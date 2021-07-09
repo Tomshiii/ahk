@@ -10,6 +10,20 @@ SetWorkingDir, %A_ScriptDir%
 Run, C:\Program Files\AHK
 return
 
+^+d:: ;Make discord bigger so I can actually read stuff when not streaming
+WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488
+Return
+
+F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
+run, D:\Program Files\User\Music\pokemon.xspf
+if WinExist("ahk_exe vlc.exe")
+	WinActivate
+else
+	WinWaitActive, ahk_exe vlc.exe
+WinMove, VLC,,  2016, 34, 501, 412
+SendInput +a, +a, +a
+Return
+
 #IfWinNotActive ahk_exe firefox.exe ;I do this just because F11 is fullscreen and I guess I can't be bothered using another button
 F11:: ;opens the streamdeck app
 Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
@@ -23,7 +37,7 @@ if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into fo
 	WinActivate
 else
 	WinWaitActive, ahk_exe obs64.exe
-sleep 2500
+sleep 2500 ; you have to wait a while after obs opens before you can start sending it commands or it'll crash 
 SendInput, !p ;Changes profile to main stream profile. The Above 1s sleep is essential as obs crashes if you instantly change the profile
 SendInput, {DOWN 7}
 SendInput, {ENTER}
@@ -71,10 +85,6 @@ Run, chrome.exe https://www.twitch.tv/popout/tomshi/chat
 WinMove, ahk_exe Discord.exe,, 4480, 432, 1080, 797 ;moves into position
 Return
 
-^+d:: ;Make discord bigger so I can actually read stuff when not streaming
-WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488
-Return
-
 F16:: ;opens streamelements obs and swaps to botshi profile
 Run, C:\Program Files\AHK\BOTSHI.lnk
 ;Run, C:\Program Files\AHK\obs64.lnk
@@ -100,11 +110,9 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-
-
 #IfWinExist ahk_exe obs64.exe
-^+r::
-if WinExist("ahk_exe obs64.exe")
+^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream 
+if WinExist("ahk_exe obs64.exe") ;focuses obs
 	WinActivate
 else
 	WinWaitActive, ahk_exe obs64.exe
@@ -114,18 +122,6 @@ SendInput, ^+8 ;Source Record OBS Plugin replay buffer must be set to this
 sleep 10
 SendInput, ^+9 ;Source Record OBS Plugin replay buffer must be set to this
 sleep 10
-Return
-
-;================Basic Windows================
-#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
-F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
-run, D:\Program Files\User\Music\pokemon.xspf
-if WinExist("ahk_exe vlc.exe")
-	WinActivate
-else
-	WinWaitActive, ahk_exe vlc.exe
-WinMove, VLC,,  2016, 34, 501, 412
-SendInput +a, +a, +a
 Return
 
 ;================Audition================
