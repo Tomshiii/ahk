@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 Run, C:\Program Files\AHK
 return
 
-#IfWinNotActive ahk_exe firefox.exe
+#IfWinNotActive ahk_exe firefox.exe ;I do this just because F11 is fullscreen and I guess I can't be bothered using another button
 F11:: ;opens the streamdeck app
 Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
 Return
