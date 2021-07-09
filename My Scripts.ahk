@@ -25,8 +25,7 @@ WinMove, VLC,,  2016, 34, 501, 412
 SendInput +a, +a, +a
 Return
 
-#IfWinNotActive ahk_exe firefox.exe ;I do this just because F11 is fullscreen and I guess I can't be bothered using another button
-F11:: ;opens the streamdeck app
+F9:: ;opens the streamdeck app
 Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
 Return
 ;================Stream================
@@ -162,6 +161,49 @@ Return
 
 ;================Premiere================
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
+
+F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised
+SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
+sleep 100 ;ahk is too fast
+SendInput, {Click Right}
+sleep 200
+SendInput, {Down 8} ;menus down to send to adobe audition
+sleep 200
+SendInput, {Enter}
+if WinExist("ahk_exe Adobe Audition.exe") ;waits until audition opens
+	WinActivate
+else
+	WinWaitActive, ahk_exe Adobe Audition.exe
+sleep 4000 ;audition is slow asf to load
+WinMaximize, ahk_exe Adobe Audition.exe ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetKeyDelay, 0
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+MouseMove, 1192, 632 ;moves the mouse to the middle of the screen
+SendInput, {click}
+sleep 100
+MouseMove, 301, 373 ;moves the mouse to the preset clicker
+SendInput, {Click}, l, {DOWN 3}, {ENTER} ;menus to the limit preset I have
+Sleep, 5
+MouseMove, 80, 714
+SendInput, {Click}
+Sleep, 2200
+SendInput, !rnn, {ENTER} ;menus to the normalise preset in the alt menu
+Sleep, 2200
+MouseMove, 1192, 632 ;moves back to the middle of the screen and clicks
+SendInput, {click}
+SendInput, ^s ;saves so the changes translate over to premiere
+MouseMove, %xposP%, %yposP% 
+blockinput, MouseMoveOff
+BlockInput, off
+WinMinimize, ahk_exe Adobe Audition.exe ;minimises audition and reactivates premiere
+WinActivate, ahk_exe Adobe Premiere Pro.exe
+Return
 ;~~~~~~~~~~~~~~~~~NUMPAD SCRIPTS~~~~~~~~~~~~~~~~~
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 SendInput, ^+9,{F8} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
