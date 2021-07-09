@@ -3,6 +3,7 @@ SetWorkingDir, %A_ScriptDir%
 
 ; A lot of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/Tomshiii/ahk), his videos on the subject
 ; are what got me into AHK to begin with and what brought this entire script to life
+; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
 
 ;================Windows================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
@@ -50,16 +51,16 @@ else
 	WinWaitActive, ahk_exe firefox.exe
 sleep 1000
 Run, firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager
-sleep 9000
+sleep 9000 ;if both tabs don't load in, it can mess with trying to separate them
 if WinExist("ahk_exe firefox.exe")
 	WinActivate
 else
-	WinWaitActive, ahk_exe firefox.exe
+	WinWaitActive, ahk_exe firefox.exe ;the following code was yoinked from taran, it's just a deeper method of calling firefox forwards since sometimes it doesn't focus
 WinActivatebottom ahk_exe firefox.exe
 WinGet, hWnd, ID, ahk_class MozillaWindowClass
 	DllCall("SetForegroundWindow", UInt, hWnd) 
 SendInput, !d ;Detatches the firefox tab
-sleep, 100
+sleep, 100 ;ahk is too fast for firefox, so we must be slow
 Send, +{TAB}
 sleep, 100
 Send, +{TAB}
@@ -347,7 +348,7 @@ SendInput, ^c
 blockinput, MouseMoveOff
 BlockInput, off
 Return
-;~~~~~~~~~~~~~~~~~EVERYTHING BELOW HERE IS FOR SPEED MACROS IN PREMIERE~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~SPEED MACROS~~~~~~~~~~~~~~~~~
 ^+1:: ;Must set ctrl + d to open the speed menu
 	SendInput, ^d, 20, {ENTER} ;Sets speed(s) to 20(or applicable number)
 Return
