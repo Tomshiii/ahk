@@ -1,5 +1,9 @@
 ﻿#SingleInstance Force
 SetWorkingDir, %A_ScriptDir%
+
+; A lot of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/Tomshiii/ahk), his videos on the subject
+; are what got me into AHK to begin with and what brought this entire script to life
+
 ;================Windows================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 ^+a:: ;opens my script directory
