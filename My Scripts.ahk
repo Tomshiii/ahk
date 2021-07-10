@@ -206,7 +206,8 @@ WinActivate, ahk_exe Adobe Premiere Pro.exe
 Return
 ;~~~~~~~~~~~~~~~~~NUMPAD SCRIPTS~~~~~~~~~~~~~~~~~
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
-SendInput, ^+9,{F8} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+SendInput, ^+9
+SendInput, {F8} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 coordmode, pixel, Window
 coordmode, mouse, Window
 BlockInput, SendAndMouse
@@ -219,7 +220,9 @@ MouseGetPos, xposP, yposP
 ;Send ^+8 ;highlight the effect control panel
 ;Send ^+8 ;again because adobe is dumb and sometimes doesn't highlight if you're fullscreen somewhere
 MouseMove, 122,1060 ;location for "motion"
-SendInput, ^+k,{Click}{Tab 2}, 1912, {Tab}, 0, {Tab}, 200, {ENTER}, ^+k
+SendInput, ^+k
+SendInput, {Click}
+SendInput, {Tab 2}, 1912, {Tab}, 0, {Tab}, 200, {ENTER} ^+k
 
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -227,7 +230,8 @@ BlockInput, off
 Return
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
-SendInput, ^+9,{F8} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+SendInput, ^+9
+SendInput, {F8} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 coordmode, pixel, Window
 coordmode, mouse, Window
 BlockInput, SendAndMouse
@@ -238,7 +242,9 @@ SetDefaultMouseSpeed 0
 
 MouseGetPos, xposP, yposP
 MouseMove, 122,1060
-SendInput, {Click}{Tab 2}, 2880, {Tab},-538,{Tab}, 300, {Enter}
+SendInput, {Click}
+SendInput, {Tab 2}, 2880, {Tab},-538,{Tab}, 300
+SendInput, {Enter}
 
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -246,7 +252,8 @@ BlockInput, off
 Return
 
 Numpad9:: ;This script moves the mouse to a pixel position to reset the "motion" effects
-SendInput, ^+9,{F12} ;highlights the timeline, then changes the track colour so I know that clip has been reset back to normal
+SendInput, ^+9
+SendInput, {F12} ;highlights the timeline, then changes the track colour so I know that clip has been reset back to normal
 coordmode, pixel, Window
 coordmode, mouse, Window
 BlockInput, SendAndMouse
@@ -256,7 +263,7 @@ SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 
 MouseGetPos, xposP, yposP
-MouseMove, 358, 1055
+MouseMove, 359, 1064
 SendInput, {Click}
 
 MouseMove, %xposP%, %yposP% 
@@ -265,15 +272,18 @@ BlockInput, off
 Return
 
 Numpad2:: ;INCREASE GAIN BY 2db == set g to open gain window
-SendInput, g, +{Tab}, {UP 3}, {DOWN},  {TAB}, 2, {ENTER}
+SendInput, g
+SendInput, +{Tab}{UP 3}{DOWN}{TAB}2{ENTER}
 Return
 
 Numpad1:: ;REDUCE GAIN BY -2db
-SendInput, g, +{Tab}, {UP 3}, {DOWN}, {TAB}, -2, {ENTER}
+SendInput, g
+SendInput, +{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}
 Return
 
 Numpad3:: ;INCREASE GAIN BY 6db
-SendInput, g, +{Tab}, {UP 3}, {DOWN}, {TAB}, 6, {ENTER}
+SendInput, g
+SendInput, +{Tab}{UP 3}{DOWN}{TAB}6{ENTER}
 Return
 
 Numpad4:: ;GO TO EFFECTS WINDOW AND HIGHLIGHT SEARCH BOX
