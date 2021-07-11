@@ -1,6 +1,6 @@
 ﻿#SingleInstance Force
 SetWorkingDir, %A_ScriptDir%
-
+SetNumLockState, AlwaysOn
 ; A lot of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/Tomshiii/ahk), his videos on the subject
 ; are what got me into AHK to begin with and what brought this entire script to life
 ; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
@@ -321,6 +321,9 @@ Return
 ;~~~~~~~~~~~~~~~~~Drag and Drop Effect Presets~~~~~~~~~~~~~~~~~
 
 !g::
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
 SendInput, ^+7
 SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
 SendInput, ^a{DEL}
@@ -336,9 +339,14 @@ MouseMove, 40, 68,, R
 SendInput, {Click Down}
 MouseMove, %xposP%, %yposP% 
 SendInput, {Click Up}
+blockinput, MouseMoveOff
+BlockInput, off
 Return
 
 !p::
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
 SendInput, ^+7
 SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
 SendInput, ^a{DEL}
@@ -354,6 +362,8 @@ MouseMove, 40, 68,, R
 SendInput, {Click Down}
 MouseMove, %xposP%, %yposP% 
 SendInput, {Click Up}
+blockinput, MouseMoveOff
+BlockInput, off
 Return
 
 ;~~~~~~~~~~~~~~~~~Scale Adjustments~~~~~~~~~~~~~~~~~
