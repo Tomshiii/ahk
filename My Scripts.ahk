@@ -24,14 +24,6 @@ else
 WinMove, VLC,,  2016, 34, 501, 412
 SendInput +a, +a, +a
 Return
-
-F8::
-Run, C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe
-Return
-
-F9:: ;opens the streamdeck app
-Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
-Return
 ;================Stream================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 
