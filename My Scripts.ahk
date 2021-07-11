@@ -184,8 +184,14 @@ Return
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised
-SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
-sleep 100 ;ahk is too fast
+;SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
+;sleep 100 ;ahk is too fast
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+MouseMove, xposP, 513
 SendInput, {Click Right}
 sleep 200
 SendInput, {Down 8} ;menus down to send to adobe audition
@@ -308,7 +314,46 @@ SendInput, +{Tab}{UP 3}{DOWN}{TAB}6{ENTER}
 Return
 
 Numpad4:: ;GO TO EFFECTS WINDOW AND HIGHLIGHT SEARCH BOX
-SendInput, ^+7,^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+SendInput, ^+7
+SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+Return
+
+;~~~~~~~~~~~~~~~~~Drag and Drop Effect Presets~~~~~~~~~~~~~~~~~
+
+!g::
+SendInput, ^+7
+SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+SendInput, ^a{DEL}
+SendInput, gaussian blur 20 ;create a preset of blur effect with this name, must be in a folder as well
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+MouseMove, 3354, 259
+Sleep 100
+MouseMove, 40, 68,, R
+SendInput, {Click Down}
+MouseMove, %xposP%, %yposP% 
+SendInput, {Click Up}
+Return
+
+!p::
+SendInput, ^+7
+SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+SendInput, ^a{DEL}
+SendInput, parametric ;create parametric eq preset with this name, must be in a folder as well
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+MouseMove, 3354, 259
+Sleep 100
+MouseMove, 40, 68,, R
+SendInput, {Click Down}
+MouseMove, %xposP%, %yposP% 
+SendInput, {Click Up}
 Return
 
 ;~~~~~~~~~~~~~~~~~Scale Adjustments~~~~~~~~~~~~~~~~~
@@ -452,6 +497,23 @@ Return
 
 
 ; ==================OLD=====================
+;F6:: ;how to move mouse on one axis
+;SetDefaultMouseSpeed 0
+;SetKeyDelay, 0
+;coordmode, pixel, Screen
+;coordmode, mouse, Screen
+;MouseGetPos, xposP, yposP
+;MouseMove, xposP, 513,, R
+;Return
+
+;F6:: ;how to move mouse on one axis, relative to current position
+;SetDefaultMouseSpeed 0
+;SetKeyDelay, 0
+;coordmode, pixel, Screen
+;coordmode, mouse, Screen
+;MouseMove, 0, 513,, R
+;Return
+
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 ;Detatch a firefox tab
 
