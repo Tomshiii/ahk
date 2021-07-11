@@ -317,15 +317,14 @@ Numpad4:: ;GO TO EFFECTS WINDOW AND HIGHLIGHT SEARCH BOX
 SendInput, ^+7
 SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
 Return
-
 ;~~~~~~~~~~~~~~~~~Drag and Drop Effect Presets~~~~~~~~~~~~~~~~~
-
 !g::
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 SendInput, ^+7
 SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+Sleep 60
 SendInput, ^a{DEL}
 SendInput, gaussian blur 20 ;create a preset of blur effect with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
@@ -349,6 +348,7 @@ BlockInput, MouseMove
 BlockInput, On
 SendInput, ^+7
 SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+Sleep 60
 SendInput, ^a{DEL}
 SendInput, parametric ;create parametric eq preset with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
@@ -365,7 +365,6 @@ SendInput, {Click Up}
 blockinput, MouseMoveOff
 BlockInput, off
 Return
-
 ;~~~~~~~~~~~~~~~~~Scale Adjustments~~~~~~~~~~~~~~~~~
 
 ^1:: ;makes the scale of current selected clip 100
