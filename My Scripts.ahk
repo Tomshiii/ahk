@@ -8,7 +8,7 @@ SetNumLockState, AlwaysOn
 ;================Windows================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 ^+a:: ;opens my script directory
-Run, C:\Program Files\AHK
+Run, C:\Program Files\ahk
 return
 
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
@@ -25,6 +25,10 @@ WinMove, VLC,,  2016, 34, 501, 412
 SendInput +a, +a, +a
 Return
 
+F8::
+Run, C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe
+Return
+
 F9:: ;opens the streamdeck app
 Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
 Return
@@ -33,7 +37,7 @@ Return
 
 F15:: ;Start everything for stream
 SetWinDelay, 0 ;makes windows move instantly
-Run, C:\Program Files\AHK\obs64.lnk
+Run, C:\Program Files\ahk\obs64.lnk
 if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 	WinActivate
 else
@@ -100,15 +104,15 @@ Run, C:\Program Files\Chatterino\chatterino.exe
 Run, C:\Program Files (x86)\foobar2000\foobar2000.exe
 Run, F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe
 Run, C:\Users\Tom\AppData\Local\Programs\streamlabels\StreamLabels.exe
-Run, C:\Program Files\AHK\Streamlabs Chatbot.lnk
+Run, C:\Program Files\ahk\Streamlabs Chatbot.lnk
 ;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe replaced by source record plugin
 Run, chrome.exe https://www.twitch.tv/popout/tomshi/chat
 WinMove, ahk_exe Discord.exe,, 4480, 432, 1080, 797 ;moves into position
 Return
 
 F16:: ;opens streamelements obs and swaps to botshi profile
-Run, C:\Program Files\AHK\BOTSHI.lnk
-;Run, C:\Program Files\AHK\obs64.lnk
+Run, C:\Program Files\ahk\BOTSHI.lnk
+;Run, C:\Program Files\ahk\obs64.lnk
 WinWait ahk_exe obs64.exe ;waits until obs is open then brings it into focus. obs live fucked up their integration so you have to physically click on obs live before you can input alt commands. Thanks obs live
 	sleep 3000
 coordmode, pixel, Window
