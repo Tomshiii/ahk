@@ -30,6 +30,7 @@ Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
 Return
 ;================Stream================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
+
 F15:: ;Start everything for stream
 SetWinDelay, 0 ;makes windows move instantly
 Run, C:\Program Files\AHK\obs64.lnk
@@ -43,6 +44,26 @@ SendInput, {DOWN 7}
 SendInput, {ENTER}
 sleep 2000
 WinMove, OBS,,  2553, -892, 1111, 1047 ;Moves obs into position, important to keep because streamelements obs is wider and ruins main obs
+{ ;this part of the script is just to set the source record hotkeys until they fix it
+WinActivate, ahk_exe obs64.exe
+SendInput, !f
+sleep 100
+SendInput, s
+sleep 2000
+SendInput, {DOWN 5}
+sleep 200
+SendInput, {TAB 52}
+sleep 200
+SendInput, ^+8
+sleep 1000
+SendInput, {TAB}
+SendInput, +{TAB 53}
+sleep 200
+SendInput, {UP}
+SendInput, {TAB}
+SendInput, {ENTER}
+sleep 200
+}
 Run, firefox.exe https://docs.google.com/presentation/d/1b6pCuOIrw4pEF6GACxrBh8C-mB4XsDeHLM50cj4jAkQ/edit#slide=id.g90e8195d3c_16_958
 if WinExist("ahk_exe firefox.exe")
 	WinActivate
