@@ -245,7 +245,7 @@ MouseGetPos, xposP, yposP
 MouseMove, 122,1060 ;location for "motion"
 SendInput, ^+k
 SendInput, {Click}
-SendInput, {Tab 2}, 1912, {Tab}, 0, {Tab}, 200, {ENTER} ^+k
+SendInput, {Tab 2}1912{Tab}0{Tab}200{ENTER}^+k
 
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -266,7 +266,7 @@ SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 MouseMove, 122,1060
 SendInput, {Click}
-SendInput, {Tab 2}, 2880, {Tab},-538,{Tab}, 300
+SendInput, {Tab 2}2880{Tab}-538{Tab}300
 SendInput, {Enter}
 
 MouseMove, %xposP%, %yposP% 
@@ -286,7 +286,7 @@ SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 
 MouseGetPos, xposP, yposP
-MouseMove, 359, 1064
+MouseMove, 425, 1063
 SendInput, {Click}
 
 MouseMove, %xposP%, %yposP% 
