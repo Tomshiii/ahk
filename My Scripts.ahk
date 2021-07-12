@@ -154,12 +154,12 @@ SetDefaultMouseSpeed 0
 
 MouseGetPos, xposP, yposP
 MouseMove, 300, 380
-SendInput, {Click}, l, {DOWN 3}, {ENTER}
+SendInput, {Click}l{DOWN 3}{ENTER}
 Sleep, 5
 MouseMove, 92, 717
 SendInput, {Click}
 Sleep, 2200
-SendInput, !rnn, {ENTER}
+SendInput, !rnn{ENTER}
 
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -173,7 +173,7 @@ SendInput, {TAB}{RIGHT}
 Sleep 200
 SendInput, {DOWN 17}
 Sleep 200
-SendInput, {Enter},+{Tab}
+SendInput, {Enter}+{Tab}
 Return
 
 ;================Premiere================
@@ -211,12 +211,12 @@ MouseMove, 1192, 632 ;moves the mouse to the middle of the screen
 SendInput, {click}
 sleep 100
 MouseMove, 301, 373 ;moves the mouse to the preset clicker
-SendInput, {Click}, l, {DOWN 3}, {ENTER} ;menus to the limit preset I have
+SendInput, {Click}l{DOWN 3}{ENTER} ;menus to the limit preset I have
 Sleep, 5
 MouseMove, 80, 714
 SendInput, {Click}
 Sleep, 2200
-SendInput, !rnn, {ENTER} ;menus to the normalise preset in the alt menu
+SendInput, !rnn{ENTER} ;menus to the normalise preset in the alt menu
 Sleep, 2200
 MouseMove, 1192, 632 ;moves back to the middle of the screen and clicks
 SendInput, {click}
@@ -374,7 +374,7 @@ SetDefaultMouseSpeed 0
 
 MouseGetPos, xposP, yposP
 MouseMove, 237,1102
-SendInput, {CLICK}, 100, {ENTER}
+SendInput, {CLICK}100{ENTER}
 
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -392,7 +392,7 @@ SetDefaultMouseSpeed 0
 
 MouseGetPos, xposP, yposP
 MouseMove, 237,1102
-SendInput, {CLICK}, 200, {ENTER}
+SendInput, {CLICK}200{ENTER}
 
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -410,7 +410,7 @@ SetDefaultMouseSpeed 0
 
 MouseGetPos, xposP, yposP
 MouseMove, 237,1102
-SendInput, {CLICK}, 300, {ENTER}
+SendInput, {CLICK}300{ENTER}
 
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -473,27 +473,27 @@ BlockInput, off
 Return
 ;~~~~~~~~~~~~~~~~~SPEED MACROS~~~~~~~~~~~~~~~~~
 ^+1:: ;Must set ctrl + d to open the speed menu
-	SendInput, ^d, 20, {ENTER} ;Sets speed(s) to 20(or applicable number)
+	SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
 Return
 
 ^+2::
-	SendInput, ^d, 25, {ENTER}
+	SendInput, ^d25{ENTER}
 Return
 
 ^+3::
-	SendInput, ^d, 50, {ENTER}
+	SendInput, ^d50{ENTER}
 Return
 
 ^4::
-	SendInput, ^d, 75, {ENTER}
+	SendInput, ^d75{ENTER}
 Return
 
 ^5::
-	SendInput, ^d, 100, {ENTER}
+	SendInput, ^d100{ENTER}
 Return
 
 ^6::
-	SendInput, ^d, 200, {ENTER}
+	SendInput, ^d200{ENTER}
 Return
 
 
