@@ -182,12 +182,12 @@ Return
 F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised
 ;SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
 ;sleep 100 ;ahk is too fast
-SetDefaultMouseSpeed 0
-SetKeyDelay, 0
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-MouseMove, xposP, 513
+;SetDefaultMouseSpeed 0
+;SetKeyDelay, 0
+;coordmode, pixel, Screen
+;coordmode, mouse, Screen
+;MouseGetPos, xposP, yposP
+;MouseMove, xposP, 513
 SendInput, {Click Right}
 sleep 200
 SendInput, {Down 8} ;menus down to send to adobe audition
