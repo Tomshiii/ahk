@@ -4,6 +4,7 @@ SetNumLockState, AlwaysOn
 ; A lot of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/TaranVH/), his videos on the subject
 ; are what got me into AHK to begin with and what brought this entire script to life
 ; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
+; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
 ;================Windows================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
@@ -97,7 +98,7 @@ SetWinDelay, 0 ;makes windows move instantly
 	Run, F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe
 	Run, C:\Users\Tom\AppData\Local\Programs\streamlabels\StreamLabels.exe
 	Run, C:\Program Files\ahk\Streamlabs Chatbot.lnk
-	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe - replaced by source record plugin
+	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run, chrome.exe https://www.twitch.tv/popout/tomshi/chat
 	WinMove, ahk_exe Discord.exe,, 4480, 432, 1080, 797 ;moves into position
 Return
@@ -229,7 +230,7 @@ Return
 	SendInput, d ;d must be set to "select clip at playhead"
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-;BlockInput, SendAndMouse - can't use block input as you need to drag the mouse
+;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
 ;BlockInput, MouseMove
 ;BlockInput, On
 SetKeyDelay, 0
@@ -248,7 +249,7 @@ Return
 	SendInput, d ;d must be set to "select clip at playhead"
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-;BlockInput, SendAndMouse - can't use block input as you need to drag the mouse
+;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
 ;BlockInput, MouseMove
 ;BlockInput, On
 SetKeyDelay, 0
@@ -267,7 +268,7 @@ Return
 	SendInput, d ;d must be set to "select clip at playhead"
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-;BlockInput, SendAndMouse - can't use block input as you need to drag the mouse
+;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
 ;BlockInput, MouseMove
 ;BlockInput, On
 SetKeyDelay, 0
@@ -286,7 +287,7 @@ Return
 	SendInput, d ;d must be set to "select clip at playhead"
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-;BlockInput, SendAndMouse - can't use block input as you need to drag the mouse
+;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
 ;BlockInput, MouseMove
 ;BlockInput, On
 SetKeyDelay, 0
@@ -298,7 +299,8 @@ SetDefaultMouseSpeed 0
 	SendInput, {Click Down}
 	KeyWait, alt, L
 	SendInput, {Click Up}
-;MouseMove, %xposP%, %yposP% - moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
 ;blockinput, MouseMoveOff
 ;BlockInput, off
 Return
@@ -522,39 +524,6 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 	KeyWait, Xbutton2
 	SendInput, {LButton Up}{v} ;set select tool to v
 Return
-;~~~~~~~~~~~~~~~~~Timecode Scripts~~~~~~~~~~~~~~~~~
-^!c:: ;moves the mouse to the timecode and copies it
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-SetKeyDelay, 0
-SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	MouseMove, 79,93
-	SendInput, {Click}
-	SendInput, ^c
-MouseMove, %xposP%, %yposP%
-	SendInput, {Click}
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-^+c:: ;moves the mouse to the timecode and clicks it
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-SetKeyDelay, 0
-SetDefaultMouseSpeed 0
-	MouseMove, 79,93
-	SendInput, {Click}
-	SendInput, ^c
-blockinput, MouseMoveOff
-BlockInput, off
-Return
 ;~~~~~~~~~~~~~~~~~SPEED MACROS~~~~~~~~~~~~~~~~~
 ^+1:: ;Must set ctrl + d to open the speed menu
 	SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
@@ -645,3 +614,37 @@ Return
 ;SendInput, {DOWN 7}
 ;SendInput, {ENTER}
 Return
+
+;~~~~~~~~~~~~~~~~~Timecode Scripts~~~~~~~~~~~~~~~~~
+;^!c:: ;moves the mouse to the timecode and copies it  //these were mostly for the beginner tutorial, I don't use anymore
+;coordmode, pixel, Window
+;coordmode, mouse, Window
+;BlockInput, SendAndMouse
+;BlockInput, MouseMove
+;BlockInput, On
+;SetKeyDelay, 0
+;SetDefaultMouseSpeed 0
+;MouseGetPos, xposP, yposP
+	;MouseMove, 79,93
+	;SendInput, {Click}
+	;SendInput, ^c
+;MouseMove, %xposP%, %yposP%
+	;SendInput, {Click}
+;blockinput, MouseMoveOff
+;BlockInput, off
+;Return
+
+;^+c:: ;moves the mouse to the timecode and clicks it
+;coordmode, pixel, Window
+;coordmode, mouse, Window
+;BlockInput, SendAndMouse
+;BlockInput, MouseMove
+;BlockInput, On
+;SetKeyDelay, 0
+;SetDefaultMouseSpeed 0
+	;MouseMove, 79,93
+	;SendInput, {Click}
+	;SendInput, ^c
+;blockinput, MouseMoveOff
+;BlockInput, off
+;Return
