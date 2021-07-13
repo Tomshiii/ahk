@@ -361,6 +361,30 @@ SendInput, {Click Up}
 blockinput, MouseMoveOff
 BlockInput, off
 Return
+
+!h::
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SendInput, ^+7
+SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+Sleep 60
+SendInput, ^a{DEL}
+SendInput, hflip ;create hflip preset with this name, must be in a folder as well
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+MouseMove, 3354, 259
+Sleep 100
+MouseMove, 40, 68,, R
+SendInput, {Click Down}
+MouseMove, %xposP%, %yposP% 
+SendInput, {Click Up}
+blockinput, MouseMoveOff
+BlockInput, off
+Return
 ;~~~~~~~~~~~~~~~~~Scale Adjustments~~~~~~~~~~~~~~~~~
 
 ^1:: ;makes the scale of current selected clip 100
@@ -430,6 +454,7 @@ Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
 Return
 
 Xbutton2:: ;changes the tool to the hand tool while mouse button is held
+click middle
 SendInput, {h}{LButton Down} ;set hand tool to "h"
 KeyWait, Xbutton2
 SendInput, {LButton Up}{v} ;set select tool to v
