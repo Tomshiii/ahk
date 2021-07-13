@@ -230,7 +230,7 @@ Return
 ;~~~~~~~~~~~~~~~~~NUMPAD SCRIPTS~~~~~~~~~~~~~~~~~
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 SendInput, ^+9
-SendInput, {F8} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+SendInput, {F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 coordmode, pixel, Window
 coordmode, mouse, Window
 BlockInput, SendAndMouse
@@ -254,7 +254,7 @@ Return
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 SendInput, ^+9
-SendInput, {F8} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+SendInput, {F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 coordmode, pixel, Window
 coordmode, mouse, Window
 BlockInput, SendAndMouse
