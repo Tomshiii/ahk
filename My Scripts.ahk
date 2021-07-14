@@ -195,8 +195,8 @@ F11:: ;hover over an audio track you want normalized, this will then send it to 
 			WinActivate
 		else
 			WinWaitActive, ahk_exe Adobe Audition.exe
+	WinMaximize, ahk_exe Adobe Audition.exe ;for whatever reason audition opens windowed sometimes, this just forces fullscreen		
 	sleep 4000 ;audition is slow asf to load
-	WinMaximize, ahk_exe Adobe Audition.exe ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 BlockInput, SendAndMouse
@@ -207,10 +207,10 @@ SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 1192, 632 ;moves the mouse to the middle of the screen
 	SendInput, {click} ;clicks in the middle of the screen to ensure the current audio is actually selected, audition is just jank as hell and it's easier to just add this step than to deal with it not working sometimes
-	sleep 100
+	sleep 1000
 	MouseMove, 301, 373 ;moves the mouse to the preset selector
 	SendInput, {Click}l{DOWN 3}{ENTER} ;menus to the limit preset I have
-	sleep, 5
+	sleep, 100
 	MouseMove, 80, 714
 	SendInput, {Click}
 	sleep, 2200
@@ -227,7 +227,7 @@ BlockInput, off
 Return
 
 !s:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
-	SendInput, d ;d must be set to "select clip at playhead"
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 ;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
@@ -246,7 +246,7 @@ MouseMove, %xposP%, %yposP%
 Return
 
 !a:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
-	SendInput, d ;d must be set to "select clip at playhead"
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 ;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
@@ -265,7 +265,7 @@ MouseMove, %xposP%, %yposP%
 Return
 
 !d:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
-	SendInput, d ;d must be set to "select clip at playhead"
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 ;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
@@ -284,7 +284,7 @@ MouseMove, %xposP%, %yposP%
 Return
 
 !w:: ;press then hold alt and drag to move position. Let go of alt to confirm 
-	SendInput, d ;d must be set to "select clip at playhead"
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 ;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
