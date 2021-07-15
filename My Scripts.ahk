@@ -253,6 +253,27 @@ BlockInput, off
 MouseMove, %xposP%, %yposP% 
 Return
 
+2:: ;press then hold alt and drag to move position. Let go of alt to confirm 
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetKeyDelay, 0
+SetDefaultMouseSpeed 0
+;MouseGetPos, xposP, yposP
+	Click 142 1059 ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
+	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
+	SendInput, {Click Down}
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, 2
+	SendInput, {Click Up}
+;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
+Return
+
 3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
@@ -289,28 +310,6 @@ BlockInput, off
 	KeyWait, 4
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
-Return
-
-2:: ;press then hold alt and drag to move position. Let go of alt to confirm 
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-SetKeyDelay, 0
-SetDefaultMouseSpeed 0
-;MouseGetPos, xposP, yposP
-	MouseMove, 142, 1059
-	SendInput, {Click left} ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
-	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
-	SendInput, {Click Down}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, 2
-	SendInput, {Click Up}
-;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
-;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
 Return
 ;~~~~~~~~~~~~~~~~~NUMPAD SCRIPTS~~~~~~~~~~~~~~~~~
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
