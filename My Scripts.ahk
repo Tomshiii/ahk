@@ -178,14 +178,16 @@ Return
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised. If there are multiple audio tracks and you only want one, alt click it individually first.
-;SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
-;sleep 100 ;ahk is too fast
-;SetDefaultMouseSpeed 0
-;SetKeyDelay, 0
-;coordmode, pixel, Screen
-;coordmode, mouse, Screen
-;MouseGetPos, xposP, yposP
-;MouseMove, xposP, 513
+/* using this caused problems
+SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
+sleep 100 ;ahk is too fast
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+MouseMove, xposP, 513
+*/
 	SendInput, {Click Right}
 	sleep 200
 	SendInput, {Down 8} ;menus down to send to adobe audition
@@ -555,96 +557,105 @@ Return
 
 
 ; ==================OLD=====================
-;F6:: ;how to move mouse on one axis
-;SetDefaultMouseSpeed 0
-;SetKeyDelay, 0
-;coordmode, pixel, Screen
-;coordmode, mouse, Screen
-;MouseGetPos, xposP, yposP
-;MouseMove, xposP, 513,, R
-;Return
-
-;F6:: ;how to move mouse on one axis, relative to current position
-;SetDefaultMouseSpeed 0
-;SetKeyDelay, 0
-;coordmode, pixel, Screen
-;coordmode, mouse, Screen
-;MouseMove, 0, 513,, R
-;Return
-
-#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
-;Detatch a firefox tab
-
-;#IfWinActive ahk_exe firefox.exe
-;F14:: ;detatch a tab when it fails to do so
-;SendInput, !d
-;sleep, 100
-;Send, +{TAB}
-;sleep, 100
-;Send, +{TAB}
-;sleep, 100
-;Send, +{TAB}
-;sleep, 200
-;Send, +{F10}
-;sleep, 200
-;Send, v
-;sleep, 200
-;Send, w
-;sleep, 200
-;Return
-
-;change obs profile
-
-;F9::
-;SendInput, !p
-;SendInput, {DOWN 7}
-;SendInput, {ENTER}
-;Return
-
-;open obs and change its profle
-
-;^+!o::  ;====learning how WinActivate works====
-;Run, C:\Program Files\AHK\obs64.lnk
-;if WinExist("ahk_exe obs64.exe")
-	;WinActivate
-;else
-	;WinWaitActive, ahk_exe obs64.exe
-;sleep 1000
-;SendInput, !p
-;SendInput, {DOWN 7}
-;SendInput, {ENTER}
+/*
+F6:: ;how to move mouse on one axis
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+MouseMove, xposP, 513,, R
 Return
 
-;~~~~~~~~~~~~~~~~~Timecode Scripts~~~~~~~~~~~~~~~~~
-;^!c:: ;moves the mouse to the timecode and copies it  //these were mostly for the beginner tutorial, I don't use anymore
-;coordmode, pixel, Window
-;coordmode, mouse, Window
-;BlockInput, SendAndMouse
-;BlockInput, MouseMove
-;BlockInput, On
-;SetKeyDelay, 0
-;SetDefaultMouseSpeed 0
-;MouseGetPos, xposP, yposP
-	;MouseMove, 79,93
-	;SendInput, {Click}
-	;SendInput, ^c
-;MouseMove, %xposP%, %yposP%
-	;SendInput, {Click}
-;blockinput, MouseMoveOff
-;BlockInput, off
-;Return
+F6:: ;how to move mouse on one axis, relative to current position
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseMove, 0, 513,, R
+Return
+*/
 
-;^+c:: ;moves the mouse to the timecode and clicks it
-;coordmode, pixel, Window
-;coordmode, mouse, Window
-;BlockInput, SendAndMouse
-;BlockInput, MouseMove
-;BlockInput, On
-;SetKeyDelay, 0
-;SetDefaultMouseSpeed 0
-	;MouseMove, 79,93
-	;SendInput, {Click}
-	;SendInput, ^c
-;blockinput, MouseMoveOff
-;BlockInput, off
-;Return
+#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
+/*
+;Detatch a firefox tab
+
+#IfWinActive ahk_exe firefox.exe
+F14:: ;detatch a tab when it fails to do so
+SendInput, !d
+sleep, 100
+Send, +{TAB}
+sleep, 100
+Send, +{TAB}
+sleep, 100
+Send, +{TAB}
+sleep, 200
+Send, +{F10}
+sleep, 200
+Send, v
+sleep, 200
+Send, w
+sleep, 200
+Return
+*/
+
+;change obs profile
+/*
+F9::
+SendInput, !p
+SendInput, {DOWN 7}
+SendInput, {ENTER}
+Return
+*/
+
+/*
+;open obs and change its profle
+
+^+!o::  ;====learning how WinActivate works====
+Run, C:\Program Files\AHK\obs64.lnk
+if WinExist("ahk_exe obs64.exe")
+	WinActivate
+else
+	WinWaitActive, ahk_exe obs64.exe
+sleep 1000
+SendInput, !p
+SendInput, {DOWN 7}
+SendInput, {ENTER}
+Return
+*/
+
+/*
+~~~~~~~~~~~~~~~~~Timecode Scripts~~~~~~~~~~~~~~~~~
+^!c:: ;moves the mouse to the timecode and copies it  //these were mostly for the beginner tutorial, I don't use anymore
+coordmode, pixel, Window
+coordmode, mouse, Window
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetKeyDelay, 0
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	MouseMove, 79,93
+	SendInput, {Click}
+	SendInput, ^c
+MouseMove, %xposP%, %yposP%
+	SendInput, {Click}
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+
+^+c:: ;moves the mouse to the timecode and clicks it
+coordmode, pixel, Window
+coordmode, mouse, Window
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetKeyDelay, 0
+SetDefaultMouseSpeed 0
+	MouseMove, 79,93
+	SendInput, {Click}
+	SendInput, ^c
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+*/
