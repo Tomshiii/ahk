@@ -1,6 +1,7 @@
 ﻿#SingleInstance Force
 SetWorkingDir, %A_ScriptDir%
 SetNumLockState, AlwaysOn
+SetCapsLockState, AlwaysOff
 ; A lot of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/TaranVH/), his videos on the subject
 ; are what got me into AHK to begin with and what brought this entire script to life
 ; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
@@ -11,6 +12,8 @@ SetNumLockState, AlwaysOn
 ^+a:: ;opens my script directory
 	Run, C:\Program Files\ahk
 return
+
+!a::edit %a_ScriptDir% ;opens this script in notepad
 
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 	WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488
@@ -24,6 +27,9 @@ F22:: ;opens editing playlist, moves vlc into a small window, changes its audio 
 			WinWaitActive, ahk_exe vlc.exe
 	WinMove, VLC,,  2016, 34, 501, 412
 	SendInput +a+a+a
+Return
+
+^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
 Return
 ;================Stream================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
@@ -178,14 +184,16 @@ Return
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised. If there are multiple audio tracks and you only want one, alt click it individually first.
-;SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
-;sleep 100 ;ahk is too fast
-;SetDefaultMouseSpeed 0
-;SetKeyDelay, 0
-;coordmode, pixel, Screen
-;coordmode, mouse, Screen
-;MouseGetPos, xposP, yposP
-;MouseMove, xposP, 513
+/* using this caused problems
+SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
+sleep 100 ;ahk is too fast
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+MouseMove, xposP, 513
+*/
 	SendInput, {Click Right}
 	sleep 200
 	SendInput, {Down 8} ;menus down to send to adobe audition
@@ -226,70 +234,70 @@ BlockInput, off
 	WinActivate, ahk_exe Adobe Premiere Pro.exe
 Return
 
-!s:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
+1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
-;BlockInput, MouseMove
-;BlockInput, On
+BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
+BlockInput, MouseMove
+BlockInput, On
 SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 227, 1101
 	SendInput, {Click Down}
-	KeyWait, alt, L
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, 1
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
-;blockinput, MouseMoveOff
-;BlockInput, off
 Return
 
-!a:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
+3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
-;BlockInput, MouseMove
-;BlockInput, On
+BlockInput, SendAndMouse 
+BlockInput, MouseMove
+BlockInput, On
 SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 226, 1079
 	SendInput, {Click Down}
-	KeyWait, alt, L
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, 3
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
-;blockinput, MouseMoveOff
-;BlockInput, off
 Return
 
-!d:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
+4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
-;BlockInput, MouseMove
-;BlockInput, On
+BlockInput, SendAndMouse 
+BlockInput, MouseMove
+BlockInput, On
 SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 275, 1080
 	SendInput, {Click Down}
-	KeyWait, alt, L
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, 4
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
-;blockinput, MouseMoveOff
-;BlockInput, off
 Return
 
-!w:: ;press then hold alt and drag to move position. Let go of alt to confirm 
+2:: ;press then hold alt and drag to move position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-;BlockInput, SendAndMouse // can't use block input as you need to drag the mouse
-;BlockInput, MouseMove
-;BlockInput, On
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
 SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 ;MouseGetPos, xposP, yposP
@@ -297,12 +305,12 @@ SetDefaultMouseSpeed 0
 	SendInput, {Click left} ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
 	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
 	SendInput, {Click Down}
-	KeyWait, alt, L
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, 2
 	SendInput, {Click Up}
 ;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
 ;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
-;blockinput, MouseMoveOff
-;BlockInput, off
 Return
 ;~~~~~~~~~~~~~~~~~NUMPAD SCRIPTS~~~~~~~~~~~~~~~~~
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
@@ -555,96 +563,105 @@ Return
 
 
 ; ==================OLD=====================
-;F6:: ;how to move mouse on one axis
-;SetDefaultMouseSpeed 0
-;SetKeyDelay, 0
-;coordmode, pixel, Screen
-;coordmode, mouse, Screen
-;MouseGetPos, xposP, yposP
-;MouseMove, xposP, 513,, R
-;Return
-
-;F6:: ;how to move mouse on one axis, relative to current position
-;SetDefaultMouseSpeed 0
-;SetKeyDelay, 0
-;coordmode, pixel, Screen
-;coordmode, mouse, Screen
-;MouseMove, 0, 513,, R
-;Return
-
-#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
-;Detatch a firefox tab
-
-;#IfWinActive ahk_exe firefox.exe
-;F14:: ;detatch a tab when it fails to do so
-;SendInput, !d
-;sleep, 100
-;Send, +{TAB}
-;sleep, 100
-;Send, +{TAB}
-;sleep, 100
-;Send, +{TAB}
-;sleep, 200
-;Send, +{F10}
-;sleep, 200
-;Send, v
-;sleep, 200
-;Send, w
-;sleep, 200
-;Return
-
-;change obs profile
-
-;F9::
-;SendInput, !p
-;SendInput, {DOWN 7}
-;SendInput, {ENTER}
-;Return
-
-;open obs and change its profle
-
-;^+!o::  ;====learning how WinActivate works====
-;Run, C:\Program Files\AHK\obs64.lnk
-;if WinExist("ahk_exe obs64.exe")
-	;WinActivate
-;else
-	;WinWaitActive, ahk_exe obs64.exe
-;sleep 1000
-;SendInput, !p
-;SendInput, {DOWN 7}
-;SendInput, {ENTER}
+/*
+F6:: ;how to move mouse on one axis
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+MouseMove, xposP, 513,, R
 Return
 
-;~~~~~~~~~~~~~~~~~Timecode Scripts~~~~~~~~~~~~~~~~~
-;^!c:: ;moves the mouse to the timecode and copies it  //these were mostly for the beginner tutorial, I don't use anymore
-;coordmode, pixel, Window
-;coordmode, mouse, Window
-;BlockInput, SendAndMouse
-;BlockInput, MouseMove
-;BlockInput, On
-;SetKeyDelay, 0
-;SetDefaultMouseSpeed 0
-;MouseGetPos, xposP, yposP
-	;MouseMove, 79,93
-	;SendInput, {Click}
-	;SendInput, ^c
-;MouseMove, %xposP%, %yposP%
-	;SendInput, {Click}
-;blockinput, MouseMoveOff
-;BlockInput, off
-;Return
+F6:: ;how to move mouse on one axis, relative to current position
+SetDefaultMouseSpeed 0
+SetKeyDelay, 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseMove, 0, 513,, R
+Return
+*/
 
-;^+c:: ;moves the mouse to the timecode and clicks it
-;coordmode, pixel, Window
-;coordmode, mouse, Window
-;BlockInput, SendAndMouse
-;BlockInput, MouseMove
-;BlockInput, On
-;SetKeyDelay, 0
-;SetDefaultMouseSpeed 0
-	;MouseMove, 79,93
-	;SendInput, {Click}
-	;SendInput, ^c
-;blockinput, MouseMoveOff
-;BlockInput, off
-;Return
+#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
+/*
+;Detatch a firefox tab
+
+#IfWinActive ahk_exe firefox.exe
+F14:: ;detatch a tab when it fails to do so
+SendInput, !d
+sleep, 100
+Send, +{TAB}
+sleep, 100
+Send, +{TAB}
+sleep, 100
+Send, +{TAB}
+sleep, 200
+Send, +{F10}
+sleep, 200
+Send, v
+sleep, 200
+Send, w
+sleep, 200
+Return
+*/
+
+;change obs profile
+/*
+F9::
+SendInput, !p
+SendInput, {DOWN 7}
+SendInput, {ENTER}
+Return
+*/
+
+/*
+;open obs and change its profle
+
+^+!o::  ;====learning how WinActivate works====
+Run, C:\Program Files\AHK\obs64.lnk
+if WinExist("ahk_exe obs64.exe")
+	WinActivate
+else
+	WinWaitActive, ahk_exe obs64.exe
+sleep 1000
+SendInput, !p
+SendInput, {DOWN 7}
+SendInput, {ENTER}
+Return
+*/
+
+/*
+~~~~~~~~~~~~~~~~~Timecode Scripts~~~~~~~~~~~~~~~~~
+^!c:: ;moves the mouse to the timecode and copies it  //these were mostly for the beginner tutorial, I don't use anymore
+coordmode, pixel, Window
+coordmode, mouse, Window
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetKeyDelay, 0
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	MouseMove, 79,93
+	SendInput, {Click}
+	SendInput, ^c
+MouseMove, %xposP%, %yposP%
+	SendInput, {Click}
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+
+^+c:: ;moves the mouse to the timecode and clicks it
+coordmode, pixel, Window
+coordmode, mouse, Window
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetKeyDelay, 0
+SetDefaultMouseSpeed 0
+	MouseMove, 79,93
+	SendInput, {Click}
+	SendInput, ^c
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+*/
