@@ -13,6 +13,8 @@ SetCapsLockState, AlwaysOff
 	Run, C:\Program Files\ahk
 return
 
+!a::edit %a_ScriptDir% ;opens this script in notepad
+
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 	WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488
 Return
