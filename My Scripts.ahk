@@ -1,6 +1,7 @@
 ﻿#SingleInstance Force
 SetWorkingDir, %A_ScriptDir%
 SetNumLockState, AlwaysOn
+SetCapsLockState, AlwaysOff
 ; A lot of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/TaranVH/), his videos on the subject
 ; are what got me into AHK to begin with and what brought this entire script to life
 ; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
@@ -24,6 +25,9 @@ F22:: ;opens editing playlist, moves vlc into a small window, changes its audio 
 			WinWaitActive, ahk_exe vlc.exe
 	WinMove, VLC,,  2016, 34, 501, 412
 	SendInput +a+a+a
+Return
+
+^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
 Return
 ;================Stream================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
