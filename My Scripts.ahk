@@ -12,10 +12,12 @@ SetCapsLockState, AlwaysOff
 ;=========================================================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 ^+a:: ;opens my script directory
-	Run, C:\Program Files\ahk
+	Run, C:\Program Files\ahk 
 return
 
-!a::edit %a_ScriptDir% ;opens this script in notepad
+;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++
+!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
+;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
 
 !r:: 
 Reload
@@ -41,9 +43,7 @@ Return
 ^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
 Return
 
-NumpadDiv::
-   Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE 
-return
+NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE 
 
 ;=========================================================
 ;		Stream
@@ -167,7 +167,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 300, 380
@@ -187,11 +186,12 @@ Return
 ;=========================================================
 #IfWinActive ahk_exe Photoshop.exe
 ^+p:: ;When highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
-	SendInput, {TAB}{RIGHT}
-	sleep 200
+SetKeyDelay, 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
+	Send, {TAB}{RIGHT}
+	SendInput, {Up 21} ;makes sure you have the top most option selected
+	sleep 50 ;this probably isn't needed, but I have here for saftey just because photoshop isn't the best performance wise
 	SendInput, {DOWN 17}
-	Sleep 200
-	SendInput, {Enter}+{Tab}
+	Send, {Enter}+{Tab}
 Return
 
 ;=========================================================
@@ -199,6 +199,7 @@ Return
 ;=========================================================
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
+SetKeyDelay, 0 ;this is just here incase I add some sends in the future
 F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised. If there are multiple audio tracks and you only want one, alt click it individually first.
 /* using this caused problems
 SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
