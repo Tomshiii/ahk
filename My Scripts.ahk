@@ -7,7 +7,9 @@ SetCapsLockState, AlwaysOff
 ; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
 ; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
-;================Windows================
+;=========================================================
+;		Windows
+;=========================================================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 ^+a:: ;opens my script directory
 	Run, C:\Program Files\ahk
@@ -38,9 +40,11 @@ Return
 
 ^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
 Return
-;================Stream================
-#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 
+;=========================================================
+;		Stream
+;=========================================================
+#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 F15:: ;Start everything for stream
 SetWinDelay, 0 ;makes windows move instantly
 	Run, C:\Program Files\ahk\obs64.lnk ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
@@ -149,7 +153,9 @@ Return
 	sleep 10
 Return
 
-;================Audition================
+;=========================================================
+;		Audition
+;=========================================================
 #IfWinActive ahk_exe Adobe Audition.exe
 F13:: ;Moves mouse and applies Limit preset, then normalises to -3db
 coordmode, pixel, Window
@@ -172,7 +178,9 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-;================Photoshop================
+;=========================================================
+;		Photoshop
+;=========================================================
 #IfWinActive ahk_exe Photoshop.exe
 ^+p:: ;When highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 	SendInput, {TAB}{RIGHT}
@@ -182,7 +190,9 @@ Return
 	SendInput, {Enter}+{Tab}
 Return
 
-;================Premiere================
+;=========================================================
+;		Premiere
+;=========================================================
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised. If there are multiple audio tracks and you only want one, alt click it individually first.
@@ -308,7 +318,10 @@ BlockInput, off
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
 Return
-;~~~~~~~~~~~~~~~~~NUMPAD SCRIPTS~~~~~~~~~~~~~~~~~
+
+;=========================================================
+;		NUMPAD SCRIPTS
+;=========================================================
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 	SendInput, ^+9
 	SendInput, {F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
@@ -385,7 +398,10 @@ Numpad4:: ;GO TO EFFECTS WINDOW AND HIGHLIGHT SEARCH BOX
 	SendInput, ^+7
 	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
 Return
-;~~~~~~~~~~~~~~~~~Drag and Drop Effect Presets~~~~~~~~~~~~~~~~~
+
+;=========================================================
+;		Drag and Drop Effect Presets
+;=========================================================
 !g::
 BlockInput, SendAndMouse
 BlockInput, MouseMove
@@ -454,8 +470,10 @@ MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
-;~~~~~~~~~~~~~~~~~Scale Adjustments~~~~~~~~~~~~~~~~~
 
+;=========================================================
+;		Scale Adjustments
+;=========================================================
 ^1:: ;makes the scale of current selected clip 100
 coordmode, pixel, Window
 coordmode, mouse, Window
@@ -501,7 +519,9 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-;~~~~~~~~~~~~~~~~~Mouse Scripts~~~~~~~~~~~~~~~~~
+;=========================================================
+;		Mouse Scripts
+;=========================================================
 WheelRight:: +Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft:: +Up ;Set shift up to "Go to previous edit point on any track
 F14::^+w ;Set mouse button to always spit out f14, then set ctrl shift w to "Nudge Clip Selection up"
@@ -512,7 +532,9 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 	KeyWait, Xbutton2
 	SendInput, {LButton Up}{v} ;set select tool to v
 Return
-;~~~~~~~~~~~~~~~~~SPEED MACROS~~~~~~~~~~~~~~~~~ ;Must set ctrl + d to open the speed menu
+;=========================================================
+;		SPEED MACROS		;Must set ctrl + d to open the speed menu
+;=========================================================
 ^+1:: SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
 
 ^+2::SendInput, ^d25{ENTER}
@@ -529,9 +551,10 @@ Return
 
 
 
-
-; ==================OLD=====================
 /*
+;=========================================================
+						OLD
+;=========================================================
 F6:: ;how to move mouse on one axis
 SetDefaultMouseSpeed 0
 SetKeyDelay, 0
