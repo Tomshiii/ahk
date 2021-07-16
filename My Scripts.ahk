@@ -41,6 +41,10 @@ Return
 ^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
 Return
 
+NumpadDiv::
+   Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE 
+return
+
 ;=========================================================
 ;		Stream
 ;=========================================================
