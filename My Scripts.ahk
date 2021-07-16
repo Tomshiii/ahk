@@ -15,6 +15,13 @@ return
 
 !a::edit %a_ScriptDir% ;opens this script in notepad
 
+!r:: 
+Reload
+Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+MsgBox, 4,, The script could not be reloaded. Would you like to open it for editing?
+IfMsgBox, Yes, Edit
+return
+
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 	WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488
 Return
@@ -82,18 +89,14 @@ SetWinDelay, 0 ;makes windows move instantly
 			WinActivatebottom ahk_exe firefox.exe
 			WinGet, hWnd, ID, ahk_class MozillaWindowClass
 				DllCall("SetForegroundWindow", UInt, hWnd) 
-	SendInput, !d ;opens the alt context menu to begin detatching the firefox tab
-	sleep, 100 ;ahk is too fast for firefox, so we must be slow here
-	Send, +{TAB}
+	SetKeyDelay, 100
+	Send, !d ;opens the alt context menu to begin detatching the firefox tab
+	Send, +{TAB 3}
 	sleep, 100
-	Send, +{TAB}
-	sleep, 100
-	Send, +{TAB}
-	sleep, 200
 	Send, +{F10}
-	sleep, 200
+	sleep, 100
 	Send, v
-	sleep, 200
+	sleep, 100
 	Send, w
 	sleep, 2000
 	WinMove, Twitch,, -6, 0, 1497, 886 ;moves browser tabs into position for stream
@@ -119,7 +122,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 457, 928
@@ -210,7 +212,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 1192, 632 ;moves the mouse to the middle of the screen
@@ -241,7 +242,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 227, 1101
@@ -260,7 +260,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 ;MouseGetPos, xposP, yposP
 	Click 142 1059 ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
@@ -281,7 +280,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse 
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 226, 1079
@@ -300,7 +298,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse 
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 275, 1080
@@ -320,7 +317,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	;Send ^+8 ;highlight the effect control panel
@@ -342,7 +338,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 	MouseGetPos, xposP, yposP
 	MouseMove, 122,1060
@@ -362,7 +357,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 425, 1063
@@ -402,7 +396,6 @@ BlockInput, On
 	SendInput, ^a{DEL}
 	SendInput, gaussian blur 20 ;create a preset of blur effect with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
-SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -426,7 +419,6 @@ BlockInput, On
 	SendInput, ^a{DEL}
 	SendInput, parametric ;create parametric eq preset with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
-SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -450,7 +442,6 @@ BlockInput, On
 	SendInput, ^a{DEL}
 	SendInput, hflip ;create hflip preset with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
-SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -471,7 +462,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
@@ -487,7 +477,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
@@ -503,7 +492,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
@@ -515,46 +503,27 @@ Return
 
 ;~~~~~~~~~~~~~~~~~Mouse Scripts~~~~~~~~~~~~~~~~~
 WheelRight:: +Down ;Set shift down to "Go to next edit point on any track"
-Return
 WheelLeft:: +Up ;Set shift up to "Go to previous edit point on any track
-Return
-
 F14::^+w ;Set mouse button to always spit out f14, then set ctrl shift w to "Nudge Clip Selection up"
-return
-
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-Return
-
 Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 	click middle
 	SendInput, {h}{LButton Down} ;set hand tool to "h"
 	KeyWait, Xbutton2
 	SendInput, {LButton Up}{v} ;set select tool to v
 Return
-;~~~~~~~~~~~~~~~~~SPEED MACROS~~~~~~~~~~~~~~~~~
-^+1:: ;Must set ctrl + d to open the speed menu
-	SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
-Return
+;~~~~~~~~~~~~~~~~~SPEED MACROS~~~~~~~~~~~~~~~~~ ;Must set ctrl + d to open the speed menu
+^+1:: SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
 
-^+2::
-	SendInput, ^d25{ENTER}
-Return
+^+2::SendInput, ^d25{ENTER}
 
-^+3::
-	SendInput, ^d50{ENTER}
-Return
+^+3::SendInput, ^d50{ENTER}
 
-^4::
-	SendInput, ^d75{ENTER}
-Return
+^4::SendInput, ^d75{ENTER}
 
-^5::
-	SendInput, ^d100{ENTER}
-Return
+^5::SendInput, ^d100{ENTER}
 
-^6::
-	SendInput, ^d200{ENTER}
-Return
+^6::SendInput, ^d200{ENTER}
 
 
 
