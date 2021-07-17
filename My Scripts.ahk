@@ -61,8 +61,8 @@ SetWinDelay, 0 ;makes windows move instantly
 	SendInput, {ENTER} ;Changes profile to main stream profile.
 	sleep 2000
 	WinMove, OBS,,  2553, -892, 1111, 1047 ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
-{ ;this part of the script is just to set the source record hotkeys until they fix it
-		WinActivate, ahk_exe obs64.exe
+{ ;this part of the script is just to set the source record hotkey(s) until they fix it
+		WinActivate, ahk_exe obs64.exe ;just incase windows loses it
 		SendInput, !f
 		sleep 100
 		SendInput, s
@@ -156,8 +156,9 @@ Return
 	sleep 10
 Return
 
+/* ;currently replaced by the F11 premiere hotkey
 ;=========================================================
-;		Audition
+;		Audition 
 ;=========================================================
 #IfWinActive ahk_exe Adobe Audition.exe
 F13:: ;Moves mouse and applies Limit preset, then normalises to -3db
@@ -178,7 +179,7 @@ MouseGetPos, xposP, yposP
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
 BlockInput, off
-Return
+Return */
 
 ;=========================================================
 ;		Photoshop
@@ -199,8 +200,9 @@ Return
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 SetKeyDelay, 0 ;this is just here incase I add some sends in the future
-F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised. If there are multiple audio tracks and you only want one, alt click it individually first.
-/* using this caused problems
+F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised.
+; If there are multiple audio tracks and you only want one, alt click it individually first.
+/* using this caused problems with premieres selections
 SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
 sleep 100 ;ahk is too fast
 SetDefaultMouseSpeed 0
@@ -288,10 +290,9 @@ coordmode, pixel, Screen
 coordmode, mouse, Screen
 BlockInput, SendAndMouse
 BlockInput, MouseMove
-MouseGetPos, xposP, yposP
+;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
 BlockInput, On
 SetDefaultMouseSpeed 0
-;MouseGetPos, xposP, yposP
 	Click 142 1059 ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
 	sleep 100
 GetKeyState, stateFirstCheck, F2, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -313,8 +314,8 @@ blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F2
 	SendInput, {Click Up}
-;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
-;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
 Return
 
 F3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
