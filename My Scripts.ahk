@@ -259,7 +259,17 @@ BlockInput, On
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 227, 1101
+	sleep 100
 	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F1, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 100
+			sleep 50
+			send, {enter}
+		}
 blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F1
@@ -273,10 +283,25 @@ coordmode, pixel, Screen
 coordmode, mouse, Screen
 BlockInput, SendAndMouse
 BlockInput, MouseMove
+MouseGetPos, xposP, yposP
 BlockInput, On
 SetDefaultMouseSpeed 0
 ;MouseGetPos, xposP, yposP
 	Click 142 1059 ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
+	sleep 100
+GetKeyState, stateFirstCheck, F2, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			MouseMove, 418, 1055
+			;MsgBox, you've moved to the position
+			sleep 50
+			Send, {click left}
+			blockinput, MouseMoveOff
+			BlockInput, off
+			MouseMove, %xposP%, %yposP% 
+			return
+		}
+else
 	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
@@ -297,7 +322,17 @@ BlockInput, On
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 226, 1079
+	sleep 100
 	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F3, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 960
+			sleep 50
+			send, {enter}
+		}
 blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F3
@@ -315,7 +350,17 @@ BlockInput, On
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 275, 1080
+	sleep 100
 	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F4, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 540
+			sleep 50
+			send, {enter}
+		}
 blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F4
