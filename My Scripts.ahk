@@ -329,7 +329,7 @@ GetKeyState, stateFirstCheck, F3, P ;gets the state of the f1 key, enough time n
 		{
 			Click up left
 			sleep 10
-			Send, 960
+			Send, 960 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
 			sleep 50
 			send, {enter}
 		}
@@ -357,7 +357,7 @@ GetKeyState, stateFirstCheck, F4, P ;gets the state of the f1 key, enough time n
 		{
 			Click up left
 			sleep 10
-			Send, 540
+			Send, 540 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
 			sleep 50
 			send, {enter}
 		}
@@ -585,15 +585,10 @@ Return
 ;		SPEED MACROS		;Must set ctrl + d to open the speed menu
 ;=========================================================
 ^+1:: SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
-
 ^+2::SendInput, ^d25{ENTER}
-
 ^+3::SendInput, ^d50{ENTER}
-
 ^4::SendInput, ^d75{ENTER}
-
 ^5::SendInput, ^d100{ENTER}
-
 ^6::SendInput, ^d200{ENTER}
 
 
