@@ -267,8 +267,13 @@ GetKeyState, stateFirstCheck, F1, P ;gets the state of the f1 key, enough time n
 			Click up left
 			sleep 10
 			Send, 100
+			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 			sleep 50
 			send, {enter}
+			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
 		}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -330,8 +335,13 @@ GetKeyState, stateFirstCheck, F3, P ;gets the state of the f1 key, enough time n
 			Click up left
 			sleep 10
 			Send, 960 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
+			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 			sleep 50
 			send, {enter}
+			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
 		}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -358,12 +368,45 @@ GetKeyState, stateFirstCheck, F4, P ;gets the state of the f1 key, enough time n
 			Click up left
 			sleep 10
 			Send, 540 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
+			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+			sleep 50
+			send, {enter}
+			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
+		}
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, F4
+	SendInput, {Click Up}
+MouseMove, %xposP%, %yposP% 
+Return
+
+F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	MouseMove, 219, 1165
+	sleep 100
+	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F5, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 0 ;resets rotation to 0
 			sleep 50
 			send, {enter}
 		}
 blockinput, MouseMoveOff
 BlockInput, off
-	KeyWait, F4
+	KeyWait, F5
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
 Return
@@ -441,11 +484,6 @@ Return
 Numpad3:: ;INCREASE GAIN BY 6db
 	SendInput, g
 	SendInput, +{Tab}{UP 3}{DOWN}{TAB}6{ENTER}
-Return
-
-Numpad4:: ;GO TO EFFECTS WINDOW AND HIGHLIGHT SEARCH BOX
-	SendInput, ^+7
-	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
 Return
 
 ;=========================================================
