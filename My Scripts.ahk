@@ -41,7 +41,6 @@ F22:: ;opens editing playlist, moves vlc into a small window, changes its audio 
 Return
 
 ^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
-Return
 
 NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE 
 
@@ -250,7 +249,7 @@ BlockInput, off
 	WinActivate, ahk_exe Adobe Premiere Pro.exe
 Return
 
-1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
+F1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -263,12 +262,12 @@ MouseGetPos, xposP, yposP
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
-	KeyWait, 1
+	KeyWait, F1
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
 Return
 
-2:: ;press then hold alt and drag to move position. Let go of alt to confirm 
+F2:: ;press then hold alt and drag to move position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -282,13 +281,13 @@ SetDefaultMouseSpeed 0
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
-	KeyWait, 2
+	KeyWait, F2
 	SendInput, {Click Up}
 ;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
 ;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
 Return
 
-3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
+F3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -301,12 +300,12 @@ MouseGetPos, xposP, yposP
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
-	KeyWait, 3
+	KeyWait, F3
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
 Return
 
-4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
+F4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -319,7 +318,7 @@ MouseGetPos, xposP, yposP
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
-	KeyWait, 4
+	KeyWait, F4
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
 Return
@@ -378,7 +377,7 @@ BlockInput, On
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 425, 1063
-	SendInput, {Click}
+	click
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
 BlockInput, off
