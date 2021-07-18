@@ -14,7 +14,7 @@ You can watch me use some of these scripts in action live while I edit away on  
 - [X] random mii wii.ahk (for stream)
 - [ ] fkey auto launch (not often)
 
-## Eplaination
+## Explanation
 Iten | Use
 ------------ | -------------
 My Scripts.ahk | My main scripts, contains everything I use for stream and editing, as well as a few windows related things I do to speed a few interactions up.
