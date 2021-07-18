@@ -7,13 +7,27 @@ SetCapsLockState, AlwaysOff
 ; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
 ; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
-;================Windows================
+; I use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk
+; go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
+
+;=========================================================
+;		Windows
+;=========================================================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 ^+a:: ;opens my script directory
-	Run, C:\Program Files\ahk
+	Run, C:\Program Files\ahk 
 return
 
-!a::edit %a_ScriptDir% ;opens this script in notepad
+;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++
+!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
+;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
+
+!r:: 
+Reload
+Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+MsgBox, 4,, The script could not be reloaded. Would you like to open it for editing?
+IfMsgBox, Yes, Edit
+return
 
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 	WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488
@@ -30,10 +44,13 @@ F22:: ;opens editing playlist, moves vlc into a small window, changes its audio 
 Return
 
 ^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
-Return
-;================Stream================
-#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 
+NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE 
+
+;=========================================================
+;		Stream
+;=========================================================
+#IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 F15:: ;Start everything for stream
 SetWinDelay, 0 ;makes windows move instantly
 	Run, C:\Program Files\ahk\obs64.lnk ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
@@ -47,8 +64,8 @@ SetWinDelay, 0 ;makes windows move instantly
 	SendInput, {ENTER} ;Changes profile to main stream profile.
 	sleep 2000
 	WinMove, OBS,,  2553, -892, 1111, 1047 ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
-{ ;this part of the script is just to set the source record hotkeys until they fix it
-		WinActivate, ahk_exe obs64.exe
+{ ;this part of the script is just to set the source record hotkey(s) until they fix it
+		WinActivate, ahk_exe obs64.exe ;just incase windows loses it
 		SendInput, !f
 		sleep 100
 		SendInput, s
@@ -82,18 +99,14 @@ SetWinDelay, 0 ;makes windows move instantly
 			WinActivatebottom ahk_exe firefox.exe
 			WinGet, hWnd, ID, ahk_class MozillaWindowClass
 				DllCall("SetForegroundWindow", UInt, hWnd) 
-	SendInput, !d ;opens the alt context menu to begin detatching the firefox tab
-	sleep, 100 ;ahk is too fast for firefox, so we must be slow here
-	Send, +{TAB}
+	SetKeyDelay, 100
+	Send, !d ;opens the alt context menu to begin detatching the firefox tab
+	Send, +{TAB 3}
 	sleep, 100
-	Send, +{TAB}
-	sleep, 100
-	Send, +{TAB}
-	sleep, 200
 	Send, +{F10}
-	sleep, 200
+	sleep, 100
 	Send, v
-	sleep, 200
+	sleep, 100
 	Send, w
 	sleep, 2000
 	WinMove, Twitch,, -6, 0, 1497, 886 ;moves browser tabs into position for stream
@@ -119,7 +132,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 457, 928
@@ -147,7 +159,10 @@ Return
 	sleep 10
 Return
 
-;================Audition================
+/* ;currently replaced by the F11 premiere hotkey
+;=========================================================
+;		Audition 
+;=========================================================
 #IfWinActive ahk_exe Adobe Audition.exe
 F13:: ;Moves mouse and applies Limit preset, then normalises to -3db
 coordmode, pixel, Window
@@ -155,7 +170,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 300, 380
@@ -168,23 +182,30 @@ MouseGetPos, xposP, yposP
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
 BlockInput, off
-Return
+Return */
 
-;================Photoshop================
+;=========================================================
+;		Photoshop
+;=========================================================
 #IfWinActive ahk_exe Photoshop.exe
 ^+p:: ;When highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
-	SendInput, {TAB}{RIGHT}
-	sleep 200
+SetKeyDelay, 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
+	Send, {TAB}{RIGHT}
+	SendInput, {Up 21} ;makes sure you have the top most option selected
+	sleep 50 ;this probably isn't needed, but I have here for saftey just because photoshop isn't the best performance wise
 	SendInput, {DOWN 17}
-	Sleep 200
-	SendInput, {Enter}+{Tab}
+	Send, {Enter}+{Tab}
 Return
 
-;================Premiere================
+;=========================================================
+;		Premiere
+;=========================================================
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
-F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised. If there are multiple audio tracks and you only want one, alt click it individually first.
-/* using this caused problems
+SetKeyDelay, 0 ;this is just here incase I add some sends in the future
+F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised.
+; If there are multiple audio tracks and you only want one, alt click it individually first.
+/* using this caused problems with premieres selections
 SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
 sleep 100 ;ahk is too fast
 SetDefaultMouseSpeed 0
@@ -210,7 +231,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 1192, 632 ;moves the mouse to the middle of the screen
@@ -234,85 +254,170 @@ BlockInput, off
 	WinActivate, ahk_exe Adobe Premiere Pro.exe
 Return
 
-1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
+F1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 227, 1101
+	sleep 100
 	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F1, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 100
+			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+			sleep 50
+			send, {enter}
+			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
+		}
 blockinput, MouseMoveOff
 BlockInput, off
-	KeyWait, 1
+	KeyWait, F1
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP% 
 Return
 
-3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse 
-BlockInput, MouseMove
-BlockInput, On
-SetKeyDelay, 0
-SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	MouseMove, 226, 1079
-	SendInput, {Click Down}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, 3
-	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP% 
-Return
-
-4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse 
-BlockInput, MouseMove
-BlockInput, On
-SetKeyDelay, 0
-SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	MouseMove, 275, 1080
-	SendInput, {Click Down}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, 4
-	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP% 
-Return
-
-2:: ;press then hold alt and drag to move position. Let go of alt to confirm 
+F2:: ;press then hold alt and drag to move position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 BlockInput, SendAndMouse
 BlockInput, MouseMove
+;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
-;MouseGetPos, xposP, yposP
-	MouseMove, 142, 1059
-	SendInput, {Click left} ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
+	Click 142 1059 ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
+	sleep 100
+GetKeyState, stateFirstCheck, F2, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			MouseMove, 418, 1055
+			;MsgBox, you've moved to the position
+			sleep 50
+			Send, {click left}
+			blockinput, MouseMoveOff
+			BlockInput, off
+			MouseMove, %xposP%, %yposP% 
+			return
+		}
+else
 	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
-	KeyWait, 2
+	KeyWait, F2
 	SendInput, {Click Up}
-;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
-;MouseMove, %xposP%, %yposP% // moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
 Return
-;~~~~~~~~~~~~~~~~~NUMPAD SCRIPTS~~~~~~~~~~~~~~~~~
+
+F3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+BlockInput, SendAndMouse 
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	MouseMove, 226, 1079
+	sleep 100
+	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F3, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 960 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
+			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+			sleep 50
+			send, {enter}
+			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
+		}
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, F3
+	SendInput, {Click Up}
+MouseMove, %xposP%, %yposP% 
+Return
+
+F4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+BlockInput, SendAndMouse 
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	MouseMove, 275, 1080
+	sleep 100
+	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F4, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 540 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
+			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+			sleep 50
+			send, {enter}
+			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
+		}
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, F4
+	SendInput, {Click Up}
+MouseMove, %xposP%, %yposP% 
+Return
+
+F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	MouseMove, 219, 1165
+	sleep 100
+	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F5, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 0 ;resets rotation to 0
+			sleep 50
+			send, {enter}
+		}
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, F5
+	SendInput, {Click Up}
+MouseMove, %xposP%, %yposP% 
+Return
+
+;=========================================================
+;		NUMPAD SCRIPTS
+;=========================================================
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 	SendInput, ^+9
 	SendInput, {F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
@@ -321,7 +426,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	;Send ^+8 ;highlight the effect control panel
@@ -343,7 +447,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 	MouseGetPos, xposP, yposP
 	MouseMove, 122,1060
@@ -363,11 +466,10 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 425, 1063
-	SendInput, {Click}
+	click
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
 BlockInput, off
@@ -388,11 +490,9 @@ Numpad3:: ;INCREASE GAIN BY 6db
 	SendInput, +{Tab}{UP 3}{DOWN}{TAB}6{ENTER}
 Return
 
-Numpad4:: ;GO TO EFFECTS WINDOW AND HIGHLIGHT SEARCH BOX
-	SendInput, ^+7
-	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-Return
-;~~~~~~~~~~~~~~~~~Drag and Drop Effect Presets~~~~~~~~~~~~~~~~~
+;=========================================================
+;		Drag and Drop Effect Presets
+;=========================================================
 !g::
 BlockInput, SendAndMouse
 BlockInput, MouseMove
@@ -403,7 +503,6 @@ BlockInput, On
 	SendInput, ^a{DEL}
 	SendInput, gaussian blur 20 ;create a preset of blur effect with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
-SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -427,7 +526,6 @@ BlockInput, On
 	SendInput, ^a{DEL}
 	SendInput, parametric ;create parametric eq preset with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
-SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -451,7 +549,6 @@ BlockInput, On
 	SendInput, ^a{DEL}
 	SendInput, hflip ;create hflip preset with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
-SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -464,15 +561,16 @@ MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
-;~~~~~~~~~~~~~~~~~Scale Adjustments~~~~~~~~~~~~~~~~~
 
+;=========================================================
+;		Scale Adjustments
+;=========================================================
 ^1:: ;makes the scale of current selected clip 100
 coordmode, pixel, Window
 coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
@@ -488,7 +586,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
@@ -504,7 +601,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetKeyDelay, 0
 SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
@@ -514,56 +610,37 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-;~~~~~~~~~~~~~~~~~Mouse Scripts~~~~~~~~~~~~~~~~~
+;=========================================================
+;		Mouse Scripts
+;=========================================================
 WheelRight:: +Down ;Set shift down to "Go to next edit point on any track"
-Return
 WheelLeft:: +Up ;Set shift up to "Go to previous edit point on any track
-Return
-
 F14::^+w ;Set mouse button to always spit out f14, then set ctrl shift w to "Nudge Clip Selection up"
-return
-
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-Return
-
 Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 	click middle
 	SendInput, {h}{LButton Down} ;set hand tool to "h"
 	KeyWait, Xbutton2
 	SendInput, {LButton Up}{v} ;set select tool to v
 Return
-;~~~~~~~~~~~~~~~~~SPEED MACROS~~~~~~~~~~~~~~~~~
-^+1:: ;Must set ctrl + d to open the speed menu
-	SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
-Return
-
-^+2::
-	SendInput, ^d25{ENTER}
-Return
-
-^+3::
-	SendInput, ^d50{ENTER}
-Return
-
-^4::
-	SendInput, ^d75{ENTER}
-Return
-
-^5::
-	SendInput, ^d100{ENTER}
-Return
-
-^6::
-	SendInput, ^d200{ENTER}
-Return
+;=========================================================
+;		SPEED MACROS		;Must set ctrl + d to open the speed menu
+;=========================================================
+^+1:: SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
+^+2::SendInput, ^d25{ENTER}
+^+3::SendInput, ^d50{ENTER}
+^4::SendInput, ^d75{ENTER}
+^5::SendInput, ^d100{ENTER}
+^6::SendInput, ^d200{ENTER}
 
 
 
 
 
-
-; ==================OLD=====================
 /*
+;=========================================================
+						OLD
+;=========================================================
 F6:: ;how to move mouse on one axis
 SetDefaultMouseSpeed 0
 SetKeyDelay, 0
