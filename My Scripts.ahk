@@ -150,6 +150,10 @@ sleep 1000 ;waits since it's not responsive to input for a second even after it 
 SendInput, y{enter}
 return
 
+F17::
+Run, C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe
+Return
+
 F19:: ;this script goes through and closes everything I use for stream
 coordmode, pixel, Screen
 coordmode, mouse, Screen
