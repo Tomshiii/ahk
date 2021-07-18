@@ -118,7 +118,7 @@ SetWinDelay, 0 ;makes windows move instantly
 	sleep, 2000
 	WinMove, Twitch,, -6, 0, 1497, 886 ;moves browser tabs into position for stream
 	WinMove, All Moons UPDATED v.1.3.0,, 1218, 658, 1347, 747 ;moves browser tabs into position for stream
-	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe
+	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe ;required for brothers queue program for automatic mii wii playback
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run, C:\Program Files\Chatterino\chatterino.exe
 	Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe
@@ -137,16 +137,16 @@ if WinExist("ahk_exe ApplicationDj.exe") ;waits until obs is open then brings it
 			WinWaitActive, ahk_exe ApplicationDj.exe
 sleep 1000
 SendInput, y{enter}
-Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe
+Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe ;try to run it again since apparently running it once sometimes isn't enough
 Return
 
 F13::
-Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe
+Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe ;runs the queue program incase it opened too late
 if WinExist("ahk_exe ApplicationDj.exe") ;waits until obs is open then brings it into focus
 			WinActivate
 		else
 			WinWaitActive, ahk_exe ApplicationDj.exe
-sleep 1000
+sleep 1000 ;waits since it's not responsive to input for a second even after it has opened
 SendInput, y{enter}
 return
 
