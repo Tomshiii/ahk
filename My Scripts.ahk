@@ -47,6 +47,11 @@ Return
 
 NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE 
 
+^+c::
+    Send, ^c
+    Sleep 50
+    Run, https://www.google.com/search?d&q=%clipboard%
+    Return
 ;=========================================================
 ;		Stream
 ;=========================================================
