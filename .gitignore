@@ -14,3 +14,12 @@ Sounds/wii11.wav
 Sounds/wii10.wav
 Sounds/wii1.wav
 userDefineLang_AHK_backup.xml
+TomSongQueueue.7z
+TomSongQueueue/Builds/ApplicationDj.exe
+TomSongQueueue/Builds/ApplicationDj.pdb
+TomSongQueueue/Builds/SongQueuer.exe
+TomSongQueueue/Builds/SongQueuer.pdb
+TomSongQueueue/Builds/songs.json
+TomSongQueueue/Docker/.env
+TomSongQueueue/Docker/docker-compose.yml
+random mii wii.ahk
