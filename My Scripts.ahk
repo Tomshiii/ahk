@@ -47,7 +47,7 @@ Return
 
 NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE 
 
-^+c::
+^+c:: ;runs a google search of highlighted text
     Send, ^c
     Sleep 50
     Run, https://www.google.com/search?d&q=%clipboard%
@@ -164,7 +164,8 @@ Return
 	sleep 10
 Return
 
-/* ;currently replaced by the F11 premiere hotkey
+/*
+;currently replaced by the F11 premiere hotkey
 ;=========================================================
 ;		Audition 
 ;=========================================================
@@ -187,7 +188,8 @@ MouseGetPos, xposP, yposP
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
 BlockInput, off
-Return */
+Return
+*/
 
 ;=========================================================
 ;		Photoshop
@@ -621,7 +623,9 @@ Return
 WheelRight:: +Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft:: +Up ;Set shift up to "Go to previous edit point on any track
 F14::^+w ;Set mouse button to always spit out f14, then set ctrl shift w to "Nudge Clip Selection up"
+
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
+
 Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 	click middle
 	SendInput, {h}{LButton Down} ;set hand tool to "h"
