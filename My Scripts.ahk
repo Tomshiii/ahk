@@ -118,11 +118,10 @@ SetWinDelay, 0 ;makes windows move instantly
 	sleep, 2000
 	WinMove, Twitch,, -6, 0, 1497, 886 ;moves browser tabs into position for stream
 	WinMove, All Moons UPDATED v.1.3.0,, 1218, 658, 1347, 747 ;moves browser tabs into position for stream
+	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run, C:\Program Files\Chatterino\chatterino.exe
 	Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe
-	Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe
-	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe
 	Run, C:\Program Files (x86)\foobar2000\foobar2000.exe
 	Run, F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe
 	Run, C:\Users\Tom\AppData\Local\Programs\streamlabels\StreamLabels.exe
@@ -130,6 +129,48 @@ SetWinDelay, 0 ;makes windows move instantly
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run, chrome.exe https://www.twitch.tv/popout/tomshi/chat
 	WinMove, ahk_exe Discord.exe,, 4480, 432, 1080, 797 ;moves into position
+sleep 9000
+Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe
+if WinExist("ahk_exe ApplicationDj.exe") ;waits until obs is open then brings it into focus
+			WinActivate
+		else
+			WinWaitActive, ahk_exe ApplicationDj.exe
+sleep 1000
+SendInput, y{enter}
+Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe
+Return
+
+F13::
+Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe
+if WinExist("ahk_exe ApplicationDj.exe") ;waits until obs is open then brings it into focus
+			WinActivate
+		else
+			WinWaitActive, ahk_exe ApplicationDj.exe
+sleep 1000
+SendInput, y{enter}
+return
+
+F19:: ;this script goes through and closes everything I use for stream
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+	MouseMove, 878, 14
+	WinActivate, ahk_exe Streamlabs Chatbot.exe
+	WinActivate, ahk_exe LiveSplit.exe
+sleep 200
+	SendInput, {click}
+	WinClose, ahk_exe foobar2000.exe
+	WinClose, All Moons UPDATED v.1.3.0
+	WinClose, Twitch
+	WinClose, ahk_exe Docker Desktop.exe
+;WinClose, ahk_exe LiveSplit.exe ;don't include, just incase of gold/pbs
+;WinClose, LiveSplit ;don't include, just incase of gold/pbs
+	WinClose, ahk_exe chrome.exe
+	WinClose, ahk_exe obs64.exe
+	WinClose, ahk_exe StreamLabels.exe
+	WinClose, ahk_exe chatterino.exe
+	WinClose, ahk_exe LioranBoard Receiver.exe
+;WinKill, Streamlabs Chatbot
 Return
 
 F16:: ;opens streamelements obs and swaps to botshi profile
