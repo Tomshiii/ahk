@@ -131,6 +131,12 @@ SetWinDelay, 0 ;makes windows move instantly
 	WinMove, ahk_exe Discord.exe,, 4480, 432, 1080, 797 ;moves into position
 sleep 9000
 Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe
+if WinExist("ahk_exe ApplicationDj.exe") ;waits until obs is open then brings it into focus
+			WinActivate
+		else
+			WinWaitActive, ahk_exe ApplicationDj.exe
+sleep 1000
+SendInput, y{enter}
 Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe
 Return
 
@@ -140,7 +146,8 @@ if WinExist("ahk_exe ApplicationDj.exe") ;waits until obs is open then brings it
 			WinActivate
 		else
 			WinWaitActive, ahk_exe ApplicationDj.exe
-;SendInput, y
+sleep 1000
+SendInput, y{enter}
 return
 
 F19:: ;this script goes through and closes everything I use for stream
