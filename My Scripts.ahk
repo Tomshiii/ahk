@@ -7,6 +7,9 @@ SetCapsLockState, AlwaysOff
 ; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
 ; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
+; I use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk
+; go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
+
 ;=========================================================
 ;		Windows
 ;=========================================================
