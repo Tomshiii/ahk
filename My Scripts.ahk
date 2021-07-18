@@ -34,13 +34,15 @@ return
 Return
 
 F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
+SetKeyDelay, 100
+SetWinDelay, 0
 	run, D:\Program Files\User\Music\pokemon.xspf
 		if WinExist("ahk_exe vlc.exe")
 			WinActivate
 		else
 			WinWaitActive, ahk_exe vlc.exe
-	WinMove, VLC,,  2016, 34, 501, 412
-	SendInput +a+a+a
+	WinMove, VLC media player,, 2066, 0, 501, 412 ;isn't working atm??
+	Send, +a+a+a+a+a+a
 Return
 
 ^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
@@ -118,6 +120,9 @@ SetWinDelay, 0 ;makes windows move instantly
 	WinMove, All Moons UPDATED v.1.3.0,, 1218, 658, 1347, 747 ;moves browser tabs into position for stream
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run, C:\Program Files\Chatterino\chatterino.exe
+	Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe
+	Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe
+	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe
 	Run, C:\Program Files (x86)\foobar2000\foobar2000.exe
 	Run, F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe
 	Run, C:\Users\Tom\AppData\Local\Programs\streamlabels\StreamLabels.exe
