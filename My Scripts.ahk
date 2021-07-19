@@ -174,6 +174,7 @@ sleep 200
 	WinClose, ahk_exe StreamLabels.exe
 	WinClose, ahk_exe chatterino.exe
 	WinClose, ahk_exe LioranBoard Receiver.exe
+	WinClose, ahk_exe ApplicationDj.exe
 ;WinKill, Streamlabs Chatbot
 Return
 
