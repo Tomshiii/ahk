@@ -563,7 +563,7 @@ Return
 ;=========================================================
 ;		Drag and Drop Effect Presets
 ;=========================================================
-!g::
+!g:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
@@ -586,7 +586,7 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-!p::
+!p:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
@@ -609,7 +609,7 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-!h::
+!h:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
@@ -618,6 +618,29 @@ BlockInput, On
 		sleep 60
 	SendInput, ^a{DEL}
 	SendInput, hflip ;create hflip preset with this name, must be in a folder as well
+SetDefaultMouseSpeed 0
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+	MouseMove, 3354, 259
+		sleep 100
+	MouseMove, 40, 68,, R
+	SendInput, {Click Down}
+MouseMove, %xposP%, %yposP% 
+	SendInput, {Click Up}
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+
+!c:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+	SendInput, ^+7
+	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+		sleep 60
+	SendInput, ^a{DEL}
+	SendInput, croptom ;create croptom preset with this name, must be in a folder as well
 SetDefaultMouseSpeed 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
