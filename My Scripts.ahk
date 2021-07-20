@@ -99,10 +99,15 @@ SetWinDelay, 0 ;makes windows move instantly
 	sleep 1000 ;waits before opening the next tab or firefox derps out
 	Run, firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager
 	sleep 9000 ;if both tabs don't load in, it can mess with trying to separate them
-		if WinExist("ahk_exe firefox.exe")
-			WinActivate
-		else
-			WinWaitActive, ahk_exe firefox.exe ;the following code was yoinked from taran, it's just a deeper method of calling firefox forwards since sometimes it doesn't focus
+		;{ ;if WinExist("ahk_exe firefox.exe")
+			;WinActivate
+		;else
+			;WinWaitActive, ahk_exe firefox.exe ;the following code was yoinked from taran, it's just a deeper method of calling firefox forwards since sometimes it doesn't focus
+			;WinActivatebottom ahk_exe firefox.exe
+			;WinGet, hWnd, ID, ahk_class MozillaWindowClass
+				;DllCall("SetForegroundWindow", UInt, hWnd) } ;old code, testing ;
+			WinActivate ahk_exe firefox.exe
+			;WinWaitActive, ahk_exe firefox.exe ;the following code was yoinked from taran, it's just a deeper method of calling firefox forwards since sometimes it doesn't focus
 			WinActivatebottom ahk_exe firefox.exe
 			WinGet, hWnd, ID, ahk_class MozillaWindowClass
 				DllCall("SetForegroundWindow", UInt, hWnd) 
@@ -119,6 +124,7 @@ SetWinDelay, 0 ;makes windows move instantly
 	WinMove, Twitch,, -6, 0, 1497, 886 ;moves browser tabs into position for stream
 	WinMove, All Moons UPDATED v.1.3.0,, 1218, 658, 1347, 747 ;moves browser tabs into position for stream
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
+	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe
 	Run, C:\Program Files\Chatterino\chatterino.exe
 	Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe
 	Run, C:\Program Files (x86)\foobar2000\foobar2000.exe
@@ -128,12 +134,12 @@ SetWinDelay, 0 ;makes windows move instantly
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run, chrome.exe https://www.twitch.tv/popout/tomshi/chat
 	WinMove, ahk_exe Discord.exe,, 4480, 432, 1080, 797 ;moves into position
-	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe ;required for brothers queue program for automatic mii wii playback
-		if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
-			WinActivate
-		else
-			WinWaitActive, ahk_exe ahk_exe Docker Desktop.exe
-		sleep 1000
+	 ;required for brothers queue program for automatic mii wii playback
+if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
+		WinActivate
+	else
+		WinWaitActive, ahk_exe ahk_exe Docker Desktop.exe
+	sleep 1000
 		coordmode, pixel, Window
 		coordmode, mouse, Window
 		MouseMove, 1128, 130 ;moves mouse to click the start button
@@ -145,8 +151,8 @@ sleep 1000
 		else
 			WinWaitActive, ahk_exe ApplicationDj.exe
 sleep 2000
-SendInput, y{enter}
-Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe ;try to run it again since apparently running it once sometimes isn't enough
+	SendInput, y{enter}
+	Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe ;try to run it again since apparently running it once sometimes isn't enough
 Return
 
 F13::
@@ -169,9 +175,6 @@ coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
 	MouseMove, 878, 14
 	WinActivate, ahk_exe Streamlabs Chatbot.exe
-	WinActivate, ahk_exe LiveSplit.exe
-sleep 200
-	SendInput, {click}
 	WinClose, ahk_exe foobar2000.exe
 	WinClose, All Moons UPDATED v.1.3.0
 	WinClose, Twitch
