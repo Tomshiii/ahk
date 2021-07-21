@@ -366,7 +366,7 @@ BlockInput, MouseMove
 ;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
 BlockInput, On
 SetDefaultMouseSpeed 0
-	Click 142 1059 ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
+	Click 142 1059 
 	sleep 100
 GetKeyState, stateFirstCheck, F2, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 	if stateFirstCheck = U ;this function just does what I describe above
@@ -380,7 +380,7 @@ GetKeyState, stateFirstCheck, F2, P ;gets the state of the f1 key, enough time n
 			MouseMove, %xposP%, %yposP% 
 			return
 		}
-else
+else					;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
 	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
