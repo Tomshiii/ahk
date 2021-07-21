@@ -14,6 +14,17 @@ You can watch me use some of these scripts in action live while I edit away on  
 - [ ] Resolve_Example.ahk (port over functionality occasionally)
 - [ ] fkey auto launch (not often)
 
+## What to do:
+1. Download and install [AHK](https://www.autohotkey.com/)
+2. Download and install [Notepad++](https://notepad-plus-plus.org/downloads/) (not necessary, but recommended)
+3. Download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
+4. Edit and then run any of the .ahk files to then use to your liking!
+   - Scripts that will work with no tinkering include ->
+     - Alt Menu acceleration
+     - autodismiss error
+     - fkey auto launch (recommended to check it out first though)
+Any scripts that contain pixel coordinates rely not only on my monitor layout, but also my workspace layout within premiere and will not necessarily work out of the box. They will require looking at the individual comments to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK
+
 ## Explanation
 Item | Use
 ------------ | -------------
