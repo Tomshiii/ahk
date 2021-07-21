@@ -324,6 +324,9 @@ BlockInput, off
 	WinActivate, ahk_exe Adobe Premiere Pro.exe
 Return
 
+;=========================================================
+;		hold and drag (or click)
+;=========================================================
 F1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
