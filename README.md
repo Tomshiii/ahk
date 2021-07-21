@@ -23,6 +23,7 @@ You can watch me use some of these scripts in action live while I edit away on  
      - Alt Menu acceleration
      - autodismiss error
      - fkey auto launch (recommended to check it out first though)
+
 Any scripts that contain pixel coordinates rely not only on my monitor layout, but also my workspace layout within premiere and will not necessarily work out of the box. They will require looking at the individual comments to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK
 
 ## Explanation
