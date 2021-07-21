@@ -21,6 +21,21 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #IfWinActive ahk_exe Resolve.exe
 
 ;=========================================================
+;		keyboard shortcut replacements
+;=========================================================
+; ///// these all assume you're using resolve's default keybinds
+
+q::+[ ; reassign shift[ to ripple start to playhead ;...or assign it to q
+w::+] ; reassign shift] to ripple start to playhead ;...or assign it to w
+~s::^\ ; ctrl \ is how to split tracks in resolve ;needs ~ or you can't save lmao. likely better to just remap in resolve
+XButton2::MButton ; middle mouse is how you normally scroll horizontally in resolve, middle mouse is obnoxious to press though
+WheelRight::Down 
+WheelLeft::Up 
+;change "normal edit mode" to v to make it like premiere
+;change "blade edit mode" to c to make it like how I use premiere
+;change "ripple delete" to shift c to make it like how I use premiere
+
+;=========================================================
 ;		hold and drag (or click)
 ;=========================================================
 ; ///// for these scripts to work, the inspector tab must be open and scrolled to the top
