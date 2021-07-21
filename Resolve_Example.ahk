@@ -134,8 +134,8 @@ Return
 
 F4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
+coordmode, pixel, Window
+coordmode, mouse, Window
 BlockInput, SendAndMouse 
 BlockInput, MouseMove
 BlockInput, On
@@ -200,7 +200,6 @@ Return
 ;=========================================================
 ;		flips
 ;=========================================================
-
 !h:: ;flip horizontally
 SetDefaultMouseSpeed 0
 coordmode, pixel, Window
