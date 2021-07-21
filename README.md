@@ -6,11 +6,12 @@ Included is also the Excel document I use to keep track of any hotkeys I set, ju
 
 A lot of the code in My Scripts.ahk is either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks.
 
-You can watch me use some of these scripts in action live while I edit away on  twitch when I stream on my bot account : https://www.twitch.tv/botshiii
+You can watch me use some of these scripts in action live while I edit away on  twitch when I stream on my bot account: https://www.twitch.tv/botshiii
 
 ## Currently WIP:
 - [X] My Scripts.ahk
 - [X] scripts f keys taken.xlsx
+- [ ] Resolve_Example.ahk (port over functionality occasionally)
 - [ ] fkey auto launch (not often)
 
 ## Explanation
