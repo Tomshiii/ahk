@@ -20,6 +20,12 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;=========================================================
 #IfWinActive ahk_exe Resolve.exe
 
+;=========================================================
+;		hold and drag (or click)
+;=========================================================
+; ///// for these scripts to work, the inspector tab must be open and scrolled to the top
+; ///// you could add functionality to scroll up a few times if you run into that being an issue a lot
+
 F1::
 coordmode, pixel, Window
 coordmode, mouse, Window
@@ -191,6 +197,10 @@ BlockInput, off
 MouseMove, %xposP%, %yposP% 
 Return
 
+;=========================================================
+;		flips
+;=========================================================
+
 !h:: ;flip horizontally
 SetDefaultMouseSpeed 0
 coordmode, pixel, Window
@@ -222,6 +232,64 @@ MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
+
+;=========================================================
+;		Scale Adjustments
+;=========================================================
+^1:: ;makes the scale of current selected clip 100
+coordmode, pixel, Window
+coordmode, mouse, Window
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	click 2333, 218 ;clicks on video
+	SendInput, 1{ENTER} ;effectively 100%
+	click 2292, 215 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+MouseMove, %xposP%, %yposP% 
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+
+^2:: ;makes the scale of current selected clip 100
+coordmode, pixel, Window
+coordmode, mouse, Window
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	click 2333, 218 ;clicks on video
+	SendInput, 2{ENTER} ;effectively 200%
+	click 2292, 215 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+MouseMove, %xposP%, %yposP% 
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+
+^3:: ;makes the scale of current selected clip 100
+coordmode, pixel, Window
+coordmode, mouse, Window
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	click 2333, 218 ;clicks on video
+	SendInput, 3{ENTER} ;effectively 300%
+	click 2292, 215 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+MouseMove, %xposP%, %yposP% 
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+
+
+
+
+;=========================================================
+;		other
+;=========================================================
 
 /*
 Numpad1::
