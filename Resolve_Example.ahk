@@ -5,6 +5,16 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ; SetNumLockState, AlwaysOn ;uncomment if you want numlock to always be ON
 ; SetCapsLockState, AlwaysOff uncomment if you want capslock to always be OFF
 
+; ==================================================================================================
+;
+; This script was created by Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
+; Its purpose is to port over similar macros from my "My Scripts.ahk" to allow faster editing within resolve for you non adobe editors
+; You are free to modify this script to your own personal uses/needs
+; Please give credit to the foundation if you build on top of it, otherwise you're free to do as you wish
+;
+; ==================================================================================================
+#IfWinNotActive ahk_exe Resolve.exe
+
 ^!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
 
@@ -20,6 +30,7 @@ return
 ; ALL PIXEL VALUES WILL NEED TO BE ADJUSTED IF YOU AREN'T USING A 1440p MONITOR (AND MIGHT STILL EVEN IF YOU ARE)
 
 ; ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ; This is an example script I've created for davinci resolve porting over some similar functionality I use
 ; in my premiere scripts. Things aren't as clean and there may be better ways to do things
 ; keep in mind I don't use resolve and I've just cooked this up as an example for you to mess with yourself
