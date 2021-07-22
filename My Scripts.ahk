@@ -1,10 +1,20 @@
 ﻿#SingleInstance Force
 SetWorkingDir, %A_ScriptDir%
-SetNumLockState, AlwaysOn
-SetCapsLockState, AlwaysOff
-; A lot of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/TaranVH/), his videos on the subject
-; are what got me into AHK to begin with and what brought this entire script to life
-; I use a streamdeck to run a lot of these scripts which is why most of them are bound to F13-24 but really they could be replaced with anything
+SetNumLockState, AlwaysOn ;sets numlock to always on
+SetCapsLockState, AlwaysOff ;sets caps lock to always off (you can still use caps lock for macros)
+
+; ==================================================================================================
+;
+; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
+; Its purpose is to help speed up editing and random interactions with windows.
+; You are free to modify this script to your own personal uses/needs
+; Please give credit to the foundation if you build on top of it, similar to how I have below, otherwise you're free to do as you wish
+;
+; ==================================================================================================
+
+; A chunk of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/TaranVH/), his videos on the subject
+; are what got me into AHK to begin with and what brought the foundation of this script to life
+; I use a streamdeck to run a lot of these scripts which is why a bunch of them are bound to F13-24 but really they could be replaced with anything
 ; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
 ; I use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk
@@ -139,7 +149,7 @@ if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then bring
 		WinActivate
 	else
 		WinWaitActive, ahk_exe ahk_exe Docker Desktop.exe
-	sleep 1000
+	sleep 10000
 		coordmode, pixel, Window
 		coordmode, mouse, Window
 		MouseMove, 1128, 130 ;moves mouse to click the start button
@@ -275,7 +285,8 @@ Return
 SetKeyDelay, 0 ;this is just here incase I add some sends in the future
 F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised.
 ; If there are multiple audio tracks and you only want one, alt click it individually first.
-/* using this caused problems with premieres selections
+/*
+using this caused problems with premieres selections
 SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
 sleep 100 ;ahk is too fast
 SetDefaultMouseSpeed 0
