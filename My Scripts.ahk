@@ -371,7 +371,73 @@ BlockInput, off
 MouseMove, %xposP%, %yposP% 
 Return
 
-F2:: ;press then hold alt and drag to move position. Let go of alt to confirm 
+F2:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+BlockInput, SendAndMouse 
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	MouseMove, 226, 1079
+	sleep 100
+	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F2, P ;gets the state of the f2 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 960 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
+			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+			sleep 50
+			send, {enter}
+			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
+		}
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, F2
+	SendInput, {Click Up}
+MouseMove, %xposP%, %yposP% 
+Return
+
+F3:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
+	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+BlockInput, SendAndMouse 
+BlockInput, MouseMove
+BlockInput, On
+SetDefaultMouseSpeed 0
+MouseGetPos, xposP, yposP
+	MouseMove, 275, 1080
+	sleep 100
+	SendInput, {Click Down}
+GetKeyState, stateFirstCheck, F3, P ;gets the state of the f3 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if stateFirstCheck = U ;this function just does what I describe above
+		{
+			Click up left
+			sleep 10
+			Send, 540 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
+			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+			sleep 50
+			send, {enter}
+			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
+		}
+blockinput, MouseMoveOff
+BlockInput, off
+	KeyWait, F3
+	SendInput, {Click Up}
+MouseMove, %xposP%, %yposP% 
+Return
+
+F4:: ;press then hold alt and drag to move position. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -382,7 +448,7 @@ BlockInput, On
 SetDefaultMouseSpeed 0
 	Click 142 1059 
 	sleep 100
-GetKeyState, stateFirstCheck, F2, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 	if stateFirstCheck = U ;this function just does what I describe above
 		{
 			MouseMove, 418, 1055
@@ -399,76 +465,10 @@ else					;you can simply double click the preview window to achieve the same res
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
-	KeyWait, F2
-	SendInput, {Click Up}
-;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
-;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
-Return
-
-F3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse 
-BlockInput, MouseMove
-BlockInput, On
-SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	MouseMove, 226, 1079
-	sleep 100
-	SendInput, {Click Down}
-GetKeyState, stateFirstCheck, F3, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-	if stateFirstCheck = U ;this function just does what I describe above
-		{
-			Click up left
-			sleep 10
-			Send, 960 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
-			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-			sleep 50
-			send, {enter}
-			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
-			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
-			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
-		}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, F3
-	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP% 
-Return
-
-F4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse 
-BlockInput, MouseMove
-BlockInput, On
-SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	MouseMove, 275, 1080
-	sleep 100
-	SendInput, {Click Down}
-GetKeyState, stateFirstCheck, F4, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-	if stateFirstCheck = U ;this function just does what I describe above
-		{
-			Click up left
-			sleep 10
-			Send, 540 ;I always edit in a 1080p timeline so it's just easier to input those values, you could MouseMove over to the reset arrow instead like F2 if that's better for you
-			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-			sleep 50
-			send, {enter}
-			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
-			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
-			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
-		}
-blockinput, MouseMoveOff
-BlockInput, off
 	KeyWait, F4
 	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP% 
+;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
 Return
 
 F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
@@ -483,7 +483,7 @@ MouseGetPos, xposP, yposP
 	MouseMove, 219, 1165
 	sleep 100
 	SendInput, {Click Down}
-GetKeyState, stateFirstCheck, F5, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+GetKeyState, stateFirstCheck, F5, P ;gets the state of the f5 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 	if stateFirstCheck = U ;this function just does what I describe above
 		{
 			Click up left
