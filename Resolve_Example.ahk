@@ -5,6 +5,15 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ; SetNumLockState, AlwaysOn ;uncomment if you want numlock to always be ON
 ; SetCapsLockState, AlwaysOff uncomment if you want capslock to always be OFF
 
+^!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
+;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
+
+^!r:: 
+Reload
+Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+MsgBox, 4,, The script could not be reloaded. Would you like to open it for editing?
+IfMsgBox, Yes, Edit
+return
 
 ; ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
