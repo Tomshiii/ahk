@@ -2,20 +2,21 @@
 SetWorkingDir, %A_ScriptDir%
 SetNumLockState, AlwaysOn ;sets numlock to always on
 SetCapsLockState, AlwaysOff ;sets caps lock to always off (you can still use caps lock for macros)
+SetDefaultMouseSpeed, 0
 I_Icon = C:\Program Files\ahk\Icons\myscript.png ;you'll need to change this path \\this code changes the icon for the script
 ICON [I_Icon]                        ;Changes a compiled script's icon (.exe)
 if I_Icon <>
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%   ;Changes menu tray icon
 
-; ==================================================================================================
+; ===========================================================================================================================================================
 ;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
 ; Its purpose is to help speed up editing and random interactions with windows.
 ; You are free to modify this script to your own personal uses/needs
 ; Please give credit to the foundation if you build on top of it, similar to how I have below, otherwise you're free to do as you wish
 ;
-; ==================================================================================================
+; ===========================================================================================================================================================
 
 ; A chunk of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/TaranVH/), his videos on the subject
 ; are what got me into AHK to begin with and what brought the foundation of this script to life
@@ -25,14 +26,15 @@ IfExist, %I_Icon%
 ; I use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk
 ; go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
 
-;=========================================================
+;===========================================================================================================================================================================
+;
 ;		Windows
-;=========================================================
+;
+;===========================================================================================================================================================================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-SetDefaultMouseSpeed 0
 MouseMove, 5044, 340
 return
 
@@ -79,9 +81,11 @@ NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
     Sleep 50
     Run, https://www.google.com/search?d&q=%clipboard%
     Return
-;=========================================================
+;===========================================================================================================================================================================
+;
 ;		Stream
-;=========================================================
+;
+;===========================================================================================================================================================================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 F15:: ;Start everything for stream
 SetWinDelay, 0 ;makes windows move instantly
@@ -225,7 +229,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 457, 928
 	SendInput, {Click}, !p ;I have to physically click on streamelements obs before it will accept any inputs, I have no idea why, this didn't happen originally but started happening in obs 27
@@ -264,7 +267,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 300, 380
 	SendInput, {Click}l{DOWN 3}{ENTER}
@@ -279,9 +281,11 @@ BlockInput, off
 Return
 */
 
-;=========================================================
+;===========================================================================================================================================================================
+;
 ;		Photoshop
-;=========================================================
+;
+;===========================================================================================================================================================================
 #IfWinActive ahk_exe Photoshop.exe
 ^+p:: ;When highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 SetKeyDelay, 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
@@ -292,9 +296,11 @@ SetKeyDelay, 300 ;photoshop is sometimes slow as heck, delaying things just a bi
 	Send, {Enter}+{Tab}
 Return
 
-;=========================================================
+;===========================================================================================================================================================================
+;
 ;		Premiere
-;=========================================================
+;
+;===========================================================================================================================================================================
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 SetKeyDelay, 0 ;this is just here incase I add some sends in the future
@@ -304,7 +310,6 @@ F11:: ;hover over an audio track you want normalized, this will then send it to 
 using this caused problems with premieres selections
 SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
 sleep 100 ;ahk is too fast
-SetDefaultMouseSpeed 0
 SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -327,7 +332,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 1192, 632 ;moves the mouse to the middle of the screen
 	SendInput, {click} ;clicks in the middle of the screen to ensure the current audio is actually selected, audition is just jank as hell and it's easier to just add this step than to deal with it not working sometimes
@@ -350,9 +354,11 @@ BlockInput, off
 	WinActivate, ahk_exe Adobe Premiere Pro.exe
 Return
 
-;=========================================================
+;===========================================================================================================================================================================
+;
 ;		hold and drag (or click)
-;=========================================================
+;
+;===========================================================================================================================================================================
 F1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
@@ -360,7 +366,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 227, 1101
 	sleep 100
@@ -393,7 +398,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse 
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 226, 1079
 	sleep 100
@@ -426,7 +430,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse 
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 275, 1080
 	sleep 100
@@ -460,7 +463,6 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 ;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
 BlockInput, On
-SetDefaultMouseSpeed 0
 	Click 142 1059 
 	sleep 100
 GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -493,7 +495,6 @@ coordmode, mouse, Screen
 BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 219, 1165
 	sleep 100
@@ -514,9 +515,11 @@ BlockInput, off
 MouseMove, %xposP%, %yposP% 
 Return
 
-;=========================================================
+;===========================================================================================================================================================================
+;
 ;		NUMPAD SCRIPTS
-;=========================================================
+;
+;===========================================================================================================================================================================
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 	SendInput, ^+9
 	SendInput, ^{F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
@@ -525,14 +528,15 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	;Send ^+8 ;highlight the effect control panel
 	;Send ^+8 ;again because adobe is dumb and sometimes doesn't highlight if you're fullscreen somewhere
+	click, 214, 1016
+	SendInput, {WheelUp 30}
 	MouseMove, 122,1060 ;location for "motion"
 	SendInput, ^+k ;shuttle stop. idk why this one is still here, but uh, leave it since it's not breaking anything
 	SendInput, {Click}
-	SendInput, {Tab 2}1912{Tab}0{Tab}200{ENTER}
+	SendInput, {Tab}1912{Tab}0{Tab}200{ENTER}
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
 BlockInput, off
@@ -546,11 +550,13 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 	MouseGetPos, xposP, yposP
+	click, 214, 1016
+	SendInput, {WheelUp 30}
 	MouseMove, 122,1060
+	;SendInput, {WheelUp 10}
 	SendInput, {Click}
-	SendInput, {Tab 2}2880{Tab}-538{Tab}300
+	SendInput, {Tab}2880{Tab}-538{Tab}300
 	SendInput, {Enter}
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -565,9 +571,9 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
-	MouseMove, 425, 1063
+	MouseMove, 359, 1063
+	;SendInput, {WheelUp 10}
 	click
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
@@ -589,9 +595,11 @@ Numpad3:: ;INCREASE GAIN BY 6db
 	SendInput, +{Tab}{UP 3}{DOWN}{TAB}6{ENTER}
 Return
 
-;=========================================================
+;===========================================================================================================================================================================
+;
 ;		Drag and Drop Effect Presets
-;=========================================================
+;
+;===========================================================================================================================================================================
 !g:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 BlockInput, SendAndMouse
 BlockInput, MouseMove
@@ -601,7 +609,6 @@ BlockInput, On
 		sleep 60
 	SendInput, ^a{DEL}
 	SendInput, gaussian blur 20 ;create a preset of blur effect with this name, must be in a folder as well
-SetDefaultMouseSpeed 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -624,7 +631,6 @@ BlockInput, On
 		sleep 60
 	SendInput, ^a{DEL}
 	SendInput, parametric ;create parametric eq preset with this name, must be in a folder as well
-SetDefaultMouseSpeed 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -647,7 +653,6 @@ BlockInput, On
 		sleep 60
 	SendInput, ^a{DEL}
 	SendInput, hflip ;create hflip preset with this name, must be in a folder as well
-SetDefaultMouseSpeed 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -670,7 +675,6 @@ BlockInput, On
 		sleep 60
 	SendInput, ^a{DEL}
 	SendInput, croptom ;create croptom preset with this name, must be in a folder as well
-SetDefaultMouseSpeed 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
@@ -684,16 +688,45 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-;=========================================================
+!t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+	SendInput, ^+7
+	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+		sleep 60
+	SendInput, ^a{DEL}
+	SendInput, loremipsum ;create loremipsum preset with this name, must be in a folder as well
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+MouseGetPos, xposP, yposP
+	MouseMove, 205, 1039
+	sleep 100
+	SendInput, {WheelUp 10}
+	MouseMove, 31, 1080
+	sleep 500 ;apparently if you don't give premiere half a second before trying to hide a text layer, it just doesn't click?? or it's ahk??
+	Click, Left
+	sleep 100
+	MouseMove, 3354, 259
+	MouseMove, 40, 68,, R
+	SendInput, {Click Down}
+MouseMove, %xposP%, %yposP% 
+	SendInput, {Click Up}
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+
+;===========================================================================================================================================================================
+;
 ;		Scale Adjustments
-;=========================================================
+;
+;===========================================================================================================================================================================
 ^1:: ;makes the scale of current selected clip 100
 coordmode, pixel, Window
 coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
 	SendInput, {CLICK}100{ENTER}
@@ -708,7 +741,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
 	SendInput, {CLICK}200{ENTER}
@@ -723,7 +755,6 @@ coordmode, mouse, Window
 BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
 	SendInput, {CLICK}300{ENTER}
@@ -732,9 +763,11 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-;=========================================================
+;===========================================================================================================================================================================
+;
 ;		Mouse Scripts
-;=========================================================
+;
+;===========================================================================================================================================================================
 WheelRight:: +Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft:: +Up ;Set shift up to "Go to previous edit point on any track
 F14::^+w ;Set mouse button to always spit out f14, then set ctrl shift w to "Nudge Clip Selection up"
@@ -762,11 +795,10 @@ Return
 
 
 /*
-;=========================================================
+;===========================================================================================================================================================================
 						OLD
-;=========================================================
+;===========================================================================================================================================================================
 F6:: ;how to move mouse on one axis
-SetDefaultMouseSpeed 0
 SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -775,7 +807,6 @@ MouseMove, xposP, 513,, R
 Return
 
 F6:: ;how to move mouse on one axis, relative to current position
-SetDefaultMouseSpeed 0
 SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -840,7 +871,6 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 SetKeyDelay, 0
-SetDefaultMouseSpeed 0
 MouseGetPos, xposP, yposP
 	MouseMove, 79,93
 	SendInput, {Click}
@@ -858,7 +888,6 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 SetKeyDelay, 0
-SetDefaultMouseSpeed 0
 	MouseMove, 79,93
 	SendInput, {Click}
 	SendInput, ^c
