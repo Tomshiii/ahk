@@ -23,8 +23,9 @@ IfExist, %I_Icon%
 ; I use a streamdeck to run a lot of these scripts which is why a bunch of them are bound to F13-24 but really they could be replaced with anything
 ; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
-; I use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk
-; go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
+; I use to use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
+; I now use VSCode which can be found here: https://code.visualstudio.com/
+; AHK syntax highlighting can be installed within the program itself
 
 ;===========================================================================================================================================================================
 ;
@@ -55,7 +56,11 @@ return
 Reload
 Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 MsgBox, 4,, The script could not be reloaded. Would you like to open it for editing?
-IfMsgBox, Yes, Edit
+IfMsgBox, Yes, Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+if WinExist("ahk_exe Code.exe")
+			WinActivate
+		else
+			WinWaitActive, ahk_exe Code.exe
 return
 
 ^+d::WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488 ;Make discord bigger so I can actually read stuff when not streaming
@@ -89,7 +94,7 @@ NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 F15:: ;Start everything for stream
 SetWinDelay, 0 ;makes windows move instantly
-	Run, C:\Program Files\ahk\obs64.lnk ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
+	Run, C:\Program Files\ahk\obs64.lnk ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
 		else
