@@ -554,7 +554,6 @@ BlockInput, On
 	click, 214, 1016
 	SendInput, {WheelUp 30}
 	MouseMove, 122,1060
-	;SendInput, {WheelUp 10}
 	SendInput, {Click}
 	SendInput, {Tab}2880{Tab}-538{Tab}300
 	SendInput, {Enter}
@@ -573,7 +572,7 @@ BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
 	MouseMove, 359, 1063
-	;SendInput, {WheelUp 10}
+	;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 	click
 MouseMove, %xposP%, %yposP% 
 blockinput, MouseMoveOff
