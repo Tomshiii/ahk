@@ -6,7 +6,7 @@ Included is also the Excel document I use to keep track of any hotkeys I set, ju
 
 A lot of the code in My Scripts.ahk is either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks.
 
-You can watch me use some of these scripts in action live while I edit away on  twitch when I stream on my bot account: https://www.twitch.tv/botshiii
+You can watch me use some of these scripts in action while I edit away on  twitch when I stream on my bot account: https://www.twitch.tv/botshiii
 
 ## Currently WIP:
 - [X] My Scripts.ahk
@@ -16,13 +16,16 @@ You can watch me use some of these scripts in action live while I edit away on  
 
 ## What to do:
 1. Download and install [AHK](https://www.autohotkey.com/)
-2. Download and install [Notepad++](https://notepad-plus-plus.org/downloads/) (not necessary, but recommended)
-3. Download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
-4. Edit and then run any of the .ahk files to then use to your liking!
+2. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
+   - [Notepad++](https://notepad-plus-plus.org/downloads/)
+     - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
+   - [VSCode](https://code.visualstudio.com/)
+     - Then install an AHK extension within the program for a more complete package.
+3. Edit and then run any of the .ahk files to then use to your liking!
    - Scripts that will work with no tinkering include ->
-     - Alt Menu acceleration
+     - Alt Menu acceleration disabler
      - autodismiss error
-     - fkey auto launch (recommended to check it out first though)
+     - fkey auto launch (recommended you check it out first though as it opens specific programs)
 
 Any scripts that contain pixel coordinates rely not only on my monitor layout, but also my workspace layout within premiere and will not necessarily work out of the box. They will require looking at the individual comments to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK
 

@@ -36,10 +36,7 @@ SetDefaultMouseSpeed 0
 MouseMove, 5044, 340
 return
 
-^+a:: ;opens my script directory
-	Run, C:\Program Files\ahk 
-return
-;yep
+^+a::Run, C:\Program Files\ahk ;opens my script directory
 
 ;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++ \\don't recomment using this way at all, replacing notepad kinda sucks
 ;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred) \\use this way
@@ -59,9 +56,7 @@ MsgBox, 4,, The script could not be reloaded. Would you like to open it for edit
 IfMsgBox, Yes, Edit
 return
 
-^+d:: ;Make discord bigger so I can actually read stuff when not streaming
-	WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488
-Return
+^+d::WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488 ;Make discord bigger so I can actually read stuff when not streaming
 
 F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
 SetKeyDelay, 100

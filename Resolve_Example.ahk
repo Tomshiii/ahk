@@ -23,6 +23,14 @@ IfExist, %I_Icon%
 ^!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
 
+;!a:: ;if for whatever reason you choose to use vscode instead of notepad++, use this version instead of above
+;Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
+;if WinExist("ahk_exe Code.exe")
+;			WinActivate
+;		else
+;			WinWaitActive, ahk_exe Code.exe
+;return
+
 ^!r:: 
 Reload
 Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.

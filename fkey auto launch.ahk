@@ -83,7 +83,7 @@ IfWinNotExist, ahk_exe GitHubDesktop.exe
 	Run, C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe
 GroupAdd, taranexplorers, ahk_class CabinetWClass
 if WinActive("ahk_exe GitHubDesktop.exe")
-	GroupActivate, taranexplorers, r
+	GroupActivate, tarangit, r
 else
 	WinActivate ahk_exe GitHubDesktop.exe ;you have to use WinActivatebottom if you didn't create a window group.
 }
@@ -94,7 +94,7 @@ IfWinNotExist, ahk_exe StreamDeck.exe
 	Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
 GroupAdd, taranexplorers, ahk_class CabinetWClass
 if WinActive("ahk_exe StreamDeck.exe")
-	GroupActivate, taranexplorers, r
+	GroupActivate, taranstream, r
 else
 	WinActivate ahk_exe StreamDeck.exe ;you have to use WinActivatebottom if you didn't create a window group.
 }
