@@ -2,6 +2,11 @@
 SetWorkingDir, %A_ScriptDir%
 SetNumLockState, AlwaysOn ;sets numlock to always on
 SetCapsLockState, AlwaysOff ;sets caps lock to always off (you can still use caps lock for macros)
+I_Icon = C:\Program Files\ahk\Icons\myscript.png ;you'll need to change this path \\this code changes the icon for the script
+ICON [I_Icon]                        ;Changes a compiled script's icon (.exe)
+if I_Icon <>
+IfExist, %I_Icon%
+	Menu, Tray, Icon, %I_Icon%   ;Changes menu tray icon
 
 ; ==================================================================================================
 ;

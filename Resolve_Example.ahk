@@ -4,6 +4,11 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #SingleInstance Force
 ; SetNumLockState, AlwaysOn ;uncomment if you want numlock to always be ON
 ; SetCapsLockState, AlwaysOff uncomment if you want capslock to always be OFF
+I_Icon = C:\Program Files\ahk\Icons\resolve.png ;you'll need to change this path \\this code changes the icon for the script
+ICON [I_Icon]                        ;Changes a compiled script's icon (.exe)
+if I_Icon <>
+IfExist, %I_Icon%
+	Menu, Tray, Icon, %I_Icon%   ;Changes menu tray icon 
 
 ; ==================================================================================================
 ;
