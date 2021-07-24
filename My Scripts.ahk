@@ -41,10 +41,16 @@ return
 return
 ;yep
 
-;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++
-;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
+;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++ \\don't recomment using this way at all, replacing notepad kinda sucks
+;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred) \\use this way
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
-!a:: Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;"%A_ScriptFullPath%" ;opens in vscode (how I edit it)
+!a:: ;ignore this version, comment it out and uncomment ^ for notepad++
+Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
+if WinExist("ahk_exe Code.exe")
+			WinActivate
+		else
+			WinWaitActive, ahk_exe Code.exe
+return
 
 !r:: 
 Reload
@@ -159,23 +165,23 @@ SetWinDelay, 0 ;makes windows move instantly
 	Run, chrome.exe https://www.twitch.tv/popout/tomshi/chat
 	WinMove, ahk_exe Discord.exe,, 4480, 432, 1080, 797 ;moves into position
 	 ;required for brothers queue program for automatic mii wii playback
-if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
-		WinActivate
-	else
-		WinWaitActive, ahk_exe ahk_exe Docker Desktop.exe
-	sleep 10000
-		coordmode, pixel, Window
-		coordmode, mouse, Window
-		MouseMove, 1128, 130 ;moves mouse to click the start button
-		click
+;if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
+;		WinActivate
+;	else
+;		WinWaitActive, ahk_exe ahk_exe Docker Desktop.exe
+;	sleep 10000
+;		coordmode, pixel, Window
+;		coordmode, mouse, Window
+;		MouseMove, 1128, 130 ;moves mouse to click the start button
+;		click
 sleep 1000
 	Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe
-		if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
-			WinActivate
-		else
-			WinWaitActive, ahk_exe ApplicationDj.exe
-sleep 2000
-	SendInput, y{enter}
+;		if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
+;			WinActivate
+;		else
+;			WinWaitActive, ahk_exe ApplicationDj.exe
+;sleep 2000
+;	SendInput, y{enter}
 	Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe ;try to run it again since apparently running it once sometimes isn't enough
 Return
 
