@@ -29,6 +29,13 @@ IfExist, %I_Icon%
 ;		Windows
 ;=========================================================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
+^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
+coordmode, pixel, Screen
+coordmode, mouse, Screen
+SetDefaultMouseSpeed 0
+MouseMove, 5044, 340
+return
+
 ^+a:: ;opens my script directory
 	Run, C:\Program Files\ahk 
 return
