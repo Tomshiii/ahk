@@ -77,11 +77,22 @@ Process, Exist, firefox.exe
 	}
 }
 
+F7::
+switchToVSCodehub(){
+IfWinNotExist, ahk_exe Code.exe
+	Run, C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe
+GroupAdd, taranCode, ahk_class CabinetWClass
+if WinActive("ahk_exe Code.exe")
+	GroupActivate, taranCode, r
+else
+	WinActivate ahk_exe Code.exe ;you have to use WinActivatebottom if you didn't create a window group.
+}
+
 F8::
 switchToGithub(){
 IfWinNotExist, ahk_exe GitHubDesktop.exe
 	Run, C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe
-GroupAdd, taranexplorers, ahk_class CabinetWClass
+GroupAdd, tarangit, ahk_class CabinetWClass
 if WinActive("ahk_exe GitHubDesktop.exe")
 	GroupActivate, tarangit, r
 else
@@ -92,7 +103,7 @@ F9::
 switchToStreamdeck(){
 IfWinNotExist, ahk_exe StreamDeck.exe
 	Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
-GroupAdd, taranexplorers, ahk_class CabinetWClass
+GroupAdd, taranstream, ahk_class CabinetWClass
 if WinActive("ahk_exe StreamDeck.exe")
 	GroupActivate, taranstream, r
 else
