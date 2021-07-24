@@ -162,6 +162,12 @@ KeyWait, RAlt ; so that it doesn't keep spamming SC0E9
 Sendinput {Blind}{sc0EA}
 return
 
+#IfWinActive ahk_exe firefox.exe
+F10::
+Sendinput {Blind}{sc0E9}
+KeyWait, F10 ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
+Sendinput {Blind}{sc0EA}
+return
 ;this was VK07, but i want to be able to distinguish between this, and menu masking, seperately, in my debugging.
 
 
