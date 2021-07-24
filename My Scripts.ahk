@@ -52,7 +52,7 @@ if WinExist("ahk_exe Code.exe")
 			WinWaitActive, ahk_exe Code.exe
 return
 
-!r:: 
+!r::
 Reload
 Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 MsgBox, 4,, The script could not be reloaded. Would you like to open it for editing?
@@ -77,9 +77,9 @@ SetWinDelay, 0
 	Send, +a+a+a+a+a+a
 Return
 
-^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top 
+^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top
 
-NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE 
+NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
 
 ^+c:: ;runs a google search of highlighted text
     Send, ^c
@@ -99,7 +99,7 @@ SetWinDelay, 0 ;makes windows move instantly
 			WinActivate
 		else
 			WinWaitActive, ahk_exe obs64.exe
-	sleep 2500 ; you have to wait a while after obs opens before you can start sending it commands or it'll crash 
+	sleep 2500 ; you have to wait a while after obs opens before you can start sending it commands or it'll crash
 	SendInput, !p ;Opens alt context menu - The Above 2.5s sleep is essential as obs crashes if you instantly change the profile
 	SendInput, {DOWN 7}
 	SendInput, {ENTER} ;Changes profile to main stream profile.
@@ -144,7 +144,7 @@ SetWinDelay, 0 ;makes windows move instantly
 			;WinWaitActive, ahk_exe firefox.exe ;the following code was yoinked from taran, it's just a deeper method of calling firefox forwards since sometimes it doesn't focus
 			WinActivatebottom ahk_exe firefox.exe
 			WinGet, hWnd, ID, ahk_class MozillaWindowClass
-				DllCall("SetForegroundWindow", UInt, hWnd) 
+				DllCall("SetForegroundWindow", UInt, hWnd)
 	SetKeyDelay, 100
 	Send, !d ;opens the alt context menu to begin detatching the firefox tab
 	Send, +{TAB 3}
@@ -241,13 +241,13 @@ MouseGetPos, xposP, yposP
 	SendInput, {DOWN 6}
 	sleep 200
 	SendInput, {ENTER}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
 
 #IfWinExist ahk_exe obs64.exe
-^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream 
+^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream
 		if WinExist("ahk_exe obs64.exe") ;focuses obs
 			WinActivate
 		else
@@ -263,7 +263,7 @@ Return
 /*
 ;currently replaced by the F11 premiere hotkey
 ;=========================================================
-;		Audition 
+;		Audition
 ;=========================================================
 #IfWinActive ahk_exe Adobe Audition.exe
 F13:: ;Moves mouse and applies Limit preset, then normalises to -3db
@@ -280,7 +280,7 @@ MouseGetPos, xposP, yposP
 	SendInput, {Click}
 	sleep, 2200
 	SendInput, !rnn{ENTER}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
@@ -330,7 +330,7 @@ MouseMove, xposP, 513
 			WinActivate
 		else
 			WinWaitActive, ahk_exe Adobe Audition.exe
-	WinMaximize, ahk_exe Adobe Audition.exe ;for whatever reason audition opens windowed sometimes, this just forces fullscreen		
+	WinMaximize, ahk_exe Adobe Audition.exe ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
 	sleep 4000 ;audition is slow asf to load
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -352,7 +352,7 @@ MouseGetPos, xposP, yposP
 	MouseMove, 1192, 632 ;moves back to the middle of the screen and clicks
 	SendInput, {click}
 	SendInput, ^s ;saves so the changes translate over to premiere
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 	WinMinimize, ahk_exe Adobe Audition.exe ;minimises audition and reactivates premiere
@@ -364,7 +364,7 @@ Return
 ;		hold and drag (or click)
 ;
 ;===========================================================================================================================================================================
-F1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
+F1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -393,14 +393,14 @@ blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F1
 	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 Return
 
-F2:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm 
+F2:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-BlockInput, SendAndMouse 
+BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
@@ -425,14 +425,14 @@ blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F2
 	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 Return
 
-F3:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm 
+F3:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
-BlockInput, SendAndMouse 
+BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
@@ -457,10 +457,10 @@ blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F3
 	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 Return
 
-F4:: ;press then hold alt and drag to move position. Let go of alt to confirm 
+F4:: ;press then hold alt and drag to move position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -468,7 +468,7 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 ;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
 BlockInput, On
-	Click 142 1059 
+	Click 142 1059
 	sleep 100
 GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 	if stateFirstCheck = U ;this function just does what I describe above
@@ -479,21 +479,21 @@ GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time n
 			Send, {click left}
 			blockinput, MouseMoveOff
 			BlockInput, off
-			MouseMove, %xposP%, %yposP% 
+			MouseMove, %xposP%, %yposP%
 			return
 		}
-else					;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract 
+else					;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract
 	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F4
 	SendInput, {Click Up}
-;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
-;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting 
+;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
+;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
 Return
 
-F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm 
+F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 coordmode, pixel, Screen
 coordmode, mouse, Screen
@@ -517,7 +517,7 @@ blockinput, MouseMoveOff
 BlockInput, off
 	KeyWait, F5
 	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 Return
 
 ;===========================================================================================================================================================================
@@ -542,7 +542,7 @@ MouseGetPos, xposP, yposP
 	SendInput, ^+k ;shuttle stop. idk why this one is still here, but uh, leave it since it's not breaking anything
 	SendInput, {Click}
 	SendInput, {Tab}1912{Tab}0{Tab}200{ENTER}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
@@ -562,7 +562,7 @@ BlockInput, On
 	SendInput, {Click}
 	SendInput, {Tab}2880{Tab}-538{Tab}300
 	SendInput, {Enter}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
@@ -579,7 +579,7 @@ MouseGetPos, xposP, yposP
 	MouseMove, 359, 1063
 	;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 	click
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
@@ -620,7 +620,7 @@ MouseGetPos, xposP, yposP
 	sleep 100
 	MouseMove, 40, 68,, R
 	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -642,7 +642,7 @@ MouseGetPos, xposP, yposP
 		Sleep 100
 	MouseMove, 40, 68,, R
 	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -664,7 +664,7 @@ MouseGetPos, xposP, yposP
 		sleep 100
 	MouseMove, 40, 68,, R
 	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -686,7 +686,7 @@ MouseGetPos, xposP, yposP
 		sleep 100
 	MouseMove, 40, 68,, R
 	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -714,7 +714,7 @@ MouseGetPos, xposP, yposP
 	MouseMove, 3354, 259
 	MouseMove, 40, 68,, R
 	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -734,7 +734,7 @@ BlockInput, On
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
 	SendInput, {CLICK}100{ENTER}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
@@ -748,7 +748,7 @@ BlockInput, On
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
 	SendInput, {CLICK}200{ENTER}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
@@ -762,7 +762,7 @@ BlockInput, On
 MouseGetPos, xposP, yposP
 	MouseMove, 237,1102
 	SendInput, {CLICK}300{ENTER}
-MouseMove, %xposP%, %yposP% 
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
