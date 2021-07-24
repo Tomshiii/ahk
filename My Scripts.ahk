@@ -39,10 +39,12 @@ return
 ^+a:: ;opens my script directory
 	Run, C:\Program Files\ahk 
 return
+;yep
 
 ;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++
-!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
+;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
+!a:: Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;"%A_ScriptFullPath%" ;opens in vscode (how I edit it)
 
 !r:: 
 Reload
