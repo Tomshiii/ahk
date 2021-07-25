@@ -473,7 +473,7 @@ BlockInput, On
 GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 	if stateFirstCheck = U ;this function just does what I describe above
 		{
-			MouseMove, 418, 1055
+			MouseMove, 352, 1076
 			;MsgBox, you've moved to the position
 			sleep 50
 			Send, {click left}
