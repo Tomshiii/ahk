@@ -301,6 +301,13 @@ SetKeyDelay, 300 ;photoshop is sometimes slow as heck, delaying things just a bi
 	Send, {Enter}+{Tab}
 Return
 
+Xbutton2:: ;changes the tool to the hand tool while mouse button is held
+	click middle
+	SendInput, {h}{LButton Down} ;set hand tool to "h"
+	KeyWait, Xbutton2
+	SendInput, {LButton Up}{p} ;swaps to the pen tool so you can keep on rotoscoping ez
+Return
+
 ;===========================================================================================================================================================================
 ;
 ;		Premiere
