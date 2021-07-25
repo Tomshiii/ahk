@@ -68,7 +68,6 @@ WheelLeft::Up
 ;change "normal edit mode" to v to make it like premiere
 ;change "blade edit mode" to c to make it like how I use premiere
 ;change "ripple delete" to shift c to make it like how I use premiere
-;don't need a mouse script to move along timeline as resolve allows you to middle mouse click and drag
 
 ;=========================================================
 ;		hold and drag (or click)
@@ -353,6 +352,30 @@ MouseGetPos, xposP, yposP
 SetDefaultMouseSpeed 2 ;resolve doesn't like if your mouse warps right back to the timeline, this is necessary
 MouseMove, %xposP%, %yposP%
 	;sleep 500
+	SendInput, {Click Up}
+blockinput, MouseMoveOff
+blockinput, off
+return
+
+;===========================================================================================================================================================================
+;
+;		better timeline movement (don't use rightclick, you'll lose context menus)
+;
+;===========================================================================================================================================================================
+Xbutton1:: ;this script isn't as powerful as the premiere version, but to my knowledge resolve doesn't have a keyboard shortcut to move the playhead, so this is the best we have
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+coordmode, pixel, Window
+CoordMode, mouse, Window
+MouseGetPos, xposP, yposP
+	MouseMove, xposP, 827
+	SendInput, {Click Down}
+	blockinput, MouseMoveOff
+	blockinput, off
+	KeyWait, Xbutton1
+	BlockInput, MouseMove
+	BlockInput, On
 	SendInput, {Click Up}
 blockinput, MouseMoveOff
 blockinput, off
