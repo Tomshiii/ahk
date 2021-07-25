@@ -371,6 +371,7 @@ CoordMode, mouse, Window
 MouseGetPos, xposP, yposP
 	MouseMove, xposP, 827
 	SendInput, {Click Down}
+	MouseMove, %xposP%, %yposP%
 	blockinput, MouseMoveOff
 	blockinput, off
 	KeyWait, Xbutton1
