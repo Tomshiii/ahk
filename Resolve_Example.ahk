@@ -1,6 +1,7 @@
 ﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+SetDefaultMouseSpeed, 0
 #SingleInstance Force
 ; SetNumLockState, AlwaysOn ;uncomment if you want numlock to always be ON
 ; SetCapsLockState, AlwaysOff uncomment if you want capslock to always be OFF
@@ -67,6 +68,7 @@ WheelLeft::Up
 ;change "normal edit mode" to v to make it like premiere
 ;change "blade edit mode" to c to make it like how I use premiere
 ;change "ripple delete" to shift c to make it like how I use premiere
+;don't need a mouse script to move along timeline as resolve allows you to middle mouse click and drag
 
 ;=========================================================
 ;		hold and drag (or click)
@@ -331,8 +333,30 @@ blockinput, MouseMoveOff
 BlockInput, off
 Return
 
-
-
+;===========================================================================================================================================================================
+;
+;		Drag and Drop Effect Presets
+;
+;===========================================================================================================================================================================
+!g:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track
+BlockInput, SendAndMouse ;this script requires the "effects library" to be open on the left side of screen
+BlockInput, MouseMove
+BlockInput, On
+coordmode, pixel, Window
+CoordMode, mouse, Window
+MouseGetPos, xposP, yposP
+	;Click 566, 735 ;clicks mag glass in the "effects library" window \\bad idea since clicking it again closes the search bar .-.
+	;SendInput, gaussian
+	MouseMove, 80, 1046 ;add effect as a favourite instead, makes things easier as clicking the mag glass changes depending on if it's already open
+	sleep 100
+	SendInput, {Click Down}
+SetDefaultMouseSpeed 2 ;resolve doesn't like if your mouse warps right back to the timeline, this is necessary
+MouseMove, %xposP%, %yposP%
+	;sleep 500
+	SendInput, {Click Up}
+blockinput, MouseMoveOff
+blockinput, off
+return
 
 ;=========================================================
 ;		other
