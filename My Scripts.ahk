@@ -94,6 +94,7 @@ NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 F15:: ;Start everything for stream
 SetWinDelay, 0 ;makes windows move instantly
+	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe
 	Run, C:\Program Files\ahk\obs64.lnk ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
@@ -113,12 +114,12 @@ SetWinDelay, 0 ;makes windows move instantly
 		sleep 2000
 		SendInput, {DOWN 5}
 		sleep 200
-		SendInput, {TAB 52}
+		SendInput, {TAB 55}
 		sleep 200
 		SendInput, ^+8
 		sleep 1000
 		SendInput, {TAB}
-		SendInput, +{TAB 53}
+		SendInput, +{TAB 54}
 		sleep 200
 		SendInput, {UP}
 		SendInput, {TAB}
@@ -158,7 +159,6 @@ SetWinDelay, 0 ;makes windows move instantly
 	WinMove, Twitch,, -6, 0, 1497, 886 ;moves browser tabs into position for stream
 	WinMove, All Moons UPDATED v.1.3.0,, 1218, 658, 1347, 747 ;moves browser tabs into position for stream
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
-	Run, C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe
 	Run, C:\Program Files\Chatterino\chatterino.exe
 	Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe
 	Run, C:\Program Files (x86)\foobar2000\foobar2000.exe
@@ -169,23 +169,21 @@ SetWinDelay, 0 ;makes windows move instantly
 	Run, chrome.exe https://www.twitch.tv/popout/tomshi/chat
 	WinMove, ahk_exe Discord.exe,, 4480, 432, 1080, 797 ;moves into position
 	 ;required for brothers queue program for automatic mii wii playback
-;if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
-;		WinActivate
-;	else
-;		WinWaitActive, ahk_exe ahk_exe Docker Desktop.exe
-;	sleep 10000
-;		coordmode, pixel, Window
-;		coordmode, mouse, Window
-;		MouseMove, 1128, 130 ;moves mouse to click the start button
-;		click
+if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
+	WinActivate
+	sleep 2000
+		coordmode, pixel, Window
+		coordmode, mouse, Window
+		MouseMove, 1128, 130 ;moves mouse to click the start button
+		click
 sleep 1000
 	Run, C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe
-;		if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
-;			WinActivate
-;		else
-;			WinWaitActive, ahk_exe ApplicationDj.exe
-;sleep 2000
-;	SendInput, y{enter}
+		if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
+			WinActivate
+		else
+			WinWaitActive, ahk_exe ApplicationDj.exe
+sleep 2000
+	SendInput, y{enter}
 	Run, F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe ;try to run it again since apparently running it once sometimes isn't enough
 Return
 
