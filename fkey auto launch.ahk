@@ -81,7 +81,7 @@ F7::
 switchToVSCodehub(){
 IfWinNotExist, ahk_exe Code.exe
 	Run, C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe
-GroupAdd, taranCode, ahk_class CabinetWClass
+GroupAdd, taranCode, ahk_class Chrome_WidgetWin_1
 if WinActive("ahk_exe Code.exe")
 	GroupActivate, taranCode, r
 else
@@ -92,7 +92,7 @@ F8::
 switchToGithub(){
 IfWinNotExist, ahk_exe GitHubDesktop.exe
 	Run, C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe
-GroupAdd, tarangit, ahk_class CabinetWClass
+GroupAdd, tarangit, ahk_class  Chrome_WidgetWin_1
 if WinActive("ahk_exe GitHubDesktop.exe")
 	GroupActivate, tarangit, r
 else
@@ -103,7 +103,7 @@ F9::
 switchToStreamdeck(){
 IfWinNotExist, ahk_exe StreamDeck.exe
 	Run, C:\Program Files\Elgato\StreamDeck\StreamDeck.exe
-GroupAdd, taranstream, ahk_class CabinetWClass
+GroupAdd, taranstream, ahk_class  Qt5152QWindowIcon
 if WinActive("ahk_exe StreamDeck.exe")
 	GroupActivate, taranstream, r
 else
