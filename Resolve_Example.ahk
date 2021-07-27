@@ -376,8 +376,6 @@ MouseGetPos, xposP, yposP
 	blockinput, off
 	KeyWait, Xbutton1
 	SendInput, {Click Up}
-blockinput, MouseMoveOff
-blockinput, off
 return
 
 ;=========================================================
