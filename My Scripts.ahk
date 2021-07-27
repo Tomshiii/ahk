@@ -45,22 +45,22 @@ return
 ;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred) \\use this way
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
 !a:: ;ignore this version, comment it out and uncomment ^ for notepad++
-Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
 if WinExist("ahk_exe Code.exe")
 			WinActivate
 		else
-			WinWaitActive, ahk_exe Code.exe
+			Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
 return
 
 !r::
 Reload
 Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 MsgBox, 4,, The script could not be reloaded. Would you like to open it for editing?
-IfMsgBox, Yes, Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-if WinExist("ahk_exe Code.exe")
+IfMsgBox, Yes, {
+	if WinExist("ahk_exe Code.exe")
 			WinActivate
-		else
-			WinWaitActive, ahk_exe Code.exe
+	else
+			Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+		}
 return
 
 ^+d::WinMove, ahk_exe Discord.exe,, 4480, -260, 1080, 1488 ;Make discord bigger so I can actually read stuff when not streaming
@@ -74,12 +74,11 @@ SetWinDelay, 0
 		else
 			WinWaitActive, ahk_exe vlc.exe
 	WinMove, VLC media player,, 2066, 0, 501, 412 ;isn't working atm??
-	Send, +a+a+a+a+a+a
-Return
+	Send, !ad{Down 3}{enter} ;using the alt menu is infinitely faster and more effecient than using the "cycle audio devices" hotkey within vlc
 
 ^SPACE::WinSet, AlwaysOnTop, -1, A ; will toggle the current window to remain on top
 
-NumpadDiv::Run, *RunAs C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
+NumpadDiv::Run, C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
 
 ^+c:: ;runs a google search of highlighted text
     Send, ^c
@@ -197,7 +196,7 @@ sleep 1000 ;waits since it's not responsive to input for a second even after it 
 SendInput, y{enter}
 return
 
-F17::
+F17:: ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
 Run, C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe
 Return
 
@@ -246,10 +245,7 @@ Return
 
 #IfWinExist ahk_exe obs64.exe
 ^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream
-		if WinExist("ahk_exe obs64.exe") ;focuses obs
-			WinActivate
-		else
-			WinWaitActive, ahk_exe obs64.exe
+	WinActivate ahk_exe obs64.exe
 	sleep 1000
 	SendInput, ^p ;Main replay buffer hotkey must be set to this
 	SendInput, ^+8 ;Source Record OBS Plugin replay buffer must be set to this
@@ -779,7 +775,7 @@ Return
 ;===========================================================================================================================================================================
 WheelRight:: +Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft:: +Up ;Set shift up to "Go to previous edit point on any track
-F14::^+w ;Set mouse button to always spit out f14, then set ctrl shift w to "Nudge Clip Selection up"
+;F14::^+w ;Set mouse button to always spit out f14, then set ctrl shift w to "Nudge Clip Selection up"
 
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
 
@@ -792,7 +788,7 @@ Return
 ;=========================================================
 ;		SPEED MACROS		;Must set ctrl + d to open the speed menu
 ;=========================================================
-^+1:: SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
+^+1::SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
 ^+2::SendInput, ^d25{ENTER}
 ^+3::SendInput, ^d50{ENTER}
 ^4::SendInput, ^d75{ENTER}
