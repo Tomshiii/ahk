@@ -96,3 +96,4 @@ sleep 2000
     }
 else
     sleep 100
+ExitApp

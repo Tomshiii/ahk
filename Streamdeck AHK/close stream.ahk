@@ -17,3 +17,4 @@ MouseGetPos, xposP, yposP
 	WinClose, ahk_exe LioranBoard Receiver.exe
 	WinClose, ahk_exe ApplicationDj.exe
 ;WinKill, Streamlabs Chatbot
+ExitApp

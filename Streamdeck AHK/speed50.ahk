@@ -4,3 +4,4 @@ SendInput, ^d50{ENTER}
 }
 Else
 sleep 100
+ExitApp

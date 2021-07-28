@@ -11,3 +11,4 @@ SendInput, y{enter}
 }
 else
     sleep 100
+ExitApp

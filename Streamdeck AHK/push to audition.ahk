@@ -52,3 +52,4 @@ BlockInput, off
 }
 else
     sleep 100
+ExitApp
