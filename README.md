@@ -29,7 +29,7 @@ You can watch me use some of these scripts in action while I edit away on  twitc
 
 Any scripts that contain pixel coordinates rely not only on my monitor layout, but also my workspace layout within premiere and will not necessarily work out of the box. They will require looking at the individual comments to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK
 
-## Explanation
+## Explanation:
 Item | Use
 ------------ | -------------
 My Scripts.ahk | My main scripts, contains everything I use for stream and editing, as well as a few windows related things I do to speed a few interactions up.
@@ -39,3 +39,12 @@ Alt_menu_acceleration_DISABLER.ahk | A script from [Taran](https://github.com/Ta
 autodismiss error.ahk | A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child
 right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button
 scripts f keys taken.xlsx | An Excel doc I use to track all the button combinations used in my scripts so I know what is/isn't available.
+
+## Version Information:
+These scripts are all for v1.1 of AutoHotkey. From my testing most of them will not work in the upcoming v2.0 without heavy modification. I'm not exactly much of a coder so trying to port over a lot of functionality into said newer version is definitely leaving me scratching my head but the hope is to one day do that(?). Until then, scripts that work in v2.0 include (none currently):
+- [ ] My Scripts.ahk
+- [ ] fkey auto launch.ahk
+- [ ] Resolve_Example.ahk
+- [ ] Alt_menu_acceleration_disabler.ahk
+- [ ] autodismiss error.ahk
+- [ ] right click premiere.ahk
