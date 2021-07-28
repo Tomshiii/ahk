@@ -11,9 +11,11 @@ if I_Icon <>
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%   ;Changes menu tray icon
 
-;\\SCRIPT VERSION
+;\\CURRENT SCRIPT VERSION
 ;\\v1.0
 
+;\\CURRENT RELEASE VERSION
+;\\v1.0
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v1.1 OF AUTOHOTKEY

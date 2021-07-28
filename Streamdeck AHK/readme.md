@@ -1,0 +1,1 @@
+you launch these scripts individually from a streamdeck to access their macros without needed to clog up a hotkey

@@ -9,7 +9,10 @@ if I_Icon <>
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%   ;Changes menu tray icon
 
-;\\SCRIPT VERSION
+;\\CURRENT SCRIPT VERSION
+;\\v1.0.1
+
+;\\CURRENT RELEASE VERSION
 ;\\v1.0
 
 ; ===========================================================================================================================================================
@@ -734,53 +737,6 @@ Return
 
 ;===========================================================================================================================================================================
 ;
-;		Scale Adjustments
-;
-;===========================================================================================================================================================================
-^1:: ;makes the scale of current selected clip 100
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 237,1102
-	SendInput, {CLICK}100{ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-^2:: ;makes the scale of current selected clip 200
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 237,1102
-	SendInput, {CLICK}200{ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-^3:: ;makes the scale of current selected clip 300
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 237,1102
-	SendInput, {CLICK}300{ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-;===========================================================================================================================================================================
-;
 ;		Mouse Scripts
 ;
 ;===========================================================================================================================================================================
@@ -796,15 +752,6 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 	KeyWait, Xbutton2
 	SendInput, {LButton Up}{v} ;set select tool to v
 Return
-;=========================================================
-;		SPEED MACROS		;Must set ctrl + d to open the speed menu
-;=========================================================
-^+1::SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
-^+2::SendInput, ^d25{ENTER}
-^+3::SendInput, ^d50{ENTER}
-^4::SendInput, ^d75{ENTER}
-^5::SendInput, ^d100{ENTER}
-^6::SendInput, ^d200{ENTER}
 
 
 
