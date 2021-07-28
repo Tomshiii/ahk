@@ -1,1 +1,2 @@
-you launch these scripts individually from a streamdeck to access their macros without needed to clog up a hotkey
+## How To
+You launch these scripts individually from a streamdeck (or by using your keyboards custom software to launch programs) to access their macros without needing to clog up a hotkey
