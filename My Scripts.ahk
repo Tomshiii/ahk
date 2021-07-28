@@ -175,6 +175,11 @@ Return
 ;
 ;===========================================================================================================================================================================
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
+
+;There use to be a lot of scripts about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
+;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
+;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
+
 ;===========================================================================================================================================================================
 ;
 ;		hold and drag (or click)
@@ -188,7 +193,7 @@ BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 227, 1101
+	MouseMove, 227, 1101 ;move to the "scale" value
 	sleep 100
 	SendInput, {Click Down}
 GetKeyState, stateFirstCheck, F1, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -220,7 +225,7 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 226, 1079
+	MouseMove, 226, 1079 ;move to the "x" value
 	sleep 100
 	SendInput, {Click Down}
 GetKeyState, stateFirstCheck, F2, P ;gets the state of the f2 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -252,7 +257,7 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 275, 1080
+	MouseMove, 275, 1080 ;move to the "y" value
 	sleep 100
 	SendInput, {Click Down}
 GetKeyState, stateFirstCheck, F3, P ;gets the state of the f3 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -284,12 +289,12 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 ;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
 BlockInput, On
-	Click 142 1059
+	Click 142 1059 ;move to the "motion" tab
 	sleep 100
 GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 	if stateFirstCheck = U ;this function just does what I describe above
 		{
-			MouseMove, 352, 1076
+			MouseMove, 352, 1076 ;move to the reset arrow for position
 			;MsgBox, you've moved to the position
 			sleep 50
 			Send, {click left}
@@ -298,8 +303,8 @@ GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time n
 			MouseMove, %xposP%, %yposP%
 			return
 		}
-else					;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract
-	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
+else					;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
+	MouseMove, 2300, 238 ;move to the preview window
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -317,7 +322,7 @@ BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 219, 1165
+	MouseMove, 219, 1165 ;move to the "rotation" value
 	sleep 100
 	SendInput, {Click Down}
 GetKeyState, stateFirstCheck, F5, P ;gets the state of the f5 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -374,7 +379,7 @@ BlockInput, On
 	MouseGetPos, xposP, yposP
 	click, 214, 1016
 	SendInput, {WheelUp 30}
-	MouseMove, 122,1060
+	MouseMove, 122,1060 ;location for "motion"
 	SendInput, {Click}
 	SendInput, {Tab}2880{Tab}-538{Tab}300
 	SendInput, {Enter}
@@ -392,7 +397,7 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 359, 1063
+	MouseMove, 359, 1063 ;location for the reset arrow
 	;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 	click
 MouseMove, %xposP%, %yposP%
@@ -432,9 +437,9 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
 	sleep 100
-	MouseMove, 40, 68,, R
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
@@ -454,9 +459,9 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
 		Sleep 100
-	MouseMove, 40, 68,, R
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
@@ -476,9 +481,9 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
 		sleep 100
-	MouseMove, 40, 68,, R
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
@@ -498,9 +503,9 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
 		sleep 100
-	MouseMove, 40, 68,, R
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
@@ -520,15 +525,15 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 205, 1039
+	MouseMove, 205, 1039 ;move to the top of the effects panel to allow WheelUp to work
 	sleep 100
 	SendInput, {WheelUp 10}
-	MouseMove, 31, 1080
+	MouseMove, 31, 1080 ;hover over the hide/show eye for the default text created on a new text layer
 	sleep 500 ;apparently if you don't give premiere half a second before trying to hide a text layer, it just doesn't click?? or it's ahk??
 	Click, Left
 	sleep 100
-	MouseMove, 3354, 259
-	MouseMove, 40, 68,, R
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
