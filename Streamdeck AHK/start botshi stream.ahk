@@ -1,4 +1,4 @@
-﻿IfWinNotExist(ahk_exe obs64.exe)
+﻿IfWinNotExist, ahk_exe obs64.exe
 {
 ;F16:: ;opens streamelements obs and swaps to botshi profile
 	Run, C:\Program Files\ahk\BOTSHI.lnk ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
