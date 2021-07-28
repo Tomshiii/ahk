@@ -11,6 +11,14 @@ IfExist, %I_Icon%
 
 ; ===========================================================================================================================================================
 ;
+; 										THIS SCRIPT IS FOR v1.1 OF AUTOHOTKEY
+;				 					IT WILL NOT RUN IN v2.0 WITHOUT HEAVY MODIFICATION
+;
+;						I hope to one day port funcitonality to v2.0 - that will take a long time though as
+;							I am not a programmer, and a lot of the 2.0 changes go right over my head
+;
+; ===========================================================================================================================================================
+;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
 ; Its purpose is to help speed up editing and random interactions with windows.
 ; You are free to modify this script to your own personal uses/needs
