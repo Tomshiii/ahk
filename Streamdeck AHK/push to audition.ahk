@@ -1,4 +1,4 @@
-﻿#IfWinActive ahk_exe Adobe Premiere Pro.exe
+﻿IfWinActive ahk_exe Adobe Premiere Pro.exe
 {
 SetKeyDelay, 0 ;this is just here incase I add some sends in the future
 ;F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised.
