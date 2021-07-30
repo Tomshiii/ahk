@@ -1,29 +1,16 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+﻿;NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-SetDefaultMouseSpeed, 0
+SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
+SetDefaultMouseSpeed 0
 #SingleInstance Force
 ; SetNumLockState, AlwaysOn ;uncomment if you want numlock to always be ON
 ; SetCapsLockState, AlwaysOff uncomment if you want capslock to always be OFF
-I_Icon = C:\Program Files\ahk\Icons\resolve.png ;you'll need to change this path \\this code changes the icon for the script
-ICON [I_Icon]                        ;Changes a compiled script's icon (.exe)
-if I_Icon <>
-IfExist, %I_Icon%
-	Menu, Tray, Icon, %I_Icon%   ;Changes menu tray icon
-
-;\\CURRENT SCRIPT VERSION
-;\\v1.0
-
-;\\CURRENT RELEASE VERSION
-;\\v1.0
-; ==================================================================================================
-;
-; 							THIS SCRIPT IS FOR v1.1 OF AUTOHOTKEY
-;				 		IT WILL NOT RUN IN v2.0 WITHOUT HEAVY MODIFICATION
-;
-;			I hope to one day port funcitonality to v2.0 - that will take a long time though as
-;				I am not a programmer, and a lot of the 2.0 changes go right over my head
-;
+;I_Icon := "C:\Program Files\ahk\Icons\resolve.png" ;you'll need to change this path \\this code changes the icon for the script
+;"ICON" [I_Icon]                        ;Changes a compiled script's icon (.exe)
+;if I_Icon
+;IfExist "%I_Icon%"
+;	Menu Tray Icon "%I_Icon%"   ;Changes menu tray icon
+TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
 ; ==================================================================================================
 ;
 ; This script was created by Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
@@ -32,10 +19,7 @@ IfExist, %I_Icon%
 ; Please give credit to the foundation if you build on top of it, otherwise you're free to do as you wish
 ;
 ; ==================================================================================================
-#IfWinNotActive ahk_exe Resolve.exe
-
-^!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
-;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
+#HotIf ;WinNotActive("ahk_exe Resolve.exe")
 
 ;!a:: ;if for whatever reason you choose to use vscode instead of notepad++, use this version instead of above
 ;Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
@@ -46,11 +30,19 @@ IfExist, %I_Icon%
 ;return
 
 ^!r::
+{
 Reload
 Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-MsgBox, 4,, The script could not be reloaded. Would you like to open it for editing?
-IfMsgBox, Yes, Edit
-return
+;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
+Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
+if Result = "Yes"
+{
+	if WinExist("ahk_exe Code.exe")
+			WinActivate
+	else
+			Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+		}
+}
 
 ; ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,7 +57,7 @@ return
 ;=========================================================
 ;		DAVINCI RESOLVE
 ;=========================================================
-#IfWinActive ahk_exe Resolve.exe
+#HotIf WinActive("ahk_exe Resolve.exe")
 
 ;=========================================================
 ;		keyboard shortcut replacements
@@ -89,261 +81,272 @@ WheelLeft::Up
 ; ///// you could add functionality to scroll up a few times if you run into that being an issue a lot
 
 F1::
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
-BlockInput, MouseMove
-BlockInput, On
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse" ;// can't use block input as you need to drag the mouse
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2196, 139 ;this highlights the video tab
-	MouseMove, 2329, 215 ;moves to the scale value
+MouseGetPos &xpos, &ypos
+	click "2196 139" ;this highlights the video tab
+	MouseMove 2329, 215 ;moves to the scale value
 	sleep 100
-	SendInput, {Click Down}
-GetKeyState, stateFirstCheck, F1, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-	if stateFirstCheck = U ;this function just does what I describe above
+	SendInput "{Click Down}"
+;GetKeyState stateFirstCheck F1 P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+state := GetKeyState("F1", "P")
+	if GetKeyState("F1", 1) ;= "U" ;this function just does what I describe above
 		{
-			Click up left
-			sleep 10
-			Send, 1
+			SendInput "{Click Up}"
+			sleep 100
+			Send "1"
 			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
 			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-			sleep 50
-			send, {enter}
-			click 2295, 240 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+			sleep 100
+			send "{enter}"
+			click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
 			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
 			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
 			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
 		}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, F1
-	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP%
-Return
+	
+blockinput "MouseMoveOff"
+BlockInput "off"
+	KeyWait "F1"
+	SendInput "{Click Up}"
+MouseMove %&xpos%, %&ypos%
+}
 
 /*
 ;Not entirely sure Resolve has similar function to premiere where you can reposition a clip by draggin it around in the preview window
 F2:: ;press then hold alt and drag to move position. Let go of alt to confirm
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput SendAndMouse
+BlockInput MouseMove
+BlockInput On
+SetDefaultMouseSpeed 0
+;MouseGetPos &xposP, &yposP ;if you wish to use the reset arrow, uncomment this line
 BlockInput, On
 SetDefaultMouseSpeed 0
 	Click 142 1059 ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract
 	sleep 100
-GetKeyState, stateFirstCheck, F2, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+GetKeyState stateFirstCheck, F2, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 	if stateFirstCheck = U ;this function just does what I describe above
 		{
-			MouseMove, 418, 1055
+			MouseMove 418, 1055
 			;MsgBox, you've moved to the position
 			sleep 50
-			Send, {click left}
-			blockinput, MouseMoveOff
-			BlockInput, off
-			MouseMove, %xposP%, %yposP%
+			Send "{click left}"
+			blockinput MouseMoveOff
+			BlockInput off
+			MouseMove %&xposP% %&yposP%
 			return
 		}
 else
-	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
-	SendInput, {Click Down}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, F2
-	SendInput, {Click Up}
-;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
-;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
-Return
+	MouseMove 2300 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
+	SendInput "{Click Down}"
+blockinput MouseMoveOff
+BlockInput off
+	KeyWait "F2"
+	SendInput "{Click Up}"
+;MouseMove %&xposP%, %&yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
+;MouseMove %&xposP%, %&yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
+}
 */
 
 F3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2196, 139 ;this highlights the video tab
-	MouseMove, 2332, 239 ;moves to the x axis value
+MouseGetPos &xpos, &ypos
+	click "2196 139" ;this highlights the video tab
+	MouseMove 2332, 239 ;moves to the x axis value
 	sleep 100
-	SendInput, {Click Down}
-GetKeyState, stateFirstCheck, F3, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-	if stateFirstCheck = U ;this function just does what I describe above
+	SendInput "{Click Down}"
+state := GetKeyState("F3", "P")
+	if GetKeyState("F3") = "U" ;this function just does what I describe above
 		{
-			Click up left
+			Click "up left"
 			sleep 10
-			Send, 0
-			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			Send "0"
+			;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
 			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 			sleep 50
-			send, {enter}
-			click 2295, 240 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
-			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
-			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
+			send "{enter}"
+			click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+			;MouseMove %&xposP%, %&yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput off ;if you want to press the reset arrow, uncomment this line
 		}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, F3
-	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP%
-Return
+blockinput "MouseMoveOff"
+BlockInput "off"
+	KeyWait "F3"
+	SendInput "{Click Up}"
+MouseMove "%&xpos%", "%&ypos%"
+}
 
 F4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2196, 139 ;this highlights the video tab
-	MouseMove, 2457, 240 ;moves to the y axis value
+MouseGetPos &xpos, &ypos
+	click "2196, 139" ;this highlights the video tab
+	MouseMove 2457, 240 ;moves to the y axis value
 	sleep 100
-	SendInput, {Click Down}
-GetKeyState, stateFirstCheck, F4, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-	if stateFirstCheck = U ;this function just does what I describe above
+	SendInput "{Click Down}"
+state := GetKeyState("F4", "P")
+	if GetKeyState("F4") = "U" ;this function just does what I describe above
 		{
-			Click up left
+			Click "up left"
 			sleep 10
-			Send, 0
-			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			Send "0"
+			;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
 			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 			sleep 50
-			send, {enter}
-			click 2295, 240 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
-			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
-			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
+			send "{enter}"
+			click "2295 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+			;MouseMove %&xposP%, %&yposP% ;if you want to press the reset arrow, uncomment this line
+			;blockinput MouseMoveOff ;if you want to press the reset arrow, uncomment this line
+			;BlockInput off ;if you want to press the reset arrow, uncomment this line
 		}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, F4
-	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP%
-Return
+blockinput "MouseMoveOff"
+BlockInput "off"
+	KeyWait "F4"
+	SendInput "{Click Up}"
+MouseMove %&xpos%, %&ypos%
+}
 
 F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
-BlockInput, MouseMove
-BlockInput, On
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2196, 139 ;this highlights the video tab
-	MouseMove, 2456, 265 ;moves to the rotation value
+MouseGetPos &xpos, &ypos
+	click "2196, 139" ;this highlights the video tab
+	MouseMove 2456, 265 ;moves to the rotation value
 	sleep 100
-	SendInput, {Click Down}
-GetKeyState, stateFirstCheck, F5, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-	if stateFirstCheck = U ;this function just does what I describe above
+	SendInput "{Click Down}"
+state := GetKeyState("F5", "P")
+	if GetKeyState("F5") = "U" ;this function just does what I describe above
 		{
-			Click up left
+			Click "up left"
 			sleep 10
-			Send, 0 ;resets rotation to 0
+			Send "0" ;resets rotation to 0
 			sleep 50
-			send, {enter}
-			click 2295, 240 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+			send "{enter}"
+			click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
 		}
-blockinput, MouseMoveOff
-BlockInput, off
-	KeyWait, F5
-	SendInput, {Click Up}
-MouseMove, %xposP%, %yposP%
-Return
+blockinput "MouseMoveOff"
+BlockInput "off"
+	KeyWait "F5"
+	SendInput "{Click Up}"
+MouseMove %&xpos%, %&ypos%
+}
 
 ;=========================================================
 ;		flips
 ;=========================================================
 !h:: ;flip horizontally
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2196, 139 ;this highlights the video tab
-	click 2301, 363
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
+MouseGetPos &xpos, &ypos
+	click "2196, 139" ;this highlights the video tab
+	click "2301, 363"
+MouseMove %&xpos%, %&ypos%
+blockinput "MouseMoveOff"
+BlockInput "off"
+}
 
 !v:: ;flip vertically
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2196, 139 ;this highlights the video tab
-	click 2340, 367
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
+MouseGetPos &xpos, &ypos
+	click "2196, 139" ;this highlights the video tab
+	click "2340, 367"
+MouseMove %&xpos%, %&ypos%
+blockinput "MouseMoveOff"
+BlockInput "off"
+}
 
 ;=========================================================
 ;		Scale Adjustments
 ;=========================================================
 ^1:: ;makes the scale of current selected clip 100
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2333, 218 ;clicks on video
-	SendInput, 1{ENTER} ;effectively 100%
-	click 2292, 215 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
+MouseGetPos &xpos, &ypos
+	click "2333, 218" ;clicks on video
+	SendInput "1{ENTER}" ;effectively 100%
+	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+MouseMove %&xpos%, %&ypos%
+blockinput "MouseMoveOff"
+BlockInput "off"
+}
 
 ^2:: ;makes the scale of current selected clip 100
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2333, 218 ;clicks on video
-	SendInput, 2{ENTER} ;effectively 200%
-	click 2292, 215 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
+MouseGetPos &xpos, &ypos
+	click "2333, 218" ;clicks on video
+	SendInput "2{ENTER}" ;effectively 200%
+	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+MouseMove %&xpos%, %&ypos%
+blockinput "MouseMoveOff"
+BlockInput "off"
+}
 
 ^3:: ;makes the scale of current selected clip 100
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "MouseMove"
+BlockInput "On"
 SetDefaultMouseSpeed 0
-MouseGetPos, xposP, yposP
-	click 2333, 218 ;clicks on video
-	SendInput, 3{ENTER} ;effectively 300%
-	click 2292, 215 ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
+MouseGetPos &xpos, &ypos
+	click "2333, 218" ;clicks on video
+	SendInput "3{ENTER}" ;effectively 300%
+	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+MouseMove %&xpos%, %&ypos%
+blockinput "MouseMoveOff"
+BlockInput "off"
+}
 
 ;===========================================================================================================================================================================
 ;
@@ -351,24 +354,25 @@ Return
 ;
 ;===========================================================================================================================================================================
 !g:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track
-BlockInput, SendAndMouse ;this script requires the "effects library" to be open on the left side of screen
-BlockInput, MouseMove
-BlockInput, On
-coordmode, pixel, Window
-CoordMode, mouse, Window
-MouseGetPos, xposP, yposP
-	;Click 566, 735 ;clicks mag glass in the "effects library" window \\bad idea since clicking it again closes the search bar .-.
-	;SendInput, gaussian
-	MouseMove, 80, 1046 ;add effect as a favourite instead, makes things easier as clicking the mag glass changes depending on if it's already open
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse" ;this script requires the "effects library" to be open on the left side of screen
+BlockInput "MouseMove"
+BlockInput "On"
+SetDefaultMouseSpeed 0
+MouseGetPos &xpos, &ypos
+	;Click 566 735 ;clicks mag glass in the "effects library" window \\bad idea since clicking it again closes the search bar .-.
+	;SendInput gaussian
+	MouseMove 80, 1046 ;add effect as a favourite instead, makes things easier as clicking the mag glass changes depending on if it's already open
 	sleep 100
-	SendInput, {Click Down}
-SetDefaultMouseSpeed 2 ;resolve doesn't like if your mouse warps right back to the timeline, this is necessary
-MouseMove, %xposP%, %yposP%
+	SendInput "{Click Down}"
+MouseMove %&xpos%, %&ypos%, 200
 	;sleep 500
-	SendInput, {Click Up}
-blockinput, MouseMoveOff
-blockinput, off
-return
+	SendInput "{Click Up}"
+blockinput "MouseMoveOff"
+blockinput "off"
+}
 
 ;===========================================================================================================================================================================
 ;
@@ -376,25 +380,26 @@ return
 ;
 ;===========================================================================================================================================================================
 Xbutton1:: ;this script isn't as powerful as the premiere version, but to my knowledge resolve doesn't have a keyboard shortcut to move the playhead, so this is the best we have
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-coordmode, pixel, Window
-CoordMode, mouse, Window
-MouseGetPos, xposP, yposP
-	MouseMove, xposP, 827
-	SendInput, {Click Down}
-	MouseMove, %xposP%, %yposP%
-	blockinput, MouseMoveOff
-	blockinput, off
-	KeyWait, Xbutton1
-	SendInput, {Click Up}
-return
+{
+coordmode "pixel", "Window"
+coordmode "mouse", "Window"
+BlockInput "SendAndMouse"
+BlockInput "On"
+SetDefaultMouseSpeed 0
+MouseGetPos &xpos, &ypos
+	MouseMove %&xpos%, 827
+	SendInput "{Click Down}"
+	MouseMove %&xpos%, %&ypos%
+	blockinput "MouseMoveOff"
+	blockinput "off"
+	KeyWait "Xbutton1"
+	SendInput "{Click Up}"
+}
 
 ;=========================================================
 ;		other
 ;=========================================================
-
+;the below code hasn't been formatted for v2.0
 /*
 Numpad1::
 SetDefaultMouseSpeed 0
