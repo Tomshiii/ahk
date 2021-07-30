@@ -1,21 +1,15 @@
 # ahk
-
-This is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane random interactions with a computer.
-
-Included is also the Excel document I use to keep track of any hotkeys I set, just as an easier and more visual way of understanding what is/isn't available.
-
-A lot of the code in My Scripts.ahk is either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks.
-
-You can watch me use some of these scripts in action while I edit away on  twitch when I stream on my bot account: https://www.twitch.tv/botshiii
-
-## Currently WIP:
-- [X] My Scripts.ahk
-- [X] scripts f keys taken.xlsx
-- [ ] Resolve_Example.ahk (port over functionality occasionally)
-- [ ] fkey auto launch (not often)
+## Version Information:
+This repo is to work on v2.0 functionality to my scripts. I'm not exactly much of a coder so trying to port over a lot of functionality into said newer version is definitely leaving me scratching my head but the hope is to one day do that(?). Until then, scripts that work in v2.0 include:
+- [ ] My Scripts.ahk
+- [x] fkey auto launch.ahk
+- [x] Resolve_Example.ahk
+- [x] Alt_menu_acceleration_disabler.ahk
+- [ ] autodismiss error.ahk
+- [x] right click premiere.ahk
 
 ## What to do:
-1. Download and install [AHK](https://www.autohotkey.com/)
+1. Download and install [AHK v2.0 Beta](https://www.autohotkey.com/)
 2. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
    - [Notepad++](https://notepad-plus-plus.org/downloads/)
      - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
@@ -39,12 +33,3 @@ Alt_menu_acceleration_DISABLER.ahk | A script from [Taran](https://github.com/Ta
 autodismiss error.ahk | A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child
 right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button
 scripts f keys taken.xlsx | An Excel doc I use to track all the button combinations used in my scripts so I know what is/isn't available.
-
-## Version Information:
-These scripts are all for v1.1 of AutoHotkey. From my testing most of them will not work in the upcoming v2.0 without heavy modification. I'm not exactly much of a coder so trying to port over a lot of functionality into said newer version is definitely leaving me scratching my head but the hope is to one day do that(?). Until then, scripts that work in v2.0 include (none currently):
-- [ ] My Scripts.ahk
-- [ ] fkey auto launch.ahk
-- [ ] Resolve_Example.ahk
-- [ ] Alt_menu_acceleration_disabler.ahk
-- [ ] autodismiss error.ahk
-- [ ] right click premiere.ahk
