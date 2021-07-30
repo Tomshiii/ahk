@@ -11,6 +11,7 @@ You can watch me use some of these scripts in action while I edit away on  twitc
 ## Currently WIP:
 - [X] My Scripts.ahk
 - [X] scripts f keys taken.xlsx
+- [x] Porting Scripts to [AHK v2.0](https://github.com/Tomshiii/ahk/tree/v2.0)
 - [ ] Resolve_Example.ahk (port over functionality occasionally)
 - [ ] fkey auto launch (not often)
 
