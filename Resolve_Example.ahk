@@ -92,29 +92,28 @@ MouseGetPos &xpos, &ypos
 	click "2196 139" ;this highlights the video tab
 	MouseMove 2329, 215 ;moves to the scale value
 	sleep 100
-	SendInput "{Click Down}"
-;GetKeyState stateFirstCheck F1 P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-state := GetKeyState("F1", "P")
-	if GetKeyState("F1", 1) ;= "U" ;this function just does what I describe above
-		{
-			SendInput "{Click Up}"
-			sleep 100
-			Send "1"
-			;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-			sleep 100
-			send "{enter}"
-			click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-			;MouseMove, %xposP%, %yposP% ;if you want to press the reset arrow, uncomment this line
-			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
-			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
-		}
-	
-blockinput "MouseMoveOff"
-BlockInput "off"
-	KeyWait "F1"
-	SendInput "{Click Up}"
-MouseMove %&xpos%, %&ypos%
+	SendInput "{Click Down}"	
+		if GetKeyState("F1", "P")
+			{
+				blockinput "MouseMoveOff"
+				BlockInput "off"
+				KeyWait "F1"
+				SendInput "{Click Up}"
+				MouseMove %&xpos%, %&ypos%
+			}
+		else
+			{
+				SendInput "{Click Up}"
+				sleep 10
+				Send "1"
+				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+				sleep 10
+				send "{enter}"
+				click "2295, 240"
+				blockinput "MouseMoveOff"
+				BlockInput "off"
+			}
 }
 
 /*
@@ -170,26 +169,27 @@ MouseGetPos &xpos, &ypos
 	MouseMove 2332, 239 ;moves to the x axis value
 	sleep 100
 	SendInput "{Click Down}"
-state := GetKeyState("F3", "P")
-	if GetKeyState("F3") = "U" ;this function just does what I describe above
-		{
-			Click "up left"
-			sleep 10
-			Send "0"
-			;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-			sleep 50
-			send "{enter}"
-			click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-			;MouseMove %&xposP%, %&yposP% ;if you want to press the reset arrow, uncomment this line
-			;blockinput MouseMoveOff ;if you want to press the reset arrow, uncomment this line
-			;BlockInput off ;if you want to press the reset arrow, uncomment this line
-		}
-blockinput "MouseMoveOff"
-BlockInput "off"
-	KeyWait "F3"
-	SendInput "{Click Up}"
-MouseMove "%&xpos%", "%&ypos%"
+		if GetKeyState("F3", "P")
+			{
+				blockinput "MouseMoveOff"
+				BlockInput "off"
+				KeyWait "F3"
+				SendInput "{Click Up}"
+				MouseMove %&xpos%, %&ypos%
+			}
+		else
+			{
+				SendInput "{Click Up}"
+				sleep 10
+				Send "1"
+				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+				sleep 10
+				send "{enter}"
+				click "2295, 240"
+				blockinput "MouseMoveOff"
+				BlockInput "off"
+			}
 }
 
 F4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm
@@ -206,26 +206,27 @@ MouseGetPos &xpos, &ypos
 	MouseMove 2457, 240 ;moves to the y axis value
 	sleep 100
 	SendInput "{Click Down}"
-state := GetKeyState("F4", "P")
-	if GetKeyState("F4") = "U" ;this function just does what I describe above
-		{
-			Click "up left"
-			sleep 10
-			Send "0"
-			;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-			sleep 50
-			send "{enter}"
-			click "2295 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-			;MouseMove %&xposP%, %&yposP% ;if you want to press the reset arrow, uncomment this line
-			;blockinput MouseMoveOff ;if you want to press the reset arrow, uncomment this line
-			;BlockInput off ;if you want to press the reset arrow, uncomment this line
-		}
-blockinput "MouseMoveOff"
-BlockInput "off"
-	KeyWait "F4"
-	SendInput "{Click Up}"
-MouseMove %&xpos%, %&ypos%
+			if GetKeyState("F4", "P")
+			{
+				blockinput "MouseMoveOff"
+				BlockInput "off"
+				KeyWait "F4"
+				SendInput "{Click Up}"
+				MouseMove %&xpos%, %&ypos%
+			}
+		else
+			{
+				SendInput "{Click Up}"
+				sleep 10
+				Send "1"
+				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+				sleep 10
+				send "{enter}"
+				click "2295, 240"
+				blockinput "MouseMoveOff"
+				BlockInput "off"
+			}
 }
 
 F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm
@@ -242,21 +243,27 @@ MouseGetPos &xpos, &ypos
 	MouseMove 2456, 265 ;moves to the rotation value
 	sleep 100
 	SendInput "{Click Down}"
-state := GetKeyState("F5", "P")
-	if GetKeyState("F5") = "U" ;this function just does what I describe above
-		{
-			Click "up left"
-			sleep 10
-			Send "0" ;resets rotation to 0
-			sleep 50
-			send "{enter}"
-			click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-		}
-blockinput "MouseMoveOff"
-BlockInput "off"
-	KeyWait "F5"
-	SendInput "{Click Up}"
-MouseMove %&xpos%, %&ypos%
+			if GetKeyState("F5", "P")
+			{
+				blockinput "MouseMoveOff"
+				BlockInput "off"
+				KeyWait "F5"
+				SendInput "{Click Up}"
+				MouseMove %&xpos%, %&ypos%
+			}
+		else
+			{
+				SendInput "{Click Up}"
+				sleep 10
+				Send "1"
+				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+				sleep 10
+				send "{enter}"
+				click "2295, 240"
+				blockinput "MouseMoveOff"
+				BlockInput "off"
+			}
 }
 
 ;=========================================================
@@ -367,7 +374,7 @@ MouseGetPos &xpos, &ypos
 	MouseMove 80, 1046 ;add effect as a favourite instead, makes things easier as clicking the mag glass changes depending on if it's already open
 	sleep 100
 	SendInput "{Click Down}"
-MouseMove %&xpos%, %&ypos%, 200
+MouseMove %&xpos%, %&ypos%, 2
 	;sleep 500
 	SendInput "{Click Up}"
 blockinput "MouseMoveOff"
