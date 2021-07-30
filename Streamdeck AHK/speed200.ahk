@@ -1,6 +1,6 @@
-﻿IfWinActive AHK_exe Adobe Premiere Pro.exe
+﻿If WinActive("ahk_exe Adobe Premiere Pro.exe")
 {
-SendInput, ^d200{ENTER}
+SendInput "^d200{ENTER}"
 }
 Else
 sleep 100

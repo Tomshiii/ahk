@@ -93,152 +93,9 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 ;		Stream
 ;
 ;===========================================================================================================================================================================
-F15:: ;Start everything for stream
-{
-SetWinDelay 0 ;makes windows move instantly
-	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
-	Run "C:\Program Files\ahk\obs64.lnk" ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
-		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
-			WinActivate
-		else
-			WinWaitActive "ahk_exe obs64.exe"
-	sleep 2500 ; you have to wait a while after obs opens before you can start sending it commands or it'll crash
-	SendInput "!p" ;Opens alt context menu - The Above 2.5s sleep is essential as obs crashes if you instantly change the profile
-	SendInput "{DOWN 7}"
-	SendInput "{ENTER}" ;Changes profile to main stream profile.
-	sleep 2000
-	WinMove 2553, -892, 1111, 1047, "ahk_exe obs64.exe" ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
-{ ;this part of the script is just to set the source record hotkey(s) until they fix it
-		WinActivate "ahk_exe obs64.exe" ;just incase windows loses it
-		SendInput "!f"
-		sleep 100
-		SendInput "s"
-		sleep 2000
-		SendInput "{DOWN 5}""
-		sleep 200
-		SendInput "{TAB 55}"
-		sleep 200
-		SendInput "^+8"
-		sleep 1000
-		SendInput "{TAB}"
-		SendInput "+{TAB 54}"
-		sleep 200
-		SendInput "{UP}{TAB}{ENTER}"
-		sleep 200
-}
-	Run "firefox.exe https://docs.google.com/presentation/d/1b6pCuOIrw4pEF6GACxrBh8C-mB4XsDeHLM50cj4jAkQ/edit#slide=id.g90e8195d3c_16_958" ;opens the AM route doc to pauline questions
-		if WinExist("ahk_exe firefox.exe")
-			WinActivate
-		else
-			WinWaitActive "ahk_exe firefox.exe"
-	sleep 1000 ;waits before opening the next tab or firefox derps out
-	Run Run "firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager"
-	sleep 9000 ;if both tabs don't load in, it can mess with trying to separate them
-		;{ ;if WinExist("ahk_exe firefox.exe")
-			;WinActivate
-		;else
-			;WinWaitActive, ahk_exe firefox.exe ;the following code was yoinked from taran, it's just a deeper method of calling firefox forwards since sometimes it doesn't focus
-			;WinActivatebottom ahk_exe firefox.exe
-			;WinGet, hWnd, ID, ahk_class MozillaWindowClass
-				;DllCall("SetForegroundWindow", UInt, hWnd) } ;old code, testing ;
-			WinActivate "ahk_exe firefox.exe"
-	SetKeyDelay, 100
-	Send "!d" ;opens the alt context menu to begin detatching the firefox tab
-	Send "+{TAB 3}"
-	sleep 100
-	Send "+{F10}"
-	sleep 100
-	Send "v"
-	sleep 100
-	Send "w"
-	sleep 2000
-	WinMove -6, 0, 1497, 886,, "Twitch"  ;moves browser tabs into position for stream
-	WinMove 1218, 658, 1347, 747,, "All Moons UPDATED v.1.3.0"  ;moves browser tabs into position for stream
-	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
-	Run "C:\Program Files\Chatterino\chatterino.exe"
-	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
-	Run "C:\Program Files (x86)\foobar2000\foobar2000.exe"
-	Run "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe"
-	Run "C:\Users\Tom\AppData\Local\Programs\streamlabels\StreamLabels.exe"
-	Run "C:\Program Files\ahk\Streamlabs Chatbot.lnk"
-	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
-	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
-	WinMove 4480, 432, 1080, 797, "ahk_exe Discord.exe"  ;moves into position
-	 ;required for brothers queue program for automatic mii wii playback
-if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
-	WinActivate
-	sleep 2000
-		coordmode "pixel", "Window"
-		coordmode "mouse", "Window"
-		MouseMove 1128, 130 ;moves mouse to click the start button
-		click
-sleep 1000
-	Run "C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
-		if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
-			WinActivate
-		else
-			WinWaitActive "ahk_exe ApplicationDj.exe"
-sleep 2000
-	SendInput "y{enter}"
-	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe" ;try to run it again since apparently running it once sometimes isn't enough
-}
-
-F13::
-{
-Run "C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe" ;runs the queue program incase it opened too late
-if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
-			WinActivate
-		else
-			WinWaitActive "ahk_exe ApplicationDj.exe"
-sleep 1000 ;waits since it's not responsive to input for a second even after it has opened
-SendInput "y{enter}"
-}
-
+if not WinExist("ahk_exe Adobe Premiere Pro.exe")
 F17:: ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
 Run, C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe
-Return
-
-F19:: ;this script goes through and closes everything I use for stream
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-	MouseMove, 878, 14
-	WinActivate, ahk_exe Streamlabs Chatbot.exe
-	WinClose, ahk_exe foobar2000.exe
-	WinClose, All Moons UPDATED v.1.3.0
-	WinClose, Twitch
-	WinClose, ahk_exe Docker Desktop.exe
-;WinClose, ahk_exe LiveSplit.exe ;don't include, just incase of gold/pbs
-;WinClose, LiveSplit ;don't include, just incase of gold/pbs
-	WinClose, ahk_exe chrome.exe
-	WinClose, ahk_exe obs64.exe
-	WinClose, ahk_exe StreamLabels.exe
-	WinClose, ahk_exe chatterino.exe
-	WinClose, ahk_exe LioranBoard Receiver.exe
-	WinClose, ahk_exe ApplicationDj.exe
-;WinKill, Streamlabs Chatbot
-Return
-
-F16:: ;opens streamelements obs and swaps to botshi profile
-	Run, C:\Program Files\ahk\BOTSHI.lnk ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
-	;Run, C:\Program Files\ahk\obs64.lnk
-		WinWait ahk_exe obs64.exe ;waits until obs is open then brings it into focus. obs live fucked up their integration so you have to physically click on obs live before you can input alt commands. Thanks obs live
-		sleep 3000 ;waits a little bit once obs has opened so it doesn't crash
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 457, 928
-	SendInput, {Click}, !p ;I have to physically click on streamelements obs before it will accept any inputs, I have no idea why, this didn't happen originally but started happening in obs 27
-	sleep 200 ;either these sleeps are necessary, or every SendInput needs to be on a separate line, obs can't take inputs that fast and breaks
-	SendInput, {DOWN 6}
-	sleep 200
-	SendInput, {ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
 Return
 
 #IfWinExist ahk_exe obs64.exe
@@ -253,7 +110,7 @@ Return
 Return
 
 /*
-;currently replaced by the F11 premiere hotkey
+;currently replaced by the push to audition streamdeck script
 ;=========================================================
 ;		Audition
 ;=========================================================
@@ -307,56 +164,9 @@ Return
 ;===========================================================================================================================================================================
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
-SetKeyDelay, 0 ;this is just here incase I add some sends in the future
-F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised.
-; If there are multiple audio tracks and you only want one, alt click it individually first.
-/*
-using this caused problems with premieres selections
-SendInput, !{Click} ;alt clicks the audio track to just select it and not the whole track
-sleep 100 ;ahk is too fast
-SetKeyDelay, 0
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-MouseMove, xposP, 513
-*/
-	SendInput, {Click Right}
-	sleep 200
-	SendInput, {Down 8} ;menus down to send to adobe audition
-	sleep 200
-	SendInput, {Enter}
-		if WinExist("ahk_exe Adobe Audition.exe") ;waits until audition opens
-			WinActivate
-		else
-			WinWaitActive, ahk_exe Adobe Audition.exe
-	WinMaximize, ahk_exe Adobe Audition.exe ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
-	sleep 4000 ;audition is slow asf to load
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 1192, 632 ;moves the mouse to the middle of the screen
-	SendInput, {click} ;clicks in the middle of the screen to ensure the current audio is actually selected, audition is just jank as hell and it's easier to just add this step than to deal with it not working sometimes
-	sleep 1000
-	MouseMove, 301, 373 ;moves the mouse to the preset selector
-	SendInput, {Click}l{DOWN 3}{ENTER} ;menus to the limit preset I have
-	sleep, 100
-	MouseMove, 80, 714
-	SendInput, {Click}
-	sleep, 2200
-	SendInput, !rnn{ENTER} ;menus to the normalise preset in the alt menu
-	sleep, 2200
-	MouseMove, 1192, 632 ;moves back to the middle of the screen and clicks
-	SendInput, {click}
-	SendInput, ^s ;saves so the changes translate over to premiere
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-	WinMinimize, ahk_exe Adobe Audition.exe ;minimises audition and reactivates premiere
-	WinActivate, ahk_exe Adobe Premiere Pro.exe
-Return
+;There use to be a lot of scripts about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
+;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
+;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
 ;===========================================================================================================================================================================
 ;
@@ -371,7 +181,7 @@ BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 227, 1101
+	MouseMove, 227, 1101 ;move to the "scale" value
 	sleep 100
 	SendInput, {Click Down}
 GetKeyState, stateFirstCheck, F1, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -403,7 +213,7 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 226, 1079
+	MouseMove, 226, 1079 ;move to the "x" value
 	sleep 100
 	SendInput, {Click Down}
 GetKeyState, stateFirstCheck, F2, P ;gets the state of the f2 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -435,7 +245,7 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 275, 1080
+	MouseMove, 275, 1080 ;move to the "y" value
 	sleep 100
 	SendInput, {Click Down}
 GetKeyState, stateFirstCheck, F3, P ;gets the state of the f3 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -467,12 +277,12 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 ;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
 BlockInput, On
-	Click 142 1059
+	Click 142 1059 ;move to the "motion" tab
 	sleep 100
 GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 	if stateFirstCheck = U ;this function just does what I describe above
 		{
-			MouseMove, 352, 1076
+			MouseMove, 352, 1076 ;move to the reset arrow for position
 			;MsgBox, you've moved to the position
 			sleep 50
 			Send, {click left}
@@ -481,8 +291,8 @@ GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time n
 			MouseMove, %xposP%, %yposP%
 			return
 		}
-else					;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract
-	MouseMove, 2300, 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
+else					;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
+	MouseMove, 2300, 238 ;move to the preview window
 	SendInput, {Click Down}
 blockinput, MouseMoveOff
 BlockInput, off
@@ -500,7 +310,7 @@ BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 219, 1165
+	MouseMove, 219, 1165 ;move to the "rotation" value
 	sleep 100
 	SendInput, {Click Down}
 GetKeyState, stateFirstCheck, F5, P ;gets the state of the f5 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -557,7 +367,7 @@ BlockInput, On
 	MouseGetPos, xposP, yposP
 	click, 214, 1016
 	SendInput, {WheelUp 30}
-	MouseMove, 122,1060
+	MouseMove, 122,1060 ;location for "motion"
 	SendInput, {Click}
 	SendInput, {Tab}2880{Tab}-538{Tab}300
 	SendInput, {Enter}
@@ -575,7 +385,7 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 MouseGetPos, xposP, yposP
-	MouseMove, 359, 1063
+	MouseMove, 359, 1063 ;location for the reset arrow
 	;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 	click
 MouseMove, %xposP%, %yposP%
@@ -615,9 +425,9 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
 	sleep 100
-	MouseMove, 40, 68,, R
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
@@ -637,9 +447,9 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
 		Sleep 100
-	MouseMove, 40, 68,, R
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
@@ -659,9 +469,9 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
 		sleep 100
-	MouseMove, 40, 68,, R
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
@@ -681,9 +491,9 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
 		sleep 100
-	MouseMove, 40, 68,, R
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
@@ -703,65 +513,18 @@ BlockInput, On
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
-	MouseMove, 205, 1039
+	MouseMove, 205, 1039 ;move to the top of the effects panel to allow WheelUp to work
 	sleep 100
 	SendInput, {WheelUp 10}
-	MouseMove, 31, 1080
+	MouseMove, 31, 1080 ;hover over the hide/show eye for the default text created on a new text layer
 	sleep 500 ;apparently if you don't give premiere half a second before trying to hide a text layer, it just doesn't click?? or it's ahk??
 	Click, Left
 	sleep 100
-	MouseMove, 3354, 259
-	MouseMove, 40, 68,, R
+	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
+	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
 	SendInput, {Click Down}
 MouseMove, %xposP%, %yposP%
 	SendInput, {Click Up}
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-;===========================================================================================================================================================================
-;
-;		Scale Adjustments
-;
-;===========================================================================================================================================================================
-^1:: ;makes the scale of current selected clip 100
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 237,1102
-	SendInput, {CLICK}100{ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-^2:: ;makes the scale of current selected clip 200
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 237,1102
-	SendInput, {CLICK}200{ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-^3:: ;makes the scale of current selected clip 300
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 237,1102
-	SendInput, {CLICK}300{ENTER}
-MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
@@ -783,15 +546,6 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 	KeyWait, Xbutton2
 	SendInput, {LButton Up}{v} ;set select tool to v
 Return
-;=========================================================
-;		SPEED MACROS		;Must set ctrl + d to open the speed menu
-;=========================================================
-^+1::SendInput, ^d20{ENTER} ;Sets speed(s) to 20(or applicable number)
-^+2::SendInput, ^d25{ENTER}
-^+3::SendInput, ^d50{ENTER}
-^4::SendInput, ^d75{ENTER}
-^5::SendInput, ^d100{ENTER}
-^6::SendInput, ^d200{ENTER}
 
 
 
@@ -808,7 +562,6 @@ coordmode, mouse, Screen
 MouseGetPos, xposP, yposP
 MouseMove, xposP, 513,, R
 Return
-
 F6:: ;how to move mouse on one axis, relative to current position
 SetKeyDelay, 0
 coordmode, pixel, Screen
@@ -820,7 +573,6 @@ Return
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 /*
 ;Detatch a firefox tab
-
 #IfWinActive ahk_exe firefox.exe
 F14:: ;detatch a tab when it fails to do so
 SendInput, !d
@@ -851,7 +603,6 @@ Return
 
 /*
 ;open obs and change its profle
-
 ^+!o::  ;====learning how WinActivate works====
 Run, C:\Program Files\AHK\obs64.lnk
 if WinExist("ahk_exe obs64.exe")
@@ -883,7 +634,6 @@ MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
-
 ^+c:: ;moves the mouse to the timecode and clicks it
 coordmode, pixel, Window
 coordmode, mouse, Window
