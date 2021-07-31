@@ -47,9 +47,9 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 #HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
-coordmode "pixel", "Screen"
-coordmode "mouse", "Screen"
-MouseMove 5044, 340
+	coordmode "pixel", "Screen"
+	coordmode "mouse", "Screen"
+	MouseMove 5044, 340
 }
 
 ^+a::Run "C:\Program Files\ahk" ;opens my script directory
@@ -59,25 +59,25 @@ MouseMove 5044, 340
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
 !a:: ;ignore this version, comment it out and uncomment ^ for notepad++
 {
-if WinExist("ahk_exe Code.exe")
+	if WinExist("ahk_exe Code.exe")
 			WinActivate
-		else
-			Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
+	else
+		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
 }
 
 !r::
 {
-Reload
-Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
-Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
-if Result = "Yes"
-{
-	if WinExist("ahk_exe Code.exe")
-			WinActivate
-	else
-			Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-		}
+	Reload
+	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
+	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
+		if Result = "Yes"
+			{
+				if WinExist("ahk_exe Code.exe")
+						WinActivate
+				else
+					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+			}
 }
 
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
@@ -88,16 +88,16 @@ if Result = "Yes"
 
 F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
 {
-SetKeyDelay 100
-SetWinDelay 0
-	run "D:\Program Files\User\Music\pokemon.xspf"
+	SetKeyDelay 100
+	SetWinDelay 0
+		run "D:\Program Files\User\Music\pokemon.xspf"
+			if WinExist("ahk_exe vlc.exe")
+				WinActivate
+			else
+				WinWait "ahk_exe vlc.exe"
 		if WinExist("ahk_exe vlc.exe")
-			WinActivate
-		else
-			WinWait "ahk_exe vlc.exe"
-	if WinExist("ahk_exe vlc.exe")
-	WinMove 2066, 0, 501, 412
-	Send "!ad{Down 3}{enter}"
+		WinMove 2066, 0, 501, 412
+		Send "!ad{Down 3}{enter}"
 }
 
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
@@ -121,7 +121,8 @@ F17::Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboar
 #HotIf WinExist("ahk_exe obs64.exe")
 ^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream
 {
-	WinActivate "ahk_exe obs64.exe"
+	if WinExist("ahk_exe obs64.exe")
+		WinActivate 
 	sleep 1000
 	SendInput "^p" ;Main replay buffer hotkey must be set to this
 	SendInput "^+8" ;Source Record OBS Plugin replay buffer must be set to this
@@ -138,12 +139,12 @@ F17::Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboar
 #HotIf WinActive("ahk_exe Photoshop.exe")
 ^+p:: ;When highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 {
-SetKeyDelay 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
-	Send "{TAB}{RIGHT}"
-	SendInput "{Up 21}" ;makes sure you have the top most option selected
-	sleep 50 ;this probably isn't needed, but I have here for saftey just because photoshop isn't the best performance wise
-	SendInput "{DOWN 17}"
-	Send "{Enter}+{Tab}"
+	SetKeyDelay 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
+		Send "{TAB}{RIGHT}"
+		SendInput "{Up 21}" ;makes sure you have the top most option selected
+		sleep 50 ;this probably isn't needed, but I have here for saftey just because photoshop isn't the best performance wise
+		SendInput "{DOWN 17}"
+		Send "{Enter}+{Tab}"
 }
 
 Xbutton2:: ;changes the tool to the hand tool while mouse button is held
@@ -173,16 +174,16 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 F1:: ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to confirm, Simply Tap F1 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode "pixel", "Screen"
-coordmode "mouse", "Screen"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-MouseGetPos &xpos, &ypos
-	MouseMove 227, 1101 ;move to the "scale" value
-	sleep 100
-	SendInput "{Click Down}"
-		if GetKeyState("F1", "P")
+	coordmode "pixel", "Screen"
+	coordmode "mouse", "Screen"
+	BlockInput "SendAndMouse"
+	BlockInput "MouseMove"
+	BlockInput "On"
+	MouseGetPos &xpos, &ypos
+		MouseMove 227, 1101 ;move to the "scale" value
+		sleep 100
+		SendInput "{Click Down}"
+			if GetKeyState("F1", "P")
 			{
 				blockinput "MouseMoveOff"
 				BlockInput "off"
@@ -190,7 +191,7 @@ MouseGetPos &xpos, &ypos
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
 			}
-		else
+			else
 			{
 				Click "{Click Up}"
 				sleep 10
@@ -208,16 +209,16 @@ MouseGetPos &xpos, &ypos
 F2:: ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to confirm, Simply Tap F2 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode "pixel", "Screen"
-coordmode "mouse", "Screen"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-MouseGetPos &xpos, &ypos
-	MouseMove 226, 1079 ;move to the "x" value
-	sleep 100
-	SendInput "{Click Down}"
-		if GetKeyState("F2", "P")
+	coordmode "pixel", "Screen"
+	coordmode "mouse", "Screen"
+	BlockInput "SendAndMouse"
+	BlockInput "MouseMove"
+	BlockInput "On"
+	MouseGetPos &xpos, &ypos
+		MouseMove 226, 1079 ;move to the "x" value
+		sleep 100
+		SendInput "{Click Down}"
+			if GetKeyState("F2", "P")
 			{
 				blockinput "MouseMoveOff"
 				BlockInput "off"
@@ -225,7 +226,7 @@ MouseGetPos &xpos, &ypos
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
 			}
-		else
+			else
 			{
 				Click "{Click Up}"
 				sleep 10
@@ -243,104 +244,104 @@ MouseGetPos &xpos, &ypos
 F3:: ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to confirm, Simply Tap F3 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode "pixel", "Screen"
-coordmode "mouse", "Screen"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-MouseGetPos &xpos, &ypos
+	coordmode "pixel", "Screen"
+	coordmode "mouse", "Screen"
+	BlockInput "SendAndMouse"
+	BlockInput "MouseMove"
+	BlockInput "On"
+	MouseGetPos &xpos, &ypos
 	MouseMove 275, 1080 ;move to the "y" value
 	sleep 100
 	SendInput "{Click Down}"
 		if GetKeyState("F3", "P")
-			{
-				blockinput "MouseMoveOff"
-				BlockInput "off"
-				KeyWait "F3"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
+		{
+			blockinput "MouseMoveOff"
+			BlockInput "off"
+			KeyWait "F3"
+			SendInput "{Click Up}"
+			MouseMove %&xpos%, %&ypos%
+		}
 		else
-			{
-				Click "{Click Up}"
-				sleep 10
-				Send "540"
-				;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-				sleep 50
-				send "{enter}"
-				MouseMove %&xpos%, %&ypos%
-				blockinput "MouseMoveOff"
-				BlockInput "off"
-			}
+		{
+			Click "{Click Up}"
+			sleep 10
+			Send "540"
+			;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+			sleep 50
+			send "{enter}"
+			MouseMove %&xpos%, %&ypos%
+			blockinput "MouseMoveOff"
+			BlockInput "off"
+		}
 }
 
 F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Simply Tap F4 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode "pixel", "Screen"
-coordmode "mouse", "Screen"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-MouseGetPos &xpos, &ypos
-MouseMove 142, 1059
+	coordmode "pixel", "Screen"
+	coordmode "mouse", "Screen"
+	BlockInput "SendAndMouse"
+	BlockInput "MouseMove"
+	BlockInput "On"
+	MouseGetPos &xpos, &ypos
+	MouseMove 142, 1059
 	sleep 100
 		if GetKeyState("F4", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-			{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable move to the preview window
-				Click ;move to the "motion" tab
-				MouseMove 2300, 238 ;move to the preview window
-				SendInput "{Click Down}"
-				blockinput "MouseMoveOff"
-				BlockInput "off"
-				KeyWait "F4"
-				SendInput "{Click Up}"
-				;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
-			}
+		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable move to the preview window
+			Click ;move to the "motion" tab
+			MouseMove 2300, 238 ;move to the preview window
+			SendInput "{Click Down}"
+			blockinput "MouseMoveOff"
+			BlockInput "off"
+			KeyWait "F4"
+			SendInput "{Click Up}"
+			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
+		}
 		else
-			{
-				MouseMove 352, 1076
-				Click
-				sleep 50
-				blockinput "MouseMoveOff"
-				BlockInput "off"
-				MouseMove %&xpos%, %&ypos%
-			}
+		{
+			MouseMove 352, 1076
+			Click
+			sleep 50
+			blockinput "MouseMoveOff"
+			BlockInput "off"
+			MouseMove %&xpos%, %&ypos%
+		}
 }
 
 F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode "pixel", "Screen"
-coordmode "mouse", "Screen"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-MouseGetPos &xpos, &ypos
+	coordmode "pixel", "Screen"
+	coordmode "mouse", "Screen"
+	BlockInput "SendAndMouse"
+	BlockInput "MouseMove"
+	BlockInput "On"
+	MouseGetPos &xpos, &ypos
 	MouseMove 219, 1165 ;move to the "rotation" value
 	sleep 100
 	SendInput "{Click Down}"
 		if GetKeyState("F5", "P")
-			{
-				blockinput "MouseMoveOff"
-				BlockInput "off"
-				KeyWait "F5"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
+		{
+			blockinput "MouseMoveOff"
+			BlockInput "off"
+			KeyWait "F5"
+			SendInput "{Click Up}"
+			MouseMove %&xpos%, %&ypos%
+		}
 		else
-			{
-				Click "{Click Up}"
-				sleep 10
-				Send "0"
-				;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-				sleep 50
-				send "{enter}"
-				MouseMove %&xpos%, %&ypos%
-				blockinput "MouseMoveOff"
-				BlockInput "off"
-			}
+		{
+			Click "{Click Up}"
+			sleep 10
+			Send "0"
+			;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+			sleep 50
+			send "{enter}"
+			MouseMove %&xpos%, %&ypos%
+			blockinput "MouseMoveOff"
+			BlockInput "off"
+		}
 }
 
 ;===========================================================================================================================================================================
@@ -350,14 +351,14 @@ MouseGetPos &xpos, &ypos
 ;===========================================================================================================================================================================
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 {
-		SendInput "^+9"
-		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 	coordmode "pixel", "Window"
 	coordmode "mouse", "Window"
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
 	MouseGetPos &xpos, &ypos
+		SendInput "^+9"
+		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 		;Send ^+8 ;highlight the effect control panel
 		;Send ^+8 ;again because adobe is dumb and sometimes doesn't highlight if you're fullscreen somewhere
 		click "214, 1016"
@@ -372,14 +373,14 @@ Numpad7:: ;This script moves the mouse to a pixel position to highlight the "mot
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 {
-		SendInput "^+9"
-		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 	coordmode "pixel", "Window"
 	coordmode "mouse", "Window"
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
 	MouseGetPos &xpos, &ypos
+		SendInput "^+9"
+		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 		click 214, 1016
 		SendInput "{WheelUp 30}"
 		MouseMove 122,1060 ;location for "motion"
@@ -393,14 +394,14 @@ Numpad8:: ;This script moves the mouse to a pixel position to highlight the "mot
 
 Numpad9:: ;This script moves the mouse to a pixel position to reset the "motion" effects
 {
-		SendInput "^+9"
-		SendInput "{F12}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 	coordmode "pixel", "Window"
 	coordmode "mouse", "Window"
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
 	MouseGetPos &xpos, &ypos
+		SendInput "^+9"
+		SendInput "{F12}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 		MouseMove 359, 1063 ;location for the reset arrow
 		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 		click
@@ -423,19 +424,19 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-			sleep 60
-		SendInput "^a{DEL}"
-		SendInput "gaussian blur 20" ;create a preset of blur effect with this name, must be in a folder as well
 	coordmode "pixel", "Screen"
 	coordmode "mouse", "Screen"
 	MouseGetPos &xpos, &ypos
+		SendInput "^+7"
+		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+		sleep 60
+		SendInput "^a{DEL}"
+		SendInput "gaussian blur 20" ;create a preset of blur effect with this name, must be in a folder as well
 		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
 		sleep 100
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%
+		MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
 	BlockInput "off"
@@ -446,19 +447,19 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-			sleep 60
-		SendInput "^a{DEL}"
-		SendInput "parametric" ;create a preset of parametric eq effect with this name, must be in a folder as well
 	coordmode "pixel", "Screen"
 	coordmode "mouse", "Screen"
 	MouseGetPos &xpos, &ypos
+		SendInput "^+7"
+		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+		sleep 60
+		SendInput "^a{DEL}"
+		SendInput "parametric" ;create a preset of parametric eq effect with this name, must be in a folder as well
 		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
 		sleep 100
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%
+		MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
 	BlockInput "off"
@@ -469,19 +470,19 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-			sleep 60
-		SendInput "^a{DEL}"
-		SendInput "hflip" ;create a preset of horizontal flip effect with this name, must be in a folder as well
 	coordmode "pixel", "Screen"
 	coordmode "mouse", "Screen"
 	MouseGetPos &xpos, &ypos
+		SendInput "^+7"
+		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+		sleep 60
+		SendInput "^a{DEL}"
+		SendInput "hflip" ;create a preset of horizontal flip effect with this name, must be in a folder as well
 		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
 		sleep 100
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%
+		MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
 	BlockInput "off"
@@ -492,19 +493,19 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-			sleep 60
-		SendInput "^a{DEL}"
-		SendInput "croptom" ;create a preset of crop effect with this name, must be in a folder as well
 	coordmode "pixel", "Screen"
 	coordmode "mouse", "Screen"
 	MouseGetPos &xpos, &ypos
+		SendInput "^+7"
+		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+		sleep 60
+		SendInput "^a{DEL}"
+		SendInput "croptom" ;create a preset of crop effect with this name, must be in a folder as well
 		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
 		sleep 100
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%
+		MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
 	BlockInput "off"
@@ -515,14 +516,14 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-			sleep 60
-		SendInput "^a{DEL}"
-		SendInput "loremipsum" ;create loremipsum preset with this name, must be in a folder as well
 	coordmode "pixel", "Screen"
 	coordmode "mouse", "Screen"
 	MouseGetPos &xpos, &ypos
+		SendInput "^+7"
+		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+		sleep 60
+		SendInput "^a{DEL}"
+		SendInput "loremipsum" ;create loremipsum preset with this name, must be in a folder as well
 		MouseMove 205, 1039 ;move to the top of the effects panel to allow WheelUp to work
 		sleep 100
 		SendInput "{WheelUp 10}"
@@ -533,7 +534,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%
+		MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
 	BlockInput "off"
