@@ -6,7 +6,7 @@ SetDefaultMouseSpeed 0
 TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 
 ;\\CURRENT SCRIPT VERSION
-;\\v2.1
+;\\v2.1.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.1
@@ -49,7 +49,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 {
 	coordmode "pixel", "Screen"
 	coordmode "mouse", "Screen"
-	MouseMove 5044, 340
+		MouseMove 5044, 340
 }
 
 ^+a::Run "C:\Program Files\ahk" ;opens my script directory
@@ -168,7 +168,6 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 
 preset(item)
 {
-	
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
@@ -194,9 +193,9 @@ num()
 {
 	coordmode "pixel", "Window"
 	coordmode "mouse", "Window"
-	;BlockInput "SendAndMouse"
-	;BlockInput "MouseMove"
-	;BlockInput "On"
+	BlockInput "SendAndMouse"
+	BlockInput "MouseMove"
+	BlockInput "On"
 	MouseGetPos &xpos, &ypos
 		SendInput "^+9"
 		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
@@ -434,10 +433,10 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 ;		Drag and Drop Effect Presets
 ;
 ;===========================================================================================================================================================================
-!g::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-!p::preset("parametric") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-!h::preset("hflip") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-!c::preset("croptom") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+!g::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
+!p::preset("parametric") 
+!h::preset("hflip") 
+!c::preset("croptom") 
 
 !t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 {
@@ -475,10 +474,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 ;===========================================================================================================================================================================
 WheelRight::+Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
-;F14::^+w ;Set mouse button to always spit out f14, then set ctrl shift w to "Nudge Clip Selection up"
-
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-
 Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 {
 	click "middle"
