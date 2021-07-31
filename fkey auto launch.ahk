@@ -1,5 +1,6 @@
 ﻿;https://www.youtube.com/watch?v=OqyQABySV8k
 #SingleInstance Force
+TraySetIcon("C:\Program Files\ahk\Icons\Flaunch.png")
 HotIfWinActive
 F1::
 {

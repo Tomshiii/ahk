@@ -1,7 +1,7 @@
 ﻿#SingleInstance force ; only 1 instance of this script may run at a time.
 InstallMouseHook
 InstallKeybdHook
-
+TraySetIcon("C:\Program Files\ahk\Icons\right.png")
 CoordMode "Mouse", "screen"
 CoordMode "Pixel", "screen"
 
