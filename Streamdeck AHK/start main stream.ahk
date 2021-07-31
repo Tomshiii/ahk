@@ -57,6 +57,16 @@ WinActivate
 			WinMove -6, 0, 1497, 886
 	WinWait("All Moons UPDATED v.1.3.0", , 10) ;WinMove 1218, 658, 1347, 747,, "All Moons UPDATED v.1.3.0"  ;moves browser tabs into position for stream
 		WinMove 1218, 658, 1347, 747
+	if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
+		WinActivate
+	else
+		WinWait("ahk_exe Docker Desktop.exe")
+	sleep 2000
+		coordmode "pixel", "Window"
+		coordmode "mouse", "Window"
+		MouseMove 1128, 130 ;moves mouse to click the start button
+		click ;required for brothers queue program for automatic mii wii playback
+sleep 1000
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run "C:\Program Files\Chatterino\chatterino.exe"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
@@ -66,22 +76,12 @@ WinActivate
 	Run "C:\Program Files\ahk\Streamlabs Chatbot.lnk"
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
-	WinMove 4480, 432, 1080, 797, "ahk_exe Discord.exe"  ;moves into position
-	 ;required for brothers queue program for automatic mii wii playback
-if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
-	WinActivate
-	sleep 2000
-		coordmode "pixel", "Window"
-		coordmode "mouse", "Window"
-		MouseMove 1128, 130 ;moves mouse to click the start button
-		click
-sleep 1000
+	if WinExist("ahk_exe Discord.exe")
+		WinMove 4480, 432, 1080, 797  ;moves into position	 
 	Run "C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
 		if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
 			WinActivate
-		else
-			WinWaitActive "ahk_exe ApplicationDj.exe"
-sleep 2000
+	sleep 2000
 	SendInput "y{enter}"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe" ;try to run it again since apparently running it once sometimes isn't enough
 }
