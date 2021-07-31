@@ -16,8 +16,8 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 ; 														THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
 ;				 											IT WILL NOT RUN IN v1.1
 ;
-;						Everything in this script is functional within v2.0, I am only having issues with WinMove while using "WinText" 
-;							to grab windows, I think it's a bug, so hopefully by the time 2.0 is final, I'll be ready to swap over													
+;						Everything in this script is functional within v2.0, I am only having issues with WinMove while using "WinText"
+;							to grab windows, I think it's a bug, so hopefully by the time 2.0 is final, I'll be ready to swap over
 ;																	\\\\
 ;									I have since found another way to use WinMove that is funcitonal within ahk v2.0
 ;														so everything is now functional
@@ -80,10 +80,10 @@ if Result = "Yes"
 		}
 }
 
-^+d::
+^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 {
 	if WinExist("ahk_exe Discord.exe")
-	WinMove 4480, -260, 1080, 1488 ;Make discord bigger so I can actually read stuff when not streaming
+	WinMove 4480, -260, 1080, 1488
 }
 
 F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
@@ -96,7 +96,7 @@ SetWinDelay 0
 		else
 			WinWait "ahk_exe vlc.exe"
 	if WinExist("ahk_exe vlc.exe")
-	WinMove 2066, 0, 501, 412 ;isn't working atm??
+	WinMove 2066, 0, 501, 412
 	Send "!ad{Down 3}{enter}"
 }
 
@@ -116,10 +116,7 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 ;
 ;===========================================================================================================================================================================
 #HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
-F17:: ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
-{
-Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe"
-}
+F17::Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
 
 #HotIf WinExist("ahk_exe obs64.exe")
 ^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream
@@ -132,32 +129,6 @@ Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe"
 	;SendInput, ^+9 ;Source Record OBS Plugin replay buffer must be set to this
 	sleep 10
 }
-
-/*
-;currently replaced by the push to audition streamdeck script
-;=========================================================
-;		Audition
-;=========================================================
-#IfWinActive ahk_exe Adobe Audition.exe
-F13:: ;Moves mouse and applies Limit preset, then normalises to -3db
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 300, 380
-	SendInput, {Click}l{DOWN 3}{ENTER}
-	sleep, 5
-	MouseMove, 92, 717
-	SendInput, {Click}
-	sleep, 2200
-	SendInput, !rnn{ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-*/
 
 ;===========================================================================================================================================================================
 ;
@@ -230,7 +201,7 @@ MouseGetPos &xpos, &ypos
 				send "{enter}"
 				MouseMove %&xpos%, %&ypos%
 				blockinput "MouseMoveOff"
-				BlockInput "off" 
+				BlockInput "off"
 			}
 }
 
@@ -265,7 +236,7 @@ MouseGetPos &xpos, &ypos
 				send "{enter}"
 				MouseMove %&xpos%, %&ypos%
 				blockinput "MouseMoveOff"
-				BlockInput "off" 
+				BlockInput "off"
 			}
 }
 
@@ -300,7 +271,7 @@ MouseGetPos &xpos, &ypos
 				send "{enter}"
 				MouseMove %&xpos%, %&ypos%
 				blockinput "MouseMoveOff"
-				BlockInput "off" 
+				BlockInput "off"
 			}
 }
 
@@ -368,7 +339,7 @@ MouseGetPos &xpos, &ypos
 				send "{enter}"
 				MouseMove %&xpos%, %&ypos%
 				blockinput "MouseMoveOff"
-				BlockInput "off" 
+				BlockInput "off"
 			}
 }
 
@@ -396,7 +367,7 @@ Numpad7:: ;This script moves the mouse to a pixel position to highlight the "mot
 		SendInput "{Tab}1912{Tab}0{Tab}200{ENTER}"
 	MouseMove %&xpos%, %&ypos%
 	blockinput "MouseMoveOff"
-	BlockInput "off" 
+	BlockInput "off"
 }
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
@@ -467,7 +438,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
-	BlockInput "off" 
+	BlockInput "off"
 }
 
 !p:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
@@ -490,7 +461,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
-	BlockInput "off" 
+	BlockInput "off"
 }
 
 !h:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
@@ -513,7 +484,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
-	BlockInput "off" 
+	BlockInput "off"
 }
 
 !c:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
@@ -536,7 +507,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
-	BlockInput "off" 
+	BlockInput "off"
 }
 
 !t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
@@ -565,7 +536,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
 	blockinput "MouseMoveOff"
-	BlockInput "off" 
+	BlockInput "off"
 }
 
 ;===========================================================================================================================================================================
@@ -683,6 +654,32 @@ SetKeyDelay, 0
 	MouseMove, 79,93
 	SendInput, {Click}
 	SendInput, ^c
+blockinput, MouseMoveOff
+BlockInput, off
+Return
+*/
+
+/*
+;currently replaced by the push to audition streamdeck script
+;=========================================================
+;		Audition
+;=========================================================
+#IfWinActive ahk_exe Adobe Audition.exe
+F13:: ;Moves mouse and applies Limit preset, then normalises to -3db
+coordmode, pixel, Window
+coordmode, mouse, Window
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+MouseGetPos, xposP, yposP
+	MouseMove, 300, 380
+	SendInput, {Click}l{DOWN 3}{ENTER}
+	sleep, 5
+	MouseMove, 92, 717
+	SendInput, {Click}
+	sleep, 2200
+	SendInput, !rnn{ENTER}
+MouseMove, %xposP%, %yposP%
 blockinput, MouseMoveOff
 BlockInput, off
 Return
