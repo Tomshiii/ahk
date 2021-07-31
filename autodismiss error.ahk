@@ -6,11 +6,11 @@ A_MaxHotkeysPerInterval := 2000
 ; "This action will delete existing keyframes. Do you want to continue?"
 ;Well, now you can auto-dismiss it. That's not as good as WIPING IT FROM THE FACE OF THE EARTH FOREVER, but it's at least a little better.
 ;If you know how to hack it so that there is effectively a "don't ask again" checkbox functionality... let me know.
-
-DetectHiddenText "On"
+;#HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
+DetectHiddenText "1"
 
 lol:
-WinWait "Warning", "ahk_exe Adobe Premiere Pro.exe"
-sendinput "{enter}"
+if WinWait("Warning ahk_exe Adobe Premiere Pro.exe")
+    sendinput "{enter}"
 sleep 100
 goto lol
