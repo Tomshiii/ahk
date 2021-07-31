@@ -11,6 +11,17 @@ SetDefaultMouseSpeed 0
 ;IfExist "%I_Icon%"
 ;	Menu Tray Icon "%I_Icon%"   ;Changes menu tray icon
 TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
+
+;\\CURRENT SCRIPT VERSION
+;\\v2.0
+
+;\\CURRENT RELEASE VERSION
+;\\v1.1
+; ==================================================================================================
+;
+; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
+;				 				IT WILL NOT RUN IN v1.1
+;
 ; ==================================================================================================
 ;
 ; This script was created by Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
