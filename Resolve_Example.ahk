@@ -15,7 +15,7 @@ IfExist, %I_Icon%
 ;\\v1.0
 
 ;\\CURRENT RELEASE VERSION
-;\\v1.0
+;\\v1.1
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v1.1 OF AUTOHOTKEY
