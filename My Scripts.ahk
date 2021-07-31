@@ -166,6 +166,46 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
+preset(item)
+{
+	
+	BlockInput "SendAndMouse"
+	BlockInput "MouseMove"
+	BlockInput "On"
+	coordmode "pixel", "Screen"
+	coordmode "mouse", "Screen"
+	MouseGetPos &xpos, &ypos
+		SendInput "^+7"
+		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+		sleep 60
+		SendInput "^a{DEL}"
+		SendInput %&item% ;create a preset of blur effect with this name, must be in a folder as well
+		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
+		sleep 100
+		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
+		SendInput "{Click Down}"
+		MouseMove %&xpos%, %&ypos%
+		SendInput "{Click Up}"
+	blockinput "MouseMoveOff"
+	BlockInput "off"
+}
+
+num()
+{
+	coordmode "pixel", "Window"
+	coordmode "mouse", "Window"
+	;BlockInput "SendAndMouse"
+	;BlockInput "MouseMove"
+	;BlockInput "On"
+	MouseGetPos &xpos, &ypos
+		SendInput "^+9"
+		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+		click 214, 1016
+		SendInput "{WheelUp 30}"
+		MouseMove 122,1060 ;location for "motion"
+		SendInput "{Click}"
+		MouseMove %&xpos%, %&ypos%
+}
 ;===========================================================================================================================================================================
 ;
 ;		hold and drag (or click)
@@ -351,43 +391,18 @@ F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to
 ;===========================================================================================================================================================================
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 {
-	coordmode "pixel", "Window"
-	coordmode "mouse", "Window"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	MouseGetPos &xpos, &ypos
-		SendInput "^+9"
-		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		;Send ^+8 ;highlight the effect control panel
-		;Send ^+8 ;again because adobe is dumb and sometimes doesn't highlight if you're fullscreen somewhere
-		click "214, 1016"
-		SendInput "{WheelUp 30}"
-		MouseMove 122,1060 ;location for "motion"
-		SendInput "{Click}"
-		SendInput "{Tab}1912{Tab}0{Tab}200{ENTER}"
-	MouseMove %&xpos%, %&ypos%
+	num()
+	SendInput "{Tab}1912{Tab}0{Tab}200{ENTER}"
+	SendInput "{Enter}"
 	blockinput "MouseMoveOff"
 	BlockInput "off"
 }
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 {
-	coordmode "pixel", "Window"
-	coordmode "mouse", "Window"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	MouseGetPos &xpos, &ypos
-		SendInput "^+9"
-		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		click 214, 1016
-		SendInput "{WheelUp 30}"
-		MouseMove 122,1060 ;location for "motion"
-		SendInput "{Click}"
-		SendInput "{Tab}2880{Tab}-538{Tab}300"
-		SendInput "{Enter}"
-	MouseMove %&xpos%, %&ypos%
+	num()
+	SendInput "{Tab}2880{Tab}-538{Tab}300"
+	SendInput "{Enter}"
 	blockinput "MouseMoveOff"
 	BlockInput "off"
 }
@@ -419,97 +434,10 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 ;		Drag and Drop Effect Presets
 ;
 ;===========================================================================================================================================================================
-!g:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-{
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	MouseGetPos &xpos, &ypos
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-		SendInput "^a{DEL}"
-		SendInput "gaussian blur 20" ;create a preset of blur effect with this name, must be in a folder as well
-		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
-		sleep 100
-		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
-		SendInput "{Click Down}"
-		MouseMove %&xpos%, %&ypos%
-		SendInput "{Click Up}"
-	blockinput "MouseMoveOff"
-	BlockInput "off"
-}
-
-!p:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-{
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	MouseGetPos &xpos, &ypos
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-		SendInput "^a{DEL}"
-		SendInput "parametric" ;create a preset of parametric eq effect with this name, must be in a folder as well
-		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
-		sleep 100
-		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
-		SendInput "{Click Down}"
-		MouseMove %&xpos%, %&ypos%
-		SendInput "{Click Up}"
-	blockinput "MouseMoveOff"
-	BlockInput "off"
-}
-
-!h:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-{
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	MouseGetPos &xpos, &ypos
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-		SendInput "^a{DEL}"
-		SendInput "hflip" ;create a preset of horizontal flip effect with this name, must be in a folder as well
-		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
-		sleep 100
-		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
-		SendInput "{Click Down}"
-		MouseMove %&xpos%, %&ypos%
-		SendInput "{Click Up}"
-	blockinput "MouseMoveOff"
-	BlockInput "off"
-}
-
-!c:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-{
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	MouseGetPos &xpos, &ypos
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-		SendInput "^a{DEL}"
-		SendInput "croptom" ;create a preset of crop effect with this name, must be in a folder as well
-		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
-		sleep 100
-		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
-		SendInput "{Click Down}"
-		MouseMove %&xpos%, %&ypos%
-		SendInput "{Click Up}"
-	blockinput "MouseMoveOff"
-	BlockInput "off"
-}
+!g::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+!p::preset("parametric") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+!h::preset("hflip") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+!c::preset("croptom") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 
 !t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 {
