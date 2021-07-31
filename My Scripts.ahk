@@ -27,7 +27,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 ;		Windows
 ;
 ;===========================================================================================================================================================================
-#HotIf
+#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
 coordmode "pixel", "Screen"
@@ -93,21 +93,23 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 ;		Stream
 ;
 ;===========================================================================================================================================================================
-if not WinExist("ahk_exe Adobe Premiere Pro.exe")
+#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
 F17:: ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
-Run, C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe
-Return
+{
+Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe"
+}
 
-#IfWinExist ahk_exe obs64.exe
+#HotIf WinExist("ahk_exe obs64.exe")
 ^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream
-	WinActivate ahk_exe obs64.exe
+{
+	WinActivate "ahk_exe obs64.exe"
 	sleep 1000
-	SendInput, ^p ;Main replay buffer hotkey must be set to this
-	SendInput, ^+8 ;Source Record OBS Plugin replay buffer must be set to this
+	SendInput "^p" ;Main replay buffer hotkey must be set to this
+	SendInput "^+8" ;Source Record OBS Plugin replay buffer must be set to this
 	;sleep 10
 	;SendInput, ^+9 ;Source Record OBS Plugin replay buffer must be set to this
 	sleep 10
-Return
+}
 
 /*
 ;currently replaced by the push to audition streamdeck script
@@ -140,29 +142,31 @@ Return
 ;		Photoshop
 ;
 ;===========================================================================================================================================================================
-#IfWinActive ahk_exe Photoshop.exe
+#HotIf WinActive("ahk_exe Photoshop.exe")
 ^+p:: ;When highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
-SetKeyDelay, 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
-	Send, {TAB}{RIGHT}
-	SendInput, {Up 21} ;makes sure you have the top most option selected
+{
+SetKeyDelay 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
+	Send "{TAB}{RIGHT}"
+	SendInput "{Up 21}" ;makes sure you have the top most option selected
 	sleep 50 ;this probably isn't needed, but I have here for saftey just because photoshop isn't the best performance wise
-	SendInput, {DOWN 17}
-	Send, {Enter}+{Tab}
-Return
+	SendInput "{DOWN 17}"
+	Send "{Enter}+{Tab}"
+}
 
 Xbutton2:: ;changes the tool to the hand tool while mouse button is held
-	click middle
-	SendInput, {h}{LButton Down} ;set hand tool to "h"
-	KeyWait, Xbutton2
-	SendInput, {LButton Up}{p} ;swaps to the pen tool so you can keep on rotoscoping ez
-Return
+{
+	click "middle"
+	SendInput "{h}{LButton Down}" ;set hand tool to "h"
+	KeyWait "Xbutton2"
+	SendInput "{LButton Up}{p}" ;swaps to the pen tool so you can keep on rotoscoping ez
+}
 
 ;===========================================================================================================================================================================
 ;
 ;		Premiere
 ;
 ;===========================================================================================================================================================================
-#IfWinActive ahk_exe Adobe Premiere Pro.exe
+#HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
 
 ;There use to be a lot of scripts about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
