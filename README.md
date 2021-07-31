@@ -42,10 +42,10 @@ right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to
 scripts f keys taken.xlsx | An Excel doc I use to track all the button combinations used in my scripts so I know what is/isn't available.
 
 ## Version Information:
-These scripts are all currently for v1.1 of AutoHotkey. From my testing most of them will not work in the upcoming v2.0 without heavy modification. I'm not exactly much of a coder so trying to port over a lot of functionality into said newer version is definitely leaving me scratching my head but the hope is to one day do that(?). Until then, scripts that work in [v2.0](https://github.com/Tomshiii/ahk/tree/v2.0) (with updated files) include:
-- [ ] My Scripts.ahk
+These scripts are all currently for v1.1 of AutoHotkey. From my testing most of them will not work in the upcoming v2.0 without heavy modification. I'm not exactly much of a coder so trying to port over a lot of functionality into said newer version definitely had me scratching my head but I believe I have achieved it. The scripts that work in [v2.0](https://github.com/Tomshiii/ahk/tree/v2.0) (with updated files) include:
+- [x] My Scripts.ahk
 - [x] fkey auto launch.ahk
 - [x] Resolve_Example.ahk
 - [x] Alt_menu_acceleration_disabler.ahk
-- [ ] autodismiss error.ahk
+- [x] autodismiss error.ahk
 - [x] right click premiere.ahk
