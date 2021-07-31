@@ -22,8 +22,10 @@ MouseMove, xposP, 513
 			WinActivate
 		else
 			WinWaitActive "ahk_exe Adobe Audition.exe"
-	WinMaximize "ahk_exe Adobe Audition.exe" ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
-	sleep 4000 ;audition is slow asf to load
+			sleep 4000 ;audition is slow asf to load
+	if WinExist("ahk_exe Adobe Audition.exe")		
+		WinMaximize "ahk_exe Adobe Audition.exe" ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
+		sleep 4000 ;audition is slow asf to load
 coordmode "pixel", "Screen"
 coordmode "mouse", "Screen"
 BlockInput "SendAndMouse"

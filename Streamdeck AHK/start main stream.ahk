@@ -12,14 +12,15 @@ SetWinDelay 0 ;makes windows move instantly
 	SendInput "{DOWN 7}"
 	SendInput "{ENTER}" ;Changes profile to main stream profile.
 	sleep 2000
-	WinMove 2553, -892, 1111, 1047, "ahk_exe obs64.exe" ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
+	if WinExist("ahk_exe obs64.exe")
+		WinMove 2553, -892, 1111, 1047  ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
 { ;this part of the script is just to set the source record hotkey(s) until they fix it
 		WinActivate "ahk_exe obs64.exe" ;just incase windows loses it
 		SendInput "!f"
 		sleep 100
 		SendInput "s"
 		sleep 2000
-		SendInput "{DOWN 5}""
+		SendInput "{DOWN 5}"
 		sleep 200
 		SendInput "{TAB 55}"
 		sleep 200
@@ -37,18 +38,13 @@ SetWinDelay 0 ;makes windows move instantly
 		else
 			WinWaitActive "ahk_exe firefox.exe"
 	sleep 1000 ;waits before opening the next tab or firefox derps out
-	Run Run "firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager"
-	sleep 9000 ;if both tabs don't load in, it can mess with trying to separate them
-		;{ ;if WinExist("ahk_exe firefox.exe")
-			;WinActivate
-		;else
-			;WinWaitActive, ahk_exe firefox.exe ;the following code was yoinked from taran, it's just a deeper method of calling firefox forwards since sometimes it doesn't focus
-			;WinActivatebottom ahk_exe firefox.exe
-			;WinGet, hWnd, ID, ahk_class MozillaWindowClass
-				;DllCall("SetForegroundWindow", UInt, hWnd) } ;old code, testing ;
-			WinActivate "ahk_exe firefox.exe"
+	Run "firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager"
+	sleep 9000 
+	if WinExist("ahk_exe firefox.exe")
+WinActivate
 	SetKeyDelay 100
 	Send "!d" ;opens the alt context menu to begin detatching the firefox tab
+	sleep 100
 	Send "+{TAB 3}"
 	sleep 100
 	Send "+{F10}"
@@ -57,8 +53,10 @@ SetWinDelay 0 ;makes windows move instantly
 	sleep 100
 	Send "w"
 	sleep 2000
-	WinMove -6, 0, 1497, 886,, "Twitch"  ;moves browser tabs into position for stream
-	WinMove 1218, 658, 1347, 747,, "All Moons UPDATED v.1.3.0"  ;moves browser tabs into position for stream
+	WinWait("Twitch", , 10) ;WinMove -6, 0, 1497, 886,, "Twitch"  ;moves browser tabs into position for stream
+			WinMove -6, 0, 1497, 886
+	WinWait("All Moons UPDATED v.1.3.0", , 10) ;WinMove 1218, 658, 1347, 747,, "All Moons UPDATED v.1.3.0"  ;moves browser tabs into position for stream
+		WinMove 1218, 658, 1347, 747
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run "C:\Program Files\Chatterino\chatterino.exe"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"

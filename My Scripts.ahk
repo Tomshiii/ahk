@@ -6,19 +6,21 @@ SetDefaultMouseSpeed 0
 TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 
 ;\\CURRENT SCRIPT VERSION
-;\\v2.0
+;\\v2.1
 
 ;\\CURRENT RELEASE VERSION
-;\\v1.0
+;\\v1.1
 
 ; ===========================================================================================================================================================
 ;
-; 										THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
-;				 							IT WILL NOT RUN IN v1.1
+; 														THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
+;				 											IT WILL NOT RUN IN v1.1
 ;
-;						Everything in this script is functional within v2.0, I am only having issues with WinMove while using
-;						"WinText" to grab windows, I think it's a bug, so hopefully by the time 2.0 is final, I'll be ready
-;														to swap over
+;						Everything in this script is functional within v2.0, I am only having issues with WinMove while using "WinText" 
+;							to grab windows, I think it's a bug, so hopefully by the time 2.0 is final, I'll be ready to swap over													
+;																	\\\\
+;									I have since found another way to use WinMove that is funcitonal within ahk v2.0
+;														so everything is now functional
 ; ===========================================================================================================================================================
 ;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
@@ -78,7 +80,11 @@ if Result = "Yes"
 		}
 }
 
-^+d::WinMove "ahk_exe Discord.exe",, 4480, -260, 1080, 1488 ;Make discord bigger so I can actually read stuff when not streaming
+^+d::
+{
+	if WinExist("ahk_exe Discord.exe")
+	WinMove 4480, -260, 1080, 1488 ;Make discord bigger so I can actually read stuff when not streaming
+}
 
 F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
 {
@@ -89,7 +95,8 @@ SetWinDelay 0
 			WinActivate
 		else
 			WinWait "ahk_exe vlc.exe"
-	WinMove 2066, 0, 501, 412, "ahk_exe vlc.exe"  ;isn't working atm??
+	if WinExist("ahk_exe vlc.exe")
+	WinMove 2066, 0, 501, 412 ;isn't working atm??
 	Send "!ad{Down 3}{enter}"
 }
 

@@ -1,7 +1,7 @@
 # ahk
 ## Version Information:
 This repo is to work on v2.0 functionality to my scripts. I'm not exactly much of a coder so trying to port over a lot of functionality into said newer version is definitely leaving me scratching my head but the hope is to one day do that(?). Until then, scripts that work in v2.0 include:
-- [x] My Scripts.ahk \\\ Everything except WinMove (when using WinText) is currently working
+- [x] My Scripts.ahk
 - [x] fkey auto launch.ahk
 - [x] Resolve_Example.ahk
 - [x] Alt_menu_acceleration_disabler.ahk
