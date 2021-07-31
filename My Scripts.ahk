@@ -4,9 +4,10 @@ SetNumLockState "AlwaysOn" ;sets numlock to always on
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still use caps lock for macros)
 SetDefaultMouseSpeed 0
 TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
+#Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION
-;\\v2.1.1
+;\\v2.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.1
@@ -166,45 +167,7 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
-preset(item)
-{
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	MouseGetPos &xpos, &ypos
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-		SendInput "^a{DEL}"
-		SendInput %&item% ;create a preset of blur effect with this name, must be in a folder as well
-		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
-		sleep 100
-		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
-		SendInput "{Click Down}"
-		MouseMove %&xpos%, %&ypos%
-		SendInput "{Click Up}"
-	blockinput "MouseMoveOff"
-	BlockInput "off"
-}
-
-num()
-{
-	coordmode "pixel", "Window"
-	coordmode "mouse", "Window"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	MouseGetPos &xpos, &ypos
-		SendInput "^+9"
-		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		click 214, 1016
-		SendInput "{WheelUp 30}"
-		MouseMove 122,1060 ;location for "motion"
-		SendInput "{Click}"
-		MouseMove %&xpos%, %&ypos%
-}
+CapsLock & z::^+!z ;\\set zoom out to ^+!z\\
 ;===========================================================================================================================================================================
 ;
 ;		hold and drag (or click)
