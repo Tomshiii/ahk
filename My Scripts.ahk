@@ -4,6 +4,21 @@ SetNumLockState "AlwaysOn" ;sets numlock to always on
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still use caps lock for macros)
 SetDefaultMouseSpeed 0
 TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
+
+;\\CURRENT SCRIPT VERSION
+;\\v2.0
+
+;\\CURRENT RELEASE VERSION
+;\\v1.0
+
+; ===========================================================================================================================================================
+;
+; 										THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
+;				 							IT WILL NOT RUN IN v1.1
+;
+;						Everything in this script is functional within v2.0, I am only having issues with WinMove while using
+;						"WinText" to grab windows, I think it's a bug, so hopefully by the time 2.0 is final, I'll be ready
+;														to swap over
 ; ===========================================================================================================================================================
 ;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
@@ -13,8 +28,8 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 ;
 ; ===========================================================================================================================================================
 
-; A chunk of the code in this script was either directly inspired by, or copied from Taran from LTT (https://github.com/TaranVH/), his videos on the subject
-; are what got me into AHK to begin with and what brought the foundation of this script to life
+; A chunk of the code in this script was either directly inspired by, or originally copied from Taran from LTT (https://github.com/TaranVH/) before I modified it to fit v2.0 of ahk,
+; his videos on the subject are what got me into AHK to begin with and what brought the foundation of the original version of this script to life
 ; I use a streamdeck to run a lot of these scripts which is why a bunch of them are bound to F13-24 but really they could be replaced with anything
 ; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
