@@ -22,7 +22,8 @@ You can watch me use some of these scripts in action while I edit away on  twitc
      - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
-3. Edit and then run any of the .ahk files to then use to your liking!
+3. Save these scripts in "C:\Program Files\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
+4. Edit and then run any of the .ahk files to then use to your liking!
    - Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
      - autodismiss error
