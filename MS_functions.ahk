@@ -2,7 +2,47 @@
 SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
-preset(item)
+;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
+;\\v2.0.1
+
+;\\CURRENT RELEASE VERSION
+;\\v1.1
+
+; =========================================================================
+;		Coordmode
+; =========================================================================
+coords()
+{
+	coordmode "pixel", "screen"
+	coordmode "mouse", "screen"
+}
+
+coordw()
+{
+	coordmode "pixel", "window"
+	coordmode "mouse", "window"
+}
+
+; =========================================================================
+;		Blockinput
+; =========================================================================
+blockOn()
+{
+	BlockInput "SendAndMouse"
+	BlockInput "MouseMove"
+	BlockInput "On"
+}
+
+blockOff()
+{
+	blockinput "MouseMoveOff"
+	BlockInput "off"
+}
+
+; =========================================================================
+;		Premiere
+; =========================================================================
+preset(item) ;this preset is for the drag and drop effect presets in premiere
 {
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
@@ -25,7 +65,7 @@ preset(item)
 	BlockInput "off"
 }
 
-num()
+num() ;this preset is to simply cut down repeated code on my numpad punch in scripts
 {
 	coordmode "pixel", "Window"
 	coordmode "mouse", "Window"

@@ -6,8 +6,8 @@ SetDefaultMouseSpeed 0
 TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
-;\\CURRENT SCRIPT VERSION
-;\\v2.2
+;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
+;\\v2.2.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.1
@@ -48,14 +48,13 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 #HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-		MouseMove 5044, 340
+	coords()
+	MouseMove 5044, 340
 }
 
 ^+a::Run "C:\Program Files\ahk" ;opens my script directory
 
-;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++ \\don't recomment using this way at all, replacing notepad kinda sucks
+;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++ \\don't recommend using this way at all, replacing notepad kinda sucks
 ;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred) \\use this way
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
 !a:: ;ignore this version, comment it out and uncomment ^ for notepad++
@@ -176,19 +175,15 @@ CapsLock & z::^+!z ;\\set zoom out to ^+!z\\
 F1:: ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to confirm, Simply Tap F1 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
+	coords()
+	blockOn()
 	MouseGetPos &xpos, &ypos
 		MouseMove 227, 1101 ;move to the "scale" value
 		sleep 100
 		SendInput "{Click Down}"
 			if GetKeyState("F1", "P")
 			{
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				blockOff()
 				KeyWait "F1"
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
@@ -203,27 +198,22 @@ F1:: ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to con
 				sleep 50
 				send "{enter}"
 				MouseMove %&xpos%, %&ypos%
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				blockOff()
 			}
 }
 
 F2:: ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to confirm, Simply Tap F2 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
+	coords()
+	blockOn()
 	MouseGetPos &xpos, &ypos
 		MouseMove 226, 1079 ;move to the "x" value
 		sleep 100
 		SendInput "{Click Down}"
 			if GetKeyState("F2", "P")
 			{
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				blockOff()
 				KeyWait "F2"
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
@@ -238,27 +228,22 @@ F2:: ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to c
 				sleep 50
 				send "{enter}"
 				MouseMove %&xpos%, %&ypos%
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				blockOff()
 			}
 }
 
 F3:: ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to confirm, Simply Tap F3 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
+	coords()
+	blockOn()
 	MouseGetPos &xpos, &ypos
 	MouseMove 275, 1080 ;move to the "y" value
 	sleep 100
 	SendInput "{Click Down}"
 		if GetKeyState("F3", "P")
 		{
-			blockinput "MouseMoveOff"
-			BlockInput "off"
+			blockOff()
 			KeyWait "F3"
 			SendInput "{Click Up}"
 			MouseMove %&xpos%, %&ypos%
@@ -273,19 +258,15 @@ F3:: ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to c
 			sleep 50
 			send "{enter}"
 			MouseMove %&xpos%, %&ypos%
-			blockinput "MouseMoveOff"
-			BlockInput "off"
+			blockOff()
 		}
 }
 
 F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Simply Tap F4 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
+	coords()
+	blockOn()
 	MouseGetPos &xpos, &ypos
 	MouseMove 142, 1059
 	sleep 100
@@ -294,8 +275,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 			Click ;move to the "motion" tab
 			MouseMove 2300, 238 ;move to the preview window
 			SendInput "{Click Down}"
-			blockinput "MouseMoveOff"
-			BlockInput "off"
+			blockOff()
 			KeyWait "F4"
 			SendInput "{Click Up}"
 			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
@@ -305,28 +285,23 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 			MouseMove 352, 1076
 			Click
 			sleep 50
-			blockinput "MouseMoveOff"
-			BlockInput "off"
 			MouseMove %&xpos%, %&ypos%
+			blockOff()
 		}
 }
 
 F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
+	coords()
+	blockOn()
 	MouseGetPos &xpos, &ypos
 	MouseMove 219, 1165 ;move to the "rotation" value
 	sleep 100
 	SendInput "{Click Down}"
 		if GetKeyState("F5", "P")
 		{
-			blockinput "MouseMoveOff"
-			BlockInput "off"
+			blockOff()
 			KeyWait "F5"
 			SendInput "{Click Up}"
 			MouseMove %&xpos%, %&ypos%
@@ -341,8 +316,7 @@ F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to
 			sleep 50
 			send "{enter}"
 			MouseMove %&xpos%, %&ypos%
-			blockinput "MouseMoveOff"
-			BlockInput "off"
+			blockOff()
 		}
 }
 
@@ -356,8 +330,7 @@ Numpad7:: ;This script moves the mouse to a pixel position to highlight the "mot
 	num()
 	SendInput "{Tab}1912{Tab}0{Tab}200{ENTER}"
 	SendInput "{Enter}"
-	blockinput "MouseMoveOff"
-	BlockInput "off"
+	blockOff()
 }
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
@@ -365,17 +338,13 @@ Numpad8:: ;This script moves the mouse to a pixel position to highlight the "mot
 	num()
 	SendInput "{Tab}2880{Tab}-538{Tab}300"
 	SendInput "{Enter}"
-	blockinput "MouseMoveOff"
-	BlockInput "off"
+	blockOff()
 }
 
 Numpad9:: ;This script moves the mouse to a pixel position to reset the "motion" effects
 {
-	coordmode "pixel", "Window"
-	coordmode "mouse", "Window"
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
+	coordw()
+	blockOn()
 	MouseGetPos &xpos, &ypos
 		SendInput "^+9"
 		SendInput "{F12}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
@@ -383,8 +352,7 @@ Numpad9:: ;This script moves the mouse to a pixel position to reset the "motion"
 		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 		click
 	MouseMove %&xpos%, %&ypos%
-	blockinput "MouseMoveOff"
-	BlockInput "off"
+	blockOff()
 }
 
 Numpad1::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}" ;REDUCE GAIN BY -2db
@@ -403,11 +371,8 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 
 !t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 {
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	coordmode "pixel", "Screen"
-	coordmode "mouse", "Screen"
+	blockOn()
+	coords()
 	MouseGetPos &xpos, &ypos
 		SendInput "^+7"
 		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
@@ -426,8 +391,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 		SendInput "{Click Down}"
 		MouseMove %&xpos%, %&ypos%
 		SendInput "{Click Up}"
-	blockinput "MouseMoveOff"
-	BlockInput "off"
+	blockOff()
 }
 
 ;===========================================================================================================================================================================

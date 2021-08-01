@@ -11,12 +11,14 @@ SetDefaultMouseSpeed 0
 ;IfExist "%I_Icon%"
 ;	Menu Tray Icon "%I_Icon%"   ;Changes menu tray icon
 TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
+#Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
-;\\CURRENT SCRIPT VERSION
-;\\v2.0
+;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
+;\\v2.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.1
+
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
@@ -93,12 +95,8 @@ WheelLeft::Up
 
 F1::
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse" ;// can't use block input as you need to drag the mouse
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn() ;// can't use block input as you need to drag the mouse
 MouseGetPos &xpos, &ypos
 	click "2196 139" ;this highlights the video tab
 	MouseMove 2329, 215 ;moves to the scale value
@@ -106,8 +104,7 @@ MouseGetPos &xpos, &ypos
 	SendInput "{Click Down}"	
 		if GetKeyState("F1", "P")
 			{
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				blockOff()
 				KeyWait "F1"
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
@@ -122,8 +119,8 @@ MouseGetPos &xpos, &ypos
 				sleep 10
 				send "{enter}"
 				click "2295, 240"
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
 			}
 }
 
@@ -169,12 +166,8 @@ BlockInput off
 F3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn()
 MouseGetPos &xpos, &ypos
 	click "2196 139" ;this highlights the video tab
 	MouseMove 2332, 239 ;moves to the x axis value
@@ -182,8 +175,7 @@ MouseGetPos &xpos, &ypos
 	SendInput "{Click Down}"
 		if GetKeyState("F3", "P")
 			{
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				blockOff()
 				KeyWait "F3"
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
@@ -198,20 +190,16 @@ MouseGetPos &xpos, &ypos
 				sleep 10
 				send "{enter}"
 				click "2295, 240"
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
 			}
 }
 
 F4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn()
 MouseGetPos &xpos, &ypos
 	click "2196, 139" ;this highlights the video tab
 	MouseMove 2457, 240 ;moves to the y axis value
@@ -219,8 +207,7 @@ MouseGetPos &xpos, &ypos
 	SendInput "{Click Down}"
 			if GetKeyState("F4", "P")
 			{
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				blockOff()
 				KeyWait "F4"
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
@@ -235,20 +222,16 @@ MouseGetPos &xpos, &ypos
 				sleep 10
 				send "{enter}"
 				click "2295, 240"
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
 			}
 }
 
 F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn()
 MouseGetPos &xpos, &ypos
 	click "2196, 139" ;this highlights the video tab
 	MouseMove 2456, 265 ;moves to the rotation value
@@ -256,8 +239,7 @@ MouseGetPos &xpos, &ypos
 	SendInput "{Click Down}"
 			if GetKeyState("F5", "P")
 			{
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				blockOff()
 				KeyWait "F5"
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
@@ -266,14 +248,14 @@ MouseGetPos &xpos, &ypos
 			{
 				SendInput "{Click Up}"
 				sleep 10
-				Send "1"
+				Send "0"
 				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
 				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 				sleep 10
 				send "{enter}"
 				click "2295, 240"
-				blockinput "MouseMoveOff"
-				BlockInput "off"
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
 			}
 }
 
@@ -282,34 +264,24 @@ MouseGetPos &xpos, &ypos
 ;=========================================================
 !h:: ;flip horizontally
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn()
 MouseGetPos &xpos, &ypos
 	click "2196, 139" ;this highlights the video tab
 	click "2301, 363"
 MouseMove %&xpos%, %&ypos%
-blockinput "MouseMoveOff"
-BlockInput "off"
+blockOff()
 }
 
 !v:: ;flip vertically
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn()
 MouseGetPos &xpos, &ypos
 	click "2196, 139" ;this highlights the video tab
 	click "2340, 367"
 MouseMove %&xpos%, %&ypos%
-blockinput "MouseMoveOff"
-BlockInput "off"
+blockOff()
 }
 
 ;=========================================================
@@ -317,53 +289,39 @@ BlockInput "off"
 ;=========================================================
 ^1:: ;makes the scale of current selected clip 100
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn()
 MouseGetPos &xpos, &ypos
 	click "2333, 218" ;clicks on video
 	SendInput "1{ENTER}" ;effectively 100%
 	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
 MouseMove %&xpos%, %&ypos%
-blockinput "MouseMoveOff"
-BlockInput "off"
+blockOff()
 }
 
 ^2:: ;makes the scale of current selected clip 100
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn()
 MouseGetPos &xpos, &ypos
 	click "2333, 218" ;clicks on video
 	SendInput "2{ENTER}" ;effectively 200%
 	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
 MouseMove %&xpos%, %&ypos%
-blockinput "MouseMoveOff"
-BlockInput "off"
+blockOff()
 }
 
 ^3:: ;makes the scale of current selected clip 100
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "MouseMove"
-BlockInput "On"
+coordw()
+blockOn()
 SetDefaultMouseSpeed 0
 MouseGetPos &xpos, &ypos
 	click "2333, 218" ;clicks on video
 	SendInput "3{ENTER}" ;effectively 300%
 	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
 MouseMove %&xpos%, %&ypos%
-blockinput "MouseMoveOff"
-BlockInput "off"
+blockOff()
 }
 
 ;===========================================================================================================================================================================
@@ -373,12 +331,8 @@ BlockInput "off"
 ;===========================================================================================================================================================================
 !g:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse" ;this script requires the "effects library" to be open on the left side of screen
-BlockInput "MouseMove"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw() ;this script requires the "effects library" to be open on the left side of screen
+blockOn()
 MouseGetPos &xpos, &ypos
 	;Click 566 735 ;clicks mag glass in the "effects library" window \\bad idea since clicking it again closes the search bar .-.
 	;SendInput gaussian
@@ -388,8 +342,7 @@ MouseGetPos &xpos, &ypos
 MouseMove %&xpos%, %&ypos%, 2
 	;sleep 500
 	SendInput "{Click Up}"
-blockinput "MouseMoveOff"
-blockinput "off"
+blockOff()
 }
 
 ;===========================================================================================================================================================================
@@ -399,17 +352,13 @@ blockinput "off"
 ;===========================================================================================================================================================================
 Xbutton1:: ;this script isn't as powerful as the premiere version, but to my knowledge resolve doesn't have a keyboard shortcut to move the playhead, so this is the best we have
 {
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput "SendAndMouse"
-BlockInput "On"
-SetDefaultMouseSpeed 0
+coordw()
+blockOn()
 MouseGetPos &xpos, &ypos
 	MouseMove %&xpos%, 827
 	SendInput "{Click Down}"
 	MouseMove %&xpos%, %&ypos%
-	blockinput "MouseMoveOff"
-	blockinput "off"
+	blockOff()
 	KeyWait "Xbutton1"
 	SendInput "{Click Up}"
 }
