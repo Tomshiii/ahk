@@ -8,12 +8,13 @@ ICON [I_Icon]                        ;Changes a compiled script's icon (.exe)
 if I_Icon <>
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%   ;Changes menu tray icon
+#include C:\Program Files\ahk\MS_functions.ahk ;includes function definitions so they don't clog up this script
 
-;\\CURRENT SCRIPT VERSION
-;\\v1.1
+;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
+;\\v1.2
 
 ;\\CURRENT RELEASE VERSION
-;\\v1.1
+;\\v1.2
 
 ; ===========================================================================================================================================================
 ;
@@ -48,8 +49,7 @@ IfExist, %I_Icon%
 ;===========================================================================================================================================================================
 #IfWinNotActive ahk_exe Adobe Premiere Pro.exe
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
-coordmode, pixel, Screen
-coordmode, mouse, Screen
+coords()
 MouseMove, 5044, 340
 return
 
@@ -121,32 +121,6 @@ Return
 	sleep 10
 Return
 
-/*
-;currently replaced by the push to audition streamdeck script
-;=========================================================
-;		Audition
-;=========================================================
-#IfWinActive ahk_exe Adobe Audition.exe
-F13:: ;Moves mouse and applies Limit preset, then normalises to -3db
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 300, 380
-	SendInput, {Click}l{DOWN 3}{ENTER}
-	sleep, 5
-	MouseMove, 92, 717
-	SendInput, {Click}
-	sleep, 2200
-	SendInput, !rnn{ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-*/
-
 ;===========================================================================================================================================================================
 ;
 ;		Photoshop
@@ -187,11 +161,8 @@ Return
 ;===========================================================================================================================================================================
 F1:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
-BlockInput, MouseMove
-BlockInput, On
+coords()
+blockOn() ;// can't use block input as you need to drag the mouse
 MouseGetPos, xposP, yposP
 	MouseMove, 227, 1101 ;move to the "scale" value
 	sleep 100
@@ -210,8 +181,7 @@ GetKeyState, stateFirstCheck, F1, P ;gets the state of the f1 key, enough time n
 			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
 			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
 		}
-blockinput, MouseMoveOff
-BlockInput, off
+blockOff()
 	KeyWait, F1
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP%
@@ -219,11 +189,8 @@ Return
 
 F2:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+coords()
+blockOn()
 MouseGetPos, xposP, yposP
 	MouseMove, 226, 1079 ;move to the "x" value
 	sleep 100
@@ -242,8 +209,7 @@ GetKeyState, stateFirstCheck, F2, P ;gets the state of the f2 key, enough time n
 			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
 			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
 		}
-blockinput, MouseMoveOff
-BlockInput, off
+blockOff()
 	KeyWait, F2
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP%
@@ -251,11 +217,8 @@ Return
 
 F3:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+coords()
+blockOn()
 MouseGetPos, xposP, yposP
 	MouseMove, 275, 1080 ;move to the "y" value
 	sleep 100
@@ -274,8 +237,7 @@ GetKeyState, stateFirstCheck, F3, P ;gets the state of the f3 key, enough time n
 			;blockinput, MouseMoveOff ;if you want to press the reset arrow, uncomment this line
 			;BlockInput, off ;if you want to press the reset arrow, uncomment this line
 		}
-blockinput, MouseMoveOff
-BlockInput, off
+blockOff()
 	KeyWait, F3
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP%
@@ -283,12 +245,9 @@ Return
 
 F4:: ;press then hold alt and drag to move position. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse
-BlockInput, MouseMove
+coords()
+blockOn()
 ;MouseGetPos, xposP, yposP ;if you wish to use the reset arrow, uncomment this line
-BlockInput, On
 	Click 142 1059 ;move to the "motion" tab
 	sleep 100
 GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
@@ -298,16 +257,14 @@ GetKeyState, stateFirstCheck, F4, P ;gets the state of the f4 key, enough time n
 			;MsgBox, you've moved to the position
 			sleep 50
 			Send, {click left}
-			blockinput, MouseMoveOff
-			BlockInput, off
+			blockOff()
 			MouseMove, %xposP%, %yposP%
 			return
 		}
 else					;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
 	MouseMove, 2300, 238 ;move to the preview window
 	SendInput, {Click Down}
-blockinput, MouseMoveOff
-BlockInput, off
+	blockOff()
 	KeyWait, F4
 	SendInput, {Click Up}
 ;MouseMove, %xposP%, %yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
@@ -316,11 +273,8 @@ Return
 
 F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-BlockInput, SendAndMouse ;// can't use block input as you need to drag the mouse
-BlockInput, MouseMove
-BlockInput, On
+coords()
+blockOn() ;// can't use block input as you need to drag the mouse
 MouseGetPos, xposP, yposP
 	MouseMove, 219, 1165 ;move to the "rotation" value
 	sleep 100
@@ -334,8 +288,7 @@ GetKeyState, stateFirstCheck, F5, P ;gets the state of the f5 key, enough time n
 			sleep 50
 			send, {enter}
 		}
-blockinput, MouseMoveOff
-BlockInput, off
+blockOff()
 	KeyWait, F5
 	SendInput, {Click Up}
 MouseMove, %xposP%, %yposP%
@@ -349,11 +302,8 @@ Return
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 	SendInput, ^+9
 	SendInput, ^{F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+coordw()
+blockOn()
 MouseGetPos, xposP, yposP
 	;Send ^+8 ;highlight the effect control panel
 	;Send ^+8 ;again because adobe is dumb and sometimes doesn't highlight if you're fullscreen somewhere
@@ -364,18 +314,14 @@ MouseGetPos, xposP, yposP
 	SendInput, {Click}
 	SendInput, {Tab}1912{Tab}0{Tab}200{ENTER}
 MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
+blockOff()
 Return
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 	SendInput, ^+9
 	SendInput, ^{F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+coordw()
+blockOn()
 	MouseGetPos, xposP, yposP
 	click, 214, 1016
 	SendInput, {WheelUp 30}
@@ -384,25 +330,20 @@ BlockInput, On
 	SendInput, {Tab}2880{Tab}-538{Tab}300
 	SendInput, {Enter}
 MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
+blockOff()
 Return
 
 Numpad9:: ;This script moves the mouse to a pixel position to reset the "motion" effects
 	SendInput, ^+9
 	SendInput, {F12} ;highlights the timeline, then changes the track colour so I know that clip has been reset back to normal
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
+coordw()
+blockOn()
 MouseGetPos, xposP, yposP
 	MouseMove, 359, 1063 ;location for the reset arrow
 	;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 	click
 MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
+blockOff()
 Return
 
 Numpad2:: ;INCREASE GAIN BY 2db == set g to open gain window
@@ -425,120 +366,33 @@ Return
 ;		Drag and Drop Effect Presets
 ;
 ;===========================================================================================================================================================================
-!g:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-	SendInput, ^+7
-	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-	SendInput, ^a{DEL}
-	SendInput, gaussian blur 20 ;create a preset of blur effect with this name, must be in a folder as well
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
-	sleep 100
-	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
-	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP%
-	SendInput, {Click Up}
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-!p:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-	SendInput, ^+7
-	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-	SendInput, ^a{DEL}
-	SendInput, parametric ;create parametric eq preset with this name, must be in a folder as well
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
-		Sleep 100
-	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
-	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP%
-	SendInput, {Click Up}
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-!h:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-	SendInput, ^+7
-	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-	SendInput, ^a{DEL}
-	SendInput, hflip ;create hflip preset with this name, must be in a folder as well
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
-		sleep 100
-	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
-	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP%
-	SendInput, {Click Up}
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-
-!c:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-	SendInput, ^+7
-	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-	SendInput, ^a{DEL}
-	SendInput, croptom ;create croptom preset with this name, must be in a folder as well
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
-		sleep 100
-	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
-	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP%
-	SendInput, {Click Up}
-blockinput, MouseMoveOff
-BlockInput, off
-Return
+!g::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+!p::preset("parametric") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+!h::preset("hflip") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
+!c::preset("croptom") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 
 !t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-	SendInput, ^+7
-	SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
+blockOn()
+	coords()
+	MouseGetPos xpos, ypos
+		SendInput, ^+7
+		SendInput, ^b ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
 		sleep 60
-	SendInput, ^a{DEL}
-	SendInput, loremipsum ;create loremipsum preset with this name, must be in a folder as well
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-	MouseMove, 205, 1039 ;move to the top of the effects panel to allow WheelUp to work
-	sleep 100
-	SendInput, {WheelUp 10}
-	MouseMove, 31, 1080 ;hover over the hide/show eye for the default text created on a new text layer
-	sleep 500 ;apparently if you don't give premiere half a second before trying to hide a text layer, it just doesn't click?? or it's ahk??
-	Click, Left
-	sleep 100
-	MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
-	MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
-	SendInput, {Click Down}
-MouseMove, %xposP%, %yposP%
-	SendInput, {Click Up}
-blockinput, MouseMoveOff
-BlockInput, off
+		SendInput, ^a{DEL}
+		SendInput, loremipsum ;create loremipsum preset with this name, must be in a folder as well
+		MouseMove, 205, 1039 ;move to the top of the effects panel to allow WheelUp to work
+		sleep 100
+		SendInput, {WheelUp 10}
+		MouseMove, 31, 1080 ;hover over the hide/show eye for the default text created on a new text layer
+		sleep 500 ;apparently if you don't give premiere half a second before trying to hide a text layer, it just doesn't click?? or it's ahk??
+		Click
+		sleep 100
+		MouseMove, 3354, 259 ;move to the magnifying glass in the effects panel
+		MouseMove, 40, 68,, R ;move down to the saved preset (must be in an additional folder)
+		SendInput, {Click Down}
+		MouseMove, %xpos%, %ypos%
+		SendInput, {Click Up}
+	blockOff()
 Return
 
 ;===========================================================================================================================================================================
