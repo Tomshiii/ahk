@@ -29,8 +29,8 @@ TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
 ; ==================================================================================================
 #HotIf ;WinNotActive("ahk_exe Resolve.exe")
 
-;^!a:: Run "C:\Program Files (x86)\Notepad++\notepad++.exe" A_ScriptFullPath ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
-;for whatever reason trying to open the scripts path doesn't... work in ahk v2.0?? not sure why that is.
+;^!a:: Run "C:\Program Files (x86)\Notepad++\notepad++.exe", A_ScriptFullPath ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
+;best way to open this script if you don't use vscode
 
 ;!a:: ;if for whatever reason you choose to use vscode instead of notepad++, use this version instead of above
 ;{
