@@ -3,10 +3,10 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.1
+;\\v2.0.2
 
 ;\\CURRENT RELEASE VERSION
-;\\v1.1
+;\\v1.2
 
 ; =========================================================================
 ;		Coordmode
@@ -55,7 +55,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 		sleep 60
 		SendInput "^a{DEL}"
 		SendInput %&item% ;create a preset of blur effect with this name, must be in a folder as well
-		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
+		MouseMove 2232, 1001 ;move to the magnifying glass in the effects panel
 		sleep 100
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"

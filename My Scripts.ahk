@@ -7,21 +7,17 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.1
+;\\v2.2.2
 
 ;\\CURRENT RELEASE VERSION
-;\\v1.1
+;\\v1.2
 
 ; ===========================================================================================================================================================
 ;
 ; 														THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
 ;				 											IT WILL NOT RUN IN v1.1
 ;
-;						Everything in this script is functional within v2.0, I am only having issues with WinMove while using "WinText"
-;							to grab windows, I think it's a bug, so hopefully by the time 2.0 is final, I'll be ready to swap over
-;																	\\\\
-;									I have since found another way to use WinMove that is funcitonal within ahk v2.0
-;														so everything is now functional
+;												Everything in this script is functional within v2.0
 ; ===========================================================================================================================================================
 ;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
@@ -374,11 +370,6 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
-		SendInput "^+7"
-		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
-		SendInput "^a{DEL}"
-		SendInput "loremipsum" ;create loremipsum preset with this name, must be in a folder as well
 		MouseMove 205, 1039 ;move to the top of the effects panel to allow WheelUp to work
 		sleep 100
 		SendInput "{WheelUp 10}"
@@ -386,12 +377,8 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 		sleep 500 ;apparently if you don't give premiere half a second before trying to hide a text layer, it just doesn't click?? or it's ahk??
 		Click
 		sleep 100
-		MouseMove 3354, 259 ;move to the magnifying glass in the effects panel
-		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
-		SendInput "{Click Down}"
-		MouseMove %&xpos%, %&ypos%
-		SendInput "{Click Up}"
-	blockOff()
+		preset("loremipsum")
+		MouseMove %&xpos%, %&ypos% ;although this line is usually in the ^preset, if you don't add it again, your curosr gets left on the text eyeball instead of back on the timeline 
 }
 
 ;===========================================================================================================================================================================

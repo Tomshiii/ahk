@@ -5,19 +5,14 @@ SetDefaultMouseSpeed 0
 #SingleInstance Force
 ; SetNumLockState, AlwaysOn ;uncomment if you want numlock to always be ON
 ; SetCapsLockState, AlwaysOff uncomment if you want capslock to always be OFF
-;I_Icon := "C:\Program Files\ahk\Icons\resolve.png" ;you'll need to change this path \\this code changes the icon for the script
-;"ICON" [I_Icon]                        ;Changes a compiled script's icon (.exe)
-;if I_Icon
-;IfExist "%I_Icon%"
-;	Menu Tray Icon "%I_Icon%"   ;Changes menu tray icon
 TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1
+;\\v2.1.1
 
 ;\\CURRENT RELEASE VERSION
-;\\v1.1
+;\\v1.2
 
 ; ==================================================================================================
 ;
@@ -34,13 +29,16 @@ TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
 ; ==================================================================================================
 #HotIf ;WinNotActive("ahk_exe Resolve.exe")
 
+;^!a:: Run "C:\Program Files (x86)\Notepad++\notepad++.exe" A_ScriptFullPath ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
+;for whatever reason trying to open the scripts path doesn't... work in ahk v2.0?? not sure why that is.
+
 ;!a:: ;if for whatever reason you choose to use vscode instead of notepad++, use this version instead of above
-;Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
-;if WinExist("ahk_exe Code.exe")
+;{
+;	if WinExist("ahk_exe Code.exe") ;opens in vscode (how I edit it)
 ;			WinActivate
-;		else
-;			WinWaitActive, ahk_exe Code.exe
-;return
+;	else
+;		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
+;}
 
 ^!r::
 {
@@ -93,7 +91,7 @@ WheelLeft::Up
 ; ///// for these scripts to work, the inspector tab must be open and scrolled to the top
 ; ///// you could add functionality to scroll up a few times if you run into that being an issue a lot
 
-F1::
+F1:: ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm
 {
 coordw()
 blockOn() ;// can't use block input as you need to drag the mouse
@@ -125,7 +123,7 @@ MouseGetPos &xpos, &ypos
 }
 
 /*
-;Not entirely sure Resolve has similar function to premiere where you can reposition a clip by draggin it around in the preview window
+;Not entirely sure Resolve has similar function to premiere where you can reposition a clip by dragging it around in the preview window \\ This code was as such, never ported to ahk v2.0 code \\
 F2:: ;press then hold alt and drag to move position. Let go of alt to confirm
 {
 coordmode "pixel", "Window"
@@ -163,8 +161,7 @@ BlockInput off
 }
 */
 
-F3:: ;press then hold alt and drag to increase/decrese x position. Let go of alt to confirm
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+F3:: ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm
 {
 coordw()
 blockOn()
@@ -195,8 +192,7 @@ MouseGetPos &xpos, &ypos
 			}
 }
 
-F4:: ;press then hold alt and drag to increase/decrese y position. Let go of alt to confirm
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+F4:: ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm
 {
 coordw()
 blockOn()
@@ -227,8 +223,7 @@ MouseGetPos &xpos, &ypos
 			}
 }
 
-F5:: ;press then hold alt and drag to increase/decrese scale. Let go of alt to confirm
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+F5:: ;press then hold F5 and drag to increase/decrese scale. Let go of F5 to confirm
 {
 coordw()
 blockOn()
@@ -339,7 +334,7 @@ MouseGetPos &xpos, &ypos
 	MouseMove 80, 1046 ;add effect as a favourite instead, makes things easier as clicking the mag glass changes depending on if it's already open
 	sleep 100
 	SendInput "{Click Down}"
-MouseMove %&xpos%, %&ypos%, 2
+	MouseMove %&xpos%, %&ypos%, 2
 	;sleep 500
 	SendInput "{Click Up}"
 blockOff()
