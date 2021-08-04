@@ -300,50 +300,30 @@ Return
 ;
 ;===========================================================================================================================================================================
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
-	SendInput, ^+9
-	SendInput, ^{F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-coordw()
-blockOn()
-MouseGetPos, xposP, yposP
-	;Send ^+8 ;highlight the effect control panel
-	;Send ^+8 ;again because adobe is dumb and sometimes doesn't highlight if you're fullscreen somewhere
-	click, 214, 1016
-	SendInput, {WheelUp 30}
-	MouseMove, 122,1060 ;location for "motion"
-	SendInput, ^+k ;shuttle stop. idk why this one is still here, but uh, leave it since it's not breaking anything
-	SendInput, {Click}
+	num()
 	SendInput, {Tab}1912{Tab}0{Tab}200{ENTER}
-MouseMove, %xposP%, %yposP%
+	SendInput, {Enter}
 blockOff()
 Return
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
-	SendInput, ^+9
-	SendInput, ^{F5} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-coordw()
-blockOn()
-	MouseGetPos, xposP, yposP
-	click, 214, 1016
-	SendInput, {WheelUp 30}
-	MouseMove, 122,1060 ;location for "motion"
-	SendInput, {Click}
+	num()
 	SendInput, {Tab}2880{Tab}-538{Tab}300
 	SendInput, {Enter}
-MouseMove, %xposP%, %yposP%
-blockOff()
+	blockOff()
 Return
 
 Numpad9:: ;This script moves the mouse to a pixel position to reset the "motion" effects
-	SendInput, ^+9
-	SendInput, {F12} ;highlights the timeline, then changes the track colour so I know that clip has been reset back to normal
-coordw()
-blockOn()
-MouseGetPos, xposP, yposP
-	MouseMove, 359, 1063 ;location for the reset arrow
-	;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
-	click
-MouseMove, %xposP%, %yposP%
-blockOff()
+	coordw()
+	blockOn()
+	MouseGetPos, xpos, ypos
+		SendInput, ^+9
+		SendInput, {F12} ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+		MouseMove 359, 1063 ;location for the reset arrow
+		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
+		click
+	MouseMove %xpos%, %ypos%
+	blockOff()
 Return
 
 Numpad2:: ;INCREASE GAIN BY 2db == set g to open gain window
