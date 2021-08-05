@@ -7,7 +7,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.2
+;\\v2.2.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.2
@@ -153,6 +153,33 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 
 ;===========================================================================================================================================================================
 ;
+;		After Effects
+;
+;===========================================================================================================================================================================
+#HotIf WinActive("ahk_exe AfterFX.exe")
+Xbutton2:: ;changes the tool to the hand tool while mouse button is held
+{
+	click "middle"
+	SendInput "{h}{LButton Down}" ;set hand tool to "h"
+	KeyWait "Xbutton2"
+	SendInput "{LButton Up}{p}" ;swaps to the pen tool so you can keep on rotoscoping ez
+}
+
+Xbutton1:: ;this script isn't as powerful as the premiere version, but to my knowledge resolve doesn't have a keyboard shortcut to move the playhead, so this is the best we have
+{
+coordw()
+blockOn()
+MouseGetPos &xpos, &ypos
+	MouseMove %&xpos%, 981
+	SendInput "{Click Down}"
+	MouseMove %&xpos%, %&ypos%
+	blockOff()
+	KeyWait "Xbutton1"
+	SendInput "{Click Up}"
+}
+
+;===========================================================================================================================================================================
+;
 ;		Premiere
 ;
 ;===========================================================================================================================================================================
@@ -163,6 +190,14 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
 CapsLock & z::^+!z ;\\set zoom out to ^+!z\\
+CapsLock & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
+{
+	coords()
+	MouseGetPos &xpos, &ypos
+	MouseMove 34, 917 ;location of the selection tool
+	click
+	MouseMove %&xpos%, %&ypos%
+}
 ;===========================================================================================================================================================================
 ;
 ;		hold and drag (or click)
