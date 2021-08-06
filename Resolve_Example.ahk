@@ -9,7 +9,9 @@ TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.1
+;\\v2.1.2
+;\\Minimum Version of "MS_Functions.ahk" Required for this script
+;\\v2.0.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.2
@@ -94,7 +96,7 @@ WheelLeft::Up
 F1:: ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm
 {
 coordw()
-blockOn() ;// can't use block input as you need to drag the mouse
+blockOn()
 MouseGetPos &xpos, &ypos
 	click "2196 139" ;this highlights the video tab
 	MouseMove 2329, 215 ;moves to the scale value
@@ -109,14 +111,7 @@ MouseGetPos &xpos, &ypos
 			}
 		else
 			{
-				SendInput "{Click Up}"
-				sleep 10
-				Send "1"
-				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-				sleep 10
-				send "{enter}"
-				click "2295, 240"
+				rfElse("1")
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
@@ -179,14 +174,7 @@ MouseGetPos &xpos, &ypos
 			}
 		else
 			{
-				SendInput "{Click Up}"
-				sleep 10
-				Send "1"
-				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-				sleep 10
-				send "{enter}"
-				click "2295, 240"
+				rfElse("1")
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
@@ -210,14 +198,7 @@ MouseGetPos &xpos, &ypos
 			}
 		else
 			{
-				SendInput "{Click Up}"
-				sleep 10
-				Send "1"
-				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-				sleep 10
-				send "{enter}"
-				click "2295, 240"
+				rfElse("1")
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
@@ -241,14 +222,7 @@ MouseGetPos &xpos, &ypos
 			}
 		else
 			{
-				SendInput "{Click Up}"
-				sleep 10
-				Send "0"
-				;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-				sleep 10
-				send "{enter}"
-				click "2295, 240"
+				rfElse("0")
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
@@ -282,42 +256,9 @@ blockOff()
 ;=========================================================
 ;		Scale Adjustments
 ;=========================================================
-^1:: ;makes the scale of current selected clip 100
-{
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-	click "2333, 218" ;clicks on video
-	SendInput "1{ENTER}" ;effectively 100%
-	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-MouseMove %&xpos%, %&ypos%
-blockOff()
-}
-
-^2:: ;makes the scale of current selected clip 100
-{
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-	click "2333, 218" ;clicks on video
-	SendInput "2{ENTER}" ;effectively 200%
-	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-MouseMove %&xpos%, %&ypos%
-blockOff()
-}
-
-^3:: ;makes the scale of current selected clip 100
-{
-coordw()
-blockOn()
-SetDefaultMouseSpeed 0
-MouseGetPos &xpos, &ypos
-	click "2333, 218" ;clicks on video
-	SendInput "3{ENTER}" ;effectively 300%
-	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-MouseMove %&xpos%, %&ypos%
-blockOff()
-}
+^1::Rscale("1") ;makes the scale of current selected clip 100
+^2::Rscale("2") ;makes the scale of current selected clip 100
+^3::Rscale("3") ;makes the scale of current selected clip 100
 
 ;===========================================================================================================================================================================
 ;
@@ -345,18 +286,11 @@ blockOff()
 ;		better timeline movement (don't use rightclick, you'll lose context menus)
 ;
 ;===========================================================================================================================================================================
-Xbutton1:: ;this script isn't as powerful as the premiere version, but to my knowledge resolve doesn't have a keyboard shortcut to move the playhead, so this is the best we have
-{
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-	MouseMove %&xpos%, 827
-	SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%
-	blockOff()
-	KeyWait "Xbutton1"
-	SendInput "{Click Up}"
-}
+XButton1::timeline("827") ;check MS_Functions.ahk for code
+
+
+
+
 
 ;=========================================================
 ;		other

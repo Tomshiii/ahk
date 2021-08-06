@@ -7,7 +7,9 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.3
+;\\v2.2.4
+;\\Minimum Version of "MS_Functions.ahk" Required for this script
+;\\v2.0.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.2
@@ -143,13 +145,7 @@ F17::Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboar
 		Send "{Enter}+{Tab}"
 }
 
-Xbutton2:: ;changes the tool to the hand tool while mouse button is held
-{
-	click "middle"
-	SendInput "{h}{LButton Down}" ;set hand tool to "h"
-	KeyWait "Xbutton2"
-	SendInput "{LButton Up}{p}" ;swaps to the pen tool so you can keep on rotoscoping ez
-}
+Xbutton2::mousedrag("p") ;changes the tool to the hand tool while mouse button is held
 
 ;===========================================================================================================================================================================
 ;
@@ -157,14 +153,10 @@ Xbutton2:: ;changes the tool to the hand tool while mouse button is held
 ;
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
-Xbutton2:: ;changes the tool to the hand tool while mouse button is held
-{
-	click "middle"
-	SendInput "{h}{LButton Down}" ;set hand tool to "h"
-	KeyWait "Xbutton2"
-	SendInput "{LButton Up}{p}" ;swaps to the pen tool so you can keep on rotoscoping ez
-}
+Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button is held
 
+timeline("981")
+/*
 Xbutton1:: ;this script isn't as powerful as the premiere version, but to my knowledge resolve doesn't have a keyboard shortcut to move the playhead, so this is the best we have
 {
 coordw()
@@ -177,7 +169,7 @@ MouseGetPos &xpos, &ypos
 	KeyWait "Xbutton1"
 	SendInput "{Click Up}"
 }
-
+*/
 ;===========================================================================================================================================================================
 ;
 ;		Premiere
@@ -221,13 +213,7 @@ F1:: ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to con
 			}
 			else
 			{
-				Click "{Click Up}"
-				sleep 10
-				Send "100"
-				;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-				sleep 50
-				send "{enter}"
+				fElse("100")
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
@@ -251,13 +237,7 @@ F2:: ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to c
 			}
 			else
 			{
-				Click "{Click Up}"
-				sleep 10
-				Send "960"
-				;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-				;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-				sleep 50
-				send "{enter}"
+				fElse("960")
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
@@ -281,13 +261,7 @@ F3:: ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to c
 		}
 		else
 		{
-			Click "{Click Up}"
-			sleep 10
-			Send "540"
-			;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-			sleep 50
-			send "{enter}"
+			fElse("540")
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 		}
@@ -339,13 +313,7 @@ F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to
 		}
 		else
 		{
-			Click "{Click Up}"
-			sleep 10
-			Send "0"
-			;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-			;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-			sleep 50
-			send "{enter}"
+			fElse("0")
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 		}
@@ -424,13 +392,8 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 WheelRight::+Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-Xbutton2:: ;changes the tool to the hand tool while mouse button is held
-{
-	click "middle"
-	SendInput "{h}{LButton Down}" ;set hand tool to "h"
-	KeyWait "Xbutton2"
-	SendInput "{LButton Up}{v}" ;set select tool to v
-}
+Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button is held
+
 
 
 
