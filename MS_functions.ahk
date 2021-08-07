@@ -3,46 +3,46 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.3
+;\\v2.0.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.2
 
 ; =========================================================================
-;		Coordmode
+;		Coordmode \\ Last updated: v2.0.1
 ; =========================================================================
-coords()
+coords() ;sets coordmode to "screen"
 {
 	coordmode "pixel", "screen"
 	coordmode "mouse", "screen"
 }
 
-coordw()
+coordw() ;sets coordmode to "window"
 {
 	coordmode "pixel", "window"
 	coordmode "mouse", "window"
 }
 
 ; =========================================================================
-;		Blockinput
+;		Blockinput \\ Last updated: v2.0.1
 ; =========================================================================
-blockOn()
+blockOn() ;blocks all user inputs
 {
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
 }
 
-blockOff()
+blockOff() ;turns off the blocks on user input
 {
 	blockinput "MouseMoveOff"
 	BlockInput "off"
 }
 
 ; =========================================================================
-;		Mouse Drag
+;		Mouse Drag \\ Last updated: v2.0.3
 ; =========================================================================
-mousedrag(item)
+mousedrag(item) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
 {
 	click "middle"
 	SendInput "{h}{LButton Down}" ;set hand tool to "h"
@@ -52,9 +52,9 @@ mousedrag(item)
 }
 
 ; =========================================================================
-;		better timeline movement
+;		better timeline movement \\ Last updated: v2.0.3
 ; =========================================================================
-timeline(item)
+timeline(item) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
 {
 coordw()
 blockOn()
@@ -68,7 +68,7 @@ MouseGetPos &xpos, &ypos
 }
 
 ; =========================================================================
-;		Premiere
+;		Premiere \\ Last updated: v2.0.3
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 {
@@ -103,7 +103,7 @@ num() ;this preset is to simply cut down repeated code on my numpad punch in scr
 		MouseMove %&xpos%, %&ypos%
 }
 
-fElse(item) ;a preset for the premiere scale,x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
+fElse(item) ;a preset for the premiere scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
 {
 	Click "{Click Up}"
 	sleep 10
@@ -115,9 +115,9 @@ fElse(item) ;a preset for the premiere scale,x/y and rotation scripts ;these won
 }
 
 ; =========================================================================
-;		Resolve
+;		Resolve \\ Last updated: v2.0.4
 ; =========================================================================
-Rscale(item)
+Rscale(item) ;to set the scale of a video within resolve
 {
 coordw()
 blockOn()
@@ -130,7 +130,7 @@ MouseMove %&xpos%, %&ypos%
 blockOff()
 }
 
-rfElse(item)
+rfElse(item) ;a preset for the resolve scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
 {
 	SendInput "{Click Up}"
 	sleep 10
@@ -140,4 +140,20 @@ rfElse(item)
 	sleep 10
 	send "{enter}"
 	click "2295, 240"
+}
+
+Rfav(x, y) ;x and y are the window pixel coords for the "favourite" you want your hotkey to apply to your clip
+{
+coordw() ;this script requires the "effects library" to be open on the left side of screen
+blockOn()
+MouseGetPos &xpos, &ypos
+	;Click 566 735 ;clicks mag glass in the "effects library" window \\bad idea since clicking it again closes the search bar .-.
+	;SendInput gaussian
+	MouseMove %&x%, %&y% ;add effect as a favourite instead, makes things easier as clicking the mag glass changes depending on if it's already open
+	sleep 100
+	SendInput "{Click Down}"
+	MouseMove %&xpos%, %&ypos%, 2
+	;sleep 500
+	SendInput "{Click Up}"
+blockOff()
 }
