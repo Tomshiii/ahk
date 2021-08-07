@@ -27,7 +27,7 @@ SetWinDelay 0 ;makes windows move instantly
 		SendInput "^+8"
 		sleep 1000
 		SendInput "{TAB}"
-		SendInput "+{TAB 54}"
+		SendInput "+{TAB 57}"
 		sleep 200
 		SendInput "{UP}{TAB}{ENTER}"
 		sleep 200
