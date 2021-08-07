@@ -7,7 +7,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.4
+;\\v2.2.5
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.0.3
 
@@ -145,7 +145,7 @@ F17::Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboar
 		Send "{Enter}+{Tab}"
 }
 
-Xbutton2::mousedrag("p") ;changes the tool to the hand tool while mouse button is held
+Xbutton2::mousedrag("p") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
 ;===========================================================================================================================================================================
 ;
@@ -153,23 +153,9 @@ Xbutton2::mousedrag("p") ;changes the tool to the hand tool while mouse button i
 ;
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
-Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button is held
+Xbutton1::timeline("981") ;check MS_functions.ahk for the code to this preset
+Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
-timeline("981")
-/*
-Xbutton1:: ;this script isn't as powerful as the premiere version, but to my knowledge resolve doesn't have a keyboard shortcut to move the playhead, so this is the best we have
-{
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-	MouseMove %&xpos%, 981
-	SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%
-	blockOff()
-	KeyWait "Xbutton1"
-	SendInput "{Click Up}"
-}
-*/
 ;===========================================================================================================================================================================
 ;
 ;		Premiere
@@ -190,11 +176,11 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 	click
 	MouseMove %&xpos%, %&ypos%
 }
-;===========================================================================================================================================================================
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		hold and drag (or click)
 ;
-;===========================================================================================================================================================================
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 F1:: ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to confirm, Simply Tap F1 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
@@ -213,7 +199,7 @@ F1:: ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to con
 			}
 			else
 			{
-				fElse("100")
+				fElse("100") ;check MS_functions.ahk for the code to this preset
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
@@ -237,7 +223,7 @@ F2:: ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to c
 			}
 			else
 			{
-				fElse("960")
+				fElse("960") ;check MS_functions.ahk for the code to this preset
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
@@ -261,7 +247,7 @@ F3:: ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to c
 		}
 		else
 		{
-			fElse("540")
+			fElse("540") ;check MS_functions.ahk for the code to this preset
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 		}
@@ -313,20 +299,20 @@ F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to
 		}
 		else
 		{
-			fElse("0")
+			fElse("0") ;check MS_functions.ahk for the code to this preset
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 		}
 }
 
-;===========================================================================================================================================================================
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		NUMPAD SCRIPTS
 ;
-;===========================================================================================================================================================================
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 {
-	num()
+	num() ;check MS_functions.ahk for the code to this preset
 	SendInput "{Tab}1912{Tab}0{Tab}200{ENTER}"
 	SendInput "{Enter}"
 	blockOff()
@@ -334,7 +320,7 @@ Numpad7:: ;This script moves the mouse to a pixel position to highlight the "mot
 
 Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
 {
-	num()
+	num() ;check MS_functions.ahk for the code to this preset
 	SendInput "{Tab}2880{Tab}-538{Tab}300"
 	SendInput "{Enter}"
 	blockOff()
@@ -358,13 +344,13 @@ Numpad1::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}" ;REDUCE GAIN BY -2db
 Numpad2::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}2{ENTER}" ;INCREASE GAIN BY 2db == set g to open gain window
 Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 
-;===========================================================================================================================================================================
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Drag and Drop Effect Presets
 ;
-;===========================================================================================================================================================================
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 !g::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
-!p::preset("parametric") 
+!p::preset("parametric") ;check MS_functions.ahk for the code for these presets
 !h::preset("hflip") 
 !c::preset("croptom") 
 
@@ -384,15 +370,15 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 		MouseMove %&xpos%, %&ypos% ;although this line is usually in the ^preset, if you don't add it again, your curosr gets left on the text eyeball instead of back on the timeline 
 }
 
-;===========================================================================================================================================================================
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
 ;
-;===========================================================================================================================================================================
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 WheelRight::+Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button is held
+Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
 
 
