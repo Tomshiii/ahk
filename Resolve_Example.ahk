@@ -9,9 +9,9 @@ TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.2
+;\\v2.1.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.0.3
+;\\v2.0.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.2
@@ -257,29 +257,16 @@ blockOff()
 ;		Scale Adjustments
 ;=========================================================
 ^1::Rscale("1") ;makes the scale of current selected clip 100
-^2::Rscale("2") ;makes the scale of current selected clip 100
-^3::Rscale("3") ;makes the scale of current selected clip 100
+^2::Rscale("2") ;makes the scale of current selected clip 200
+^3::Rscale("3") ;makes the scale of current selected clip 300
 
 ;===========================================================================================================================================================================
 ;
 ;		Drag and Drop Effect Presets
 ;
 ;===========================================================================================================================================================================
-!g:: ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track
-{
-coordw() ;this script requires the "effects library" to be open on the left side of screen
-blockOn()
-MouseGetPos &xpos, &ypos
-	;Click 566 735 ;clicks mag glass in the "effects library" window \\bad idea since clicking it again closes the search bar .-.
-	;SendInput gaussian
-	MouseMove 80, 1046 ;add effect as a favourite instead, makes things easier as clicking the mag glass changes depending on if it's already open
-	sleep 100
-	SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%, 2
-	;sleep 500
-	SendInput "{Click Up}"
-blockOff()
-}
+!g::Rfav("80", "1071") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
+; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords. x (80 in this example) will always remain the same, so just grab the new y coords and you've added a new macro
 
 ;===========================================================================================================================================================================
 ;
