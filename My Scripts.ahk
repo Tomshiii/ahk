@@ -2,8 +2,9 @@
 SetWorkingDir A_ScriptDir
 SetNumLockState "AlwaysOn" ;sets numlock to always on
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still use caps lock for macros)
-SetDefaultMouseSpeed 0
-TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
+SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
+SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
+TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
@@ -43,11 +44,17 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 ;		Windows
 ;
 ;===========================================================================================================================================================================
-#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
+#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next HotIf) will trigger as long as premiere pro isn't active
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
 	coords()
 	MouseMove 5044, 340
+}
+
+^!+w:: ;this simply warps my mouse to my main monitor bc I'm lazy YEP
+{
+	coords()
+	MouseMove 1280, 720
 }
 
 ^+a::Run "C:\Program Files\ahk" ;opens my script directory
@@ -57,7 +64,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
 !a:: ;ignore this version, comment it out and uncomment ^ for notepad++
 {
-	if WinExist("ahk_exe Code.exe")
+	if WinExist("ahk_exe Code.exe") ;if vscode exists it'll simply activate it, if it doesn't, it'll open it
 			WinActivate
 	else
 		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
@@ -86,8 +93,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png")
 
 F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
 {
-	SetKeyDelay 100
-	SetWinDelay 0
+	SetKeyDelay 100 ;adds 100ms of delay between each "send" input (vlc can't take inputs too fast so this helps)
 		run "D:\Program Files\User\Music\pokemon.xspf"
 			if WinExist("ahk_exe vlc.exe")
 				WinActivate
