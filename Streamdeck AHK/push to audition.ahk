@@ -1,6 +1,5 @@
 ﻿If WinActive("ahk_exe Adobe Premiere Pro.exe")
 {
-SetKeyDelay, 0 ;this is just here incase I add some sends in the future
 ;F11:: ;hover over an audio track you want normalized, this will then send it to adobe audition to be limited and normalised.
 ; If there are multiple audio tracks and you only want one, alt click it individually first.
 /*
@@ -36,7 +35,7 @@ MouseGetPos &xposP, &yposP
 	SendInput "{click}" ;clicks in the middle of the screen to ensure the current audio is actually selected, audition is just jank as hell and it's easier to just add this step than to deal with it not working sometimes
 	sleep 1000
 	MouseMove 301, 373 ;moves the mouse to the preset selector
-	SendInput "{Click}l{DOWN 3}{ENTER}"" ;menus to the limit preset I have
+	SendInput "{Click}l{DOWN 3}{ENTER}" ;menus to the limit preset I have
 	sleep 100
 	MouseMove 80, 714
 	SendInput "{Click}"
