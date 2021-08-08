@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.4
+;\\v2.0.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.2
@@ -39,6 +39,22 @@ blockOff() ;turns off the blocks on user input
 	BlockInput "off"
 }
 
+; =========================================================================
+;		Mouse Drag \\ Last updated: v2.0.5
+; =========================================================================
+disc(ycoord)
+{
+	{
+		coords()
+		MouseGetPos(&x, &y)
+		blockOn()
+		click "right"
+		MouseMove(29, %&ycoord%,, "R")
+		click
+		MouseMove(%&x%, %&y%)
+		blockOff()
+	}
+}
 ; =========================================================================
 ;		Mouse Drag \\ Last updated: v2.0.3
 ; =========================================================================

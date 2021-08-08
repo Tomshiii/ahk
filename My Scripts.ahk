@@ -8,7 +8,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.5
+;\\v2.2.6
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.0.3
 
@@ -114,6 +114,11 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
     Sleep 50
     Run "https://www.google.com/search?d&q=%clipboard%"
 }
+
+#HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
+^e::disc("111") ;edit the message you're hovering over
+^r::disc("173") ;reply to the message you're hovering over
+^!a::disc("71") ;add a reaction to the message you're hovering over
 ;===========================================================================================================================================================================
 ;
 ;		Stream
