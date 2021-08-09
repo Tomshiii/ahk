@@ -1,12 +1,6 @@
 # ahk
 ## Version Information:
-This repo is to work on v2.0 functionality to my scripts. I'm not exactly much of a coder so trying to port over a lot of functionality into said newer version definitely had me scratching my head but I believe I've mostly done it. The scripts that work in v2.0 include:
-- [x] My Scripts.ahk
-- [x] fkey auto launch.ahk
-- [x] Resolve_Example.ahk
-- [x] Alt_menu_acceleration_disabler.ahk
-- [x] autodismiss error.ahk
-- [x] right click premiere.ahk
+This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check releases 1.0-1.2 in this repo.
 
 ## What to do:
 1. Download and install [AHK v2.0 Beta](https://www.autohotkey.com/)
