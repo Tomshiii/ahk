@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.5
+;\\v2.0.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v1.2
@@ -40,18 +40,79 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.0.5
+;		Mouse Drag \\ Last updated: v2.0.6
 ; =========================================================================
-disc(ycoord)
+discedit()
 {
 	{
 		coords()
 		MouseGetPos(&x, &y)
 		blockOn()
-		click "right"
-		MouseMove(29, %&ycoord%,, "R")
-		click
-		MouseMove(%&x%, %&y%)
+		if(%&y% > 876) ;this value will need to be adjusted per your monitor
+			{
+				click "right"
+				MouseMove(%&x%, 948) ;this value will need to be adjusted per your monitor
+				MouseMove(29, 0,, "R")
+				click
+				MouseMove(%&x%, %&y%)
+			}
+		else
+			{
+				click "right"
+				MouseMove(29, 111,, "R") ;the y value here will need to be adjusted per your monitor
+				click
+				MouseMove(%&x%, %&y%)
+			}
+		blockOff()
+	}
+}
+
+discreply()
+{
+	{
+		coords()
+		MouseGetPos(&x, &y)
+		blockOn()
+		if(%&y% > 876) ;this value will need to be adjusted per your monitor
+			{
+				click "right"
+				MouseMove(%&x%, 1017) ;this value will need to be adjusted per your monitor
+				MouseMove(29, 0,, "R")
+				click
+				MouseMove(%&x%, %&y%)
+			}
+		else
+			{
+				click "right"
+				MouseMove(29, 153,, "R") ;the y value here will need to be adjusted per your monitor
+				click
+				MouseMove(%&x%, %&y%)
+			}
+		blockOff()
+	}
+}
+
+discreac()
+{
+	{
+		coords()
+		MouseGetPos(&x, &y)
+		blockOn()
+		if(%&y% > 876) ;this value will need to be adjusted per your monitor
+			{
+				click "right"
+				MouseMove(%&x%, 944) ;this value will need to be adjusted per your monitor
+				MouseMove(29, 0,, "R")
+				click
+				MouseMove(%&x%, %&y%)
+			}
+		else
+			{
+				click "right"
+				MouseMove(29, 71,, "R") ;the y value here will need to be adjusted per your monitor
+				click
+				MouseMove(%&x%, %&y%)
+			}
 		blockOff()
 	}
 }
