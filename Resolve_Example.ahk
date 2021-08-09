@@ -14,8 +14,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
 ;\\v2.0.4
 
 ;\\CURRENT RELEASE VERSION
-;\\v1.2
-
+;\\v2.0
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY

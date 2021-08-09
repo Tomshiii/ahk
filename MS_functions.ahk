@@ -6,7 +6,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 ;\\v2.0.6
 
 ;\\CURRENT RELEASE VERSION
-;\\v1.2
+;\\v2.0
 
 ; =========================================================================
 ;		Coordmode \\ Last updated: v2.0.1
