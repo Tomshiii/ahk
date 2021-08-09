@@ -77,8 +77,9 @@ sleep 1000
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, 432, 1080, 797  ;moves into position	 
+		WinMove 4480, 432, 1080, 797  ;moves into position
 	Run "C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
+	sleep 3500 ;it needed some time to open
 		if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
 			WinActivate
 	sleep 2000

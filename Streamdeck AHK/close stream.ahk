@@ -25,6 +25,8 @@
 	if WinExist("ahk_exe LioranBoard Receiver.exe")
 	WinClose
 	if WinExist("ahk_exe ApplicationDj.exe")
-	WinClose 
+	WinClose
+	if WinExist("ahk_exe discord.exe")
+		WinMove 4480, -260, 1080, 1488
 ;WinKill, Streamlabs Chatbot
 ExitApp
