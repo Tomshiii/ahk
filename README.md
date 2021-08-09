@@ -1,6 +1,14 @@
 # ahk
+This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane random interactions with a computer.
+
+Included is also the Excel document I use to keep track of any hotkeys I set, just as an easier and more visual way of understanding what is/isn't available.
+
+A lot of the code in My Scripts.ahk is either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks.
+
+You can watch me use some of these scripts in action while I edit away on twitch when I stream on my bot account: https://www.twitch.tv/botshiii
+
 ## Version Information:
-This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check releases 1.0-1.2 in this repo.
+This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo.
 
 ## What to do:
 1. Download and install [AHK v2.0 Beta](https://www.autohotkey.com/)
