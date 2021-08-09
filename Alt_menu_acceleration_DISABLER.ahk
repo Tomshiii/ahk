@@ -1,17 +1,17 @@
-Menu, Tray, Icon, shell32.dll, 110 ; changes the icon to a 🚫
+;Menu Tray Icon shell32.dll 110 ; changes the icon to a 🚫
 
 ;SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-#InstallKeybdHook
-#NoEnv
+InstallKeybdHook true
+;#NoEnv
 ;#NoTrayIcon ;comment this in if you do not want a tray icon.
 #SingleInstance
-#MaxHotkeysPerInterval 2000
-Process, Priority, , H
-SendMode Input
+MaxHotkeysPerInterval := 2000
+ProcessSetPriority "H"
+TraySetIcon("C:\Program Files\ahk\Icons\disable.png") ;changes the icon this script uses in the taskbar
 #SingleInstance force
 
 ;These next two lines are very important. You have to change the "menu mask key" away from being CTRL, to something that won't result in cross-talk. Read this thread to learn the details: https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
-#MenuMaskKey vk07  ; vk07 is unassigned. 
+A_MenuMaskKey := "vk07"  ; vk07 is unassigned. 
 #UseHook
 
 ;; take this tutorial if you don't know how AHK works. https://www.autohotkey.com/docs/Tutorial.htm
@@ -151,26 +151,29 @@ SendMode Input
 ;;;UPDATE: Those two lines totally work, but I am now trying a slightly different thing instead:
 
 ~LAlt::
-Sendinput {Blind}{sc0E9}
-KeyWait, LAlt ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
-Sendinput {Blind}{sc0EA}
-return
+{
+Sendinput "{Blind}{sc0E9}"
+KeyWait "LAlt" ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
+Sendinput "{Blind}{sc0EA}"
+}
 
 ~RAlt::
-Sendinput {Blind}{sc0E9}
-KeyWait, RAlt ; so that it doesn't keep spamming SC0E9
-Sendinput {Blind}{sc0EA}
-return
+{
+Sendinput "{Blind}{sc0E9}"
+KeyWait "RAlt" ; so that it doesn't keep spamming SC0E9
+Sendinput "{Blind}{sc0EA}"
+}
 ;this was VK07, but i want to be able to distinguish between this, and menu masking, seperately, in my debugging.
 
 
 ;the below firefox snippet is by tomshi to disable firefox's annoying alt menu that is bound to f10 for whatever
-#IfWinActive ahk_exe firefox.exe
+#HotIf WinActive("ahk_exe firefox.exe") 
 F10::
-Sendinput {Blind}{sc0E9}
-KeyWait, F10 ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
-Sendinput {Blind}{sc0EA}
-return
+{
+Sendinput "{Blind}{sc0E9}"
+KeyWait "F10" ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
+Sendinput "{Blind}{sc0EA}"
+}
 
 ;below here is taran again
 

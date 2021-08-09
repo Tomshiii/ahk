@@ -1,11 +1,11 @@
 ﻿#SingleInstance force ; only 1 instance of this script may run at a time.
-#InstallMouseHook
-#InstallKeybdHook
+InstallMouseHook
+InstallKeybdHook
+TraySetIcon("C:\Program Files\ahk\Icons\right.png")
+CoordMode "Mouse", "screen"
+CoordMode "Pixel", "screen"
 
-CoordMode, Mouse, screen
-CoordMode, Pixel, screen
-
-Menu, Tray, Icon, imageres.dll, 90
+;Menu "Tray" "Icon" "imageres.dll" 90
 
 ;THIS IS A GREAT FIRST SCRIPT FOR AHK NOOBS! IT WORKS WITH VERY LITTLE SETUP. JUST READ THE STUFF BELOW! YAY! 
 ;VIDEO EXPLANATION:  https://youtu.be/O6ERELse_QY?t=23m40s
@@ -28,28 +28,31 @@ Menu, Tray, Icon, imageres.dll, 90
 ;First, we define all the timeline's DEFAULT possible colors.
 ;(Note that your colors will be different if you changed the UI brightness inside preferences > appearance > brightness.)
 ;I used Window Spy (it comes with AHK) to detect the exact colors onscreen.
-timeline1 = 0x414141 ;timeline color inside the in/out points ON a targeted track
-timeline2 = 0x313131 ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
-timeline3 = 0x1b1b1b ;the timeline color inside in/out points on a NON targeted track
-timeline4 = 0x212121 ;the color of the bare timeline NOT inside the in out points
-timeline5 = 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
-timeline6 = 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
-timeline7 = 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
-timeline8 = 0x202020
+timeline1 := 0x414141 ;timeline color inside the in/out points ON a targeted track
+timeline2 := 0x313131 ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
+timeline3 := 0x1b1b1b ;the timeline color inside in/out points on a NON targeted track
+timeline4 := 0x212121 ;the color of the bare timeline NOT inside the in out points
+timeline5 := 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
+timeline6 := 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+timeline8 := 0x202020
 
-#IfWinActive ahk_exe Adobe Premiere Pro.exe ;exact name was gotten from windowspy
+#HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
+;HotIfWinActive "ahk_exe Adobe Premiere Pro.exe" ;exact name was gotten from windowspy
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
 
 Rbutton::
-MouseGetPos X, Y
-PixelGetColor colorr, %X%, %Y%, RGB
-if (colorr = timeline5 || colorr = timeline6 || colorr = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
-	send {ESC} ;in Premiere 13.0, ESCAPE will now deselect clips on the timeline, in addition to its other uses. i think it is good ot use here, now. But you can swap this out with CTRL SHIFT D if you like.
+{
+MouseGetPos &xpos, &ypos
+Color := PixelGetColor(%&xpos%, %&ypos%, "RGB")
+;PixelGetColor colorr, %X%, %Y%, RGB ;v1.1 code
+if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
+	sendinput "{ESC}" ;in Premiere 13.0, ESCAPE will now deselect clips on the timeline, in addition to its other uses. i think it is good ot use here, now. But you can swap this out with CTRL SHIFT D if you like.
 ;send ^!d ;in Premiere, set CTRL ALT D to "DESELECT ALL"
-if (colorr = timeline1 || colorr = timeline2 || colorr = timeline3 || colorr = timeline4 || colorr = timeline5 || colorr = timeline6 || colorr = timeline7 || colorr = timeline8) ;alternatively, i think I can use "if in" for this kind of thing..
+if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = timeline8) ;alternatively, i think I can use "if in" for this kind of thing..
 {
 	;BREAKTHROUGH -- it looks like a middle mouse click will BRING FOCUS TO a panel without doing ANYTHING ELSE like selecting or going through tabs or anything. Unfortunately, i still can't know with AHK which panel is already in focus.
-	click middle ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
+	click "middle" ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
 	; tooltip, % GetKeyState("Rbutton", "P") ;<----this was essential for me to figure out EXACTLY how AHK wanted this query to be phrased. Why should i need the quotation marks?? Why does it return a 1 and 0, but for the other method, it returns U and D? Who the hell knows...
 	; if GetKeyState("$Rbutton") = D ;<--- see, this line did not work AT ALL.
 	if GetKeyState("Rbutton", "P") = 1 ;<----THIS is the only way to phrase this query.
@@ -59,24 +62,25 @@ if (colorr = timeline1 || colorr = timeline2 || colorr = timeline3 || colorr = t
 		;tooltip,
 		loop
 			{
-			Send \ ;in premiere, this must be set to "move playhead to cursor."
+			Send "{\}" ;in premiere, this must be set to "move playhead to cursor."
 			sleep 16 ;this loop will repeat every 16 milliseconds.
 			if GetKeyState("Rbutton", "P") = 0
 				{
 				;msgbox,,,time to break,1 ;I use message boxes when debugging, and then just comment the out rather than deleting them. It's just like disabling a clip in Premiere.
-				tooltip,
+				tooltip
 				goto theEnd
-				break
+				;break
 				}
 			}
 		}
 	;tooltip,
-	Send {escape} ;in case you end up inside the "delete" right click menu from the timeline
+	Send "{Escape}" ;in case you end up inside the "delete" right click menu from the timeline
 	;MouseClick, left ;notice how this is commented out. I deemed it inferior to using ESCAPE.
 }
 else
-	sendinput {Rbutton} ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
+	sendinput "{Rbutton}" ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
 theEnd:
+}
 Return
 
 
