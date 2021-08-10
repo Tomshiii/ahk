@@ -1,6 +1,7 @@
 ﻿if not WinExist("ahk_exe obs64.exe")
 {
 SetWinDelay 0 ;makes windows move instantly
+	Run '*RunAs "C:\Program Files\ahk\Streaming.ahk"'
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
 	Run "C:\Program Files\ahk\obs64.lnk" ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus

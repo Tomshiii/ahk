@@ -8,7 +8,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.7
+;\\v2.2.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.0.3
 
@@ -91,19 +91,6 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 	WinMove 4480, -260, 1080, 1488
 }
 
-F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
-{
-	SetKeyDelay 100 ;adds 100ms of delay between each "send" input (vlc can't take inputs too fast so this helps)
-		run "D:\Program Files\User\Music\pokemon.xspf"
-			if WinExist("ahk_exe vlc.exe")
-				WinActivate
-			else
-				WinWait "ahk_exe vlc.exe"
-		if WinExist("ahk_exe vlc.exe")
-		WinMove 2066, 0, 501, 412
-		Send "!ad{Down 3}{enter}"
-}
-
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
 
 NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
@@ -119,26 +106,6 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 ^e::discedit() ;edit the message you're hovering over
 ^r::discreply() ;reply to the message you're hovering over
 ^!a::discreac() ;add a reaction to the message you're hovering over
-;===========================================================================================================================================================================
-;
-;		Stream
-;
-;===========================================================================================================================================================================
-#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
-F17::Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
-
-#HotIf WinExist("ahk_exe obs64.exe")
-^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream
-{
-	if WinExist("ahk_exe obs64.exe")
-		WinActivate 
-	sleep 1000
-	SendInput "^p" ;Main replay buffer hotkey must be set to this
-	SendInput "^+8" ;Source Record OBS Plugin replay buffer must be set to this
-	;sleep 10
-	;SendInput, ^+9 ;Source Record OBS Plugin replay buffer must be set to this
-	sleep 10
-}
 
 ;===========================================================================================================================================================================
 ;
