@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.6
+;\\v2.0.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -40,28 +40,33 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.0.6
+;		Mouse Drag \\ Last updated: v2.0.7
 ; =========================================================================
+;PLEASE NOTE, I ORIGINALLY HAD THIS SCRIPT WARP THE MOUSE TO CERTAIN POSITIONS TO HIT THE RESPECTIVE BUTTONS BUT THE POSITION OF BUTTONS IN DISCORD WITHIN THE RIGHT CLICK CONTEXT MENU CHANGE DEPENDING ON WHAT PERMS YOU HAVE IN A SERVER, SO IT WOULD ALWAYS TRY TO DO RANDOM THINGS LIKE PIN A MESSAGE OR OPEN A THREAD. There isn't really anything you can do about that. I initially tried to just send through multiple down/up inputs but apparently discord rate limits you to like 1 input every .5-1s so that's fun.
 discedit()
 {
 	{
 		coords()
 		MouseGetPos(&x, &y)
 		blockOn()
-		if(%&y% > 876) ;this value will need to be adjusted per your monitor
+		if(%&y% > 876) ;this value will need to be adjusted per your monitor. Because my monitor is rotated to sit vertically, "lower" on my screen is actually a higher y pixel value, hence the > instead of <
 			{
 				click "right"
-				MouseMove(%&x%, 948) ;this value will need to be adjusted per your monitor
+				MouseMove(%&x%, 948) ;this value will need to be adjusted per your monitor - it's where the edit button sits when your mouse is towards the bottom of discord
 				MouseMove(29, 0,, "R")
-				click
-				MouseMove(%&x%, %&y%)
+				;blockOff()
+				;keywait "LButton", "D" ;tried to make it so the user presses the button you want since it moves everywhere depending on what perms you have in a server
+				;click					;but it was too disorienting to make the user move, click, then warp the mouse back to the og position so
+				;MouseMove(%&x%, %&y%)	;this is the best you can do here with the limitations of discord
 			}
 		else
 			{
 				click "right"
 				MouseMove(29, 111,, "R") ;the y value here will need to be adjusted per your monitor
-				click
-				MouseMove(%&x%, %&y%)
+				;blockOff()				;I'll preserve this code in this first script, but remove it from the following two examples
+				;keywait "LButton", "D"
+				;click
+				;MouseMove(%&x%, %&y%)
 			}
 		blockOff()
 	}
@@ -76,17 +81,13 @@ discreply()
 		if(%&y% > 876) ;this value will need to be adjusted per your monitor
 			{
 				click "right"
-				MouseMove(%&x%, 1017) ;this value will need to be adjusted per your monitor
+				MouseMove(%&x%, 1017) ;this value will need to be adjusted per your monitor - it's where the reply button sits when your mouse is towards the bottom of discord
 				MouseMove(29, 0,, "R")
-				click
-				MouseMove(%&x%, %&y%)
 			}
 		else
 			{
 				click "right"
 				MouseMove(29, 153,, "R") ;the y value here will need to be adjusted per your monitor
-				click
-				MouseMove(%&x%, %&y%)
 			}
 		blockOff()
 	}
@@ -101,21 +102,18 @@ discreac()
 		if(%&y% > 876) ;this value will need to be adjusted per your monitor
 			{
 				click "right"
-				MouseMove(%&x%, 944) ;this value will need to be adjusted per your monitor
+				MouseMove(%&x%, 944) ;this value will need to be adjusted per your monitor - it's where the add reaction button sits when your mouse is towards the bottom of discord
 				MouseMove(29, 0,, "R")
-				click
-				MouseMove(%&x%, %&y%)
 			}
 		else
 			{
 				click "right"
 				MouseMove(29, 71,, "R") ;the y value here will need to be adjusted per your monitor
-				click
-				MouseMove(%&x%, %&y%)
 			}
 		blockOff()
 	}
 }
+
 ; =========================================================================
 ;		Mouse Drag \\ Last updated: v2.0.3
 ; =========================================================================

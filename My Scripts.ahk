@@ -8,9 +8,9 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.8
+;\\v2.2.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.0.3
+;\\v2.0.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -19,8 +19,11 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 ;
 ; 														THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
 ;				 											IT WILL NOT RUN IN v1.1
-;
+;									--------------------------------------------------------------------------------
 ;												Everything in this script is functional within v2.0
+;											any code like "blockon()" "coords()" etc are all defined
+;										in the MS_functions.ahk script. Look there for specific code to edit
+;
 ; ===========================================================================================================================================================
 ;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
@@ -30,14 +33,15 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 ;
 ; ===========================================================================================================================================================
 
-; A chunk of the code in this script was either directly inspired by, or originally copied from Taran from LTT (https://github.com/TaranVH/) before I modified it to fit v2.0 of ahk,
-; his videos on the subject are what got me into AHK to begin with and what brought the foundation of the original version of this script to life
+; A chunk of the code in the original versions of this script was either directly inspired by, or originally copied from Taran from LTT (https://github.com/TaranVH/) before
+; I modified it to fit v2.0 of ahk and made a bunch of other changes, his videos on the subject are what got me into AHK to begin with and what brought the foundation of the original
+; version of this script to life.
 ; I use a streamdeck to run a lot of these scripts which is why a bunch of them are bound to F13-24 but really they could be replaced with anything
 ; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
 ; I use to use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
 ; I now use VSCode which can be found here: https://code.visualstudio.com/
-; AHK syntax highlighting can be installed within the program itself
+; AHK (and v2.0) syntax highlighting can be installed within the program itself.
 
 ;===========================================================================================================================================================================
 ;
@@ -237,11 +241,11 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	MouseMove 142, 1059
+	MouseMove 142, 1059 ;move to the "motion" tab
 	sleep 100
 		if GetKeyState("F4", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable move to the preview window
-			Click ;move to the "motion" tab
+		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
+			Click
 			MouseMove 2300, 238 ;move to the preview window
 			SendInput "{Click Down}"
 			blockOff()
@@ -251,7 +255,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 		}
 		else
 		{
-			MouseMove 352, 1076
+			MouseMove 352, 1076 ;move to the reset arrow
 			Click
 			sleep 50
 			MouseMove %&xpos%, %&ypos%
