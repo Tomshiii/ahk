@@ -4,6 +4,9 @@
 ;MouseGetPos &xpos, &ypos
 	;MouseMove 878, 14
 	;WinActivate "ahk_exe Streamlabs Chatbot.exe"
+DetectHiddenWindows(true)
+	if WinExist("Streaming.ahk")
+		WinClose
 	if WinExist("ahk_exe foobar2000.exe")
 	WinClose
 	if WinExist("All Moons UPDATED v.1.3.0")

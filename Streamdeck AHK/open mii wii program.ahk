@@ -9,6 +9,6 @@ if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then
 sleep 1000 ;waits since it's not responsive to input for a second even after it has opened
 SendInput "y{enter}"
 }
-else
-    sleep 100
+;else
+ ;   sleep 100
 ExitApp

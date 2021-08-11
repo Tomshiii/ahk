@@ -12,6 +12,8 @@ TraySetIcon("C:\Program Files\ahk\Icons\streaming.png") ;changes the icon this s
 ;	So this script will open alongside everything else for stream to allow for my macros
 ;
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
+; This is just so I have a way to relaunch it manually as admin
+F6::Run '*RunAs "C:\Program Files\ahk\Streaming.ahk"'
 
 ;===========================================================================================================================================================================
 ;
