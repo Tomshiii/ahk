@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.7
+;\\v2.1.0
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -40,78 +40,59 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.0.7
+;		Mouse Drag \\ Last updated: v2.1.0
 ; =========================================================================
-;PLEASE NOTE, I ORIGINALLY HAD THIS SCRIPT WARP THE MOUSE TO CERTAIN POSITIONS TO HIT THE RESPECTIVE BUTTONS BUT THE POSITION OF BUTTONS IN DISCORD WITHIN THE RIGHT CLICK CONTEXT MENU CHANGE DEPENDING ON WHAT PERMS YOU HAVE IN A SERVER, SO IT WOULD ALWAYS TRY TO DO RANDOM THINGS LIKE PIN A MESSAGE OR OPEN A THREAD. There isn't really anything you can do about that. I initially tried to just send through multiple down/up inputs but apparently discord rate limits you to like 1 input every .5-1s so that's fun.
-discedit()
-{
-	{
-		coords()
-		MouseGetPos(&x, &y)
-		blockOn()
-		if(%&y% > 876) ;this value will need to be adjusted per your monitor. Because my monitor is rotated to sit vertically, "lower" on my screen is actually a higher y pixel value, hence the > instead of <
-			{
-				click "right"
-				MouseMove(%&x%, 948) ;this value will need to be adjusted per your monitor - it's where the edit button sits when your mouse is towards the bottom of discord
-				MouseMove(29, 0,, "R")
-				;blockOff()
-				;keywait "LButton", "D" ;tried to make it so the user presses the button you want since it moves everywhere depending on what perms you have in a server
-				;click					;but it was too disorienting to make the user move, click, then warp the mouse back to the og position so
-				;MouseMove(%&x%, %&y%)	;this is the best you can do here with the limitations of discord
-			}
-		else
-			{
-				click "right"
-				MouseMove(29, 111,, "R") ;the y value here will need to be adjusted per your monitor
-				;blockOff()				;I'll preserve this code in this first script, but remove it from the following two examples
-				;keywait "LButton", "D"
-				;click
-				;MouseMove(%&x%, %&y%)
-			}
-		blockOff()
-	}
-}
+;These functions look for the buttons as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 
 discreply()
 {
-	{
-		coords()
-		MouseGetPos(&x, &y)
-		blockOn()
-		if(%&y% > 876) ;this value will need to be adjusted per your monitor
-			{
-				click "right"
-				MouseMove(%&x%, 1017) ;this value will need to be adjusted per your monitor - it's where the reply button sits when your mouse is towards the bottom of discord
-				MouseMove(29, 0,, "R")
-			}
-		else
-			{
-				click "right"
-				MouseMove(29, 153,, "R") ;the y value here will need to be adjusted per your monitor
-			}
-		blockOff()
-	}
+	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
+	MouseGetPos(&x, &y)
+	blockOn()
+	click "right"
+	sleep 50 ;sleep required so the right click context menu has time to open
+	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 C:\Program Files\ahk\ImageSearch\DiscReply.png") ;*2 is required otherwise it spits out errors. check documentation for definition
+		MouseMove(%&xpos%, %&ypos%)
+	else
+			MsgBox("that didn't work")
+	MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button
+	Click
+	MouseMove(%&x%, %&y%)
+	blockOff()
+}
+
+discedit()
+{
+	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
+	MouseGetPos(&x, &y)
+	blockOn()
+	click "right"
+	sleep 50 ;sleep required so the right click context menu has time to open
+	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 C:\Program Files\ahk\ImageSearch\DiscEdit.png") ;*2 is required otherwise it spits out errors. check documentation for definition
+		MouseMove(%&xpos%, %&ypos%)
+	else
+			MsgBox("that didn't work my guy")
+	MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button
+	Click
+	MouseMove(%&x%, %&y%)
+	blockOff()
 }
 
 discreac()
 {
-	{
-		coords()
-		MouseGetPos(&x, &y)
-		blockOn()
-		if(%&y% > 876) ;this value will need to be adjusted per your monitor
-			{
-				click "right"
-				MouseMove(%&x%, 944) ;this value will need to be adjusted per your monitor - it's where the add reaction button sits when your mouse is towards the bottom of discord
-				MouseMove(29, 0,, "R")
-			}
-		else
-			{
-				click "right"
-				MouseMove(29, 71,, "R") ;the y value here will need to be adjusted per your monitor
-			}
-		blockOff()
-	}
+	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
+	MouseGetPos(&x, &y)
+	blockOn()
+	click "right"
+	sleep 50 ;sleep required so the right click context menu has time to open
+	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 C:\Program Files\ahk\ImageSearch\DiscReact.png") ;*2 is required otherwise it spits out errors. check documentation for definition
+		MouseMove(%&xpos%, %&ypos%)
+	else
+			MsgBox("that didn't work my guy")
+	MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button
+	Click
+	MouseMove(%&x%, %&y%)
+	blockOff()
 }
 
 ; =========================================================================
@@ -231,4 +212,39 @@ MouseGetPos &xpos, &ypos
 	;sleep 500
 	SendInput "{Click Up}"
 blockOff()
+}
+
+
+; =========================================================================
+; Old
+; =========================================================================
+/* ;this was the old way of doing the discord functions (v2.0.7) that included just right clicking and making the user do things. I've save the one with all variations of code it went through, the other two have been removed for cleanup as they were functionally identical
+;PLEASE NOTE, I ORIGINALLY HAD THIS SCRIPT WARP THE MOUSE TO CERTAIN POSITIONS TO HIT THE RESPECTIVE BUTTONS BUT THE POSITION OF BUTTONS IN DISCORD WITHIN THE RIGHT CLICK CONTEXT MENU CHANGE DEPENDING ON WHAT PERMS YOU HAVE IN A SERVER, SO IT WOULD ALWAYS TRY TO DO RANDOM THINGS LIKE PIN A MESSAGE OR OPEN A THREAD. There isn't really anything you can do about that. I initially tried to just send through multiple down/up inputs but apparently discord rate limits you to like 1 input every .5-1s so that's fun.
+discedit()
+{
+	{
+		coords()
+		MouseGetPos(&x, &y)
+		blockOn()
+		if(%&y% > 876) ;this value will need to be adjusted per your monitor. Because my monitor is rotated to sit vertically, "lower" on my screen is actually a higher y pixel value, hence the > instead of <
+			{
+				click "right"
+				MouseMove(%&x%, 948) ;this value will need to be adjusted per your monitor - it's where the edit button sits when your mouse is towards the bottom of discord
+				MouseMove(29, 0,, "R")
+				;blockOff()
+				;keywait "LButton", "D" ;tried to make it so the user presses the button you want since it moves everywhere depending on what perms you have in a server
+				;click					;but it was too disorienting to make the user move, click, then warp the mouse back to the og position so
+				;MouseMove(%&x%, %&y%)	;this is the best you can do here with the limitations of discord
+			}
+		else
+			{
+				click "right"
+				MouseMove(29, 111,, "R") ;the y value here will need to be adjusted per your monitor
+				;blockOff()				;I'll preserve this code in this first script, but remove it from the following two examples
+				;keywait "LButton", "D"
+				;click
+				;MouseMove(%&x%, %&y%)
+			}
+		blockOff()
+	}
 }
