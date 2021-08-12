@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.1
+;\\v2.1.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -40,7 +40,7 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.1.1
+;		Mouse Drag \\ Last updated: v2.1.2
 ; =========================================================================
 ;This function look for the buttons as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 
@@ -52,16 +52,25 @@ disc(button)
 	click "right"
 	sleep 50 ;sleep required so the right click context menu has time to open
 	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 " A_WorkingDir %&button%) ;*2 is required otherwise it spits out errors. check documentation for definition
-		if "true"
+		if "true" ;I don't think this line is necessary??
 			MouseMove(%&xpos%, %&ypos%)
 	else
-		sleep 500
-		ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 " A_WorkingDir %&button%)
-		MouseMove(%&xpos%, %&ypos%)
+		sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
+		ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 " A_WorkingDir %&button%) ;this line is getting the location of your selected button. Same goes for above
+		MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
 	;MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button | use this if your screenshots don't line up with the button properly
 	Click
-	MouseMove(%&x%, %&y%)
-	blockOff()
+	sleep 100
+	If ImageSearch(&xdir, &ydir, 330, 1380, 819, 1461, "*2 " A_WorkingDir "\ImageSearch\DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below
+		{
+			MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
+			Click
+			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+			blockOff()
+		}
+	else
+		MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+		blockOff()
 }
 
 ; =========================================================================
