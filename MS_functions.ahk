@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.0
+;\\v2.1.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -40,56 +40,25 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.1.0
+;		Mouse Drag \\ Last updated: v2.1.1
 ; =========================================================================
-;These functions look for the buttons as defined in the screenshots in \ahk\ImageSearch\disc[button].png
+;This function look for the buttons as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 
-discreply()
+disc(button)
 {
 	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
 	MouseGetPos(&x, &y)
 	blockOn()
 	click "right"
 	sleep 50 ;sleep required so the right click context menu has time to open
-	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 C:\Program Files\ahk\ImageSearch\DiscReply.png") ;*2 is required otherwise it spits out errors. check documentation for definition
-		MouseMove(%&xpos%, %&ypos%)
+	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 " A_WorkingDir %&button%) ;*2 is required otherwise it spits out errors. check documentation for definition
+		if "true"
+			MouseMove(%&xpos%, %&ypos%)
 	else
-			MsgBox("that didn't work")
-	MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button
-	Click
-	MouseMove(%&x%, %&y%)
-	blockOff()
-}
-
-discedit()
-{
-	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
-	MouseGetPos(&x, &y)
-	blockOn()
-	click "right"
-	sleep 50 ;sleep required so the right click context menu has time to open
-	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 C:\Program Files\ahk\ImageSearch\DiscEdit.png") ;*2 is required otherwise it spits out errors. check documentation for definition
+		sleep 500
+		ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 " A_WorkingDir %&button%)
 		MouseMove(%&xpos%, %&ypos%)
-	else
-			MsgBox("that didn't work my guy")
-	MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button
-	Click
-	MouseMove(%&x%, %&y%)
-	blockOff()
-}
-
-discreac()
-{
-	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
-	MouseGetPos(&x, &y)
-	blockOn()
-	click "right"
-	sleep 50 ;sleep required so the right click context menu has time to open
-	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 C:\Program Files\ahk\ImageSearch\DiscReact.png") ;*2 is required otherwise it spits out errors. check documentation for definition
-		MouseMove(%&xpos%, %&ypos%)
-	else
-			MsgBox("that didn't work my guy")
-	MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button
+	;MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button | use this if your screenshots don't line up with the button properly
 	Click
 	MouseMove(%&x%, %&y%)
 	blockOff()
