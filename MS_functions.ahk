@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.3
+;\\v2.1.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -40,7 +40,7 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.1.3
+;		Mouse Drag \\ Last updated: v2.1.4
 ; =========================================================================
 disc(button) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 {
@@ -59,7 +59,7 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 	;MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button | use this if your screenshots don't line up with the button properly
 	Click
 	sleep 100
-	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " A_WorkingDir "\ImageSearch\DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears about it when you "reply" to someone
+	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " A_WorkingDir "\ImageSearch\Discord\DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears about it when you "reply" to someone
 		{
 			MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 			Click

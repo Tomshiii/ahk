@@ -8,9 +8,9 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.12
+;\\v2.2.13
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.1
+;\\v2.1.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -107,10 +107,10 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 }
 
 #HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
-CapsLock & e::disc("\ImageSearch\DiscEdit.png") ;edit the message you're hovering over
-CapsLock & r::disc("\ImageSearch\DiscReply.png") ;reply to the message you're hovering over
-CapsLock & a::disc("\ImageSearch\DiscReact.png") ;add a reaction to the message you're hovering over
-CapsLock & d::disc("\ImageSearch\DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
+CapsLock & e::disc("\ImageSearch\Discord\DiscEdit.png") ;edit the message you're hovering over
+CapsLock & r::disc("\ImageSearch\Discord\DiscReply.png") ;reply to the message you're hovering over
+CapsLock & a::disc("\ImageSearch\Discord\DiscReact.png") ;add a reaction to the message you're hovering over
+CapsLock & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 
 ;===========================================================================================================================================================================
 ;
@@ -170,7 +170,11 @@ F1:: ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to con
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-		MouseMove 227, 1101 ;move to the "scale" value
+		;MouseMove 227, 1101 ;move to the "scale" value
+		If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\scale.png") ;moves to the scale variable (please note the defined coords need to be tight, otherwise it'll try to click on "uniform scale")
+			MouseMove(%&x%, %&y%)
+		If PixelSearch(&xcol, &ycol, 42, 1092, 491, 1109, 0x288ccf, 3) ;looks for the blue text to the right of scale
+			MouseMove(%&xcol%, %&ycol%)
 		sleep 100
 		SendInput "{Click Down}"
 			if GetKeyState("F1", "P")
@@ -194,7 +198,11 @@ F2:: ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to c
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-		MouseMove 226, 1079 ;move to the "x" value
+		;MouseMove 226, 1079 ;move to the "x" value
+		If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable
+			MouseMove(%&x%, %&y%)
+		If PixelSearch(&xcol, &ycol, 37, 1069, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
+			MouseMove(%&xcol%, %&ycol%)
 		sleep 100
 		SendInput "{Click Down}"
 			if GetKeyState("F2", "P")
@@ -218,7 +226,11 @@ F3:: ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to c
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	MouseMove 275, 1080 ;move to the "y" value
+	;MouseMove 275, 1080 ;move to the "y" value
+	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable
+		MouseMove(%&x%, %&y%)
+	If PixelSearch(&xcol, &ycol, 37, 1069, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
+		MouseMove(%&xcol% + "60", %&ycol%) ;moves to the second value (the y value)
 	sleep 100
 	SendInput "{Click Down}"
 		if GetKeyState("F3", "P")
@@ -242,9 +254,13 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	MouseMove 142, 1059 ;move to the "motion" tab
+	;MouseMove 142, 1059 ;move to the "motion" tab
+	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
+		{
+			MouseMove(%&x% + "25", %&y%)
+		}
 	sleep 100
-		if GetKeyState("F4", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if GetKeyState("F4", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
 			Click
 			MouseMove 2300, 238 ;move to the preview window
@@ -254,9 +270,11 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 			SendInput "{Click Up}"
 			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
 		}
-		else
+	else
 		{
 			MouseMove 352, 1076 ;move to the reset arrow
+			;if ImageSearch(&xcol, &ycol, 320, 1070, 446, 1086, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png")
+				;MouseMove(%&xcol%, %&ycol%) ; this wouldn't work, idk why
 			Click
 			sleep 50
 			MouseMove %&xpos%, %&ypos%
@@ -270,7 +288,11 @@ F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	MouseMove 219, 1165 ;move to the "rotation" value
+	;MouseMove 219, 1165 ;move to the "rotation" value
+	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\rotation.png") ;moves to the rotation variable
+		MouseMove(%&x%, %&y%)
+	If PixelSearch(&xcol, &ycol, 38, 1153, 573, 1173, 0x288ccf, 3) ;looks for the blue text to the right of scale
+		MouseMove(%&xcol%, %&ycol%)
 	sleep 100
 	SendInput "{Click Down}"
 		if GetKeyState("F5", "P")
@@ -386,7 +408,7 @@ MouseMove, 0, 513,, R
 Return
 */
 
-#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
+;#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
 /*
 ;Detatch a firefox tab
 #IfWinActive ahk_exe firefox.exe
