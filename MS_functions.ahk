@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.2
+;\\v2.1.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -40,28 +40,26 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.1.2
+;		Mouse Drag \\ Last updated: v2.1.3
 ; =========================================================================
-;This function look for the buttons as defined in the screenshots in \ahk\ImageSearch\disc[button].png
-
-disc(button)
+disc(button) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 {
 	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
 	MouseGetPos(&x, &y)
 	blockOn()
 	click "right"
 	sleep 50 ;sleep required so the right click context menu has time to open
-	If ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 " A_WorkingDir %&button%) ;*2 is required otherwise it spits out errors. check documentation for definition
+	If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&button%) ;*2 is required otherwise it spits out errors. check documentation for definition. These coords define the entire area discord contains text. Recommended to close the right sidebar or do this in a dm so you see the entire area discord normally shows messages
 		if "true" ;I don't think this line is necessary??
 			MouseMove(%&xpos%, %&ypos%)
 	else
 		sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-		ImageSearch(&xpos, &ypos, 312, 64, 836, 1479, "*2 " A_WorkingDir %&button%) ;this line is getting the location of your selected button. Same goes for above
+		ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&button%) ;this line is searching for the location of your selected button. Same goes for above. The coords here are the same as above
 		MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
 	;MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button | use this if your screenshots don't line up with the button properly
 	Click
 	sleep 100
-	If ImageSearch(&xdir, &ydir, 330, 1380, 819, 1461, "*2 " A_WorkingDir "\ImageSearch\DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below
+	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " A_WorkingDir "\ImageSearch\DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears about it when you "reply" to someone
 		{
 			MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 			Click
@@ -76,24 +74,24 @@ disc(button)
 ; =========================================================================
 ;		Mouse Drag \\ Last updated: v2.0.3
 ; =========================================================================
-mousedrag(item) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
+mousedrag(tool) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
 {
 	click "middle"
 	SendInput "{h}{LButton Down}" ;set hand tool to "h"
 	KeyWait "Xbutton2"
 	SendInput "{LButton Up}"
-	SendInput %&item%
+	SendInput %&tool% ;this is the button you want the script to press to bring you back to your tool of choice
 }
 
 ; =========================================================================
 ;		better timeline movement \\ Last updated: v2.0.3
 ; =========================================================================
-timeline(item) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
+timeline(y) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
 {
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
-	MouseMove %&xpos%, %&item%
+	MouseMove %&xpos%, %&y% ;the y value you're defining is for the location of the top bar in your video editor that allows you to click it to drag along the timeline
 	SendInput "{Click Down}"
 	MouseMove %&xpos%, %&ypos%
 	blockOff()
@@ -113,7 +111,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
 		sleep 60
 		SendInput "^a{DEL}"
-		SendInput %&item% ;create a preset of blur effect with this name, must be in a folder as well
+		SendInput %&item% ;create a preset of any effect, must be in a folder as well
 		MouseMove 2232, 1001 ;move to the magnifying glass in the effects panel
 		sleep 100
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
@@ -137,11 +135,11 @@ num() ;this preset is to simply cut down repeated code on my numpad punch in scr
 		MouseMove %&xpos%, %&ypos%
 }
 
-fElse(item) ;a preset for the premiere scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
+fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
 {
 	Click "{Click Up}"
 	sleep 10
-	Send %&item%
+	Send %&data% ;what the script is typing in the text box
 	;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
 	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 	sleep 50
@@ -164,11 +162,11 @@ MouseMove %&xpos%, %&ypos%
 blockOff()
 }
 
-rfElse(item) ;a preset for the resolve scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
+rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
 {
 	SendInput "{Click Up}"
 	sleep 10
-	Send %&item%
+	Send %&data% ;what the script is typing in the text box
 	;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
 	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 	sleep 10
@@ -196,7 +194,7 @@ blockOff()
 ; =========================================================================
 ; Old
 ; =========================================================================
-/* ;this was the old way of doing the discord functions (v2.0.7) that included just right clicking and making the user do things. I've save the one with all variations of code it went through, the other two have been removed for cleanup as they were functionally identical
+/* ;this was the old way of doing the discord functions (v2.0.7) that included just right clicking and making the user do things. I've saved the one with all variations of code it went through, the other two have been removed for cleanup as they were functionally identical
 ;PLEASE NOTE, I ORIGINALLY HAD THIS SCRIPT WARP THE MOUSE TO CERTAIN POSITIONS TO HIT THE RESPECTIVE BUTTONS BUT THE POSITION OF BUTTONS IN DISCORD WITHIN THE RIGHT CLICK CONTEXT MENU CHANGE DEPENDING ON WHAT PERMS YOU HAVE IN A SERVER, SO IT WOULD ALWAYS TRY TO DO RANDOM THINGS LIKE PIN A MESSAGE OR OPEN A THREAD. There isn't really anything you can do about that. I initially tried to just send through multiple down/up inputs but apparently discord rate limits you to like 1 input every .5-1s so that's fun.
 discedit()
 {

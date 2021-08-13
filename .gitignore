@@ -1,31 +1,13 @@
 
 *.lnk
-move windows.ahk
-Sounds/wii9.wav
-Sounds/wii8.wav
-Sounds/wii7.wav
-Sounds/wii6.wav
-Sounds/wii5.wav
-Sounds/wii4.wav
-Sounds/wii3.wav
-Sounds/wii2.wav
-Sounds/wii12.wav
-Sounds/wii11.wav
-Sounds/wii10.wav
-Sounds/wii1.wav
+Sounds/
 userDefineLang_AHK_backup.xml
 TomSongQueueue.7z
-TomSongQueueue/Builds/ApplicationDj.exe
-TomSongQueueue/Builds/ApplicationDj.pdb
-TomSongQueueue/Builds/SongQueuer.exe
-TomSongQueueue/Builds/SongQueuer.pdb
-TomSongQueueue/Builds/songs.json
-TomSongQueueue/Docker/.env
-TomSongQueueue/Docker/docker-compose.yml
+TomSongQueueue/
 random mii wii.ahk
 Sounds/new 1.txt
-TomSongQueueue/Builds/docker-compose.yml
 duck.xlsx
 v2/
 releases/
 changelog.md
+ahk vscode.code-workspace
