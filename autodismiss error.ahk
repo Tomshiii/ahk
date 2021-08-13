@@ -1,6 +1,7 @@
 ﻿#SingleInstance force ;only one instance of this script may run at a time!
 TraySetIcon("C:\Program Files\ahk\Icons\warning.png")
 A_MaxHotkeysPerInterval := 2000
+#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 ;Menu, Tray, Icon, shell32.dll, 303 ; this changes the tray icon to a little check mark!
 
 ;you know that extremely annoying dialouge box that says,

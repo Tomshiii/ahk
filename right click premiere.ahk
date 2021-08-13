@@ -4,6 +4,7 @@ InstallKeybdHook
 TraySetIcon("C:\Program Files\ahk\Icons\right.png")
 CoordMode "Mouse", "screen"
 CoordMode "Pixel", "screen"
+#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;Menu "Tray" "Icon" "imageres.dll" 90
 

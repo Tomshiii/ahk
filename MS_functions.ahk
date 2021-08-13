@@ -1,6 +1,7 @@
 ﻿;#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
+#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.1.4

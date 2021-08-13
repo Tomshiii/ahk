@@ -1,4 +1,5 @@
 ﻿#SingleInstance Force
+#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir
 SetNumLockState "AlwaysOn" ;sets numlock to always on
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still use caps lock for macros)

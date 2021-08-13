@@ -1,6 +1,8 @@
 ﻿;https://www.youtube.com/watch?v=OqyQABySV8k
 #SingleInstance Force
 TraySetIcon("C:\Program Files\ahk\Icons\Flaunch.png")
+#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
+
 HotIfWinActive
 F1::
 {
