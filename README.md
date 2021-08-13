@@ -7,27 +7,29 @@ Included is also the Excel document I use to keep track of any hotkeys I set, ju
   - Video walking through _all (at the time)_ of my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo)
     - Video walking through even older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
 
-A lot of the code in the earliest versions of My Scripts.ahk was either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into an ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as so down below in the Explanation section.
+A lot of the code in the earliest versions my scripts were either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into an ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I personally have gone through them and made them function in ahk v2.0).
 
 You can watch me use some of these scripts in action while I edit away on twitch when I stream on my bot account: https://www.twitch.tv/botshiii
 
 ### Version Information:
-This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo. They are likely severely outdated by the time you're reading this, but those versions will no longer be maintained, you're free to try and backport any further additions if you're willing.
+This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo. They are likely severely outdated by the time you're reading this, but those versions will no longer be maintained, you're free to try and backport any later additions if you're willing.
 
 ## What to do:
-1. Download and install [AHK v2.0 Beta](https://www.autohotkey.com/)
-2. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
+1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 Beta](https://www.autohotkey.com/v2/).
+2. Extract AHK v2.0 beta and rename either 32bit or 64bit exe to just "AutoHotkey.exe". Then replace the default AutoHotkey.exe (usually found in C:\Program Files\AutoHotkey) with your new file from the 2.0 beta
+   - Replace Window Spy.ahk with a v2.0 version found [here](https://github.com/steelywing/AutoHotkey-Release/blob/master/installer/source/WindowSpy.v2.ahk)
+3. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
    - [Notepad++](https://notepad-plus-plus.org/downloads/)
      - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
-3. Save these scripts in "C:\Program Files\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
-4. Edit and then run any of the .ahk files to then use to your liking!
+4. Save these scripts in "C:\Program Files\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
+5. Edit, then run any of the .ahk files to then use to your liking!
    - Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
      - autodismiss error
      - fkey auto launch (recommended you check it out first though as it opens specific programs)
-     - MS_Functions (by nature. This script just defines functions FOR other scripts)
+     - MS_Functions (by nature. This script just defines functions FOR other scripts. It also does not need to be run separately as it is individually included in My Scripts.ahk)
      
 #### Then be aware:
 
