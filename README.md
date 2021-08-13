@@ -1,14 +1,18 @@
 # ahk
-This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane random interactions with a computer.
+This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane and random interactions with a computer.
 
 Included is also the Excel document I use to keep track of any hotkeys I set, just as an easier and more visual way of understanding what is/isn't available.
 
-A lot of the code in My Scripts.ahk is either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks.
+- Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
+  - Video walking through _all (at the time)_ of my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo)
+    - Video walking through even older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
+
+A lot of the code in the earliest versions of My Scripts.ahk was either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into an ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as so down below in the Explanation section.
 
 You can watch me use some of these scripts in action while I edit away on twitch when I stream on my bot account: https://www.twitch.tv/botshiii
 
-## Version Information:
-This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo.
+### Version Information:
+This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo. They are likely severely outdated by the time you're reading this, but those versions will no longer be maintained, you're free to try and backport any further additions if you're willing.
 
 ## What to do:
 1. Download and install [AHK v2.0 Beta](https://www.autohotkey.com/)
@@ -23,8 +27,12 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
      - Alt Menu acceleration disabler
      - autodismiss error
      - fkey auto launch (recommended you check it out first though as it opens specific programs)
+     - MS_Functions (by nature. This script just defines functions FOR other scripts)
+     
+#### Then be aware:
 
-Any scripts that contain pixel coordinates rely not only on my monitor layout, but also my workspace layout within premiere and will not necessarily work out of the box. They will require looking at the individual comments to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK
+Any scripts that contain pixel coordinates rely not only on my monitor layout, but also my workspace layout within premiere (or any applicable program) and will not necessarily work out of the box. They will require looking at the individual comments, as well as any accompanying AHK documentation (make sure you look at the ahk v2.0 documentation and **NOT** the v1.1 documentation) to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK. (an ahk v2.0 version of window spy can be found [here](https://github.com/steelywing/AutoHotkey-Release/blob/master/installer/source/WindowSpy.v2.ahk))
+
 
 ## Explanation:
 Item | Use
