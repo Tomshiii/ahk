@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.4
+;\\v2.1.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -148,7 +148,7 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 }
 
 ; =========================================================================
-;		Resolve \\ Last updated: v2.0.4
+;		Resolve \\ Last updated: v2.1.5
 ; =========================================================================
 Rscale(item) ;to set the scale of a video within resolve
 {
@@ -175,19 +175,39 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts ;these wo
 	click "2295, 240"
 }
 
-Rfav(x, y) ;x and y are the window pixel coords for the "favourite" you want your hotkey to apply to your clip
+Rfav(effect) ;apply any effect to the clip you're hovering over. this script requires the search box to be visible on the left side of the screen
 {
-coordw() ;this script requires the "effects library" to be open on the left side of screen
+coordw() ;
 blockOn()
 MouseGetPos &xpos, &ypos
-	;Click 566 735 ;clicks mag glass in the "effects library" window \\bad idea since clicking it again closes the search bar .-.
-	;SendInput gaussian
-	MouseMove %&x%, %&y% ;add effect as a favourite instead, makes things easier as clicking the mag glass changes depending on if it's already open
-	sleep 100
-	SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%, 2
-	;sleep 500
-	SendInput "{Click Up}"
+If ImageSearch(&xi, &yi, 8, 752, 220, 803, "*2 " A_WorkingDir "\ImageSearch\Resolve\search.png") ;the search bar must be visible for this script to work. The coords in this function are to search for it
+	{
+		MouseMove(%&xi% + "10", %&yi% + "5")
+		Click
+		SendInput(%&effect%)
+		MouseMove(189, 72,, "R")
+		SendInput "{Click Down}"
+		MouseMove %&xpos%, %&ypos%, 2
+		SendInput "{Click Up}"
+		MouseMove(%&xi% + "10", %&yi% + "5")
+		click
+	}
+	else ;if for whatever reason the word "seach" isn't visible in the search box, this part of the function defaults back to just raw pixel coords
+		{
+			MouseMove(34, 775)
+			Click
+			SendInput(%&effect%)
+			MouseMove(189, 72,, "R")
+			SendInput "{Click Down}"
+			MouseMove %&xpos%, %&ypos%, 2
+			SendInput "{Click Up}"
+			MouseMove(34, 775)
+			click
+		}
+
+	SendInput("^a" "{Del}")
+	MouseMove %&xpos%, %&ypos%
+	click "middle"
 blockOff()
 }
 

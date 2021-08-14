@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.3
+;\\v2.1.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.0.4
+;\\v2.1.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -98,7 +98,11 @@ F1:: ;press then hold F1 and drag to increase/decrese x position. Let go of F1 t
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
-	click "2196 139" ;this highlights the video tab
+If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
 	MouseMove 2329, 215 ;moves to the scale value
 	sleep 100
 	SendInput "{Click Down}"	
@@ -161,7 +165,11 @@ F3:: ;press then hold F3 and drag to increase/decrese x position. Let go of F3 t
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
-	click "2196 139" ;this highlights the video tab
+If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+	{
+		MouseMove(%&xn%, %&yn%)
+		click ;"2196 139" ;this highlights the video tab
+	}
 	MouseMove 2332, 239 ;moves to the x axis value
 	sleep 100
 	SendInput "{Click Down}"
@@ -185,7 +193,11 @@ F4:: ;press then hold F4 and drag to increase/decrese y position. Let go of F4 t
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
-	click "2196, 139" ;this highlights the video tab
+If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+	{
+		MouseMove(%&xn%, %&yn%)
+		click ;"2196 139" ;this highlights the video tab
+	}
 	MouseMove 2457, 240 ;moves to the y axis value
 	sleep 100
 	SendInput "{Click Down}"
@@ -209,7 +221,11 @@ F5:: ;press then hold F5 and drag to increase/decrese scale. Let go of F5 to con
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
-	click "2196, 139" ;this highlights the video tab
+If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+	{
+		MouseMove(%&xn%, %&yn%)
+		click ;"2196 139" ;this highlights the video tab
+	}
 	MouseMove 2456, 265 ;moves to the rotation value
 	sleep 100
 	SendInput "{Click Down}"
@@ -231,24 +247,56 @@ MouseGetPos &xpos, &ypos
 ;=========================================================
 ;		flips
 ;=========================================================
-!h:: ;flip horizontally
+!h:: ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
 {
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
-	click "2196, 139" ;this highlights the video tab
-	click "2301, 363"
+If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
+	{
+		MouseMove(%&xn%, %&yn%)
+		click ;"2196 139" ;this highlights the video tab
+	}
+	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\horizontal.png") ;searches for the horizontal button when it isn't activated already
+		{
+			MouseMove(%&xh%, %&yh%)
+			click ;"2196 139" ;this highlights the video tab
+			goto next
+		}
+	If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\horizontalON.png") ;searches for the horizontal button when it is activated already
+		{
+			MouseMove(%&xho%, %&yho%)
+			click ;"2196 139" ;this highlights the video tab
+			goto next
+		}
+next:
 MouseMove %&xpos%, %&ypos%
 blockOff()
 }
 
-!v:: ;flip vertically
+!v:: ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
 {
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
-	click "2196, 139" ;this highlights the video tab
-	click "2340, 367"
+If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
+	{
+		MouseMove(%&xn%, %&yn%)
+		click ;"2196 139" ;this highlights the video tab
+	}
+	If ImageSearch(&xv, &yv, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\vertical.png") ;searches for the vertical button when it isn't activated already
+		{
+			MouseMove(%&xv%, %&yv%)
+			click ;"2196 139" ;this highlights the video tab
+			goto next
+		}
+	If ImageSearch(&xvo, &yvo, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\verticalON.png") ;searches for the vertical button when it is activated already
+		{
+			MouseMove(%&xvo%, %&yvo%)
+			click ;"2196 139" ;this highlights the video tab
+			goto next
+		}
+next:
 MouseMove %&xpos%, %&ypos%
 blockOff()
 }
@@ -265,7 +313,7 @@ blockOff()
 ;		Drag and Drop Effect Presets
 ;
 ;===========================================================================================================================================================================
-!g::Rfav("80", "1071") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
+!g::Rfav("gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
 ; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords. x (80 in this example) will always remain the same, so just grab the new y coords and you've added a new macro
 
 ;===========================================================================================================================================================================
