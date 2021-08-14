@@ -118,9 +118,9 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 		sleep 60
 		SendInput "^a{DEL}"
 		SendInput %&item% ;create a preset of any effect, must be in a folder as well
-		coordc()
-		CaretGetPos(&carx, &cary)
-		MouseMove %&carx%, %&cary% ;move to the magnifying glass in the effects panel
+		coordc() ;change caret coord mode to window
+		CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
+		MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
 		sleep 100
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
@@ -165,21 +165,22 @@ MouseGetPos &xpos, &ypos
 	click "2333, 218" ;clicks on video
 	SendInput %&item% ;effectively x %
 	SendInput "{ENTER}"
-	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
+	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.  Using the arrow would honestly be faster here
 MouseMove %&xpos%, %&ypos%
 blockOff()
 }
 
-rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
+rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 {
 	SendInput "{Click Up}"
 	sleep 10
 	Send %&data% ;what the script is typing in the text box
-	;MouseMove, x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
+	;MouseMove, x, y ;if you want to press the reset arrow, input the windowspy SCREEN coords here then comment out the above Send^
 	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
+	;alternatively you could also run imagesearches like in the other resolve functions to ensure you always end up in the right place
 	sleep 10
 	send "{enter}"
-	click "2295, 240"
+	click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.
 }
 
 Rfav(effect) ;apply any effect to the clip you're hovering over. this script requires the search box to be visible on the left side of the screen
@@ -206,7 +207,7 @@ If ImageSearch(&xi, &yi, 8, 752, 220, 803, "*2 " A_WorkingDir "\ImageSearch\Reso
 			SendInput(%&effect%)
 			MouseMove(189, 72,, "R")
 			SendInput "{Click Down}"
-			MouseMove %&xpos%, %&ypos%, 2
+			MouseMove %&xpos%, %&ypos%, 2 ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
 			SendInput "{Click Up}"
 			MouseMove(34, 775)
 			click
