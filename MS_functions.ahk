@@ -4,13 +4,13 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.5
+;\\v2.1.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
 
 ; =========================================================================
-;		Coordmode \\ Last updated: v2.0.1
+;		Coordmode \\ Last updated: v2.1.6
 ; =========================================================================
 coords() ;sets coordmode to "screen"
 {
@@ -22,6 +22,11 @@ coordw() ;sets coordmode to "window"
 {
 	coordmode "pixel", "window"
 	coordmode "mouse", "window"
+}
+
+coordc()
+{
+	coordmode "caret", "window"
 }
 
 ; =========================================================================
@@ -101,7 +106,7 @@ MouseGetPos &xpos, &ypos
 }
 
 ; =========================================================================
-;		Premiere \\ Last updated: v2.0.3
+;		Premiere \\ Last updated: v2.1.6
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 {
@@ -113,7 +118,9 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 		sleep 60
 		SendInput "^a{DEL}"
 		SendInput %&item% ;create a preset of any effect, must be in a folder as well
-		MouseMove 2232, 1001 ;move to the magnifying glass in the effects panel
+		coordc()
+		CaretGetPos(&carx, &cary)
+		MouseMove %&carx%, %&cary% ;move to the magnifying glass in the effects panel
 		sleep 100
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
