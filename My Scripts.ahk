@@ -9,7 +9,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.14
+;\\v2.2.15
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.1.4
 
@@ -102,9 +102,9 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 
 ^+c:: ;runs a google search of highlighted text
 {
-    Send "^c"
-    Sleep 50
-    Run "https://www.google.com/search?d&q=%clipboard%"
+	Send "^c"
+	Sleep 50
+	Run "https://www.google.com/search?d&q=" A_Clipboard
 }
 
 #HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
