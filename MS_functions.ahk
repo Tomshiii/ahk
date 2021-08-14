@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.6
+;\\v2.1.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -106,7 +106,7 @@ MouseGetPos &xpos, &ypos
 }
 
 ; =========================================================================
-;		Premiere \\ Last updated: v2.1.6
+;		Premiere \\ Last updated: v2.1.7
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 {
@@ -115,13 +115,12 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	MouseGetPos &xpos, &ypos
 		SendInput "^+7"
 		SendInput "^b" ;Requires you to set ctrl shift 7 to the effects window, then ctrl b to select find box
-		sleep 60
 		SendInput "^a{DEL}"
-		SendInput %&item% ;create a preset of any effect, must be in a folder as well
+		sleep 60
 		coordc() ;change caret coord mode to window
 		CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
 		MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
-		sleep 100
+		SendInput %&item% ;create a preset of any effect, must be in a folder as well
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
 		MouseMove %&xpos%, %&ypos%
