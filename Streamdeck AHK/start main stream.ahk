@@ -67,7 +67,13 @@ WinActivate
 		coordmode "mouse", "Window"
 		MouseMove 1128, 130 ;moves mouse to click the start button
 		click ;required for brothers queue program for automatic mii wii playback
-sleep 1000
+sleep 2000
+Run "C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
+sleep 3500 ;it needed some time to open
+	if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
+		WinActivate
+sleep 3000
+SendInput "y{enter}"
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run "C:\Program Files\Chatterino\chatterino.exe"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
@@ -79,12 +85,6 @@ sleep 1000
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
 	if WinExist("ahk_exe Discord.exe")
 		WinMove 4480, 432, 1080, 797  ;moves into position
-	Run "C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
-	sleep 3500 ;it needed some time to open
-		if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
-			WinActivate
-	sleep 2000
-	SendInput "y{enter}"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe" ;try to run it again since apparently running it once sometimes isn't enough
 }
 else
