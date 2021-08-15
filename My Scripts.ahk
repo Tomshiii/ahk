@@ -31,13 +31,15 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 ; Its purpose is to help speed up editing and random interactions with windows.
 ; You are free to modify this script to your own personal uses/needs
 ; Please give credit to the foundation if you build on top of it, similar to how I have below, otherwise you're free to do as you wish
+; Youtube Video going through all (at the time) of my ahk v2.0 scripts (https://youtu.be/3rFDEonACxo)
+; Youtube Video showing how AHK can speed up editing workflows (https://youtu.be/Iv-oR7An_iI)
 ;
 ; ===========================================================================================================================================================
 
 ; A chunk of the code in the original versions of this script was either directly inspired by, or originally copied from Taran from LTT (https://github.com/TaranVH/) before
 ; I modified it to fit v2.0 of ahk and made a bunch of other changes, his videos on the subject are what got me into AHK to begin with and what brought the foundation of the original
 ; version of this script to life.
-; I use a streamdeck to run a lot of these scripts which is why a bunch of them are bound to F13-24 but really they could be replaced with anything
+; I use a streamdeck to run a lot of these scripts which is why a bunch of them are separated out into their own scripts in the \Streamdeck AHK\ folder
 ; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
 
 ; I use to use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
@@ -105,6 +107,15 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 	Send "^c"
 	Sleep 50
 	Run "https://www.google.com/search?d&q=" A_Clipboard
+}
+
+;These two scripts are to open highlighted text in the ahk documentation
+^F6:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
+^+F6:: ;opens highlighted ahk command in the documentation
+{
+	Send "^c"
+	ClipWait
+	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
 
 #HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
