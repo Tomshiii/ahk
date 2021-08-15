@@ -65,7 +65,7 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 	;MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button | use this if your screenshots don't line up with the button properly
 	Click
 	sleep 100
-	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " A_WorkingDir "\ImageSearch\Discord\DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears about it when you "reply" to someone
+	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " A_WorkingDir "\ImageSearch\Discord\DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears about it when you "reply" to someone
 		{
 			MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 			Click
@@ -73,8 +73,11 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 			blockOff()
 		}
 	else
-		MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
-		blockOff()
+		{
+			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+			blockOff()
+			;MsgBox("didn't find the image")
+		}
 }
 
 ; =========================================================================
