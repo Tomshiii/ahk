@@ -142,17 +142,9 @@ CapsLock & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message yo
 		Send "{Enter}+{Tab}"
 }
 
-XButton1::mousedrag("h", "XButton1", "P")
+XButton1::mousedrag("h", "XButton1", "P") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-
-z::
-{
-	SendInput("z")
-	SendInput("{click down}")
-	KeyWait("z", "P")
-	SendInput("{click up}")
-	SendInput("v")
-}
+z::mousedrag("z", "z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
 
 ;===========================================================================================================================================================================
 ;
