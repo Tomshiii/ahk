@@ -3,7 +3,13 @@
 
 ; This script will continue to be a long term work in progress and will move quite slowling in comparison to everything else
 
-#a:: Edit ;win + a opens notepad to edit this script
+#a:: ;win + a opens notepad to edit this script
+{
+	if WinExist("ahk_exe notepad.exe") ;if vscode exists it'll simply activate it, if it doesn't, it'll open it
+			WinActivate
+	else
+		Run 'notepad.exe  "C:\Program Files\ahk\textreplace.ahk"' ;opens in vscode (how I edit it)
+}
 #+r:: ;win + r reloads this script
 {
 	Reload
@@ -24,7 +30,19 @@
 ;----------------------------------------
 ; TWITCH EMOTES
 ;----------------------------------------
-:*:omeg::omegalul
+:*:omega::omegalul
 :*:oemg::omegalul
-:*:pepel::pepeLaugh
+:*:pepela::pepeLaugh
 :*:pogg::poggies
+
+;----------------------------------------
+; TEXT CORRECTIONS
+;----------------------------------------
+:*:couldnt::couldn't
+:*:wouldnt::wouldn't
+:*:shouldnt::shouldn't
+
+;----------------------------------------
+; AUTOCORRECT
+;----------------------------------------
+::tyope::type
