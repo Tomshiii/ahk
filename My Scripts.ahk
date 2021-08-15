@@ -9,7 +9,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 #Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.15
+;\\v2.2.16
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.1.4
 
@@ -104,8 +104,9 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 
 ^+c:: ;runs a google search of highlighted text
 {
+	A_Clipboard := "" ;clears the clipboard
 	Send "^c"
-	Sleep 50
+	ClipWait ;waits for the clipboard to contain data
 	Run "https://www.google.com/search?d&q=" A_Clipboard
 }
 
@@ -113,8 +114,9 @@ NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 ^F6:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
 ^+F6:: ;opens highlighted ahk command in the documentation
 {
+	A_Clipboard := "" ;clears the clipboard
 	Send "^c"
-	ClipWait
+	ClipWait ;waits for the clipboard to contain data
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
 
