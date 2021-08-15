@@ -5,8 +5,8 @@ SetNumLockState "AlwaysOn" ;sets numlock to always on
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still use caps lock for macros)
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
-TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this script uses in the taskbar
-#Include "C:\Program Files\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
+TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon this script uses in the taskbar
+#Include "C:\Program Files\ahk\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.2.16
@@ -64,7 +64,7 @@ TraySetIcon("C:\Program Files\ahk\Icons\myscript.png") ;changes the icon this sc
 	MouseMove 1280, 720
 }
 
-^+a::Run "C:\Program Files\ahk" ;opens my script directory
+^+a::Run "C:\Program Files\ahk\ahk" ;opens my script directory
 
 ;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++ \\don't recommend using this way at all, replacing notepad kinda sucks
 ;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred) \\use this way

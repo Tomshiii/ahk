@@ -1,9 +1,9 @@
 ﻿if not WinExist("ahk_exe obs64.exe")
 {
 SetWinDelay 0 ;makes windows move instantly
-	Run '*RunAs "C:\Program Files\ahk\Streaming.ahk"'
+	Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
-	Run "C:\Program Files\ahk\obs64.lnk" ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
+	Run "C:\Program Files\ahk\ahk\obs64.lnk" ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
 		else
@@ -68,7 +68,7 @@ WinActivate
 		MouseMove 1128, 130 ;moves mouse to click the start button
 		click ;required for brothers queue program for automatic mii wii playback
 sleep 2000
-Run "C:\Program Files\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
+Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
 sleep 3500 ;it needed some time to open
 	if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
 		WinActivate
@@ -80,7 +80,7 @@ SendInput "y{enter}"
 	Run "C:\Program Files (x86)\foobar2000\foobar2000.exe"
 	Run "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe"
 	Run "C:\Users\Tom\AppData\Local\Programs\streamlabels\StreamLabels.exe"
-	Run "C:\Program Files\ahk\Streamlabs Chatbot.lnk"
+	Run "C:\Program Files\ahk\ahk\Streamlabs Chatbot.lnk"
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
 	if WinExist("ahk_exe Discord.exe")

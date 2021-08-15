@@ -1,8 +1,8 @@
 ﻿if not WinExist("ahk_exe obs64.exe")
 {
 ;F16:: ;opens streamelements obs and swaps to botshi profile
-	Run '*RunAs "C:\Program Files\ahk\Streaming.ahk"'
-	Run "C:\Program Files\ahk\BOTSHI.lnk" ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
+	Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
+	Run "C:\Program Files\ahk\ahk\BOTSHI.lnk" ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
 	;Run, C:\Program Files\ahk\obs64.lnk
 		WinWait "ahk_exe obs64.exe" ;waits until obs is open then brings it into focus. obs live fucked up their integration so you have to physically click on obs live before you can input alt commands. Thanks obs live
 		sleep 3000 ;waits a little bit once obs has opened so it doesn't crash
