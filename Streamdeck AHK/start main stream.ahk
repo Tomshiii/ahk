@@ -76,7 +76,7 @@ sleep 3000
 SendInput "y{enter}"
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run "C:\Program Files\Chatterino\chatterino.exe"
-	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
+	;Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
 	Run "C:\Program Files (x86)\foobar2000\foobar2000.exe"
 	Run "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe"
 	Run "C:\Users\Tom\AppData\Local\Programs\streamlabels\StreamLabels.exe"

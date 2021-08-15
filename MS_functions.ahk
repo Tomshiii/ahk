@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.7
+;\\v2.1.8
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -81,15 +81,15 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.0.3
+;		Mouse Drag \\ Last updated: v2.1.8
 ; =========================================================================
-mousedrag(tool) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
+mousedrag(tool, keyywait, toolorig) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
 {
 	click "middle"
-	SendInput "{h}{LButton Down}" ;set hand tool to "h"
-	KeyWait "Xbutton2"
+	SendInput %&tool% "{LButton Down}" ;tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
+	KeyWait %&keyywait% ;keyywait is the button you're using to call this function
 	SendInput "{LButton Up}"
-	SendInput %&tool% ;this is the button you want the script to press to bring you back to your tool of choice
+	SendInput %&toolorig% ;toolorig is the button you want the script to press to bring you back to your tool of choice
 }
 
 ; =========================================================================

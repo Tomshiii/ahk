@@ -9,9 +9,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "C:\Program Files\ahk\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.16
+;\\v2.2.17
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.4
+;\\v2.1.8
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -142,7 +142,17 @@ CapsLock & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message yo
 		Send "{Enter}+{Tab}"
 }
 
-Xbutton2::mousedrag("p") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+XButton1::mousedrag("h", "XButton1", "P")
+Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+
+z::
+{
+	SendInput("z")
+	SendInput("{click down}")
+	KeyWait("z", "P")
+	SendInput("{click up}")
+	SendInput("v")
+}
 
 ;===========================================================================================================================================================================
 ;
@@ -151,7 +161,7 @@ Xbutton2::mousedrag("p") ;changes the tool to the hand tool while mouse button i
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
 Xbutton1::timeline("981") ;check MS_functions.ahk for the code to this preset
-Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
 ;===========================================================================================================================================================================
 ;
@@ -397,7 +407,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 WheelRight::+Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
 
 
