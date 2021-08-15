@@ -6,30 +6,78 @@
 	;WinActivate "ahk_exe Streamlabs Chatbot.exe"
 DetectHiddenWindows(true)
 	if WinExist("Streaming.ahk")
-		WinClose
+		WinClose(,,1)
+	if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
+			{
+
+					WinActivate
+					WinMove 2553, -892, 1111, 1047
+				coordmode "pixel", "window"
+				coordmode "mouse", "window"
+				MouseMove(1022, 880)
+				click
+			}
 	if WinExist("ahk_exe foobar2000.exe")
-	WinClose
+		{
+			WinActivate
+			WinClose(,,2)
+		}
 	if WinExist("All Moons UPDATED v.1.3.0")
-	WinClose
-	if WinExist("Twitch")
-	WinClose
-	if WinExist("ahk_exe Docker Desktop.exe")
-	WinClose 
+		{
+			WinActivate
+			WinClose(,,2)
+		}
+;	if WinExist("Twitch") ;leaving this in will close the window you're using after a raid which is just annoying so I'd rather just manually close my dashboard window
+;		{
+;			WinActivate
+;			WinClose(,,1)
+;		}
 ;WinClose, ahk_exe LiveSplit.exe ;don't include, just incase of gold/pbs
 ;WinClose, LiveSplit ;don't include, just incase of gold/pbs
 	if WinExist("ahk_exe chrome.exe")
-	WinClose
-	if WinExist("ahk_exe obs64.exe")
-	WinClose
+		{
+			WinActivate
+			WinKill(,,2)
+			coordmode "pixel", "window"
+			coordmode "mouse", "window"
+			MouseMove(780, 13)
+			click
+		}
 	if WinExist("ahk_exe StreamLabels.exe")
-	WinClose
+		{
+			WinActivate
+			WinClose(,,2)
+		}
 	if WinExist("ahk_exe chatterino.exe")
-	WinClose
+		{
+			WinActivate
+			WinClose(,,2)
+		}
 	if WinExist("ahk_exe LioranBoard Receiver.exe")
-	WinClose
+		{
+			WinActivate
+			WinClose(,,2)
+		}
 	if WinExist("ahk_exe ApplicationDj.exe")
-	WinClose
+		{
+			WinActivate
+			WinClose(,,2)
+		}
 	if WinExist("ahk_exe discord.exe")
 		WinMove 4480, -260, 1080, 1488
-;WinKill, Streamlabs Chatbot
+	if WinExist("ahk_exe Docker Desktop.exe")
+		{
+			WinActivate
+			WinKill(,,10)
+		}
+	if WinExist("ahk_exe Streamlabs Chatbot.exe")
+		{
+			WinActivate
+			WinClose(,,10)
+		}
+	if WinExist("ahk_exe Docker Desktop.exe")
+		{
+			WinActivate
+			WinClose(,,10)
+		}
 ExitApp

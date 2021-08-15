@@ -405,7 +405,7 @@ Xbutton2::mousedrag("v") ;changes the tool to the hand tool while mouse button i
 
 /*
 ;===========================================================================================================================================================================
-						OLD \\ Nothing below here has been adapted for use with ahk v2.0
+						OLD \\ Code below here might not be converted to ahk v2.0 code
 ;===========================================================================================================================================================================
 F6:: ;how to move mouse on one axis
 SetKeyDelay, 0
@@ -419,110 +419,5 @@ SetKeyDelay, 0
 coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseMove, 0, 513,, R
-Return
-*/
-
-;#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
-/*
-;Detatch a firefox tab
-#IfWinActive ahk_exe firefox.exe
-F14:: ;detatch a tab when it fails to do so
-SendInput, !d
-sleep, 100
-Send, +{TAB}
-sleep, 100
-Send, +{TAB}
-sleep, 100
-Send, +{TAB}
-sleep, 200
-Send, +{F10}
-sleep, 200
-Send, v
-sleep, 200
-Send, w
-sleep, 200
-Return
-*/
-
-;change obs profile
-/*
-F9::
-SendInput, !p
-SendInput, {DOWN 7}
-SendInput, {ENTER}
-Return
-*/
-
-/*
-;open obs and change its profle
-^+!o::  ;====learning how WinActivate works====
-Run, C:\Program Files\AHK\obs64.lnk
-if WinExist("ahk_exe obs64.exe")
-	WinActivate
-else
-	WinWaitActive, ahk_exe obs64.exe
-sleep 1000
-SendInput, !p
-SendInput, {DOWN 7}
-SendInput, {ENTER}
-Return
-*/
-
-/*
-~~~~~~~~~~~~~~~~~Timecode Scripts~~~~~~~~~~~~~~~~~
-^!c:: ;moves the mouse to the timecode and copies it  //these were mostly for the beginner tutorial, I don't use anymore
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-SetKeyDelay, 0
-MouseGetPos, xposP, yposP
-	MouseMove, 79,93
-	SendInput, {Click}
-	SendInput, ^c
-MouseMove, %xposP%, %yposP%
-	SendInput, {Click}
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-^+c:: ;moves the mouse to the timecode and clicks it
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-SetKeyDelay, 0
-	MouseMove, 79,93
-	SendInput, {Click}
-	SendInput, ^c
-blockinput, MouseMoveOff
-BlockInput, off
-Return
-*/
-
-/*
-;currently replaced by the push to audition streamdeck script
-;=========================================================
-;		Audition
-;=========================================================
-#IfWinActive ahk_exe Adobe Audition.exe
-F13:: ;Moves mouse and applies Limit preset, then normalises to -3db
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	MouseMove, 300, 380
-	SendInput, {Click}l{DOWN 3}{ENTER}
-	sleep, 5
-	MouseMove, 92, 717
-	SendInput, {Click}
-	sleep, 2200
-	SendInput, !rnn{ENTER}
-MouseMove, %xposP%, %yposP%
-blockinput, MouseMoveOff
-BlockInput, off
 Return
 */
