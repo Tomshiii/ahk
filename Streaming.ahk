@@ -14,7 +14,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\streaming.png") ;changes the icon th
 ;
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ; This is just so I have a way to relaunch it manually as admin
-F6::Run '*RunAs "C:\Program Files\ahk\Streaming.ahk"'
+F6::Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
 
 ;===========================================================================================================================================================================
 ;
@@ -22,7 +22,7 @@ F6::Run '*RunAs "C:\Program Files\ahk\Streaming.ahk"'
 ;
 ;===========================================================================================================================================================================
 #HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
-F17::Run "C:\Program Files\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
+F17::Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
 
 #HotIf WinExist("ahk_exe obs64.exe")
 ^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream

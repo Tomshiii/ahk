@@ -33,7 +33,7 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
      
 #### Then be aware:
 
-Any scripts that contain pixel coordinates rely not only on my monitor layout, but also my workspace layout within premiere (or any applicable program) and will not necessarily work out of the box. They will require looking at the individual comments, as well as any accompanying AHK documentation (make sure you look at the ahk v2.0 documentation and **NOT** the v1.1 documentation) to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK. (an ahk v2.0 version of window spy can be found [here](https://github.com/steelywing/AutoHotkey-Release/blob/master/installer/source/WindowSpy.v2.ahk))
+Any scripts that contain pixel coordinates rely not only on my monitor layout, but also my workspace layout within premiere (or any applicable program) and will not necessarily work out of the box. They will require looking at the individual comments, as well as any accompanying AHK documentation (make sure you look at the ahk [v2.0](https://lexikos.github.io/v2/docs/AutoHotkey.htm) documentation and **NOT** the [v1.1](https://www.autohotkey.com/docs/AutoHotkey.htm) documentation) to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK. (an ahk v2.0 version of window spy can be found [here](https://github.com/steelywing/AutoHotkey-Release/blob/master/installer/source/WindowSpy.v2.ahk))
 
 
 ## Explanation:
