@@ -9,7 +9,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "C:\Program Files\ahk\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.17
+;\\v2.2.18
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.1.8
 
@@ -272,9 +272,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 	MouseGetPos &xpos, &ypos
 	;MouseMove 142, 1059 ;move to the "motion" tab
 	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
-		{
 			MouseMove(%&x% + "25", %&y%)
-		}
 	sleep 100
 	if GetKeyState("F4", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
@@ -288,9 +286,9 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 		}
 	else
 		{
-			MouseMove 352, 1076 ;move to the reset arrow
-			;if ImageSearch(&xcol, &ycol, 320, 1070, 446, 1086, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png")
-				;MouseMove(%&xcol%, %&ycol%) ; this wouldn't work, idk why
+			;MouseMove 352, 1076 ;move to the reset arrow
+			if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+					MouseMove(%&xcol%, %&ycol%)
 			Click
 			sleep 50
 			MouseMove %&xpos%, %&ypos%

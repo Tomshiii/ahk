@@ -49,6 +49,12 @@ blockOff() ;turns off the blocks on user input
 ;		discord \\ Last updated: v2.1.4
 ; =========================================================================
 disc(button) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
+;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME. YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
+;dark theme
+;chat font scaling: 20px
+;space between message groups: 16px
+;zoom level: 100
+;saturation; 70%
 {
 	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
 	MouseGetPos(&x, &y)
