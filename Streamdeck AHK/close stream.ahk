@@ -4,6 +4,8 @@
 ;MouseGetPos &xpos, &ypos
 	;MouseMove 878, 14
 	;WinActivate "ahk_exe Streamlabs Chatbot.exe"
+
+;this script is kinda rough and sometimes requires multiple activations to get everything closed. Probably requires more elaborate code but realistically it's just too much effort for me to bother with at the moment.
 DetectHiddenWindows(true)
 	if WinExist("Streaming.ahk")
 		WinClose(,,1)
@@ -55,11 +57,13 @@ DetectHiddenWindows(true)
 		}
 	if WinExist("ahk_exe LioranBoard Receiver.exe")
 		{
+			WinRestore
 			WinActivate
 			WinClose(,,2)
 		}
 	if WinExist("ahk_exe ApplicationDj.exe")
 		{
+			WinRestore
 			WinActivate
 			WinClose(,,2)
 		}
@@ -67,6 +71,7 @@ DetectHiddenWindows(true)
 		WinMove 4480, -260, 1080, 1488
 	if WinExist("ahk_exe Docker Desktop.exe")
 		{
+			WinRestore
 			WinActivate
 			WinKill(,,10)
 		}
@@ -77,7 +82,8 @@ DetectHiddenWindows(true)
 		}
 	if WinExist("ahk_exe Docker Desktop.exe")
 		{
+			WinRestore
 			WinActivate
-			WinClose(,,10)
+			WinKill(,,10)
 		}
 ExitApp
