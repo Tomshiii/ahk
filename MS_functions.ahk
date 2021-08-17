@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.8
+;\\v2.1.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -115,7 +115,7 @@ MouseGetPos &xpos, &ypos
 }
 
 ; =========================================================================
-;		Premiere \\ Last updated: v2.1.7
+;		Premiere \\ Last updated: v2.1.9
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 {
@@ -137,18 +137,28 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	blockOff()
 }
 
-num() ;this preset is to simply cut down repeated code on my numpad punch in scripts
+num(xval, yval, scale) ;this preset is to simply cut down repeated code on my numpad punch in scripts
 {
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
 		SendInput "^+9"
 		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		click 214, 1016
-		SendInput "{WheelUp 30}"
-		MouseMove 122,1060 ;location for "motion"
+		;click 214, 1016
+		If ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " A_WorkingDir "\ImageSearch\Premiere\video.png") ;moves to the motion tab
+			MouseMove(%&x%, %&y%)
+		else
+			goto end
+		;SendInput "{WheelUp 30}" ;no longer required as the function wont finish if it can't find the image
+		;MouseMove 122,1060 ;location for "motion"
+		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png") ;moves to the motion tab
+			MouseMove(%&x2% + "10", %&y2% + "10")
 		SendInput "{Click}"
+		SendInput "{Tab 2}" %&xval% "{Tab}" %&yval% "{Tab}" %&scale% "{ENTER}"
+		SendInput "{Enter}"
+		end:
 		MouseMove %&xpos%, %&ypos%
+		blockOff()
 }
 
 fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code

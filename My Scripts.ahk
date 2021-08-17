@@ -9,9 +9,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "C:\Program Files\ahk\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.18
+;\\v2.2.19
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.8
+;\\v2.1.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -100,7 +100,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
 
-NumpadDiv::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
+NumLock::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 
 ^+c:: ;runs a google search of highlighted text
 {
@@ -144,7 +144,7 @@ CapsLock & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message yo
 
 XButton1::mousedrag("h", "XButton1", "P") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-z::mousedrag("z", "z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
++z::mousedrag("z", "z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
 
 ;===========================================================================================================================================================================
 ;
@@ -171,10 +171,63 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 {
 	coords()
 	MouseGetPos &xpos, &ypos
-	MouseMove 34, 917 ;location of the selection tool
+	;MouseMove 34, 917 ;location of the selection tool
+	If ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " A_WorkingDir "\ImageSearch\Premiere\selection.png") ;moves to the selection tool
+			MouseMove(%&x%, %&y%)
 	click
 	MouseMove %&xpos%, %&ypos%
 }
+
+^F1:: ;clicks the scale window so you can input your own values - then waits for you to hit enter to warp the cursor back 
+{
+	coords()
+	BlockInput "MouseMove"
+	BlockInput "On"
+	MouseGetPos &xpos, &ypos
+	If PixelSearch(&xcol, &ycol, 42, 1092, 491, 1109, 0x288ccf, 3) ;looks for the blue text to the right of scale
+		MouseMove(%&xcol%, %&ycol%)
+	KeyWait("F1") ;waits for you to let go of F1
+	SendInput "{Click}"
+	KeyWait("``", "D") ;waits until the ` is pressed before continuing
+	SendInput("{Enter}")
+	MouseMove %&xpos%, %&ypos%
+	Click("middle")
+	blockOff()
+}
+
+^MButton:: ;drag my bleep (goose) sfx to the cursor
+{
+	KeyWait("Ctrl")
+	blockOn()
+	coords()
+	MouseGetPos &xpos, &ypos
+		SendInput "^+6"
+		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
+		SendInput "^a{DEL}"
+		SendInput("Goose_honk")
+		sleep 100
+		If ImageSearch(&x, &y, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose.png") ;moves to the goose sfx
+			{
+				MouseMove(%&x% + "20", %&y% + "5")
+				SendInput("{Click Down}")
+			}
+		else
+		{
+			If ImageSearch(&x2, &y2, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose2.png") ;moves to the goose sfx if already highlighted
+			{
+				MouseMove(%&x2% + "20", %&y2% + "5")
+				SendInput("{Click Down}")
+			}
+		}
+		MouseMove(%&xpos%, %&ypos%, "2")
+		SendInput("{Click Up}")
+		SendInput "^+6"
+		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
+		SendInput "^a{DEL}"
+		Click("middle")
+		blockOff()
+}
+
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		hold and drag (or click)
@@ -329,30 +382,18 @@ F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to
 ;		NUMPAD SCRIPTS
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Numpad7:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
-{
-	num() ;check MS_functions.ahk for the code to this preset
-	SendInput "{Tab}1912{Tab}0{Tab}200{ENTER}"
-	SendInput "{Enter}"
-	blockOff()
-}
-
-Numpad8:: ;This script moves the mouse to a pixel position to highlight the "motion tab" then menu and change values to zoom into a custom coord and zoom level
-{
-	num() ;check MS_functions.ahk for the code to this preset
-	SendInput "{Tab}2880{Tab}-538{Tab}300"
-	SendInput "{Enter}"
-	blockOff()
-}
-
-Numpad9:: ;This script moves the mouse to a pixel position to reset the "motion" effects
+Numpad7::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+Numpad8::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+Numpad9:: ;This script moves the reset button to reset the "motion" effects
 {
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
 		SendInput "^+9"
 		SendInput "{F12}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		MouseMove 359, 1063 ;location for the reset arrow
+		;MouseMove 359, 1063 ;location for the reset arrow
+		if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+			MouseMove(%&xcol%, %&ycol%)
 		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 		click
 	MouseMove %&xpos%, %&ypos%
