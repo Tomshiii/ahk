@@ -9,7 +9,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "C:\Program Files\ahk\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.19
+;\\v2.2.20
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.1.9
 
@@ -111,8 +111,8 @@ NumLock::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
 }
 
 ;These two scripts are to open highlighted text in the ahk documentation
-^F6:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
-^+F6:: ;opens highlighted ahk command in the documentation
+AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
+^AppsKey:: ;opens highlighted ahk command in the documentation
 {
 	A_Clipboard := "" ;clears the clipboard
 	Send "^c"

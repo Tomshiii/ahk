@@ -80,8 +80,7 @@ else
 	Run "firefox.exe"
 }
 
-
-F7::
+RWin::
 {
 ;switchToVSCodehub(){
 if not WinExist("ahk_exe Code.exe")
