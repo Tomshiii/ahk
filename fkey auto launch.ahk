@@ -51,7 +51,7 @@ if WinActive("ahk_exe firefox.exe")
 else
 	{
 	;WinRestore ahk_exe firefox.exe
-	WinActivate "ahk_exe firefox.exe"
+	WinWaitActive "ahk_exe firefox.exe"
 	;sometimes winactivate is not enough. the window is brought to the foreground, but not put into FOCUS.
 	;the below code should fix that.
 	;Controls := WinGetControlsHwnd("ahk_class MozillaWindowClass")
