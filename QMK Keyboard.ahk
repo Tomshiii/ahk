@@ -6,9 +6,9 @@ SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.1
+;\\v2.1.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.9
+;\\v2.1.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -309,163 +309,80 @@ numpad4::numpad4
 
 
 numpad5:: ;press then hold numpad5 and drag to increase/decrease rotation. Let go of numpad5 to confirm, Simply Tap numpad5 to reset values
-If WinActive("ahk_exe Adobe Premiere Pro.exe")
 {
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	;MouseMove 219, 1165 ;move to the "rotation" value
-	;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\rotation.png") ;moves to the rotation variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-		;MouseMove(%&x%, %&y%)
-	If PixelSearch(&xcol, &ycol, 38, 1153, 573, 1173, 0x288ccf, 3) ;looks for the blue text to the right of scale
-		MouseMove(%&xcol%, %&ycol%)
-	sleep 100
-	SendInput "{Click Down}"
-		if GetKeyState("Numpad5", "P")
+	If WinActive("ahk_exe Adobe Premiere Pro.exe")
 		{
-			blockOff()
-			KeyWait "Numpad5"
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
-		}
-		else
-		{
-			fElse("0") ;check MS_functions.ahk for the code to this preset
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
-}
-else
-	Sleep 10
-
-numpad6:: ;press then hold numpad6 and drag to move position. Let go of numpad6 to confirm, Simply Tap numpad6 to reset values
-If WinActive("ahk_exe Adobe Premiere Pro.exe")
-{
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	;MouseMove 142, 1059 ;move to the "motion" tab
-	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
-			MouseMove(%&x% + "25", %&y%)
-	sleep 100
-	if GetKeyState("Numpad6", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
-			Click
-			MouseMove 2300, 238 ;move to the preview window
-			SendInput "{Click Down}"
-			blockOff()
-			KeyWait "Numpad6"
-			SendInput "{Click Up}"
-			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
+			valuehold("38", "1153", "573", "1173", "Numpad5", "0", "0")
 		}
 	else
-		{
-			;MouseMove 352, 1076 ;move to the reset arrow
-			if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
-					MouseMove(%&xcol%, %&ycol%)
-			Click
-			sleep 50
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
+		Sleep 10
 }
-else
-	Sleep 10
+
+numpad6:: ;press then hold numpad6 and drag to move position. Let go of numpad6 to confirm, Simply Tap numpad6 to reset values
+{
+	If WinActive("ahk_exe Adobe Premiere Pro.exe")
+	{
+		;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
+		coords()
+		blockOn()
+		MouseGetPos &xpos, &ypos
+		;MouseMove 142, 1059 ;move to the "motion" tab
+		If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
+				MouseMove(%&x% + "25", %&y%)
+		sleep 100
+		if GetKeyState("Numpad6", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+			{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
+				Click
+				MouseMove 2300, 238 ;move to the preview window
+				SendInput "{Click Down}"
+				blockOff()
+				KeyWait "Numpad6"
+				SendInput "{Click Up}"
+				;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
+			}
+		else
+			{
+				;MouseMove 352, 1076 ;move to the reset arrow
+				if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+						MouseMove(%&xcol%, %&ycol%)
+				Click
+				sleep 50
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
+			}
+	}
+	else
+		Sleep 10
+}
 
 numpad7:: ;press then hold numpad7 and drag to increase/decrese scale. Let go of numpad7 to confirm, Simply Tap numpad7 to reset values
-If WinActive("ahk_exe Adobe Premiere Pro.exe")
 {
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-		;MouseMove 227, 1101 ;move to the "scale" value
-		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\scale.png") ;moves to the scale variable (please note the defined coords need to be tight, otherwise it'll try to click on "uniform scale") ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-			;MouseMove(%&x%, %&y%)
-		If PixelSearch(&xcol, &ycol, 42, 1092, 491, 1109, 0x288ccf, 3) ;looks for the blue text to the right of scale
-			MouseMove(%&xcol%, %&ycol%)
-		sleep 100
-		SendInput "{Click Down}"
-			if GetKeyState("Numpad7", "P")
-			{
-				blockOff()
-				KeyWait "Numpad7"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
-			else
-			{
-				fElse("100") ;check MS_functions.ahk for the code to this preset
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-			}
+	If WinActive("ahk_exe Adobe Premiere Pro.exe")
+		{
+			valuehold("42", "1092", "491", "1109", "Numpad7", "100", "0")
+		}
+	else
+		Sleep 10
 }
-else
-	Sleep 10
-
 numpad8:: ;press then hold numpad8 and drag to increase/decrese x value. Let go of numpad8 to confirm, Simply Tap numpad8 to reset values
-If WinActive("ahk_exe Adobe Premiere Pro.exe")
 {
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-		;MouseMove 226, 1079 ;move to the "x" value
-		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-			;MouseMove(%&x%, %&y%)
-		If PixelSearch(&xcol, &ycol, 100, 1081, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
-			MouseMove(%&xcol%, %&ycol%)
-		sleep 100
-		SendInput "{Click Down}"
-			if GetKeyState("Numpad8", "P")
-			{
-				blockOff()
-				KeyWait "Numpad8"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
-			else
-			{
-				fElse("960") ;check MS_functions.ahk for the code to this preset
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-			}
+	If WinActive("ahk_exe Adobe Premiere Pro.exe")
+		{
+			valuehold("100", "1081", "540", "1087", "Numpad8", "960", "0")
+		}
+	else
+		Sleep 10
 }
-else
-	Sleep 10
 
 numpad9:: ;press then hold numpad9 and drag to increase/decrese y value. Let go of numpad9 to confirm, Simply Tap numpad9 to reset values
-If WinActive("ahk_exe Adobe Premiere Pro.exe")
 {
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	;MouseMove 275, 1080 ;move to the "y" value
-	;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-		;MouseMove(%&x%, %&y%)
-	If PixelSearch(&xcol, &ycol, 100, 1081, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
-		MouseMove(%&xcol% + "60", %&ycol%) ;moves to the second value (the y value)
-	sleep 100
-	SendInput "{Click Down}"
-		if GetKeyState("Numpad9", "P")
+	If WinActive("ahk_exe Adobe Premiere Pro.exe")
 		{
-			blockOff()
-			KeyWait "Numpad9"
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
+			valuehold("100", "1081", "540", "1087", "Numpad9", "540", "60")
 		}
-		else
-		{
-			fElse("540") ;check MS_functions.ahk for the code to this preset
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
+	else
+		Sleep 10
 }
-else
-	Sleep 10
 
 ;;============ THE NUMPAD WITH NUMLOCK OFF ============;;
 numpadins::numpadins
@@ -484,7 +401,8 @@ numpadpgup::numpadpgup
 numpadDiv::numpadDiv
 numpadMult::numpadMult
 
-numpadSub::{
+numpadSub::
+{
 	;switchToExplorer(){
 	if not WinExist("ahk_class CabinetWClass")
 		Run "explorer.exe"
@@ -494,7 +412,7 @@ numpadSub::{
 	else
 		if WinExist("ahk_class CabinetWClass")
 		WinActivate "ahk_class CabinetWClass" ;you have to use WinActivatebottom if you didn't create a window group.
-	}
+}
 
 numpadAdd::
 {
@@ -509,7 +427,7 @@ numpadAdd::
 	else
 		if WinExist("ahk_class Premiere Pro")
 		WinActivate "ahk_class Premiere Pro"
-	}
+}
 
 numpadEnter::numpadEnter
 numpadDot::numpadDot

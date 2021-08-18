@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.9
+;\\v2.1.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -115,7 +115,7 @@ MouseGetPos &xpos, &ypos
 }
 
 ; =========================================================================
-;		Premiere \\ Last updated: v2.1.9
+;		Premiere \\ Last updated: v2.1.10
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 {
@@ -170,6 +170,33 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 	sleep 50
 	send "{enter}"
+}
+
+valuehold(x1, y1, x2, y2, button, data, optional)
+{
+	coords()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+		;MouseMove 226, 1079 ;move to the "x" value
+		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
+			;MouseMove(%&x%, %&y%)
+		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of scale
+			MouseMove(%&xcol% + %&optional%, %&ycol%)
+		sleep 100
+		SendInput "{Click Down}"
+			if GetKeyState(%&button%, "P")
+			{
+				blockOff()
+				KeyWait %&button%
+				SendInput "{Click Up}"
+				MouseMove %&xpos%, %&ypos%
+			}
+			else
+			{
+				fElse(%&data%) ;check MS_functions.ahk for the code to this preset
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
+			}
 }
 
 ; =========================================================================

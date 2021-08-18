@@ -9,9 +9,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "C:\Program Files\ahk\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.21
+;\\v2.2.22
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.9
+;\\v2.1.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -243,89 +243,9 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 ;		hold and drag (or click)
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-F1:: ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to confirm, Simply Tap F1 to reset values
-{
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-		;MouseMove 227, 1101 ;move to the "scale" value
-		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\scale.png") ;moves to the scale variable (please note the defined coords need to be tight, otherwise it'll try to click on "uniform scale") ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-			;MouseMove(%&x%, %&y%)
-		If PixelSearch(&xcol, &ycol, 42, 1092, 491, 1109, 0x288ccf, 3) ;looks for the blue text to the right of scale
-			MouseMove(%&xcol%, %&ycol%)
-		sleep 100
-		SendInput "{Click Down}"
-			if GetKeyState("F1", "P")
-			{
-				blockOff()
-				KeyWait "F1"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
-			else
-			{
-				fElse("100") ;check MS_functions.ahk for the code to this preset
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-			}
-}
-
-F2:: ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to confirm, Simply Tap F2 to reset values
-{
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-		;MouseMove 226, 1079 ;move to the "x" value
-		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-			;MouseMove(%&x%, %&y%)
-		If PixelSearch(&xcol, &ycol, 100, 1081, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
-			MouseMove(%&xcol%, %&ycol%)
-		sleep 100
-		SendInput "{Click Down}"
-			if GetKeyState("F2", "P")
-			{
-				blockOff()
-				KeyWait "F2"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
-			else
-			{
-				fElse("960") ;check MS_functions.ahk for the code to this preset
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-			}
-}
-
-F3:: ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to confirm, Simply Tap F3 to reset values
-{
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	;MouseMove 275, 1080 ;move to the "y" value
-	;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-		;MouseMove(%&x%, %&y%)
-	If PixelSearch(&xcol, &ycol, 100, 1081, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
-		MouseMove(%&xcol% + "60", %&ycol%) ;moves to the second value (the y value)
-	sleep 100
-	SendInput "{Click Down}"
-		if GetKeyState("F3", "P")
-		{
-			blockOff()
-			KeyWait "F3"
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
-		}
-		else
-		{
-			fElse("540") ;check MS_functions.ahk for the code to this preset
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
-}
+F1::valuehold("42", "1092", "491", "1109", "F1", "100", "0") ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to confirm, Simply Tap F1 to reset values
+F2::valuehold("100", "1081", "540", "1087", "F2", "960", "0") ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to confirm, Simply Tap F2 to reset values
+F3::valuehold("100", "1081", "540", "1087", "F3", "540", "60") ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to confirm, Simply Tap F3 to reset values
 
 F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Simply Tap F4 to reset values
 {
@@ -359,33 +279,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 		}
 }
 
-F5:: ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
-{
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	;MouseMove 219, 1165 ;move to the "rotation" value
-	;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\rotation.png") ;moves to the rotation variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-		;MouseMove(%&x%, %&y%)
-	If PixelSearch(&xcol, &ycol, 38, 1153, 573, 1173, 0x288ccf, 3) ;looks for the blue text to the right of scale
-		MouseMove(%&xcol%, %&ycol%)
-	sleep 100
-	SendInput "{Click Down}"
-		if GetKeyState("F5", "P")
-		{
-			blockOff()
-			KeyWait "F5"
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
-		}
-		else
-		{
-			fElse("0") ;check MS_functions.ahk for the code to this preset
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
-}
+F5::valuehold("38", "1153", "573", "1173", "F5", "0", "0") ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
