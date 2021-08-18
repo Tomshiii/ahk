@@ -9,7 +9,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "C:\Program Files\ahk\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.20
+;\\v2.2.21
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.1.9
 
@@ -205,7 +205,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
 		SendInput "^a{DEL}"
 		SendInput("Goose_honk")
-		sleep 100
+		sleep 200
 		If ImageSearch(&x, &y, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose.png") ;moves to the goose sfx
 			{
 				MouseMove(%&x% + "20", %&y% + "5")
@@ -270,7 +270,7 @@ F2:: ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to c
 		;MouseMove 226, 1079 ;move to the "x" value
 		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
 			;MouseMove(%&x%, %&y%)
-		If PixelSearch(&xcol, &ycol, 37, 1069, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
+		If PixelSearch(&xcol, &ycol, 100, 1081, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
 			MouseMove(%&xcol%, %&ycol%)
 		sleep 100
 		SendInput "{Click Down}"
@@ -298,7 +298,7 @@ F3:: ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to c
 	;MouseMove 275, 1080 ;move to the "y" value
 	;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
 		;MouseMove(%&x%, %&y%)
-	If PixelSearch(&xcol, &ycol, 37, 1069, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
+	If PixelSearch(&xcol, &ycol, 100, 1081, 540, 1087, 0x288ccf, 3) ;looks for the blue text to the right of scale
 		MouseMove(%&xcol% + "60", %&ycol%) ;moves to the second value (the y value)
 	sleep 100
 	SendInput "{Click Down}"

@@ -1,7 +1,7 @@
 ﻿#SingleInstance force ; only 1 instance of this script may run at a time.
 InstallMouseHook
 InstallKeybdHook
-TraySetIcon("C:\Program Files\ahk\ahk\Icons\right.png")
+TraySetIcon("C:\Program Files\ahk\ahk\Icons\mouse.ico")
 CoordMode "Mouse", "screen"
 CoordMode "Pixel", "screen"
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0

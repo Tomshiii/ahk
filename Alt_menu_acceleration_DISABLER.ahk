@@ -7,7 +7,7 @@ InstallKeybdHook true
 #SingleInstance
 MaxHotkeysPerInterval := 2000
 ProcessSetPriority "H"
-TraySetIcon("C:\Program Files\ahk\ahk\Icons\disable.png") ;changes the icon this script uses in the taskbar
+TraySetIcon("C:\Program Files\ahk\ahk\Icons\error.ico") ;changes the icon this script uses in the taskbar
 #SingleInstance force
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
