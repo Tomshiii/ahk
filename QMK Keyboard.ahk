@@ -6,7 +6,7 @@ SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.0
+;\\v2.1.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.1.9
 
@@ -16,6 +16,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
 ; \\\\\\\\
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE SIMPLY ADJUSTED IT TO WORK IN AHK v2.0
 ; ALSO I CURRENTLY ONLY USE A LIL NUMPAD NOT A WHOLE KEYBOARD SO EVERYTHING ELSE IS COMMENTED OUT
+; ANY OF THE SCRIPTS IN THIS FILE CAN BE PULLED OUT AND THEN REPLACED ON A NORMAL KEY ON YOUR NORMAL KEYBOARD
 ; \\\\\\\\
 
 
@@ -301,9 +302,9 @@ right::right
 ;;or is it the other way around? AGH! Just don't use shift with the numpad!
 
 numpad0::numpad0
-numpad1::numpad1
-numpad2::numpad2
-numpad3::numpad3
+Numpad1::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}" ;REDUCE GAIN BY -2db
+Numpad2::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}2{ENTER}" ;INCREASE GAIN BY 2db == set g to open gain window
+Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 numpad4::numpad4
 
 
