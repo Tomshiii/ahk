@@ -41,6 +41,7 @@ Item | Use
 ------------ | -------------
 My Scripts.ahk | My main scripts, contains everything I use for stream and editing, as well as a few windows related things I do to speed a few interactions up.
 MS_functions.ahk | (My Scripts_functions) A separate ahk file to define functions so they don't have to clog up the main script.
+QMK Keyboard.ahk | A script to allow separate function for my secondary keyboard (I use a little numpad). A script originally created by [Taran](https://github.com/TaranVH/) that I've modified to work in ahk v2.0
 Streaming.ahk | A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact)
 Resolve_Example.ahk | An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough and thrown together.
 scripts f keys taken.xlsx | An Excel doc I use to track all the button combinations used in my scripts so I know what is/isn't available.
