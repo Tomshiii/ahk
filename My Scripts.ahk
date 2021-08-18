@@ -198,13 +198,22 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 ^MButton:: ;drag my bleep (goose) sfx to the cursor
 {
 	KeyWait("Ctrl")
+	KeyWait("MButton")
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
-		SendInput "^+6"
+		SendInput "^+5"
+		sleep 100
+		click "2299", "1048"
 		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
+		coordc()
 		SendInput "^a{DEL}"
 		SendInput("Goose_honk")
+		CaretGetPos(&carx, &cary)
+		MouseMove(%&carx% - "60", %&cary% + "60")
+		sleep 50
+		SendInput("{Click Down}")
+		/* ;this code was to pull it out of the project window. the project windows search is stupid though
 		sleep 200
 		If ImageSearch(&x, &y, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose.png") ;moves to the goose sfx
 			{
@@ -219,12 +228,13 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 				SendInput("{Click Down}")
 			}
 		}
-		MouseMove(%&xpos%, %&ypos%, "2")
+		*/
+		MouseMove(%&xpos%, %&ypos%)
 		SendInput("{Click Up}")
-		SendInput "^+6"
-		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
-		SendInput "^a{DEL}"
-		Click("middle")
+		;SendInput "^+6"
+		;SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
+		;SendInput "^a{DEL}"
+		;Click("middle")
 		blockOff()
 }
 
@@ -403,6 +413,8 @@ Numpad9:: ;This script moves the reset button to reset the "motion" effects
 Numpad1::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}" ;REDUCE GAIN BY -2db
 Numpad2::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}2{ENTER}" ;INCREASE GAIN BY 2db == set g to open gain window
 Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
+
+
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
