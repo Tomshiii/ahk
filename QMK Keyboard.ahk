@@ -1,9 +1,13 @@
 SetWorkingDir A_ScriptDir
-#Include "C:\Program Files\ahk\ahk\MS_functions.ahk"
+#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
+SetCapsLockState "AlwaysOff"
+#SingleInstance Force ;only one instance of this script may run at a time!
+A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
+#WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.1.2
@@ -13,11 +17,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
 
-; \\\\\\\\
+; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE SIMPLY ADJUSTED IT TO WORK IN AHK v2.0
 ; ALSO I CURRENTLY ONLY USE A LIL NUMPAD NOT A WHOLE KEYBOARD SO EVERYTHING ELSE IS COMMENTED OUT
 ; ANY OF THE SCRIPTS IN THIS FILE CAN BE PULLED OUT AND THEN REPLACED ON A NORMAL KEY ON YOUR NORMAL KEYBOARD
-; \\\\\\\\
+; \\\\\\\\///////////
 
 
 ;;WHAT'S THIS ALL ABOUT??
@@ -27,10 +31,6 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
 
 ;;THE LONG VERSION:
 ;; https://www.youtube.com/playlist?list=PLH1gH0v9E3ruYrNyRbHhDe6XDfw4sZdZr
-
-;;LOCATION FOR WHERE TO PUT THIS SCRIPT:
-; C:\AHK\2nd-keyboard\HASU_USB\
-;;(It's not mandatory for this one, but if you use any of my other scripts, it'll make things easier later.)
 
 ;;Location for where to put a shortcut to the script, such that it will start when Windows starts:
 ;;  Here for just yourself:
@@ -44,14 +44,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
 ;InstallKeybdHook
 ;InstallMouseHook "true", "force" ;<--You'll want to use this if you have scripts that use the mouse.
 ;#UseHook True
-#SingleInstance Force ;only one instance of this script may run at a time!
 ;A_MaxHotkeysPerInterval := 2000
 
 ;;The lines below are optional. Delete them if you need to.
 ;A_HotkeyModifierTimeout := 60 ; https://autohotkey.com/docs/commands/_HotkeyModifierTimeout.htm
 ;KeyHistory 200 ; https://autohotkey.com/docs/commands/_KeyHistory.htm ; useful for debugging.
-A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
-#WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 ;;The lines above are optional. Delete them if you need to.
 
 

@@ -6,7 +6,7 @@ SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still use ca
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon this script uses in the taskbar
-#Include "C:\Program Files\ahk\ahk\MS_functions.ahk" ;includes function definitions so they don't clog up this script
+#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.2.22

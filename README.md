@@ -23,7 +23,7 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
      - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
-4. Save these scripts in "C:\Program Files\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
+4. Save these scripts in "C:\Program Files\ahk\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
 5. Edit, then run any of the .ahk files to then use to your liking!
    - Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
@@ -40,7 +40,7 @@ Any scripts that contain pixel coordinates (in either, Click, MouseMove, ImageSe
 Item | Use
 ------------ | -------------
 My Scripts.ahk | My main scripts, contains everything I use for stream and editing, as well as a few windows related things I do to speed a few interactions up.
-MS_functions.ahk | (My Scripts_functions) A separate ahk file to define functions so they don't have to clog up the main script.
+MS_functions.ahk | (My Scripts_functions) A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#included](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it
 QMK Keyboard.ahk | A script to allow separate function for my secondary keyboard (I use a little numpad). A script originally created by [Taran](https://github.com/TaranVH/) that I've modified to work in ahk v2.0
 Streaming.ahk | A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact)
 Resolve_Example.ahk | An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough and thrown together.
