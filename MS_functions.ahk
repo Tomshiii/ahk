@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.10
+;\\v2.1.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -104,20 +104,33 @@ mousedrag(tool, keyywait, toolorig) ;press a button(ideally a mouse button), thi
 }
 
 ; =========================================================================
-;		better timeline movement \\ Last updated: v2.0.3
+;		better timeline movement \\ Last updated: v2.1.11
 ; =========================================================================
-timeline(y) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
-;&y in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
+timeline(button, timeline, x1, x2, y1) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
+;&button in this function is the button you're using to call the function
+;&timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
+;x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
+;x2 is the furthest right pixel value of the timeline that will work with your cursor warping up to grab it
+;y1 is just below the bar that your mouse will be warping to, this way your mouse doesn't try doing things when you're doing other stuff above the timeline
 {
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-	MouseMove %&xpos%, %&y%
-	SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%
-	blockOff()
-	KeyWait "Xbutton1"
-	SendInput "{Click Up}"
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	if(%&xpos% > %&x1% and %&xpos% < %&x2%) and (%&ypos% > %&y1%) ;this function will only trigger if your cursor is within the timeline. This ofcourse can break if you accidently move around your workspace
+		{
+			MouseMove %&xpos%, %&timeline%
+			SendInput "{Click Down}"
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+			KeyWait %&button%
+			SendInput "{Click Up}"
+		}
+	else
+		{
+			blockOff()
+			sleep 10
+		}
+
 }
 
 ; =========================================================================

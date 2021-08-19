@@ -9,9 +9,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.22
+;\\v2.2.23
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.10
+;\\v2.1.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -152,7 +152,7 @@ Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool whi
 ;
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
-Xbutton1::timeline("981") ;check MS_functions.ahk for the code to this preset
+Xbutton1::timeline("XButton1", "981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset
 Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
 ;===========================================================================================================================================================================

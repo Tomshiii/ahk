@@ -1,5 +1,3 @@
-;NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-; #Warn  ; Enable warnings to assist with detecting common errors.
 SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 SetDefaultMouseSpeed 0
 #SingleInstance Force
@@ -10,9 +8,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.4
-;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.1.5
+;\\Minimum Version of "MS_Functions.ahk" Required for this script
+;\\v2.1.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -103,7 +101,7 @@ If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\
 			MouseMove(%&xn%, %&yn%)
 			click ;"2196 139" ;this highlights the video tab
 		}
-	MouseMove 2329, 215 ;moves to the scale value
+	MouseMove 2329, 215 ;moves to the scale value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark
 	sleep 100
 	SendInput "{Click Down}"	
 		if GetKeyState("F1", "P")
@@ -170,7 +168,7 @@ If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\
 		MouseMove(%&xn%, %&yn%)
 		click ;"2196 139" ;this highlights the video tab
 	}
-	MouseMove 2332, 239 ;moves to the x axis value
+	MouseMove 2332, 239 ;moves to the x axis value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
 		if GetKeyState("F3", "P")
@@ -198,7 +196,7 @@ If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\
 		MouseMove(%&xn%, %&yn%)
 		click ;"2196 139" ;this highlights the video tab
 	}
-	MouseMove 2457, 240 ;moves to the y axis value
+	MouseMove 2457, 240 ;moves to the y axis value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
 			if GetKeyState("F4", "P")
@@ -226,7 +224,7 @@ If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\
 		MouseMove(%&xn%, %&yn%)
 		click ;"2196 139" ;this highlights the video tab
 	}
-	MouseMove 2456, 265 ;moves to the rotation value
+	MouseMove 2456, 265 ;moves to the rotation value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
 			if GetKeyState("F5", "P")
@@ -321,7 +319,7 @@ blockOff()
 ;		better timeline movement (don't use rightclick, you'll lose context menus)
 ;
 ;===========================================================================================================================================================================
-XButton1::timeline("827") ;check MS_Functions.ahk for code
+XButton1::timeline("XButton1", "827", "856", "2550", "845") ;check MS_Functions.ahk for code
 
 
 
