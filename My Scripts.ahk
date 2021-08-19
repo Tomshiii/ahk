@@ -74,7 +74,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 	if WinExist("ahk_exe Code.exe") ;if vscode exists it'll simply activate it, if it doesn't, it'll open it
 			WinActivate
 	else
-		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
+		Run "C:\Users\Tom\AppData\Local\\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
 }
 
 !r::
@@ -100,7 +100,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
 
-NumLock::Run "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
+NumLock::Run A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE" ;run microsoft excel.
 
 ^+c:: ;runs a google search of highlighted text
 {

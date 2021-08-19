@@ -24,7 +24,7 @@ coordw() ;sets coordmode to "window"
 	coordmode "mouse", "window"
 }
 
-coordc()
+coordc() ;sets coordmode to "caret"
 {
 	coordmode "caret", "window"
 }
@@ -55,6 +55,8 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 ;space between message groups: 16px
 ;zoom level: 100
 ;saturation; 70%
+
+;&button in this script is the path to the screenshot of the button you want the function to press
 {
 	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
 	MouseGetPos(&x, &y)
@@ -90,23 +92,27 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 ;		Mouse Drag \\ Last updated: v2.1.8
 ; =========================================================================
 mousedrag(tool, keyywait, toolorig) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
+;&tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
+;&keyywait is the button you're using to call this function
+;&toolorig is the button you want the script to press to bring you back to your tool of choice
 {
 	click "middle"
-	SendInput %&tool% "{LButton Down}" ;tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
-	KeyWait %&keyywait% ;keyywait is the button you're using to call this function
+	SendInput %&tool% "{LButton Down}" 
+	KeyWait %&keyywait% 
 	SendInput "{LButton Up}"
-	SendInput %&toolorig% ;toolorig is the button you want the script to press to bring you back to your tool of choice
+	SendInput %&toolorig% 
 }
 
 ; =========================================================================
 ;		better timeline movement \\ Last updated: v2.0.3
 ; =========================================================================
 timeline(y) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
+;&y in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
 {
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
-	MouseMove %&xpos%, %&y% ;the y value you're defining is for the location of the top bar in your video editor that allows you to click it to drag along the timeline
+	MouseMove %&xpos%, %&y%
 	SendInput "{Click Down}"
 	MouseMove %&xpos%, %&ypos%
 	blockOff()
@@ -118,6 +124,7 @@ MouseGetPos &xpos, &ypos
 ;		Premiere \\ Last updated: v2.1.10
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
+;&item in this function defines what it will type into the search box (the name of your preset within premiere)
 {
 	blockOn()
 	coords()
@@ -137,7 +144,10 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	blockOff()
 }
 
-num(xval, yval, scale) ;this preset is to simply cut down repeated code on my numpad punch in scripts
+num(xval, yval, scale) ;this function is to simply cut down repeated code on my numpad punch in scripts. it punches the video into my preset values for highlight videos
+;&xval is the pixel value you want this function to paste into the X coord text field in premiere
+;&yval is the pixel value you want this function to paste into the y coord text field in premiere
+;&scale is the scale value you want this function to paste into the scale text field in premiere
 {
 	coordw()
 	blockOn()
@@ -162,17 +172,25 @@ num(xval, yval, scale) ;this preset is to simply cut down repeated code on my nu
 }
 
 fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
+;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
 {
 	Click "{Click Up}"
 	sleep 10
-	Send %&data% ;what the script is typing in the text box
+	Send %&data% 
 	;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
 	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 	sleep 50
 	send "{enter}"
 }
 
-valuehold(x1, y1, x2, y2, button, data, optional)
+valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+;&x1 is the pixel value for the first x coord for PixelSearch
+;&y1 is the pixel value for the first y coord for PixelSearch
+;&x2 is the pixel value for the second x coord for PixelSearch
+;&y2 is the pixel value for the second y coord for PixelSearch
+;&button is what button the function is being activated by (if you call this function from F1, put F1 here for example)
+;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
+;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
 {
 	coords()
 	blockOn()
@@ -203,12 +221,13 @@ valuehold(x1, y1, x2, y2, button, data, optional)
 ;		Resolve \\ Last updated: v2.1.5
 ; =========================================================================
 Rscale(item) ;to set the scale of a video within resolve
+;&item is the number you want to type into the text field (100% in reslove requires a 1 here for example)
 {
 coordw()
 blockOn()
 MouseGetPos &xpos, &ypos
 	click "2333, 218" ;clicks on video
-	SendInput %&item% ;effectively x %
+	SendInput %&item%
 	SendInput "{ENTER}"
 	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.  Using the arrow would honestly be faster here
 MouseMove %&xpos%, %&ypos%
@@ -216,10 +235,11 @@ blockOff()
 }
 
 rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
+;&data is what the script is typing in the text box to reset its value
 {
 	SendInput "{Click Up}"
 	sleep 10
-	Send %&data% ;what the script is typing in the text box
+	Send %&data%
 	;MouseMove, x, y ;if you want to press the reset arrow, input the windowspy SCREEN coords here then comment out the above Send^
 	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 	;alternatively you could also run imagesearches like in the other resolve functions to ensure you always end up in the right place
@@ -229,6 +249,7 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 }
 
 Rfav(effect) ;apply any effect to the clip you're hovering over. this script requires the search box to be visible on the left side of the screen
+;&effect is the name of the effect you want this function to type into the search box
 {
 coordw() ;
 blockOn()
