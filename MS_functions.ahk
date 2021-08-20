@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.11
+;\\v2.1.12
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -225,6 +225,52 @@ valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a 
 			else
 			{
 				fElse(%&data%) ;check MS_functions.ahk for the code to this preset
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
+			}
+}
+
+
+
+; =========================================================================
+;		Photoshop \\ Last updated: v2.1.12
+; =========================================================================
+psProp(button, image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
+;&button is what button the function is being activated by (if you call this function from F1, put F1 here for example)
+;&image is the filepath to the image that imagesearch will use
+{
+	coords()
+	MouseGetPos &xpos, &ypos
+	coordw()
+	blockOn()
+	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\text.png") ;checks to see if you're in the text tool
+		SendInput("v") ;if you are, it'll press v to go to the selection tool
+	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\InTransform.png") ;checks to see if you're already in the free transform window
+		{
+			If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir %&button%) ;if you are, it'll then search for your button of choice and move to it
+			MouseMove(%&x%, %&y%)
+		}
+	else
+		{
+			;SendInput("{Enter}") 
+			SendInput("^t") ;if you aren't in the free transform it'll simply press ctrl t to get you into it
+			sleep 200 ;photoshop is slow
+			If ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " A_WorkingDir %&image%) ;moves to the position variable
+				MouseMove(%&x%, %&y%)
+		}		
+		sleep 100
+		SendInput "{Click Down}"
+			if GetKeyState(%&button%, "P")
+			{
+				blockOff()
+				KeyWait %&button%
+				SendInput "{Click Up}"
+				MouseMove %&xpos%, %&ypos%
+			}
+			else ;since we're in photoshop here, adding functionality for tapping the keys doesn't make much sense
+			{
+				Click "{Click Up}"
+				;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
