@@ -23,6 +23,13 @@ F6::Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
 ;===========================================================================================================================================================================
 #HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
 F17::Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboard sends f17 when channel point reward comes through, this program then plays the sound
+F16::  ;temporary way to play full mii wii song using lioranboard
+{
+	Run(A_WorkingDir "\Sounds\Wii Music.mp3")
+	sleep 105000
+	WinClose("ahk_exe vlc.exe")
+}
+
 
 #HotIf WinExist("ahk_exe obs64.exe")
 ^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream
