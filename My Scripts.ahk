@@ -9,9 +9,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.23
+;\\v2.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.11
+;\\v2.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -52,6 +52,35 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;
 ;===========================================================================================================================================================================
 #HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next HotIf) will trigger as long as premiere pro isn't active
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		launch programs
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PgUp::switchToExcel() ;run microsoft excel.
+Pause::switchToWindowSpy()
+RWin::switchToVSC()
+F9::switchToStreamdeck()
+F8::switchToGithub()
+PgDn::switchToFirefox()
+!PgDn::switchToOtherFirefoxWindow()
+F1::switchToExplorer() ;for now
+F2::switchToPremiere() ;for now
+
+;These two scripts are to open highlighted text in the ahk documentation
+AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
+^AppsKey:: ;opens highlighted ahk command in the documentation
+{
+	A_Clipboard := "" ;clears the clipboard
+	Send "^c"
+	ClipWait ;waits for the clipboard to contain data
+	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
+}
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		other
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
 	coords()
@@ -69,13 +98,13 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++ \\don't recommend using this way at all, replacing notepad kinda sucks
 ;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred) \\use this way
 ;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
-!a:: ;ignore this version, comment it out and uncomment ^ for notepad++
-{
-	if WinExist("ahk_exe Code.exe") ;if vscode exists it'll simply activate it, if it doesn't, it'll open it
-			WinActivate
-	else
-		Run "C:\Users\Tom\AppData\Local\\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
-}
+;!a:: ;ignore this version, comment it out and uncomment ^ for notepad++
+;{
+	;if WinExist("ahk_exe Code.exe") ;if vscode exists it'll simply activate it, if it doesn't, it'll open it
+	;		WinActivate
+	;else
+	;	Run "C:\Users\Tom\AppData\Local\\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
+;}
 
 !r::
 {
@@ -100,8 +129,6 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
 
-NumLock::Run A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE" ;run microsoft excel.
-
 ^+c:: ;runs a google search of highlighted text
 {
 	A_Clipboard := "" ;clears the clipboard
@@ -109,17 +136,11 @@ NumLock::Run A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE" ;run mic
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://www.google.com/search?d&q=" A_Clipboard
 }
-
-;These two scripts are to open highlighted text in the ahk documentation
-AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
-^AppsKey:: ;opens highlighted ahk command in the documentation
-{
-	A_Clipboard := "" ;clears the clipboard
-	Send "^c"
-	ClipWait ;waits for the clipboard to contain data
-	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
-}
-
+;===========================================================================================================================================================================
+;
+;		Discord
+;
+;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
 CapsLock & e::disc("\ImageSearch\Discord\DiscEdit.png") ;edit the message you're hovering over
 CapsLock & r::disc("\ImageSearch\Discord\DiscReply.png") ;reply to the message you're hovering over

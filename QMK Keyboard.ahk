@@ -10,9 +10,9 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.3
+;\\v2.1.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.12
+;\\v2.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -99,61 +99,9 @@ home::home
 end::end
 pgup::pgup
 pgdn::pgdn
-Backspace::
-{
-	;switchToFirefox(){
-	sendinput "{SC0E8}" ;scan code of an unassigned key. Do I NEED this?
-	if not WinExist("ahk_class MozillaWindowClass")
-		Run "firefox.exe"
-	if WinActive("ahk_exe firefox.exe")
-		{
-		Class := WinGetClass("A")
-		;WinGetClass class, A
-		if (class = "Mozillawindowclass1")
-			msgbox "this is a notification"
-		}
-	if WinActive("ahk_exe firefox.exe")
-		Send "^{tab}"
-	else
-		{
-		;WinRestore ahk_exe firefox.exe
-		WinWaitActive "ahk_exe firefox.exe"
-		;sometimes winactivate is not enough. the window is brought to the foreground, but not put into FOCUS.
-		;the below code should fix that.
-		;Controls := WinGetControlsHwnd("ahk_class MozillaWindowClass")
-		;WinGet hWnd ID ahk_class MozillaWindowClass
-		;Result := DllCall("SetForegroundWindow UInt hWnd")
-		;DllCall("SetForegroundWindow" UInt hWnd) 
-		}
-	}
-
-numpadSub::
-	{
-		;switchToExplorer(){
-		if not WinExist("ahk_class CabinetWClass")
-			Run "explorer.exe"
-		GroupAdd "taranexplorers", "ahk_class CabinetWClass"
-		if WinActive("ahk_exe explorer.exe")
-			GroupActivate "taranexplorers", "r"
-		else
-			if WinExist("ahk_class CabinetWClass")
-			WinActivate "ahk_class CabinetWClass" ;you have to use WinActivatebottom if you didn't create a window group.
-	}
-	
-numpadAdd::
-	{
-		;switchToPremiere(){
-		if not WinExist("ahk_class Premiere Pro")
-			{
-			;Run, Adobe Premiere Pro.exe
-			;Adobe Premiere Pro CC 2017
-			; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
-			Run "Adobe Premiere Pro.exe"
-			}
-		else
-			if WinExist("ahk_class Premiere Pro")
-			WinActivate "ahk_class Premiere Pro"
-	}
+Backspace::Backspace
+numpadSub::switchToExplorer()
+numpadAdd::switchToPremiere()
 
 
 ;===========================================================================
