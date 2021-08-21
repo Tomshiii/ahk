@@ -247,7 +247,7 @@ psProp(button, image) ;a preset to warp to one of a photos values values (scale 
 		SendInput("v") ;if you are, it'll press v to go to the selection tool
 	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\InTransform.png") ;checks to see if you're already in the free transform window
 		{
-			If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir %&button%) ;if you are, it'll then search for your button of choice and move to it
+			If ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " A_WorkingDir %&image%) ;if you are, it'll then search for your button of choice and move to it
 			MouseMove(%&x%, %&y%)
 		}
 	else

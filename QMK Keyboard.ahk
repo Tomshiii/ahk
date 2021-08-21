@@ -19,13 +19,26 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE SIMPLY ADJUSTED IT TO WORK IN AHK v2.0
-; ALSO I CURRENTLY ONLY USE A LIL NUMPAD NOT A WHOLE KEYBOARD SO EVERYTHING ELSE IS COMMENTED OUT
+; ALSO I CURRENTLY ONLY USE A LIL NUMPAD NOT A WHOLE KEYBOARD SO EVERYTHING ELSE HAS BEEN REMOVED
 ; ANY OF THE SCRIPTS IN THIS FILE CAN BE PULLED OUT AND THEN REPLACED ON A NORMAL KEY ON YOUR NORMAL KEYBOARD
-; This script looked very different when initially committed (taken from taran). Its messiness was too much of a pain for me so I've stripped a bunch of
+; This script looked very different when initially committed. Its messiness was too much of a pain for me so I've stripped a bunch of
 ; unnecessary comments
 ; \\\\\\\\///////////
 
-
+!+r::
+{
+	Reload
+	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
+	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
+		if Result = "Yes"
+			{
+				if WinExist("ahk_exe Code.exe")
+						WinActivate
+				else
+					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+			}
+}
 
 
 ;;WHAT'S THIS ALL ABOUT??
