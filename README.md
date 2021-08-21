@@ -28,8 +28,7 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
    - Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
      - autodismiss error
-     - fkey auto launch (recommended you check it out first though as it opens specific programs)
-     - MS_Functions (by nature. This script just defines functions FOR other scripts. It also does not need to be run separately as it is individually included in My Scripts.ahk)
+     - MS_Functions (By nature. This script just defines functions FOR other scripts. It also does not need to be run separately as it is individually included in My Scripts.ahk)
      
 #### Then be aware:
 
@@ -45,7 +44,6 @@ QMK Keyboard.ahk | A script to allow separate function for my secondary keyboard
 Streaming.ahk | A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact)
 Resolve_Example.ahk | An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough and thrown together.
 scripts f keys taken.xlsx | An Excel doc I use to track all the button combinations used in my scripts so I know what is/isn't available.
-fkey auto launch.ahk | A script from [Taran](https://github.com/TaranVH/) to auto launch OR swap to specific applications if they're already open
 Alt_menu_acceleration_DISABLER.ahk | A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key
 autodismiss error.ahk | A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child
 right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button

@@ -345,18 +345,16 @@ blockOff()
 }
 
 ; =========================================================================
-;		Fkey AutoLaunch \\ Last updated: v2.1.13
+;		Fkey AutoLaunch \\ Last updated: v2.2
 ; =========================================================================
-
-HotIfWinActive
 switchToExplorer()
 {
 ;switchToExplorer(){
 if not WinExist("ahk_class CabinetWClass")
 	Run "explorer.exe"
-GroupAdd "taranexplorers", "ahk_class CabinetWClass"
+GroupAdd "explorers", "ahk_class CabinetWClass"
 if WinActive("ahk_exe explorer.exe")
-	GroupActivate "taranexplorers", "r"
+	GroupActivate "explorers", "r"
 else
 	if WinExist("ahk_class CabinetWClass")
 	WinActivate "ahk_class CabinetWClass" ;you have to use WinActivatebottom if you didn't create a window group.
@@ -415,9 +413,9 @@ switchToOtherFirefoxWindow()
 ;msgbox errorLevel `n%errorLevel%
 	If (PID := ProcessExist("firefox.exe"))
 	{
-	GroupAdd "taranfirefoxes", "ahk_class MozillaWindowClass"
+	GroupAdd "firefoxes", "ahk_class MozillaWindowClass"
 	if WinActive("ahk_class MozillaWindowClass")
-		GroupActivate "taranfirefoxes", "r"
+		GroupActivate "firefoxes", "r"
 	else
 		WinActivate "ahk_class MozillaWindowClass"
 	}
@@ -430,9 +428,9 @@ switchToVSC()
 ;switchToVSCodehub(){
 if not WinExist("ahk_exe Code.exe")
 	Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-GroupAdd "taranCode", "ahk_class Chrome_WidgetWin_1"
+GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
 if WinActive("ahk_exe Code.exe")
-	GroupActivate "taranCode", "r"
+	GroupActivate "Code", "r"
 else
 	if WinExist("ahk_exe Code.exe")
 	WinActivate "ahk_exe Code.exe" ;you have to use WinActivatebottom if you didn't create a window group.
@@ -443,9 +441,9 @@ switchToGithub()
 ;switchToGithub(){
 if not WinExist("ahk_exe GitHubDesktop.exe")
 	Run "C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
-GroupAdd "tarangit", "ahk_class Chrome_WidgetWin_1"
+GroupAdd "git", "ahk_class Chrome_WidgetWin_1"
 if WinActive("ahk_exe GitHubDesktop.exe")
-	GroupActivate "tarangit", "r"
+	GroupActivate "git", "r"
 else
 	if WinExist("ahk_exe GitHubDesktop.exe")
 	WinActivate "ahk_exe GitHubDesktop.exe" ;you have to use WinActivatebottom if you didn't create a window group.
@@ -456,9 +454,9 @@ switchToStreamdeck()
 ;switchToStreamdeck(){
 if not WinExist("ahk_exe StreamDeck.exe")
 	Run "C:\Program Files\Elgato\StreamDeck\StreamDeck.exe"
-GroupAdd "taranstream", "ahk_class Qt5152QWindowIcon"
+GroupAdd "stream", "ahk_class Qt5152QWindowIcon"
 if WinActive("ahk_exe StreamDeck.exe")
-	GroupActivate "taranstream", "r"
+	GroupActivate "stream", "r"
 else
 	if WinExist("ahk_exe Streamdeck.exe")
 	WinActivate "ahk_exe StreamDeck.exe" ;you have to use WinActivatebottom if you didn't create a window group.
