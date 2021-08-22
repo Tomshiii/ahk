@@ -1,15 +1,16 @@
 ﻿#SingleInstance Force
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir
-SetNumLockState "AlwaysOn" ;sets numlock to always on
-SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still use caps lock for macros)
+SetNumLockState "AlwaysOn" ;sets numlock to always on (you can still it for macros)
+SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still it for macros)
+SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it for macros)
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3
+;\\v2.3.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.2
 
@@ -60,11 +61,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 PgUp::switchToExcel() ;run microsoft excel.
 Pause::switchToWindowSpy()
 RWin::switchToVSC()
-F9::switchToStreamdeck()
-F8::switchToGithub()
+ScrollLock::switchToStreamdeck()
 PgDn::switchToFirefox()
 !PgDn::switchToOtherFirefoxWindow()
 F1::switchToExplorer() ;for now
+^F1::run "explorer.exe"
 F2::switchToPremiere() ;for now
 
 ;These two scripts are to open highlighted text in the ahk documentation
@@ -166,6 +167,7 @@ CapsLock & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message yo
 XButton1::mousedrag("h", "XButton1", "P") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 +z::mousedrag("z", "z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
+!g::SendInput("!{t}" "b{Right}g") ;open gaussian blur
 
 ;===========================================================================================================================================================================
 ;
