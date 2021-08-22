@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2
+;\\v2.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -48,7 +48,7 @@ blockOff() ;turns off the blocks on user input
 ; =========================================================================
 ;		discord \\ Last updated: v2.1.4
 ; =========================================================================
-disc(button) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
+disc(imagepath) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME. YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
 ;dark theme
 ;chat font scaling: 20px
@@ -56,19 +56,19 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 ;zoom level: 100
 ;saturation; 70%
 
-;&button in this script is the path to the screenshot of the button you want the function to press
+;&imagepath in this script is the path to the screenshot of the button you want the function to press
 {
 	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
 	MouseGetPos(&x, &y)
 	blockOn()
 	click "right"
 	sleep 50 ;sleep required so the right click context menu has time to open
-	If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&button%) ;*2 is required otherwise it spits out errors. check documentation for definition. These coords define the entire area discord contains text. Recommended to close the right sidebar or do this in a dm so you see the entire area discord normally shows messages
+	If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&imagepath%) ;*2 is required otherwise it spits out errors. check documentation for definition. These coords define the entire area discord contains text. Recommended to close the right sidebar or do this in a dm so you see the entire area discord normally shows messages
 		if "true" ;I don't think this line is necessary??
 			MouseMove(%&xpos%, %&ypos%)
 	else
 		sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-		ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&button%) ;this line is searching for the location of your selected button. Same goes for above. The coords here are the same as above
+		ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&imagepath%) ;this line is searching for the location of your selected button. Same goes for above. The coords here are the same as above
 		MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
 	;MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button | use this if your screenshots don't line up with the button properly
 	Click
@@ -89,16 +89,15 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 }
 
 ; =========================================================================
-;		Mouse Drag \\ Last updated: v2.1.8
+;		Mouse Drag \\ Last updated: v2.3
 ; =========================================================================
-mousedrag(tool, keyywait, toolorig) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
+mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
 ;&tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
-;&keyywait is the button you're using to call this function
 ;&toolorig is the button you want the script to press to bring you back to your tool of choice
 {
 	click "middle"
 	SendInput %&tool% "{LButton Down}" 
-	KeyWait %&keyywait% 
+	KeyWait A_ThisHotkey
 	SendInput "{LButton Up}"
 	SendInput %&toolorig% 
 }
@@ -106,8 +105,7 @@ mousedrag(tool, keyywait, toolorig) ;press a button(ideally a mouse button), thi
 ; =========================================================================
 ;		better timeline movement \\ Last updated: v2.1.11
 ; =========================================================================
-timeline(button, timeline, x1, x2, y1) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
-;&button in this function is the button you're using to call the function
+timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
 ;&timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
 ;x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
 ;x2 is the furthest right pixel value of the timeline that will work with your cursor warping up to grab it
@@ -122,7 +120,7 @@ timeline(button, timeline, x1, x2, y1) ;a weaker version of the right click prem
 			SendInput "{Click Down}"
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
-			KeyWait %&button%
+			KeyWait A_ThisHotkey
 			SendInput "{Click Up}"
 		}
 	else
@@ -134,7 +132,7 @@ timeline(button, timeline, x1, x2, y1) ;a weaker version of the right click prem
 }
 
 ; =========================================================================
-;		Premiere \\ Last updated: v2.1.10
+;		Premiere \\ Last updated: v2.3
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
@@ -196,12 +194,9 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 	send "{enter}"
 }
 
-valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-;&x1 is the pixel value for the first x coord for PixelSearch
-;&y1 is the pixel value for the first y coord for PixelSearch
-;&x2 is the pixel value for the second x coord for PixelSearch
-;&y2 is the pixel value for the second y coord for PixelSearch
-;&button is what button the function is being activated by (if you call this function from F1, put F1 here for example)
+valuehold(filepath, data, optional)
+;valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+;&filepath is the path to the image ImageSearch is going to use to find what value you want to adjust
 ;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
 ;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
 {
@@ -209,34 +204,61 @@ valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a 
 	blockOn()
 	MouseGetPos &xpos, &ypos
 		;MouseMove 226, 1079 ;move to the "x" value
-		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
+		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			;MouseMove(%&x%, %&y%)
-		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of scale
+		{
+			PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "340", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+			If Color := 0x288ccf
 			MouseMove(%&xcol% + %&optional%, %&ycol%)
-		sleep 100
-		SendInput "{Click Down}"
-			if GetKeyState(%&button%, "P")
+		}
+		else
 			{
+				ToolTip("couldn't find image", )
+				sleep 200
+				ToolTip("")
+				goto move
+			}
+			/*
+		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of the value name you want to check
+			MouseMove(%&xcol% + %&optional%, %&ycol%)
+		 */
+		sleep 100
+		
+			if GetKeyState(A_ThisHotkey, "P")
+			{
+				SendInput "{Click Down}"
 				blockOff()
-				KeyWait %&button%
+				KeyWait A_ThisHotkey
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
 			}
 			else
 			{
-				fElse(%&data%) ;check MS_functions.ahk for the code to this preset
+				;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
+				If ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "500", %&y% + "20", "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;searches for the reset button to the right of the value you want to adjust
+					{
+						MouseMove(%&x2%, %&y2%)
+						SendInput("{Click}")
+					}
+				else
+					{
+						MouseMove %&xpos%, %&ypos%
+						ToolTip("couldn't find image", )
+						sleep 200
+						ToolTip("")
+						goto move
+					}
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
+			move:
+			blockOff()
 }
 
-
-
 ; =========================================================================
-;		Photoshop \\ Last updated: v2.1.12
+;		Photoshop \\ Last updated: v2.3
 ; =========================================================================
-psProp(button, image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
-;&button is what button the function is being activated by (if you call this function from F1, put F1 here for example)
+psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
 ;&image is the filepath to the image that imagesearch will use
 {
 	coords()
@@ -260,10 +282,10 @@ psProp(button, image) ;a preset to warp to one of a photos values values (scale 
 		}		
 		sleep 100
 		SendInput "{Click Down}"
-			if GetKeyState(%&button%, "P")
+			if GetKeyState(A_ThisHotkey, "P")
 			{
 				blockOff()
-				KeyWait %&button%
+				KeyWait A_ThisHotkey
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
 			}
@@ -519,4 +541,45 @@ discedit()
 			}
 		blockOff()
 	}
+}
+
+this is the original way of doing value hold. Theoretically this isn't that bad, but if I move my effect controls too much, it would theoretically break
+valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+;&x1 is the pixel value for the first x coord for PixelSearch
+;&y1 is the pixel value for the first y coord for PixelSearch
+;&x2 is the pixel value for the second x coord for PixelSearch
+;&y2 is the pixel value for the second y coord for PixelSearch
+;&button is what button the function is being activated by (if you call this function from F1, put F1 here for example)
+;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
+;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+{
+	coords()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+		;MouseMove 226, 1079 ;move to the "x" value
+		;If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath%) ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
+			;MouseMove(%&x%, %&y%)
+			;If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "340", %&y% + "100", 0x288ccf, 3)
+				;MouseMove(%&xcol% + %&optional%, %&ycol%)
+
+
+			
+		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of the value name you want to check
+			MouseMove(%&xcol% + %&optional%, %&ycol%)
+		 
+		sleep 100
+		SendInput "{Click Down}"
+			if GetKeyState(%&button%, "P")
+			{
+				blockOff()
+				KeyWait %&button%
+				SendInput "{Click Up}"
+				MouseMove %&xpos%, %&ypos%
+			}
+			else
+			{
+				fElse(%&data%) ;check MS_functions.ahk for the code to this preset
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
+			}
 }
