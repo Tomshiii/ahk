@@ -8,9 +8,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.5
+;\\v2.1.6
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.1.11
+;\\v2.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -319,7 +319,7 @@ blockOff()
 ;		better timeline movement (don't use rightclick, you'll lose context menus)
 ;
 ;===========================================================================================================================================================================
-XButton1::timeline("XButton1", "827", "856", "2550", "845") ;check MS_Functions.ahk for code
+XButton1::timeline("827", "856", "2550", "845") ;check MS_Functions.ahk for code
 
 
 

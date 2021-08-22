@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.1
+;\\v2.3.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.2
+;\\v2.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -164,9 +164,9 @@ CapsLock & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message yo
 		Send "{Enter}+{Tab}"
 }
 
-XButton1::mousedrag("h", "XButton1", "P") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-+z::mousedrag("z", "z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
+XButton1::mousedrag("h","P") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
++z::mousedrag("z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
 !g::SendInput("!{t}" "b{Right}g") ;open gaussian blur
 
 ;===========================================================================================================================================================================
@@ -175,8 +175,8 @@ Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool whi
 ;
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
-Xbutton1::timeline("XButton1", "981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset
-Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset
+Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
 ;===========================================================================================================================================================================
 ;
@@ -266,9 +266,9 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 ;		hold and drag (or click)
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-F1::valuehold("42", "1092", "491", "1109", "F1", "100", "0") ;press then hold F1 and drag to increase/decrese scale. Let go of F1 to confirm, Simply Tap F1 to reset values
-F2::valuehold("100", "1081", "540", "1087", "F2", "960", "0") ;press then hold F2 and drag to increase/decrese x value. Let go of F2 to confirm, Simply Tap F2 to reset values
-F3::valuehold("100", "1081", "540", "1087", "F3", "540", "60") ;press then hold F3 and drag to increase/decrese y value. Let go of F3 to confirm, Simply Tap F3 to reset values
+F1::valuehold("\ImageSearch\Premiere\scale.png", "100", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+F2::valuehold("\ImageSearch\Premiere\position.png", "960", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+F3::valuehold("\ImageSearch\Premiere\position.png", "540", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Simply Tap F4 to reset values
 {
@@ -280,13 +280,13 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
 			MouseMove(%&x% + "25", %&y%)
 	sleep 100
-	if GetKeyState("F4", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
 			Click
 			MouseMove 2300, 238 ;move to the preview window
 			SendInput "{Click Down}"
 			blockOff()
-			KeyWait "F4"
+			KeyWait A_ThisHotkey
 			SendInput "{Click Up}"
 			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
 		}
@@ -302,7 +302,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 		}
 }
 
-F5::valuehold("38", "1153", "573", "1173", "F5", "0", "0") ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
+F5::valuehold("\ImageSearch\Premiere\rotation.png", "0", "0") ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
@@ -367,7 +367,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 WheelRight::+Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-Xbutton2::mousedrag("h", "XButton2", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
 
 

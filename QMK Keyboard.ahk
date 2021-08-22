@@ -10,7 +10,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.4
+;\\v2.1.5
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.2
 
@@ -101,6 +101,7 @@ pgup::pgup
 pgdn::pgdn
 Backspace::Backspace
 numpadSub::switchToExplorer()
+NumpadMult & NumpadSub::run "explorer.exe" ;just opens a new explorer window
 numpadAdd::switchToPremiere()
 
 
@@ -119,13 +120,8 @@ down::down
 left::left
 right::right
 
-numpad0::numpad0
-Numpad1::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}" ;REDUCE GAIN BY -2db
-Numpad2::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}2{ENTER}" ;INCREASE GAIN BY 2db == set g to open gain window
-Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
-numpad4::numpad4
-numpad5::valuehold("38", "1153", "573", "1173", "Numpad5", "0", "0") ;press then hold numpad5 and drag to increase/decrease rotation. Let go of numpad5 to confirm, Simply Tap numpad5 to reset values
-numpad6:: ;press then hold numpad6 and drag to move position. Let go of numpad6 to confirm, Simply Tap numpad6 to reset values
+numpadMult::valuehold("\ImageSearch\Premiere\rotation.png", "0", "0") ;press then hold numpad5 and drag to increase/decrease rotation. Let go of numpad5 to confirm, Simply Tap numpad5 to reset values
+numpadDiv:: ;press then hold numpad6 and drag to move position. Let go of numpad6 to confirm, Simply Tap numpad6 to reset values
 {
 	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
 	coords()
@@ -135,13 +131,13 @@ numpad6:: ;press then hold numpad6 and drag to move position. Let go of numpad6 
 	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
 			MouseMove(%&x% + "25", %&y%)
 	sleep 100
-	if GetKeyState("Numpad6", "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
 			Click
 			MouseMove 2300, 238 ;move to the preview window
 			SendInput "{Click Down}"
 			blockOff()
-			KeyWait "Numpad6"
+			KeyWait A_ThisHotkey
 			SendInput "{Click Up}"
 			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
 		}
@@ -157,9 +153,30 @@ numpad6:: ;press then hold numpad6 and drag to move position. Let go of numpad6 
 		}
 }
 
-numpad7::valuehold("42", "1092", "491", "1109", "Numpad7", "100", "0") ;press then hold numpad7 and drag to increase/decrese scale. Let go of numpad7 to confirm, Simply Tap numpad7 to reset values
-numpad8::valuehold("100", "1081", "540", "1087", "Numpad8", "960", "0") ;press then hold numpad8 and drag to increase/decrese x value. Let go of numpad8 to confirm, Simply Tap numpad8 to reset values
-numpad9::valuehold("100", "1081", "540", "1087", "Numpad9", "540", "60") ;press then hold numpad9 and drag to increase/decrese y value. Let go of numpad9 to confirm, Simply Tap numpad9 to reset values
+numpad0::numpad0
+Numpad1::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}" ;REDUCE GAIN BY -2db
+Numpad2::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}2{ENTER}" ;INCREASE GAIN BY 2db == set g to open gain window
+Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
+numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+numpad5::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+numpad6::  ;This script moves the reset button to reset the "motion" effects
+{
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+		SendInput "^+9"
+		SendInput "{F12}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+		;MouseMove 359, 1063 ;location for the reset arrow
+		if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+			MouseMove(%&xcol%, %&ycol%)
+		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
+		click
+	MouseMove %&xpos%, %&ypos%
+	blockOff()
+}
+numpad7::valuehold("\ImageSearch\Premiere\scale.png", "100", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+numpad8::valuehold("\ImageSearch\Premiere\position.png", "960", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+numpad9::valuehold("\ImageSearch\Premiere\position.png", "540", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 ;;============ THE NUMPAD WITH NUMLOCK OFF ============;;
 numpadins::numpadins
@@ -175,8 +192,8 @@ numpadpgup::numpadpgup
 
 ;;====== NUMPAD KEYS THAT DON'T CARE ABOUT NUMLOCK =====;;
 ;;NumLock::tooltip, DO NOT USE THE NUMLOCK KEY IN YOUR 2ND KEYBOARD! I have replaced it with SC05C-International 6
-numpadDiv::numpadDiv
-numpadMult::numpadMult
+
+;numpadMult::numpadMult ;if you ever use this for a single thing, test to see if you need it to only activate on the UP since you have a hotkey already on nummult and numsub
 numpadEnter::numpadEnter
 numpadDot::numpadDot
 
