@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.3
+;\\v2.3.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3
+;\\v2.3.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -197,8 +197,14 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 	;MouseMove 34, 917 ;location of the selection tool
 	If ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " A_WorkingDir "\ImageSearch\Premiere\selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
+	else
+		{
+			toolT("selection tool", "2000")
+			goto end
+		}
 	click
 	MouseMove %&xpos%, %&ypos%
+	end:
 }
 
 ^F1:: ;clicks the scale window so you can input your own values - then waits for you to hit enter to warp the cursor back 
@@ -235,9 +241,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 			}
 		else
 			{
-				ToolTip("couldn't find image", )
-				sleep 200
-				ToolTip("")
+				toolT("sfx folder", "2000")
 				goto end
 			}
 		;click "2299", "1048"
@@ -250,10 +254,55 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 				MouseMove(%&vlx%, %&vly%)
 				SendInput("{Click Down}")
 			}
+		else
+			{
+				toolT("vlc image", "2000")
+				goto end
+			}
 		MouseMove(%&xpos%, %&ypos%)
 		SendInput("{Click Up}")
 		end:
 		blockOff()
+}
+
+RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
+{
+	KeyWait("p")
+	KeyWait("RAlt")
+	blockOn()
+	coords()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\project.png") ;searches for the project window to grab the track
+		{
+			MouseMove(%&prx% + "5", %&pry% +"3")
+			SendInput("{Click Down}")
+			Sleep 100
+			MouseMove 2562, 223, "2"
+			SendInput("{Click Up}")
+			MouseMove(%&xpos%, %&ypos%)
+			blockOff()
+		}
+	else
+		{
+			If ImageSearch(&pr2x, &pr2y, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\project2.png") ;searches for the project window to grab the track
+			{
+				MouseMove(%&pr2x% + "5", %&pr2y% +"3")
+				;MsgBox()
+				SendInput("{Click Down}")
+				Sleep 100
+				MouseMove 2562, 223, "2"
+				;MsgBox()
+				SendInput("{Click Up}")
+				MouseMove(%&xpos%, %&ypos%)
+				blockOff()
+			}
+			else
+				{
+					blockOff()
+					toolT("project window", "2000")
+				}
+		}
+
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -274,6 +323,13 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 	;MouseMove 142, 1059 ;move to the "motion" tab
 	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
 			MouseMove(%&x% + "25", %&y%)
+	else
+		{
+			blockOff()
+			toolT("the motion tab", "1000")
+			goto end
+		}
+		
 	sleep 100
 	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
@@ -290,11 +346,19 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 			;MouseMove 352, 1076 ;move to the reset arrow
 			if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
 					MouseMove(%&xcol%, %&ycol%)
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					toolT("the reset button", "1000")
+					goto end
+				}
 			Click
 			sleep 50
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 		}
+		end:
 }
 
 F5::valuehold("\ImageSearch\Premiere\rotation.png", "0", "0") ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
@@ -316,6 +380,11 @@ Numpad9:: ;This script moves the reset button to reset the "motion" effects
 		;MouseMove 359, 1063 ;location for the reset arrow
 		if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
 			MouseMove(%&xcol%, %&ycol%)
+		else
+			{
+				blockOff()
+				toolT("the reset button", "1000")
+			}
 		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 		click
 	MouseMove %&xpos%, %&ypos%

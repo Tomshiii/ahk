@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.1
+;\\v2.3.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -30,6 +30,16 @@ coordc() ;sets coordmode to "caret"
 }
 
 ; =========================================================================
+;		Tooltip \\ Last updated: v2.3.2
+; =========================================================================
+toolT(message, timeout)
+{
+	ToolTip("couldn't find " %&message%)
+	sleep %&timeout%
+	ToolTip("")
+}
+
+; =========================================================================
 ;		Blockinput \\ Last updated: v2.0.1
 ; =========================================================================
 blockOn() ;blocks all user inputs
@@ -46,7 +56,7 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		discord \\ Last updated: v2.1.4
+;		discord \\ Last updated: v2.3.2
 ; =========================================================================
 disc(imagepath) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME. YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
@@ -67,9 +77,18 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 		if "true" ;I don't think this line is necessary??
 			MouseMove(%&xpos%, %&ypos%)
 	else
-		sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-		ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&imagepath%) ;this line is searching for the location of your selected button. Same goes for above. The coords here are the same as above
-		MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
+		{
+			sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
+			If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&imagepath%) ;this line is searching for the location of your selected button. Same goes for above. The coords here are the same as above
+				MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
+			else
+				{
+					MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+					blockOff()
+					toolT("the requested button", "2000")
+				}
+
+		}
 	;MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button | use this if your screenshots don't line up with the button properly
 	Click
 	sleep 100
@@ -84,6 +103,7 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 		{
 			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 			blockOff()
+			toolT("the @ ping button", "1000")
 			;MsgBox("didn't find the image")
 		}
 }
@@ -131,7 +151,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 }
 
 ; =========================================================================
-;		Premiere \\ Last updated: v2.3
+;		Premiere \\ Last updated: v2.3.2
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
@@ -212,9 +232,7 @@ valuehold(filepath, data, optional)
 		}
 		else
 			{
-				ToolTip("couldn't find image", )
-				sleep 200
-				ToolTip("")
+				toolT("the blue text", "1000")
 				goto move
 			}
 		sleep 100
@@ -236,9 +254,7 @@ valuehold(filepath, data, optional)
 				else
 					{
 						MouseMove %&xpos%, %&ypos%
-						ToolTip("couldn't find image", )
-						sleep 200
-						ToolTip("")
+						toolT("the reset button", "1000")
 						goto move
 					}
 				MouseMove %&xpos%, %&ypos%
@@ -249,7 +265,7 @@ valuehold(filepath, data, optional)
 }
 
 ; =========================================================================
-;		Photoshop \\ Last updated: v2.3
+;		Photoshop \\ Last updated: v2.3.2
 ; =========================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
 ;&image is the filepath to the image that imagesearch will use
@@ -272,6 +288,12 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 			sleep 200 ;photoshop is slow
 			If ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " A_WorkingDir %&image%) ;moves to the position variable
 				MouseMove(%&x%, %&y%)
+			else
+				{
+					MouseMove %&xpos%, %&ypos%
+					blockOff()
+					toolT("whatever you were looking for", "2000")
+				}
 		}		
 		sleep 100
 		SendInput "{Click Down}"
