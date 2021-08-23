@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.2
+;\\v2.3.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3
 
@@ -220,44 +220,39 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 
 ^MButton:: ;drag my bleep (goose) sfx to the cursor
 {
+	SendInput "^+5"
 	KeyWait("Ctrl")
-	KeyWait("MButton")
+	KeyWait A_ThisHotkey
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
 		SendInput "^+5"
-		sleep 100
-		click "2299", "1048"
+		;sleep 100
+		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;moves to my "sfx" folder in the media browser
+			{
+				MouseMove(%&sfx% + "100", %&sfy% + "75")
+				SendInput("{Click}")
+			}
+		else
+			{
+				ToolTip("couldn't find image", )
+				sleep 200
+				ToolTip("")
+				goto end
+			}
+		;click "2299", "1048"
 		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
 		coordc()
 		SendInput "^a{DEL}"
 		SendInput("Goose_honk")
-		CaretGetPos(&carx, &cary)
-		MouseMove(%&carx% - "60", %&cary% + "60")
-		sleep 50
-		SendInput("{Click Down}")
-		/* ;this code was to pull it out of the project window. the project windows search is stupid though
-		sleep 200
-		If ImageSearch(&x, &y, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose.png") ;moves to the goose sfx
+		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\vlc.png") ;searches for the vlc icon to grab the track
 			{
-				MouseMove(%&x% + "20", %&y% + "5")
+				MouseMove(%&vlx%, %&vly%)
 				SendInput("{Click Down}")
 			}
-		else
-		{
-			If ImageSearch(&x2, &y2, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose2.png") ;moves to the goose sfx if already highlighted
-			{
-				MouseMove(%&x2% + "20", %&y2% + "5")
-				SendInput("{Click Down}")
-			}
-		}
-		*/
 		MouseMove(%&xpos%, %&ypos%)
 		SendInput("{Click Up}")
-		;SendInput "^+6"
-		;SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
-		;SendInput "^a{DEL}"
-		;Click("middle")
+		end:
 		blockOff()
 }
 
@@ -390,4 +385,47 @@ coordmode, pixel, Screen
 coordmode, mouse, Screen
 MouseMove, 0, 513,, R
 Return
+
+^MButton:: ;drag my bleep (goose) sfx to the cursor ;this is the original code for it
+{
+	KeyWait("Ctrl")
+	KeyWait("MButton")
+	blockOn()
+	coords()
+	MouseGetPos &xpos, &ypos
+		SendInput "^+5"
+		sleep 100
+		click "2299", "1048"
+		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
+		coordc()
+		SendInput "^a{DEL}"
+		SendInput("Goose_honk")
+		CaretGetPos(&carx, &cary)
+		MouseMove(%&carx% - "60", %&cary% + "60")
+		sleep 50
+		SendInput("{Click Down}")
+		 ;this code was to pull it out of the project window. the project windows search is stupid though
+		;sleep 200
+		;If ImageSearch(&x, &y, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose.png") ;moves to the goose sfx
+		;	{
+		;		MouseMove(%&x% + "20", %&y% + "5")
+		;		SendInput("{Click Down}")
+		;	}
+		;else
+		;{
+		;	If ImageSearch(&x2, &y2, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose2.png") ;moves to the goose sfx if already highlighted
+		;	{
+		;		MouseMove(%&x2% + "20", %&y2% + "5")
+		;		SendInput("{Click Down}")
+		;	}
+		;}
+		
+		MouseMove(%&xpos%, %&ypos%)
+		SendInput("{Click Up}")
+		;SendInput "^+6"
+		;SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
+		;SendInput "^a{DEL}"
+		;Click("middle")
+		blockOff()
+}
 */

@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3
+;\\v2.3.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -128,7 +128,6 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 			blockOff()
 			sleep 10
 		}
-
 }
 
 ; =========================================================================
@@ -207,7 +206,7 @@ valuehold(filepath, data, optional)
 		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			;MouseMove(%&x%, %&y%)
 		{
-			PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "340", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+			PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
 			If Color := 0x288ccf
 			MouseMove(%&xcol% + %&optional%, %&ycol%)
 		}
@@ -229,7 +228,7 @@ valuehold(filepath, data, optional)
 			}
 			else
 			{
-				If ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "500", %&y% + "20", "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;searches for the reset button to the right of the value you want to adjust
+				If ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;searches for the reset button to the right of the value you want to adjust
 					{
 						MouseMove(%&x2%, %&y2%)
 						SendInput("{Click}")
