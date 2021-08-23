@@ -3,7 +3,14 @@
 SetWinDelay 0 ;makes windows move instantly
 	Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
-	MsgBox("have you started the goxlr bruh")
+	Result := MsgBox("have you started the goxlr bruh",, 1)
+	if Result = "OK"
+		{
+			goto next
+		}
+	else
+		goto theend
+	next:
 	Run "C:\Program Files\ahk\ahk\obs64.lnk" ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
@@ -73,7 +80,7 @@ Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
 sleep 3500 ;it needed some time to open
 	if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
 		WinActivate
-sleep 3000
+sleep 2000
 SendInput "y{enter}"
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run "C:\Program Files\Chatterino\chatterino.exe"
@@ -90,4 +97,5 @@ SendInput "y{enter}"
 }
 else
     sleep 100
+theend:
 ExitApp

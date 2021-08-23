@@ -4,7 +4,7 @@
 ;MouseGetPos &xpos, &ypos
 	;MouseMove 878, 14
 	;WinActivate "ahk_exe Streamlabs Chatbot.exe"
-
+#SingleInstance Force
 ;this script is kinda rough and sometimes requires multiple activations to get everything closed. Probably requires more elaborate code but realistically it's just too much effort for me to bother with at the moment.
 DetectHiddenWindows(true)
 	if WinExist("Streaming.ahk")
@@ -22,11 +22,13 @@ DetectHiddenWindows(true)
 	if WinExist("ahk_exe foobar2000.exe")
 		{
 			WinActivate
+			SendInput("!{F4}")
 			WinClose(,,2)
 		}
 	if WinExist("All Moons UPDATED v.1.3.0")
 		{
 			WinActivate
+			SendInput("!{F4}")
 			WinClose(,,2)
 		}
 ;	if WinExist("Twitch") ;leaving this in will close the window you're using after a raid which is just annoying so I'd rather just manually close my dashboard window
@@ -39,6 +41,7 @@ DetectHiddenWindows(true)
 	if WinExist("ahk_exe chrome.exe")
 		{
 			WinActivate
+			SendInput("!{F4}")
 			WinKill(,,2)
 			coordmode "pixel", "window"
 			coordmode "mouse", "window"
@@ -48,23 +51,27 @@ DetectHiddenWindows(true)
 	if WinExist("ahk_exe StreamLabels.exe")
 		{
 			WinActivate
+			SendInput("!{F4}")
 			WinClose(,,2)
 		}
 	if WinExist("ahk_exe chatterino.exe")
 		{
 			WinActivate
+			SendInput("!{F4}")
 			WinClose(,,2)
 		}
 	if WinExist("ahk_exe LioranBoard Receiver.exe")
 		{
 			WinRestore
 			WinActivate
+			SendInput("!{F4}")
 			WinClose(,,2)
 		}
 	if WinExist("ahk_exe ApplicationDj.exe")
 		{
 			WinRestore
 			WinActivate
+			SendInput("!{F4}")
 			WinClose(,,2)
 		}
 	if WinExist("ahk_exe discord.exe")
@@ -73,17 +80,20 @@ DetectHiddenWindows(true)
 		{
 			WinRestore
 			WinActivate
-			WinKill(,,10)
+			SendInput("!{F4}")
+			WinKill(,,2)
 		}
 	if WinExist("ahk_exe Streamlabs Chatbot.exe")
 		{
 			WinActivate
-			WinClose(,,10)
+			SendInput("!{F4}")
+			WinClose(,,2)
 		}
 	if WinExist("ahk_exe Docker Desktop.exe")
 		{
 			WinRestore
 			WinActivate
-			WinKill(,,10)
+			SendInput("!{F4}")
+			WinKill(,,2)
 		}
 ExitApp
