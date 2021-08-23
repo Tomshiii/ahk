@@ -218,12 +218,7 @@ valuehold(filepath, data, optional)
 				ToolTip("")
 				goto move
 			}
-			/*
-		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of the value name you want to check
-			MouseMove(%&xcol% + %&optional%, %&ycol%)
-		 */
 		sleep 100
-		
 			if GetKeyState(A_ThisHotkey, "P")
 			{
 				SendInput "{Click Down}"
@@ -234,7 +229,6 @@ valuehold(filepath, data, optional)
 			}
 			else
 			{
-				;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
 				If ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "500", %&y% + "20", "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;searches for the reset button to the right of the value you want to adjust
 					{
 						MouseMove(%&x2%, %&y2%)
@@ -557,16 +551,10 @@ valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a 
 	blockOn()
 	MouseGetPos &xpos, &ypos
 		;MouseMove 226, 1079 ;move to the "x" value
-		;If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath%) ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
+		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
 			;MouseMove(%&x%, %&y%)
-			;If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "340", %&y% + "100", 0x288ccf, 3)
-				;MouseMove(%&xcol% + %&optional%, %&ycol%)
-
-
-			
-		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of the value name you want to check
+		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of scale
 			MouseMove(%&xcol% + %&optional%, %&ycol%)
-		 
 		sleep 100
 		SendInput "{Click Down}"
 			if GetKeyState(%&button%, "P")

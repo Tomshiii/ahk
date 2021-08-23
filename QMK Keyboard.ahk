@@ -204,7 +204,7 @@ numpadDot::numpadDot
 ;===========================================================================
 F24::return ;this line is mandatory for proper functionality
 
-numpad5::psProp("Numpad5", "\ImageSearch\Photoshop\rotate.png")
-numpad7::psProp("Numpad7", "\ImageSearch\Photoshop\scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
-numpad8::psProp("Numpad8", "\ImageSearch\Photoshop\x.png")
-numpad9::psProp("Numpad9", "\ImageSearch\Photoshop\y.png")
+numpad5::psProp("\ImageSearch\Photoshop\rotate.png")
+numpad7::psProp("\ImageSearch\Photoshop\scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
+numpad8::psProp("\ImageSearch\Photoshop\x.png")
+numpad9::psProp("\ImageSearch\Photoshop\y.png")
