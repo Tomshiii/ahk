@@ -207,7 +207,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 	end:
 }
 
-^F1:: ;clicks the scale window so you can input your own values - then waits for you to hit enter to warp the cursor back 
+^F1:: ;clicks the scale window so you can input your own values - then waits for you to hit enter to warp the cursor back
 {
 	coords()
 	BlockInput "MouseMove"
@@ -228,13 +228,13 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 {
 	SendInput "^+5"
 	KeyWait("Ctrl")
-	KeyWait A_ThisHotkey
+	KeyWait("MButton")
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
 		SendInput "^+5"
 		;sleep 100
-		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;moves to my "sfx" folder in the media browser
+		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;moves to my "sfx" folder in the media browser. The media browser must be its own window for these coords to line up, otherwise it overshoots by a mile
 			{
 				MouseMove(%&sfx% + "100", %&sfy% + "75")
 				SendInput("{Click}")
@@ -331,7 +331,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 			toolT("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 			goto end
 		}
-		
+
 	sleep 100
 	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
@@ -406,8 +406,8 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 !g::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
 !p::preset("parametric") ;check MS_functions.ahk for the code for these presets
-!h::preset("hflip") 
-!c::preset("croptom") 
+!h::preset("hflip")
+!c::preset("croptom")
 
 !t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 {
@@ -422,7 +422,7 @@ Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
 		Click
 		sleep 100
 		preset("loremipsum")
-		MouseMove %&xpos%, %&ypos% ;although this line is usually in the ^preset, if you don't add it again, your curosr gets left on the text eyeball instead of back on the timeline 
+		MouseMove %&xpos%, %&ypos% ;although this line is usually in the ^preset, if you don't add it again, your curosr gets left on the text eyeball instead of back on the timeline
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -490,7 +490,7 @@ Return
 		;		SendInput("{Click Down}")
 		;	}
 		;}
-		
+
 		MouseMove(%&xpos%, %&ypos%)
 		SendInput("{Click Up}")
 		;SendInput "^+6"
