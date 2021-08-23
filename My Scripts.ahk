@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.4
+;\\v2.3.5
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.2
 
@@ -59,14 +59,14 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PgUp::switchToExcel() ;run microsoft excel.
-Pause::switchToWindowSpy()
-RWin::switchToVSC()
-ScrollLock::switchToStreamdeck()
-PgDn::switchToFirefox()
-!PgDn::switchToOtherFirefoxWindow()
-F1::switchToExplorer() ;for now
-^F1::run "explorer.exe"
-F2::switchToPremiere() ;for now
+Pause::switchToWindowSpy() ;run windowspy
+RWin::switchToVSC() ;run vscode
+ScrollLock::switchToStreamdeck() ;run the streamdeck program
+PgDn::switchToFirefox() ;open firefox
+!PgDn::switchToOtherFirefoxWindow() ;swap between firefox windows
+F1::switchToExplorer() ;run explorer ;for now
+^F1::run "explorer.exe" ;open a new explorer window
+F2::switchToPremiere() ;run premiere ;for now
 
 ;These two scripts are to open highlighted text in the ahk documentation
 AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
@@ -154,7 +154,7 @@ CapsLock & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message yo
 ;
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe Photoshop.exe")
-^+p:: ;When highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
+^+p:: ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 {
 	SetKeyDelay 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
 		Send "{TAB}{RIGHT}"
@@ -199,7 +199,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 			MouseMove(%&x%, %&y%)
 	else
 		{
-			toolT("selection tool", "2000")
+			toolT("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 			goto end
 		}
 	click
@@ -241,7 +241,8 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 			}
 		else
 			{
-				toolT("sfx folder", "2000")
+				blockOff()
+				toolT("sfx folder", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 				goto end
 			}
 		;click "2299", "1048"
@@ -256,13 +257,14 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 			}
 		else
 			{
-				toolT("vlc image", "2000")
+				blockOff()
+				toolT("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 				goto end
 			}
 		MouseMove(%&xpos%, %&ypos%)
 		SendInput("{Click Up}")
-		end:
 		blockOff()
+		end:
 }
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
@@ -299,7 +301,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			else
 				{
 					blockOff()
-					toolT("project window", "2000")
+					toolT("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 				}
 		}
 
@@ -326,7 +328,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 	else
 		{
 			blockOff()
-			toolT("the motion tab", "1000")
+			toolT("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 			goto end
 		}
 		
@@ -350,7 +352,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 				{
 					blockOff()
 					MouseMove %&xpos%, %&ypos%
-					toolT("the reset button", "1000")
+					toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					goto end
 				}
 			Click
@@ -368,9 +370,9 @@ F5::valuehold("\ImageSearch\Premiere\rotation.png", "0", "0") ;press then hold F
 ;		NUMPAD SCRIPTS
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Numpad7::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-Numpad8::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-Numpad9:: ;This script moves the reset button to reset the "motion" effects
+Numpad7::num("2550", "0", "200") ;This script moves to the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+Numpad8::num("3828", "-717", "300") ;This script moves to the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+Numpad9:: ;This script moves to the reset button to reset the "motion" effects
 {
 	coordw()
 	blockOn()
@@ -383,7 +385,7 @@ Numpad9:: ;This script moves the reset button to reset the "motion" effects
 		else
 			{
 				blockOff()
-				toolT("the reset button", "1000")
+				toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 			}
 		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 		click

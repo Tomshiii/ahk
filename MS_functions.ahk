@@ -32,7 +32,7 @@ coordc() ;sets coordmode to "caret"
 ; =========================================================================
 ;		Tooltip \\ Last updated: v2.3.2
 ; =========================================================================
-toolT(message, timeout)
+toolT(message, timeout) ;create a tooltip
 {
 	ToolTip("couldn't find " %&message%)
 	sleep %&timeout%
@@ -74,7 +74,6 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 	click "right"
 	sleep 50 ;sleep required so the right click context menu has time to open
 	If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&imagepath%) ;*2 is required otherwise it spits out errors. check documentation for definition. These coords define the entire area discord contains text. Recommended to close the right sidebar or do this in a dm so you see the entire area discord normally shows messages
-		if "true" ;I don't think this line is necessary??
 			MouseMove(%&xpos%, %&ypos%)
 	else
 		{
@@ -89,7 +88,6 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 				}
 
 		}
-	;MouseMove(10, 10,, "R") ;moves the mouse out of the corner and actually onto the button | use this if your screenshots don't line up with the button properly
 	Click
 	sleep 100
 	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " A_WorkingDir "\ImageSearch\Discord\DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears about it when you "reply" to someone
@@ -104,7 +102,6 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 			blockOff()
 			toolT("the @ ping button", "1000")
-			;MsgBox("didn't find the image")
 		}
 }
 
@@ -169,7 +166,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 		SendInput %&item% ;create a preset of any effect, must be in a folder as well
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput "{Click Down}"
-		MouseMove %&xpos%, %&ypos%
+		MouseMove %&xpos%, %&ypos% ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. If this happens to you, add ', "2" ' to the end of this mouse move
 		SendInput "{Click Up}"
 	blockOff()
 }
@@ -184,9 +181,8 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 	MouseGetPos &xpos, &ypos
 		SendInput "^+9"
 		SendInput "^{F5}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		;click 214, 1016
-		If ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " A_WorkingDir "\ImageSearch\Premiere\video.png") ;moves to the motion tab
-			MouseMove(%&x%, %&y%)
+		If ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " A_WorkingDir "\ImageSearch\Premiere\video.png") ;moves to the "video" section of the effects control window tab
+			MouseMove(%&x%, %&y%) ;I have no idea why this line matter but uh, if you don't have it here the script doesn't work so
 		else
 			goto end
 		;SendInput "{WheelUp 30}" ;no longer required as the function wont finish if it can't find the image
@@ -213,8 +209,7 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 	send "{enter}"
 }
 
-valuehold(filepath, data, optional)
-;valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+valuehold(filepath, data, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
 ;&filepath is the path to the image ImageSearch is going to use to find what value you want to adjust
 ;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
 ;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
@@ -232,10 +227,10 @@ valuehold(filepath, data, optional)
 		}
 		else
 			{
-				toolT("the blue text", "1000")
+				toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 				goto move
 			}
-		sleep 100
+		sleep 100 ;required, otherwise it can't know if you're trying to tap to reset
 			if GetKeyState(A_ThisHotkey, "P")
 			{
 				SendInput "{Click Down}"
@@ -254,7 +249,7 @@ valuehold(filepath, data, optional)
 				else
 					{
 						MouseMove %&xpos%, %&ypos%
-						toolT("the reset button", "1000")
+						toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 						goto move
 					}
 				MouseMove %&xpos%, %&ypos%
@@ -283,7 +278,6 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 		}
 	else
 		{
-			;SendInput("{Enter}") 
 			SendInput("^t") ;if you aren't in the free transform it'll simply press ctrl t to get you into it
 			sleep 200 ;photoshop is slow
 			If ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " A_WorkingDir %&image%) ;moves to the position variable
@@ -292,7 +286,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 				{
 					MouseMove %&xpos%, %&ypos%
 					blockOff()
-					toolT("whatever you were looking for", "2000")
+					toolT("whatever you were looking for", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 				}
 		}		
 		sleep 100
