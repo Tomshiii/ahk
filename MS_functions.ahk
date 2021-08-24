@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.4
+;\\v2.3.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -294,7 +294,7 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 			}
 }
 ; =========================================================================
-;		Photoshop \\ Last updated: v2.3.3
+;		Photoshop \\ Last updated: v2.3.5
 ; =========================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
 ;&image is the filepath to the image that imagesearch will use
@@ -308,7 +308,13 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\InTransform.png") ;checks to see if you're already in the free transform window
 		{
 			If ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " A_WorkingDir %&image%) ;if you are, it'll then search for your button of choice and move to it
-			MouseMove(%&x%, %&y%)
+				MouseMove(%&x%, %&y%)
+			else
+				{
+					blockOff()
+					toolT("what you're looking for", "1000")
+					return
+				}
 		}
 	else
 		{
@@ -344,7 +350,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 }
 
 ; =========================================================================
-;		Resolve \\ Last updated: v2.1.5
+;		Resolve \\ Last updated: v2.3.5
 ; =========================================================================
 Rscale(item) ;to set the scale of a video within resolve
 ;&item is the number you want to type into the text field (100% in reslove requires a 1 here for example)
@@ -376,10 +382,18 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 
 Rfav(effect) ;apply any effect to the clip you're hovering over. this script requires the search box to be visible on the left side of the screen
 ;&effect is the name of the effect you want this function to type into the search box
+;There are so many different states of existence Resolves FX panel and its search box can be in, if you want to cover them all you need more imagesearch's than I'm using here, this is assuming it's in a specific spot, and you're already clicked on the "open fx" tab at a minimum. Again, you'd need like 4 more imagesearch's to do that automatically and I just... cbf when I don't use resolve. I've written stuff to get you started, feel free to add more. Check other functions in this script for examples on how to stack imagesearch's (namely valuehold() or psProp() for the best example)
 {
 coordw() ;
 blockOn()
 MouseGetPos &xpos, &ypos
+If ImageSearch(&xs, &ys, 8, 613, 664, 961, "*2 " A_WorkingDir "\ImageSearch\Resolve\search2.png")
+	{
+		MouseMove(%&xs%, %&ys%)
+		SendInput("{Click}")
+	}
+else
+	sleep 10
 If ImageSearch(&xi, &yi, 8, 752, 220, 803, "*2 " A_WorkingDir "\ImageSearch\Resolve\search.png") ;the search bar must be visible for this script to work. The coords in this function are to search for it
 	{
 		MouseMove(%&xi% + "10", %&yi% + "5")

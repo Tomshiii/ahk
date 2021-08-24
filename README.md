@@ -5,13 +5,17 @@ Included is also the Excel document I use to keep track of any hotkeys I set, ju
 
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
   - Video walking through _all (at the time)_ of my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo)
-    - Video walking through even older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
+    - Video walking through the [Release 2.1 update](ADD A LINK HERE BRO)
+      - Video walking through even older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
 
 A lot of the code in the earliest versions my scripts were either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into an ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I personally have gone through them and made them function in ahk v2.0).
 
 You can watch me use some of these scripts in action while I edit away on twitch when I stream on my bot account: https://www.twitch.tv/botshiii
 
-### Version Information:
+### QMK Keyboard:
+My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [Hasu USB-USB converter](https://geekhack.org/index.php?topic=109514.0) allows you to use a second keyboard to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues
+
+### AHK Version Information:
 This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo. They are likely severely outdated by the time you're reading this, but those versions will no longer be maintained, you're free to try and backport any later additions if you're willing.
 
 ## What to do:
