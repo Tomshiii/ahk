@@ -8,7 +8,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.7
+;\\v2.1.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3
 
@@ -96,19 +96,25 @@ F1:: ;press then hold F1 and drag to increase/decrese x position. Let go of F1 t
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
-			{
-				MouseMove(%&xn%, %&yn%)
-				click ;"2196 139" ;this highlights the video tab
-			}
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
+		goto rest
 	else
 		{
-			blockOff()
-			MouseMove %&xpos%, %&ypos%
-			ToolTip("couldn't find video tab")
-			sleep 1000
-			ToolTip("")
+			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
+					{
+						MouseMove(%&xn%, %&yn%)
+						click ;"2196 139" ;this highlights the video tab
+					}
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					ToolTip("couldn't find video tab")
+					sleep 1000
+					ToolTip("")
+				}
 		}
+	rest:
 	MouseMove 2329, 215 ;moves to the scale value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark
 	sleep 100
 	SendInput "{Click Down}"	
@@ -171,19 +177,25 @@ F3:: ;press then hold F3 and drag to increase/decrese x position. Let go of F3 t
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
-		{
-			MouseMove(%&xn%, %&yn%)
-			click ;"2196 139" ;this highlights the video tab
-		}
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
+		goto rest
 	else
 		{
-			blockOff()
-			MouseMove %&xpos%, %&ypos%
-			ToolTip("couldn't find video tab")
-			sleep 1000
-			ToolTip("")
+			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
+					{
+						MouseMove(%&xn%, %&yn%)
+						click ;"2196 139" ;this highlights the video tab
+					}
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					ToolTip("couldn't find video tab")
+					sleep 1000
+					ToolTip("")
+				}
 		}
+	rest:
 	MouseMove 2332, 239 ;moves to the x axis value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
@@ -207,19 +219,25 @@ F4:: ;press then hold F4 and drag to increase/decrese y position. Let go of F4 t
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
-		{
-			MouseMove(%&xn%, %&yn%)
-			click ;"2196 139" ;this highlights the video tab
-		}
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
+		goto rest
 	else
 		{
-			blockOff()
-			MouseMove %&xpos%, %&ypos%
-			ToolTip("couldn't find video tab")
-			sleep 1000
-			ToolTip("")
+			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
+					{
+						MouseMove(%&xn%, %&yn%)
+						click ;"2196 139" ;this highlights the video tab
+					}
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					ToolTip("couldn't find video tab")
+					sleep 1000
+					ToolTip("")
+				}
 		}
+	rest:
 	MouseMove 2457, 240 ;moves to the y axis value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
@@ -243,19 +261,25 @@ F5:: ;press then hold F5 and drag to increase/decrese scale. Let go of F5 to con
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
-		{
-			MouseMove(%&xn%, %&yn%)
-			click ;"2196 139" ;this highlights the video tab
-		}
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
+		goto rest
 	else
 		{
-			blockOff()
-			MouseMove %&xpos%, %&ypos%
-			ToolTip("couldn't find video tab")
-			sleep 1000
-			ToolTip("")
+			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
+					{
+						MouseMove(%&xn%, %&yn%)
+						click ;"2196 139" ;this highlights the video tab
+					}
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					ToolTip("couldn't find video tab")
+					sleep 1000
+					ToolTip("")
+				}
 		}
+	rest:
 	MouseMove 2456, 265 ;moves to the rotation value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
