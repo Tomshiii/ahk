@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.5
+;\\v2.3.6
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.2
 
@@ -200,11 +200,10 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 	else
 		{
 			toolT("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-			goto end
+			return
 		}
 	click
 	MouseMove %&xpos%, %&ypos%
-	end:
 }
 
 ^F1:: ;clicks the scale window so you can input your own values - then waits for you to hit enter to warp the cursor back
@@ -215,6 +214,12 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 	MouseGetPos &xpos, &ypos
 	If PixelSearch(&xcol, &ycol, 42, 1092, 491, 1109, 0x288ccf, 3) ;looks for the blue text to the right of scale
 		MouseMove(%&xcol%, %&ycol%)
+	else
+		{
+			blockOff()
+			toolT("the blue pixel values", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
 	KeyWait("F1") ;waits for you to let go of F1
 	SendInput "{Click}"
 	KeyWait("``", "D") ;waits until the ` is pressed before continuing
@@ -243,7 +248,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 			{
 				blockOff()
 				toolT("sfx folder", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				goto end
+				return
 			}
 		;click "2299", "1048"
 		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
@@ -259,12 +264,11 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 			{
 				blockOff()
 				toolT("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				goto end
+				return
 			}
 		MouseMove(%&xpos%, %&ypos%)
 		SendInput("{Click Up}")
 		blockOff()
-		end:
 }
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
@@ -302,6 +306,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				{
 					blockOff()
 					toolT("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
 				}
 		}
 
@@ -329,7 +334,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 		{
 			blockOff()
 			toolT("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-			goto end
+			return
 		}
 
 	sleep 100
@@ -353,14 +358,13 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 					blockOff()
 					MouseMove %&xpos%, %&ypos%
 					toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					goto end
+					return
 				}
 			Click
 			sleep 50
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 		}
-		end:
 }
 
 F5::valuehold("\ImageSearch\Premiere\rotation.png", "0", "0") ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
@@ -384,8 +388,10 @@ Numpad9:: ;This script moves to the reset button to reset the "motion" effects
 			MouseMove(%&xcol%, %&ycol%)
 		else
 			{
+				MouseMove %&xpos%, %&ypos%
 				blockOff()
 				toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+				return
 			}
 		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
 		click

@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.2
+;\\v2.3.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -56,7 +56,7 @@ blockOff() ;turns off the blocks on user input
 }
 
 ; =========================================================================
-;		discord \\ Last updated: v2.3.2
+;		discord \\ Last updated: v2.3.3
 ; =========================================================================
 disc(imagepath) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME. YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
@@ -84,7 +84,8 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 				{
 					MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 					blockOff()
-					toolT("the requested button", "2000")
+					toolT("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
 				}
 
 		}
@@ -101,7 +102,8 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 		{
 			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 			blockOff()
-			toolT("the @ ping button", "1000")
+			toolT("the @ ping button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 }
 
@@ -148,7 +150,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 }
 
 ; =========================================================================
-;		Premiere \\ Last updated: v2.3.2
+;		Premiere \\ Last updated: v2.3.3
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
@@ -184,15 +186,31 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 		If ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " A_WorkingDir "\ImageSearch\Premiere\video.png") ;moves to the "video" section of the effects control window tab
 			MouseMove(%&x%, %&y%) ;I have no idea why this line matter but uh, if you don't have it here the script doesn't work so
 		else
-			goto end
+			{
+				MouseMove %&xpos%, %&ypos%
+				blockOff()
+				toolT("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+				return
+			}
 		;SendInput "{WheelUp 30}" ;no longer required as the function wont finish if it can't find the image
 		;MouseMove 122,1060 ;location for "motion"
 		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png") ;moves to the motion tab
 			MouseMove(%&x2% + "10", %&y2% + "10")
+		else
+			{
+				If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion3.png") ;this is a second check incase "motion" is already highlighted
+					MouseMove(%&x3% + "10", %&y3% + "10")
+				else
+					{
+						MouseMove %&xpos%, %&ypos%
+						blockOff()
+						toolT("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+						return
+					}
+			}
 		SendInput "{Click}"
 		SendInput "{Tab 2}" %&xval% "{Tab}" %&yval% "{Tab}" %&scale% "{ENTER}"
 		SendInput "{Enter}"
-		end:
 		MouseMove %&xpos%, %&ypos%
 		blockOff()
 }
@@ -221,14 +239,21 @@ valuehold(filepath, data, optional) ;a preset to warp to one of a videos values 
 		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			;MouseMove(%&x%, %&y%)
 		{
-			PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
-			If Color := 0x288ccf
-			MouseMove(%&xcol% + %&optional%, %&ycol%)
+			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+			;If Color := 0x288ccf
+				MouseMove(%&xcol% + %&optional%, %&ycol%)
+			else
+				{
+					blockOff()
+					toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}			
 		}
 		else
 			{
-				toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-				goto move
+				blockOff()
+				toolT("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+				return
 			}
 		sleep 100 ;required, otherwise it can't know if you're trying to tap to reset
 			if GetKeyState(A_ThisHotkey, "P")
@@ -249,18 +274,17 @@ valuehold(filepath, data, optional) ;a preset to warp to one of a videos values 
 				else
 					{
 						MouseMove %&xpos%, %&ypos%
+						blockOff()
 						toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-						goto move
+						return
 					}
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
 			}
-			move:
-			blockOff()
 }
 
 ; =========================================================================
-;		Photoshop \\ Last updated: v2.3.2
+;		Photoshop \\ Last updated: v2.3.3
 ; =========================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
 ;&image is the filepath to the image that imagesearch will use
@@ -287,6 +311,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 					MouseMove %&xpos%, %&ypos%
 					blockOff()
 					toolT("whatever you were looking for", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
 				}
 		}		
 		sleep 100
@@ -304,6 +329,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 				;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
+				return
 			}
 }
 
@@ -368,7 +394,6 @@ If ImageSearch(&xi, &yi, 8, 752, 220, 803, "*2 " A_WorkingDir "\ImageSearch\Reso
 			MouseMove(34, 775)
 			click
 		}
-
 	SendInput("^a" "{Del}")
 	MouseMove %&xpos%, %&ypos%
 	click "middle"
