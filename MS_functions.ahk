@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.3
+;\\v2.3.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -91,7 +91,7 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 		}
 	Click
 	sleep 100
-	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " A_WorkingDir "\ImageSearch\Discord\DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears about it when you "reply" to someone
+	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " A_WorkingDir "\ImageSearch\Discord\DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears above it when you "reply" to someone
 		{
 			MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 			Click
@@ -150,7 +150,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 }
 
 ; =========================================================================
-;		Premiere \\ Last updated: v2.3.3
+;		Premiere \\ Last updated: v2.3.4
 ; =========================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
@@ -227,7 +227,7 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 	send "{enter}"
 }
 
-valuehold(filepath, data, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
 ;&filepath is the path to the image ImageSearch is going to use to find what value you want to adjust
 ;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
 ;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
@@ -235,28 +235,39 @@ valuehold(filepath, data, optional) ;a preset to warp to one of a videos values 
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-		;MouseMove 226, 1079 ;move to the "x" value
 		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
-			;MouseMove(%&x%, %&y%)
-		{
-			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
-			;If Color := 0x288ccf
-				MouseMove(%&xcol% + %&optional%, %&ycol%)
-			else
-				{
-					blockOff()
-					toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}			
-		}
-		else
 			{
-				blockOff()
-				toolT("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
+				If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+					MouseMove(%&xcol% + %&optional%, %&ycol%)
+				else
+					{
+						blockOff()
+						toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+						return
+					}			
+			}
+		else ;this is for when you have the "toggle animation" keyframe button pressed
+			{
+                If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath2%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
+                    {
+                        If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+                            MouseMove(%&xcol% + %&optional%, %&ycol%)
+                        else
+                            {
+                                blockOff()
+                                toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                                return
+                            }			
+                    }
+				else
+					{
+						blockOff()
+						toolT("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+						return
+					}		
 			}
 		sleep 100 ;required, otherwise it can't know if you're trying to tap to reset
-			if GetKeyState(A_ThisHotkey, "P")
+		if GetKeyState(A_ThisHotkey, "P")
 			{
 				SendInput "{Click Down}"
 				blockOff()
@@ -264,7 +275,7 @@ valuehold(filepath, data, optional) ;a preset to warp to one of a videos values 
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
 			}
-			else
+		else
 			{
 				If ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;searches for the reset button to the right of the value you want to adjust
 					{
@@ -282,7 +293,6 @@ valuehold(filepath, data, optional) ;a preset to warp to one of a videos values 
 				blockOff()
 			}
 }
-
 ; =========================================================================
 ;		Photoshop \\ Last updated: v2.3.3
 ; =========================================================================

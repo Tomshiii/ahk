@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.6
+;\\v2.3.7
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.2
+;\\v2.3.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -317,9 +317,9 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;		hold and drag (or click)
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-F1::valuehold("\ImageSearch\Premiere\scale.png", "100", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-F2::valuehold("\ImageSearch\Premiere\position.png", "960", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-F3::valuehold("\ImageSearch\Premiere\position.png", "540", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+F1::valuehold("\ImageSearch\Premiere\scale.png", "\ImageSearch\Premiere\scale2.png", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+F2::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+F3::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Simply Tap F4 to reset values
 {
@@ -367,7 +367,7 @@ F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Sim
 		}
 }
 
-F5::valuehold("\ImageSearch\Premiere\rotation.png", "0", "0") ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
+F5::valuehold("\ImageSearch\Premiere\rotation.png", "\ImageSearch\Premiere\rotation2.png", "0") ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;

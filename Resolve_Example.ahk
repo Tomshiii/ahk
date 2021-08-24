@@ -8,7 +8,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.6
+;\\v2.1.7
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3
 
@@ -88,35 +88,43 @@ WheelLeft::Up
 ;=========================================================
 ;		hold and drag (or click)
 ;=========================================================
-; ///// for these scripts to work, the inspector tab must be open and scrolled to the top
-; ///// you could add functionality to scroll up a few times if you run into that being an issue a lot
+; ///// for these scripts to work, the inspector tab must be open. You could add imagesearches to check for you at the beginning of each script
+; ///// You could turn these into a function in MS_Functions then just call the functions here instead to save room. I'm not doing that because I don't use resolve so there's little point
 
-F1:: ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm
+F1:: ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
 {
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+			{
+				MouseMove(%&xn%, %&yn%)
+				click ;"2196 139" ;this highlights the video tab
+			}
+	else
 		{
-			MouseMove(%&xn%, %&yn%)
-			click ;"2196 139" ;this highlights the video tab
+			blockOff()
+			MouseMove %&xpos%, %&ypos%
+			ToolTip("couldn't find video tab")
+			sleep 1000
+			ToolTip("")
 		}
 	MouseMove 2329, 215 ;moves to the scale value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark
 	sleep 100
 	SendInput "{Click Down}"	
-		if GetKeyState("F1", "P")
-			{
-				blockOff()
-				KeyWait "F1"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
-		else
-			{
-				rfElse("1")
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-			}
+	if GetKeyState("F1", "P")
+		{
+			blockOff()
+			KeyWait "F1"
+			SendInput "{Click Up}"
+			MouseMove %&xpos%, %&ypos%
+		}
+	else
+		{
+			rfElse("1")
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+		}
 }
 
 /*
@@ -158,88 +166,112 @@ BlockInput off
 }
 */
 
-F3:: ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm
+F3:: ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm. Tap to reset
 {
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
-	{
-		MouseMove(%&xn%, %&yn%)
-		click ;"2196 139" ;this highlights the video tab
-	}
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
+	else
+		{
+			blockOff()
+			MouseMove %&xpos%, %&ypos%
+			ToolTip("couldn't find video tab")
+			sleep 1000
+			ToolTip("")
+		}
 	MouseMove 2332, 239 ;moves to the x axis value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
-		if GetKeyState("F3", "P")
-			{
-				blockOff()
-				KeyWait "F3"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
-		else
-			{
-				rfElse("1")
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-			}
+	if GetKeyState("F3", "P")
+		{
+			blockOff()
+			KeyWait "F3"
+			SendInput "{Click Up}"
+			MouseMove %&xpos%, %&ypos%
+		}
+	else
+		{
+			rfElse("1")
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+		}
 }
 
-F4:: ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm
+F4:: ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm. Tap to reset
 {
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
-	{
-		MouseMove(%&xn%, %&yn%)
-		click ;"2196 139" ;this highlights the video tab
-	}
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
+	else
+		{
+			blockOff()
+			MouseMove %&xpos%, %&ypos%
+			ToolTip("couldn't find video tab")
+			sleep 1000
+			ToolTip("")
+		}
 	MouseMove 2457, 240 ;moves to the y axis value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
-			if GetKeyState("F4", "P")
-			{
-				blockOff()
-				KeyWait "F4"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
-		else
-			{
-				rfElse("1")
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-			}
+	if GetKeyState("F4", "P")
+		{
+			blockOff()
+			KeyWait "F4"
+			SendInput "{Click Up}"
+			MouseMove %&xpos%, %&ypos%
+		}
+	else
+		{
+			rfElse("1")
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+		}
 }
 
-F5:: ;press then hold F5 and drag to increase/decrese scale. Let go of F5 to confirm
+F5:: ;press then hold F5 and drag to increase/decrese scale. Let go of F5 to confirm. Tap to reset
 {
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
-	{
-		MouseMove(%&xn%, %&yn%)
-		click ;"2196 139" ;this highlights the video tab
-	}
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png")
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
+	else
+		{
+			blockOff()
+			MouseMove %&xpos%, %&ypos%
+			ToolTip("couldn't find video tab")
+			sleep 1000
+			ToolTip("")
+		}
 	MouseMove 2456, 265 ;moves to the rotation value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
 	sleep 100
 	SendInput "{Click Down}"
-			if GetKeyState("F5", "P")
-			{
-				blockOff()
-				KeyWait "F5"
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
-			}
-		else
-			{
-				rfElse("0")
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-			}
+	if GetKeyState("F5", "P")
+		{
+			blockOff()
+			KeyWait "F5"
+			SendInput "{Click Up}"
+			MouseMove %&xpos%, %&ypos%
+		}
+	else
+		{
+			rfElse("0")
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+		}
 }
 
 ;=========================================================
@@ -247,56 +279,96 @@ If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\
 ;=========================================================
 !h:: ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
 {
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
-	{
-		MouseMove(%&xn%, %&yn%)
-		click ;"2196 139" ;this highlights the video tab
-	}
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
+	else
+		{
+			blockOff()
+			MouseMove %&xpos%, %&ypos%
+			ToolTip("couldn't find video tab")
+			sleep 1000
+			ToolTip("")
+		}
 	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\horizontal.png") ;searches for the horizontal button when it isn't activated already
 		{
 			MouseMove(%&xh%, %&yh%)
 			click ;"2196 139" ;this highlights the video tab
-			goto next
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+			return
 		}
-	If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\horizontalON.png") ;searches for the horizontal button when it is activated already
+	else
 		{
-			MouseMove(%&xho%, %&yho%)
-			click ;"2196 139" ;this highlights the video tab
-			goto next
+			If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\horizontalON.png") ;searches for the horizontal button when it is activated already
+				{
+					MouseMove(%&xho%, %&yho%)
+					click ;"2196 139" ;this highlights the video tab
+					MouseMove %&xpos%, %&ypos%
+					blockOff()
+					return
+				}
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					ToolTip("couldn't find horizontal button")
+					sleep 1000
+					ToolTip("")
+				}
 		}
-next:
-MouseMove %&xpos%, %&ypos%
-blockOff()
 }
 
 !v:: ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
 {
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
-	{
-		MouseMove(%&xn%, %&yn%)
-		click ;"2196 139" ;this highlights the video tab
-	}
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
+	else
+		{
+			blockOff()
+			MouseMove %&xpos%, %&ypos%
+			ToolTip("couldn't find video tab")
+			sleep 1000
+			ToolTip("")
+		}
 	If ImageSearch(&xv, &yv, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\vertical.png") ;searches for the vertical button when it isn't activated already
 		{
 			MouseMove(%&xv%, %&yv%)
 			click ;"2196 139" ;this highlights the video tab
-			goto next
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+			return
 		}
-	If ImageSearch(&xvo, &yvo, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\verticalON.png") ;searches for the vertical button when it is activated already
+	else
 		{
-			MouseMove(%&xvo%, %&yvo%)
-			click ;"2196 139" ;this highlights the video tab
-			goto next
+			If ImageSearch(&xvo, &yvo, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\verticalON.png") ;searches for the vertical button when it is activated already
+				{
+					MouseMove(%&xvo%, %&yvo%)
+					click ;"2196 139" ;this highlights the video tab
+					MouseMove %&xpos%, %&ypos%
+					blockOff()
+					return
+				}
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					ToolTip("couldn't find vertical button")
+					sleep 1000
+					ToolTip("")
+				}
 		}
-next:
-MouseMove %&xpos%, %&ypos%
-blockOff()
 }
 
 ;=========================================================
