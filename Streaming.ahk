@@ -5,6 +5,7 @@ SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\streaming.ico") ;changes the icon this script uses in the taskbar
 ;#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
+#SingleInstance Force
 
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ;
@@ -13,7 +14,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\streaming.ico") ;changes the icon th
 ;	So this script will open alongside everything else for stream to allow for my macros
 ;
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
-; This is just so I have a way to relaunch it manually as admin
+; This is just so I have a way to relaunch it manually as admin for debugging purposes
 F6::Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
 
 ;===========================================================================================================================================================================
