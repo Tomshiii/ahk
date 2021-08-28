@@ -10,9 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.7
+;\\v2.3.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.4
+;\\v2.3.3
+;\\Current QMK Keyboard Version
+;\\v2.1.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -311,99 +313,6 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 
 }
-
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-;
-;		hold and drag (or click)
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-F1::valuehold("\ImageSearch\Premiere\scale.png", "\ImageSearch\Premiere\scale2.png", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-F2::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-F3::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-
-F4:: ;press then hold F4 and drag to move position. Let go of F4 to confirm, Simply Tap F4 to reset values
-{
-	;SendInput, d ;d must be set to "select clip at playhead" //if a clip is already selected the effects disappear :)
-	coords()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	;MouseMove 142, 1059 ;move to the "motion" tab
-	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
-			MouseMove(%&x% + "25", %&y%)
-	else
-		{
-			blockOff()
-			toolT("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-			return
-		}
-
-	sleep 100
-	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
-			Click
-			MouseMove 2300, 238 ;move to the preview window
-			SendInput "{Click Down}"
-			blockOff()
-			KeyWait A_ThisHotkey
-			SendInput "{Click Up}"
-			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
-		}
-	else
-		{
-			;MouseMove 352, 1076 ;move to the reset arrow
-			if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
-					MouseMove(%&xcol%, %&ycol%)
-			else
-				{
-					blockOff()
-					MouseMove %&xpos%, %&ypos%
-					toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
-			Click
-			sleep 50
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
-}
-
-F5::valuehold("\ImageSearch\Premiere\rotation.png", "\ImageSearch\Premiere\rotation2.png", "0") ;press then hold F5 and drag to increase/decrease rotation. Let go of F5 to confirm, Simply Tap F5 to reset values
-
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-;
-;		NUMPAD SCRIPTS
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Numpad7::num("2550", "0", "200") ;This script moves to the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-Numpad8::num("3828", "-717", "300") ;This script moves to the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-Numpad9:: ;This script moves to the reset button to reset the "motion" effects
-{
-	coordw()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-		SendInput "^+9"
-		SendInput "{F12}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		;MouseMove 359, 1063 ;location for the reset arrow
-		if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
-			MouseMove(%&xcol%, %&ycol%)
-		else
-			{
-				MouseMove %&xpos%, %&ypos%
-				blockOff()
-				toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
-			}
-		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
-		click
-	MouseMove %&xpos%, %&ypos%
-	blockOff()
-}
-
-Numpad1::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}" ;REDUCE GAIN BY -2db
-Numpad2::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}2{ENTER}" ;INCREASE GAIN BY 2db == set g to open gain window
-Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
-
-
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;

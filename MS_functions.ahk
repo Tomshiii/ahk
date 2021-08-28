@@ -4,14 +4,16 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.5
+;\\v2.3.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
 
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		Coordmode \\ Last updated: v2.1.6
-; =========================================================================
+;
+; ==================================================================================================================================================
 coords() ;sets coordmode to "screen"
 {
 	coordmode "pixel", "screen"
@@ -29,9 +31,11 @@ coordc() ;sets coordmode to "caret"
 	coordmode "caret", "window"
 }
 
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		Tooltip \\ Last updated: v2.3.2
-; =========================================================================
+;
+; ==================================================================================================================================================
 toolT(message, timeout) ;create a tooltip
 {
 	ToolTip("couldn't find " %&message%)
@@ -39,9 +43,11 @@ toolT(message, timeout) ;create a tooltip
 	ToolTip("")
 }
 
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		Blockinput \\ Last updated: v2.0.1
-; =========================================================================
+;
+; ==================================================================================================================================================
 blockOn() ;blocks all user inputs
 {
 	BlockInput "SendAndMouse"
@@ -55,9 +61,11 @@ blockOff() ;turns off the blocks on user input
 	BlockInput "off"
 }
 
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		discord \\ Last updated: v2.3.3
-; =========================================================================
+;
+; ==================================================================================================================================================
 disc(imagepath) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME. YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
 ;dark theme
@@ -107,9 +115,11 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 		}
 }
 
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		Mouse Drag \\ Last updated: v2.3
-; =========================================================================
+;
+; ==================================================================================================================================================
 mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
 ;&tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
 ;&toolorig is the button you want the script to press to bring you back to your tool of choice
@@ -121,9 +131,11 @@ mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script t
 	SendInput %&toolorig% 
 }
 
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		better timeline movement \\ Last updated: v2.1.11
-; =========================================================================
+;
+; ==================================================================================================================================================
 timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
 ;&timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
 ;x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
@@ -149,9 +161,11 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 		}
 }
 
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		Premiere \\ Last updated: v2.3.4
-; =========================================================================
+;
+; ==================================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
 {
@@ -293,9 +307,11 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 				blockOff()
 			}
 }
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		Photoshop \\ Last updated: v2.3.5
-; =========================================================================
+;
+; ==================================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
 ;&image is the filepath to the image that imagesearch will use
 {
@@ -349,9 +365,11 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 			}
 }
 
-; =========================================================================
+; ==================================================================================================================================================
+;
 ;		Resolve \\ Last updated: v2.3.5
-; =========================================================================
+;
+; ==================================================================================================================================================
 Rscale(item) ;to set the scale of a video within resolve
 ;&item is the number you want to type into the text field (100% in reslove requires a 1 here for example)
 {
@@ -424,9 +442,102 @@ If ImageSearch(&xi, &yi, 8, 752, 220, 803, "*2 " A_WorkingDir "\ImageSearch\Reso
 blockOff()
 }
 
-; =========================================================================
+
+; ==================================================================================================================================================
+;
+;		QMK Stuff \\ Last updated: v2.3.6
+;
+; ==================================================================================================================================================
+;All of these functions are just to allow QMK Keyboard.ahk to be more readable
+movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+{
+	coords()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion.png") ;moves to the motion tab
+			MouseMove(%&x% + "25", %&y%)
+	else
+		{
+			blockOff()
+			toolT("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
+
+	sleep 100
+	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the f4 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
+			Click
+			MouseMove 2300, 238 ;move to the preview window
+			SendInput "{Click Down}"
+			blockOff()
+			KeyWait A_ThisHotkey
+			SendInput "{Click Up}"
+			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
+		}
+	else
+		{
+			;MouseMove 352, 1076 ;move to the reset arrow
+			if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+					MouseMove(%&xcol%, %&ycol%)
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
+			Click
+			sleep 50
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+		}
+}
+
+reset() ;This script moves to the reset button to reset the "motion" effects
+{
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+		SendInput "^+9"
+		SendInput "{F12}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+		;MouseMove 359, 1063 ;location for the reset arrow
+		if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " A_WorkingDir "\ImageSearch\Premiere\reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+			MouseMove(%&xcol%, %&ycol%)
+		;SendInput, {WheelUp 10} ;if you do this, for whatever reason "click" no longer works without an insane amount of delay, idk why
+		click
+	MouseMove %&xpos%, %&ypos%
+	blockOff()
+}
+
+manScale(key1, key2, keyend)
+{
+	coords()
+	BlockInput "MouseMove"
+	BlockInput "On"
+	MouseGetPos &xpos, &ypos
+	If PixelSearch(&xcol, &ycol, 42, 1092, 491, 1109, 0x288ccf, 3) ;looks for the blue text to the right of scale
+		MouseMove(%&xcol%, %&ycol%)
+	else
+		{
+			blockOff()
+			toolT("the blue pixel values", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
+	KeyWait(%&key1%) ;waits for you to let go of F1
+	KeyWait(%&key2%) ;waits for you to let go of F1
+	SendInput "{Click}"
+	KeyWait(%&keyend%, "D") ;waits until the ` is pressed before continuing
+	SendInput("{Enter}")
+	MouseMove %&xpos%, %&ypos%
+	Click("middle")
+	blockOff()
+}
+
+; ==================================================================================================================================================
+;
 ;		Fkey AutoLaunch \\ Last updated: v2.2
-; =========================================================================
+;
+; ==================================================================================================================================================
 switchToExplorer()
 {
 ;switchToExplorer(){
@@ -567,9 +678,9 @@ switchToWindowSpy()
 }
 
 
-; =========================================================================
+; ==================================================================================================================================================
 ; Old
-; =========================================================================
+; ==================================================================================================================================================
 /* ;this was the old way of doing the discord functions (v2.0.7) that included just right clicking and making the user do things. I've saved the one with all variations of code it went through, the other two have been removed for cleanup as they were functionally identical
 ;PLEASE NOTE, I ORIGINALLY HAD THIS SCRIPT WARP THE MOUSE TO CERTAIN POSITIONS TO HIT THE RESPECTIVE BUTTONS BUT THE POSITION OF BUTTONS IN DISCORD WITHIN THE RIGHT CLICK CONTEXT MENU CHANGE DEPENDING ON WHAT PERMS YOU HAVE IN A SERVER, SO IT WOULD ALWAYS TRY TO DO RANDOM THINGS LIKE PIN A MESSAGE OR OPEN A THREAD. There isn't really anything you can do about that. I initially tried to just send through multiple down/up inputs but apparently discord rate limits you to like 1 input every .5-1s so that's fun.
 discedit()
