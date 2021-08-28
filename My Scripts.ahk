@@ -208,29 +208,6 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 	MouseMove %&xpos%, %&ypos%
 }
 
-^F1:: ;clicks the scale window so you can input your own values - then waits for you to hit enter to warp the cursor back
-{
-	coords()
-	BlockInput "MouseMove"
-	BlockInput "On"
-	MouseGetPos &xpos, &ypos
-	If PixelSearch(&xcol, &ycol, 42, 1092, 491, 1109, 0x288ccf, 3) ;looks for the blue text to the right of scale
-		MouseMove(%&xcol%, %&ycol%)
-	else
-		{
-			blockOff()
-			toolT("the blue pixel values", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-			return
-		}
-	KeyWait("F1") ;waits for you to let go of F1
-	SendInput "{Click}"
-	KeyWait("``", "D") ;waits until the ` is pressed before continuing
-	SendInput("{Enter}")
-	MouseMove %&xpos%, %&ypos%
-	Click("middle")
-	blockOff()
-}
-
 ^MButton:: ;drag my bleep (goose) sfx to the cursor
 {
 	SendInput "^+5"
