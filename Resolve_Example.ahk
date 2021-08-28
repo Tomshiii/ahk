@@ -8,9 +8,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.8
+;\\v2.1.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3
+;\\v2.3.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -91,48 +91,14 @@ WheelLeft::Up
 ; ///// for these scripts to work, the inspector tab must be open. You could add imagesearches to check for you at the beginning of each script
 ; ///// You could turn these into a function in MS_Functions then just call the functions here instead to save room. I'm not doing that because I don't use resolve so there's little point
 
-F1:: ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
-{
-	coordw()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
-		goto rest
-	else
-		{
-			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
-					{
-						MouseMove(%&xn%, %&yn%)
-						click ;"2196 139" ;this highlights the video tab
-					}
-			else
-				{
-					blockOff()
-					MouseMove %&xpos%, %&ypos%
-					ToolTip("couldn't find video tab")
-					sleep 1000
-					ToolTip("")
-				}
-		}
-	rest:
-	MouseMove 2329, 215 ;moves to the scale value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark
-	sleep 100
-	SendInput "{Click Down}"	
-	if GetKeyState("F1", "P")
-		{
-			blockOff()
-			KeyWait "F1"
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
-		}
-	else
-		{
-			rfElse("1")
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
-}
+F1::rvalhold("\ImageSearch\Resolve\zoom.png", "\ImageSearch\Resolve\zoom2.png", "60", "1") ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
 
+F2:: ;I kept pressing this and opening premiere, this is just to stop that
+{
+	ToolTip(A_ThisHotkey " is unassigned")
+	sleep 1000
+	ToolTip("")
+}
 /*
 ;Not entirely sure Resolve has similar function to premiere where you can reposition a clip by dragging it around in the preview window \\ This code was as such, never ported to ahk v2.0 code \\
 F2:: ;press then hold alt and drag to move position. Let go of alt to confirm
@@ -172,131 +138,9 @@ BlockInput off
 }
 */
 
-F3:: ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm. Tap to reset
-{
-	coordw()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
-		goto rest
-	else
-		{
-			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
-					{
-						MouseMove(%&xn%, %&yn%)
-						click ;"2196 139" ;this highlights the video tab
-					}
-			else
-				{
-					blockOff()
-					MouseMove %&xpos%, %&ypos%
-					ToolTip("couldn't find video tab")
-					sleep 1000
-					ToolTip("")
-				}
-		}
-	rest:
-	MouseMove 2332, 239 ;moves to the x axis value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
-	sleep 100
-	SendInput "{Click Down}"
-	if GetKeyState("F3", "P")
-		{
-			blockOff()
-			KeyWait "F3"
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
-		}
-	else
-		{
-			rfElse("1")
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
-}
-
-F4:: ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm. Tap to reset
-{
-	coordw()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
-		goto rest
-	else
-		{
-			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
-					{
-						MouseMove(%&xn%, %&yn%)
-						click ;"2196 139" ;this highlights the video tab
-					}
-			else
-				{
-					blockOff()
-					MouseMove %&xpos%, %&ypos%
-					ToolTip("couldn't find video tab")
-					sleep 1000
-					ToolTip("")
-				}
-		}
-	rest:
-	MouseMove 2457, 240 ;moves to the y axis value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
-	sleep 100
-	SendInput "{Click Down}"
-	if GetKeyState("F4", "P")
-		{
-			blockOff()
-			KeyWait "F4"
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
-		}
-	else
-		{
-			rfElse("1")
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
-}
-
-F5:: ;press then hold F5 and drag to increase/decrese scale. Let go of F5 to confirm. Tap to reset
-{
-	coordw()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
-		goto rest
-	else
-		{
-			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
-					{
-						MouseMove(%&xn%, %&yn%)
-						click ;"2196 139" ;this highlights the video tab
-					}
-			else
-				{
-					blockOff()
-					MouseMove %&xpos%, %&ypos%
-					ToolTip("couldn't find video tab")
-					sleep 1000
-					ToolTip("")
-				}
-		}
-	rest:
-	MouseMove 2456, 265 ;moves to the rotation value. You could change this mousemove to an imagesearch similar to^ or even PixelSearches as the box behind values in resolve is quite dark 
-	sleep 100
-	SendInput "{Click Down}"
-	if GetKeyState("F5", "P")
-		{
-			blockOff()
-			KeyWait "F5"
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
-		}
-	else
-		{
-			rfElse("0")
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-		}
-}
+F3::rvalhold("\ImageSearch\Resolve\position.png", "\ImageSearch\Resolve\position2.png", "80", "1") ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm. Tap to reset
+F4::rvalhold("\ImageSearch\Resolve\position.png", "\ImageSearch\Resolve\position2.png", "210", "1") ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm. Tap to reset
+F5::rvalhold("\ImageSearch\Resolve\rotation.png", "\ImageSearch\Resolve\rotation2.png", "240", "0") ;press then hold F5 and drag to increase/decrese rotation. Let go of F5 to confirm. Tap to reset
 
 ;=========================================================
 ;		flips

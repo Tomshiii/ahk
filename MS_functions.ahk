@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.6
+;\\v2.3.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -367,7 +367,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 
 ; ==================================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.3.5
+;		Resolve \\ Last updated: v2.3.7
 ;
 ; ==================================================================================================================================================
 Rscale(item) ;to set the scale of a video within resolve
@@ -400,7 +400,7 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 
 Rfav(effect) ;apply any effect to the clip you're hovering over. this script requires the search box to be visible on the left side of the screen
 ;&effect is the name of the effect you want this function to type into the search box
-;There are so many different states of existence Resolves FX panel and its search box can be in, if you want to cover them all you need more imagesearch's than I'm using here, this is assuming it's in a specific spot, and you're already clicked on the "open fx" tab at a minimum. Again, you'd need like 4 more imagesearch's to do that automatically and I just... cbf when I don't use resolve. I've written stuff to get you started, feel free to add more. Check other functions in this script for examples on how to stack imagesearch's (namely valuehold() or psProp() for the best example)
+;There are so many different states of existence Resolves FX panel and its search box can be in, if you want to cover them all you need more imagesearch's than I'm using here, this is currently assuming it's in a specific spot, and you're already clicked on the "open fx" tab at a minimum. Again, you'd need like 4 more imagesearch's to do that automatically and I just... cbf when I don't use resolve. I've written stuff to get you started, feel free to add more. Check other functions in this script for examples on how to stack imagesearch's (namely valuehold() or psProp() for the best example)
 {
 coordw() ;
 blockOn()
@@ -442,6 +442,69 @@ If ImageSearch(&xi, &yi, 8, 752, 220, 803, "*2 " A_WorkingDir "\ImageSearch\Reso
 blockOff()
 }
 
+rvalhold(image1, image2, plus, rfelseval)
+{
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " A_WorkingDir "\ImageSearch\Resolve\inspector.png")
+		goto video
+	else
+		{
+			If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " A_WorkingDir "\ImageSearch\Resolve\inspector2.png")
+				MouseMove(%&xi%, %&yi%)
+				click ;this opens the inspector tab
+				goto video
+		}
+	video:
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\video.png") ;if you're already in the video tab, it'll find this image then move on
+		goto rest
+	else
+		{
+			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;if you aren't already in the video tab, this line will search for it
+					{
+						MouseMove(%&xn%, %&yn%)
+						click ;"2196 139" ;this highlights the video tab
+					}
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					toolT("video tab", "1000")
+					return
+				}
+		}
+	rest:
+	;MouseMove 2329, 215 ;moves to the scale value.
+	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " A_WorkingDir %&image1%) ;searches for the zoom property
+		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to zoom. This function assumes x/y are linked
+	else
+		{
+			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " A_WorkingDir %&image2%) ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+				MouseMove(%&xz% + %&plus%, %&yz% + "5")
+			else
+				{
+					toolT("zoom", "1000")
+					return
+				}
+		}
+	sleep 100
+	SendInput "{Click Down}"	
+	if GetKeyState(A_ThisHotkey, "P")
+		{
+			blockOff()
+			KeyWait A_ThisHotkey
+			SendInput "{Click Up}"
+			MouseMove %&xpos%, %&ypos%
+		}
+	else
+		{
+			rfElse(%&rfelseval%)
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+			return
+		}
+}
 
 ; ==================================================================================================================================================
 ;
