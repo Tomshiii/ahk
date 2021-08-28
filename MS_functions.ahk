@@ -367,7 +367,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 
 ; ==================================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.3.7
+;		Resolve \\ Last updated: v2.3.8
 ;
 ; ==================================================================================================================================================
 Rscale(item) ;to set the scale of a video within resolve
@@ -399,7 +399,10 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 }
 
 REffect(folder1, folder2, effect) ;apply any effect to the clip you're hovering over.
+;&folder1 is the path directory to a screenshot of the drop down sidebar option (in the effects window) you WANT to be active - ACTIVATED
+;&folder2 is the path directory to a screenshot of the drop down sidebar option (in the effects window) you WANT to be active - NOT ACTIVATED
 ;&effect is the name of the effect you want this function to type into the search box
+
 ;This function will, in order;
 ;Check to see if the effects window is open on the left side of the screen
 ;Check to make sure the effects sidebar is expanded
@@ -410,7 +413,7 @@ REffect(folder1, folder2, effect) ;apply any effect to the clip you're hovering 
 	coordw() ;
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " A_WorkingDir "\ImageSearch\Resolve\effects.png")
+	If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " A_WorkingDir "\ImageSearch\Resolve\effects.png") ;checks to see if the effects button is deactivated
 		{
 			MouseMove(%&xe%, %&ye%)
 			SendInput("{Click}")
@@ -418,22 +421,22 @@ REffect(folder1, folder2, effect) ;apply any effect to the clip you're hovering 
 		}
 	else
 		{
-			If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " A_WorkingDir "\ImageSearch\Resolve\effects2.png")
+			If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " A_WorkingDir "\ImageSearch\Resolve\effects2.png") ;checks to see if the effects button is activated
 				goto closeORopen
 			else
 				{
 					blockOff()
-					toolT("the effects button", "1000")
+					toolT("the effects button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
 closeORopen:
 ;MsgBox("close/open")
-	If ImageSearch(&xopen, &yopen, 8, 114, 617, 1358, "*2 " A_WorkingDir "\ImageSearch\Resolve\open.png")
+	If ImageSearch(&xopen, &yopen, 8, 114, 617, 1358, "*2 " A_WorkingDir "\ImageSearch\Resolve\open.png") ;checks to see if the effects window sidebar is open
 		goto EffectFolder
 	else
 		{
-			If ImageSearch(&xclosed, &yclosed, 8, 114, 617, 1358, "*2 " A_WorkingDir "\ImageSearch\Resolve\closed.png")
+			If ImageSearch(&xclosed, &yclosed, 8, 114, 617, 1358, "*2 " A_WorkingDir "\ImageSearch\Resolve\closed.png") ;checks to see if the effects window sidebar is closed
 				{
 					MouseMove(%&xclosed%, %&yclosed%)
 					SendInput("{Click}")
@@ -442,17 +445,17 @@ closeORopen:
 			else
 				{
 					blockOff()
-					toolT("open/close button", "1000")
+					toolT("open/close button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
 EffectFolder:
 ;MsgBox("effect folder")
-	If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir %&folder1%)
+	If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir %&folder1%) ;checks to see if the drop down option you want is activated
 		goto SearchButton
 	else
 		{
-			If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir %&folder2%)
+			If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir %&folder2%) ;checks to see if the drop down option you want is deactivated
 				{
 					MouseMove(%&xfx%, %&yfx%)
 					SendInput("{Click}")
@@ -461,13 +464,13 @@ EffectFolder:
 			else
 				{
 					blockOff()
-					toolT("the fxfolder", "1000")
+					toolT("the fxfolder", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}	
 		}
 SearchButton:
 ;MsgBox("search button")
-	If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " A_WorkingDir "\ImageSearch\Resolve\search2.png")
+	If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " A_WorkingDir "\ImageSearch\Resolve\search2.png") ;checks to see if the search icon is deactivated
 		{
 			MouseMove(%&xs%, %&ys%)
 			SendInput("{Click 2}")
@@ -475,7 +478,7 @@ SearchButton:
 		}
 	else
 	{
-		If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " A_WorkingDir "\ImageSearch\Resolve\search3.png")
+		If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " A_WorkingDir "\ImageSearch\Resolve\search3.png") ;checks to see if the search icon is activated
 			{
 				MouseMove(%&xs%, %&ys%)
 				SendInput("{Click 2}")
@@ -484,7 +487,7 @@ SearchButton:
 		else
 			{
 				blockOff()
-				toolT("search button", "1000")
+				toolT("search button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 				return
 			}
 	}
@@ -527,7 +530,7 @@ rvalhold(image1, image2, plus, rfelseval)
 				{
 					blockOff()
 					MouseMove %&xpos%, %&ypos%
-					toolT("video tab", "1000")
+					toolT("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -541,7 +544,7 @@ rvalhold(image1, image2, plus, rfelseval)
 				MouseMove(%&xz% + %&plus%, %&yz% + "5")
 			else
 				{
-					toolT("zoom", "1000")
+					toolT("zoom", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -643,10 +646,10 @@ manScale(key1, key2, keyend)
 			toolT("the blue pixel values", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 			return
 		}
-	KeyWait(%&key1%) ;waits for you to let go of F1
-	KeyWait(%&key2%) ;waits for you to let go of F1
+	KeyWait(%&key1%) ;waits for you to let go of hotkey
+	KeyWait(%&key2%) ;waits for you to let go of hotkey
 	SendInput "{Click}"
-	KeyWait(%&keyend%, "D") ;waits until the ` is pressed before continuing
+	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
 	SendInput("{Enter}")
 	MouseMove %&xpos%, %&ypos%
 	Click("middle")
