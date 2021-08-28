@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.7
+;\\v2.3.8
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -398,48 +398,105 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 	click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.
 }
 
-Rfav(effect) ;apply any effect to the clip you're hovering over. this script requires the search box to be visible on the left side of the screen
+REffect(folder1, folder2, effect) ;apply any effect to the clip you're hovering over.
 ;&effect is the name of the effect you want this function to type into the search box
-;There are so many different states of existence Resolves FX panel and its search box can be in, if you want to cover them all you need more imagesearch's than I'm using here, this is currently assuming it's in a specific spot, and you're already clicked on the "open fx" tab at a minimum. Again, you'd need like 4 more imagesearch's to do that automatically and I just... cbf when I don't use resolve. I've written stuff to get you started, feel free to add more. Check other functions in this script for examples on how to stack imagesearch's (namely valuehold() or psProp() for the best example)
+;This function will, in order;
+;Check to see if the effects window is open on the left side of the screen
+;Check to make sure the effects sidebar is expanded
+;Open or close/reopen the search bar
+;Ensure you're clicked on the appropriate drop down
+;Search for your effect of choice, then drag back to the click you were hovering over originally
 {
-coordw() ;
-blockOn()
-MouseGetPos &xpos, &ypos
-If ImageSearch(&xs, &ys, 8, 613, 664, 961, "*2 " A_WorkingDir "\ImageSearch\Resolve\search2.png")
-	{
-		MouseMove(%&xs%, %&ys%)
-		SendInput("{Click}")
-	}
-else
-	sleep 10
-If ImageSearch(&xi, &yi, 8, 752, 220, 803, "*2 " A_WorkingDir "\ImageSearch\Resolve\search.png") ;the search bar must be visible for this script to work. The coords in this function are to search for it
-	{
-		MouseMove(%&xi% + "10", %&yi% + "5")
-		Click
-		SendInput(%&effect%)
-		MouseMove(189, 72,, "R")
-		SendInput "{Click Down}"
-		MouseMove %&xpos%, %&ypos%, 2
-		SendInput "{Click Up}"
-		MouseMove(%&xi% + "10", %&yi% + "5")
-		click
-	}
-	else ;if for whatever reason the word "seach" isn't visible in the search box, this part of the function defaults back to just raw pixel coords
+	coordw() ;
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " A_WorkingDir "\ImageSearch\Resolve\effects.png")
 		{
-			MouseMove(34, 775)
-			Click
-			SendInput(%&effect%)
-			MouseMove(189, 72,, "R")
-			SendInput "{Click Down}"
-			MouseMove %&xpos%, %&ypos%, 2 ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
-			SendInput "{Click Up}"
-			MouseMove(34, 775)
-			click
+			MouseMove(%&xe%, %&ye%)
+			SendInput("{Click}")
+			goto closeORopen
 		}
-	SendInput("^a" "{Del}")
-	MouseMove %&xpos%, %&ypos%
-	click "middle"
-blockOff()
+	else
+		{
+			If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " A_WorkingDir "\ImageSearch\Resolve\effects2.png")
+				goto closeORopen
+			else
+				{
+					blockOff()
+					toolT("the effects button", "1000")
+					return
+				}
+		}
+closeORopen:
+;MsgBox("close/open")
+	If ImageSearch(&xopen, &yopen, 8, 114, 617, 1358, "*2 " A_WorkingDir "\ImageSearch\Resolve\open.png")
+		goto EffectFolder
+	else
+		{
+			If ImageSearch(&xclosed, &yclosed, 8, 114, 617, 1358, "*2 " A_WorkingDir "\ImageSearch\Resolve\closed.png")
+				{
+					MouseMove(%&xclosed%, %&yclosed%)
+					SendInput("{Click}")
+					goto EffectFolder
+				}
+			else
+				{
+					blockOff()
+					toolT("open/close button", "1000")
+					return
+				}
+		}
+EffectFolder:
+;MsgBox("effect folder")
+	If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir %&folder1%)
+		goto SearchButton
+	else
+		{
+			If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir %&folder2%)
+				{
+					MouseMove(%&xfx%, %&yfx%)
+					SendInput("{Click}")
+					goto SearchButton
+				}
+			else
+				{
+					blockOff()
+					toolT("the fxfolder", "1000")
+					return
+				}	
+		}
+SearchButton:
+;MsgBox("search button")
+	If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " A_WorkingDir "\ImageSearch\Resolve\search2.png")
+		{
+			MouseMove(%&xs%, %&ys%)
+			SendInput("{Click 2}")
+			goto final
+		}
+	else
+	{
+		If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " A_WorkingDir "\ImageSearch\Resolve\search3.png")
+			{
+				MouseMove(%&xs%, %&ys%)
+				SendInput("{Click 2}")
+				goto final
+			}
+		else
+			{
+				blockOff()
+				toolT("search button", "1000")
+				return
+			}
+	}
+final:
+;MsgBox("final")
+	SendInput(%&effect%)
+	MouseMove(0, 130,, "R")
+	SendInput "{Click Down}"
+	MouseMove %&xpos%, %&ypos%, 2 ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
+	SendInput "{Click Up}"
+	blockOff()
+	return
 }
 
 rvalhold(image1, image2, plus, rfelseval)

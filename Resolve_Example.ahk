@@ -8,9 +8,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.9
+;\\v2.1.10
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.7
+;\\v2.3.8
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -251,7 +251,7 @@ F5::rvalhold("\ImageSearch\Resolve\rotation.png", "\ImageSearch\Resolve\rotation
 ;		Drag and Drop Effect Presets
 ;
 ;===========================================================================================================================================================================
-!g::Rfav("gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
+!g::REffect("\ImageSearch\Resolve\openfx.png", "\ImageSearch\Resolve\openfx2.png", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
 ; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords. x (80 in this example) will always remain the same, so just grab the new y coords and you've added a new macro
 
 ;===========================================================================================================================================================================
