@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.9
+;\\v2.3.10
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.3
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.1.7
+;\\v2.1.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -211,14 +211,31 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 ^MButton:: ;drag my bleep (goose) sfx to the cursor
 {
 	SendInput "^+5"
-	KeyWait("Ctrl")
-	KeyWait("MButton")
+	KeyWait(A_PriorKey)
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
 		SendInput "^+5"
-		;sleep 100
-		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;moves to my "sfx" folder in the media browser. The media browser must be its own window for these coords to line up, otherwise it overshoots by a mile
+		sleep 10
+		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+			{
+				MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
+				SendInput("{Click}")
+				goto next
+			}
+		else
+			{
+				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx2.png") ;if it is selected, this will see it, then move on
+					goto next
+				else
+					{
+						blockOff()
+						toolT("sfx folder", "1000")
+						return
+					}
+			}
+		/* 
+		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\mediabrowser.png") ;moves to the media browser. The media browser must be its own window for these coords to line up, otherwise it overshoots by a mile
 			{
 				MouseMove(%&sfx% + "100", %&sfy% + "75")
 				SendInput("{Click}")
@@ -229,11 +246,13 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 				toolT("sfx folder", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 				return
 			}
-		;click "2299", "1048"
-		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
+			*/
+		next:
+		SendInput "^b" ;Requires you to set ctrl b to select find box
 		coordc()
 		SendInput "^a{DEL}"
 		SendInput("Goose_honk")
+		sleep 50
 		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\vlc.png") ;searches for the vlc icon to grab the track
 			{
 				MouseMove(%&vlx%, %&vly%)
@@ -252,8 +271,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
-	KeyWait("p")
-	KeyWait("RAlt")
+	KeyWait(A_PriorKey)
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
@@ -303,6 +321,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 
 !t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
 {
+	KeyWait(A_PriorKey)
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
