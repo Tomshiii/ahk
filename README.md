@@ -5,10 +5,10 @@ Included is also the Excel document I use to keep track of any hotkeys I set, ju
 
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
   - Video walking through _all (at the time)_ of my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo)
-    - Video walking through the [Release 2.1 update](ADD A LINK HERE BRO)
+    - Video walking through the [Release 2.1 update](https://youtu.be/JF_WISVJsPU)
       - Video walking through even older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
 
-A lot of the code in the earliest versions my scripts were either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into an ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I personally have gone through them and made them function in ahk v2.0).
+A lot of the code in the earliest versions my scripts were either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into a ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I personally have gone through them and made them function in ahk v2.0).
 
 You can watch me use some of these scripts in action while I edit away on twitch when I stream on my bot account: https://www.twitch.tv/botshiii
 
@@ -20,7 +20,7 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
 
 ## What to do:
 1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 Beta](https://www.autohotkey.com/v2/).
-2. Extract AHK v2.0 beta and rename either 32bit or 64bit exe to just "AutoHotkey.exe". Then replace the default AutoHotkey.exe (usually found in C:\Program Files\AutoHotkey) with your new file from the 2.0 beta
+2. Extract AHK v2.0 beta and rename either the 32bit or 64bit exe to just "AutoHotkey.exe". Then replace the default AutoHotkey.exe (usually found in C:\Program Files\AutoHotkey) with your new file from the 2.0 beta
    - Replace Window Spy.ahk with a v2.0 version found [here](https://github.com/steelywing/AutoHotkey-Release/blob/master/installer/source/WindowSpy.v2.ahk)
 3. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
    - [Notepad++](https://notepad-plus-plus.org/downloads/)
@@ -41,13 +41,14 @@ Any scripts that contain pixel coordinates (in either, Click, MouseMove, ImageSe
 
 ## Explanation:
 Item | Use
------------- | -------------
-My Scripts.ahk | My main scripts, contains everything I use for stream and editing, as well as a few windows related things I do to speed a few interactions up.
-MS_functions.ahk | (My Scripts_functions) A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#included](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it
-QMK Keyboard.ahk | A script to allow separate function for my secondary keyboard (I use a little numpad). A script originally created by [Taran](https://github.com/TaranVH/) that I've modified to work in ahk v2.0
-Streaming.ahk | A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact)
+:---: | :---
+My Scripts.ahk | My main scripts, contains everything I use for editing, as well as a few windows related things I do to speed a few interactions up.
+MS_functions.ahk | (My Scripts_functions) A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#included](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to; <br />```func(variableX, variableY)```<br />```{```<br />```  code(%&variableX%)```<br />```code(%&variableY%)```<br />```}```<br />We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add ```func("variableX", "variableY")``` to scripts.
+QMK Keyboard.ahk | A script to allow separate function for my secondary keyboard (I use a little numpad). A script originally created by [Taran](https://github.com/TaranVH/) that I've modified to work in ahk v2.0 (and cut down to only applicable buttons).
+Streaming.ahk | A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
+PC Startup.ahk | A script that does some things when my PC starts up to ensure proper function of my scripts as well as opening programs I'd otherwise have to open manually.
 Resolve_Example.ahk | An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough and thrown together.
-scripts f keys taken.xlsx | An Excel doc I use to track all the button combinations used in my scripts so I know what is/isn't available.
-Alt_menu_acceleration_DISABLER.ahk | A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key
-autodismiss error.ahk | A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child
-right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button
+scripts f keys taken.xlsx / QMK.psd | An Excel doc/psd file I use to track all the button combinations used in my scripts so I know what is/isn't available.
+Alt_menu_acceleration_DISABLER.ahk | A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key.
+autodismiss error.ahk | A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
+right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button.

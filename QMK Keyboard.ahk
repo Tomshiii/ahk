@@ -26,10 +26,10 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 ; unnecessary comments
 ; \\\\\\\\///////////
 
-unassigned(timeout) ;create a tooltip for unused keys
+unassigned() ;create a tooltip for unused keys
 {
 	ToolTip(A_ThisHotkey " is unassigned")
-	sleep %&timeout%
+	sleep 1000
 	ToolTip("")
 }
 
@@ -77,46 +77,18 @@ unassigned(timeout) ;create a tooltip for unused keys
 
 ;Numlock is an AWFUL key. I prefer to leave it permanently on.
 ;It's been changed to International 6 (SC05C), so you can use it with no fear that it'll mess up your numpad.
-;===========================================================================
-;
-#HotIf getKeyState("F24", "P") ;<--Everything after this line will only happen on the secondary keyboard that uses F24.
-;
-;===========================================================================
-F24::return ;this line is mandatory for proper functionality
 
-
-SC05C::unassigned("1000")
-
-Numpad0::unassigned("1000")
-Numpad1::unassigned("1000")
-Numpad2::unassigned("1000")
-Numpad3::unassigned("1000")
-Numpad4::unassigned("1000")
-Numpad5::unassigned("1000")
-Numpad6::unassigned("1000")
-;Numpad7::unassigned("1000")
-Numpad8::unassigned("1000")
-Numpad9::unassigned("1000")
-
-numpadSub::switchToExplorer()
-NumpadSub & NumpadMult::run "explorer.exe" ;just opens a new explorer window
-NumpadMult::unassigned("1000")
-numpadAdd::switchToPremiere()
-NumpadEnter::unassigned("1000")
-numpadDot::unassigned("1000")
-NumpadDiv::unassigned("1000")
-Backspace::unassigned("1000")
-
+;DEFINE SEPARATE PROGRAMS FIRST, THEN ANYTHING YOU WANT WHEN NO PROGRAM IS ACTIVE ->
 
 ;===========================================================================
 ;
-#HotIf getKeyState("F24", "P") and WinActive("ahk_exe Adobe Premiere Pro.exe")
+#HotIf WinActive("ahk_exe Adobe Premiere Pro.exe") and getKeyState("F24", "P")
 ;
 ;===========================================================================
 F24::return ;this line is mandatory for proper functionality
-SC05C::unassigned("1000")
+SC05C::unassigned()
 
-numpad0::unassigned("1000")
+numpad0::unassigned()
 Numpad1::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}-2{ENTER}" ;REDUCE GAIN BY -2db
 Numpad2::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}2{ENTER}" ;INCREASE GAIN BY 2db == set g to open gain window
 Numpad3::SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}6{ENTER}" ;INCREASE GAIN BY 6db
@@ -128,14 +100,13 @@ SC05C & Numpad7::manScale("SC05C", "Numpad7", "Enter") ;manually input a scale v
 numpad8::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 numpad9::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
-;numpadSub::unassigned("1000") ;file explorer
+;numpadSub::unassigned() ;file explorer
 numpadMult::valuehold("\ImageSearch\Premiere\rotation.png", "\ImageSearch\Premiere\rotation2.png", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-numpadAdd::unassigned("1000")
-NumpadEnter::unassigned("1000")
-numpadDot::unassigned("1000")
+numpadAdd::unassigned()
+NumpadEnter::unassigned()
+numpadDot::unassigned()
 numpadDiv::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-Backspace::unassigned("1000")
-
+Backspace::unassigned()
 
 
 ;======================================================================================================================================================
@@ -144,26 +115,58 @@ Backspace::unassigned("1000")
 ;
 ;======================================================================================================================================================
 F24::return ;this line is mandatory for proper functionality
-SC05C::unassigned("1000")
+SC05C::unassigned()
 
-Numpad0::unassigned("1000")
-Numpad1::unassigned("1000")
-Numpad2::unassigned("1000")
-Numpad3::unassigned("1000")
-Numpad4::unassigned("1000")
+Numpad0::unassigned()
+Numpad1::unassigned()
+Numpad2::unassigned()
+Numpad3::unassigned()
+Numpad4::unassigned()
 numpad5::psProp("\ImageSearch\Photoshop\rotate.png")
-Numpad6::unassigned("1000")
+Numpad6::unassigned()
 numpad7::psProp("\ImageSearch\Photoshop\scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
 numpad8::psProp("\ImageSearch\Photoshop\x.png")
 numpad9::psProp("\ImageSearch\Photoshop\y.png")
 
-numpadSub::unassigned("1000")
-NumpadMult::unassigned("1000")
-numpadAdd::unassigned("1000")
-NumpadEnter::unassigned("1000")
-numpadDot::unassigned("1000")
-NumpadDiv::unassigned("1000")
-Backspace::unassigned("1000")
+numpadSub::unassigned()
+NumpadMult::unassigned()
+numpadAdd::unassigned()
+NumpadEnter::unassigned()
+numpadDot::unassigned()
+NumpadDiv::unassigned()
+Backspace::unassigned()
+
+
+
+;===========================================================================
+;
+#HotIf getKeyState("F24", "P") ;<--Everything after this line will only happen on the secondary keyboard that uses F24.
+;
+;===========================================================================
+F24::return ;this line is mandatory for proper functionality
+
+
+SC05C::unassigned()
+
+Numpad0::unassigned()
+Numpad1::unassigned()
+Numpad2::unassigned()
+Numpad3::unassigned()
+Numpad4::unassigned()
+Numpad5::unassigned()
+Numpad6::unassigned()
+Numpad7::unassigned()
+Numpad8::unassigned()
+Numpad9::unassigned()
+
+numpadSub::switchToExplorer()
+NumpadSub & NumpadMult::run "explorer.exe" ;just opens a new explorer window
+NumpadMult::unassigned()
+numpadAdd::switchToPremiere()
+NumpadEnter::unassigned()
+numpadDot::unassigned()
+NumpadDiv::unassigned()
+Backspace::unassigned()
 
 
 
@@ -176,24 +179,24 @@ Backspace::unassigned("1000")
 /*
 Everything I use so you can easy copy paste for new programs
 
-SC05C::unassigned("1000")
+SC05C::unassigned()
 
-Numpad0::unassigned("1000")
-Numpad1::unassigned("1000")
-Numpad2::unassigned("1000")
-Numpad3::unassigned("1000")
-Numpad4::unassigned("1000")
-Numpad5::unassigned("1000")
-Numpad6::unassigned("1000")
-Numpad7::unassigned("1000")
-Numpad8::unassigned("1000")
-Numpad9::unassigned("1000")
+Numpad0::unassigned()
+Numpad1::unassigned()
+Numpad2::unassigned()
+Numpad3::unassigned()
+Numpad4::unassigned()
+Numpad5::unassigned()
+Numpad6::unassigned()
+Numpad7::unassigned()
+Numpad8::unassigned()
+Numpad9::unassigned()
 
-numpadSub::unassigned("1000")
-NumpadMult::unassigned("1000")
-numpadAdd::sunassigned("1000")
-NumpadEnter::unassigned("1000")
-numpadDot::unassigned("1000")
-NumpadDiv::unassigned("1000")
-Backspace::unassigned("1000")
+numpadSub::unassigned()
+NumpadMult::unassigned()
+numpadAdd::unassigned()
+NumpadEnter::unassigned()
+numpadDot::unassigned()
+NumpadDiv::unassigned()
+Backspace::unassigned()
  */

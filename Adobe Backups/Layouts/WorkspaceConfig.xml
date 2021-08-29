@@ -1,0 +1,156 @@
+<?xml version='1.0'?>
+<prop.map version='4'>
+<prop.list>
+<prop.pair>
+<key>BuiltInKeys</key>
+<array>
+<array.type><string/></array.type>
+<string>$$$/Premiere/FrontEnd/Learning=Learning</string>
+<string>$$$/Premiere/FrontEnd/AllPanels=All Panels</string>
+<string>$$$/Premiere/FrontEnd/Assembly=Assembly</string>
+<string>$$$/Premiere/FrontEnd/Editing=Editing</string>
+<string>$$$/Premiere/FrontEnd/Color=Color</string>
+<string>$$$/Premiere/FrontEnd/Effects=Effects</string>
+<string>$$$/Premiere/FrontEnd/Audio=Audio</string>
+<string>$$$/Premiere/FrontEnd/Metalogging=Metalogging</string>
+<string>$$$/Premiere/FrontEnd/Graphics=Graphics</string>
+<string>$$$/Premiere/FrontEnd/CaptionsSpace=Captions</string>
+<string>$$$/Premiere/FrontEnd/Libraries=Libraries</string>
+<string>$$$/Premiere/FrontEnd/Production=Production</string>
+</array>
+</prop.pair>
+<prop.pair>
+<key>BuiltIns</key>
+<array>
+<array.type><ustring/></array.type>
+</array>
+</prop.pair>
+<prop.pair>
+<key>FilePaths</key>
+<array>
+<array.type><ustring/></array.type>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace5.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace3.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace12.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace2.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace1.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace6.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace_4.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace11.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace4.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\15.0\Profile-Tom\Layouts\UserWorkspace_3.xml</ustring>
+</array>
+</prop.pair>
+<prop.pair>
+<key>MainWndPos</key>
+<prop.list>
+<prop.pair>
+<key>MaxPos</key>
+<array>
+<array.type><int type='signed' size='32'/></array.type>
+<int type='signed' size='32'>-1</int>
+<int type='signed' size='32'>-1</int>
+</array>
+</prop.pair>
+<prop.pair>
+<key>MinPos</key>
+<array>
+<array.type><int type='signed' size='32'/></array.type>
+<int type='signed' size='32'>-32000</int>
+<int type='signed' size='32'>-32000</int>
+</array>
+</prop.pair>
+<prop.pair>
+<key>NormalPos</key>
+<array>
+<array.type><int type='signed' size='32'/></array.type>
+<int type='signed' size='32'>354</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>1634</int>
+<int type='signed' size='32'>1024</int>
+</array>
+</prop.pair>
+<prop.pair>
+<key>ShowCmd</key>
+<int type='signed' size='32'>3</int>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
+<key>ModifiedTimes</key>
+<array>
+<array.type><string/></array.type>
+<string>20210823T095516.588146</string>
+<string>20201116T003810</string>
+<string>20210829T043103.512544</string>
+<string>20210724T012439.842307</string>
+<string>20210724T012431.372181</string>
+<string>20200630T070242</string>
+<string>20210721T031708.669318</string>
+<string>20201203T073654</string>
+<string>20210724T012444.409107</string>
+<string>20200310T074047</string>
+<string>20190406T052522</string>
+<string>20210721T025647.242273</string>
+<string>20210823T090803.344954</string>
+<string>20201203T073643</string>
+<string>20180303T074126</string>
+<string>20210721T031839.381297</string>
+</array>
+</prop.pair>
+<prop.pair>
+<key>UserNames</key>
+<array>
+<array.type><ustring/></array.type>
+<ustring>2021-2</ustring>
+<ustring>testing</ustring>
+<ustring>2021-2</ustring>
+<ustring>$$$/Premiere/FrontEnd/AllPanels=All Panels</ustring>
+<ustring>$$$/Premiere/FrontEnd/Assembly=Assembly</ustring>
+<ustring>$$$/Premiere/FrontEnd/Audio=Audio</ustring>
+<ustring>$$$/Premiere/FrontEnd/Color=Color</ustring>
+<ustring>Dual Monitors</ustring>
+<ustring>$$$/Premiere/FrontEnd/Editing=Editing</ustring>
+<ustring>$$$/Premiere/FrontEnd/Effects=Effects</ustring>
+<ustring>$$$/Premiere/FrontEnd/Graphics=Graphics</ustring>
+<ustring>$$$/Premiere/FrontEnd/Learning=Learning</ustring>
+<ustring>$$$/Premiere/FrontEnd/Libraries=Libraries</ustring>
+<ustring>Strim</ustring>
+<ustring>Titles</ustring>
+<ustring>testing</ustring>
+</array>
+</prop.pair>
+<prop.pair>
+<key>WorkspaceConfigVersion</key>
+<string>1.1</string>
+</prop.pair>
+<prop.pair>
+<key>WorkspaceTypes</key>
+<array>
+<array.type><int type='signed' size='32'/></array.type>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
+</array>
+</prop.pair>
+</prop.list>
+</prop.map>
