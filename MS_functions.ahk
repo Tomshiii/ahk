@@ -412,8 +412,8 @@ REffect(folder1, folder2, effect) ;apply any effect to the clip you're hovering 
 ;This function will, in order;
 ;Check to see if the effects window is open on the left side of the screen
 ;Check to make sure the effects sidebar is expanded
-;Open or close/reopen the search bar
 ;Ensure you're clicked on the appropriate drop down
+;Open or close/reopen the search bar
 ;Search for your effect of choice, then drag back to the click you were hovering over originally
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
