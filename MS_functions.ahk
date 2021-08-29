@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.8
+;\\v2.3.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -63,7 +63,7 @@ blockOff() ;turns off the blocks on user input
 
 ; ==================================================================================================================================================
 ;
-;		discord \\ Last updated: v2.3.3
+;		discord \\ Last updated: v2.3.9
 ;
 ; ==================================================================================================================================================
 disc(imagepath) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
@@ -76,6 +76,7 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 
 ;&imagepath in this script is the path to the screenshot of the button you want the function to press
 {
+	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable
 	MouseGetPos(&x, &y)
 	blockOn()
@@ -110,7 +111,7 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 		{
 			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 			blockOff()
-			toolT("the @ ping button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			toolT("the @ ping button", "500") ;useful tooltip to help you debug when it can't find what it's looking for
 			return
 		}
 }
@@ -169,6 +170,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
 {
+	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
@@ -192,6 +194,7 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 ;&yval is the pixel value you want this function to paste into the y coord text field in premiere
 ;&scale is the scale value you want this function to paste into the scale text field in premiere
 {
+	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
@@ -229,6 +232,7 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 		blockOff()
 }
 
+/* ;not used anymore
 fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
 ;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
 {
@@ -240,6 +244,7 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 	sleep 50
 	send "{enter}"
 }
+ */
 
 valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
 ;&filepath is the path to the image ImageSearch is going to use to find what value you want to adjust
@@ -373,15 +378,16 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 Rscale(item) ;to set the scale of a video within resolve
 ;&item is the number you want to type into the text field (100% in reslove requires a 1 here for example)
 {
-coordw()
-blockOn()
-MouseGetPos &xpos, &ypos
-	click "2333, 218" ;clicks on video
-	SendInput %&item%
-	SendInput "{ENTER}"
-	click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.  Using the arrow would honestly be faster here
-MouseMove %&xpos%, %&ypos%
-blockOff()
+	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+		click "2333, 218" ;clicks on video
+		SendInput %&item%
+		SendInput "{ENTER}"
+		click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.  Using the arrow would honestly be faster here
+	MouseMove %&xpos%, %&ypos%
+	blockOff()
 }
 
 rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
@@ -410,6 +416,7 @@ REffect(folder1, folder2, effect) ;apply any effect to the clip you're hovering 
 ;Ensure you're clicked on the appropriate drop down
 ;Search for your effect of choice, then drag back to the click you were hovering over originally
 {
+	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw() ;
 	blockOn()
 	MouseGetPos &xpos, &ypos
@@ -568,7 +575,7 @@ rvalhold(image1, image2, plus, rfelseval)
 
 ; ==================================================================================================================================================
 ;
-;		QMK Stuff \\ Last updated: v2.3.6
+;		QMK Stuff \\ Last updated: v2.3.9
 ;
 ; ==================================================================================================================================================
 ;All of these functions are just to allow QMK Keyboard.ahk to be more readable
@@ -618,6 +625,7 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 
 reset() ;This script moves to the reset button to reset the "motion" effects
 {
+	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
@@ -654,6 +662,12 @@ manScale(key1, key2, keyend)
 	MouseMove %&xpos%, %&ypos%
 	Click("middle")
 	blockOff()
+}
+
+gain(amount)
+{
+	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+	SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}"
 }
 
 ; ==================================================================================================================================================
