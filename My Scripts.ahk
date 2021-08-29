@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.8
+;\\v2.3.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.3
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -35,6 +35,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ; You are free to modify this script to your own personal uses/needs
 ; Please give credit to the foundation if you build on top of it, similar to how I have below, otherwise you're free to do as you wish
 ; Youtube Video going through all (at the time) of my ahk v2.0 scripts (https://youtu.be/3rFDEonACxo)
+; Youtube Video going through most of the Release v2.1 changes (https://youtu.be/JF_WISVJsPU)
 ; Youtube Video showing how AHK can speed up editing workflows (https://youtu.be/Iv-oR7An_iI)
 ;
 ; ===========================================================================================================================================================
@@ -54,7 +55,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;		Windows
 ;
 ;===========================================================================================================================================================================
-#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next HotIf) will trigger as long as premiere pro isn't active
+#HotIf ;code below here (until the next #HotIf will work anywhere)
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		launch programs
@@ -66,9 +67,6 @@ RWin::switchToVSC() ;run vscode
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
 PgDn::switchToFirefox() ;open firefox
 !PgDn::switchToOtherFirefoxWindow() ;swap between firefox windows
-F1::switchToExplorer() ;run explorer ;for now
-^F1::run "explorer.exe" ;open a new explorer window
-F2::switchToPremiere() ;run premiere ;for now
 
 ;These two scripts are to open highlighted text in the ahk documentation
 AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
@@ -79,6 +77,8 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
+
+#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		other

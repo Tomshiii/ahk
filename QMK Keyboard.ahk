@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.7
+;\\v2.1.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.6
 
@@ -128,7 +128,7 @@ SC05C & Numpad7::manScale("SC05C", "Numpad7", "Enter") ;manually input a scale v
 numpad8::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 numpad9::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
-numpadSub::unassigned("1000")
+;numpadSub::unassigned("1000") ;file explorer
 numpadMult::valuehold("\ImageSearch\Premiere\rotation.png", "\ImageSearch\Premiere\rotation2.png", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 numpadAdd::unassigned("1000")
 NumpadEnter::unassigned("1000")
