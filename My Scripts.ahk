@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.10
+;\\v2.3.11
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.3
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -210,12 +210,12 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 
 ^MButton:: ;drag my bleep (goose) sfx to the cursor
 {
-	SendInput "^+5"
+	SendInput "^+5" ;highlights the media browser
 	KeyWait(A_PriorKey)
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
-		SendInput "^+5"
+		SendInput "^+5" ;highlights the media browser
 		sleep 10
 		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
 			{
@@ -227,7 +227,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 			{
 				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx2.png") ;if it is selected, this will see it, then move on
 					goto next
-				else
+				else ;if everything fails, this else will trigger
 					{
 						blockOff()
 						toolT("sfx folder", "1000")
@@ -250,7 +250,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 		next:
 		SendInput "^b" ;Requires you to set ctrl b to select find box
 		coordc()
-		SendInput "^a{DEL}"
+		SendInput("^a{DEL}") ;delets anything that might be in the search box
 		SendInput("Goose_honk")
 		sleep 50
 		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\vlc.png") ;searches for the vlc icon to grab the track
@@ -299,7 +299,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				MouseMove(%&xpos%, %&ypos%)
 				blockOff()
 			}
-			else
+			else ;if everything fails, this else will trigger
 				{
 					blockOff()
 					toolT("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
@@ -323,17 +323,31 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 {
 	KeyWait(A_PriorKey)
 	blockOn()
-	coords()
+	coordw()
 	MouseGetPos &xpos, &ypos
-		MouseMove 205, 1039 ;move to the top of the effects panel to allow WheelUp to work
+		SendInput("^t")
 		sleep 100
-		SendInput "{WheelUp 10}"
-		MouseMove 31, 1080 ;hover over the hide/show eye for the default text created on a new text layer
-		sleep 500 ;apparently if you don't give premiere half a second before trying to hide a text layer, it just doesn't click?? or it's ahk??
-		Click
-		sleep 100
-		preset("loremipsum")
-		MouseMove %&xpos%, %&ypos% ;although this line is usually in the ^preset, if you don't add it again, your curosr gets left on the text eyeball instead of back on the timeline
+		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\graphics.png")
+			{
+				If ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " A_WorkingDir "\ImageSearch\Premiere\eye.png")
+					{
+						MouseMove(%&xeye%, %&yeye%)
+						SendInput("{Click}")
+						preset("loremipsum")
+						MouseMove %&xpos%, %&ypos% ;although this line is usually in the ^preset, if you don't add it again, your curosr gets left on the text eyeball instead of back on the timeline
+						blockOff()
+					}
+				else
+					{
+						blockOff()
+						toolT("the eye icon", "1000")
+					}
+			}
+		else
+			{
+				blockOff()
+				toolT("the graphics tab", "1000")
+			}
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
