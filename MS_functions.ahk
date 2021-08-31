@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.9
+;\\v2.3.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -314,7 +314,7 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 }
 ; ==================================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.3.5
+;		Photoshop \\ Last updated: v2.3.10
 ;
 ; ==================================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
@@ -324,6 +324,8 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 	MouseGetPos &xpos, &ypos
 	coordw()
 	blockOn()
+	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\text2.png") ;checks to see if you're typing
+		SendInput("^{Enter}")
 	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\text.png") ;checks to see if you're in the text tool
 		SendInput("v") ;if you are, it'll press v to go to the selection tool
 	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\InTransform.png") ;checks to see if you're already in the free transform window
@@ -333,25 +335,27 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 			else
 				{
 					blockOff()
-					toolT("what you're looking for", "1000")
+					toolT("the value you wish`nto adjust_1", "1000")
 					return
 				}
 		}
 	else
 		{
 			SendInput("^t") ;if you aren't in the free transform it'll simply press ctrl t to get you into it
-			sleep 200 ;photoshop is slow
+			ToolTip("we must wait for photoshop`nbecause it's slow as hell")
+			sleep 300 ;photoshop is slow
+			ToolTip("")
 			If ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " A_WorkingDir %&image%) ;moves to the position variable
 				MouseMove(%&x%, %&y%)
 			else
 				{
 					MouseMove %&xpos%, %&ypos%
 					blockOff()
-					toolT("whatever you were looking for", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolT("the value you wish`nto adjust_2", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}		
-		sleep 100
+		sleep 100 ;this sleep is necessary for the "tap" functionality below (in the 'else') to work
 		SendInput "{Click Down}"
 			if GetKeyState(A_ThisHotkey, "P")
 			{
@@ -360,11 +364,12 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 				SendInput "{Click Up}"
 				MouseMove %&xpos%, %&ypos%
 			}
-			else ;since we're in photoshop here, adding functionality for tapping the keys doesn't make much sense
+			else ;since we're in photoshop here, we'll simply make the "tap" functionality so simply have ahk hit enter twice so you exit out of the free transform
 			{
 				Click "{Click Up}"
 				;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
 				MouseMove %&xpos%, %&ypos%
+				SendInput("{Enter 2}")
 				blockOff()
 				return
 			}
