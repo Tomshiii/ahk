@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.12
+;\\v2.3.13
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -33,14 +33,17 @@ coordc() ;sets coordmode to "caret"
 
 ; ==================================================================================================================================================
 ;
-;		Tooltip \\ Last updated: v2.3.2
+;		Tooltip \\ Last updated: v2.3.13
 ;
 ; ==================================================================================================================================================
 toolT(message, timeout) ;create a tooltip
 {
 	ToolTip("couldn't find " %&message%)
-	sleep %&timeout%
-	ToolTip("")
+	SetTimer(timeouttime, - %&timeout%)
+	timeouttime()
+	{
+		ToolTip("")
+	}
 }
 
 ; ==================================================================================================================================================
@@ -710,16 +713,36 @@ manScale(key1, key2, keyend)
 gain(amount)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
-			{
-				SendInput("^+9") ;selects the timeline
-				goto inputs
-			}
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png")
+		goto inputs
+	else
 		{
-			SendInput("^+9" "d")
-			goto inputs
+			If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
+				{
+					SendInput("^+9") ;selects the timeline
+					goto inputs
+				}
+			else
+				{
+					If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+						{
+							SendInput("^+9" "d")
+							goto inputs
+						}
+					else
+						{
+							ToolTip("gain macro couldn't figure`nout what to do")
+							SetTimer(x, -1000)
+							x()
+							{
+								ToolTip("")
+							}
+							
+						}
+				}
 		}
+	
+
 	inputs:
 	SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}"
 }
