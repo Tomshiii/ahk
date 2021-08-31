@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.11
+;\\v2.3.12
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.3
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -55,7 +55,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;		Windows
 ;
 ;===========================================================================================================================================================================
-#HotIf ;code below here (until the next #HotIf will work anywhere)
+#HotIf ;code below here (until the next #HotIf) will work anywhere
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		launch programs
@@ -78,12 +78,20 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
 
-#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		other
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
+WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
+
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		other - NOT Premiere
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
 	coords()
@@ -186,7 +194,6 @@ Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse but
 ;
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
-
 ;There use to be a lot of scripts about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
