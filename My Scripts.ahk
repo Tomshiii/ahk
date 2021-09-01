@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.12
+;\\v2.3.13
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.3
+;\\v2.3.14
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.1.9
+;\\v2.1.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -208,7 +208,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 			MouseMove(%&x%, %&y%)
 	else
 		{
-			toolT("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+			toolFind("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 			return
 		}
 	click
@@ -237,23 +237,10 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 				else ;if everything fails, this else will trigger
 					{
 						blockOff()
-						toolT("sfx folder", "1000")
+						toolFind("sfx folder", "1000")
 						return
 					}
 			}
-		/* 
-		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\mediabrowser.png") ;moves to the media browser. The media browser must be its own window for these coords to line up, otherwise it overshoots by a mile
-			{
-				MouseMove(%&sfx% + "100", %&sfy% + "75")
-				SendInput("{Click}")
-			}
-		else
-			{
-				blockOff()
-				toolT("sfx folder", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
-			}
-			*/
 		next:
 		SendInput "^b" ;Requires you to set ctrl b to select find box
 		coordc()
@@ -268,7 +255,7 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 		else
 			{
 				blockOff()
-				toolT("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 				return
 			}
 		MouseMove(%&xpos%, %&ypos%)
@@ -309,7 +296,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
-					toolT("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -347,13 +334,13 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				else
 					{
 						blockOff()
-						toolT("the eye icon", "1000")
+						toolFind("the eye icon", "1000")
 					}
 			}
 		else
 			{
 				blockOff()
-				toolT("the graphics tab", "1000")
+				toolFind("the graphics tab", "1000")
 			}
 }
 

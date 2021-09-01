@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.13
+;\\v2.3.14
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -36,7 +36,7 @@ coordc() ;sets coordmode to "caret"
 ;		Tooltip \\ Last updated: v2.3.13
 ;
 ; ==================================================================================================================================================
-toolT(message, timeout) ;create a tooltip
+toolFind(message, timeout) ;create a tooltip for errors finding things
 {
 	ToolTip("couldn't find " %&message%)
 	SetTimer(timeouttime, - %&timeout%)
@@ -46,6 +46,15 @@ toolT(message, timeout) ;create a tooltip
 	}
 }
 
+toolCust(message, timeout) ;create a tooltip with any message
+{
+	ToolTip(%&message%)
+	SetTimer(timeouttime, - %&timeout%)
+	timeouttime()
+	{
+		ToolTip("")
+	}
+}
 ; ==================================================================================================================================================
 ;
 ;		Blockinput \\ Last updated: v2.0.1
@@ -96,7 +105,7 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 				{
 					MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 					blockOff()
-					toolT("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 
@@ -114,7 +123,7 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 		{
 			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 			blockOff()
-			;toolT("the @ ping button", "500") ;useful tooltip to help you debug when it can't find what it's looking for
+			;toolFind("the @ ping button", "500") ;useful tooltip to help you debug when it can't find what it's looking for
 			return
 		}
 }
@@ -206,7 +215,7 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 			{
 				MouseMove %&xpos%, %&ypos%
 				blockOff()
-				toolT("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+				toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 				return
 			}
 		;SendInput "{WheelUp 30}" ;no longer required as the function wont finish if it can't find the image
@@ -222,7 +231,7 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 					{
 						MouseMove %&xpos%, %&ypos% ;moves back to the original coords
 						blockOff()
-						toolT("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+						toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 						return
 					}
 			}
@@ -263,7 +272,7 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 				else
 					{
 						blockOff()
-						toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+						toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 						return
 					}			
 			}
@@ -276,14 +285,14 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
                         else
                             {
                                 blockOff()
-                                toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                                toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
                                 return
                             }			
                     }
 				else ;if everything fails, this else will trigger
 					{
 						blockOff()
-						toolT("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+						toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 						return
 					}		
 			}
@@ -307,7 +316,7 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 					{
 						MouseMove %&xpos%, %&ypos%
 						blockOff()
-						toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+						toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 						return
 					}
 				MouseMove %&xpos%, %&ypos%
@@ -337,7 +346,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
-					toolT("the value you wish`nto adjust_1", "1000")
+					toolFind("the value you wish`nto adjust_1", "1000")
 					return
 				}
 		}
@@ -353,7 +362,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 				{
 					MouseMove %&xpos%, %&ypos%
 					blockOff()
-					toolT("the value you wish`nto adjust_2", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("the value you wish`nto adjust_2", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}		
@@ -440,7 +449,7 @@ REffect(folder1, folder2, effect) ;apply any effect to the clip you're hovering 
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
-					toolT("the effects button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("the effects button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -459,7 +468,7 @@ closeORopen:
 			else
 				{
 					blockOff()
-					toolT("open/close button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("open/close button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -478,7 +487,7 @@ EffectFolder:
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
-					toolT("the fxfolder", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("the fxfolder", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}	
 		}
@@ -501,7 +510,7 @@ SearchButton:
 		else ;if everything fails, this else will trigger
 			{
 				blockOff()
-				toolT("search button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+				toolFind("search button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 				return
 			}
 	}
@@ -546,7 +555,7 @@ rvalhold(image1, image2, plus, rfelseval)
 				{
 					blockOff()
 					MouseMove %&xpos%, %&ypos%
-					toolT("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -560,7 +569,7 @@ rvalhold(image1, image2, plus, rfelseval)
 				MouseMove(%&xz% + %&plus%, %&yz% + "5")
 			else
 				{
-					toolT("zoom", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("zoom", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -598,7 +607,7 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 	else
 		{
 			blockOff()
-			toolT("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 			return
 		}
 
@@ -622,7 +631,7 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 				{
 					blockOff()
 					MouseMove %&xpos%, %&ypos%
-					toolT("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 			Click
@@ -647,7 +656,7 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 			else
 				{
 					blockOff()
-					toolT("the motion value", "1000")
+					toolFind("the motion value", "1000")
 					return
 				}
 		}
@@ -676,7 +685,7 @@ manScale(key1, key2, keyend)
 			else
 				{
 					blockOff()
-					toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}			
 		}
@@ -689,14 +698,14 @@ manScale(key1, key2, keyend)
 					else
 						{
 							blockOff()
-							toolT("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+							toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 							return
 						}			
 				}
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
-					toolT("scale", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("scale", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}		
 		}
@@ -731,13 +740,7 @@ gain(amount)
 						}
 					else
 						{
-							ToolTip("gain macro couldn't figure`nout what to do")
-							SetTimer(x, -1000)
-							x()
-							{
-								ToolTip("")
-							}
-							
+							toolCust("gain macro couldn't figure`nout what to do", "1000")
 						}
 				}
 		}

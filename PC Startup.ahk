@@ -8,5 +8,9 @@ SetTimer(open, -60000)
 open()
 {
     run A_ScriptDir "\My Scripts.ahk"
+    run A_ScriptDir "\QMK Keyboard.ahk"
+    ;
+    sleep 5000
+    run A_ScriptDir "\My Scripts.ahk"
     ExitApp
 }

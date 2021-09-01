@@ -11,9 +11,9 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.9
+;\\v2.1.10
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.9
+;\\v2.3.14
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -29,8 +29,11 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 unassigned() ;create a tooltip for unused keys
 {
 	ToolTip(A_ThisHotkey " is unassigned")
-	sleep 1000
-	ToolTip("")
+	SetTimer(timeouttime, -1000)
+	timeouttime()
+	{
+		ToolTip("")
+	}
 }
 
 !+r::
@@ -88,24 +91,24 @@ unassigned() ;create a tooltip for unused keys
 F24::return ;this line is mandatory for proper functionality
 SC05C::unassigned()
 
-numpad0::unassigned()
+Numpad0::unassigned()
 Numpad1::gain("-2") ;REDUCE GAIN BY -2db
 Numpad2::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 Numpad3::gain("6") ;INCREASE GAIN BY 6db
-numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-numpad5::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-numpad6::reset()  ;This script moves to the reset button to reset the "motion" effects
-numpad7::valuehold("\ImageSearch\Premiere\scale.png", "\ImageSearch\Premiere\scale2.png", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+Numpad5::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+Numpad6::reset()  ;This script moves to the reset button to reset the "motion" effects
+Numpad7::valuehold("\ImageSearch\Premiere\scale.png", "\ImageSearch\Premiere\scale2.png", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 SC05C & Numpad7::manScale("SC05C", "Numpad7", "Enter") ;manually input a scale value
-numpad8::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-numpad9::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad8::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad9::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 ;numpadSub::unassigned() ;file explorer
-numpadMult::valuehold("\ImageSearch\Premiere\rotation.png", "\ImageSearch\Premiere\rotation2.png", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-numpadAdd::unassigned()
+NumpadMult::valuehold("\ImageSearch\Premiere\rotation.png", "\ImageSearch\Premiere\rotation2.png", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+NumpadAdd::unassigned()
 NumpadEnter::unassigned()
-numpadDot::unassigned()
-numpadDiv::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+NumpadDot::unassigned()
+NumpadDiv::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 Backspace::unassigned()
 
 
@@ -124,15 +127,15 @@ Numpad3::unassigned()
 Numpad4::unassigned()
 numpad5::psProp("\ImageSearch\Photoshop\rotate.png")
 Numpad6::unassigned()
-numpad7::psProp("\ImageSearch\Photoshop\scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
-numpad8::psProp("\ImageSearch\Photoshop\x.png")
-numpad9::psProp("\ImageSearch\Photoshop\y.png")
+Numpad7::psProp("\ImageSearch\Photoshop\scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
+Numpad8::psProp("\ImageSearch\Photoshop\x.png")
+Numpad9::psProp("\ImageSearch\Photoshop\y.png")
 
-numpadSub::unassigned()
+NumpadSub::unassigned()
 NumpadMult::unassigned()
 numpadAdd::unassigned()
 NumpadEnter::unassigned()
-numpadDot::unassigned()
+NumpadDot::unassigned()
 NumpadDiv::unassigned()
 Backspace::unassigned()
 
@@ -159,12 +162,12 @@ Numpad7::unassigned()
 Numpad8::unassigned()
 Numpad9::unassigned()
 
-numpadSub::switchToExplorer()
+NumpadSub::switchToExplorer()
 NumpadSub & NumpadMult::run "explorer.exe" ;just opens a new explorer window
 NumpadMult::unassigned()
 numpadAdd::switchToPremiere()
 NumpadEnter::unassigned()
-numpadDot::unassigned()
+NumpadDot::unassigned()
 NumpadDiv::unassigned()
 Backspace::unassigned()
 
@@ -192,11 +195,11 @@ Numpad7::unassigned()
 Numpad8::unassigned()
 Numpad9::unassigned()
 
-numpadSub::unassigned()
+NumpadSub::unassigned()
 NumpadMult::unassigned()
-numpadAdd::unassigned()
+NumpadAdd::unassigned()
 NumpadEnter::unassigned()
-numpadDot::unassigned()
+NumpadDot::unassigned()
 NumpadDiv::unassigned()
 Backspace::unassigned()
  */
