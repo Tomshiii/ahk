@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.14
+;\\v2.3.15
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -593,7 +593,7 @@ rvalhold(image1, image2, plus, rfelseval)
 
 ; ==================================================================================================================================================
 ;
-;		QMK Stuff \\ Last updated: v2.3.12
+;		QMK Stuff \\ Last updated: v2.3.14
 ;
 ; ==================================================================================================================================================
 ;All of these functions are just to allow QMK Keyboard.ahk to be more readable
@@ -719,35 +719,53 @@ manScale(key1, key2, keyend)
 	blockOff()
 }
 
-gain(amount)
+gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure the timeline is in focus and a clip is selected
+;&amount is the value you want the gain to adjust (eg. -2, 6, etc)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png")
-		goto inputs
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
+	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+		{
+			SendInput("^+9" "d")
+			goto inputs
+		}
 	else
 		{
-			If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
-				{
-					SendInput("^+9") ;selects the timeline
-					goto inputs
-				}
+			classNN := ControlGetClassNN(ControlGetFocus("A"))
+			if "DroverLord - Window Class3"
+				goto inputs
 			else
 				{
-					If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-						{
-							SendInput("^+9" "d")
-							goto inputs
-						}
-					else
-						{
-							toolCust("gain macro couldn't figure`nout what to do", "1000")
-						}
+					toolCust("gain macro couldn't figure`nout what to do", "1000")
+					return
 				}
 		}
-	
-
 	inputs:
 	SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}"
+}
+
+gainSecondary() ;a macro to open up the gain menu. This macro will check to ensure the timeline is in focus and a clip is selected
+{
+KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
+	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+		{
+			SendInput("^+9" "d")
+			goto inputs
+		}
+	else
+		{
+			classNN := ControlGetClassNN(ControlGetFocus("A"))
+			if "DroverLord - Window Class3"
+				goto inputs
+			else
+				{
+					toolCust("gain macro couldn't figure`nout what to do", "1000")
+					return
+				}
+		}
+	inputs:
+	SendInput "g"
 }
 
 ; ==================================================================================================================================================
@@ -963,3 +981,29 @@ valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a 
 				blockOff()
 			}
 }
+
+gain() ;old gain code (v2.3.14)to use imagesearch instead of the ClassNN information
+	/*
+	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png")
+		goto inputs
+	else
+		{
+			If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
+				{
+					SendInput("^+9") ;selects the timeline
+					goto inputs
+				}
+			else
+				{
+					If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+						{
+							SendInput("^+9" "d")
+							goto inputs
+						}
+					else
+						{
+							toolCust("gain macro couldn't figure`nout what to do", "1000")
+							return
+						}
+				}
+		} */
