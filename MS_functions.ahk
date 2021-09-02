@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.16
+;\\v2.3.17
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -592,12 +592,13 @@ rvalhold(image1, image2, plus, rfelseval)
 
 ; ==================================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.3.14
+;		VSCode \\ Last updated: v2.3.17
 ;
 ; ==================================================================================================================================================
 vscode(script)
 ;&script is just what script I want to open
 {
+	KeyWait(A_PriorKey)
 	coords()
 	blockOn()
 	MouseGetPos(&x, &y)
