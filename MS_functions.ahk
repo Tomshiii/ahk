@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.15
+;\\v2.3.16
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -108,7 +108,6 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 					toolFind("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
-
 		}
 	Click
 	sleep 100
@@ -589,6 +588,66 @@ rvalhold(image1, image2, plus, rfelseval)
 			blockOff()
 			return
 		}
+}
+
+; ==================================================================================================================================================
+;
+;		VSCode \\ Last updated: v2.3.14
+;
+; ==================================================================================================================================================
+vscode(script)
+;&script is just what script I want to open
+{
+	coords()
+	blockOn()
+	MouseGetPos(&x, &y)
+	If ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " A_WorkingDir "\ImageSearch\VSCode\explorer.png")
+		{
+			MouseMove(%&xex%, %&yex%)
+			SendInput("{Click}")
+			sleep 50
+		}
+	If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " A_WorkingDir "\ImageSearch\VSCode\" %&script% "_Changes.png")
+		goto click
+	else
+		{
+			If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " A_WorkingDir "\ImageSearch\VSCode\" %&script% "_nochanges.png")
+				goto click
+			else
+				{
+					If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " A_WorkingDir "\ImageSearch\VSCode\" %&script% "_red.png")
+						goto click
+					else
+						{
+							If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " A_WorkingDir "\ImageSearch\VSCode\" %&script% "_Highlighted.png")
+								{
+									blockOff()
+									toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
+									return
+								}
+							else
+								{
+									If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " A_WorkingDir "\ImageSearch\VSCode\" %&script% "_ChangesHighlighted.png")
+										{
+											blockOff()
+											toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
+											return
+										}
+									else
+										{
+											blockOff()
+											toolFind("the script", "1000")
+											return
+										}
+								}
+						}
+				}
+		}
+	click:
+	MouseMove(%&xpos%, %&ypos%)
+	SendInput("{Click}")
+	MouseMove(%&x%, %&y%)
+	blockOff()
 }
 
 ; ==================================================================================================================================================
