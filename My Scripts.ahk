@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.13
+;\\v2.3.14
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.14
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -153,10 +153,11 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 ;
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
-CapsLock & e::disc("\ImageSearch\Discord\DiscEdit.png") ;edit the message you're hovering over
-CapsLock & r::disc("\ImageSearch\Discord\DiscReply.png") ;reply to the message you're hovering over
-CapsLock & a::disc("\ImageSearch\Discord\DiscReact.png") ;add a reaction to the message you're hovering over
-CapsLock & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
+;SCO3A is the scancode for the CapsLock button. Had issues with using "CapsLock" as it would require a refresh every now and then before these discord scripts would work. Currently testing using the scancodes to see if that fixes it.
+SC03A & e::disc("\ImageSearch\Discord\DiscEdit.png") ;edit the message you're hovering over
+SC03A & r::disc("\ImageSearch\Discord\DiscReply.png") ;reply to the message you're hovering over
+SC03A & a::disc("\ImageSearch\Discord\DiscReact.png") ;add a reaction to the message you're hovering over
+SC03A & d::disc("\ImageSearch\Discord\DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 
 ;===========================================================================================================================================================================
 ;
