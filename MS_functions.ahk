@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.17
+;\\v2.3.18
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -592,7 +592,7 @@ rvalhold(image1, image2, plus, rfelseval)
 
 ; ==================================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.3.17
+;		VSCode \\ Last updated: v2.3.18
 ;
 ; ==================================================================================================================================================
 vscode(script)
@@ -606,6 +606,7 @@ vscode(script)
 		{
 			MouseMove(%&xex%, %&yex%)
 			SendInput("{Click}")
+			MouseMove(%&x%, %&y%)
 			sleep 50
 		}
 	If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " A_WorkingDir "\ImageSearch\VSCode\" %&script% "_Changes.png")
