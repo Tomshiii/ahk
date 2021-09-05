@@ -8,9 +8,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.10
+;\\v2.1.11
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.8
+;\\v2.3.19
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -88,10 +88,7 @@ WheelLeft::Up
 ;=========================================================
 ;		hold and drag (or click)
 ;=========================================================
-; ///// for these scripts to work, the inspector tab must be open. You could add imagesearches to check for you at the beginning of each script
-; ///// You could turn these into a function in MS_Functions then just call the functions here instead to save room. I'm not doing that because I don't use resolve so there's little point
-
-F1::rvalhold("\ImageSearch\Resolve\zoom.png", "\ImageSearch\Resolve\zoom2.png", "60", "1") ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
+F1::rvalhold("zoom.png", "zoom2.png", "60", "1") ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
 
 F2:: ;I kept pressing this and opening premiere, this is just to stop that
 {
@@ -138,106 +135,15 @@ BlockInput off
 }
 */
 
-F3::rvalhold("\ImageSearch\Resolve\position.png", "\ImageSearch\Resolve\position2.png", "80", "1") ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm. Tap to reset
-F4::rvalhold("\ImageSearch\Resolve\position.png", "\ImageSearch\Resolve\position2.png", "210", "1") ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm. Tap to reset
-F5::rvalhold("\ImageSearch\Resolve\rotation.png", "\ImageSearch\Resolve\rotation2.png", "240", "0") ;press then hold F5 and drag to increase/decrese rotation. Let go of F5 to confirm. Tap to reset
+F3::rvalhold("position.png", "position2.png", "80", "1") ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm. Tap to reset
+F4::rvalhold("position.png", "position2.png", "210", "1") ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm. Tap to reset
+F5::rvalhold("rotation.png", "rotation2.png", "240", "0") ;press then hold F5 and drag to increase/decrese rotation. Let go of F5 to confirm. Tap to reset
 
 ;=========================================================
 ;		flips
 ;=========================================================
-!h:: ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
-{
-	coordw()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
-		{
-			MouseMove(%&xn%, %&yn%)
-			click ;"2196 139" ;this highlights the video tab
-		}
-	else
-		{
-			blockOff()
-			MouseMove %&xpos%, %&ypos%
-			ToolTip("couldn't find video tab")
-			sleep 1000
-			ToolTip("")
-		}
-	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\horizontal.png") ;searches for the horizontal button when it isn't activated already
-		{
-			MouseMove(%&xh%, %&yh%)
-			click ;"2196 139" ;this highlights the video tab
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-			return
-		}
-	else
-		{
-			If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\horizontalON.png") ;searches for the horizontal button when it is activated already
-				{
-					MouseMove(%&xho%, %&yho%)
-					click ;"2196 139" ;this highlights the video tab
-					MouseMove %&xpos%, %&ypos%
-					blockOff()
-					return
-				}
-			else
-				{
-					blockOff()
-					MouseMove %&xpos%, %&ypos%
-					ToolTip("couldn't find horizontal button")
-					sleep 1000
-					ToolTip("")
-				}
-		}
-}
-
-!v:: ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
-{
-	coordw()
-	blockOn()
-	MouseGetPos &xpos, &ypos
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
-		{
-			MouseMove(%&xn%, %&yn%)
-			click ;"2196 139" ;this highlights the video tab
-		}
-	else
-		{
-			blockOff()
-			MouseMove %&xpos%, %&ypos%
-			ToolTip("couldn't find video tab")
-			sleep 1000
-			ToolTip("")
-		}
-	If ImageSearch(&xv, &yv, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\vertical.png") ;searches for the vertical button when it isn't activated already
-		{
-			MouseMove(%&xv%, %&yv%)
-			click ;"2196 139" ;this highlights the video tab
-			MouseMove %&xpos%, %&ypos%
-			blockOff()
-			return
-		}
-	else
-		{
-			If ImageSearch(&xvo, &yvo, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\verticalON.png") ;searches for the vertical button when it is activated already
-				{
-					MouseMove(%&xvo%, %&yvo%)
-					click ;"2196 139" ;this highlights the video tab
-					MouseMove %&xpos%, %&ypos%
-					blockOff()
-					return
-				}
-			else
-				{
-					blockOff()
-					MouseMove %&xpos%, %&ypos%
-					ToolTip("couldn't find vertical button")
-					sleep 1000
-					ToolTip("")
-				}
-		}
-}
+!h::rflip("horizontal.png", "horizontalON.png") ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
+!v::rflip("vertical.png", "verticalON.png") ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
 
 ;=========================================================
 ;		Scale Adjustments
@@ -251,7 +157,7 @@ F5::rvalhold("\ImageSearch\Resolve\rotation.png", "\ImageSearch\Resolve\rotation
 ;		Drag and Drop Effect Presets
 ;
 ;===========================================================================================================================================================================
-!g::REffect("\ImageSearch\Resolve\openfx.png", "\ImageSearch\Resolve\openfx2.png", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
+!g::REffect("openfx.png", "openfx2.png", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
 ; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords. x (80 in this example) will always remain the same, so just grab the new y coords and you've added a new macro
 
 ;===========================================================================================================================================================================

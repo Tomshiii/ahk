@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.18
+;\\v2.3.19
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -75,7 +75,7 @@ blockOff() ;turns off the blocks on user input
 
 ; ==================================================================================================================================================
 ;
-;		discord \\ Last updated: v2.3.9
+;		discord \\ Last updated: v2.3.19
 ;
 ; ==================================================================================================================================================
 disc(imagepath) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
@@ -86,7 +86,7 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 ;zoom level: 100
 ;saturation; 70%
 
-;&imagepath in this script is the path to the screenshot of the button you want the function to press
+;&imagepath in the png name of a screenshot of the button you want the function to press
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable. Alternatively, if you move discord around a lot, it might make more sense to just search your whole screen.
@@ -94,12 +94,12 @@ disc(imagepath) ;This function uses an imagesearch to look for buttons within th
 	blockOn()
 	click "right" ;this opens the right click context menu on the message you're hovering over
 	sleep 50 ;sleep required so the right click context menu has time to open
-	If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&imagepath%) ;These coords define the entire area discord contains text. Recommended to close the right sidebar or do this in a dm so you see the entire area discord normally shows messages. If you constantly move/resize discord you'll have to just search your entire screen instead - which you can do by adjust the coords in these image searches
+	If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir "\ImageSearch\Discord\" %&imagepath%) ;These coords define the entire area discord contains text. Recommended to close the right sidebar or do this in a dm so you see the entire area discord normally shows messages. If you constantly move/resize discord you'll have to just search your entire screen instead - which you can do by adjust the coords in these image searches
 			MouseMove(%&xpos%, %&ypos%)
 	else
 		{
 			sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-			If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir %&imagepath%) ;this line is searching for the location of your selected button. Same goes for above. The coords here are the same as above
+			If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " A_WorkingDir "\ImageSearch\Discord\" %&imagepath%) ;this line is searching for the location of your selected button. Same goes for above. The coords here are the same as above
 				MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
 			else ;if everything fails, this else will trigger
 				{
@@ -172,7 +172,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ==================================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.3.11
+;		Premiere \\ Last updated: v2.3.19
 ;
 ; ==================================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -256,15 +256,14 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
  */
 
 valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-;&filepath is the path to the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
-;&filepath is the path to the image ImageSearch is going to use to find what value you want to adjust (the opposite to ^)
-;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
+;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+;&filepath2 is the png name of the image ImageSearch is going to use to find what value you want to adjust (the opposite of above)
 ;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
 {
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
+		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir "\ImageSearch\Premiere\" %&filepath%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			{
 				If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
 					MouseMove(%&xcol% + %&optional%, %&ycol%)
@@ -277,7 +276,7 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 			}
 		else ;this is for when you have the "toggle animation" keyframe button pressed
 			{
-                If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir %&filepath2%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
+                If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " A_WorkingDir "\ImageSearch\Premiere\" %&filepath2%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
                     {
                         If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
                             MouseMove(%&xcol% + %&optional%, %&ycol%)
@@ -324,11 +323,11 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 }
 ; ==================================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.3.10
+;		Photoshop \\ Last updated: v2.3.19
 ;
 ; ==================================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
-;&image is the filepath to the image that imagesearch will use
+;&image is the png name of the image that imagesearch will use
 {
 	coords()
 	MouseGetPos &xpos, &ypos
@@ -340,7 +339,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 		SendInput("v") ;if you are, it'll press v to go to the selection tool
 	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\InTransform.png") ;checks to see if you're already in the free transform window
 		{
-			If ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " A_WorkingDir %&image%) ;if you are, it'll then search for your button of choice and move to it
+			If ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\" %&image%) ;if you are, it'll then search for your button of choice and move to it
 				MouseMove(%&x%, %&y%)
 			else ;if everything fails, this else will trigger
 				{
@@ -355,7 +354,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 			ToolTip("we must wait for photoshop`nbecause it's slow as hell")
 			sleep 300 ;photoshop is slow
 			ToolTip("")
-			If ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " A_WorkingDir %&image%) ;moves to the position variable
+			If ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " A_WorkingDir "\ImageSearch\Photoshop\" %&image%) ;moves to the position variable
 				MouseMove(%&x%, %&y%)
 			else ;if everything fails, this else will trigger
 				{
@@ -387,7 +386,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 
 ; ==================================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.3.8
+;		Resolve \\ Last updated: v2.3.19
 ;
 ; ==================================================================================================================================================
 Rscale(item) ;to set the scale of a video within resolve
@@ -473,11 +472,11 @@ closeORopen:
 		}
 EffectFolder:
 ;MsgBox("effect folder")
-	If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir %&folder1%) ;checks to see if the drop down option you want is activated
+	If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir "\ImageSearch\Resolve\" %&folder1%) ;checks to see if the drop down option you want is activated
 		goto SearchButton
 	else
 		{
-			If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir %&folder2%) ;checks to see if the drop down option you want is deactivated
+			If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " A_WorkingDir "\ImageSearch\Resolve\" %&folder2%) ;checks to see if the drop down option you want is deactivated
 				{
 					MouseMove(%&xfx%, %&yfx%)
 					SendInput("{Click}")
@@ -515,6 +514,7 @@ SearchButton:
 	}
 final:
 ;MsgBox("final")
+	sleep 50
 	SendInput(%&effect%)
 	MouseMove(0, 130,, "R")
 	SendInput "{Click Down}"
@@ -525,6 +525,10 @@ final:
 }
 
 rvalhold(image1, image2, plus, rfelseval)
+;&image1 is the png name of a screenshot of the property you wish to adjust (either activated or not)
+;&image2 is the png name of a screenshot of the property you wish to adjust (oppisite to above)
+;&plus is the pixel value you wish to add to the x value to grab the Y value
+;&rfelseval is the value you wish to pass to rfelse()
 {
 	coordw()
 	blockOn()
@@ -560,11 +564,11 @@ rvalhold(image1, image2, plus, rfelseval)
 		}
 	rest:
 	;MouseMove 2329, 215 ;moves to the scale value.
-	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " A_WorkingDir %&image1%) ;searches for the zoom property
+	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " A_WorkingDir "\ImageSearch\Resolve\" %&image1%) ;searches for the zoom property
 		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to zoom. This function assumes x/y are linked
 	else
 		{
-			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " A_WorkingDir %&image2%) ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " A_WorkingDir "\ImageSearch\Resolve\" %&image2%) ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 				MouseMove(%&xz% + %&plus%, %&yz% + "5")
 			else
 				{
@@ -587,6 +591,47 @@ rvalhold(image1, image2, plus, rfelseval)
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 			return
+		}
+}
+
+rflip(button1, button2)
+;&button1 is the png name of a screenshot of the button you wish to click (either activated or deactivated)
+;&button2 is the png name of a screenshot of the button you wish to click (oppisite to above)
+{
+	coordw()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
+	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\" %&button1%) ;searches for the horizontal button when it isn't activated already
+		{
+			MouseMove(%&xh%, %&yh%)
+			click ;"2196 139" ;this highlights the video tab
+			MouseMove %&xpos%, %&ypos%
+			blockOff()
+			return
+		}
+	else
+		{
+			If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\" %&button2%) ;searches for the horizontal button when it is activated already
+				{
+					MouseMove(%&xho%, %&yho%)
+					click ;"2196 139" ;this highlights the video tab
+					MouseMove %&xpos%, %&ypos%
+					blockOff()
+					return
+				}
+			else
+				{
+					blockOff()
+					MouseMove %&xpos%, %&ypos%
+					ToolTip("couldn't find desired button")
+					sleep 1000
+					ToolTip("")
+				}
 		}
 }
 

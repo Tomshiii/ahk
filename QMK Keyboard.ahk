@@ -11,9 +11,9 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.11
+;\\v2.1.12
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.14
+;\\v2.3.19
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -99,13 +99,13 @@ Numpad3::gain("6") ;INCREASE GAIN BY 6db
 Numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
 Numpad5::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
 Numpad6::reset()  ;This script moves to the reset button to reset the "motion" effects
-Numpad7::valuehold("\ImageSearch\Premiere\scale.png", "\ImageSearch\Premiere\scale2.png", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad7::valuehold("scale.png", "scale2.png", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 SC05C & Numpad7::manScale("SC05C", "Numpad7", "Enter") ;manually input a scale value
-Numpad8::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-Numpad9::valuehold("\ImageSearch\Premiere\position.png", "\ImageSearch\Premiere\position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad8::valuehold("position.png", "\position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad9::valuehold("position.png", "position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 ;numpadSub::unassigned() ;file explorer
-NumpadMult::valuehold("\ImageSearch\Premiere\rotation.png", "\ImageSearch\Premiere\rotation2.png", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+NumpadMult::valuehold("rotation.png", "rotation2.png", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 NumpadAdd::unassigned()
 NumpadEnter::unassigned()
 NumpadDot::unassigned()
@@ -126,11 +126,11 @@ Numpad1::unassigned()
 Numpad2::unassigned()
 Numpad3::unassigned()
 Numpad4::unassigned()
-numpad5::psProp("\ImageSearch\Photoshop\rotate.png")
+numpad5::psProp("rotate.png")
 Numpad6::unassigned()
-Numpad7::psProp("\ImageSearch\Photoshop\scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
-Numpad8::psProp("\ImageSearch\Photoshop\x.png")
-Numpad9::psProp("\ImageSearch\Photoshop\y.png")
+Numpad7::psProp("scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
+Numpad8::psProp("x.png")
+Numpad9::psProp("y.png")
 
 NumpadSub::unassigned()
 NumpadMult::unassigned()
