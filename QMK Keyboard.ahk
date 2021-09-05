@@ -13,7 +13,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.1.12
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.19
+;\\v2.3.20
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0

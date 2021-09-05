@@ -4,7 +4,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.19
+;\\v2.3.20
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -632,7 +632,7 @@ rflip(button1, button2)
 				{
 					blockOff()
 					MouseMove %&xpos%, %&ypos%
-					toolFind("desired button")
+					toolFind("desired button", "1000")
 				}
 		}
 }

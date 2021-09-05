@@ -12,7 +12,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.3.16
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.19
+;\\v2.3.20
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.1.12
 
@@ -159,6 +159,7 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 ;===========================================================================================================================================================================
 #HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
 ;SCO3A is the scancode for the CapsLock button. Had issues with using "CapsLock" as it would require a refresh every now and then before these discord scripts would work. Currently testing using the scancodes to see if that fixes it.
+;alright scancodes didn't fix it, idk why but sometimes this function won't work until you refresh the main script. Might have to do with where I have it located in this script, maybe pulling it out into it's own script would fix it, or maybe discord is just dumb, who knows.
 SC03A & e::disc("DiscEdit.png") ;edit the message you're hovering over
 SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
