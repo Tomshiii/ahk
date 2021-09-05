@@ -37,6 +37,8 @@ coordc() ;sets coordmode to "caret"
 ;
 ; ==================================================================================================================================================
 toolFind(message, timeout) ;create a tooltip for errors finding things
+;&message is what you want the tooltip to say after "couldn't find"
+;&timeout is how many ms you want the tooltip to last
 {
 	ToolTip("couldn't find " %&message%)
 	SetTimer(timeouttime, - %&timeout%)
@@ -47,6 +49,8 @@ toolFind(message, timeout) ;create a tooltip for errors finding things
 }
 
 toolCust(message, timeout) ;create a tooltip with any message
+;&message is what you want the tooltip to say
+;&timeout is how many ms you want the tooltip to last
 {
 	ToolTip(%&message%)
 	SetTimer(timeouttime, - %&timeout%)
@@ -604,22 +608,22 @@ rflip(button1, button2)
 	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " A_WorkingDir "\ImageSearch\Resolve\videoN.png") ;makes sure the video tab is selected
 		{
 			MouseMove(%&xn%, %&yn%)
-			click ;"2196 139" ;this highlights the video tab
+			click
 		}
-	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\" %&button1%) ;searches for the horizontal button when it isn't activated already
+	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\" %&button1%) ;searches for the button when it isn't activated already
 		{
 			MouseMove(%&xh%, %&yh%)
-			click ;"2196 139" ;this highlights the video tab
+			click
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 			return
 		}
 	else
 		{
-			If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\" %&button2%) ;searches for the horizontal button when it is activated already
+			If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " A_WorkingDir "\ImageSearch\Resolve\" %&button2%) ;searches for the button when it is activated already
 				{
 					MouseMove(%&xho%, %&yho%)
-					click ;"2196 139" ;this highlights the video tab
+					click 
 					MouseMove %&xpos%, %&ypos%
 					blockOff()
 					return
@@ -628,9 +632,7 @@ rflip(button1, button2)
 				{
 					blockOff()
 					MouseMove %&xpos%, %&ypos%
-					ToolTip("couldn't find desired button")
-					sleep 1000
-					ToolTip("")
+					toolFind("desired button")
 				}
 		}
 }
@@ -640,7 +642,7 @@ rflip(button1, button2)
 ;		VSCode \\ Last updated: v2.3.18
 ;
 ; ==================================================================================================================================================
-vscode(script)
+vscode(script) ;a script to quickly naviate between my scripts
 ;&script is just what script I want to open
 {
 	KeyWait(A_PriorKey)
@@ -778,7 +780,10 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 	blockOff()
 }
 
-manScale(key1, key2, keyend)
+manScale(key1, key2, keyend) ;a script that will warp to and press the scale button in premiere to manually input a value
+;&key1 is the hotkey you use to activate this function
+;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
+;&keyend is whatever key you want the function to wait for before finishing
 {
 	coords()
 	BlockInput "MouseMove"
