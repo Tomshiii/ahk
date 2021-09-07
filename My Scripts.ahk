@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.16
+;\\v2.3.17
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.20
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -152,6 +152,9 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://www.google.com/search?d&q=" A_Clipboard
 }
+
+F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 ;===========================================================================================================================================================================
 ;
 ;		Discord
@@ -221,54 +224,6 @@ CapsLock & v:: ;getting back to the selection tool while you're editing text wil
 		}
 	click
 	MouseMove %&xpos%, %&ypos%
-}
-
-^MButton:: ;drag my bleep (goose) sfx to the cursor
-{
-	SendInput "^+5" ;highlights the media browser
-	KeyWait(A_PriorKey)
-	blockOn()
-	coords()
-	MouseGetPos &xpos, &ypos
-		SendInput "^+5" ;highlights the media browser
-		sleep 10
-		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
-			{
-				MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
-				SendInput("{Click}")
-				goto next
-			}
-		else
-			{
-				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx2.png") ;if it is selected, this will see it, then move on
-					goto next
-				else ;if everything fails, this else will trigger
-					{
-						blockOff()
-						toolFind("sfx folder", "1000")
-						return
-					}
-			}
-		next:
-		SendInput "^b" ;Requires you to set ctrl b to select find box
-		coordc()
-		SendInput("^a{DEL}") ;delets anything that might be in the search box
-		SendInput("Goose_honk")
-		sleep 50
-		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\vlc.png") ;searches for the vlc icon to grab the track
-			{
-				MouseMove(%&vlx%, %&vly%)
-				SendInput("{Click Down}")
-			}
-		else
-			{
-				blockOff()
-				toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
-			}
-		MouseMove(%&xpos%, %&ypos%)
-		SendInput("{Click Up}")
-		blockOff()
 }
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
@@ -362,7 +317,53 @@ WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
 Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
-
+F15:: ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F15
+{
+	SendInput "^+5" ;highlights the media browser
+	KeyWait(A_PriorKey)
+	blockOn()
+	coords()
+	MouseGetPos &xpos, &ypos
+		SendInput "^+5" ;highlights the media browser
+		sleep 10
+		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+			{
+				MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
+				SendInput("{Click}")
+				goto next
+			}
+		else
+			{
+				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx2.png") ;if it is selected, this will see it, then move on
+					goto next
+				else ;if everything fails, this else will trigger
+					{
+						blockOff()
+						toolFind("sfx folder", "1000")
+						return
+					}
+			}
+		next:
+		SendInput "^b" ;Requires you to set ctrl b to select find box
+		coordc()
+		SendInput("^a{DEL}") ;delets anything that might be in the search box
+		SendInput("Goose_honk")
+		sleep 50
+		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\vlc.png") ;searches for the vlc icon to grab the track
+			{
+				MouseMove(%&vlx%, %&vly%)
+				SendInput("{Click Down}")
+			}
+		else
+			{
+				blockOff()
+				toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				return
+			}
+		MouseMove(%&xpos%, %&ypos%)
+		SendInput("{Click Up}")
+		blockOff()
+}
 
 
 
