@@ -4,14 +4,14 @@ SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
-SetCapsLockState "AlwaysOff"
+;SetCapsLockState "AlwaysOff" ;having this on broke my main script for whatever reason
 SetNumLockState "AlwaysOn"
 #SingleInstance Force ;only one instance of this script may run at a time!
 A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.12
+;\\v2.1.13
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.20
 
