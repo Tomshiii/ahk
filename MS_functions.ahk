@@ -684,9 +684,18 @@ vscode(script) ;a script to quickly naviate between my scripts
 										}
 									else
 										{
-											blockOff()
-											toolFind("the script", "1000")
-											return
+											If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " A_WorkingDir "\ImageSearch\VSCode\" %&script% "_redHighlighted.png")
+												{
+													blockOff()
+													toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
+													return
+												}
+											else
+												{
+													blockOff()
+													toolFind("the script", "1000")
+													return
+												}
 										}
 								}
 						}
