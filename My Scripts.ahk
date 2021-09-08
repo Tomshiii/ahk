@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.17
+;\\v2.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.20
+;\\v2.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.1.13
 
@@ -49,6 +49,8 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ; I use to use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
 ; I now use VSCode which can be found here: https://code.visualstudio.com/
 ; AHK (and v2.0) syntax highlighting can be installed within the program itself.
+
+;Any EnvGet() are defined in MS_Functions.ahk
 
 ;===========================================================================================================================================================================
 ;
@@ -209,13 +211,13 @@ Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse but
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
-CapsLock & z::^+!z ;\\set zoom out to ^+!z\\
+SC03A & z::^+!z ;\\set zoom out to ^+!z\\ ;idk why tf I need the scancode for capslock here but I blame premiere
 CapsLock & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coords()
 	MouseGetPos &xpos, &ypos
 	;MouseMove 34, 917 ;location of the selection tool
-	If ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " A_WorkingDir "\ImageSearch\Premiere\selection.png") ;moves to the selection tool
+	If ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
 	else
 		{
@@ -232,7 +234,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
-	If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\project.png") ;searches for the project window to grab the track
+	If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
 		{
 			MouseMove(%&prx% + "5", %&pry% +"3")
 			SendInput("{Click Down}")
@@ -244,7 +246,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 	else
 		{
-			If ImageSearch(&pr2x, &pr2y, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\project2.png") ;searches for the project window to grab the track
+			If ImageSearch(&pr2x, &pr2y, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
 			{
 				MouseMove(%&pr2x% + "5", %&pr2y% +"3")
 				;MsgBox()
@@ -284,9 +286,9 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseGetPos &xpos, &ypos
 		SendInput("^t")
 		sleep 100
-		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\graphics.png")
+		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")
 			{
-				If ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " A_WorkingDir "\ImageSearch\Premiere\eye.png")
+				If ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " EnvGet("Premiere") "eye.png")
 					{
 						MouseMove(%&xeye%, %&yeye%)
 						SendInput("{Click}")
@@ -326,7 +328,7 @@ F15:: ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit
 	MouseGetPos &xpos, &ypos
 		SendInput "^+5" ;highlights the media browser
 		sleep 10
-		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
 			{
 				MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
 				SendInput("{Click}")
@@ -334,7 +336,7 @@ F15:: ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit
 			}
 		else
 			{
-				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\sfx2.png") ;if it is selected, this will see it, then move on
+				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
 					goto next
 				else ;if everything fails, this else will trigger
 					{
@@ -349,7 +351,7 @@ F15:: ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit
 		SendInput("^a{DEL}") ;delets anything that might be in the search box
 		SendInput("Goose_honk")
 		sleep 50
-		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " A_WorkingDir "\ImageSearch\Premiere\vlc.png") ;searches for the vlc icon to grab the track
+		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
 			{
 				MouseMove(%&vlx%, %&vly%)
 				SendInput("{Click Down}")
