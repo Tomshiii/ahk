@@ -5,7 +5,7 @@ Included is also the Excel document I use to keep track of any hotkeys I set, ju
 
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
   - Video walking through _all (at the time)_ of my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo)
-    - Video walking through the [Release 2.1 update](https://youtu.be/JF_WISVJsPU)
+    - Video walking through an early version of the [Release 2.1 update](https://youtu.be/JF_WISVJsPU)
       - Video walking through even older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
 
 A lot of the code in the earliest versions my scripts were either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into a ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I personally have gone through them and made them function in ahk v2.0).

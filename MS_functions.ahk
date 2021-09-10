@@ -1,5 +1,4 @@
-﻿;#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
+﻿SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
@@ -9,6 +8,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
 
+;EnvSet allows you to store information to call later, via EnvGet("Discord") for example, which cuts out the need to write ' A_WorkingDir "\ImageSearch\Discord\photoexample.png" ' for every piece of code
 EnvSet("Discord", A_WorkingDir "\ImageSearch\Discord\")
 EnvSet("Premiere", A_WorkingDir "\ImageSearch\Premiere\")
 EnvSet("Photoshop", A_WorkingDir "\ImageSearch\Photoshop\")
@@ -75,6 +75,7 @@ blockOn() ;blocks all user inputs
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
+	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess 
 }
 
 blockOff() ;turns off the blocks on user input
@@ -146,7 +147,7 @@ mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script t
 ;&tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
 ;&toolorig is the button you want the script to press to bring you back to your tool of choice
 {
-	click "middle"
+	click "middle" ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
 	SendInput %&tool% "{LButton Down}" 
 	KeyWait A_ThisHotkey
 	SendInput "{LButton Up}"
@@ -401,6 +402,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 ; ==================================================================================================================================================
 Rscale(item) ;to set the scale of a video within resolve
 ;&item is the number you want to type into the text field (100% in reslove requires a 1 here for example)
+;this function, as you can probably tell, doesn't use an imagesearch. It absolutely SHOULD, but I don't use resolve and I guess I just never got around to coding in an imagesearch.
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw()
@@ -416,6 +418,7 @@ Rscale(item) ;to set the scale of a video within resolve
 
 rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 ;&data is what the script is typing in the text box to reset its value
+;this function, as you can probably tell, doesn't use an imagesearch. It absolutely SHOULD, but I don't use resolve and I guess I just never got around to coding in an imagesearch.
 {
 	SendInput "{Click Up}"
 	sleep 10
@@ -534,7 +537,7 @@ final:
 	return
 }
 
-rvalhold(image1, image2, plus, rfelseval)
+rvalhold(image1, image2, plus, rfelseval) ;this function provides similar functionality to my valuehold() function for premiere
 ;&image1 is the png name of a screenshot of the property you wish to adjust (either activated or not)
 ;&image2 is the png name of a screenshot of the property you wish to adjust (oppisite to above)
 ;&plus is the pixel value you wish to add to the x value to grab the Y value
@@ -597,14 +600,14 @@ rvalhold(image1, image2, plus, rfelseval)
 		}
 	else
 		{
-			rfElse(%&rfelseval%)
+			rfElse(%&rfelseval%) ;do note rfelse doesn't use any imagesearch information and just uses raw pixel values (not a great idea), so if you have any issues, do look into changing that
 			MouseMove %&xpos%, %&ypos%
 			blockOff()
 			return
 		}
 }
 
-rflip(button1, button2)
+rflip(button1, button2) ;this function searches for and presses the horizontal/vertical flip button
 ;&button1 is the png name of a screenshot of the button you wish to click (either activated or deactivated)
 ;&button2 is the png name of a screenshot of the button you wish to click (oppisite to above)
 {
