@@ -397,6 +397,43 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 
 psSave() ;This function is to speed through the twitch emote saving process. Doing this manually is incredibly tedious and annoying, so why do it manually?
 {
+	save(size)
+	{
+		WinActivate("ahk_exe Photoshop.exe")
+		blockOn()
+		SendInput("^!i")
+		WinWait("Image Size")
+		SendInput(%&size% "{tab 2}" %&size% "{Enter}")
+		sleep 1000
+		SendInput("^!s")
+		WinWait("Save a Copy")
+	}
+	image()
+	{
+		sleep 500
+		Send "{TAB}{RIGHT}"
+		coordw()
+		sleep 1000
+		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
+			MouseMove(0, 0)
+		else
+			{
+				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
+					{
+						MouseMove(%&xpng%, %&ypng%)
+						SendInput("{Click}")
+						MouseMove(0, 0)
+					}
+				else
+					{
+						MouseMove(0, 0)
+						blockOff()
+						toolFind("png", "1000")
+						return
+					}
+			}
+	}
+
 	Emote := InputBox("Please enter an Emote Name.", "Emote Name", "w100 h100")
 		if Emote.Result = "Cancel"
    			return
@@ -409,117 +446,30 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 		else
     		goto next
 	next:
-	;112x112
-	WinActivate("ahk_exe Photoshop.exe")
-	blockOn()
-	SendInput("^!i")
-	WinWait("Image Size")
-	SendInput("112" "{tab 2}" "112" "{Enter}")
-	sleep 1000
-	SendInput("^!s")
-	WinWait("Save a Copy")
+	;=============================112x112
+	save("112")
 	SendInput(Emote.Value "_112")
-		sleep 500
-		Send "{TAB}{RIGHT}"
-		coordw()
-		sleep 1000
-		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
-			goto save112
-		else
-			{
-				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
-					{
-						MouseMove(%&xpng%, %&ypng%)
-						SendInput("{Click}")
-						MouseMove(0, 0)
-						goto save112
-					}
-				else
-					{
-						blockOff()
-						toolFind("png", "1000")
-						return
-					}
-			}
-		save112:
+		image()
 		sleep 300
 	SendInput("{F4}" "^a")
 	SendInput(Dir.Value "{Enter}")
 	SendInput("{Tab 5}" "{Enter}")
 	sleep 1000
 	SendInput("{Enter}")
-
-	;56x56
-	WinActivate("ahk_exe Photoshop.exe")
-	SendInput("^!i")
-	WinWait("Image Size")
-	SendInput("56" "{tab 2}" "56" "{Enter}")
-	sleep 1000
-	SendInput("^!s")
-	WinWait("Save a Copy")
+	;=============================56x56
+	save("56")
 	SendInput(Emote.Value "_56")
-		sleep 500
-		Send "{TAB}{RIGHT}"
-		coordw()
-		sleep 1000
-		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
-			goto save56
-		else
-			{
-				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
-					{
-						MouseMove(%&xpng%, %&ypng%)
-						SendInput("{Click}")
-						MouseMove(0, 0)
-						goto save56
-					}
-				else
-					{
-						blockOff()
-						toolFind("png", "1000")
-						return
-					}
-			}
-		save56:
+	image()
 		sleep 300
 	SendInput("{F4}" "^a")
 	SendInput(Dir.Value "{Enter}")
 	SendInput("{Tab 5}" "{Enter}")
 	sleep 1000
 	SendInput("{Enter}")
-
-	;28x28
-	WinActivate("ahk_exe Photoshop.exe")
-	SendInput("^!i")
-	WinWait("Image Size")
-	SendInput("28" "{tab 2}" "28" "{Enter}")
-	sleep 1000
-	SendInput("^!s")
-	WinWait("Save a Copy")
+	;=============================28x28
+	save("28")
 	SendInput(Emote.Value "_28")
-		sleep 500
-		Send "{TAB}{RIGHT}"
-		coordw()
-		sleep 1000
-		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
-			goto save28
-		else
-			{
-				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
-					{
-						MouseMove(%&xpng%, %&ypng%)
-						SendInput("{Click}")
-						MouseMove(0, 0)
-						goto save28
-					}
-				else
-					{
-						blockOff()
-						toolFind("png", "1000")
-						return
-					}
-			}
-		save28:
+		image()
 		sleep 300
 	SendInput("{F4}" "^a")
 	SendInput(Dir.Value "{Enter}")
