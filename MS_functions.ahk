@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4
+;\\v2.4.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -334,7 +334,7 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 }
 ; ==================================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.4
+;		Photoshop \\ Last updated: v2.4.1
 ;
 ; ==================================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
@@ -393,6 +393,140 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 				blockOff()
 				return
 			}
+}
+
+psSave() ;This function is to speed through the twitch emote saving process. Doing this manually is incredibly tedious and annoying, so why do it manually?
+{
+	Emote := InputBox("Please enter an Emote Name.", "Emote Name", "w100 h100")
+		if Emote.Result = "Cancel"
+   			return
+		else
+    		goto dir
+	dir:
+	Dir := InputBox("Please enter your save directory in full", "Save Directory", "w293 h100")
+		if Dir.Result = "Cancel"
+   			return
+		else
+    		goto next
+	next:
+	;112x112
+	WinActivate("ahk_exe Photoshop.exe")
+	blockOn()
+	SendInput("^!i")
+	WinWait("Image Size")
+	SendInput("112" "{tab 2}" "112" "{Enter}")
+	sleep 1000
+	SendInput("^!s")
+	WinWait("Save a Copy")
+	SendInput(Emote.Value "_112")
+		sleep 500
+		Send "{TAB}{RIGHT}"
+		coordw()
+		sleep 1000
+		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
+			goto save112
+		else
+			{
+				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
+					{
+						MouseMove(%&xpng%, %&ypng%)
+						SendInput("{Click}")
+						MouseMove(0, 0)
+						goto save112
+					}
+				else
+					{
+						blockOff()
+						toolFind("png", "1000")
+						return
+					}
+			}
+		save112:
+		sleep 300
+	SendInput("{F4}" "^a")
+	SendInput(Dir.Value "{Enter}")
+	SendInput("{Tab 5}" "{Enter}")
+	sleep 1000
+	SendInput("{Enter}")
+
+	;56x56
+	WinActivate("ahk_exe Photoshop.exe")
+	SendInput("^!i")
+	WinWait("Image Size")
+	SendInput("56" "{tab 2}" "56" "{Enter}")
+	sleep 1000
+	SendInput("^!s")
+	WinWait("Save a Copy")
+	SendInput(Emote.Value "_56")
+		sleep 500
+		Send "{TAB}{RIGHT}"
+		coordw()
+		sleep 1000
+		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
+			goto save56
+		else
+			{
+				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
+					{
+						MouseMove(%&xpng%, %&ypng%)
+						SendInput("{Click}")
+						MouseMove(0, 0)
+						goto save56
+					}
+				else
+					{
+						blockOff()
+						toolFind("png", "1000")
+						return
+					}
+			}
+		save56:
+		sleep 300
+	SendInput("{F4}" "^a")
+	SendInput(Dir.Value "{Enter}")
+	SendInput("{Tab 5}" "{Enter}")
+	sleep 1000
+	SendInput("{Enter}")
+
+	;28x28
+	WinActivate("ahk_exe Photoshop.exe")
+	SendInput("^!i")
+	WinWait("Image Size")
+	SendInput("28" "{tab 2}" "28" "{Enter}")
+	sleep 1000
+	SendInput("^!s")
+	WinWait("Save a Copy")
+	SendInput(Emote.Value "_28")
+		sleep 500
+		Send "{TAB}{RIGHT}"
+		coordw()
+		sleep 1000
+		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
+			goto save28
+		else
+			{
+				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
+					{
+						MouseMove(%&xpng%, %&ypng%)
+						SendInput("{Click}")
+						MouseMove(0, 0)
+						goto save28
+					}
+				else
+					{
+						blockOff()
+						toolFind("png", "1000")
+						return
+					}
+			}
+		save28:
+		sleep 300
+	SendInput("{F4}" "^a")
+	SendInput(Dir.Value "{Enter}")
+	SendInput("{Tab 5}" "{Enter}")
+	sleep 1000
+	SendInput("{Enter}")
+	blockOff()
 }
 
 ; ==================================================================================================================================================

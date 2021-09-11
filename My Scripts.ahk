@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4
+;\\v2.4.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.4
+;\\v2.4.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.1.13
 
@@ -191,6 +191,7 @@ XButton1::mousedrag("h","P") ;changes the tool to the hand tool while mouse butt
 Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 +z::mousedrag("z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
 !g::SendInput("!{t}" "b{Right}g") ;open gaussian blur
+F1::psSave()
 
 ;===========================================================================================================================================================================
 ;
