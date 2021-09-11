@@ -804,8 +804,7 @@ manScale(key1, key2, keyend) ;a script that will warp to and press the scale but
 ;&keyend is whatever key you want the function to wait for before finishing
 {
 	coords()
-	BlockInput "MouseMove"
-	BlockInput "On"
+	blockOn()
 	MouseGetPos &xpos, &ypos
 	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "scale.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		{
