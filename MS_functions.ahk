@@ -8,18 +8,36 @@
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
 
-;EnvSet allows you to store information to call later, via EnvGet("Discord") for example, which cuts out the need to write ' A_WorkingDir "\ImageSearch\Discord\photoexample.png" ' for every piece of code
+
+; All Code in this script is linked to a function
+; for example:
+; func(variable)
+; 	{
+;		code(%&variable%)
+;	}
+; Then in our main scripts we call on these functions like:
+; Hotkey::func("information")
+; then whatever you place within the "" will be put wherever you have a %&variable%
+; I make use of code like this all throughout this script. All variables are explained underneath their respective functions
+
+; I have made a concious effort throughout the workings of this script to keep out as many raw pixel coords as possible, preferring imagesearches to ensure correct mouse movements
+; but even still, an imagesearch still has a definable area that it searches for each image, for example
+; ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479,~~~~~)
+; searches in a rectangle defined by the above coords (pixel coords default to window unless you change it to something else)
+; These values will be the only thing you should theoretically need to change to get things working in your own setups (outside of potentially needing your own screenshots for things)
+
+;EnvSet allows you to store information to call later, via: EnvGet("Discord") for example, which cuts out the need to write ' A_WorkingDir "\ImageSearch\Discord\photoexample.png" ' for every piece of code
 EnvSet("Discord", A_WorkingDir "\ImageSearch\Discord\")
 EnvSet("Premiere", A_WorkingDir "\ImageSearch\Premiere\")
 EnvSet("Photoshop", A_WorkingDir "\ImageSearch\Photoshop\")
 EnvSet("Resolve", A_WorkingDir "\ImageSearch\Resolve\")
 EnvSet("VSCode", A_WorkingDir "\ImageSearch\VSCode\")
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.1.6
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 coords() ;sets coordmode to "screen"
 {
 	coordmode "pixel", "screen"
@@ -37,11 +55,11 @@ coordc() ;sets coordmode to "caret"
 	coordmode "caret", "window"
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		Tooltip \\ Last updated: v2.3.13
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 toolFind(message, timeout) ;create a tooltip for errors finding things
 ;&message is what you want the tooltip to say after "couldn't find"
 ;&timeout is how many ms you want the tooltip to last
@@ -65,11 +83,11 @@ toolCust(message, timeout) ;create a tooltip with any message
 		ToolTip("")
 	}
 }
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		Blockinput \\ Last updated: v2.0.1
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 blockOn() ;blocks all user inputs
 {
 	BlockInput "SendAndMouse"
@@ -84,11 +102,11 @@ blockOff() ;turns off the blocks on user input
 	BlockInput "off"
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		discord \\ Last updated: v2.4
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 disc(button) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
 ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME. YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
 ;dark theme
@@ -138,11 +156,11 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 		}
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		Mouse Drag \\ Last updated: v2.3
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
 ;&tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
 ;&toolorig is the button you want the script to press to bring you back to your tool of choice
@@ -154,11 +172,11 @@ mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script t
 	SendInput %&toolorig% 
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		better timeline movement \\ Last updated: v2.3.11
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
 ;&timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
 ;x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
@@ -181,11 +199,11 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 		return
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		Premiere \\ Last updated: v2.4
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
 {
@@ -332,11 +350,11 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 				blockOff()
 			}
 }
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		Photoshop \\ Last updated: v2.4.1
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
 ;&image is the png name of the image that imagesearch will use
 {
@@ -479,11 +497,11 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 	blockOff()
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		Resolve \\ Last updated: v2.4
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 Rscale(item) ;to set the scale of a video within resolve
 ;&item is the number you want to type into the text field (100% in reslove requires a 1 here for example)
 ;this function, as you can probably tell, doesn't use an imagesearch. It absolutely SHOULD, but I don't use resolve and I guess I just never got around to coding in an imagesearch.
@@ -730,11 +748,11 @@ rflip(button1, button2) ;this function searches for and presses the horizontal/v
 		}
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		VSCode \\ Last updated: v2.4
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 vscode(script) ;a script to quickly naviate between my scripts
 ;&script is just what script I want to open
 {
@@ -801,11 +819,11 @@ vscode(script) ;a script to quickly naviate between my scripts
 	blockOff()
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		QMK Stuff \\ Last updated: v2.4
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;All of these functions are just to allow QMK Keyboard.ahk to be more readable
 movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 {
@@ -1003,11 +1021,11 @@ KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to 
 	SendInput "g"
 }
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ;
 ;		Fkey AutoLaunch \\ Last updated: v2.2
 ;
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 switchToExplorer()
 {
 ;switchToExplorer(){
@@ -1163,9 +1181,9 @@ switchToWindowSpy()
 }
 
 
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 ; Old
-; ==================================================================================================================================================
+; ===========================================================================================================================================
 /* ;this was the old way of doing the discord functions (v2.0.7) that included just right clicking and making the user do things. I've saved the one with all variations of code it went through, the other two have been removed for cleanup as they were functionally identical
 ;PLEASE NOTE, I ORIGINALLY HAD THIS SCRIPT WARP THE MOUSE TO CERTAIN POSITIONS TO HIT THE RESPECTIVE BUTTONS BUT THE POSITION OF BUTTONS IN DISCORD WITHIN THE RIGHT CLICK CONTEXT MENU CHANGE DEPENDING ON WHAT PERMS YOU HAVE IN A SERVER, SO IT WOULD ALWAYS TRY TO DO RANDOM THINGS LIKE PIN A MESSAGE OR OPEN A THREAD. There isn't really anything you can do about that. I initially tried to just send through multiple down/up inputs but apparently discord rate limits you to like 1 input every .5-1s so that's fun.
 discedit()

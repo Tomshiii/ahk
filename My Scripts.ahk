@@ -14,12 +14,12 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.1
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.1.13
+;\\v2.1.14
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
 
-; ===========================================================================================================================================================
+; ============================================================================================================================================
 ;
 ; 														THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
 ;				 											IT WILL NOT RUN IN v1.1
@@ -28,7 +28,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;											any code like "blockon()" "coords()" etc are all defined
 ;										in the MS_functions.ahk script. Look there for specific code to edit
 ;
-; ===========================================================================================================================================================
+; ============================================================================================================================================
 ;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
 ; Its purpose is to help speed up editing and random interactions with windows.
@@ -38,7 +38,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ; Youtube Video going through most of the Release v2.1 changes (https://youtu.be/JF_WISVJsPU)
 ; Youtube Video showing how AHK can speed up editing workflows (https://youtu.be/Iv-oR7An_iI)
 ;
-; ===========================================================================================================================================================
+; ============================================================================================================================================
 
 ; A chunk of the code in the original versions of this script was either directly inspired by, or originally copied from Taran from LTT (https://github.com/TaranVH/) before
 ; I modified it to fit v2.0 of ahk and made a bunch of other changes, his videos on the subject are what got me into AHK to begin with and what brought the foundation of the original
@@ -52,17 +52,17 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 
 ;Any EnvGet() are defined in MS_Functions.ahk
 
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 ;
 ;		Windows
 ;
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		launch programs
 ;
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 PgUp::switchToExcel() ;run microsoft excel.
 Pause::switchToWindowSpy() ;run windowspy
 RWin::switchToVSC() ;run vscode
@@ -80,11 +80,11 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
 
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		other
 ;
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
 WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 
@@ -93,11 +93,11 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 !f::vscode("Func")
 !q::vscode("QMK")
 
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		other - NOT Premiere
 ;
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
@@ -157,11 +157,11 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 
 F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 ;
 ;		Discord
 ;
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 #HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
 ;SCO3A is the scancode for the CapsLock button. Had issues with using "CapsLock" as it would require a refresh every now and then before these discord scripts would work. Currently testing using the scancodes to see if that fixes it.
 ;alright scancodes didn't fix it, idk why but sometimes this function won't work until you refresh the main script. Might have to do with where I have it located in this script, maybe pulling it out into it's own script would fix it, or maybe discord is just dumb, who knows.
@@ -171,11 +171,11 @@ SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 ;
 ;		Photoshop
 ;
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 #HotIf WinActive("ahk_exe Photoshop.exe")
 ^+p:: ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 {
@@ -193,20 +193,20 @@ Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse but
 !g::SendInput("!{t}" "b{Right}g") ;open gaussian blur
 F1::psSave()
 
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 ;
 ;		After Effects
 ;
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
 Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset
 Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 ;
 ;		Premiere
 ;
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 #HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
 ;There use to be a lot of scripts about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
@@ -269,11 +269,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 
 }
 
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Drag and Drop Effect Presets
 ;
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 !g::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
 !p::preset("parametric") ;check MS_functions.ahk for the code for these presets
 !h::preset("hflip")
@@ -310,11 +310,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			}
 }
 
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
 ;
-;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;---------------------------------------------------------------------------------------------------------------------------------------------
 WheelRight::+Down ;Set shift down to "Go to next edit point on any track"
 WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
@@ -371,9 +371,9 @@ F15:: ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit
 
 
 /*
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 						OLD \\ Code below here might not be converted to ahk v2.0 code
-;===========================================================================================================================================================================
+;=============================================================================================================================================
 F6:: ;how to move mouse on one axis
 SetKeyDelay, 0
 coordmode, pixel, Screen
