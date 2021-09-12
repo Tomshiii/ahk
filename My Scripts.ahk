@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.1
+;\\v2.4.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.1
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -213,7 +213,7 @@ Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse but
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
 SC03A & z::^+!z ;\\set zoom out to ^+!z\\ ;idk why tf I need the scancode for capslock here but I blame premiere
-CapsLock & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
+SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coords()
 	MouseGetPos &xpos, &ypos

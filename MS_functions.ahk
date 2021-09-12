@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.1
+;\\v2.4.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -923,10 +923,33 @@ manScale(key1, key2, keyend) ;a script that will warp to and press the scale but
 		}
 	KeyWait(%&key1%) ;waits for you to let go of hotkey
 	KeyWait(%&key2%) ;waits for you to let go of hotkey
+		Hotkey("~Numpad0", "r", "On") ;all of these "hotkeys" allow me to use my numpad to input numbers instead of having to take my hand off my mouse to press the numpad on my actual keyboard
+		Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. If I put this value at something that's already defined, then the original macros will fire
+		;Hotkey("~SC05C & Numpad1", "Numpad1", "On")
+		Hotkey("~Numpad2", "r", "On")
+		Hotkey("~Numpad3", "r", "On")
+		Hotkey("~Numpad4", "r", "On")
+		Hotkey("~Numpad5", "r", "On")
+		Hotkey("~Numpad6", "r", "On")
+		Hotkey("~Numpad7", "r", "On")
+		Hotkey("~Numpad8", "r", "On")
+		Hotkey("~Numpad9", "r", "On")
+		Hotkey("~NumpadEnter", "r", "On")
 	SendInput "{Click}"
 	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
 	SendInput("{Enter}")
 	MouseMove %&xpos%, %&ypos%
+		Hotkey("~Numpad0", "Numpad0")
+		Hotkey("~Numpad1", "Numpad1")
+		Hotkey("~Numpad2", "Numpad2")
+		Hotkey("~Numpad3", "Numpad3")
+		Hotkey("~Numpad4", "Numpad4")
+		Hotkey("~Numpad5", "Numpad5")
+		Hotkey("~Numpad6", "Numpad6")
+		Hotkey("~Numpad7", "Numpad7")
+		Hotkey("~Numpad8", "Numpad8")
+		Hotkey("~Numpad9", "Numpad9")
+		Hotkey("~NumpadEnter", "NumpadEnter")
 	Click("middle")
 	blockOff()
 }
@@ -1011,6 +1034,21 @@ if not WinExist("ahk_class Premiere Pro")
 else
 	if WinExist("ahk_class Premiere Pro")
 	WinActivate "ahk_class Premiere Pro"
+}
+
+switchToAE()
+{
+;switchToPremiere(){
+if not WinExist("ahk_exe AfterFX.exe")
+	{
+	;Run, Adobe Premiere Pro.exe
+	;Adobe Premiere Pro CC 2017
+	; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
+	Run "Adobe AfterFX.exe"
+	}
+else
+	if WinExist("ahk_exe AfterFX.exe")
+	WinActivate "ahk_exe AfterFX.exe"
 }
 
 switchToFirefox()
