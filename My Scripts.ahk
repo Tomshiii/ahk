@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.2
+;\\v2.4.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.4.1
+;\\v2.4.3
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.1.14
 
@@ -320,53 +320,8 @@ WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
 Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 
-F15:: ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F15
-{
-	SendInput "^+5" ;highlights the media browser
-	KeyWait(A_PriorKey)
-	blockOn()
-	coords()
-	MouseGetPos &xpos, &ypos
-		SendInput "^+5" ;highlights the media browser
-		sleep 10
-		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
-			{
-				MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
-				SendInput("{Click}")
-				goto next
-			}
-		else
-			{
-				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
-					goto next
-				else ;if everything fails, this else will trigger
-					{
-						blockOff()
-						toolFind("sfx folder", "1000")
-						return
-					}
-			}
-		next:
-		SendInput "^b" ;Requires you to set ctrl b to select find box
-		coordc()
-		SendInput("^a{DEL}") ;delets anything that might be in the search box
-		SendInput("Goose_honk")
-		sleep 50
-		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
-			{
-				MouseMove(%&vlx%, %&vly%)
-				SendInput("{Click Down}")
-			}
-		else
-			{
-				blockOff()
-				toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
-			}
-		MouseMove(%&xpos%, %&ypos%)
-		SendInput("{Click Up}")
-		blockOff()
-}
+F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F15
+F20::audioDrag("bleep")
 
 
 

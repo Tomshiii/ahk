@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.2
+;\\v2.4.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.0
@@ -201,7 +201,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.4
+;		Premiere \\ Last updated: v2.4.3
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -350,6 +350,55 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 				blockOff()
 			}
 }
+
+audioDrag(sfxName)
+{
+	SendInput "^+5" ;highlights the media browser
+	;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
+	blockOn()
+	coords()
+	MouseGetPos &xpos, &ypos
+		SendInput "^+5" ;highlights the media browser
+		sleep 10
+		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+			{
+				MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
+				SendInput("{Click}")
+				goto next
+			}
+		else
+			{
+				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
+					goto next
+				else ;if everything fails, this else will trigger
+					{
+						blockOff()
+						toolFind("sfx folder", "1000")
+						return
+					}
+			}
+		next:
+		SendInput "^b" ;Requires you to set ctrl b to select find box
+		coordc()
+		SendInput("^a{DEL}") ;delets anything that might be in the search box
+		SendInput(%&sfxName%)
+		sleep 50
+		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
+			{
+				MouseMove(%&vlx%, %&vly%)
+				SendInput("{Click Down}")
+			}
+		else
+			{
+				blockOff()
+				toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				return
+			}
+		MouseMove(%&xpos%, %&ypos%)
+		SendInput("{Click Up}")
+		blockOff()
+}
+
 ; ===========================================================================================================================================
 ;
 ;		Photoshop \\ Last updated: v2.4.1
