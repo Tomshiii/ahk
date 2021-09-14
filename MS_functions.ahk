@@ -22,9 +22,9 @@
 
 ; I have made a concious effort throughout the workings of this script to keep out as many raw pixel coords as possible, preferring imagesearches to ensure correct mouse movements
 ; but even still, an imagesearch still has a definable area that it searches for each image, for example
-; ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479,~~~~~)
+; ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479,~~~~~) (check the ahk documentation for what each number represents)
 ; searches in a rectangle defined by the above coords (pixel coords default to window unless you change it to something else)
-; These values will be the only thing you should theoretically need to change to get things working in your own setups (outside of potentially needing your own screenshots for things)
+; These values will be the only thing you should theoretically need to change to get things working in your own setups (outside of potentially needing your own screenshots for things as different setups can mean different colours etc etc)
 
 ;EnvSet allows you to store information to call later, via: EnvGet("Discord") for example, which cuts out the need to write ' A_WorkingDir "\ImageSearch\Discord\photoexample.png" ' for every piece of code
 EnvSet("Discord", A_WorkingDir "\ImageSearch\Discord\")
@@ -503,15 +503,15 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 
 	Emote := InputBox("Please enter an Emote Name.", "Emote Name", "w100 h100")
 		if Emote.Result = "Cancel"
-   			return
+			return
 		else
-    		goto dir
+			goto dir
 	dir:
 	Dir := InputBox("Please enter your save directory in full", "Save Directory", "w293 h100")
 		if Dir.Result = "Cancel"
-   			return
+			return
 		else
-    		goto next
+			goto next
 	next:
 	;=============================112x112
 	save("112")

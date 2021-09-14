@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.3
+;\\v2.4.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.3
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -34,9 +34,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ; Its purpose is to help speed up editing and random interactions with windows.
 ; You are free to modify this script to your own personal uses/needs
 ; Please give credit to the foundation if you build on top of it, similar to how I have below, otherwise you're free to do as you wish
-; Youtube Video going through all (at the time) of my ahk v2.0 scripts (https://youtu.be/3rFDEonACxo)
-; Youtube Video going through most of the Release v2.1 changes (https://youtu.be/JF_WISVJsPU)
-; Youtube Video showing how AHK can speed up editing workflows (https://youtu.be/Iv-oR7An_iI)
+; Youtube playlist going through all my AHK changes/updates (https://www.youtube.com/playlist?list=PL8txOlLUZiqXXr2PNOsNSXeCB1171lQ1b)
 ;
 ; ============================================================================================================================================
 
@@ -179,13 +177,42 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 #HotIf WinActive("ahk_exe Photoshop.exe")
 ^+p:: ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 {
-	SetKeyDelay 300 ;photoshop is sometimes slow as heck, delaying things just a bit ensures you get the right thing every time
-		Send "{TAB}{RIGHT}"
-		SendInput "{Up 21}" ;makes sure you have the top most option selected
-		sleep 50 ;this probably isn't needed, but I have here for saftey just because photoshop isn't the best performance wise
-		SendInput "{DOWN 17}"
-		Send "{Enter}+{Tab}"
+	MouseGetPos(&x, &y)
+	Send "{TAB}{RIGHT}"
+	coordw()
+	sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
+	If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
+		{
+			SendInput("{Enter}")
+			SendInput("+{Tab}")
+		}
+
+	else
+		{
+			If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
+				{
+					MouseMove(%&xpng%, %&ypng%)
+					SendInput("{Click}")
+					SendInput("+{Tab}")
+				}
+			else
+				{
+					blockOff()
+					toolFind("png drop down", "1000")
+					return
+				}
+		}
+		MouseMove(%&x%, %&y%)
 }
+/*
+	;the below code is how you can achieve the same as above but simply using inputs. Sometimes this would still fail because photoshop sucks, but it does the job just fine
+	Send "{TAB}{RIGHT}"
+	SendInput "{Up 21}" ;makes sure you have the top most option selected
+	sleep 50 ;this probably isn't needed, but I have here for saftey just because photoshop isn't the best performance wise
+	SendInput "{DOWN 17}"
+	Send "{Enter}+{Tab}"
+ */
+;}
 
 XButton1::mousedrag("h","P") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
@@ -231,33 +258,29 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
+	move()
+	{
+		MouseMove(%&prx% + "5", %&pry% +"3")
+		SendInput("{Click Down}")
+		Sleep 100
+		MouseMove 2562, 223, "2"
+		SendInput("{Click Up}")
+		MouseMove(%&xpos%, %&ypos%)
+		blockOff()
+	}
 	KeyWait(A_PriorKey)
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
 	If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
 		{
-			MouseMove(%&prx% + "5", %&pry% +"3")
-			SendInput("{Click Down}")
-			Sleep 100
-			MouseMove 2562, 223, "2"
-			SendInput("{Click Up}")
-			MouseMove(%&xpos%, %&ypos%)
-			blockOff()
+			move()
 		}
 	else
 		{
 			If ImageSearch(&pr2x, &pr2y, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
 			{
-				MouseMove(%&pr2x% + "5", %&pr2y% +"3")
-				;MsgBox()
-				SendInput("{Click Down}")
-				Sleep 100
-				MouseMove 2562, 223, "2"
-				;MsgBox()
-				SendInput("{Click Up}")
-				MouseMove(%&xpos%, %&ypos%)
-				blockOff()
+				move()
 			}
 			else ;if everything fails, this else will trigger
 				{
@@ -361,7 +384,7 @@ Return
 		MouseMove(%&carx% - "60", %&cary% + "60")
 		sleep 50
 		SendInput("{Click Down}")
-		 ;this code was to pull it out of the project window. the project windows search is stupid though
+		;this code was to pull it out of the project window. the project windows search is stupid though
 		;sleep 200
 		;If ImageSearch(&x, &y, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose.png") ;moves to the goose sfx
 		;	{
