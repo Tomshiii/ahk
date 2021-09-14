@@ -11,7 +11,7 @@ SplitPath FullFileName, &name
 
 ;;this part makes you select the destination folder
 Move := DirSelect("*A:\_RC\Tomshi\2021", 3, "Pick the destination folder you wish everything to move to.")
-if SelectedFolder = ""
+if Move = ""
     return
 
 ;;this part deletes the proxies folder if it exists and then moves your selected folder to the selected destination
@@ -19,3 +19,5 @@ if DirExist(SelectedFolder "\proxies")
     DirDelete(SelectedFolder "\proxies", 1)
 DirMove(SelectedFolder, Move "\" %&name%)
 
+;;this part just opens the final directory
+Run(Move "\" %&name%)
