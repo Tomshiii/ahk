@@ -1,11 +1,4 @@
-﻿;F19:: ;this script goes through and closes everything I use for stream
-;coordmode "pixel", "Window"
-;coordmode "mouse", "Window"
-;MouseGetPos &xpos, &ypos
-	;MouseMove 878, 14
-	;WinActivate "ahk_exe Streamlabs Chatbot.exe"
-#SingleInstance Force
-;this script is kinda rough and sometimes requires multiple activations to get everything closed. Probably requires more elaborate code but realistically it's just too much effort for me to bother with at the moment.
+﻿#SingleInstance Force
 DetectHiddenWindows(true)
 	if WinExist("Streaming.ahk")
 		WinClose(,,1)
@@ -21,9 +14,10 @@ DetectHiddenWindows(true)
 			}
 	if WinExist("ahk_exe foobar2000.exe")
 		{
-			WinActivate
-			SendInput("!{F4}")
-			WinClose(,,2)
+			;WinActivate
+			;SendInput("!{F4}")
+			;WinClose(,,2)
+			ProcessClose("foobar2000.exe")
 		}
 	if WinExist("All Moons UPDATED v.1.3.0")
 		{
@@ -40,60 +34,60 @@ DetectHiddenWindows(true)
 ;WinClose, LiveSplit ;don't include, just incase of gold/pbs
 	if WinExist("ahk_exe chrome.exe")
 		{
-			WinActivate
-			SendInput("!{F4}")
-			WinKill(,,2)
-			coordmode "pixel", "window"
-			coordmode "mouse", "window"
-			MouseMove(780, 13)
-			click
+			;WinActivate
+			;SendInput("!{F4}")
+			;WinKill(,,2)
+			;coordmode "pixel", "window"
+			;coordmode "mouse", "window"
+			;MouseMove(780, 13)
+			;click
+			ProcessClose("chrome.exe")
 		}
 	if WinExist("ahk_exe StreamLabels.exe")
 		{
-			WinActivate
-			SendInput("!{F4}")
-			WinClose(,,2)
+			;WinActivate
+			;SendInput("!{F4}")
+			;WinClose(,,2)
+			ProcessClose("StreamLabels.exe")
 		}
 	if WinExist("ahk_exe chatterino.exe")
 		{
-			WinActivate
-			SendInput("!{F4}")
-			WinClose(,,2)
+			;WinActivate
+			;SendInput("!{F4}")
+			;WinClose(,,2)
+			ProcessClose("chatterino.exe")
 		}
 	if WinExist("ahk_exe LioranBoard Receiver.exe")
 		{
-			WinRestore
-			WinActivate
-			SendInput("!{F4}")
-			WinClose(,,2)
+			;WinRestore
+			;WinActivate
+			;SendInput("!{F4}")
+			;WinClose(,,2)
+			ProcessClose("LioranBoard Receiver.exe")
 		}
 	if WinExist("ahk_exe ApplicationDj.exe")
 		{
-			WinRestore
-			WinActivate
-			SendInput("!{F4}")
-			WinClose(,,2)
+			;WinRestore
+			;WinActivate
+			;SendInput("!{F4}")
+			;WinClose(,,2)
+			ProcessClose("ApplicationDj.exe")
 		}
 	if WinExist("ahk_exe discord.exe")
 		WinMove 4480, -260, 1080, 1488
 	if WinExist("ahk_exe Docker Desktop.exe")
 		{
-			WinRestore
-			WinActivate
-			SendInput("!{F4}")
-			WinKill(,,2)
+			;WinRestore
+			;WinActivate
+			;SendInput("!{F4}")
+			;WinKill(,,2)
+			ProcessClose("Docker Desktop.exe")
 		}
 	if WinExist("ahk_exe Streamlabs Chatbot.exe")
 		{
-			WinActivate
-			SendInput("!{F4}")
-			WinClose(,,2)
-		}
-	if WinExist("ahk_exe Docker Desktop.exe")
-		{
-			WinRestore
-			WinActivate
-			SendInput("!{F4}")
-			WinKill(,,2)
+			;WinActivate
+			;SendInput("!{F4}")
+			;WinClose(,,2)
+			ProcessClose("Streamlabs Chatbot.exe")
 		}
 ExitApp
