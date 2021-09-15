@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.3
+;\\v2.4.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1
@@ -1072,7 +1072,7 @@ KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to 
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.2
+;		Fkey AutoLaunch \\ Last updated: v2.4.4
 ;
 ; ===========================================================================================================================================
 switchToExplorer()
@@ -1229,6 +1229,17 @@ switchToWindowSpy()
 		WinActivate "WindowSpy.ahk" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+switchToYourPhone()
+{
+	if not WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
+		Run "C:\Program Files\ahk\ahk\shortcuts\Your Phone.lnk"
+	GroupAdd "yourphone", "ahk_class ApplicationFrameWindow"
+	if WinActive("Your Phone")
+		GroupActivate "yourphone", "r"
+	else
+		if WinExist("Your Phone")
+		WinActivate "Your Phone" ;you have to use WinActivatebottom if you didn't create a window group.
+}
 
 ; ===========================================================================================================================================
 ; Old
