@@ -1,5 +1,6 @@
 ﻿if not WinExist("ahk_exe obs64.exe")
 {
+	SetWorkingDir A_ScriptDir
 SetWinDelay 0 ;makes windows move instantly
 	Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
@@ -93,6 +94,7 @@ SendInput "y{enter}"
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
 	if WinExist("ahk_exe Discord.exe")
 		WinMove 4480, 432, 1080, 797  ;moves into position
+	SetWorkingDir "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe" ;try to run it again since apparently running it once sometimes isn't enough
 }
 else
