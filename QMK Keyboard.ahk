@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.14
+;\\v2.1.15
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.2
 
@@ -34,6 +34,19 @@ unassigned() ;create a tooltip for unused keys
 	{
 		ToolTip("")
 	}
+}
+
+num0unassign() ;my numpad has a "000" key that actually (thankfully) sends 0 instead of Numpad0 which means we can block it. The below code supresses those 0 keystrokes and allows me to use my own code
+{
+	If (A_TimeSincePriorHotkey > 100) ;hyperclick
+		{
+			Return
+		}
+	else
+		{
+			KeyWait("0")
+			unassigned()
+		}
 }
 
 !+r::
@@ -111,6 +124,7 @@ NumpadEnter::unassigned()
 NumpadDot::unassigned()
 NumpadDiv::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Backspace::unassigned() ;assigned to after effects
+0::num0unassign()
 
 
 r::unassigned() ;this is here so manScale() can function properly, it's weird, ignore it
@@ -141,6 +155,7 @@ NumpadEnter::unassigned()
 NumpadDot::unassigned()
 NumpadDiv::unassigned()
 ;Backspace::unassigned() ;assigned to after effects
+0::num0unassign()
 
 
 
@@ -173,6 +188,7 @@ NumpadEnter::unassigned()
 NumpadDot::unassigned()
 NumpadDiv::unassigned()
 Backspace::switchToAE()
+0::num0unassign()
 
 
 
@@ -205,4 +221,5 @@ NumpadEnter::unassigned()
 NumpadDot::unassigned()
 NumpadDiv::unassigned()
 ;Backspace::unassigned() ;assigned to after effects
+0::num0unassign()
  */
