@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.4
+;\\v2.4.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1
@@ -1111,7 +1111,7 @@ if not WinExist("ahk_exe AfterFX.exe")
 	;Run, Adobe Premiere Pro.exe
 	;Adobe Premiere Pro CC 2017
 	; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
-	Run "Adobe AfterFX.exe"
+	Run "AfterFX.exe"
 	}
 else
 	if WinExist("ahk_exe AfterFX.exe")
