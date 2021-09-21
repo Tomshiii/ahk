@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.7
+;\\v2.4.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.4
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.1.15
+;\\v2.1.16
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1
@@ -354,8 +354,16 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-WheelRight::+Down ;Set shift down to "Go to next edit point on any track"
-WheelLeft::+Up ;Set shift up to "Go to previous edit point on any track
+WheelRight::
+{
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
+	SendInput("+{Down}") ;Set shift down to "Go to next edit point on any track"
+}
+WheelLeft::
+{
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
+	SendInput("+{Up}") ;Set shift down to "Go to next edit point on any track"
+}
 Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
 Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
 

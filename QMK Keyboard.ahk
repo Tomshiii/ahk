@@ -11,9 +11,9 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.15
+;\\v2.1.16
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.4.2
+;\\v2.4.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1
@@ -106,7 +106,7 @@ SC05C::unassigned()
 
 Numpad0::unassigned()
 Numpad1::gain("-2") ;REDUCE GAIN BY -2db
-SC05C & Numpad1::gainSecondary()
+SC05C & Numpad1::gainSecondary("SC05C", "Numpad1", "NumpadEnter")
 Numpad2::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 Numpad3::gain("6") ;INCREASE GAIN BY 6db
 Numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level

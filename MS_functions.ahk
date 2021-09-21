@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.6
+;\\v2.4.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1
@@ -871,7 +871,7 @@ vscode(script) ;a script to quickly naviate between my scripts
 
 ; ===========================================================================================================================================
 ;
-;		QMK Stuff \\ Last updated: v2.4
+;		QMK Stuff \\ Last updated: v2.4.7
 ;
 ; ===========================================================================================================================================
 ;All of these functions are just to allow QMK Keyboard.ahk to be more readable
@@ -950,6 +950,37 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 	blockOff()
 }
 
+hotkeyDeactivate()
+{
+	Hotkey("~Numpad0", "r", "On") ;all of these "hotkeys" allow me to use my numpad to input numbers instead of having to take my hand off my mouse to press the numpad on my actual keyboard
+	Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. If I put this value at something that's already defined, then the original macros will fire
+	;Hotkey("~SC05C & Numpad1", "Numpad1", "On")
+	Hotkey("~Numpad2", "r", "On")
+	Hotkey("~Numpad3", "r", "On")
+	Hotkey("~Numpad4", "r", "On")
+	Hotkey("~Numpad5", "r", "On")
+	Hotkey("~Numpad6", "r", "On")
+	Hotkey("~Numpad7", "r", "On")
+	Hotkey("~Numpad8", "r", "On")
+	Hotkey("~Numpad9", "r", "On")
+	Hotkey("~NumpadEnter", "r", "On")
+}
+
+hotkeyReactivate()
+{
+	Hotkey("Numpad0", "Numpad0")
+	Hotkey("Numpad1", "Numpad1")
+	Hotkey("Numpad2", "Numpad2")
+	Hotkey("Numpad3", "Numpad3")
+	Hotkey("Numpad4", "Numpad4")
+	Hotkey("Numpad5", "Numpad5")
+	Hotkey("Numpad6", "Numpad6")
+	Hotkey("Numpad7", "Numpad7")
+	Hotkey("Numpad8", "Numpad8")
+	Hotkey("Numpad9", "Numpad9")
+	Hotkey("NumpadEnter", "NumpadEnter")
+}
+
 manScale(key1, key2, keyend) ;a script that will warp to and press the scale button in premiere to manually input a value
 ;&key1 is the hotkey you use to activate this function
 ;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
@@ -991,33 +1022,12 @@ manScale(key1, key2, keyend) ;a script that will warp to and press the scale but
 		}
 	KeyWait(%&key1%) ;waits for you to let go of hotkey
 	KeyWait(%&key2%) ;waits for you to let go of hotkey
-		Hotkey("~Numpad0", "r", "On") ;all of these "hotkeys" allow me to use my numpad to input numbers instead of having to take my hand off my mouse to press the numpad on my actual keyboard
-		Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. If I put this value at something that's already defined, then the original macros will fire
-		;Hotkey("~SC05C & Numpad1", "Numpad1", "On")
-		Hotkey("~Numpad2", "r", "On")
-		Hotkey("~Numpad3", "r", "On")
-		Hotkey("~Numpad4", "r", "On")
-		Hotkey("~Numpad5", "r", "On")
-		Hotkey("~Numpad6", "r", "On")
-		Hotkey("~Numpad7", "r", "On")
-		Hotkey("~Numpad8", "r", "On")
-		Hotkey("~Numpad9", "r", "On")
-		Hotkey("~NumpadEnter", "r", "On")
+	hotkeyDeactivate()
 	SendInput "{Click}"
 	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
 	SendInput("{Enter}")
 	MouseMove %&xpos%, %&ypos%
-		Hotkey("~Numpad0", "Numpad0")
-		Hotkey("~Numpad1", "Numpad1")
-		Hotkey("~Numpad2", "Numpad2")
-		Hotkey("~Numpad3", "Numpad3")
-		Hotkey("~Numpad4", "Numpad4")
-		Hotkey("~Numpad5", "Numpad5")
-		Hotkey("~Numpad6", "Numpad6")
-		Hotkey("~Numpad7", "Numpad7")
-		Hotkey("~Numpad8", "Numpad8")
-		Hotkey("~Numpad9", "Numpad9")
-		Hotkey("~NumpadEnter", "NumpadEnter")
+	hotkeyReactivate()
 	Click("middle")
 	blockOff()
 }
@@ -1047,9 +1057,12 @@ gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure
 	SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}"
 }
 
-gainSecondary() ;a macro to open up the gain menu. This macro will check to ensure the timeline is in focus and a clip is selected
+gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro will check to ensure the timeline is in focus and a clip is selected
+;&key1 is the hotkey you use to activate this function
+;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
+;&keyend is whatever key you want the function to wait for before finishing
 {
-KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
 	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
@@ -1068,7 +1081,12 @@ KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to 
 				}
 		}
 	inputs:
+	KeyWait(%&key1%) ;waits for you to let go of hotkey
+	KeyWait(%&key2%) ;waits for you to let go of hotkey
+	hotkeyDeactivate()
 	SendInput "g"
+	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
+	hotkeyReactivate()
 }
 
 ; ===========================================================================================================================================
