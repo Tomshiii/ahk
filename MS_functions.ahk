@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.7
+;\\v2.4.8
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.1
@@ -871,7 +871,7 @@ vscode(script) ;a script to quickly naviate between my scripts
 
 ; ===========================================================================================================================================
 ;
-;		QMK Stuff \\ Last updated: v2.4.7
+;		QMK Stuff \\ Last updated: v2.4.8
 ;
 ; ===========================================================================================================================================
 ;All of these functions are just to allow QMK Keyboard.ahk to be more readable
@@ -1087,6 +1087,39 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 	SendInput "g"
 	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
 	hotkeyReactivate()
+}
+
+numpad000() ;this function is to suppress the multiple keystrokes the "000" key sends on my secondary numpad and will in the future be used to do... something
+{
+		static winc_presses := 0
+		if winc_presses > 0 ; SetTimer already started, so we log the keypress instead.
+		{
+			winc_presses += 1
+			return
+		}
+		; Otherwise, this is the first press of a new series. Set count to 1 and start
+		; the timer:
+		winc_presses := 1
+		SetTimer After400, -50 ; Wait for more presses within a 400 millisecond window.
+	
+		After400()  ; This is a nested function.
+		{
+			if winc_presses = 1 ; The key was pressed once.
+			{
+				sleep 10  ; Open a folder.
+			}
+			else if winc_presses = 2 ; The key was pressed twice.
+			{
+				; PUT CODE HERE LATER ````````````````````````````````
+			}
+			else if winc_presses > 2
+			{
+				sleep 10
+			}
+			; Regardless of which action above was triggered, reset the count to
+			; prepare for the next series of presses:
+			winc_presses := 0
+		}
 }
 
 ; ===========================================================================================================================================
