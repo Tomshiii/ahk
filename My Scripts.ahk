@@ -17,7 +17,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;\\v2.1.16
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.1
+;\\v2.1.1
 
 ; ============================================================================================================================================
 ;
