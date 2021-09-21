@@ -51,9 +51,9 @@ else
 
 
 next:
-MouseMove(%&ffX%, %&ffY%)
-MouseGetPos(&pix, &piy)
-If PixelSearch(&xcol, &ycol, %&pix% + "250", %&piy% - "10", %&pix% + "600", %&piy% + "40", 0xD8D8D8, 3)
+;MouseMove(%&ffX%, %&ffY%)
+;MouseGetPos(&pix, &piy)
+If PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ffY% + "40", 0xD8D8D8, 3)
     {
         MouseMove(%&xcol%, %&ycol%)
         Click()
@@ -63,7 +63,7 @@ If PixelSearch(&xcol, &ycol, %&pix% + "250", %&piy% - "10", %&pix% + "600", %&pi
     
 else
     {
-        If PixelSearch(&xcol, &ycol, %&pix% + "250", %&piy% - "10", %&pix% + "600", %&piy% + "40", 0x979797, 3)
+        If PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ffY% + "40", 0x979797, 3)
             {
                 MouseMove(%&xcol%, %&ycol%)
                 Click()
