@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.5
+;\\v2.4.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1
@@ -201,7 +201,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.4.3
+;		Premiere \\ Last updated: v2.4.6
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -323,7 +323,8 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 						return
 					}		
 			}
-		sleep 100 ;required, otherwise it can't know if you're trying to tap to reset
+		sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
+		;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
 		if GetKeyState(A_ThisHotkey, "P")
 			{
 				SendInput "{Click Down}"
