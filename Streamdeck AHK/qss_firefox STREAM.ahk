@@ -57,6 +57,7 @@ If PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ff
     {
         MouseMove(%&xcol%, %&ycol%)
         Click()
+        MouseMove(-100, 0,, "R") ;moves out of the way so imagesearch can work
         sleep 1000
         if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "system.png")
             Click(%&syX%, %&syY%)
@@ -77,6 +78,7 @@ else
             {
                 MouseMove(%&xcol%, %&ycol%)
                 Click()
+                MouseMove(-100, 0,, "R") ;moves out of the way so imagesearch can work
                 sleep 1000
                 if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "system.png")
                     Click(%&syX%, %&syY%)
