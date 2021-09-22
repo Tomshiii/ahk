@@ -10,10 +10,12 @@ coordmode "mouse", "window"
 SendInput("{tab}")
 MouseMove(274, 126)
 Click()
+sleep 100
 if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffDARK.png")
     goto next
 else
     {
+        sleep 100
         if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffLIGHT.png")
             goto next
         else
