@@ -8,7 +8,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.11
+;\\v2.1.12
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.3.19
 
@@ -40,20 +40,22 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 ;		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
 ;}
 
+/* ;added functionality in my main script to reload all scripts
 ^!r::
 {
-Reload
-Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
-Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
-if Result = "Yes"
-{
-	if WinExist("ahk_exe Code.exe")
-			WinActivate
-	else
-			Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-		}
+	Reload
+	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
+	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
+	if Result = "Yes"
+	{
+		if WinExist("ahk_exe Code.exe")
+				WinActivate
+		else
+				Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+	}
 }
+*/
 
 ; ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
