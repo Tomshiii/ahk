@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.9
+;\\v2.4.10
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.4
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.1.16
+;\\v2.1.18
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.1
@@ -171,11 +171,15 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 
+;The below scripts are to swap between virtual desktops
+F19 & XButton2::^#Right
+F19 & XButton1::^#Left
+
 ;The below scripts are to move windows around with just my mouse
-F19 & WheelUp::#Up
-F19 & WheelDown::#Down
-F19 & Xbutton2::#Left
-F19 & Xbutton1::#Right
+F20 & WheelUp::#Up
+F20 & WheelDown::#Down
+F20 & Xbutton2::#Right
+F20 & Xbutton1::#Left
 
 ;=============================================================================================================================================
 ;
