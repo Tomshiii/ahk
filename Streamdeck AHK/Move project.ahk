@@ -1,7 +1,7 @@
 #SingleInstance Force
 
 ;; This part makes you select the folder you wish to move
-SelectedFolder := DirSelect("*E:\", 3, "Pick the folder you wish to move.`nTake note of the folder name as you'll need`nto type it out in the next dialogue box")
+SelectedFolder := DirSelect("*E:\", 3, "Pick the folder you wish to move.")
 if SelectedFolder = ""
     return
 
