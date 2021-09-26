@@ -61,7 +61,7 @@ If PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ff
         Click()
         MouseMove(-100, 0,, "R") ;moves out of the way so imagesearch can work
         sleep 1000
-        if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "system.png")
+        if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "sample.png")
             Click(%&syX%, %&syY%)
         else
             {
@@ -82,7 +82,7 @@ else
                 Click()
                 MouseMove(-100, 0,, "R") ;moves out of the way so imagesearch can work
                 sleep 1000
-                if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "system.png")
+                if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "sample.png")
                     Click(%&syX%, %&syY%)
                 else
                     {
@@ -99,3 +99,5 @@ else
 sleep 200
 WinClose("Settings")
 ExitApp()
+
+;don't use system you dumbass
