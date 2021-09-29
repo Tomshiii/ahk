@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.9
+;\\v2.4.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.1
@@ -872,10 +872,15 @@ vscode(script) ;a script to quickly naviate between my scripts
 
 ; ===========================================================================================================================================
 ;
-;		QMK Stuff \\ Last updated: v2.4.8
+;		QMK Stuff \\ Last updated: v2.4.10
 ;
 ; ===========================================================================================================================================
-;All of these functions are just to allow QMK Keyboard.ahk to be more readable
+;All of these functions were created just to allow QMK Keyboard.ahk to be more readable
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		Premiere
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------
 movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 {
 	coords()
@@ -1088,6 +1093,52 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 	SendInput "g"
 	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
 	hotkeyReactivate()
+}
+
+tikproject() ;changes the sequence frame size to a vertical format for social media platforms like tiktok
+{
+	coordw()
+	SendInput("!s" "q")
+	WinWait("Sequence Settings")
+	sleep 500
+	MouseMove(0, 0)
+	if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1920.png")
+		{
+			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
+				{
+					MouseMove(%&xcol% + "3", %&ycol% + "3")
+					Click()
+					SendInput("^a{Del}" "1080{Tab}1920{Enter}")
+					sleep 50
+					if WinExist("Delete All Previews For This Sequence")
+						SendInput("{Enter}")
+				}
+			else
+				{
+					toolCust("can't find colour", "1000")
+				}
+		}
+		if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1280.png")
+			{
+				If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
+					{
+						MouseMove(%&xcol% + "3", %&ycol% + "3")
+						Click()
+						SendInput("^a{Del}" "720{Tab}1280{Enter}")
+						sleep 50
+						if WinExist("Delete All Previews For This Sequence")
+							SendInput("{Enter}")
+					}
+				else
+					{
+						toolCust("can't find colour", "1000")
+					}
+			}
+	
+	if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1080.png")
+		SendInput("{Enter}")
+	if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq720.png")
+		SendInput("{Enter}")
 }
 
 numpad000() ;this function is to suppress the multiple keystrokes the "000" key sends on my secondary numpad and will in the future be used to do... something
