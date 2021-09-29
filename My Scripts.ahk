@@ -192,7 +192,7 @@ WheelRight::
 		if GetKeyState("F14", "P")
 			SendInput("l" "{MButton 2}")
 		else
-			SendInput("{Right}" "!{Tab}") ;brings focus back to what you were doing, I originally had this as a middle mouse button, but if you accidentally WheelLeft while trying to open a new tab with the middle mouse button, you'd open 2 or 3 tabs instead of 1
+			SendInput("{Right}") ;brings focus back to what you were doing, I originally had this as a middle mouse button, but if you accidentally WheelLeft while trying to open a new tab with the middle mouse button, you'd open 2 or 3 tabs instead of 1
 	}
 }
 WheelLeft::
@@ -205,7 +205,7 @@ WheelLeft::
 			if GetKeyState("F14", "P")
 				SendInput("j" "{MButton 2}")
 			else
-				SendInput("{Left}" "!{Tab}") ;brings focus back to what you were doing, I originally had this as a middle mouse button, but if you accidentally WheelLeft while trying to open a new tab with the middle mouse button, you'd open 2 or 3 tabs instead of 1
+				SendInput("{Left}") ;brings focus back to what you were doing, I originally had this as a middle mouse button, but if you accidentally WheelLeft while trying to open a new tab with the middle mouse button, you'd open 2 or 3 tabs instead of 1
 		}
 }
 
