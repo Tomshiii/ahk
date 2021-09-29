@@ -465,6 +465,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 }
 
 psSave() ;This function is to speed through the twitch emote saving process. Doing this manually is incredibly tedious and annoying, so why do it manually?
+;This script will require the latest (or at least the version containing the "save as copy" window) version of photoshop to function
 ;PHOTOSHOP IS SLOW AS ALL HELL
 ;if things in this script don't work or get stuck, consider increasing the living hell out of the sleeps along the way
 {
@@ -517,7 +518,7 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 		else
 			goto dir
 	dir:
-	dir := DirSelect("My Computer", 3, "Pick the destination folder you wish everything to save to.")
+	dir := DirSelect("*::{20D04FE0-3AEA-1069-A2D8-08002B30309D}", 3, "Pick the destination folder you wish everything to save to.")
 		if dir = ""
 			return
 	next:
