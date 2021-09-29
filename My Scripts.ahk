@@ -184,6 +184,8 @@ F20 & Xbutton1::#Left
 #HotIf WinActive("ahk_exe firefox.exe")
 WheelRight::
 {
+	if A_PriorKey = "Mbutton"
+		return
 	if WinExist("YouTube")
 	{
 		WinActivate()
@@ -195,6 +197,8 @@ WheelRight::
 }
 WheelLeft::
 {
+	if A_PriorKey = "Mbutton"
+		return
 	if WinExist("YouTube")
 		{
 			WinActivate()
