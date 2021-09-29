@@ -184,21 +184,25 @@ F20 & Xbutton1::#Left
 #HotIf WinActive("ahk_exe firefox.exe")
 WheelRight::
 {
-	if WinExist("YouTube — Mozilla Firefox")
+	if WinExist("YouTube")
+	{
 		WinActivate()
-	if GetKeyState("RButton", "P")
-		SendInput("l" "{MButton 2}")
-	else
-		SendInput("{Right}" "{MButton 2}")
+		if GetKeyState("F14", "P")
+			SendInput("l" "{MButton 2}")
+		else
+			SendInput("{Right}" "{MButton 2}")
+	}
 }
 WheelLeft::
 {
-	if WinExist("YouTube — Mozilla Firefox")
-		WinActivate()
-	if GetKeyState("RButton", "P")
-		SendInput("j" "{MButton 2}")
-	else
-		SendInput("{Left}" "{MButton 2}")
+	if WinExist("YouTube")
+		{
+			WinActivate()
+			if GetKeyState("F14", "P")
+				SendInput("j" "{MButton 2}")
+			else
+				SendInput("{Left}" "{MButton 2}")
+		}
 }
 
 
