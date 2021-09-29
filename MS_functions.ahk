@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.10
+;\\v2.4.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -403,7 +403,7 @@ audioDrag(sfxName)
 
 ; ===========================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.4.1
+;		Photoshop \\ Last updated: v2.4.11
 ;
 ; ===========================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
@@ -465,6 +465,8 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 }
 
 psSave() ;This function is to speed through the twitch emote saving process. Doing this manually is incredibly tedious and annoying, so why do it manually?
+;PHOTOSHOP IS SLOW AS ALL HELL
+;if things in this script don't work or get stuck, consider increasing the living hell out of the sleeps along the way
 {
 	save(size)
 	{
@@ -484,14 +486,20 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 		coordw()
 		sleep 1000
 		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
-			MouseMove(0, 0)
+			{
+				MouseMove(0, 0)
+				SendInput("{Enter 2}")
+			}
+
 		else
 			{
 				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
 					{
 						MouseMove(%&xpng%, %&ypng%)
 						SendInput("{Click}")
+						sleep 50
 						MouseMove(0, 0)
+						SendInput("{Enter}")
 					}
 				else
 					{
@@ -509,41 +517,41 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 		else
 			goto dir
 	dir:
-	Dir := InputBox("Please enter your save directory in full", "Save Directory", "w293 h100")
-		if Dir.Result = "Cancel"
+	dir := DirSelect("My Computer", 3, "Pick the destination folder you wish everything to save to.")
+		if dir = ""
 			return
-		else
-			goto next
 	next:
 	;=============================112x112
 	save("112")
-	SendInput(Emote.Value "_112")
-		image()
-		sleep 300
-	SendInput("{F4}" "^a")
-	SendInput(Dir.Value "{Enter}")
-	SendInput("{Tab 5}" "{Enter}")
 	sleep 1000
+	SendInput("{F4}" "^a")
+	SendInput(Dir "{Enter}")
+	sleep 1000
+	SendInput("+{Tab 9}")
+	sleep 100
+	SendInput(Emote.Value "_112")
+	image()
+	WinWait("PNG Format Options")
 	SendInput("{Enter}")
 	;=============================56x56
 	save("56")
+	SendInput("{F4}" "^a")
+	SendInput(Dir "{Enter}")
+	sleep 1000
+	SendInput("+{Tab 9}")
 	SendInput(Emote.Value "_56")
 	image()
-		sleep 300
-	SendInput("{F4}" "^a")
-	SendInput(Dir.Value "{Enter}")
-	SendInput("{Tab 5}" "{Enter}")
-	sleep 1000
+	WinWait("PNG Format Options")
 	SendInput("{Enter}")
 	;=============================28x28
 	save("28")
-	SendInput(Emote.Value "_28")
-		image()
-		sleep 300
 	SendInput("{F4}" "^a")
-	SendInput(Dir.Value "{Enter}")
-	SendInput("{Tab 5}" "{Enter}")
+	SendInput(Dir "{Enter}")
 	sleep 1000
+	SendInput("+{Tab 9}")
+	SendInput(Emote.Value "_28")
+	image()
+	WinWait("PNG Format Options")
 	SendInput("{Enter}")
 	blockOff()
 }
