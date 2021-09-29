@@ -14,10 +14,10 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.4
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.1.18
+;\\v2.1.19
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.1.1
+;\\v2.1.2
 
 ; ============================================================================================================================================
 ;

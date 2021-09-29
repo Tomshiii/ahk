@@ -13,7 +13,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 ;\\v2.3.19
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.1.1
+;\\v2.1.2
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
