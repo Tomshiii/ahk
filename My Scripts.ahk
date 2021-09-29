@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.10
+;\\v2.4.11
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -67,7 +67,6 @@ RWin::switchToVSC() ;run vscode
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
 PgDn::switchToFirefox() ;open firefox
 PgDn & End::switchToOtherFirefoxWindow() ;swap between firefox windows
-PrintScreen::switchToYourPhone()
 
 ;These two scripts are to open highlighted text in the ahk documentation
 AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation

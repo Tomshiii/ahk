@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.8
+;\\v2.4.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.1
@@ -201,7 +201,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.4.6
+;		Premiere \\ Last updated: v2.4.9
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -292,6 +292,7 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
+	SendInput("^+4") ;set to effect controls
 		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			{
 				If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
