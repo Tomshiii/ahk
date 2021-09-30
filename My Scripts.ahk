@@ -395,12 +395,12 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-WheelRight::
+WheelRight:: ;goes to the next cut point towards the right
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
 	SendInput("+{Down}") ;Set shift down to "Go to next edit point on any track"
 }
-WheelLeft::
+WheelLeft:: ;goes to the next cut point towards the left
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
 	SendInput("+{Up}") ;Set shift down to "Go to next edit point on any track"
