@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.12
+;\\v2.4.13
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -324,6 +324,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		blockOff()
 	}
 	KeyWait(A_PriorKey)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
+	SendInput("^+6") ;set control shift 6 to the projects window
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos

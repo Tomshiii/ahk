@@ -204,6 +204,13 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 ;		Premiere \\ Last updated: v2.4.9
 ;
 ; ===========================================================================================================================================
+;I have focus for certain windows within premiere set with the below hotkeys (these ofcourse have to be set manually)
+;^+4 ;Effect Controls
+;^+5 ;Media Browser
+;^+6 ;Projects
+;^+7 ;Effects
+;^+9 ;Timelines
+
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
 {
