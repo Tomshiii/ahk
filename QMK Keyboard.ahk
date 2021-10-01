@@ -11,9 +11,9 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.19
+;\\v2.1.20
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.4.10
+;\\v2.4.12
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -100,13 +100,13 @@ Numpad3::gain("6") ;INCREASE GAIN BY 6db
 Numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
 Numpad5::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
 Numpad6::reset()  ;This script moves to the reset button to reset the "motion" effects
-Numpad7::valuehold("scale.png", "scale2.png", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad7::valuehold("scale", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 SC05C & Numpad7::manScale("SC05C", "Numpad7", "NumpadEnter") ;manually input a scale value
-Numpad8::valuehold("position.png", "position2.png", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-Numpad9::valuehold("position.png", "position2.png", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad8::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+Numpad9::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 ;numpadSub::unassigned() ;assigned to file explorer
-NumpadMult::valuehold("rotation.png", "rotation2.png", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+NumpadMult::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 NumpadAdd::unassigned()
 NumpadEnter::unassigned()
 NumpadDot::unassigned()
@@ -116,6 +116,34 @@ SC00B::unassigned()
 
 
 r::unassigned() ;this is here so manScale() can function properly, it's weird, ignore it
+
+;===========================================================================
+;
+#HotIf WinActive("ahk_exe AfterFX.exe") and getKeyState("F24", "P")
+;
+;===========================================================================
+SC05C::unassigned()
+
+Numpad0::unassigned()
+Numpad1::unassigned()
+Numpad2::unassigned()
+Numpad3::unassigned()
+Numpad4::unassigned()
+Numpad5::unassigned()
+Numpad6::unassigned()
+Numpad7::aevaluehold("s", "scale", "0")
+Numpad8::aevaluehold("p", "position", "0")
+Numpad9::aevaluehold("p", "position", "30")
+
+;numpadSub::unassigned() ;assigned to file explorer
+NumpadMult::aevaluehold("r", "rotation", "30")
+;NumpadAdd::unassigned() ;assigned to premiere
+NumpadEnter::unassigned()
+NumpadDot::unassigned()
+NumpadDiv::unassigned()
+;Backspace::unassigned() ;assigned to after effects
+SC00B::unassigned()
+
 
 ;=============================================================================================================================================
 ;

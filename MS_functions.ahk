@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.11
+;\\v2.4.12
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -29,6 +29,7 @@
 ;EnvSet allows you to store information to call later, via: EnvGet("Discord") for example, which cuts out the need to write ' A_WorkingDir "\ImageSearch\Discord\photoexample.png" ' for every piece of code
 EnvSet("Discord", A_WorkingDir "\ImageSearch\Discord\")
 EnvSet("Premiere", A_WorkingDir "\ImageSearch\Premiere\")
+EnvSet("AE", A_WorkingDir "\ImageSearch\AE\")
 EnvSet("Photoshop", A_WorkingDir "\ImageSearch\Photoshop\")
 EnvSet("Resolve", A_WorkingDir "\ImageSearch\Resolve\")
 EnvSet("VSCode", A_WorkingDir "\ImageSearch\VSCode\")
@@ -201,7 +202,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.4.9
+;		Premiere \\ Last updated: v2.4.12
 ;
 ; ===========================================================================================================================================
 ;I have focus for certain windows within premiere set with the below hotkeys (these ofcourse have to be set manually)
@@ -291,7 +292,7 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 }
  */
 
-valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
 ;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
 ;&filepath2 is the png name of the image ImageSearch is going to use to find what value you want to adjust (the opposite of above)
 ;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
@@ -300,36 +301,27 @@ valuehold(filepath, filepath2, optional) ;a preset to warp to one of a videos va
 	blockOn()
 	MouseGetPos &xpos, &ypos
 	SendInput("^+4") ;set to effect controls
-		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
-			{
-				If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
-					MouseMove(%&xcol% + %&optional%, %&ycol%)
-				else
-					{
-						blockOff()
-						toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-						return
-					}			
-			}
+		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+			goto colour
 		else ;this is for when you have the "toggle animation" keyframe button pressed
 			{
-                If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath2%) ;finds the value you want to adjust, then finds the value adjustment to the right of it
-                    {
-                        If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
-                            MouseMove(%&xcol% + %&optional%, %&ycol%)
-                        else
-                            {
-                                blockOff()
-                                toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-                                return
-                            }			
-                    }
+                If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+                    goto colour
 				else ;if everything fails, this else will trigger
 					{
 						blockOff()
 						toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 						return
 					}		
+			}
+		colour:
+		If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+			MouseMove(%&xcol% + %&optional%, %&ycol%)
+		else
+			{
+				blockOff()
+				toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+				return
 			}
 		sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
 		;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
@@ -406,6 +398,74 @@ audioDrag(sfxName)
 		MouseMove(%&xpos%, %&ypos%)
 		SendInput("{Click Up}")
 		blockOff()
+}
+
+; ===========================================================================================================================================
+;
+;		After Effects \\ Last updated: v2.4.12
+;
+; ===========================================================================================================================================
+aevaluehold(button, property, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+;&button is the hotkey within after effects that's used to open up the property you want to adjust
+;&property is the filename of just the property itself ie. "scale" not "scale.png" or "scale2"
+;&optional is for when you need the mouse to move extra coords over to avoid the first "blue" text for some properties
+{
+	coordw()
+	MouseGetPos(&x, &y)
+	if(%&x% > 550 and %&x% < 2542) and (%&y% > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
+		{	
+			blockOn()
+			Click()
+			SendInput("a") ;swaps to a redundant value (in this case "anchor point")
+			sleep 50
+			SendInput(%&button%) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
+			sleep 100
+			if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% ".png")
+				goto colour
+			else
+				{
+					if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "2.png")
+						goto colour
+					else
+						{
+							if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "Key.png")
+								goto colour
+							else
+								{
+									if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "Key2.png")
+										goto colour
+									else
+										{
+											blockOff()
+											toolFind("the property you're after", "1000")
+											return
+										}
+								}
+						}
+				}
+
+			colour:
+			If PixelSearch(&xcol, &ycol, %&propX%, %&propY%, %&propX% + "740", %&propY% + "40", 0x288ccf, 3)
+				MouseMove(%&xcol% + %&optional%, %&ycol%)
+			;sleep 50
+			if GetKeyState(A_ThisHotkey, "P")
+				{
+					SendInput "{Click Down}"
+					blockOff()
+					KeyWait A_ThisHotkey
+					SendInput "{Click Up}"
+					MouseMove %&x%, %&y%
+				}
+			else ;if you tap, this function will then right click and menu to the "reset" option in the right click context menu
+				{
+					Click("Right")
+					SendInput("{Up 6}" "{Enter}")
+					MouseMove %&x%, %&y%
+					blockOff()
+				}
+		}
+	else
+		toolCust("you're not hovering a track", "1000")
 }
 
 ; ===========================================================================================================================================
