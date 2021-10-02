@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.12
+;\\v2.4.13
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -402,7 +402,7 @@ audioDrag(sfxName)
 
 ; ===========================================================================================================================================
 ;
-;		After Effects \\ Last updated: v2.4.12
+;		After Effects \\ Last updated: v2.4.13
 ;
 ; ===========================================================================================================================================
 aevaluehold(button, property, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
@@ -419,7 +419,7 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 			SendInput("a") ;swaps to a redundant value (in this case "anchor point")
 			sleep 50
 			SendInput(%&button%) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
-			sleep 100
+			sleep 200 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
 			if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% ".png")
 				goto colour
 			else

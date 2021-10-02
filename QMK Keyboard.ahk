@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.20
+;\\v2.1.21
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.12
 
@@ -140,7 +140,7 @@ NumpadMult::aevaluehold("r", "rotation", "30")
 ;NumpadAdd::unassigned() ;assigned to premiere
 NumpadEnter::unassigned()
 NumpadDot::unassigned()
-NumpadDiv::unassigned()
+NumpadDiv::aevaluehold("t", "opacity", "0")
 ;Backspace::unassigned() ;assigned to after effects
 SC00B::unassigned()
 
