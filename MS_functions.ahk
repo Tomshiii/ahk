@@ -3,7 +3,7 @@
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.13
+;\\v2.4.14
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -202,7 +202,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.4.12
+;		Premiere \\ Last updated: v2.4.14
 ;
 ; ===========================================================================================================================================
 ;I have focus for certain windows within premiere set with the below hotkeys (these ofcourse have to be set manually)
@@ -307,12 +307,22 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 			{
                 If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
                     goto colour
-				else ;if everything fails, this else will trigger
+				else
 					{
-						blockOff()
-						toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-						return
-					}		
+						If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+							goto colour
+						else
+							{
+								If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+									goto colour
+								else
+									{
+										blockOff()
+										toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+										return
+									}
+							}
+					}				
 			}
 		colour:
 		If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust

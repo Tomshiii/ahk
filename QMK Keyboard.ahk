@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.21
+;\\v2.1.22
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.12
 
@@ -107,7 +107,7 @@ Numpad9::valuehold("position", "60") ;press then hold this hotkey and drag to in
 
 ;numpadSub::unassigned() ;assigned to file explorer
 NumpadMult::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-NumpadAdd::unassigned()
+NumpadAdd::valuehold("opacity", "0")
 NumpadEnter::unassigned()
 NumpadDot::unassigned()
 NumpadDiv::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
