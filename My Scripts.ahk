@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.14
+;\\v2.4.15
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -56,6 +56,28 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
+#+r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
+{
+	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
+	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+	if WinExist("QMK Keyboard.ahk")
+		PostMessage 0x0111, 65303,,, "QMK Keyboard.ahk - AutoHotkey"
+	if WinExist("Resolve_Example.ahk")
+		PostMessage 0x0111, 65303,,, "Resolve_Example.ahk - AutoHotkey"
+	if WinExist("textreplace.ahk")
+		PostMessage 0x0111, 65303,,, "textreplace.ahk - AutoHotkey"
+	Reload
+	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
+	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
+		if Result = "Yes"
+			{
+				if WinExist("ahk_exe Code.exe")
+						WinActivate
+				else
+					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+			}
+}
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		launch programs
@@ -93,10 +115,12 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
-;		other - NOT Premiere
+;		other - NOT an editor
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
+GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
+GroupAdd("Editors", "ahk_exe AfterFX.exe")
+#HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
 	coords()
@@ -121,27 +145,6 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 	;else
 	;	Run "C:\Users\Tom\AppData\Local\\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
 ;}
-
-!r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
-{
-	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
-	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-	if WinExist("QMK Keyboard.ahk")
-		PostMessage 0x0111, 65303,,, "QMK Keyboard.ahk - AutoHotkey"
-	if WinExist("Resolve_Example.ahk")
-		PostMessage 0x0111, 65303,,, "Resolve_Example.ahk - AutoHotkey"
-	Reload
-	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
-	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
-		if Result = "Yes"
-			{
-				if WinExist("ahk_exe Code.exe")
-						WinActivate
-				else
-					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-			}
-}
 
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 {
