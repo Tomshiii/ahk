@@ -11,9 +11,9 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2
+;\\v2.2.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.4.12
+;\\v2.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -92,7 +92,7 @@ unassigned() ;create a tooltip for unused keys
 F24::return ;this line is mandatory for proper functionality
 SC05C::unassigned()
 
-Numpad0::tikproject()
+Numpad0::unassigned()
 Numpad1::gain("-2") ;REDUCE GAIN BY -2db
 SC05C & Numpad1::gainSecondary("SC05C", "Numpad1", "NumpadEnter")
 Numpad2::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
