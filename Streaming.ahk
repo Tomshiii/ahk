@@ -7,6 +7,8 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\streaming.ico") ;changes the icon th
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 #SingleInstance Force
 
+replayBuffer := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Replay Buffer")
+sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ;
 ;	This file exists because obs must be run as admin for the best performance
@@ -38,8 +40,8 @@ F16::  ;temporary way to play full mii wii song using lioranboard
 	if WinExist("ahk_exe obs64.exe")
 		WinActivate 
 	sleep 1000
-	SendInput "^p" ;Main replay buffer hotkey must be set to this
-	SendInput "^+8" ;Source Record OBS Plugin replay buffer must be set to this
+	SendInput(replayBuffer) ;Main replay buffer hotkey must be set to this
+	SendInput(sourceRecord1) ;Source Record OBS Plugin replay buffer must be set to this
 	;sleep 10
 	;SendInput, ^+9 ;Source Record OBS Plugin replay buffer must be set to this
 	sleep 10

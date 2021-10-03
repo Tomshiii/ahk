@@ -1,4 +1,5 @@
-﻿if not WinExist("ahk_exe obs64.exe")
+﻿sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
+if not WinExist("ahk_exe obs64.exe")
 {
 	SetWorkingDir A_ScriptDir
 SetWinDelay 0 ;makes windows move instantly
@@ -34,7 +35,7 @@ SetWinDelay 0 ;makes windows move instantly
 		sleep 200
 		SendInput "{TAB 55}"
 		sleep 200
-		SendInput "^+8"
+		SendInput(sourceRecord1)
 		sleep 1000
 		SendInput "{TAB}"
 		SendInput "+{TAB 57}"
@@ -98,6 +99,6 @@ SendInput "y{enter}"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe" ;try to run it again since apparently running it once sometimes isn't enough
 }
 else
-    sleep 100
+    goto theend
 theend:
 ExitApp

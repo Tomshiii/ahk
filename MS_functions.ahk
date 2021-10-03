@@ -1,9 +1,10 @@
 ﻿SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
+#Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.14
+;\\v2.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -202,16 +203,9 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.4.14
+;		Premiere \\ Last updated: v2.5
 ;
 ; ===========================================================================================================================================
-;I have focus for certain windows within premiere set with the below hotkeys (these ofcourse have to be set manually)
-;^+4 ;Effect Controls
-;^+5 ;Media Browser
-;^+6 ;Projects
-;^+7 ;Effects
-;^+9 ;Timelines
-
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
 {
@@ -219,18 +213,18 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
-		SendInput "^+7" ;set ctrl shift 7 to the "effects window"
-		SendInput "^b" ;set ctrl b to "select find box"
-		SendInput "^a{DEL}"
+		SendInput(effectsWindow) ;adjust this in the ini file
+		SendInput(findBox) ;adjust this in the ini file
+		SendInput("^a{DEL}")
 		sleep 60
 		coordc() ;change caret coord mode to window
 		CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
 		MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
 		SendInput %&item% ;create a preset of any effect, must be in a folder as well
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
-		SendInput "{Click Down}"
+		SendInput("{Click Down}")
 		MouseMove %&xpos%, %&ypos% ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. If this happens to you, add ', "2" ' to the end of this mouse move
-		SendInput "{Click Up}"
+		SendInput("{Click Up}")
 	blockOff()
 }
 
@@ -243,7 +237,7 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 	coordw()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-		SendInput "^+9" ;set ctrl shift 9 to highlight the "timeline"
+		SendInput(timelineWindow) ;adjust this in the ini file
 		SendInput "^{F5}" ;changes the track colour so I know that the clip has been zoomed in
 		If ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
 			goto next
@@ -300,7 +294,7 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	SendInput("^+4") ;set to effect controls
+	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
 		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			goto colour
 		else ;this is for when you have the "toggle animation" keyframe button pressed
@@ -364,12 +358,12 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 
 audioDrag(sfxName)
 {
-	SendInput "^+5" ;highlights the media browser
+	SendInput(mediaBrowser) ;highlights the media browser check the keyboard shortcut ini file to adjust hotkeys
 	;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
-		SendInput "^+5" ;highlights the media browser
+		SendInput(mediaBrowser) ;highlights the media browser check the keyboard shortcut ini file to adjust hotkeys
 		sleep 10
 		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
 			{
@@ -389,7 +383,7 @@ audioDrag(sfxName)
 					}
 			}
 		next:
-		SendInput "^b" ;Requires you to set ctrl b to select find box
+		SendInput(findBox) ;adjust this in the keyboard shortcuts ini file
 		coordc()
 		SendInput("^a{DEL}") ;delets anything that might be in the search box
 		SendInput(%&sfxName%)
@@ -412,7 +406,7 @@ audioDrag(sfxName)
 
 ; ===========================================================================================================================================
 ;
-;		After Effects \\ Last updated: v2.4.13
+;		After Effects \\ Last updated: v2.5
 ;
 ; ===========================================================================================================================================
 aevaluehold(button, property, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
@@ -426,7 +420,7 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 		{	
 			blockOn()
 			Click()
-			SendInput("a") ;swaps to a redundant value (in this case "anchor point")
+			SendInput(anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) check the keyboard shortcut ini file to adjust hotkeys
 			sleep 50
 			SendInput(%&button%) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
 			sleep 200 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
@@ -455,7 +449,7 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 				}
 
 			colour:
-			If PixelSearch(&xcol, &ycol, %&propX%, %&propY%, %&propX% + "740", %&propY% + "40", 0x288ccf, 3)
+			If PixelSearch(&xcol, &ycol, %&propX%, %&propY% + "8", %&propX% + "740", %&propY% + "40", 0x288ccf, 3)
 				MouseMove(%&xcol% + %&optional%, %&ycol%)
 			;sleep 50
 			if GetKeyState(A_ThisHotkey, "P")
@@ -480,7 +474,7 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 
 ; ===========================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.4.11
+;		Photoshop \\ Last updated: v2.5
 ;
 ; ===========================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
@@ -507,7 +501,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 		}
 	else
 		{
-			SendInput("^t") ;if you aren't in the free transform it'll simply press ctrl t to get you into it
+			SendInput(freeTransform) ;if you aren't in the free transform it'll simply press your hotkey to get you into it. check the ini file to adjust this hotkey
 			ToolTip("we must wait for photoshop`nbecause it's slow as hell")
 			sleep 300 ;photoshop is slow
 			ToolTip("")
@@ -550,11 +544,11 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 	{
 		WinActivate("ahk_exe Photoshop.exe")
 		blockOn()
-		SendInput("^!i")
+		SendInput(imageSize) ;check the keyboard shortcut ini file
 		WinWait("Image Size")
 		SendInput(%&size% "{tab 2}" %&size% "{Enter}")
 		sleep 1000
-		SendInput("^!s")
+		SendInput(saveasCopy) ;check the keyboard shortcut ini file
 		WinWait("Save a Copy")
 	}
 	image()
@@ -958,7 +952,7 @@ vscode(script) ;a script to quickly naviate between my scripts
 
 ; ===========================================================================================================================================
 ;
-;		QMK Stuff \\ Last updated: v2.4.10
+;		QMK Stuff \\ Last updated: v2.5
 ;
 ; ===========================================================================================================================================
 ;All of these functions were created just to allow QMK Keyboard.ahk to be more readable
@@ -1031,7 +1025,7 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 				}
 		}
 	inputs:
-		SendInput "^+9"
+		SendInput(timelineWindow) ;check the keyboard shortcut ini file to adjust hotkeys
 		SendInput "^{F1}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 		;MouseMove 359, 1063 ;location for the reset arrow
 		if ImageSearch(&xcol, &ycol, %&x2%, %&y2% - "20", %&x2% + "700", %&y2% + "20", "*2 " EnvGet("Premiere") "reset.png") ;this will look for the reset button directly next to the "motion" value
@@ -1131,7 +1125,7 @@ gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
 	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
-			SendInput("^+9" "d")
+			SendInput(timelineWindow selectAtPlayhead) ;check the keyboard shortcut ini file to adjust hotkeys
 			goto inputs
 		}
 	else
@@ -1158,7 +1152,7 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
 	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
-			SendInput("^+9" "d")
+			SendInput(timelineWindow selectAtPlayhead) ;check the keyboard shortcut ini file to adjust hotkeys
 			goto inputs
 		}
 	else
@@ -1176,7 +1170,7 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 	KeyWait(%&key1%) ;waits for you to let go of hotkey
 	KeyWait(%&key2%) ;waits for you to let go of hotkey
 	hotkeyDeactivate()
-	SendInput "g"
+	SendInput(gainAdjust) ;check the keyboard shortcut ini file to adjust hotkeys
 	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
 	hotkeyReactivate()
 }

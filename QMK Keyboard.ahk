@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.22
+;\\v2.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.4.12
 
@@ -131,16 +131,16 @@ Numpad3::unassigned()
 Numpad4::unassigned()
 Numpad5::unassigned()
 Numpad6::unassigned()
-Numpad7::aevaluehold("s", "scale", "0")
-Numpad8::aevaluehold("p", "position", "0")
-Numpad9::aevaluehold("p", "position", "30")
+Numpad7::aevaluehold(scaleProp, "scale", "0") ;check the keyboard shortcut ini file to adjust hotkeys
+Numpad8::aevaluehold(positionProp, "position", "0") ;check the keyboard shortcut ini file to adjust hotkeys
+Numpad9::aevaluehold(positionProp, "position", "30") ;check the keyboard shortcut ini file to adjust hotkeys
 
 ;numpadSub::unassigned() ;assigned to file explorer
-NumpadMult::aevaluehold("r", "rotation", "30")
+NumpadMult::aevaluehold(rotationProp, "rotation", "30") ;check the keyboard shortcut ini file to adjust hotkeys
 ;NumpadAdd::unassigned() ;assigned to premiere
 NumpadEnter::unassigned()
 NumpadDot::unassigned()
-NumpadDiv::aevaluehold("t", "opacity", "0")
+NumpadDiv::aevaluehold(opacityProp, "opacity", "0") ;check the keyboard shortcut ini file to adjust hotkeys
 ;Backspace::unassigned() ;assigned to after effects
 SC00B::unassigned()
 

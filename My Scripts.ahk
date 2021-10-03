@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.15
+;\\v2.5
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.4.4
+;\\v2.5
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.1.19
+;\\v2.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -272,9 +272,9 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
  */
 ;}
 
-XButton1::mousedrag("h","P") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-+z::mousedrag("z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
+XButton1::mousedrag(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+Xbutton2::mousedrag(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+z::mousedrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 !g::SendInput("!{t}" "b{Right}g") ;open gaussian blur
 F1::psSave()
 
@@ -284,10 +284,10 @@ F1::psSave()
 ;
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
-Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset
-Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-WheelRight::k
-WheelLeft::j
+Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton2::mousedrag(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+WheelRight::nextKeyframe ;check the keyboard shortcut ini file to adjust hotkeys
+WheelLeft::previousKeyframe ;check the keyboard shortcut ini file to adjust hotkeys
 
 ;=============================================================================================================================================
 ;
@@ -299,7 +299,7 @@ WheelLeft::j
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
-SC03A & z::^+!z ;\\set zoom out to ^+!z\\ ;idk why tf I need the scancode for capslock here but I blame premiere
+SC03A & z::zoomOut ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coords()
@@ -330,7 +330,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	}
 	KeyWait(A_PriorKey)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
-	SendInput("^+6") ;set control shift 6 to the projects window
+	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	blockOn()
 	coords()
 	MouseGetPos &xpos, &ypos
@@ -370,7 +370,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	blockOn()
 	coordw()
 	MouseGetPos &xpos, &ypos
-		SendInput("^t")
+		SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
 		sleep 100
 		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")
 			{
@@ -403,15 +403,15 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 WheelRight:: ;goes to the next cut point towards the right
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	SendInput("+{Down}") ;Set shift down to "Go to next edit point on any track"
+	SendInput(nextEditPoint) ;Set this shortcut in the keyboards shortcut ini file
 }
 WheelLeft:: ;goes to the next cut point towards the left
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	SendInput("+{Up}") ;Set shift down to "Go to next edit point on any track"
+	SendInput(previousEditPoint) ;Set this shortcut in the keyboards shortcut ini file
 }
-Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+Xbutton1::nudgeDown ;Set ctrl w to "Nudge Clip Selection Down"
+Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F15
 F20::audioDrag("bleep")
