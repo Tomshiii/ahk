@@ -212,6 +212,16 @@ WheelLeft::
 		}
 }
 
+Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mouse script, but fits in with the firefox #hotif
+{
+	if WinExist("YouTube")
+		{
+			WinActivate()
+			SendInput("{Space}")
+		}
+	else
+		SendInput("{Media_Play_Pause}")
+}
 
 ;=============================================================================================================================================
 ;
