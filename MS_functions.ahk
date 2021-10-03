@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.1
+;\\v2.5.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -203,7 +203,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5
+;		Premiere \\ Last updated: v2.5.2
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -334,7 +334,7 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 				SendInput "{Click Down}"
 				blockOff()
 				KeyWait A_ThisHotkey
-				SendInput "{Click Up}"
+				SendInput("{Click Up}" "{Enter}")
 				MouseMove %&xpos%, %&ypos%
 			}
 		else
@@ -1049,6 +1049,7 @@ hotkeyDeactivate()
 	Hotkey("~Numpad7", "r", "On")
 	Hotkey("~Numpad8", "r", "On")
 	Hotkey("~Numpad9", "r", "On")
+	Hotkey("NumpadDot", "e", "On")
 	Hotkey("~NumpadEnter", "r", "On")
 }
 
@@ -1064,10 +1065,12 @@ hotkeyReactivate()
 	Hotkey("Numpad7", "Numpad7")
 	Hotkey("Numpad8", "Numpad8")
 	Hotkey("Numpad9", "Numpad9")
+	Hotkey("NumpadDot", "NumpadDot")
 	Hotkey("NumpadEnter", "NumpadEnter")
 }
 
-manScale(key1, key2, keyend) ;a script that will warp to and press the scale button in premiere to manually input a value
+manInput(property, optional, key1, key2, keyend) ;a script that will warp to and press any value in premiere to manually input a number
+;&property is the value you want to adjust
 ;&key1 is the hotkey you use to activate this function
 ;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
 ;&keyend is whatever key you want the function to wait for before finishing
@@ -1075,10 +1078,10 @@ manScale(key1, key2, keyend) ;a script that will warp to and press the scale but
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "scale.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		{
 			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
-				MouseMove(%&xcol%, %&ycol%)
+				MouseMove(%&xcol% + %&optional%, %&ycol%)
 			else
 				{
 					blockOff()
@@ -1088,10 +1091,10 @@ manScale(key1, key2, keyend) ;a script that will warp to and press the scale but
 		}
 	else ;this is for when you have the "toggle animation" keyframe button pressed
 		{
-			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 				{
 					If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
-						MouseMove(%&xcol%, %&ycol%)
+						MouseMove(%&xcol% + %&optional%, %&ycol%)
 					else
 						{
 							blockOff()
