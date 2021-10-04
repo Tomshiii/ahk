@@ -3,7 +3,7 @@ if not WinExist("ahk_exe obs64.exe")
 {
 	SetWorkingDir A_ScriptDir
 SetWinDelay 0 ;makes windows move instantly
-	Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
+	Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
 	Result := MsgBox("have you started the goxlr bruh",, 1)
 	if Result = "OK"

@@ -1,5 +1,5 @@
 #SingleInstance Force
-SetWorkingDir A_ScriptDir
+SetWorkingDir "C:\Program Files\ahk\ahk\"
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\streaming.ico") ;changes the icon this script uses in the taskbar
@@ -18,7 +18,7 @@ sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", 
 ;
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ; This is just so I have a way to relaunch it manually as admin for debugging purposes
-F6::Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
+F6::Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
 
 ;===========================================================================================================================================================================
 ;

@@ -1,7 +1,7 @@
 ﻿if not WinExist("ahk_exe obs64.exe")
 {
 ;F16:: ;opens streamelements obs and swaps to botshi profile
-	Run '*RunAs "C:\Program Files\ahk\ahk\Streaming.ahk"'
+	Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
 	MsgBox("have you opened the goxlr stuff yet bud")
 	Run "C:\Program Files\ahk\ahk\shortcuts\BOTSHI.lnk" ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
 	;Run, C:\Program Files\ahk\obs64.lnk
