@@ -328,16 +328,6 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
-	move()
-	{
-		MouseMove(%&prx% + "5", %&pry% +"3")
-		SendInput("{Click Down}")
-		Sleep 100
-		MouseMove 2562, 223, "2"
-		SendInput("{Click Up}")
-		MouseMove(%&xpos%, %&ypos%)
-		blockOff()
-	}
 	KeyWait(A_PriorKey)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
@@ -345,15 +335,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	coords()
 	MouseGetPos &xpos, &ypos
 	If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
-		{
-			move()
-		}
+		goto move
 	else
 		{
 			If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
-			{
-				move()
-			}
+				goto move
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
@@ -361,7 +347,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 					return
 				}
 		}
-
+	move:
+	MouseMove(%&prx% + "5", %&pry% +"3")
+	SendInput("{Click Down}")
+	Sleep 100
+	MouseMove 2562, 223, "2"
+	SendInput("{Click Up}")
+	MouseMove(%&xpos%, %&ypos%)
+	blockOff()
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -425,67 +418,3 @@ Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool 
 
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F15
 F20::audioDrag("bleep")
-
-
-
-/*
-;=============================================================================================================================================
-						OLD \\ Code below here might not be converted to ahk v2.0 code
-;=============================================================================================================================================
-F6:: ;how to move mouse on one axis
-SetKeyDelay, 0
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-MouseMove, xposP, 513,, R
-Return
-F6:: ;how to move mouse on one axis, relative to current position
-SetKeyDelay, 0
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseMove, 0, 513,, R
-Return
-
-^MButton:: ;drag my bleep (goose) sfx to the cursor ;this is the original code for it
-{
-	KeyWait("Ctrl")
-	KeyWait("MButton")
-	blockOn()
-	coords()
-	MouseGetPos &xpos, &ypos
-		SendInput "^+5"
-		sleep 100
-		click "2299", "1048"
-		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
-		coordc()
-		SendInput "^a{DEL}"
-		SendInput("Goose_honk")
-		CaretGetPos(&carx, &cary)
-		MouseMove(%&carx% - "60", %&cary% + "60")
-		sleep 50
-		SendInput("{Click Down}")
-		;this code was to pull it out of the project window. the project windows search is stupid though
-		;sleep 200
-		;If ImageSearch(&x, &y, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose.png") ;moves to the goose sfx
-		;	{
-		;		MouseMove(%&x% + "20", %&y% + "5")
-		;		SendInput("{Click Down}")
-		;	}
-		;else
-		;{
-		;	If ImageSearch(&x2, &y2, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose2.png") ;moves to the goose sfx if already highlighted
-		;	{
-		;		MouseMove(%&x2% + "20", %&y2% + "5")
-		;		SendInput("{Click Down}")
-		;	}
-		;}
-
-		MouseMove(%&xpos%, %&ypos%)
-		SendInput("{Click Up}")
-		;SendInput "^+6"
-		;SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
-		;SendInput "^a{DEL}"
-		;Click("middle")
-		blockOff()
-}
-*/
