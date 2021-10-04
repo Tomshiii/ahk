@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.2
+;\\v2.5.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -203,7 +203,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.2
+;		Premiere \\ Last updated: v2.5.3
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -238,7 +238,7 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 	blockOn()
 	MouseGetPos &xpos, &ypos
 		SendInput(timelineWindow) ;adjust this in the ini file
-		SendInput "^{F5}" ;changes the track colour so I know that the clip has been zoomed in
+		SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
 		If ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
 			goto next
 		else
@@ -630,7 +630,7 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 
 ; ===========================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.4
+;		Resolve \\ Last updated: v2.5.3
 ;
 ; ===========================================================================================================================================
 Rscale(item) ;to set the scale of a video within resolve
@@ -664,9 +664,8 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 	click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.
 }
 
-REffect(folder1, folder2, effect) ;apply any effect to the clip you're hovering over.
-;&folder1 is the path directory to a screenshot of the drop down sidebar option (in the effects window) you WANT to be active - ACTIVATED
-;&folder2 is the path directory to a screenshot of the drop down sidebar option (in the effects window) you WANT to be active - NOT ACTIVATED
+REffect(folder, effect) ;apply any effect to the clip you're hovering over.
+;&folder is the name of your screenshots of the drop down sidebar option (in the effects window) you WANT to be active - both activated and deactivated
 ;&effect is the name of the effect you want this function to type into the search box
 
 ;This function will, in order;
@@ -718,11 +717,11 @@ closeORopen:
 		}
 EffectFolder:
 ;MsgBox("effect folder")
-	If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder1%) ;checks to see if the drop down option you want is activated
+	If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% ".png") ;checks to see if the drop down option you want is activated
 		goto SearchButton
 	else
 		{
-			If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder2%) ;checks to see if the drop down option you want is deactivated
+			If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
 				{
 					MouseMove(%&xfx%, %&yfx%)
 					SendInput("{Click}")
@@ -770,9 +769,8 @@ final:
 	return
 }
 
-rvalhold(image1, image2, plus, rfelseval) ;this function provides similar functionality to my valuehold() function for premiere
-;&image1 is the png name of a screenshot of the property you wish to adjust (either activated or not)
-;&image2 is the png name of a screenshot of the property you wish to adjust (oppisite to above)
+rvalhold(property, plus, rfelseval) ;this function provides similar functionality to my valuehold() function for premiere
+;&property refers to both of the screenshots (either active or not) for the property you wish to adjust
 ;&plus is the pixel value you wish to add to the x value to grab the Y value
 ;&rfelseval is the value you wish to pass to rfelse()
 {
@@ -810,15 +808,15 @@ rvalhold(image1, image2, plus, rfelseval) ;this function provides similar functi
 		}
 	rest:
 	;MouseMove 2329, 215 ;moves to the scale value.
-	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&image1%) ;searches for the zoom property
+	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the zoom property
 		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to zoom. This function assumes x/y are linked
 	else
 		{
-			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&image2%) ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 				MouseMove(%&xz% + %&plus%, %&yz% + "5")
 			else
 				{
-					toolFind("zoom", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -840,7 +838,7 @@ rvalhold(image1, image2, plus, rfelseval) ;this function provides similar functi
 		}
 }
 
-rflip(button1, button2) ;this function searches for and presses the horizontal/vertical flip button
+rflip(button) ;this function searches for and presses the horizontal/vertical flip button
 ;&button1 is the png name of a screenshot of the button you wish to click (either activated or deactivated)
 ;&button2 is the png name of a screenshot of the button you wish to click (oppisite to above)
 {
@@ -852,7 +850,7 @@ rflip(button1, button2) ;this function searches for and presses the horizontal/v
 			MouseMove(%&xn%, %&yn%)
 			click
 		}
-	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button1%) ;searches for the button when it isn't activated already
+	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% ".png") ;searches for the button when it isn't activated already
 		{
 			MouseMove(%&xh%, %&yh%)
 			click
@@ -862,7 +860,7 @@ rflip(button1, button2) ;this function searches for and presses the horizontal/v
 		}
 	else
 		{
-			If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button2%) ;searches for the button when it is activated already
+			If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% "2.png") ;searches for the button when it is activated already
 				{
 					MouseMove(%&xho%, %&yho%)
 					click 
@@ -952,7 +950,7 @@ vscode(script) ;a script to quickly naviate between my scripts
 
 ; ===========================================================================================================================================
 ;
-;		QMK Stuff \\ Last updated: v2.5.1
+;		QMK Stuff \\ Last updated: v2.5.3
 ;
 ; ===========================================================================================================================================
 ;All of these functions were created just to allow QMK Keyboard.ahk to be more readable
@@ -1026,7 +1024,7 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 		}
 	inputs:
 		SendInput(timelineWindow) ;check the keyboard shortcut ini file to adjust hotkeys
-		SendInput "^{F1}" ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+		SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
 		;MouseMove 359, 1063 ;location for the reset arrow
 		if ImageSearch(&xcol, &ycol, %&x2%, %&y2% - "20", %&x2% + "700", %&y2% + "20", "*2 " EnvGet("Premiere") "reset.png") ;this will look for the reset button directly next to the "motion" value
 			MouseMove(%&xcol%, %&ycol%)
