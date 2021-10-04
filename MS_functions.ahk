@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.3
+;\\v2.5.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -106,11 +106,11 @@ blockOff() ;turns off the blocks on user input
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.4
+;		discord \\ Last updated: v2.5.4
 ;
 ; ===========================================================================================================================================
 disc(button) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
-;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME. YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
+;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME (otherwise you'll need your own screenshots.. tbh you'll probably need your own anyway). YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
 ;dark theme
 ;chat font scaling: 20px
 ;space between message groups: 16px
@@ -125,12 +125,12 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 	blockOn()
 	click("right") ;this opens the right click context menu on the message you're hovering over
 	sleep 50 ;sleep required so the right click context menu has time to open
-	If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " EnvGet("Discord") %&button%) ;These coords define the entire area discord contains text. Recommended to close the right sidebar or do this in a dm so you see the entire area discord normally shows messages. If you constantly move/resize discord you'll have to just search your entire screen instead - which you can do by adjust the coords in these image searches
+	If ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% +"400", "*2 " EnvGet("Discord") %&button%)
 			MouseMove(%&xpos%, %&ypos%)
 	else
 		{
 			sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-			If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " EnvGet("Discord") %&button%) ;this line is searching for the location of your selected button. Same goes for above. The coords here are the same as above
+			If ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% +"400", "*2 " EnvGet("Discord") %&button%)
 				MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
 			else ;if everything fails, this else will trigger
 				{
