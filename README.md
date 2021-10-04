@@ -29,7 +29,8 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
      - Then install an AHK extension within the program for a more complete package.
 4. Save these scripts in "C:\Program Files\ahk\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
 5. Edit, then run any of the .ahk files to then use to your liking!
-   - Scripts that will work with no tinkering include ->
+  - Make sure to take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/blob/main/Streamdeck%20AHK/Keyboard%20Shortcuts.ini) to set your own keyboard shortcuts for programs!
+  - Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
      - autodismiss error
      

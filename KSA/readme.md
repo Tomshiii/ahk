@@ -1,3 +1,5 @@
+_**You do not need to run this script, it gets #Include(d) in MS_Functions.ahk which then gets #Include(d) in My Scripts.ahk**_
+
 Keyboard Shortcut Adjustments is to bring quick and easy support to adjust keyboard shortcuts within scripts without needing to dig into the code of each individual function or macro.
 
 With the addition of [[Keyboard Shortcuts.ini]](https://github.com/Tomshiii/ahk/blob/main/KSA/Keyboard%20Shortcuts.ini) you are able to quickly go in and adjust any keyboard shortcut and have it instantly reflect within any scripts that use it.
