@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.2
+;\\v2.2.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.5
 
@@ -99,18 +99,15 @@ SC05C::unassigned()
 
 Numpad0::unassigned()
 Numpad1::gain("-2") ;REDUCE GAIN BY -2db
-SC05C & Numpad1::gainSecondary("SC05C", "Numpad1", "NumpadEnter")
+
 Numpad2::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 Numpad3::gain("6") ;INCREASE GAIN BY 6db
 Numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
 Numpad5::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
 Numpad6::reset()  ;This script moves to the reset button to reset the "motion" effects
 Numpad7::valuehold("scale", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-SC05C & Numpad7::manInput("scale", "0", "SC05C", "Numpad7", "NumpadEnter") ;manually input a scale value
 Numpad8::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-SC05C & Numpad8::manInput("position", "0", "SC05C", "Numpad8", "NumpadEnter")
 Numpad9::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-SC05C & Numpad9::manInput("position", "60", "SC05C", "Numpad9", "NumpadEnter")
 
 ;numpadSub::unassigned() ;assigned to file explorer
 NumpadMult::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
@@ -120,6 +117,15 @@ NumpadDot::unassigned()
 NumpadDiv::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Backspace::unassigned() ;assigned to after effects
 SC00B::unassigned()
+
+;manInput() & gainSecondary()
+SC05C & Numpad1::gainSecondary("SC05C", "Numpad1", "NumpadEnter") ;manually input a gain value
+
+SC05C & Numpad7::manInput("scale", "0", "SC05C", "Numpad7", "NumpadEnter") ;manually input a scale value
+SC05C & Numpad8::manInput("position", "0", "SC05C", "Numpad8", "NumpadEnter") ;manually input an x value
+SC05C & Numpad9::manInput("position", "60", "SC05C", "Numpad9", "NumpadEnter") ;manually input a y value
+SC05C & NumpadMult::manInput("rotation", "0", "SC05C", "Numpad9", "NumpadEnter") ;manually input a rotation value
+SC05C & NumpadAdd::manInput("opacity", "0", "SC05C", "Numpad9", "NumpadEnter") ;manually input an opacity value
 
 e::dele() ;this is here so manInput() can function properly, it's weird, ignore it
 r::unassigned() ;this is here so manInput() can function properly, it's weird, ignore it
