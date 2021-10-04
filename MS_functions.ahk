@@ -142,20 +142,29 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 		}
 	Click
 	sleep 100
-	If ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here are for the entire screen for the sake of compatibility. If you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter.
+	If A_ThisHotkey = "SC03A & r" ;PUT YOUR OWN ACTIVATION HOTKEY HERE
 		{
-			MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
-			Click
-			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
-			blockOff()
+			If ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here are for the entire screen for the sake of compatibility. If you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter.
+				{
+					MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
+					Click
+					MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+					blockOff()
+				}
+			else
+				{
+					MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+					blockOff()
+					toolFind("the @ ping button", "500") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
 		}
 	else
 		{
 			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 			blockOff()
-			;toolFind("the @ ping button", "500") ;useful tooltip to help you debug when it can't find what it's looking for
-			return
 		}
+	
 }
 
 ; ===========================================================================================================================================
