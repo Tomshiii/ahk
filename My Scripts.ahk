@@ -95,7 +95,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 ^AppsKey:: ;opens highlighted ahk command in the documentation
 {
 	A_Clipboard := "" ;clears the clipboard
-	Send "^c"
+	Send("^c")
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
@@ -106,7 +106,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
-WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
+WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 
 #HotIf WinActive("ahk_exe Code.exe")
 !a::vscode("MS")
@@ -124,13 +124,13 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
 	coords()
-	MouseMove 5044, 340
+	MouseMove(5044, 340)
 }
 
 ^!+w:: ;this simply warps my mouse to my main monitor bc I'm lazy YEP
 {
 	coords()
-	MouseMove 1280, 720
+	MouseMove(1280, 720)
 }
 
 ^+a::Run "C:\Program Files\ahk\ahk" ;opens my script directory
@@ -246,7 +246,7 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ^+p:: ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 {
 	MouseGetPos(&x, &y)
-	Send "{TAB}{RIGHT}"
+	Send("{TAB}{RIGHT}")
 	coordw()
 	sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
 	If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
@@ -313,7 +313,7 @@ SC03A & z::zoomOut ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I n
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coords()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	;MouseMove 34, 917 ;location of the selection tool
 	If ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
@@ -333,7 +333,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	blockOn()
 	coords()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
 		goto move
 	else
@@ -372,7 +372,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	KeyWait(A_PriorKey)
 	blockOn()
 	coordw()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 		SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
 		sleep 100
 		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")

@@ -123,7 +123,7 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable. Alternatively, if you move discord around a lot, it might make more sense to just search your whole screen.
 	MouseGetPos(&x, &y)
 	blockOn()
-	click "right" ;this opens the right click context menu on the message you're hovering over
+	click("right") ;this opens the right click context menu on the message you're hovering over
 	sleep 50 ;sleep required so the right click context menu has time to open
 	If ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479, "*2 " EnvGet("Discord") %&button%) ;These coords define the entire area discord contains text. Recommended to close the right sidebar or do this in a dm so you see the entire area discord normally shows messages. If you constantly move/resize discord you'll have to just search your entire screen instead - which you can do by adjust the coords in these image searches
 			MouseMove(%&xpos%, %&ypos%)
@@ -167,10 +167,10 @@ mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script t
 ;&tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
 ;&toolorig is the button you want the script to press to bring you back to your tool of choice
 {
-	click "middle" ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
+	click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
 	SendInput %&tool% "{LButton Down}" 
-	KeyWait A_ThisHotkey
-	SendInput "{LButton Up}"
+	KeyWait(A_ThisHotkey)
+	SendInput("{LButton Up}")
 	SendInput %&toolorig% 
 }
 
@@ -186,16 +186,16 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 ;y1 is just below the bar that your mouse will be warping to, this way your mouse doesn't try doing things when you're doing other stuff above the timeline
 {
 	coordw()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	if(%&xpos% > %&x1% and %&xpos% < %&x2%) and (%&ypos% > %&y1%) ;this function will only trigger if your cursor is within the timeline. This ofcourse can break if you accidently move around your workspace
 		{
 			blockOn()
-			MouseMove %&xpos%, %&timeline% ;this will warp the mouse to the top part of your timeline defined by &timeline
-			SendInput "{Click Down}"
-			MouseMove %&xpos%, %&ypos%
+			MouseMove(%&xpos%, %&timeline%) ;this will warp the mouse to the top part of your timeline defined by &timeline
+			SendInput("{Click Down}")
+			MouseMove(%&xpos%, %&ypos%)
 			blockOff()
-			KeyWait A_ThisHotkey
-			SendInput "{Click Up}"
+			KeyWait(A_ThisHotkey)
+			SendInput("{Click Up}")
 		}
 	else
 		return
@@ -212,7 +212,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	blockOn()
 	coords()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 		SendInput(effectsWindow) ;adjust this in the ini file
 		SendInput(findBox) ;adjust this in the ini file
 		SendInput("^a{DEL}")
@@ -223,7 +223,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 		SendInput %&item% ;create a preset of any effect, must be in a folder as well
 		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 		SendInput("{Click Down}")
-		MouseMove %&xpos%, %&ypos% ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. If this happens to you, add ', "2" ' to the end of this mouse move
+		MouseMove(%&xpos%, %&ypos%) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. If this happens to you, add ', "2" ' to the end of this mouse move
 		SendInput("{Click Up}")
 	blockOff()
 }
@@ -236,14 +236,14 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	coordw()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 		SendInput(timelineWindow) ;adjust this in the ini file
 		SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
 		If ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
 			goto next
 		else
 			{
-				MouseMove %&xpos%, %&ypos%
+				MouseMove(%&xpos%, %&ypos%)
 				blockOff()
 				toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 				return
@@ -259,16 +259,16 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 					MouseMove(%&x3% + "10", %&y3% + "10")
 				else ;if everything fails, this else will trigger
 					{
-						MouseMove %&xpos%, %&ypos% ;moves back to the original coords
+						MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
 						blockOff()
 						toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 						return
 					}
 			}
-		SendInput "{Click}"
-		SendInput "{Tab 2}" %&xval% "{Tab}" %&yval% "{Tab}" %&scale% "{ENTER}"
-		SendInput "{Enter}"
-		MouseMove %&xpos%, %&ypos%
+		SendInput("{Click}")
+		SendInput("{Tab 2}" %&xval% "{Tab}" %&yval% "{Tab}" %&scale% "{ENTER}")
+		SendInput("{Enter}")
+		MouseMove(%&xpos%, %&ypos%)
 		blockOff()
 }
 
@@ -293,7 +293,7 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 {
 	coords()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
 		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			goto colour
@@ -331,11 +331,11 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 		;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
 		if GetKeyState(A_ThisHotkey, "P")
 			{
-				SendInput "{Click Down}"
+				SendInput("{Click Down}")
 				blockOff()
-				KeyWait A_ThisHotkey
+				KeyWait(A_ThisHotkey)
 				SendInput("{Click Up}" "{Enter}")
-				MouseMove %&xpos%, %&ypos%
+				MouseMove(%&xpos%, %&ypos%)
 			}
 		else
 			{
@@ -346,12 +346,12 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 					}
 				else ;if everything fails, this else will trigger
 					{
-						MouseMove %&xpos%, %&ypos%
+						MouseMove(%&xpos%, %&ypos%)
 						blockOff()
 						toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 						return
 					}
-				MouseMove %&xpos%, %&ypos%
+				MouseMove(%&xpos%, %&ypos%)
 				blockOff()
 			}
 }
@@ -362,7 +362,7 @@ audioDrag(sfxName)
 	;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
 	blockOn()
 	coords()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 		SendInput(mediaBrowser) ;highlights the media browser check the keyboard shortcut ini file to adjust hotkeys
 		sleep 10
 		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
@@ -454,17 +454,17 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 			;sleep 50
 			if GetKeyState(A_ThisHotkey, "P")
 				{
-					SendInput "{Click Down}"
+					SendInput("{Click Down}")
 					blockOff()
-					KeyWait A_ThisHotkey
-					SendInput "{Click Up}"
-					MouseMove %&x%, %&y%
+					KeyWait(A_ThisHotkey)
+					SendInput("{Click Up}")
+					MouseMove(%&x%, %&y%)
 				}
 			else ;if you tap, this function will then right click and menu to the "reset" option in the right click context menu
 				{
 					Click("Right")
 					SendInput("{Up 6}" "{Enter}")
-					MouseMove %&x%, %&y%
+					MouseMove(%&x%, %&y%)
 					blockOff()
 				}
 		}
@@ -481,7 +481,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 ;&image is the png name of the image that imagesearch will use
 {
 	coords()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	coordw()
 	blockOn()
 	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "text2.png") ;checks to see if you're typing
@@ -509,26 +509,26 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 				MouseMove(%&x%, %&y%)
 			else ;if everything fails, this else will trigger
 				{
-					MouseMove %&xpos%, %&ypos%
+					MouseMove(%&xpos%, %&ypos%)
 					blockOff()
 					toolFind("the value you wish`nto adjust_2", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}		
 		sleep 100 ;this sleep is necessary for the "tap" functionality below (in the 'else') to work
-		SendInput "{Click Down}"
+		SendInput("{Click Down}")
 			if GetKeyState(A_ThisHotkey, "P")
 			{
 				blockOff()
-				KeyWait A_ThisHotkey
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
+				KeyWait(A_ThisHotkey)
+				SendInput("{Click Up}")
+				MouseMove(%&xpos%, %&ypos%)
 			}
 			else ;since we're in photoshop here, we'll simply make the "tap" functionality have ahk hit enter twice so it exits out of the free transform
 			{
-				Click "{Click Up}"
+				Click("{Click Up}")
 				;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
-				MouseMove %&xpos%, %&ypos%
+				MouseMove(%&xpos%, %&ypos%)
 				SendInput("{Enter 2}")
 				blockOff()
 				return
@@ -554,7 +554,7 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 	image()
 	{
 		sleep 500
-		Send "{TAB}{RIGHT}"
+		Send("{TAB}{RIGHT}")
 		coordw()
 		sleep 1000
 		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
@@ -640,12 +640,12 @@ Rscale(item) ;to set the scale of a video within resolve
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw()
 	blockOn()
-	MouseGetPos &xpos, &ypos
-		click "2333, 218" ;clicks on video
-		SendInput %&item%
-		SendInput "{ENTER}"
-		click "2292, 215" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.  Using the arrow would honestly be faster here
-	MouseMove %&xpos%, %&ypos%
+	MouseGetPos(&xpos, &ypos)
+		click("2333, 218") ;clicks on video
+		SendInput(%&item%)
+		SendInput("{ENTER}")
+		click("2292, 215") ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.  Using the arrow would honestly be faster here
+	MouseMove(%&xpos%, %&ypos%)
 	blockOff()
 }
 
@@ -653,15 +653,15 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 ;&data is what the script is typing in the text box to reset its value
 ;this function, as you can probably tell, doesn't use an imagesearch. It absolutely SHOULD, but I don't use resolve and I guess I just never got around to coding in an imagesearch.
 {
-	SendInput "{Click Up}"
+	SendInput("{Click Up}")
 	sleep 10
-	Send %&data%
+	Send(%&data%)
 	;MouseMove, x, y ;if you want to press the reset arrow, input the windowspy SCREEN coords here then comment out the above Send^
 	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 	;alternatively you could also run imagesearches like in the other resolve functions to ensure you always end up in the right place
 	sleep 10
-	send "{enter}"
-	click "2295, 240" ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.
+	Send("{Enter}")
+	Click("2295, 240") ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.
 }
 
 REffect(folder, effect) ;apply any effect to the clip you're hovering over.
@@ -676,9 +676,9 @@ REffect(folder, effect) ;apply any effect to the clip you're hovering over.
 ;Search for your effect of choice, then drag back to the click you were hovering over originally
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
-	coordw() ;
+	coordw()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " EnvGet("Resolve") "effects.png") ;checks to see if the effects button is deactivated
 		{
 			MouseMove(%&xe%, %&ye%)
@@ -762,9 +762,9 @@ final:
 	sleep 50
 	SendInput(%&effect%)
 	MouseMove(0, 130,, "R")
-	SendInput "{Click Down}"
-	MouseMove %&xpos%, %&ypos%, 2 ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
-	SendInput "{Click Up}"
+	SendInput("{Click Down}")
+	MouseMove(%&xpos%, %&ypos%), 2 ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
+	SendInput("{Click Up}")
 	blockOff()
 	return
 }
@@ -776,7 +776,7 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 {
 	coordw()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
 		goto video
 	else
@@ -801,7 +801,7 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 			else
 				{
 					blockOff()
-					MouseMove %&xpos%, %&ypos%
+					MouseMove(%&xpos%, %&ypos%)
 					toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
@@ -821,18 +821,18 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 				}
 		}
 	sleep 100
-	SendInput "{Click Down}"	
+	SendInput("{Click Down}")
 	if GetKeyState(A_ThisHotkey, "P")
 		{
 			blockOff()
-			KeyWait A_ThisHotkey
-			SendInput "{Click Up}"
-			MouseMove %&xpos%, %&ypos%
+			KeyWait(A_ThisHotkey)
+			SendInput("{Click Up}")
+			MouseMove(%&xpos%, %&ypos%)
 		}
 	else
 		{
 			rfElse(%&rfelseval%) ;do note rfelse doesn't use any imagesearch information and just uses raw pixel values (not a great idea), so if you have any issues, do look into changing that
-			MouseMove %&xpos%, %&ypos%
+			MouseMove(%&xpos%, %&ypos%)
 			blockOff()
 			return
 		}
@@ -844,7 +844,7 @@ rflip(button) ;this function searches for and presses the horizontal/vertical fl
 {
 	coordw()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;makes sure the video tab is selected
 		{
 			MouseMove(%&xn%, %&yn%)
@@ -854,7 +854,7 @@ rflip(button) ;this function searches for and presses the horizontal/vertical fl
 		{
 			MouseMove(%&xh%, %&yh%)
 			click
-			MouseMove %&xpos%, %&ypos%
+			MouseMove(%&xpos%, %&ypos%)
 			blockOff()
 			return
 		}
@@ -864,14 +864,14 @@ rflip(button) ;this function searches for and presses the horizontal/vertical fl
 				{
 					MouseMove(%&xho%, %&yho%)
 					click 
-					MouseMove %&xpos%, %&ypos%
+					MouseMove(%&xpos%, %&ypos%)
 					blockOff()
 					return
 				}
 			else
 				{
 					blockOff()
-					MouseMove %&xpos%, %&ypos%
+					MouseMove(%&xpos%, %&ypos%)
 					toolFind("desired button", "1000")
 				}
 		}
@@ -963,7 +963,7 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 {
 	coords()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion.png") ;moves to the motion tab
 			MouseMove(%&x% + "25", %&y%)
 	else
@@ -977,12 +977,12 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
 			Click
-			MouseMove 2300, 238 ;move to the preview window
-			SendInput "{Click Down}"
+			MouseMove(2300, 238) ;move to the preview window
+			SendInput("{Click Down}")
 			blockOff()
 			KeyWait A_ThisHotkey
-			SendInput "{Click Up}"
-			;MouseMove %&xpos%, %&ypos% ; // moving the mouse position back to origin after doing this is incredibly disorienting
+			SendInput("{Click Up}")
+			;MouseMove(%&xpos%, %&ypos%) ; // moving the mouse position back to origin after doing this is incredibly disorienting
 		}
 	else
 		{
@@ -992,13 +992,13 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
-					MouseMove %&xpos%, %&ypos%
+					MouseMove(%&xpos%, %&ypos%)
 					toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 			Click
 			sleep 50
-			MouseMove %&xpos%, %&ypos%
+			MouseMove(%&xpos%, %&ypos%)
 			blockOff()
 		}
 }
@@ -1008,7 +1008,7 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	coordw()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion2.png") ;checks if the "motion" value is in view
 		goto inputs
 	else
@@ -1030,7 +1030,7 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 			MouseMove(%&xcol%, %&ycol%)
 		;SendInput, {WheelUp 10} ;not necessary as we use imagesearch to check for the motion value
 		click
-	MouseMove %&xpos%, %&ypos%
+	MouseMove(%&xpos%, %&ypos%)
 	blockOff()
 }
 
@@ -1075,7 +1075,7 @@ manInput(property, optional, key1, key2, keyend) ;a script that will warp to and
 {
 	coords()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		{
 			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
@@ -1110,10 +1110,10 @@ manInput(property, optional, key1, key2, keyend) ;a script that will warp to and
 	KeyWait(%&key1%) ;waits for you to let go of hotkey
 	KeyWait(%&key2%) ;waits for you to let go of hotkey
 	hotkeyDeactivate()
-	SendInput "{Click}"
+	SendInput("{Click}")
 	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
 	SendInput("{Enter}")
-	MouseMove %&xpos%, %&ypos%
+	MouseMove(%&xpos%, %&ypos%)
 	hotkeyReactivate()
 	Click("middle")
 	blockOff()
@@ -1141,7 +1141,7 @@ gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure
 				}
 		}
 	inputs:
-	SendInput "g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}"
+	SendInput("g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
 }
 
 gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro will check to ensure the timeline is in focus and a clip is selected
@@ -1426,25 +1426,25 @@ valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a 
 {
 	coords()
 	blockOn()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 		;MouseMove 226, 1079 ;move to the "x" value
 		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
 			;MouseMove(%&x%, %&y%)
 		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of scale
 			MouseMove(%&xcol% + %&optional%, %&ycol%)
 		sleep 100
-		SendInput "{Click Down}"
+		SendInput("{Click Down}")
 			if GetKeyState(%&button%, "P")
 			{
 				blockOff()
 				KeyWait %&button%
-				SendInput "{Click Up}"
-				MouseMove %&xpos%, %&ypos%
+				SendInput("{Click Up}")
+				MouseMove(%&xpos%, %&ypos%)
 			}
 			else
 			{
 				fElse(%&data%) ;check MS_functions.ahk for the code to this preset
-				MouseMove %&xpos%, %&ypos%
+				MouseMove(%&xpos%, %&ypos%)
 				blockOff()
 			}
 }
