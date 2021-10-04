@@ -142,7 +142,7 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 		}
 	Click
 	sleep 100
-	If ImageSearch(&xdir, &ydir, 330, 1380, 1066, 1461, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here define just the bottom chat box AND the tiny bar that appears above it when you "reply" to someone
+	If ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here are for the entire screen for the sake of compatibility. If you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter.
 		{
 			MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 			Click
