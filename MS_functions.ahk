@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.4
+;\\v2.5.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -303,6 +303,8 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 	coords()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
+	SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
 		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			goto colour
@@ -639,7 +641,7 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 
 ; ===========================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.5.3
+;		Resolve \\ Last updated: v2.5.5
 ;
 ; ===========================================================================================================================================
 Rscale(item) ;to set the scale of a video within resolve
@@ -772,7 +774,7 @@ final:
 	SendInput(%&effect%)
 	MouseMove(0, 130,, "R")
 	SendInput("{Click Down}")
-	MouseMove(%&xpos%, %&ypos%), 2 ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
+	MouseMove(%&xpos%, %&ypos%, 2) ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
 	SendInput("{Click Up}")
 	blockOff()
 	return
@@ -785,6 +787,7 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 {
 	coordw()
 	blockOn()
+	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
 		goto video
@@ -817,14 +820,15 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 		}
 	rest:
 	;MouseMove 2329, 215 ;moves to the scale value.
-	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the zoom property
-		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to zoom. This function assumes x/y are linked
+	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
+		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
 	else
 		{
 			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 				MouseMove(%&xz% + %&plus%, %&yz% + "5")
 			else
 				{
+					blockOff()
 					toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
@@ -884,6 +888,68 @@ rflip(button) ;this function searches for and presses the horizontal/vertical fl
 					toolFind("desired button", "1000")
 				}
 		}
+}
+
+rgain(value) ;this function allows you to adjust the gain of the selected clip similar to my gain macros in premiere. You can't pull this off quite as fast as you can in premiere, but it's still pretty useful
+;&value is how much you want the gain to be adjusted by
+{
+	coordw()
+	;blockOn()
+	SendInput(resolveSelectPlayhead)
+	MouseGetPos(&xpos, &ypos)
+	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
+		goto audio
+	else
+		{
+			If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
+				{
+					MouseMove(%&xi%, %&yi%)
+					click ;this opens the inspector tab
+					goto audio
+				}
+		}
+	audio:
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio2.png") ;if you're already in the video tab, it'll find this image then move on
+		goto rest
+	else
+		{
+			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio.png") ;if you aren't already in the video tab, this line will search for it
+					{
+						MouseMove(%&xn%, %&yn%)
+						click ;"2196 139" ;this highlights the video tab
+					}
+			else
+				{
+					blockOff()
+					MouseMove(%&xpos%, %&ypos%)
+					toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
+		}
+	rest:
+	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume.png") ;searches for the zoom property
+		MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to zoom. This function assumes x/y are linked
+	else
+		{
+			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+				MouseMove(%&xz% + "215", %&yz% + "5")
+			else
+				{
+					blockOff()
+					toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
+		}
+	SendInput("{Click 2}")
+	A_Clipboard := ""
+	;sleep 50
+	SendInput("^c")
+	ClipWait()
+	gain := A_Clipboard + %&value%
+	SendInput(gain)
+	SendInput("{Enter}")
+	MouseMove(%&xpos%, %&ypos%)
+	blockOff()
 }
 
 ; ===========================================================================================================================================

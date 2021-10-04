@@ -73,6 +73,11 @@ anchorpointProp := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini"
 opacityProp := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "After Effects", "Opacity")
 rotationProp := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "After Effects", "Rotation")
 
+;[Resolve]
+
+;hotkeys
+resolveSelectPlayhead := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Resolve", "Select at Playhead")
+
 ;[OBS]
 replayBuffer := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Replay Buffer")
 sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
