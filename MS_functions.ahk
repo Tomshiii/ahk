@@ -909,11 +909,11 @@ rgain(value) ;this function allows you to adjust the gain of the selected clip s
 				}
 		}
 	audio:
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio2.png") ;if you're already in the video tab, it'll find this image then move on
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio2.png") ;if you're already in the audio tab, it'll find this image then move on
 		goto rest
 	else
 		{
-			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio.png") ;if you aren't already in the video tab, this line will search for it
+			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio.png") ;if you aren't already in the audio tab, this line will search for it
 					{
 						MouseMove(%&xn%, %&yn%)
 						click ;"2196 139" ;this highlights the video tab
@@ -928,7 +928,7 @@ rgain(value) ;this function allows you to adjust the gain of the selected clip s
 		}
 	rest:
 	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume.png") ;searches for the zoom property
-		MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to zoom. This function assumes x/y are linked
+		MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
 	else
 		{
 			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead

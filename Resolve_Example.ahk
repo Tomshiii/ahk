@@ -91,9 +91,9 @@ WheelLeft::Up
 ;		hold and drag (or click)
 ;=========================================================
 F1::rvalhold("zoom", "60", "1") ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
-F2::rvalhold("position", "80", "1") ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm. Tap to reset
-F3::rvalhold("position", "210", "1") ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm. Tap to reset
-F4::rvalhold("rotation", "240", "0") ;press then hold F5 and drag to increase/decrese rotation. Let go of F5 to confirm. Tap to reset
+F2::rvalhold("position", "80", "1") ;press then hold F2 and drag to increase/decrese x position. Let go of F2 to confirm. Tap to reset
+F3::rvalhold("position", "210", "1") ;press then hold F3 and drag to increase/decrese y position. Let go of F3 to confirm. Tap to reset
+F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/decrese rotation. Let go of F4 to confirm. Tap to reset
 
 ;=========================================================
 ;		flips
