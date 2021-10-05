@@ -8,9 +8,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.14
+;\\v2.1.15
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.5.3
+;\\v2.5.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -73,7 +73,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #HotIf WinActive("ahk_exe Resolve.exe")
 
 ;=========================================================
-;		keyboard shortcut replacements
+;		keyboard shortcut replacements (this is just to make things similar to how I use premiere. Realistically replacing their keybinds in Resolve itself is FAR better)
 ;=========================================================
 ; ///// these all assume you're using resolve's default keybinds
 
@@ -104,9 +104,9 @@ F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/de
 ;=========================================================
 ;		Scale Adjustments
 ;=========================================================
-^1::Rscale("1") ;makes the scale of current selected clip 100
-^2::Rscale("2") ;makes the scale of current selected clip 200
-^3::Rscale("3") ;makes the scale of current selected clip 300
+^1::Rscale("1", "zoom", "60") ;makes the scale of current selected clip 100
+^2::Rscale("2", "zoom", "60") ;makes the scale of current selected clip 200
+^3::Rscale("3", "zoom", "60") ;makes the scale of current selected clip 300
 
 ;=========================================================
 ;

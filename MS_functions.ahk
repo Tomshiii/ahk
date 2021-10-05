@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.5
+;\\v2.5.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.1.2
@@ -120,7 +120,7 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 ;&button in the png name of a screenshot of the button you want the function to press
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
-	coordw() ;important to leave this as window as otherwise the image search function might try searching your entire screen which isn't desirable. Alternatively, if you move discord around a lot, it might make more sense to just search your whole screen.
+	coordw() ;important to leave this as window as otherwise the image search function will fail to find things
 	MouseGetPos(&x, &y)
 	blockOn()
 	click("right") ;this opens the right click context menu on the message you're hovering over
@@ -144,7 +144,7 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 	sleep 100
 	If A_ThisHotkey = "SC03A & r" ;PUT YOUR OWN ACTIVATION HOTKEY HERE
 		{
-			If ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the else below. The coords here are for the entire screen for the sake of compatibility. If you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter.
+			If ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are for the entire screen for the sake of compatibility. If you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish.
 				{
 					MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 					Click
@@ -212,7 +212,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.3
+;		Premiere \\ Last updated: v2.5.6
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -312,11 +312,11 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 			{
                 If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
                     goto colour
-				else
+				else ;this is for if the property you want to adjust is "selected"
 					{
 						If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 							goto colour
-						else
+						else ;this is for if the property you want to adjust is "selected" and you're keyframing
 							{
 								If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 									goto colour
@@ -369,12 +369,12 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 
 audioDrag(sfxName)
 {
-	SendInput(mediaBrowser) ;highlights the media browser check the keyboard shortcut ini file to adjust hotkeys
+	SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 	;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
 	blockOn()
 	coords()
 	MouseGetPos(&xpos, &ypos)
-		SendInput(mediaBrowser) ;highlights the media browser check the keyboard shortcut ini file to adjust hotkeys
+		SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 		sleep 10
 		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
 			{
@@ -396,7 +396,7 @@ audioDrag(sfxName)
 		next:
 		SendInput(findBox) ;adjust this in the keyboard shortcuts ini file
 		coordc()
-		SendInput("^a{DEL}") ;delets anything that might be in the search box
+		SendInput("^a{DEL}") ;deletes anything that might be in the search box
 		SendInput(%&sfxName%)
 		sleep 50
 		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
@@ -415,6 +415,221 @@ audioDrag(sfxName)
 		blockOff()
 }
 
+movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+{
+	coords()
+	blockOn()
+	MouseGetPos(&xpos, &ypos)
+	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion.png") ;moves to the motion tab
+			MouseMove(%&x% + "25", %&y%)
+	else
+		{
+			blockOff()
+			toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
+
+	sleep 100
+	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
+			Click
+			MouseMove(2300, 238) ;move to the preview window
+			SendInput("{Click Down}")
+			blockOff()
+			KeyWait A_ThisHotkey
+			SendInput("{Click Up}")
+			;MouseMove(%&xpos%, %&ypos%) ; // moving the mouse position back to origin after doing this is incredibly disorienting
+		}
+	else
+		{
+			if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " EnvGet("Premiere") "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+					MouseMove(%&xcol%, %&ycol%)
+			else ;if everything fails, this else will trigger
+				{
+					blockOff()
+					MouseMove(%&xpos%, %&ypos%)
+					toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
+			Click
+			sleep 50
+			MouseMove(%&xpos%, %&ypos%)
+			blockOff()
+		}
+}
+
+reset() ;This script moves to the reset button to reset the "motion" effects
+{
+	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+	coordw()
+	blockOn()
+	MouseGetPos(&xpos, &ypos)
+	If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion2.png") ;checks if the "motion" value is in view
+		goto inputs
+	else
+		{
+			If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion3.png") ;checks if the "motion" value is in view
+				goto inputs
+			else
+				{
+					blockOff()
+					toolFind("the motion value", "1000")
+					return
+				}
+		}
+	inputs:
+		SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
+		SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+		if ImageSearch(&xcol, &ycol, %&x2%, %&y2% - "20", %&x2% + "700", %&y2% + "20", "*2 " EnvGet("Premiere") "reset.png") ;this will look for the reset button directly next to the "motion" value
+			MouseMove(%&xcol%, %&ycol%)
+		;SendInput, {WheelUp 10} ;not necessary as we use imagesearch to check for the motion value
+		click
+	MouseMove(%&xpos%, %&ypos%)
+	blockOff()
+}
+
+hotkeyDeactivate()
+{
+	Hotkey("~Numpad0", "r", "On") ;all of these "hotkeys" allow me to use my numpad to input numbers instead of having to take my hand off my mouse to press the numpad on my actual keyboard
+	Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. If I put this value at something that's already defined, then the original macros will fire
+	;Hotkey("~SC05C & Numpad1", "Numpad1", "On")
+	Hotkey("~Numpad2", "r", "On")
+	Hotkey("~Numpad3", "r", "On")
+	Hotkey("~Numpad4", "r", "On")
+	Hotkey("~Numpad5", "r", "On")
+	Hotkey("~Numpad6", "r", "On")
+	Hotkey("~Numpad7", "r", "On")
+	Hotkey("~Numpad8", "r", "On")
+	Hotkey("~Numpad9", "r", "On")
+	Hotkey("NumpadDot", "e", "On")
+	Hotkey("~NumpadEnter", "r", "On")
+}
+
+hotkeyReactivate()
+{
+	Hotkey("Numpad0", "Numpad0")
+	Hotkey("Numpad1", "Numpad1")
+	Hotkey("Numpad2", "Numpad2")
+	Hotkey("Numpad3", "Numpad3")
+	Hotkey("Numpad4", "Numpad4")
+	Hotkey("Numpad5", "Numpad5")
+	Hotkey("Numpad6", "Numpad6")
+	Hotkey("Numpad7", "Numpad7")
+	Hotkey("Numpad8", "Numpad8")
+	Hotkey("Numpad9", "Numpad9")
+	Hotkey("NumpadDot", "NumpadDot")
+	Hotkey("NumpadEnter", "NumpadEnter")
+}
+
+manInput(property, optional, key1, key2, keyend) ;a script that will warp to and press any value in premiere to manually input a number
+;&property is the value you want to adjust
+;&key1 is the hotkey you use to activate this function
+;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
+;&keyend is whatever key you want the function to wait for before finishing
+{
+	coords()
+	blockOn()
+	MouseGetPos(&xpos, &ypos)
+	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+		goto colour
+	else ;this is for when you have the "toggle animation" keyframe button pressed
+		{
+			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+				goto colour
+			else ;this is for if the property you want to adjust is "selected"
+				{
+					If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+						goto colour
+					else ;this is for if the property you want to adjust is "selected" and you're keyframing
+						{
+							If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+								goto colour
+							else ;if everything fails, this else will trigger
+								{
+									blockOff()
+									toolFind("the property you wish to adjust", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+									return
+								}
+						}
+				}
+		}
+	colour:
+	If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+		MouseMove(%&xcol% + %&optional%, %&ycol%)
+	else
+		{
+			blockOff()
+			toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
+	KeyWait(%&key1%) ;waits for you to let go of hotkey
+	KeyWait(%&key2%) ;waits for you to let go of hotkey
+	hotkeyDeactivate()
+	SendInput("{Click}")
+	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
+	SendInput("{Enter}")
+	MouseMove(%&xpos%, %&ypos%)
+	hotkeyReactivate()
+	Click("middle")
+	blockOff()
+}
+
+gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure the timeline is in focus and a clip is selected
+;&amount is the value you want the gain to adjust (eg. -2, 6, etc)
+{
+	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
+	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+		{
+			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
+			goto inputs
+		}
+	else
+		{
+			classNN := ControlGetClassNN(ControlGetFocus("A"))
+			if "DroverLord - Window Class3"
+				goto inputs
+			else
+				{
+					toolCust("gain macro couldn't figure`nout what to do", "1000")
+					return
+				}
+		}
+	inputs:
+	SendInput("g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
+}
+
+gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro will check to ensure the timeline is in focus and a clip is selected
+;&key1 is the hotkey you use to activate this function
+;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
+;&keyend is whatever key you want the function to wait for before finishing
+{
+;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
+	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+		{
+			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
+			goto inputs
+		}
+	else
+		{
+			classNN := ControlGetClassNN(ControlGetFocus("A"))
+			if "DroverLord - Window Class3"
+				goto inputs
+			else
+				{
+					toolCust("gain macro couldn't figure`nout what to do", "1000")
+					return
+				}
+		}
+	inputs:
+	KeyWait(%&key1%) ;waits for you to let go of hotkey
+	KeyWait(%&key2%) ;waits for you to let go of hotkey
+	hotkeyDeactivate()
+	SendInput(gainAdjust) ;~ check the keyboard shortcut ini file to adjust hotkeys
+	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
+	hotkeyReactivate()
+}
 ; ===========================================================================================================================================
 ;
 ;		After Effects \\ Last updated: v2.5
@@ -431,7 +646,7 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 		{	
 			blockOn()
 			Click()
-			SendInput(anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) check the keyboard shortcut ini file to adjust hotkeys
+			SendInput(anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) ~ check the keyboard shortcut ini file to adjust hotkeys
 			sleep 50
 			SendInput(%&button%) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
 			sleep 200 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
@@ -526,24 +741,24 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 					return
 				}
 		}		
-		sleep 100 ;this sleep is necessary for the "tap" functionality below (in the 'else') to work
-		SendInput("{Click Down}")
-			if GetKeyState(A_ThisHotkey, "P")
-			{
-				blockOff()
-				KeyWait(A_ThisHotkey)
-				SendInput("{Click Up}")
-				MouseMove(%&xpos%, %&ypos%)
-			}
-			else ;since we're in photoshop here, we'll simply make the "tap" functionality have ahk hit enter twice so it exits out of the free transform
-			{
-				Click("{Click Up}")
-				;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
-				MouseMove(%&xpos%, %&ypos%)
-				SendInput("{Enter 2}")
-				blockOff()
-				return
-			}
+	sleep 100 ;this sleep is necessary for the "tap" functionality below (in the 'else') to work
+	SendInput("{Click Down}")
+	if GetKeyState(A_ThisHotkey, "P")
+		{
+			blockOff()
+			KeyWait(A_ThisHotkey)
+			SendInput("{Click Up}")
+			MouseMove(%&xpos%, %&ypos%)
+		}
+	else ;since we're in photoshop here, we'll simply make the "tap" functionality have ahk hit enter twice so it exits out of the free transform
+		{
+			Click("{Click Up}")
+			;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
+			MouseMove(%&xpos%, %&ypos%)
+			SendInput("{Enter 2}")
+			blockOff()
+			return
+		}
 }
 
 psSave() ;This function is to speed through the twitch emote saving process. Doing this manually is incredibly tedious and annoying, so why do it manually?
@@ -641,22 +856,67 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 
 ; ===========================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.5.5
+;		Resolve \\ Last updated: v2.5.6
 ;
 ; ===========================================================================================================================================
-Rscale(item) ;to set the scale of a video within resolve
-;&item is the number you want to type into the text field (100% in reslove requires a 1 here for example)
-;this function, as you can probably tell, doesn't use an imagesearch. It absolutely SHOULD, but I don't use resolve and I guess I just never got around to coding in an imagesearch.
+Rscale(value, property, plus) ;to set the scale of a video within resolve
+;&value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
+;&property is the property you want this function to type a value into (eg. zoom)
+;&plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw()
 	blockOn()
+	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-		click("2333, 218") ;clicks on video
-		SendInput(%&item%)
-		SendInput("{ENTER}")
-		click("2292, 215") ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.  Using the arrow would honestly be faster here
+	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
+		goto video
+	else
+		{
+			If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
+				{
+					MouseMove(%&xi%, %&yi%)
+					click ;this opens the inspector tab
+					goto video
+				}
+		}
+	video:
+	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
+		goto rest
+	else
+		{
+			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
+					{
+						MouseMove(%&xn%, %&yn%)
+						click ;"2196 139" ;this highlights the video tab
+					}
+			else
+				{
+					blockOff()
+					MouseMove(%&xpos%, %&ypos%)
+					toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
+		}
+	rest:
+	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
+		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
+	else
+		{
+			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+				MouseMove(%&xz% + %&plus%, %&yz% + "5")
+			else
+				{
+					blockOff()
+					toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
+		}
+	click
+	SendInput(%&value%)
+	SendInput("{ENTER}")
 	MouseMove(%&xpos%, %&ypos%)
+	SendInput("{MButton}")
 	blockOff()
 }
 
@@ -672,7 +932,6 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 	;alternatively you could also run imagesearches like in the other resolve functions to ensure you always end up in the right place
 	sleep 10
 	Send("{Enter}")
-	Click("2295, 240") ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again.
 }
 
 REffect(folder, effect) ;apply any effect to the clip you're hovering over.
@@ -782,7 +1041,7 @@ final:
 
 rvalhold(property, plus, rfelseval) ;this function provides similar functionality to my valuehold() function for premiere
 ;&property refers to both of the screenshots (either active or not) for the property you wish to adjust
-;&plus is the pixel value you wish to add to the x value to grab the Y value
+;&plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
 ;&rfelseval is the value you wish to pass to rfelse()
 {
 	coordw()
@@ -846,6 +1105,7 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 		{
 			rfElse(%&rfelseval%) ;do note rfelse doesn't use any imagesearch information and just uses raw pixel values (not a great idea), so if you have any issues, do look into changing that
 			MouseMove(%&xpos%, %&ypos%)
+			SendInput("{MButton}")
 			blockOff()
 			return
 		}
@@ -853,7 +1113,6 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 
 rflip(button) ;this function searches for and presses the horizontal/vertical flip button
 ;&button1 is the png name of a screenshot of the button you wish to click (either activated or deactivated)
-;&button2 is the png name of a screenshot of the button you wish to click (oppisite to above)
 {
 	coordw()
 	blockOn()
@@ -894,7 +1153,7 @@ rgain(value) ;this function allows you to adjust the gain of the selected clip s
 ;&value is how much you want the gain to be adjusted by
 {
 	coordw()
-	;blockOn()
+	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
@@ -922,12 +1181,12 @@ rgain(value) ;this function allows you to adjust the gain of the selected clip s
 				{
 					blockOff()
 					MouseMove(%&xpos%, %&ypos%)
-					toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("audio tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
 	rest:
-	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume.png") ;searches for the zoom property
+	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume.png") ;searches for the volume property
 		MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
 	else
 		{
@@ -1025,232 +1284,9 @@ vscode(script) ;a script to quickly naviate between my scripts
 
 ; ===========================================================================================================================================
 ;
-;		QMK Stuff \\ Last updated: v2.5.3
+;		QMK Stuff \\ Last updated: v2.5.~
 ;
 ; ===========================================================================================================================================
-;All of these functions were created just to allow QMK Keyboard.ahk to be more readable
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;
-;		Premiere
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------
-movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-{
-	coords()
-	blockOn()
-	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion.png") ;moves to the motion tab
-			MouseMove(%&x% + "25", %&y%)
-	else
-		{
-			blockOff()
-			toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-			return
-		}
-
-	sleep 100
-	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
-			Click
-			MouseMove(2300, 238) ;move to the preview window
-			SendInput("{Click Down}")
-			blockOff()
-			KeyWait A_ThisHotkey
-			SendInput("{Click Up}")
-			;MouseMove(%&xpos%, %&ypos%) ; // moving the mouse position back to origin after doing this is incredibly disorienting
-		}
-	else
-		{
-			;MouseMove 352, 1076 ;move to the reset arrow
-			if ImageSearch(&xcol, &ycol, 8, 1049, 589, 1090, "*2 " EnvGet("Premiere") "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
-					MouseMove(%&xcol%, %&ycol%)
-			else ;if everything fails, this else will trigger
-				{
-					blockOff()
-					MouseMove(%&xpos%, %&ypos%)
-					toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
-			Click
-			sleep 50
-			MouseMove(%&xpos%, %&ypos%)
-			blockOff()
-		}
-}
-
-reset() ;This script moves to the reset button to reset the "motion" effects
-{
-	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	coordw()
-	blockOn()
-	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion2.png") ;checks if the "motion" value is in view
-		goto inputs
-	else
-		{
-			If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion3.png") ;checks if the "motion" value is in view
-				goto inputs
-			else
-				{
-					blockOff()
-					toolFind("the motion value", "1000")
-					return
-				}
-		}
-	inputs:
-		SendInput(timelineWindow) ;check the keyboard shortcut ini file to adjust hotkeys
-		SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		;MouseMove 359, 1063 ;location for the reset arrow
-		if ImageSearch(&xcol, &ycol, %&x2%, %&y2% - "20", %&x2% + "700", %&y2% + "20", "*2 " EnvGet("Premiere") "reset.png") ;this will look for the reset button directly next to the "motion" value
-			MouseMove(%&xcol%, %&ycol%)
-		;SendInput, {WheelUp 10} ;not necessary as we use imagesearch to check for the motion value
-		click
-	MouseMove(%&xpos%, %&ypos%)
-	blockOff()
-}
-
-hotkeyDeactivate()
-{
-	Hotkey("~Numpad0", "r", "On") ;all of these "hotkeys" allow me to use my numpad to input numbers instead of having to take my hand off my mouse to press the numpad on my actual keyboard
-	Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. If I put this value at something that's already defined, then the original macros will fire
-	;Hotkey("~SC05C & Numpad1", "Numpad1", "On")
-	Hotkey("~Numpad2", "r", "On")
-	Hotkey("~Numpad3", "r", "On")
-	Hotkey("~Numpad4", "r", "On")
-	Hotkey("~Numpad5", "r", "On")
-	Hotkey("~Numpad6", "r", "On")
-	Hotkey("~Numpad7", "r", "On")
-	Hotkey("~Numpad8", "r", "On")
-	Hotkey("~Numpad9", "r", "On")
-	Hotkey("NumpadDot", "e", "On")
-	Hotkey("~NumpadEnter", "r", "On")
-}
-
-hotkeyReactivate()
-{
-	Hotkey("Numpad0", "Numpad0")
-	Hotkey("Numpad1", "Numpad1")
-	Hotkey("Numpad2", "Numpad2")
-	Hotkey("Numpad3", "Numpad3")
-	Hotkey("Numpad4", "Numpad4")
-	Hotkey("Numpad5", "Numpad5")
-	Hotkey("Numpad6", "Numpad6")
-	Hotkey("Numpad7", "Numpad7")
-	Hotkey("Numpad8", "Numpad8")
-	Hotkey("Numpad9", "Numpad9")
-	Hotkey("NumpadDot", "NumpadDot")
-	Hotkey("NumpadEnter", "NumpadEnter")
-}
-
-manInput(property, optional, key1, key2, keyend) ;a script that will warp to and press any value in premiere to manually input a number
-;&property is the value you want to adjust
-;&key1 is the hotkey you use to activate this function
-;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
-;&keyend is whatever key you want the function to wait for before finishing
-{
-	coords()
-	blockOn()
-	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-		{
-			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
-				MouseMove(%&xcol% + %&optional%, %&ycol%)
-			else
-				{
-					blockOff()
-					toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}			
-		}
-	else ;this is for when you have the "toggle animation" keyframe button pressed
-		{
-			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-				{
-					If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
-						MouseMove(%&xcol% + %&optional%, %&ycol%)
-					else
-						{
-							blockOff()
-							toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-							return
-						}			
-				}
-			else ;if everything fails, this else will trigger
-				{
-					blockOff()
-					toolFind("scale", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}		
-		}
-	KeyWait(%&key1%) ;waits for you to let go of hotkey
-	KeyWait(%&key2%) ;waits for you to let go of hotkey
-	hotkeyDeactivate()
-	SendInput("{Click}")
-	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
-	SendInput("{Enter}")
-	MouseMove(%&xpos%, %&ypos%)
-	hotkeyReactivate()
-	Click("middle")
-	blockOff()
-}
-
-gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure the timeline is in focus and a clip is selected
-;&amount is the value you want the gain to adjust (eg. -2, 6, etc)
-{
-	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-		{
-			SendInput(timelineWindow selectAtPlayhead) ;check the keyboard shortcut ini file to adjust hotkeys
-			goto inputs
-		}
-	else
-		{
-			classNN := ControlGetClassNN(ControlGetFocus("A"))
-			if "DroverLord - Window Class3"
-				goto inputs
-			else
-				{
-					toolCust("gain macro couldn't figure`nout what to do", "1000")
-					return
-				}
-		}
-	inputs:
-	SendInput("g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
-}
-
-gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro will check to ensure the timeline is in focus and a clip is selected
-;&key1 is the hotkey you use to activate this function
-;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
-;&keyend is whatever key you want the function to wait for before finishing
-{
-;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-		{
-			SendInput(timelineWindow selectAtPlayhead) ;check the keyboard shortcut ini file to adjust hotkeys
-			goto inputs
-		}
-	else
-		{
-			classNN := ControlGetClassNN(ControlGetFocus("A"))
-			if "DroverLord - Window Class3"
-				goto inputs
-			else
-				{
-					toolCust("gain macro couldn't figure`nout what to do", "1000")
-					return
-				}
-		}
-	inputs:
-	KeyWait(%&key1%) ;waits for you to let go of hotkey
-	KeyWait(%&key2%) ;waits for you to let go of hotkey
-	hotkeyDeactivate()
-	SendInput(gainAdjust) ;check the keyboard shortcut ini file to adjust hotkeys
-	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
-	hotkeyReactivate()
-}
-
 numpad000() ;this function is to suppress the multiple keystrokes the "000" key sends on my secondary numpad and will in the future be used to do... something
 {
 		static winc_presses := 0
@@ -1291,132 +1327,124 @@ numpad000() ;this function is to suppress the multiple keystrokes the "000" key 
 ; ===========================================================================================================================================
 switchToExplorer()
 {
-;switchToExplorer(){
-if not WinExist("ahk_class CabinetWClass")
-	Run "explorer.exe"
-GroupAdd "explorers", "ahk_class CabinetWClass"
-if WinActive("ahk_exe explorer.exe")
-	GroupActivate "explorers", "r"
-else
-	if WinExist("ahk_class CabinetWClass")
-	WinActivate "ahk_class CabinetWClass" ;you have to use WinActivatebottom if you didn't create a window group.
+	if not WinExist("ahk_class CabinetWClass")
+		Run "explorer.exe"
+	GroupAdd "explorers", "ahk_class CabinetWClass"
+	if WinActive("ahk_exe explorer.exe")
+		GroupActivate "explorers", "r"
+	else
+		if WinExist("ahk_class CabinetWClass")
+		WinActivate "ahk_class CabinetWClass" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 switchToPremiere()
 {
-;switchToPremiere(){
-if not WinExist("ahk_class Premiere Pro")
-	{
-	;Run, Adobe Premiere Pro.exe
-	;Adobe Premiere Pro CC 2017
-	; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
-	Run "Adobe Premiere Pro.exe"
-	}
-else
-	if WinExist("ahk_class Premiere Pro")
-	WinActivate "ahk_class Premiere Pro"
+	if not WinExist("ahk_class Premiere Pro")
+		{
+		;Run, Adobe Premiere Pro.exe
+		;Adobe Premiere Pro CC 2017
+		; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
+		Run "Adobe Premiere Pro.exe"
+		}
+	else
+		if WinExist("ahk_class Premiere Pro")
+		WinActivate "ahk_class Premiere Pro"
 }
 
 switchToAE()
 {
-;switchToPremiere(){
-if not WinExist("ahk_exe AfterFX.exe")
-	{
-	;Run, Adobe Premiere Pro.exe
-	;Adobe Premiere Pro CC 2017
-	; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
-	Run "AfterFX.exe"
-	}
-else
-	if WinExist("ahk_exe AfterFX.exe")
-	WinActivate "ahk_exe AfterFX.exe"
+	if not WinExist("ahk_exe AfterFX.exe")
+		{
+		;Run, Adobe Premiere Pro.exe
+		;Adobe Premiere Pro CC 2017
+		; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
+		Run "AfterFX.exe"
+		}
+	else
+		if WinExist("ahk_exe AfterFX.exe")
+		WinActivate "ahk_exe AfterFX.exe"
 }
 
 switchToFirefox()
 {
-;switchToFirefox(){
-sendinput "{SC0E8}" ;scan code of an unassigned key. Do I NEED this?
-if not WinExist("ahk_class MozillaWindowClass")
-	Run "firefox.exe"
-if WinActive("ahk_exe firefox.exe")
-	{
-	Class := WinGetClass("A")
-	;WinGetClass class, A
-	if (class = "Mozillawindowclass1")
-		msgbox "this is a notification"
-	}
-if WinActive("ahk_exe firefox.exe")
-	Send "^{tab}"
-else
-	{
-		if WinExist("ahk_exe firefox.exe")
-			;WinRestore ahk_exe firefox.exe
-				WinActivate "ahk_exe firefox.exe"
-	;sometimes winactivate is not enough. the window is brought to the foreground, but not put into FOCUS.
-	;the below code should fix that.
-	;Controls := WinGetControlsHwnd("ahk_class MozillaWindowClass")
-	;WinGet hWnd ID ahk_class MozillaWindowClass
-	;Result := DllCall("SetForegroundWindow UInt hWnd")
-	;DllCall("SetForegroundWindow" UInt hWnd) 
-	}
+	sendinput "{SC0E8}" ;scan code of an unassigned key. Do I NEED this?
+	if not WinExist("ahk_class MozillaWindowClass")
+		Run "firefox.exe"
+	if WinActive("ahk_exe firefox.exe")
+		{
+		Class := WinGetClass("A")
+		;WinGetClass class, A
+		if (class = "Mozillawindowclass1")
+			msgbox "this is a notification"
+		}
+	if WinActive("ahk_exe firefox.exe")
+		Send "^{tab}"
+	else
+		{
+			if WinExist("ahk_exe firefox.exe")
+				;WinRestore ahk_exe firefox.exe
+					WinActivate "ahk_exe firefox.exe"
+		;sometimes winactivate is not enough. the window is brought to the foreground, but not put into FOCUS.
+		;the below code should fix that.
+		;Controls := WinGetControlsHwnd("ahk_class MozillaWindowClass")
+		;WinGet hWnd ID ahk_class MozillaWindowClass
+		;Result := DllCall("SetForegroundWindow UInt hWnd")
+		;DllCall("SetForegroundWindow" UInt hWnd) 
+		}
 }
 
 switchToOtherFirefoxWindow()
 {
-;switchToOtherFirefoxWindow(){
 ;sendinput, {SC0E8} ;scan code of an unassigned key
 
 ;Process Exist firefox.exe
 ;msgbox errorLevel `n%errorLevel%
 	If (PID := ProcessExist("firefox.exe"))
 	{
-	GroupAdd "firefoxes", "ahk_class MozillaWindowClass"
-	if WinActive("ahk_class MozillaWindowClass")
-		GroupActivate "firefoxes", "r"
-	else
-		WinActivate "ahk_class MozillaWindowClass"
+		GroupAdd "firefoxes", "ahk_class MozillaWindowClass"
+		if WinActive("ahk_class MozillaWindowClass")
+			GroupActivate "firefoxes", "r"
+		else
+			WinActivate "ahk_class MozillaWindowClass"
 	}
 	else
-	Run "firefox.exe"
+		Run "firefox.exe"
 }
 
 switchToVSC()
 {
-;switchToVSCodehub(){
-if not WinExist("ahk_exe Code.exe")
-	Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
-if WinActive("ahk_exe Code.exe")
-	GroupActivate "Code", "r"
-else
-	if WinExist("ahk_exe Code.exe")
-	WinActivate "ahk_exe Code.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+	if not WinExist("ahk_exe Code.exe")
+		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+	GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
+	if WinActive("ahk_exe Code.exe")
+		GroupActivate "Code", "r"
+	else
+		if WinExist("ahk_exe Code.exe")
+		WinActivate "ahk_exe Code.exe" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 switchToGithub()
 {
-;switchToGithub(){
-if not WinExist("ahk_exe GitHubDesktop.exe")
-	Run "C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
-GroupAdd "git", "ahk_class Chrome_WidgetWin_1"
-if WinActive("ahk_exe GitHubDesktop.exe")
-	GroupActivate "git", "r"
-else
-	if WinExist("ahk_exe GitHubDesktop.exe")
-	WinActivate "ahk_exe GitHubDesktop.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+	if not WinExist("ahk_exe GitHubDesktop.exe")
+		Run "C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
+	GroupAdd "git", "ahk_class Chrome_WidgetWin_1"
+	if WinActive("ahk_exe GitHubDesktop.exe")
+		GroupActivate "git", "r"
+	else
+		if WinExist("ahk_exe GitHubDesktop.exe")
+		WinActivate "ahk_exe GitHubDesktop.exe" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 switchToStreamdeck()
 {
-;switchToStreamdeck(){
-if not WinExist("ahk_exe StreamDeck.exe")
-	Run "C:\Program Files\Elgato\StreamDeck\StreamDeck.exe"
-GroupAdd "stream", "ahk_class Qt5152QWindowIcon"
-if WinActive("ahk_exe StreamDeck.exe")
-	GroupActivate "stream", "r"
-else
-	if WinExist("ahk_exe Streamdeck.exe")
-	WinActivate "ahk_exe StreamDeck.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+	if not WinExist("ahk_exe StreamDeck.exe")
+		Run "C:\Program Files\Elgato\StreamDeck\StreamDeck.exe"
+	GroupAdd "stream", "ahk_class Qt5152QWindowIcon"
+	if WinActive("ahk_exe StreamDeck.exe")
+		GroupActivate "stream", "r"
+	else
+		if WinExist("ahk_exe Streamdeck.exe")
+		WinActivate "ahk_exe StreamDeck.exe" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 switchToExcel()
