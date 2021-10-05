@@ -1,0 +1,1 @@
+Change_[suffix] is the same file repeated because my changelog file is listed in my gitignore, which means git doesn't track its changes and therefore it doesn't change colours within vscode. Everything else is an example of what you should do for this function
