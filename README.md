@@ -1,8 +1,6 @@
 # ahk
 This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane and random interactions with a computer.
 
-Included is also the Excel document I use to keep track of any hotkeys I set, just as an easier and more visual way of understanding what is/isn't available.
-
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
 - Video walking through an early version of the [Release 2.1 update](https://youtu.be/JF_WISVJsPU)
   - Video walking through _all (at the time)_ of my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo)
@@ -50,7 +48,6 @@ QMK Keyboard.ahk | A script to allow separate function for my secondary keyboard
 Streaming.ahk | A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
 PC Startup.ahk | A script that does some things when my PC starts up to ensure proper function of my scripts as well as opening programs I'd otherwise have to open manually.
 Resolve_Example.ahk | An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough and thrown together.
-scripts f keys taken.xlsx / QMK.psd | An Excel doc/psd file I use to track all the button combinations used in my scripts so I know what is/isn't available.
 Alt_menu_acceleration_DISABLER.ahk | A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key.
 autodismiss error.ahk | A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
 right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button.
