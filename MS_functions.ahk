@@ -106,6 +106,27 @@ blockOff() ;turns off the blocks on user input
 
 ; ===========================================================================================================================================
 ;
+;		Windows Mouse Scripts \\ Last updated: v2.5.7
+;
+; ===========================================================================================================================================
+youMouse(tenS, fiveS)
+;&tenS is the hotkey for 10s skip in your direction of choice
+;&fiveS is the hotkey for 5s skip in your direction of choice
+{
+	if A_PriorKey = "Mbutton"
+		return
+	if WinExist("YouTube")
+	{
+		WinActivate()
+		if GetKeyState("F14", "P")
+			SendInput(%&tenS% "{MButton 2}")
+		else
+			SendInput(%&fiveS%)
+	}
+}
+
+; ===========================================================================================================================================
+;
 ;		discord \\ Last updated: v2.5.4
 ;
 ; ===========================================================================================================================================

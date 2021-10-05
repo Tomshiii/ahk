@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.1
+;\\v2.5.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.5
+;\\v2.5.7
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.2.3
 
@@ -185,32 +185,8 @@ F20 & Xbutton1::#Left
 
 ;The below scripts are to skip ahead in the youtube player with the mouse
 #HotIf WinActive("ahk_exe firefox.exe")
-WheelRight::
-{
-	if A_PriorKey = "Mbutton"
-		return
-	if WinExist("YouTube")
-	{
-		WinActivate()
-		if GetKeyState("F14", "P")
-			SendInput("l" "{MButton 2}")
-		else
-			SendInput("{Right}") ;brings focus back to what you were doing, I originally had this as a middle mouse button, but if you accidentally WheelLeft while trying to open a new tab with the middle mouse button, you'd open 2 or 3 tabs instead of 1
-	}
-}
-WheelLeft::
-{
-	if A_PriorKey = "Mbutton"
-		return
-	if WinExist("YouTube")
-		{
-			WinActivate()
-			if GetKeyState("F14", "P")
-				SendInput("j" "{MButton 2}")
-			else
-				SendInput("{Left}") ;brings focus back to what you were doing, I originally had this as a middle mouse button, but if you accidentally WheelLeft while trying to open a new tab with the middle mouse button, you'd open 2 or 3 tabs instead of 1
-		}
-}
+WheelRight::youMouse("l", "{Right}")
+WheelLeft::youMouse("j", "{Left}")
 
 Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mouse script, but fits in with the firefox #hotif
 {
@@ -228,7 +204,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mous
 						Break
 					Else
 						send "^{Tab}"
-					sleep 50
+					sleep 25
 					if A_Index = 8
 						switchToOtherFirefoxWindow()
 					if A_Index = 16
@@ -238,7 +214,11 @@ Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mous
 					if A_Index = 30
 						switchToOtherFirefoxWindow()
 					if A_Index = 36
-						break
+						{
+							SendInput("{Media_Play_Pause}")
+							return
+						}
+						
 				}
 			SendInput("{Space}")
 		}
