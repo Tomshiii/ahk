@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.6
+;\\v2.5.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2
@@ -856,7 +856,7 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 
 ; ===========================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.5.6
+;		Resolve \\ Last updated: v2.5.7
 ;
 ; ===========================================================================================================================================
 Rscale(value, property, plus) ;to set the scale of a video within resolve
@@ -1009,7 +1009,7 @@ SearchButton:
 	If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " EnvGet("Resolve") "search2.png") ;checks to see if the search icon is deactivated
 		{
 			MouseMove(%&xs%, %&ys%)
-			SendInput("{Click 2}")
+			SendInput("{Click}")
 			goto final
 		}
 	else

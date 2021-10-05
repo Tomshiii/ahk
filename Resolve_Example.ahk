@@ -115,7 +115,6 @@ F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/de
 ;=========================================================
 !g::REffect("openfx", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
 ; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords. x (80 in this example) will always remain the same, so just grab the new y coords and you've added a new macro
-; Please keep in mind for this function to work the search bar must ALREADY be visible, if it's hidden, you'll just break stuff instead. Resolve is dumb
 
 ;=========================================================
 ;
