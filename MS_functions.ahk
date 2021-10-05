@@ -7,7 +7,7 @@
 ;\\v2.5.6
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.1.2
+;\\v2.2
 
 
 ; All Code in this script is linked to a function
