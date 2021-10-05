@@ -1,19 +1,19 @@
 SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 SetDefaultMouseSpeed 0
 #SingleInstance Force
-; SetNumLockState, AlwaysOn ;uncomment if you want numlock to always be ON
-; SetCapsLockState, AlwaysOff uncomment if you want capslock to always be OFF
+; SetNumLockState "AlwaysOn" ;uncomment if you want numlock to always be ON
+; SetCapsLockState "AlwaysOff" ;uncomment if you want capslock to always be OFF
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script ;includes function definitions so they don't clog up this script
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.12
+;\\v2.1.15
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.3.19
+;\\v2.5.6
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.1.2
+;\\v2.2
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
@@ -73,7 +73,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #HotIf WinActive("ahk_exe Resolve.exe")
 
 ;=========================================================
-;		keyboard shortcut replacements
+;		keyboard shortcut replacements (this is just to make things similar to how I use premiere. Realistically replacing their keybinds in Resolve itself is FAR better)
 ;=========================================================
 ; ///// these all assume you're using resolve's default keybinds
 
@@ -90,111 +90,45 @@ WheelLeft::Up
 ;=========================================================
 ;		hold and drag (or click)
 ;=========================================================
-F1::rvalhold("zoom.png", "zoom2.png", "60", "1") ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
-
-F2:: ;I kept pressing this and opening premiere, this is just to stop that
-{
-	ToolTip(A_ThisHotkey " is unassigned")
-	sleep 1000
-	ToolTip("")
-}
-/*
-;Not entirely sure Resolve has similar function to premiere where you can reposition a clip by dragging it around in the preview window \\ This code was as such, never ported to ahk v2.0 code \\
-F2:: ;press then hold alt and drag to move position. Let go of alt to confirm
-{
-coordmode "pixel", "Window"
-coordmode "mouse", "Window"
-BlockInput SendAndMouse
-BlockInput MouseMove
-BlockInput On
-SetDefaultMouseSpeed 0
-;MouseGetPos &xposP, &yposP ;if you wish to use the reset arrow, uncomment this line
-BlockInput, On
-SetDefaultMouseSpeed 0
-	Click 142 1059 ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract
-	sleep 100
-GetKeyState stateFirstCheck, F2, P ;gets the state of the f1 key, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-	if stateFirstCheck = U ;this function just does what I describe above
-		{
-			MouseMove 418, 1055
-			;MsgBox, you've moved to the position
-			sleep 50
-			Send "{click left}"
-			blockinput MouseMoveOff
-			BlockInput off
-			MouseMove %&xposP% %&yposP%
-			return
-		}
-else
-	MouseMove 2300 238 ;with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable
-	SendInput "{Click Down}"
-blockinput MouseMoveOff
-BlockInput off
-	KeyWait "F2"
-	SendInput "{Click Up}"
-;MouseMove %&xposP%, %&yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
-;MouseMove %&xposP%, %&yposP% ; // moving the mouse position back to origin after doing this is incredibly disorienting
-}
-*/
-
-F3::rvalhold("position.png", "position2.png", "80", "1") ;press then hold F3 and drag to increase/decrese x position. Let go of F3 to confirm. Tap to reset
-F4::rvalhold("position.png", "position2.png", "210", "1") ;press then hold F4 and drag to increase/decrese y position. Let go of F4 to confirm. Tap to reset
-F5::rvalhold("rotation.png", "rotation2.png", "240", "0") ;press then hold F5 and drag to increase/decrese rotation. Let go of F5 to confirm. Tap to reset
+F1::rvalhold("zoom", "60", "1") ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
+F2::rvalhold("position", "80", "1") ;press then hold F2 and drag to increase/decrese x position. Let go of F2 to confirm. Tap to reset
+F3::rvalhold("position", "210", "1") ;press then hold F3 and drag to increase/decrese y position. Let go of F3 to confirm. Tap to reset
+F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/decrese rotation. Let go of F4 to confirm. Tap to reset
 
 ;=========================================================
 ;		flips
 ;=========================================================
-!h::rflip("horizontal.png", "horizontalON.png") ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
-!v::rflip("vertical.png", "verticalON.png") ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
+!h::rflip("horizontal.png") ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
+!v::rflip("vertical.png") ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
 
 ;=========================================================
 ;		Scale Adjustments
 ;=========================================================
-^1::Rscale("1") ;makes the scale of current selected clip 100
-^2::Rscale("2") ;makes the scale of current selected clip 200
-^3::Rscale("3") ;makes the scale of current selected clip 300
+^1::Rscale("1", "zoom", "60") ;makes the scale of current selected clip 100
+^2::Rscale("2", "zoom", "60") ;makes the scale of current selected clip 200
+^3::Rscale("3", "zoom", "60") ;makes the scale of current selected clip 300
 
-;===========================================================================================================================================================================
+;=========================================================
 ;
 ;		Drag and Drop Effect Presets
 ;
-;===========================================================================================================================================================================
-!g::REffect("openfx.png", "openfx2.png", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
+;=========================================================
+!g::REffect("openfx", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
 ; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords. x (80 in this example) will always remain the same, so just grab the new y coords and you've added a new macro
+; Please keep in mind for this function to work the search bar must ALREADY be visible, if it's hidden, you'll just break stuff instead. Resolve is dumb
 
-;===========================================================================================================================================================================
+;=========================================================
 ;
 ;		better timeline movement (don't use rightclick, you'll lose context menus)
 ;
-;===========================================================================================================================================================================
+;=========================================================
 XButton1::timeline("827", "856", "2550", "845") ;check MS_Functions.ahk for code
 
-
-
-
-
 ;=========================================================
-;		other
+;
+;		gain
+;
 ;=========================================================
-;the below code hasn't been formatted for v2.0
-/*
-Numpad1::
-SetDefaultMouseSpeed 0
-coordmode, pixel, Window
-coordmode, mouse, Window
-BlockInput, SendAndMouse
-BlockInput, MouseMove
-BlockInput, On
-MouseGetPos, xposP, yposP
-	click 2257, 141 ;this highlights the audio tab
-	click 2454, 216
-	SendInput, -2
-	MouseMove, 2495, 211
-	click ;resolve is a bit weird if you press enter after text, it still lets you keep typing numbers, to prevent this, we just click somewhere else again. Using the arrow would hoennstly be faster here
-blockinput, MouseMoveOff
-BlockInput, off
-MouseMove, %xposP%, %yposP%
-Return
-; This is great and all, but only lets you go to preset values, the best way in resolve is to just set a keyboard shortcut
-; in the "audio" section to increase/decrease audio by 1/3db
-*/
+Numpad1::rgain("-2")
+Numpad2::rgain("2")
+Numpad3::rgain("6")

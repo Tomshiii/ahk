@@ -1,8 +1,6 @@
 # ahk
 This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane and random interactions with a computer.
 
-Included is also the Excel document I use to keep track of any hotkeys I set, just as an easier and more visual way of understanding what is/isn't available.
-
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
 - Video walking through an early version of the [Release 2.1 update](https://youtu.be/JF_WISVJsPU)
   - Video walking through _all (at the time)_ of my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo)
@@ -29,25 +27,27 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
      - Then install an AHK extension within the program for a more complete package.
 4. Save these scripts in "C:\Program Files\ahk\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
 5. Edit, then run any of the .ahk files to then use to your liking!
-   - Scripts that will work with no tinkering include ->
+  - Make sure to take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/blob/main/Streamdeck%20AHK/Keyboard%20Shortcuts.ini) to set your own keyboard shortcuts for programs!
+  - Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
      - autodismiss error
      
 #### Then be aware:
 
-Any scripts that contain pixel coordinates (in either, Click, MouseMove, ImageSearch, PixelSearch, etc) rely not only on my monitor layout or the coordinate mode set but also my workspace layout within premiere (or any applicable program) and will not necessarily work out of the box. They will require looking at the individual comments, as well as any accompanying AHK documentation (make sure you look at the ahk [v2.0](https://lexikos.github.io/v2/docs/AutoHotkey.htm) documentation and **NOT** the [v1.1](https://www.autohotkey.com/docs/AutoHotkey.htm) documentation) to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK. (an ahk v2.0 version of window spy can be found [here](https://github.com/steelywing/AutoHotkey-Release/blob/master/installer/source/WindowSpy.v2.ahk))
+- Any scripts that contain pixel coordinates (in either, Click, MouseMove, ImageSearch, PixelSearch, etc) rely not only on my monitor layout or the coordinate mode set but also my workspace layout within premiere (or any applicable program) and will not necessarily work out of the box. They will require looking at the individual comments, as well as any accompanying AHK documentation (make sure you look at the ahk [v2.0](https://lexikos.github.io/v2/docs/AutoHotkey.htm) documentation and **NOT** the [v1.1](https://www.autohotkey.com/docs/AutoHotkey.htm) documentation) to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK. (an ahk v2.0 version of window spy can be found [here](https://github.com/steelywing/AutoHotkey-Release/blob/master/installer/source/WindowSpy.v2.ahk))
+- All keyboard shortcuts within programs like Adobe Premiere/After Effects/OBS, etc then I need a macro to send (eg. ^+5 to highlight the media browser within Premiere) are definied within the [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/blob/main/Streamdeck%20AHK/Keyboard%20Shortcuts.ini) file instead of just sending the shortcut itself. Edit that ini file with your own keyboard shortcuts to get things to work
 
 
 ## Explanation:
 Item | Use
 :---: | :---
-My Scripts.ahk | My main scripts, contains everything I use for editing, as well as a few windows related things I do to speed a few interactions up.
-MS_functions.ahk | (My Scripts_functions) A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#included](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to; <br />![Untitled-1](https://user-images.githubusercontent.com/53557479/131491115-15476b22-935c-4344-a54d-0e1c25910cd5.png)<br />We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add <br />```func("variableX", "variableY")``` to scripts.
+Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk | An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/funciton that uses its. You do NOT need to run this ahk file, it is [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) in MS_Functions.ahk
+My Scripts.ahk | This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing). This was the original script before MS_functions.ahk and QMK.ahk came about
+MS_functions.ahk | (My Scripts_functions) A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to; <br />![Untitled-1](https://user-images.githubusercontent.com/53557479/131491115-15476b22-935c-4344-a54d-0e1c25910cd5.png)<br />We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add <br />```func("variableX", "variableY")``` to scripts.
 QMK Keyboard.ahk | A script to allow separate function for my secondary keyboard (I use a little numpad). A script originally created by [Taran](https://github.com/TaranVH/) that I've modified to work in ahk v2.0 (and cut down to only applicable buttons).
 Streaming.ahk | A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
 PC Startup.ahk | A script that does some things when my PC starts up to ensure proper function of my scripts as well as opening programs I'd otherwise have to open manually.
 Resolve_Example.ahk | An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough and thrown together.
-scripts f keys taken.xlsx / QMK.psd | An Excel doc/psd file I use to track all the button combinations used in my scripts so I know what is/isn't available.
 Alt_menu_acceleration_DISABLER.ahk | A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key.
 autodismiss error.ahk | A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
 right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button.

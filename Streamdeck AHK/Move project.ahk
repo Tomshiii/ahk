@@ -17,6 +17,8 @@ if Move = ""
 ;;this part deletes the proxies folder if it exists and then moves your selected folder to the selected destination
 if DirExist(SelectedFolder "\proxies")
     DirDelete(SelectedFolder "\proxies", 1)
+if DirExist(SelectedFolder "\Proxies")
+    DirDelete(SelectedFolder "\Proxies", 1)
 DirMove(SelectedFolder, Move "\" %&name%)
 
 ;;this part just opens the final directory

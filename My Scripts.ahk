@@ -10,14 +10,14 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.11
+;\\v2.5.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.4.4
+;\\v2.5
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.1.19
+;\\v2.2.3
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.1.2
+;\\v2.2
 
 ; ============================================================================================================================================
 ;
@@ -56,6 +56,28 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
+#+r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
+{
+	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
+	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+	if WinExist("QMK Keyboard.ahk")
+		PostMessage 0x0111, 65303,,, "QMK Keyboard.ahk - AutoHotkey"
+	if WinExist("Resolve_Example.ahk")
+		PostMessage 0x0111, 65303,,, "Resolve_Example.ahk - AutoHotkey"
+	if WinExist("textreplace.ahk")
+		PostMessage 0x0111, 65303,,, "textreplace.ahk - AutoHotkey"
+	Reload
+	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
+	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
+		if Result = "Yes"
+			{
+				if WinExist("ahk_exe Code.exe")
+						WinActivate
+				else
+					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+			}
+}
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		launch programs
@@ -73,7 +95,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 ^AppsKey:: ;opens highlighted ahk command in the documentation
 {
 	A_Clipboard := "" ;clears the clipboard
-	Send "^c"
+	Send("^c")
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
@@ -84,7 +106,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
-WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
+WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 
 #HotIf WinActive("ahk_exe Code.exe")
 !a::vscode("MS")
@@ -93,20 +115,22 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
-;		other - NOT Premiere
+;		other - NOT an editor
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
+GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
+GroupAdd("Editors", "ahk_exe AfterFX.exe")
+#HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
 	coords()
-	MouseMove 5044, 340
+	MouseMove(5044, 340)
 }
 
 ^!+w:: ;this simply warps my mouse to my main monitor bc I'm lazy YEP
 {
 	coords()
-	MouseMove 1280, 720
+	MouseMove(1280, 720)
 }
 
 ^+a::Run "C:\Program Files\ahk\ahk" ;opens my script directory
@@ -121,27 +145,6 @@ WheelLeft::SendInput "!{Up}" ;Moves back 1 folder in the tree in explorer
 	;else
 	;	Run "C:\Users\Tom\AppData\Local\\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
 ;}
-
-!r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
-{
-	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
-	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-	if WinExist("QMK Keyboard.ahk")
-		PostMessage 0x0111, 65303,,, "QMK Keyboard.ahk - AutoHotkey"
-	if WinExist("Resolve_Example.ahk")
-		PostMessage 0x0111, 65303,,, "Resolve_Example.ahk - AutoHotkey"
-	Reload
-	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
-	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
-		if Result = "Yes"
-			{
-				if WinExist("ahk_exe Code.exe")
-						WinActivate
-				else
-					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-			}
-}
 
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 {
@@ -171,14 +174,77 @@ F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set
 F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 
 ;The below scripts are to swap between virtual desktops
-F19 & XButton2::^#Right
-F19 & XButton1::^#Left
+F19 & XButton2::SendInput("^#{Right}") ;you don't need these two as a sendinput, the syntax highlighting I'm using just see's ^#Right as an error and it's annoying
+F19 & XButton1::SendInput("^#{Left}")
 
 ;The below scripts are to move windows around with just my mouse
 F20 & WheelUp::#Up
 F20 & WheelDown::#Down
 F20 & Xbutton2::#Right
 F20 & Xbutton1::#Left
+
+;The below scripts are to skip ahead in the youtube player with the mouse
+#HotIf WinActive("ahk_exe firefox.exe")
+WheelRight::
+{
+	if A_PriorKey = "Mbutton"
+		return
+	if WinExist("YouTube")
+	{
+		WinActivate()
+		if GetKeyState("F14", "P")
+			SendInput("l" "{MButton 2}")
+		else
+			SendInput("{Right}") ;brings focus back to what you were doing, I originally had this as a middle mouse button, but if you accidentally WheelLeft while trying to open a new tab with the middle mouse button, you'd open 2 or 3 tabs instead of 1
+	}
+}
+WheelLeft::
+{
+	if A_PriorKey = "Mbutton"
+		return
+	if WinExist("YouTube")
+		{
+			WinActivate()
+			if GetKeyState("F14", "P")
+				SendInput("j" "{MButton 2}")
+			else
+				SendInput("{Left}") ;brings focus back to what you were doing, I originally had this as a middle mouse button, but if you accidentally WheelLeft while trying to open a new tab with the middle mouse button, you'd open 2 or 3 tabs instead of 1
+		}
+}
+
+Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mouse script, but fits in with the firefox #hotif
+{
+	if WinActive("ahk_exe firefox.exe")
+		{
+			SetTitleMatchMode 2
+			needle := "YouTube"
+			Loop 40
+				{
+					title := WinGetTitle("A")
+					;WinGetTitle title
+					if not WinActive("ahk_exe firefox.exe")
+						break
+					if (InStr(title, needle))
+						Break
+					Else
+						send "^{Tab}"
+					sleep 50
+					if A_Index = 8
+						switchToOtherFirefoxWindow()
+					if A_Index = 16
+						switchToOtherFirefoxWindow()
+					if A_Index = 24
+						switchToOtherFirefoxWindow()
+					if A_Index = 30
+						switchToOtherFirefoxWindow()
+					if A_Index = 36
+						break
+				}
+			SendInput("{Space}")
+		}
+	else
+		SendInput("{Media_Play_Pause}")
+}
 
 ;=============================================================================================================================================
 ;
@@ -203,7 +269,7 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ^+p:: ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 {
 	MouseGetPos(&x, &y)
-	Send "{TAB}{RIGHT}"
+	Send("{TAB}{RIGHT}")
 	coordw()
 	sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
 	If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
@@ -239,9 +305,9 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
  */
 ;}
 
-XButton1::mousedrag("h","P") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
-+z::mousedrag("z", "v") ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset
+XButton1::mousedrag(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+Xbutton2::mousedrag(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+z::mousedrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 !g::SendInput("!{t}" "b{Right}g") ;open gaussian blur
 F1::psSave()
 
@@ -251,8 +317,10 @@ F1::psSave()
 ;
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
-Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset
-Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton2::mousedrag(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+WheelRight::nextKeyframe ;check the keyboard shortcut ini file to adjust hotkeys
+WheelLeft::previousKeyframe ;check the keyboard shortcut ini file to adjust hotkeys
 
 ;=============================================================================================================================================
 ;
@@ -264,11 +332,11 @@ Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse but
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
-SC03A & z::^+!z ;\\set zoom out to ^+!z\\ ;idk why tf I need the scancode for capslock here but I blame premiere
+SC03A & z::zoomOut ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coords()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	;MouseMove 34, 917 ;location of the selection tool
 	If ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
@@ -283,30 +351,18 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
-	move()
-	{
-		MouseMove(%&prx% + "5", %&pry% +"3")
-		SendInput("{Click Down}")
-		Sleep 100
-		MouseMove 2562, 223, "2"
-		SendInput("{Click Up}")
-		MouseMove(%&xpos%, %&ypos%)
-		blockOff()
-	}
 	KeyWait(A_PriorKey)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
+	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	blockOn()
 	coords()
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
-		{
-			move()
-		}
+		goto move
 	else
 		{
 			If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
-			{
-				move()
-			}
+				goto move
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
@@ -314,7 +370,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 					return
 				}
 		}
-
+	move:
+	MouseMove(%&prx% + "5", %&pry% +"3")
+	SendInput("{Click Down}")
+	Sleep 100
+	MouseMove 2562, 223, "2"
+	SendInput("{Click Up}")
+	MouseMove(%&xpos%, %&ypos%)
+	blockOff()
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -332,8 +395,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	KeyWait(A_PriorKey)
 	blockOn()
 	coordw()
-	MouseGetPos &xpos, &ypos
-		SendInput("^t")
+	MouseGetPos(&xpos, &ypos)
+		SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
 		sleep 100
 		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")
 			{
@@ -363,82 +426,18 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-WheelRight::
+WheelRight:: ;goes to the next cut point towards the right
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	SendInput("+{Down}") ;Set shift down to "Go to next edit point on any track"
+	SendInput(nextEditPoint) ;Set this shortcut in the keyboards shortcut ini file
 }
-WheelLeft::
+WheelLeft:: ;goes to the next cut point towards the left
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	SendInput("+{Up}") ;Set shift down to "Go to next edit point on any track"
+	SendInput(previousEditPoint) ;Set this shortcut in the keyboards shortcut ini file
 }
-Xbutton1::^w ;Set ctrl w to "Nudge Clip Selection Down"
-Xbutton2::mousedrag("h", "v") ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset
+Xbutton1::nudgeDown ;Set ctrl w to "Nudge Clip Selection Down"
+Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F15
 F20::audioDrag("bleep")
-
-
-
-/*
-;=============================================================================================================================================
-						OLD \\ Code below here might not be converted to ahk v2.0 code
-;=============================================================================================================================================
-F6:: ;how to move mouse on one axis
-SetKeyDelay, 0
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseGetPos, xposP, yposP
-MouseMove, xposP, 513,, R
-Return
-F6:: ;how to move mouse on one axis, relative to current position
-SetKeyDelay, 0
-coordmode, pixel, Screen
-coordmode, mouse, Screen
-MouseMove, 0, 513,, R
-Return
-
-^MButton:: ;drag my bleep (goose) sfx to the cursor ;this is the original code for it
-{
-	KeyWait("Ctrl")
-	KeyWait("MButton")
-	blockOn()
-	coords()
-	MouseGetPos &xpos, &ypos
-		SendInput "^+5"
-		sleep 100
-		click "2299", "1048"
-		SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
-		coordc()
-		SendInput "^a{DEL}"
-		SendInput("Goose_honk")
-		CaretGetPos(&carx, &cary)
-		MouseMove(%&carx% - "60", %&cary% + "60")
-		sleep 50
-		SendInput("{Click Down}")
-		;this code was to pull it out of the project window. the project windows search is stupid though
-		;sleep 200
-		;If ImageSearch(&x, &y, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose.png") ;moves to the goose sfx
-		;	{
-		;		MouseMove(%&x% + "20", %&y% + "5")
-		;		SendInput("{Click Down}")
-		;	}
-		;else
-		;{
-		;	If ImageSearch(&x2, &y2, 2560, 188, 3044, 1228, "*5 " A_WorkingDir "\ImageSearch\Premiere\goose2.png") ;moves to the goose sfx if already highlighted
-		;	{
-		;		MouseMove(%&x2% + "20", %&y2% + "5")
-		;		SendInput("{Click Down}")
-		;	}
-		;}
-
-		MouseMove(%&xpos%, %&ypos%)
-		SendInput("{Click Up}")
-		;SendInput "^+6"
-		;SendInput "^b" ;Requires you to set ctrl shift 6 to the projects window, then ctrl b to select find box
-		;SendInput "^a{DEL}"
-		;Click("middle")
-		blockOff()
-}
-*/
