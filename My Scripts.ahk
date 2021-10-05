@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5
+;\\v2.5.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.5
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -214,9 +214,32 @@ WheelLeft::
 
 Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mouse script, but fits in with the firefox #hotif
 {
-	if WinExist("YouTube")
+	if WinActive("ahk_exe firefox.exe")
 		{
-			WinActivate()
+			SetTitleMatchMode 2
+			needle := "YouTube"
+			Loop 40
+				{
+					title := WinGetTitle("A")
+					;WinGetTitle title
+					if not WinActive("ahk_exe firefox.exe")
+						break
+					if (InStr(title, needle))
+						Break
+					Else
+						send "^{Tab}"
+					sleep 50
+					if A_Index = 8
+						switchToOtherFirefoxWindow()
+					if A_Index = 16
+						switchToOtherFirefoxWindow()
+					if A_Index = 24
+						switchToOtherFirefoxWindow()
+					if A_Index = 30
+						switchToOtherFirefoxWindow()
+					if A_Index = 36
+						break
+				}
 			SendInput("{Space}")
 		}
 	else
