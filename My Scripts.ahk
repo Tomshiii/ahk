@@ -1,13 +1,13 @@
 ﻿#SingleInstance Force
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
-SetWorkingDir A_ScriptDir
+SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 SetNumLockState "AlwaysOn" ;sets numlock to always on (you can still it for macros)
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still it for macros)
 SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it for macros)
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon this script uses in the taskbar
-#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
+#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.5.3
@@ -17,7 +17,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;\\v2.2.3
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.2
+;\\v2.2.0.1
 
 ; ============================================================================================================================================
 ;
@@ -109,10 +109,10 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 
 #HotIf WinActive("ahk_exe Code.exe")
-!a::vscode("MS")
-!f::vscode("Func")
-!q::vscode("QMK")
-!c::vscode("Change")
+!a::vscode("MS") ;clicks on the my scripts script in vscode
+!f::vscode("Func") ;clicks on my msfunctions script in vscode 
+!q::vscode("QMK") ;clicks on my qmk script in vscode
+!c::vscode("Change") ;clicks on my changelog file in vscode
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
@@ -121,7 +121,7 @@ WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("Editors", "ahk_exe AfterFX.exe")
-#HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro isn't active
+#HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 ^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 {
 	coords()
@@ -216,12 +216,12 @@ Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mous
 						switchToOtherFirefoxWindow()
 					if A_Index = 36
 						{
-							SendInput("{Media_Play_Pause}")
+							SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 							return
 						}
 						
 				}
-			SendInput("{Space}")
+			SendInput("{Space}") ;if it finds a youtube window it will hit space to pause/play it
 		}
 	else
 		SendInput("{Media_Play_Pause}")
