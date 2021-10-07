@@ -80,6 +80,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         sleep 1000
                         SendInput("{Tab}" "{Space}")
                         blockOff()
+                        Run(SelectedFolder) ;open an explorer window for your selected directory
                         return
                     }
                 else
