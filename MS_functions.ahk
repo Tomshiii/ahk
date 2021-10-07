@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.7
+;\\v2.5.8
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.1
@@ -106,7 +106,7 @@ blockOff() ;turns off the blocks on user input
 
 ; ===========================================================================================================================================
 ;
-;		Windows Mouse Scripts \\ Last updated: v2.5.7
+;		Windows Mouse Scripts \\ Last updated: v2.5.8
 ;
 ; ===========================================================================================================================================
 youMouse(tenS, fiveS)
@@ -125,6 +125,11 @@ youMouse(tenS, fiveS)
 	}
 }
 
+wheelEditPoint(direction)
+{
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
+	SendInput(%&direction%) ;Set these shortcut in the keyboards shortcut ini file
+}
 ; ===========================================================================================================================================
 ;
 ;		discord \\ Last updated: v2.5.4
@@ -233,7 +238,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.6
+;		Premiere \\ Last updated: v2.5.8
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -243,18 +248,53 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	blockOn()
 	coords()
 	MouseGetPos(&xpos, &ypos)
-		SendInput(effectsWindow) ;adjust this in the ini file
-		SendInput(findBox) ;adjust this in the ini file
-		SendInput("^a{DEL}")
-		sleep 60
-		coordc() ;change caret coord mode to window
-		CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
-		MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
-		SendInput %&item% ;create a preset of any effect, must be in a folder as well
-		MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
-		SendInput("{Click Down}")
-		MouseMove(%&xpos%, %&ypos%) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. If this happens to you, add ', "2" ' to the end of this mouse move
-		SendInput("{Click Up}")
+	if A_ThisHotkey = "!t" ;INPUT THE HOTKEY FOR YOUR TEXT PRESET HERE
+		{
+			ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
+			SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
+			sleep 100
+			If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")
+				{
+					If ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " EnvGet("Premiere") "eye.png")
+						{
+							MouseMove(%&xeye%, %&yeye%)
+							SendInput("{Click}")
+							MouseGetPos(&eyeX, &eyeY)
+						}
+					else
+						{
+							blockOff()
+							toolFind("the eye icon", "1000")
+							return
+						}
+				}
+			else
+				{
+					blockOff()
+					toolFind("the graphics tab", "1000")
+					return
+				}
+			}
+	SendInput(effectsWindow) ;adjust this in the ini file
+	SendInput(findBox) ;adjust this in the ini file
+	SendInput("^a{DEL}")
+	sleep 60
+	coordc() ;change caret coord mode to window
+	CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
+	MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
+	SendInput %&item% ;create a preset of any effect, must be in a folder as well
+	MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
+	SendInput("{Click Down}")
+	if A_ThisHotkey = "!t"
+		{
+			MouseMove(%&eyeX%, %&eyeY%)
+			SendInput("{Click Up}")
+			MouseMove(%&xpos%, %&ypos%)
+			blockOff()
+			return
+		}
+	MouseMove(%&xpos%, %&ypos%) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. If this happens to you, add ', "2" ' to the end of this mouse move
+	SendInput("{Click Up}")
 	blockOff()
 }
 

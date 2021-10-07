@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.3
+;\\v2.5.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.5.7
+;\\v2.5.8
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.2.3
 
@@ -370,53 +370,15 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 !p::preset("parametric") ;check MS_functions.ahk for the code for these presets
 !h::preset("hflip")
 !c::preset("croptom")
-
-!t:: ;hover over a text element on the timeline, press this hotkey, then watch as ahk drags that preset onto the hovered track
-{
-	KeyWait(A_PriorKey)
-	blockOn()
-	coordw()
-	MouseGetPos(&xpos, &ypos)
-		SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
-		sleep 100
-		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")
-			{
-				If ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " EnvGet("Premiere") "eye.png")
-					{
-						MouseMove(%&xeye%, %&yeye%)
-						SendInput("{Click}")
-						preset("loremipsum")
-						MouseMove %&xpos%, %&ypos% ;although this line is usually in the ^preset, if you don't add it again, your curosr gets left on the text eyeball instead of back on the timeline
-						blockOff()
-					}
-				else
-					{
-						blockOff()
-						toolFind("the eye icon", "1000")
-					}
-			}
-		else
-			{
-				blockOff()
-				toolFind("the graphics tab", "1000")
-			}
-}
+!t::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk drags that preset onto the text layer
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-WheelRight:: ;goes to the next cut point towards the right
-{
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	SendInput(nextEditPoint) ;Set this shortcut in the keyboards shortcut ini file
-}
-WheelLeft:: ;goes to the next cut point towards the left
-{
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	SendInput(previousEditPoint) ;Set this shortcut in the keyboards shortcut ini file
-}
+WheelRight::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
+WheelLeft::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
 Xbutton1::nudgeDown ;Set ctrl w to "Nudge Clip Selection Down"
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
