@@ -6,7 +6,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\streaming.ico") ;changes the icon th
 ;#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 #Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
 #SingleInstance Force
-IniWrite(0, "Streaming.ini", "Number", "Left")
+IniWrite(0, "C:\Program Files\ahk\ahk\Stream\Streaming.ini", "Number", "Left")
 
 replayBuffer := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Replay Buffer")
 sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
@@ -29,11 +29,11 @@ F6::Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
 
 F17:: ;Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboard sends f17 when channel point reward comes through
 {
-	songs := IniRead("Streaming.ini", "Number", "Left")
+	songs := IniRead("C:\Program Files\ahk\ahk\Stream\Streaming.ini", "Number", "Left")
 	if songs = 1
 		{
 			KeyWait("F5", "D T105")
-			IniWrite(songs - 1, "Streaming.ini", "Number", "Left")
+			IniWrite(songs - 1, "C:\Program Files\ahk\ahk\Stream\Streaming.ini", "Number", "Left")
 			Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\SongQueuer.exe"
 			return
 		}
@@ -43,13 +43,13 @@ F17:: ;Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lior
 
 F16::  ;temporary way to play full mii wii song using lioranboard
 {
-	songs := IniRead("Streaming.ini", "Number", "Left")
-	IniWrite(songs + 1, "Streaming.ini", "Number", "Left")
-	Run(A_WorkingDir "\Sounds\Wii Music.mp3")
+	songs := IniRead("C:\Program Files\ahk\ahk\Stream\Streaming.ini", "Number", "Left")
+	IniWrite(songs + 1, "C:\Program Files\ahk\ahk\Stream\Streaming.ini", "Number", "Left")
+	Run("C:\Program Files\ahk\ahk\Sounds\Wii Music.mp3")
 	sleep 105000
 	if WinExist("ahk_exe vlc.exe")
 		WinClose("ahk_exe vlc.exe")
-	IniWrite(songs - 1, "Streaming.ini", "Number", "Left")
+	IniWrite(0, "C:\Program Files\ahk\ahk\Stream\Streaming.ini", "Number", "Left")
 }
 
 
