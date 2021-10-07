@@ -126,9 +126,10 @@ youMouse(tenS, fiveS)
 }
 
 wheelEditPoint(direction)
+;&direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	SendInput(%&direction%) ;Set these shortcut in the keyboards shortcut ini file
+	SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
 }
 ; ===========================================================================================================================================
 ;
