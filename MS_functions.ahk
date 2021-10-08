@@ -376,65 +376,65 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 				}
 		}	
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
-		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-			goto colour
-		else ;this is for when you have the "toggle animation" keyframe button pressed
-			{
-                If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-                    goto colour
-				else ;this is for if the property you want to adjust is "selected"
-					{
-						If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-							goto colour
-						else ;this is for if the property you want to adjust is "selected" and you're keyframing
-							{
-								If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-									goto colour
-								else
-									{
-										blockOff()
-										toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-										return
-									}
-							}
-					}				
-			}
-		colour:
-		If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
-			MouseMove(%&xcol% + %&optional%, %&ycol%)
-		else
-			{
-				blockOff()
-				toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
-			}
-		sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
-		;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
-		if GetKeyState(A_ThisHotkey, "P")
-			{
-				SendInput("{Click Down}")
-				blockOff()
-				KeyWait(A_ThisHotkey)
-				SendInput("{Click Up}" "{Enter}")
-				MouseMove(%&xpos%, %&ypos%)
-			}
-		else
-			{
-				If ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " EnvGet("Premiere") "reset.png") ;searches for the reset button to the right of the value you want to adjust
-					{
-						MouseMove(%&x2%, %&y2%)
-						SendInput("{Click}")
-					}
-				else ;if everything fails, this else will trigger
-					{
-						MouseMove(%&xpos%, %&ypos%)
-						blockOff()
-						toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-						return
-					}
-				MouseMove(%&xpos%, %&ypos%)
-				blockOff()
-			}
+	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+		goto colour
+	else ;this is for when you have the "toggle animation" keyframe button pressed
+		{
+			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+				goto colour
+			else ;this is for if the property you want to adjust is "selected"
+				{
+					If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+						goto colour
+					else ;this is for if the property you want to adjust is "selected" and you're keyframing
+						{
+							If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+								goto colour
+							else
+								{
+									blockOff()
+									toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+									return
+								}
+						}
+				}				
+		}
+	colour:
+	If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+		MouseMove(%&xcol% + %&optional%, %&ycol%)
+	else
+		{
+			blockOff()
+			toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
+	sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
+	;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
+	if GetKeyState(A_ThisHotkey, "P")
+		{
+			SendInput("{Click Down}")
+			blockOff()
+			KeyWait(A_ThisHotkey)
+			SendInput("{Click Up}" "{Enter}")
+			MouseMove(%&xpos%, %&ypos%)
+		}
+	else
+		{
+			If ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " EnvGet("Premiere") "reset.png") ;searches for the reset button to the right of the value you want to adjust
+				{
+					MouseMove(%&x2%, %&y2%)
+					SendInput("{Click}")
+				}
+			else ;if everything fails, this else will trigger
+				{
+					MouseMove(%&xpos%, %&ypos%)
+					blockOff()
+					toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
+			MouseMove(%&xpos%, %&ypos%)
+			blockOff()
+		}
 }
 
 audioDrag(sfxName)
