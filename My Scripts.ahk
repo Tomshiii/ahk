@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.4
+;\\v2.5.5
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.5.8
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -300,8 +300,8 @@ F1::psSave()
 #HotIf WinActive("ahk_exe AfterFX.exe")
 Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
 Xbutton2::mousedrag(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
-WheelRight::nextKeyframe ;check the keyboard shortcut ini file to adjust hotkeys
-WheelLeft::previousKeyframe ;check the keyboard shortcut ini file to adjust hotkeys
+WheelRight::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
+WheelLeft::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 
 ;=============================================================================================================================================
 ;
@@ -313,7 +313,7 @@ WheelLeft::previousKeyframe ;check the keyboard shortcut ini file to adjust hotk
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
-SC03A & z::zoomOut ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
+SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coords()
@@ -379,7 +379,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 WheelRight::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
 WheelLeft::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
-Xbutton1::nudgeDown ;Set ctrl w to "Nudge Clip Selection Down"
+Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F15
