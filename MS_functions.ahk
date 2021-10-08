@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.9
+;\\v2.5.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.1
@@ -702,7 +702,7 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 }
 ; ===========================================================================================================================================
 ;
-;		After Effects \\ Last updated: v2.5
+;		After Effects \\ Last updated: v2.5.10
 ;
 ; ===========================================================================================================================================
 aevaluehold(button, property, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
@@ -715,11 +715,18 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 	if(%&x% > 550 and %&x% < 2542) and (%&y% > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
 		{	
 			blockOn()
+			MouseGetPos(&X, &Y)
+			if ImageSearch(&selectX, &selectY, 8, 8, 299, 100, "*2 " EnvGet("AE") "selection.png")
+				{
+					MouseMove(%&selectX%, %&selectY%)
+					Click
+					MouseMove(%&X%, %&Y%)
+				}
 			Click()
 			SendInput(anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) ~ check the keyboard shortcut ini file to adjust hotkeys
-			sleep 50
+			sleep 150
 			SendInput(%&button%) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
-			sleep 200 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
+			sleep 300 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
 			if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% ".png")
 				goto colour
 			else
@@ -738,12 +745,12 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 										{
 											blockOff()
 											toolFind("the property you're after", "1000")
+											KeyWait(A_ThisHotkey)
 											return
 										}
 								}
 						}
 				}
-
 			colour:
 			If PixelSearch(&xcol, &ycol, %&propX%, %&propY% + "8", %&propX% + "740", %&propY% + "40", 0x288ccf, 3)
 				MouseMove(%&xcol% + %&optional%, %&ycol%)
