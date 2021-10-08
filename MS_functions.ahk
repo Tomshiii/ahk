@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.10
+;\\v2.5.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.1
@@ -239,7 +239,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.9
+;		Premiere \\ Last updated: v2.5.11
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -376,6 +376,13 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 				}
 		}	
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
+	if A_ThisHotkey = "NumpadDot" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE TO YOUR ACTIVATION HOTKEY
+		{ ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
+			If ImageSearch(&vidx, &vidy, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "video.png")
+			toolCust("you aren't scrolled down", "1000")
+			blockOff()
+			return
+		}
 	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour
 	else ;this is for when you have the "toggle animation" keyframe button pressed
@@ -427,6 +434,13 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 				}
 			else ;if everything fails, this else will trigger
 				{
+					if A_ThisHotkey = "NumpadDot" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE TO YOUR ACTIVATION HOTKEY
+						{
+							SendInput("{Click}" "0" "{Enter}")
+							MouseMove(%&xpos%, %&ypos%)
+							blockOff()
+							return
+						}
 					MouseMove(%&xpos%, %&ypos%)
 					blockOff()
 					toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
