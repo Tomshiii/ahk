@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.5
+;\\v2.5.6
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.5.8
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -66,6 +66,8 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 		PostMessage 0x0111, 65303,,, "Resolve_Example.ahk - AutoHotkey"
 	if WinExist("textreplace.ahk")
 		PostMessage 0x0111, 65303,,, "textreplace.ahk - AutoHotkey"
+	if WinExist("right click premiere.ahk")
+		PostMessage 0x0111, 65303,,, "right click premiere.ahk - AutoHotkey"
 	Reload
 	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
