@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.11
+;\\v2.5.12
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.1
@@ -169,7 +169,7 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 		}
 	Click
 	sleep 100
-	If A_ThisHotkey = "SC03A & r" ;PUT YOUR OWN ACTIVATION HOTKEY HERE
+	If A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
 		{
 			If ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are for the entire screen for the sake of compatibility. If you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish.
 				{
@@ -239,7 +239,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.11
+;		Premiere \\ Last updated: v2.5.12
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -249,7 +249,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	blockOn()
 	coords()
 	MouseGetPos(&xpos, &ypos)
-	if A_ThisHotkey = "!t" ;INPUT THE HOTKEY FOR YOUR TEXT PRESET HERE
+	if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE
 		{
 			ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
 			SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
@@ -286,7 +286,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	SendInput %&item% ;create a preset of any effect, must be in a folder as well
 	MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
 	SendInput("{Click Down}")
-	if A_ThisHotkey = "!t"
+	if A_ThisHotkey = textHotkey ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
 		{
 			MouseMove(%&eyeX%, %&eyeY%)
 			SendInput("{Click Up}")
@@ -376,13 +376,19 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 				}
 		}	
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
-	if A_ThisHotkey = "NumpadDot" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE TO YOUR ACTIVATION HOTKEY
+	if A_ThisHotkey = levelsHotkey ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
 		{ ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
 			If ImageSearch(&vidx, &vidy, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "video.png")
-			toolCust("you aren't scrolled down", "1000")
-			blockOff()
-			return
+				{
+					toolCust("you aren't scrolled down", "1000")
+					blockOff()
+					KeyWait(A_ThisHotkey)
+					return
+				}
+			else
+				goto next
 		}
+	next:
 	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour
 	else ;this is for when you have the "toggle animation" keyframe button pressed
@@ -434,7 +440,7 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 				}
 			else ;if everything fails, this else will trigger
 				{
-					if A_ThisHotkey = "NumpadDot" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE TO YOUR ACTIVATION HOTKEY
+					if A_ThisHotkey = levelsHotkey ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
 						{
 							SendInput("{Click}" "0" "{Enter}")
 							MouseMove(%&xpos%, %&ypos%)

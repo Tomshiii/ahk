@@ -81,3 +81,8 @@ resolveSelectPlayhead := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut
 ;[OBS]
 replayBuffer := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Replay Buffer")
 sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
+
+;[Hotkeys]
+levelsHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Levels")
+replyHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Reply")
+textHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Text")

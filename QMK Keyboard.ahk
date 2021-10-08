@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.4
+;\\v2.2.5
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.5.11
 
@@ -97,7 +97,7 @@ dele() ;this is here so manInput() can work, you can just ignore this
 F24::return ;this line is mandatory for proper functionality
 SC05C::unassigned()
 
-Numpad0::unassigned()
+Numpad0::valuehold("level", "0")
 Numpad1::gain("-2") ;REDUCE GAIN BY -2db
 
 Numpad2::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
@@ -113,7 +113,7 @@ Numpad9::valuehold("position", "60") ;press then hold this hotkey and drag to in
 NumpadMult::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 NumpadAdd::valuehold("opacity", "0")
 NumpadEnter::unassigned()
-NumpadDot::valuehold("level", "0")
+NumpadDot::unassigned()
 NumpadDiv::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Backspace::unassigned() ;assigned to after effects
 SC00B::unassigned()
