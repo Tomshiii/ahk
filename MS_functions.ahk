@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.8
+;\\v2.5.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.1
@@ -239,7 +239,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.8
+;		Premiere \\ Last updated: v2.5.9
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -319,8 +319,6 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 				toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 				return
 			}
-		;SendInput "{WheelUp 30}" ;no longer required as the function wont finish if it can't find the image
-		;MouseMove 122,1060 ;location for "motion"
 		next:
 		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion2.png") ;moves to the motion tab
 			MouseMove(%&x2% + "10", %&y2% + "10")
@@ -366,7 +364,17 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}	
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
 		If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 			goto colour
