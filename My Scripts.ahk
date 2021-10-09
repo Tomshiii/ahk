@@ -239,7 +239,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mous
 ;alright scancodes didn't fix it, idk why but sometimes this function won't work until you refresh the main script. Might have to do with where I have it located in this script, maybe pulling it out into it's own script would fix it, or maybe discord is just dumb, who knows.
 ;scratch that, figured out what it is, in my qmk keyboard script I also had setcapslock to off and for whatever reason if that script was reloaded, my main script would break
 SC03A & e::disc("DiscEdit.png") ;edit the message you're hovering over
-SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over
+SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 
@@ -372,7 +372,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 !p::preset("parametric") ;check MS_functions.ahk for the code for these presets
 !h::preset("hflip")
 !c::preset("croptom")
-!t::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk drags that preset onto the text layer
+!t::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk drags that preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

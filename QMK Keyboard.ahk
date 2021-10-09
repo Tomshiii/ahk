@@ -97,7 +97,7 @@ dele() ;this is here so manInput() can work, you can just ignore this
 F24::return ;this line is mandatory for proper functionality
 SC05C::unassigned()
 
-Numpad0::valuehold("level", "0")
+Numpad0::valuehold("level", "0") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 Numpad1::gain("-2") ;REDUCE GAIN BY -2db
 
 Numpad2::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
