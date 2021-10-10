@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.12
+;\\v2.5.13
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -239,7 +239,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.12
+;		Premiere \\ Last updated: v2.5.13
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -357,7 +357,6 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 
 valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
 ;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
-;&filepath2 is the png name of the image ImageSearch is going to use to find what value you want to adjust (the opposite of above)
 ;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
 {
 	coords()
@@ -455,6 +454,48 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 			MouseMove(%&xpos%, %&ypos%)
 			blockOff()
 		}
+}
+
+keyframe(filepath, num1, num2)
+;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+;&num1 is the number for the first image (each property has screenshots labelled 1-4 in \Imagesearch\Premiere\)
+;&num2 is the number for the second image (each property has screenshots labelled 1-4 in \Imagesearch\Premiere\)
+;in this example, "", "3" would be for when the keyframe animation button ISN'T selected and "2", "4" is for when it IS
+{
+	coords()
+	;blockOn()
+	MouseGetPos(&xpos, &ypos)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
+	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}	
+	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
+	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% %&num1% ".png")
+		goto click
+	else
+		{
+			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% %&num2% ".png")
+				goto click
+			else
+				{
+					toolCust("you're already keyframing", "1000")
+					blockOff()
+					return
+				}
+		}
+	click:
+	MouseMove(%&x% + "2", %&y% + "2")
+	click
+	blockOff()
+	MouseMove(%&xpos%, %&ypos%)
 }
 
 audioDrag(sfxName)
