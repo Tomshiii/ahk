@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.6
+;\\v2.2.7
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.5.13
 
@@ -128,12 +128,14 @@ SC05C & NumpadMult::manInput("rotation", "0", "SC05C", "Numpad9", "NumpadEnter")
 SC05C & NumpadAdd::manInput("opacity", "0", "SC05C", "Numpad9", "NumpadEnter") ;manually input an opacity value
 
 ;keyframe()
+NumpadEnter & Numpad0::keyframe("level", "", "3")
 NumpadEnter & Numpad7::keyframe("scale", "", "3")
 NumpadEnter & Numpad8::keyframe("position", "", "3")
 NumpadEnter & Numpad9::keyframe("position", "", "3") ;just incase
 NumpadEnter & NumpadMult::keyframe("rotation", "", "3")
 NumpadEnter & NumpadAdd::keyframe("opacity", "", "3")
 ; -
+Numpad6 & Numpad0::keyframe("level", "2", "4")
 Numpad6 & Numpad7::keyframe("scale", "2", "4")
 Numpad6 & Numpad8::keyframe("position", "2", "4")
 Numpad6 & Numpad9::keyframe("position", "2", "4") ;just incase
