@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.15
+;\\v2.5.16
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -106,7 +106,7 @@ blockOff() ;turns off the blocks on user input
 
 ; ===========================================================================================================================================
 ;
-;		Windows Mouse Scripts \\ Last updated: v2.5.8
+;		Windows Mouse Scripts \\ Last updated: v2.5.16
 ;
 ; ===========================================================================================================================================
 youMouse(tenS, fiveS)
@@ -117,11 +117,13 @@ youMouse(tenS, fiveS)
 		return
 	if WinExist("YouTube")
 	{
+		lastactive := WinGetID("A")
 		WinActivate()
 		if GetKeyState("F14", "P")
-			SendInput(%&tenS% "{MButton 2}")
+			SendInput(%&tenS%)
 		else
 			SendInput(%&fiveS%)
+		WinActivate(lastactive)
 	}
 }
 
