@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.14
+;\\v2.5.15
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -239,7 +239,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.14
+;		Premiere \\ Last updated: v2.5.15
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -416,9 +416,14 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 		MouseMove(%&xcol% + %&optional%, %&ycol%)
 	else
 		{
-			blockOff()
-			toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-			return
+			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "720", %&y% + "40", 0x295C4D, 3) ;searches for a different shade of blue as a fallback
+				MouseMove(%&xcol% + %&optional%, %&ycol%)
+			else
+				{
+					blockOff()
+					toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}
 		}
 	sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
 	;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
