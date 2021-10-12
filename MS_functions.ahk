@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.16
+;\\v2.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -154,12 +154,12 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 	blockOn()
 	click("right") ;this opens the right click context menu on the message you're hovering over
 	sleep 50 ;sleep required so the right click context menu has time to open
-	If ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% +"400", "*2 " EnvGet("Discord") %&button%)
+	if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% +"400", "*2 " EnvGet("Discord") %&button%)
 			MouseMove(%&xpos%, %&ypos%)
 	else
 		{
 			sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-			If ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% +"400", "*2 " EnvGet("Discord") %&button%)
+			if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% +"400", "*2 " EnvGet("Discord") %&button%)
 				MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
 			else ;if everything fails, this else will trigger
 				{
@@ -171,9 +171,9 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 		}
 	Click
 	sleep 100
-	If A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
+	if A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
 		{
-			If ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are for the entire screen for the sake of compatibility. If you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish.
+			if ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are for the entire screen for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish.
 				{
 					MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 					Click
@@ -241,7 +241,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.5.15
+;		Premiere \\ Last updated: v2.6
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -256,9 +256,9 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 			ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
 			SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
 			sleep 100
-			If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")
+			if ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")
 				{
-					If ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " EnvGet("Premiere") "eye.png")
+					if ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " EnvGet("Premiere") "eye.png")
 						{
 							MouseMove(%&xeye%, %&yeye%)
 							SendInput("{Click}")
@@ -277,7 +277,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 					toolFind("the graphics tab", "1000")
 					return
 				}
-			}
+		}
 	SendInput(effectsWindow) ;adjust this in the ini file
 	SendInput(findBox) ;adjust this in the ini file
 	SendInput("^a{DEL}")
@@ -296,7 +296,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 			blockOff()
 			return
 		}
-	MouseMove(%&xpos%, %&ypos%) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. If this happens to you, add ', "2" ' to the end of this mouse move
+	MouseMove(%&xpos%, %&ypos%) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
 	SendInput("{Click Up}")
 	blockOff()
 }
@@ -312,7 +312,7 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 	MouseGetPos(&xpos, &ypos)
 		SendInput(timelineWindow) ;adjust this in the ini file
 		SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-		If ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
+		if ImageSearch(&x, &y, 0, 960, 446, 1087, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
 			goto next
 		else
 			{
@@ -322,19 +322,16 @@ num(xval, yval, scale) ;this function is to simply cut down repeated code on my 
 				return
 			}
 		next:
-		If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion2.png") ;moves to the motion tab
+		if ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion2.png") ;moves to the motion tab
 			MouseMove(%&x2% + "10", %&y2% + "10")
-		else
-			{
-				If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "\motion3.png") ;this is a second check incase "motion" is already highlighted
+		else if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "\motion3.png") ;this is a second check incase "motion" is already highlighted
 					MouseMove(%&x3% + "10", %&y3% + "10")
-				else ;if everything fails, this else will trigger
-					{
-						MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
-						blockOff()
-						toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-						return
-					}
+		else ;if everything fails, this else will trigger
+			{
+				MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
+				blockOff()
+				toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+				return
 			}
 		SendInput("{Click}")
 		SendInput("{Tab 2}" %&xval% "{Tab}" %&yval% "{Tab}" %&scale% "{ENTER}")
@@ -365,11 +362,11 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
@@ -379,7 +376,7 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
 	if A_ThisHotkey = levelsHotkey ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
 		{ ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
-			If ImageSearch(&vidx, &vidy, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "video.png")
+			if ImageSearch(&vidx, &vidy, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "video.png")
 				{
 					toolCust("you aren't scrolled down", "1000")
 					blockOff()
@@ -390,42 +387,30 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 				goto next
 		}
 	next:
-	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour
-	else ;this is for when you have the "toggle animation" keyframe button pressed
-		{
-			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-				goto colour
-			else ;this is for if the property you want to adjust is "selected"
-				{
-					If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-						goto colour
-					else ;this is for if the property you want to adjust is "selected" and you're keyframing
-						{
-							If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-								goto colour
-							else
-								{
-									blockOff()
-									toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-									return
-								}
-						}
-				}				
-		}
-	colour:
-	If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
-		MouseMove(%&xcol% + %&optional%, %&ycol%)
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+		goto colour ;this is for when you have the "toggle animation" keyframe button pressed
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+		goto colour ;this is for if the property you want to adjust is "selected"
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+		goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
 	else
 		{
-			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "720", %&y% + "40", 0x295C4D, 3) ;searches for a different shade of blue as a fallback
+			blockOff()
+			toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
+	colour:
+	if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+		MouseMove(%&xcol% + %&optional%, %&ycol%)
+	else if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "720", %&y% + "40", 0x295C4D, 3) ;searches for a different shade of blue as a fallback
 				MouseMove(%&xcol% + %&optional%, %&ycol%)
-			else
-				{
-					blockOff()
-					toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+	else
+		{
+			blockOff()
+			toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
 	;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
@@ -439,7 +424,7 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 		}
 	else
 		{
-			If ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " EnvGet("Premiere") "reset.png") ;searches for the reset button to the right of the value you want to adjust
+			if ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " EnvGet("Premiere") "reset.png") ;searches for the reset button to the right of the value you want to adjust
 				{
 					MouseMove(%&x2%, %&y2%)
 					SendInput("{Click}")
@@ -473,11 +458,11 @@ keyframe(filepath, num1, num2)
 	;blockOn()
 	MouseGetPos(&xpos, &ypos)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
@@ -485,11 +470,11 @@ keyframe(filepath, num1, num2)
 				}
 		}	
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
-	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% %&num1% ".png")
+	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% %&num1% ".png")
 		goto click
 	else
 		{
-			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% %&num2% ".png")
+			if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% %&num2% ".png")
 				goto click
 			else
 				{
@@ -514,22 +499,19 @@ audioDrag(sfxName)
 	MouseGetPos(&xpos, &ypos)
 		SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 		sleep 10
-		If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+		if ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
 			{
 				MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
 				SendInput("{Click}")
 				goto next
 			}
-		else
+		else if ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
+			goto next
+		else ;if everything fails, this else will trigger
 			{
-				If ImageSearch(&sfx, &sfy, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
-					goto next
-				else ;if everything fails, this else will trigger
-					{
-						blockOff()
-						toolFind("sfx folder", "1000")
-						return
-					}
+				blockOff()
+				toolFind("sfx folder", "1000")
+				return
 			}
 		next:
 		SendInput(findBox) ;adjust this in the keyboard shortcuts ini file
@@ -537,7 +519,7 @@ audioDrag(sfxName)
 		SendInput("^a{DEL}") ;deletes anything that might be in the search box
 		SendInput(%&sfxName%)
 		sleep 50
-		If ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
+		if ImageSearch(&vlx, &vly, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
 			{
 				MouseMove(%&vlx%, %&vly%)
 				SendInput("{Click Down}")
@@ -558,7 +540,7 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 	coords()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion.png") ;moves to the motion tab
+	if ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion.png") ;moves to the motion tab
 			MouseMove(%&x% + "25", %&y%)
 	else
 		{
@@ -602,18 +584,15 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 	coordw()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion2.png") ;checks if the "motion" value is in view
+	if ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion2.png") ;checks if the "motion" value is in view
+		goto inputs
+	else if ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion3.png") ;checks if the "motion" value is in view
 		goto inputs
 	else
 		{
-			If ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "motion3.png") ;checks if the "motion" value is in view
-				goto inputs
-			else
-				{
-					blockOff()
-					toolFind("the motion value", "1000")
-					return
-				}
+			blockOff()
+			toolFind("the motion value", "1000")
+			return
 		}
 	inputs:
 		SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
@@ -629,7 +608,7 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 hotkeyDeactivate()
 {
 	Hotkey("~Numpad0", "r", "On") ;all of these "hotkeys" allow me to use my numpad to input numbers instead of having to take my hand off my mouse to press the numpad on my actual keyboard
-	Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. If I put this value at something that's already defined, then the original macros will fire
+	Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. if I put this value at something that's already defined, then the original macros will fire
 	;Hotkey("~SC05C & Numpad1", "Numpad1", "On")
 	Hotkey("~Numpad2", "r", "On")
 	Hotkey("~Numpad3", "r", "On")
@@ -668,31 +647,22 @@ manInput(property, optional, key1, key2, keyend) ;a script that will warp to and
 	coords()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		goto colour
-	else ;this is for when you have the "toggle animation" keyframe button pressed
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+		goto colour ;this is for when you have the "toggle animation" keyframe button pressed
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+		goto colour ;this is for if the property you want to adjust is "selected"
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+		goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
+	else ;if everything fails, this else will trigger
 		{
-			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-				goto colour
-			else ;this is for if the property you want to adjust is "selected"
-				{
-					If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-						goto colour
-					else ;this is for if the property you want to adjust is "selected" and you're keyframing
-						{
-							If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&property% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-								goto colour
-							else ;if everything fails, this else will trigger
-								{
-									blockOff()
-									toolFind("the property you wish to adjust", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-									return
-								}
-						}
-				}
+			blockOff()
+			toolFind("the property you wish to adjust", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	colour:
-	If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+	if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
 		MouseMove(%&xcol% + %&optional%, %&ycol%)
 	else
 		{
@@ -717,7 +687,7 @@ gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
 			goto inputs
@@ -744,7 +714,7 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 {
 ;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021"
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
 			goto inputs
@@ -770,7 +740,7 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 }
 ; ===========================================================================================================================================
 ;
-;		After Effects \\ Last updated: v2.5.10
+;		After Effects \\ Last updated: v2.6
 ;
 ; ===========================================================================================================================================
 aevaluehold(button, property, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
@@ -797,30 +767,21 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 			sleep 300 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
 			if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% ".png")
 				goto colour
+			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "2.png")
+				goto colour
+			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "Key.png")
+				goto colour
+			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "Key2.png")
+				goto colour
 			else
 				{
-					if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "2.png")
-						goto colour
-					else
-						{
-							if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "Key.png")
-								goto colour
-							else
-								{
-									if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "Key2.png")
-										goto colour
-									else
-										{
-											blockOff()
-											toolFind("the property you're after", "1000")
-											KeyWait(A_ThisHotkey)
-											return
-										}
-								}
-						}
+					blockOff()
+					toolFind("the property you're after", "1000")
+					KeyWait(A_ThisHotkey)
+					return
 				}
 			colour:
-			If PixelSearch(&xcol, &ycol, %&propX%, %&propY% + "8", %&propX% + "740", %&propY% + "40", 0x288ccf, 3)
+			if PixelSearch(&xcol, &ycol, %&propX%, %&propY% + "8", %&propX% + "740", %&propY% + "40", 0x288ccf, 3)
 				MouseMove(%&xcol% + %&optional%, %&ycol%)
 			;sleep 50
 			if GetKeyState(A_ThisHotkey, "P")
@@ -845,7 +806,7 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 
 ; ===========================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.5
+;		Photoshop \\ Last updated: v2.6
 ;
 ; ===========================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
@@ -855,13 +816,13 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 	MouseGetPos(&xpos, &ypos)
 	coordw()
 	blockOn()
-	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "text2.png") ;checks to see if you're typing
+	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "text2.png") ;checks to see if you're typing
 		SendInput("^{Enter}")
-	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "text.png") ;checks to see if you're in the text tool
+	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "text.png") ;checks to see if you're in the text tool
 		SendInput("v") ;if you are, it'll press v to go to the selection tool
-	If ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "InTransform.png") ;checks to see if you're already in the free transform window
+	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "InTransform.png") ;checks to see if you're already in the free transform window
 		{
-			If ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") %&image%) ;if you are, it'll then search for your button of choice and move to it
+			if ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") %&image%) ;if you are, it'll then search for your button of choice and move to it
 				MouseMove(%&x%, %&y%)
 			else ;if everything fails, this else will trigger
 				{
@@ -876,7 +837,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 			ToolTip("we must wait for photoshop`nbecause it's slow as hell")
 			sleep 300 ;photoshop is slow
 			ToolTip("")
-			If ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " EnvGet("Photoshop") %&image%) ;moves to the position variable
+			if ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " EnvGet("Photoshop") %&image%) ;moves to the position variable
 				MouseMove(%&x%, %&y%)
 			else ;if everything fails, this else will trigger
 				{
@@ -928,7 +889,7 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 		Send("{TAB}{RIGHT}")
 		coordw()
 		sleep 1000
-		If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
+		if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
 			{
 				MouseMove(0, 0)
 				SendInput("{Enter 2}")
@@ -936,7 +897,7 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 
 		else
 			{
-				If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
+				if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
 					{
 						MouseMove(%&xpng%, %&ypng%)
 						SendInput("{Click}")
@@ -1001,7 +962,7 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 
 ; ===========================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.5.7
+;		Resolve \\ Last updated: v2.6
 ;
 ; ===========================================================================================================================================
 Rscale(value, property, plus) ;to set the scale of a video within resolve
@@ -1014,48 +975,39 @@ Rscale(value, property, plus) ;to set the scale of a video within resolve
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
 		goto video
-	else
+	else if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
 		{
-			If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
-				{
-					MouseMove(%&xi%, %&yi%)
-					click ;this opens the inspector tab
-					goto video
-				}
+			MouseMove(%&xi%, %&yi%)
+			click ;this opens the inspector tab
+			goto video
 		}
 	video:
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
 		goto rest
+	else if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
 	else
 		{
-			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
-					{
-						MouseMove(%&xn%, %&yn%)
-						click ;"2196 139" ;this highlights the video tab
-					}
-			else
-				{
-					blockOff()
-					MouseMove(%&xpos%, %&ypos%)
-					toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			MouseMove(%&xpos%, %&ypos%)
+			toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	rest:
 	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
 		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
+	else if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+		MouseMove(%&xz% + %&plus%, %&yz% + "5")
 	else
 		{
-			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
-				MouseMove(%&xz% + %&plus%, %&yz% + "5")
-			else
-				{
-					blockOff()
-					toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	click
 	SendInput(%&value%)
@@ -1094,84 +1046,72 @@ REffect(folder, effect) ;apply any effect to the clip you're hovering over.
 	coordw()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " EnvGet("Resolve") "effects.png") ;checks to see if the effects button is deactivated
+	if ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " EnvGet("Resolve") "effects.png") ;checks to see if the effects button is deactivated
 		{
 			MouseMove(%&xe%, %&ye%)
 			SendInput("{Click}")
 			goto closeORopen
 		}
-	else
+	else if ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " EnvGet("Resolve") "effects2.png") ;checks to see if the effects button is activated
+		goto closeORopen
+	else ;if everything fails, this else will trigger
 		{
-			If ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " EnvGet("Resolve") "effects2.png") ;checks to see if the effects button is activated
-				goto closeORopen
-			else ;if everything fails, this else will trigger
-				{
-					blockOff()
-					toolFind("the effects button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			toolFind("the effects button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 closeORopen:
 ;MsgBox("close/open")
-	If ImageSearch(&xopen, &yopen, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") "open.png") ;checks to see if the effects window sidebar is open
+	if ImageSearch(&xopen, &yopen, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") "open.png") ;checks to see if the effects window sidebar is open
 		goto EffectFolder
+	else if ImageSearch(&xclosed, &yclosed, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") "closed.png") ;checks to see if the effects window sidebar is closed
+		{
+			MouseMove(%&xclosed%, %&yclosed%)
+			SendInput("{Click}")
+			goto EffectFolder
+		}
 	else
 		{
-			If ImageSearch(&xclosed, &yclosed, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") "closed.png") ;checks to see if the effects window sidebar is closed
-				{
-					MouseMove(%&xclosed%, %&yclosed%)
-					SendInput("{Click}")
-					goto EffectFolder
-				}
-			else
-				{
-					blockOff()
-					toolFind("open/close button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			toolFind("open/close button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 EffectFolder:
-;MsgBox("effect folder")
-	If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% ".png") ;checks to see if the drop down option you want is activated
+	;MsgBox("effect folder")
+	if ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% ".png") ;checks to see if the drop down option you want is activated
 		goto SearchButton
-	else
+	else if ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
 		{
-			If ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
-				{
-					MouseMove(%&xfx%, %&yfx%)
-					SendInput("{Click}")
-					goto SearchButton
-				}
-			else ;if everything fails, this else will trigger
-				{
-					blockOff()
-					toolFind("the fxfolder", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}	
+			MouseMove(%&xfx%, %&yfx%)
+			SendInput("{Click}")
+			goto SearchButton
 		}
+	else ;if everything fails, this else will trigger
+		{
+			blockOff()
+			toolFind("the fxfolder", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}	
 SearchButton:
 ;MsgBox("search button")
-	If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " EnvGet("Resolve") "search2.png") ;checks to see if the search icon is deactivated
+	if ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " EnvGet("Resolve") "search2.png") ;checks to see if the search icon is deactivated
 		{
 			MouseMove(%&xs%, %&ys%)
 			SendInput("{Click}")
 			goto final
 		}
-	else
-	{
-		If ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " EnvGet("Resolve") "search3.png") ;checks to see if the search icon is activated
-			{
-				MouseMove(%&xs%, %&ys%)
-				SendInput("{Click 2}")
-				goto final
-			}
-		else ;if everything fails, this else will trigger
-			{
-				blockOff()
-				toolFind("search button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
-			}
-	}
+	else if ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " EnvGet("Resolve") "search3.png") ;checks to see if the search icon is activated
+		{
+			MouseMove(%&xs%, %&ys%)
+			SendInput("{Click 2}")
+			goto final
+		}
+	else ;if everything fails, this else will trigger
+		{
+			blockOff()
+			toolFind("search button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
 final:
 ;MsgBox("final")
 	sleep 50
@@ -1193,49 +1133,40 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
 		goto video
-	else
+	else if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
 		{
-			If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
-				{
-					MouseMove(%&xi%, %&yi%)
-					click ;this opens the inspector tab
-					goto video
-				}
+			MouseMove(%&xi%, %&yi%)
+			click ;this opens the inspector tab
+			goto video
 		}
 	video:
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
 		goto rest
+	else if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
 	else
 		{
-			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
-					{
-						MouseMove(%&xn%, %&yn%)
-						click ;"2196 139" ;this highlights the video tab
-					}
-			else
-				{
-					blockOff()
-					MouseMove(%&xpos%, %&ypos%)
-					toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			MouseMove(%&xpos%, %&ypos%)
+			toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	rest:
 	;MouseMove 2329, 215 ;moves to the scale value.
 	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
 		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
+	else if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+		MouseMove(%&xz% + %&plus%, %&yz% + "5")
 	else
 		{
-			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
-				MouseMove(%&xz% + %&plus%, %&yz% + "5")
-			else
-				{
-					blockOff()
-					toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	sleep 100
 	SendInput("{Click Down}")
@@ -1262,12 +1193,12 @@ rflip(button) ;this function searches for and presses the horizontal/vertical fl
 	coordw()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;makes sure the video tab is selected
+	if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;makes sure the video tab is selected
 		{
 			MouseMove(%&xn%, %&yn%)
 			click
 		}
-	If ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% ".png") ;searches for the button when it isn't activated already
+	if ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% ".png") ;searches for the button when it isn't activated already
 		{
 			MouseMove(%&xh%, %&yh%)
 			click
@@ -1275,22 +1206,19 @@ rflip(button) ;this function searches for and presses the horizontal/vertical fl
 			blockOff()
 			return
 		}
+	else if ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% "2.png") ;searches for the button when it is activated already
+		{
+			MouseMove(%&xho%, %&yho%)
+			click 
+			MouseMove(%&xpos%, %&ypos%)
+			blockOff()
+			return
+		}
 	else
 		{
-			If ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% "2.png") ;searches for the button when it is activated already
-				{
-					MouseMove(%&xho%, %&yho%)
-					click 
-					MouseMove(%&xpos%, %&ypos%)
-					blockOff()
-					return
-				}
-			else
-				{
-					blockOff()
-					MouseMove(%&xpos%, %&ypos%)
-					toolFind("desired button", "1000")
-				}
+			blockOff()
+			MouseMove(%&xpos%, %&ypos%)
+			toolFind("desired button", "1000")
 		}
 }
 
@@ -1301,48 +1229,39 @@ rgain(value) ;this function allows you to adjust the gain of the selected clip s
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
 		goto audio
-	else
+	else if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
 		{
-			If ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
-				{
-					MouseMove(%&xi%, %&yi%)
-					click ;this opens the inspector tab
-					goto audio
-				}
+			MouseMove(%&xi%, %&yi%)
+			click ;this opens the inspector tab
+			goto audio
 		}
 	audio:
-	If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio2.png") ;if you're already in the audio tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio2.png") ;if you're already in the audio tab, it'll find this image then move on
 		goto rest
+	else if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio.png") ;if you aren't already in the audio tab, this line will search for it
+		{
+			MouseMove(%&xn%, %&yn%)
+			click ;"2196 139" ;this highlights the video tab
+		}
 	else
 		{
-			If ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio.png") ;if you aren't already in the audio tab, this line will search for it
-					{
-						MouseMove(%&xn%, %&yn%)
-						click ;"2196 139" ;this highlights the video tab
-					}
-			else
-				{
-					blockOff()
-					MouseMove(%&xpos%, %&ypos%)
-					toolFind("audio tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			MouseMove(%&xpos%, %&ypos%)
+			toolFind("audio tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	rest:
 	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume.png") ;searches for the volume property
 		MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
+	else if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+		MouseMove(%&xz% + "215", %&yz% + "5")
 	else
 		{
-			if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
-				MouseMove(%&xz% + "215", %&yz% + "5")
-			else
-				{
-					blockOff()
-					toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	SendInput("{Click 2}")
 	A_Clipboard := ""
@@ -1358,7 +1277,7 @@ rgain(value) ;this function allows you to adjust the gain of the selected clip s
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.4
+;		VSCode \\ Last updated: v2.6
 ;
 ; ===========================================================================================================================================
 vscode(script) ;a script to quickly naviate between my scripts
@@ -1368,57 +1287,42 @@ vscode(script) ;a script to quickly naviate between my scripts
 	coords()
 	blockOn()
 	MouseGetPos(&x, &y)
-	If ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") "explorer.png")
+	if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") "explorer.png")
 		{
 			MouseMove(%&xex%, %&yex%)
 			SendInput("{Click}")
 			MouseMove(%&x%, %&y%)
 			sleep 50
 		}
-	If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_Changes.png")
+	if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_Changes.png")
 		goto click
-	else
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_nochanges.png")
+		goto click
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_red.png")
+		goto click
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_Highlighted.png")
 		{
-			If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_nochanges.png")
-				goto click
-			else
-				{
-					If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_red.png")
-						goto click
-					else
-						{
-							If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_Highlighted.png")
-								{
-									blockOff()
-									toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
-									return
-								}
-							else
-								{
-									If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_ChangesHighlighted.png")
-										{
-											blockOff()
-											toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
-											return
-										}
-									else
-										{
-											If ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_redHighlighted.png")
-												{
-													blockOff()
-													toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
-													return
-												}
-											else
-												{
-													blockOff()
-													toolFind("the script", "1000")
-													return
-												}
-										}
-								}
-						}
-				}
+			blockOff()
+			toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
+			return
+		}
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_ChangesHighlighted.png")
+		{
+			blockOff()
+			toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
+			return
+		}
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_redHighlighted.png")
+		{
+			blockOff()
+			toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
+			return
+		}
+	else 
+		{
+			blockOff()
+			toolFind("the script", "1000")
+			return
 		}
 	click:
 	MouseMove(%&xpos%, %&ypos%)
@@ -1544,7 +1448,7 @@ switchToOtherFirefoxWindow()
 
 ;Process Exist firefox.exe
 ;msgbox errorLevel `n%errorLevel%
-	If (PID := ProcessExist("firefox.exe"))
+	if (PID := ProcessExist("firefox.exe"))
 	{
 		GroupAdd "firefoxes", "ahk_class MozillaWindowClass"
 		if WinActive("ahk_class MozillaWindowClass")
@@ -1676,9 +1580,9 @@ valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a 
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
 		;MouseMove 226, 1079 ;move to the "x" value
-		;If ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
+		;if ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
 			;MouseMove(%&x%, %&y%)
-		If PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of scale
+		if PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of scale
 			MouseMove(%&xcol% + %&optional%, %&ycol%)
 		sleep 100
 		SendInput("{Click Down}")
@@ -1699,18 +1603,18 @@ valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a 
 
 gain() ;old gain code (v2.3.14)to use imagesearch instead of the ClassNN information
 	/*
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png")
+	if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png")
 		goto inputs
 	else
 		{
-			If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
+			if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
 				{
 					SendInput("^+9") ;selects the timeline
 					goto inputs
 				}
 			else
 				{
-					If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+					if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 						{
 							SendInput("^+9" "d")
 							goto inputs

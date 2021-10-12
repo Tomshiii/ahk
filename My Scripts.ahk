@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.7
+;\\v2.6
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.5.8
+;\\v2.6
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.2.3
+;\\v2.2.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -69,7 +69,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 	if WinExist("right click premiere.ahk")
 		PostMessage 0x0111, 65303,,, "right click premiere.ahk - AutoHotkey"
 	Reload
-	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
 	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
 		if Result = "Yes"
@@ -254,28 +254,25 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 	Send("{TAB}{RIGHT}")
 	coordw()
 	sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
-	If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
+	if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
 		{
 			SendInput("{Enter}")
 			SendInput("+{Tab}")
 		}
 
+	else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
+		{
+			MouseMove(%&xpng%, %&ypng%)
+			SendInput("{Click}")
+			SendInput("+{Tab}")
+		}
 	else
 		{
-			If ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
-				{
-					MouseMove(%&xpng%, %&ypng%)
-					SendInput("{Click}")
-					SendInput("+{Tab}")
-				}
-			else
-				{
-					blockOff()
-					toolFind("png drop down", "1000")
-					return
-				}
+			blockOff()
+			toolFind("png drop down", "1000")
+			return
 		}
-		MouseMove(%&x%, %&y%)
+	MouseMove(%&x%, %&y%)
 }
 /*
 	;the below code is how you can achieve the same as above but simply using inputs. Sometimes this would still fail because photoshop sucks, but it does the job just fine
@@ -320,7 +317,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	coords()
 	MouseGetPos(&xpos, &ypos)
 	;MouseMove 34, 917 ;location of the selection tool
-	If ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
+	if ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
 	else
 		{
@@ -339,18 +336,15 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	blockOn()
 	coords()
 	MouseGetPos(&xpos, &ypos)
-	If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
+	if ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
 		goto move
-	else
+	else if ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
+		goto move
+	else ;if everything fails, this else will trigger
 		{
-			If ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
-				goto move
-			else ;if everything fails, this else will trigger
-				{
-					blockOff()
-					toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-					return
-				}
+			blockOff()
+			toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
 		}
 	move:
 	MouseMove(%&prx% + "5", %&pry% +"3")
