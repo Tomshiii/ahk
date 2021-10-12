@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6
+;\\v2.6.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.6
+;\\v2.6.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.2.7
 
@@ -124,17 +124,8 @@ WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
-^!w:: ;this simply warps my mouse to my far monitor bc I'm lazy YEP
-{
-	coords()
-	MouseMove(5044, 340)
-}
-
-^!+w:: ;this simply warps my mouse to my main monitor bc I'm lazy YEP
-{
-	coords()
-	MouseMove(1280, 720)
-}
+^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
+^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
 
 ^+a::Run "C:\Program Files\ahk\ahk" ;opens my script directory
 
@@ -152,7 +143,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 {
 	if WinExist("ahk_exe Discord.exe")
-	WinMove 4480, -260, 1080, 1488
+		WinMove 4480, -260, 1080, 1488
 }
 
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top

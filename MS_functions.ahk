@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6
+;\\v2.6.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -106,7 +106,7 @@ blockOff() ;turns off the blocks on user input
 
 ; ===========================================================================================================================================
 ;
-;		Windows Mouse Scripts \\ Last updated: v2.5.16
+;		Windows Scripts \\ Last updated: v2.6.1
 ;
 ; ===========================================================================================================================================
 youMouse(tenS, fiveS)
@@ -133,6 +133,13 @@ wheelEditPoint(direction)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
 	SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
 }
+
+monitorWarp(x, y)
+{
+	coords()
+	MouseMove(%&x%, %&y%)
+}
+
 ; ===========================================================================================================================================
 ;
 ;		discord \\ Last updated: v2.5.4
