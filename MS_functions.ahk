@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.1
+;\\v2.6.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -248,7 +248,7 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.6
+;		Premiere \\ Last updated: v2.6.2
 ;
 ; ===========================================================================================================================================
 preset(item) ;this preset is for the drag and drop effect presets in premiere
@@ -361,13 +361,10 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 }
  */
 
-valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
-;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+noclips()
 {
 	coords()
 	blockOn()
-	MouseGetPos(&xpos, &ypos)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
 	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
 		{
@@ -381,6 +378,14 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 				}
 		}	
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
+}
+
+valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+{
+	MouseGetPos(&xpos, &ypos)
+	noclips()
 	if A_ThisHotkey = levelsHotkey ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
 		{ ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
 			if ImageSearch(&vidx, &vidy, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "video.png")
@@ -455,46 +460,65 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 		}
 }
 
-keyframe(filepath, num1, num2)
+keyreset(filepath)
 ;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
-;&num1 is the number for the first image (each property has screenshots labelled 1-4 in \Imagesearch\Premiere\)
-;&num2 is the number for the second image (each property has screenshots labelled 1-4 in \Imagesearch\Premiere\)
-;in this example, "", "3" would be for when the keyframe animation button ISN'T selected and "2", "4" is for when it IS
 {
-	coords()
-	;blockOn()
 	MouseGetPos(&xpos, &ypos)
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
-	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
-		{
-			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-			sleep 50
-			if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-				{
-					toolCust("The wrong clips are selected", "1000")
-					blockOff()
-					return
-				}
-		}	
-	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
-	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% %&num1% ".png")
+	noclips()
+	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png")
+		goto click
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "4.png")
 		goto click
 	else
 		{
-			if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% %&num2% ".png")
-				goto click
-			else
-				{
-					toolCust("you're already keyframing", "1000")
-					blockOff()
-					return
-				}
+			toolCust("you're already keyframing", "1000")
+			blockOff()
+			return
 		}
 	click:
 	MouseMove(%&x% + "5", %&y% + "2")
 	click
 	blockOff()
 	MouseMove(%&xpos%, %&ypos%)
+}
+
+keyframe(filepath)
+;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+{
+	MouseGetPos(&xpos, &ypos)
+	noclips()
+	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "2.png")
+		goto next
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "4.png")
+		goto next
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% ".png")
+		{
+			MouseMove(%&x% + "5", %&y% + "5")
+			Click()
+			goto end
+		}
+	else if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") %&filepath% "3.png")
+		{
+			MouseMove(%&x% + "5", %&y% + "5")
+			Click()
+			goto end
+		}
+	else
+		{
+			toolCust("ya broke it", "1000")
+			blockOff()
+			return
+		}
+	next:
+	if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " EnvGet("Premiere") "keyframeButton.png")
+		MouseMove(%&keyx% + "3", %&keyy%)
+	else if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " EnvGet("Premiere") "keyframeButton2.png")
+		MouseMove(%&keyx% + "3", %&keyy%)
+	Click()
+	end:
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
+	MouseMove(%&xpos%, %&ypos%)
+	blockOff()
 }
 
 audioDrag(sfxName)

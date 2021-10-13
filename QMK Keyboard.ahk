@@ -11,9 +11,9 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.7
+;\\v2.2.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.5.13
+;\\v2.6.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -128,19 +128,19 @@ SC05C & NumpadMult::manInput("rotation", "0", "SC05C", "Numpad9", "NumpadEnter")
 SC05C & NumpadAdd::manInput("opacity", "0", "SC05C", "Numpad9", "NumpadEnter") ;manually input an opacity value
 
 ;keyframe()
-NumpadEnter & Numpad0::keyframe("level", "", "3")
-NumpadEnter & Numpad7::keyframe("scale", "", "3")
-NumpadEnter & Numpad8::keyframe("position", "", "3")
-NumpadEnter & Numpad9::keyframe("position", "", "3") ;just incase
-NumpadEnter & NumpadMult::keyframe("rotation", "", "3")
-NumpadEnter & NumpadAdd::keyframe("opacity", "", "3")
+NumpadEnter & Numpad0::keyframe("level")
+NumpadEnter & Numpad7::keyframe("scale")
+NumpadEnter & Numpad8::keyframe("position")
+NumpadEnter & Numpad9::keyframe("position") ;just incase
+NumpadEnter & NumpadMult::keyframe("rotation")
+NumpadEnter & NumpadAdd::keyframe("opacity")
 ; -
-Numpad6 & Numpad0::keyframe("level", "2", "4")
-Numpad6 & Numpad7::keyframe("scale", "2", "4")
-Numpad6 & Numpad8::keyframe("position", "2", "4")
-Numpad6 & Numpad9::keyframe("position", "2", "4") ;just incase
-Numpad6 & NumpadMult::keyframe("rotation", "2", "4")
-Numpad6 & NumpadAdd::keyframe("opacity", "2", "4")
+Numpad6 & Numpad0::keyreset("level")
+Numpad6 & Numpad7::keyreset("scale")
+Numpad6 & Numpad8::keyreset("position")
+Numpad6 & Numpad9::keyreset("position") ;just incase
+Numpad6 & NumpadMult::keyreset("rotation")
+Numpad6 & NumpadAdd::keyreset("opacity")
 
 e::dele() ;this is here so manInput() can function properly, it's weird, ignore it
 r::unassigned() ;this is here so manInput() can function properly, it's weird, ignore it
