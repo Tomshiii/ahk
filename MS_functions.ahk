@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.2
+;\\v2.6.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.0.2
@@ -1308,7 +1308,7 @@ rgain(value) ;this function allows you to adjust the gain of the selected clip s
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.6
+;		VSCode \\ Last updated: v2.6.3
 ;
 ; ===========================================================================================================================================
 vscode(script) ;a script to quickly naviate between my scripts
@@ -1332,29 +1332,23 @@ vscode(script) ;a script to quickly naviate between my scripts
 	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_red.png")
 		goto click
 	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_Highlighted.png")
-		{
-			blockOff()
-			toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
-			return
-		}
+		goto already
 	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_ChangesHighlighted.png")
-		{
-			blockOff()
-			toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
-			return
-		}
+		goto already
 	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_redHighlighted.png")
-		{
-			blockOff()
-			toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
-			return
-		}
+		goto already
 	else 
 		{
 			blockOff()
 			toolFind("the script", "1000")
 			return
 		}
+	already:
+	{
+		blockOff()
+		toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
+		return
+	}
 	click:
 	MouseMove(%&xpos%, %&ypos%)
 	SendInput("{Click}")
