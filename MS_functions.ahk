@@ -109,7 +109,7 @@ blockOff() ;turns off the blocks on user input
 ;		Windows Scripts \\ Last updated: v2.6.1
 ;
 ; ===========================================================================================================================================
-youMouse(tenS, fiveS)
+youMouse(tenS, fiveS) ;a function to skip in youtube
 ;&tenS is the hotkey for 10s skip in your direction of choice
 ;&fiveS is the hotkey for 5s skip in your direction of choice
 {
@@ -127,14 +127,14 @@ youMouse(tenS, fiveS)
 	}
 }
 
-wheelEditPoint(direction)
+wheelEditPoint(direction) ;move back and forth between edit points from anywhere in premiere
 ;&direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;focuses the timeline
 	SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
 }
 
-monitorWarp(x, y)
+monitorWarp(x, y) ;warp anywhere on your desktop
 {
 	coords()
 	MouseMove(%&x%, %&y%)
@@ -361,7 +361,7 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 }
  */
 
-noclips()
+noclips() ;this is simply a combination of repeat code that kept popping up in a few functions below
 {
 	coords()
 	blockOn()
@@ -460,7 +460,7 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 		}
 }
 
-keyreset(filepath)
+keyreset(filepath) ;this function is to turn off keyframing for a given property
 ;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
 {
 	MouseGetPos(&xpos, &ypos)
@@ -482,7 +482,7 @@ keyreset(filepath)
 	MouseMove(%&xpos%, %&ypos%)
 }
 
-keyframe(filepath)
+keyframe(filepath) ;this function is to either turn on keyframing, or create a new keyframe at the cursor for a given property
 ;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
 {
 	MouseGetPos(&xpos, &ypos)
@@ -521,7 +521,8 @@ keyframe(filepath)
 	blockOff()
 }
 
-audioDrag(sfxName)
+audioDrag(sfxName) ;this function pulls an audio file out of the media browser and to the cursor
+;&sfxName is the name of whatever sound you want the function to pull onto the timeline
 {
 	SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 	;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
@@ -636,7 +637,7 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 	blockOff()
 }
 
-hotkeyDeactivate()
+hotkeyDeactivate() ;this simply allows manInput to work
 {
 	Hotkey("~Numpad0", "r", "On") ;all of these "hotkeys" allow me to use my numpad to input numbers instead of having to take my hand off my mouse to press the numpad on my actual keyboard
 	Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. if I put this value at something that's already defined, then the original macros will fire
@@ -653,7 +654,7 @@ hotkeyDeactivate()
 	Hotkey("~NumpadEnter", "r", "On")
 }
 
-hotkeyReactivate()
+hotkeyReactivate() ;this simply allows manInput to work
 {
 	Hotkey("Numpad0", "Numpad0")
 	Hotkey("Numpad1", "Numpad1")
