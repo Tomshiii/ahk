@@ -13,5 +13,8 @@ open()
     run A_ScriptDir "\Alt_menu_acceleration_DISABLER.ahk"
     run A_ScriptDir "\autodismiss error.ahk"
     run A_ScriptDir "\right click premiere.ahk"
+
+    if WinExist("ahk_exe Creative Cloud.exe")
+        WinHide()
     ExitApp
 }

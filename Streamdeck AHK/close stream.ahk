@@ -90,4 +90,8 @@ DetectHiddenWindows(true)
 			;WinClose(,,2)
 			ProcessClose("Streamlabs Chatbot.exe")
 		}
+	if WinExist("ahk_exe Firebot v5.exe")
+		{
+			ProcessClose("Firebot v5.exe")
+		}
 ExitApp

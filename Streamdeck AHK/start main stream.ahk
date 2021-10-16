@@ -143,7 +143,6 @@ if not WinExist("ahk_exe obs64.exe")
 		{
 			WinMinimize()
 		}
-	if 
 }
 else
     return
