@@ -60,7 +60,9 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 SendInput("{F4}")
                 sleep 300
                 SendInput("^a{Del}" SelectedFolder) ;SEND PATH HERE
-                SendInput("{Enter}" "+{Tab 5}" "{Enter}")
+                SendInput("{Enter}" "+{Tab 5}")
+                sleep 500
+                SendInput("{Enter}")
                 sleep 1000
                 if ImageSearch(&xin, &yin, 0, 0, 629, 348, "*2 " EnvGet("Premiere") "ingest.png")
                     {
@@ -70,15 +72,23 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         sleep 1000
                         SendInput("{Tab}" "{Space}" "{Down 2}" "{Space}")
                         sleep 1000
-                        SendInput("{Tab}" "{Space}" "{Up 5}" "{Space}" "{Tab 2}" "{Space}" "{Up}" "{Space}")
-                        WinWait("Select Folder")
-                        sleep 500
-                        SendInput("{F4}")
-                        sleep 300
-                        SendInput("^a{Del}" SelectedFolder "\proxies") ;INSERT PATH AND PROXIES HERE
-                        SendInput("{Enter}" "+{Tab 5}" "{Enter}")
-                        sleep 1000
                         SendInput("{Tab}" "{Space}")
+                        sleep 300
+                        SendInput("{Up 5}" "{Space}")
+                        sleep 300
+                        SendInput("{Tab 2}" "{Space}")
+                        sleep 300
+                        SendInput("{Up}" "{Space}")
+                        WinWait("Select Folder")
+                        sleep 800
+                        SendInput("{F4}")
+                        sleep 800
+                        SendInput("^a{Del}" SelectedFolder "\proxies") ;INSERT PATH AND PROXIES HERE
+                        sleep 800
+                        SendInput("{Enter}" "+{Tab 5}" "{Enter}")
+                        sleep 2000
+                        SendInput("{Tab}" "{Space}")
+                        sleep 1000
                         blockOff()
                         Run(SelectedFolder) ;open an explorer window for your selected directory
                         return

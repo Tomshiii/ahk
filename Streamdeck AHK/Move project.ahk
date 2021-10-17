@@ -1,4 +1,4 @@
-#SingleInstance Force
+;#SingleInstance Force ;don't want to accidentally start a second instance while it's mid move
 
 ;; This part makes you select the folder you wish to move
 SelectedFolder := DirSelect("*E:\", 3, "Pick the folder you wish to move.")

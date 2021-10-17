@@ -24,33 +24,24 @@ else
                 sleep 1000
                 if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffDARK.png")
                     goto next
+                else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffLIGHT.png")
+                    goto next
                 else
                     {
-                        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffLIGHT.png")
+                        SendInput("{WheelDown 5}")
+                        sleep 1000
+                        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffDARK.png")
+                            goto next
+                        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffLIGHT.png")
                             goto next
                         else
                             {
                                 SendInput("{WheelDown 5}")
-                                sleep 1000
-                                if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffDARK.png")
-                                    goto next
-                                else
-                                    {
-                                        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffLIGHT.png")
-                                            goto next
-                                        else
-                                            {
-                                                SendInput("{WheelDown 5}")
-                                            }
-                                    }
                             }
-                            
                     }
             }
-            
+                            
     }
-
-
 
 next:
 ;MouseMove(%&ffX%, %&ffY%)
@@ -74,30 +65,25 @@ If PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ff
                 return
             }
     }
-else
+else if PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ffY% + "40", 0x979797, 3)
     {
-        If PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ffY% + "40", 0x979797, 3)
+        MouseMove(%&xcol%, %&ycol%)
+        Click()
+        MouseMove(-100, 0,, "R") ;moves out of the way so imagesearch can work
+        sleep 1000
+        if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "sample.png")
+            Click(%&syX%, %&syY%)
+        else
             {
-                MouseMove(%&xcol%, %&ycol%)
-                Click()
-                MouseMove(-100, 0,, "R") ;moves out of the way so imagesearch can work
-                sleep 1000
-                if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "sample.png")
-                    Click(%&syX%, %&syY%)
-                else
+                ToolTip("couldn't find anything I guess")
+                SetTimer(timeouttime2, -2000)
+                    timeouttime2()
                     {
-                        ToolTip("couldn't find anything I guess")
-                        SetTimer(timeouttime2, -2000)
-                            timeouttime2()
-                            {
-                                ToolTip("")
-                            }
-                        return
+                        ToolTip("")
                     }
+                return
             }
     }
 sleep 200
 WinClose("Settings")
 ExitApp()
-
-;don't use system you dumbass

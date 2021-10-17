@@ -49,24 +49,26 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 else
                     {
                         toolCust("can't find colour", "1000")
+                        return
                     }
             }
-            if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1280.png")
-                {
-                    If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
-                        {
-                            MouseMove(%&xcol% + "3", %&ycol% + "3")
-                            Click()
-                            SendInput("^a{Del}" "720{Tab}1280{Enter}")
-                            sleep 100
-                            if WinExist("Delete All Previews For This Sequence")
-                                SendInput("{Enter}")
-                        }
-                    else
-                        {
-                            toolCust("can't find colour", "1000")
-                        }
-                }
+        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1280.png")
+            {
+                If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
+                    {
+                        MouseMove(%&xcol% + "3", %&ycol% + "3")
+                        Click()
+                        SendInput("^a{Del}" "720{Tab}1280{Enter}")
+                        sleep 100
+                        if WinExist("Delete All Previews For This Sequence")
+                            SendInput("{Enter}")
+                    }
+                else
+                    {
+                        toolCust("can't find colour", "1000")
+                        return
+                    }
+            }
         
         if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1080.png")
             SendInput("{Enter}")
