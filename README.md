@@ -27,7 +27,7 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
      - Then install an AHK extension within the program for a more complete package.
 4. Save these scripts in "C:\Program Files\ahk\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
 5. Edit, then run any of the .ahk files to then use to your liking!
-  - Make sure to take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/blob/main/Streamdeck%20AHK/Keyboard%20Shortcuts.ini) to set your own keyboard shortcuts for programs!
+  - Make sure to take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs!
   - Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
      - autodismiss error
@@ -35,7 +35,7 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
 #### Then be aware:
 
 - Any scripts that contain pixel coordinates (in either, Click, MouseMove, ImageSearch, PixelSearch, etc) rely not only on my monitor layout or the coordinate mode set but also my workspace layout within premiere (or any applicable program) and will not necessarily work out of the box. They will require looking at the individual comments, as well as any accompanying AHK documentation (make sure you look at the ahk [v2.0](https://lexikos.github.io/v2/docs/AutoHotkey.htm) documentation and **NOT** the [v1.1](https://www.autohotkey.com/docs/AutoHotkey.htm) documentation) to get an idea of what is going on, then adjusting accordingly using Window Spy which gets installed alongside AHK. (an ahk v2.0 version of window spy can be found [here](https://github.com/steelywing/AutoHotkey-Release/blob/master/installer/source/WindowSpy.v2.ahk))
-- All keyboard shortcuts within programs like Adobe Premiere/After Effects/OBS, etc then I need a macro to send (eg. ^+5 to highlight the media browser within Premiere) are definied within the [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/blob/main/Streamdeck%20AHK/Keyboard%20Shortcuts.ini) file instead of just sending the shortcut itself. Edit that ini file with your own keyboard shortcuts to get things to work
+- All keyboard shortcuts within programs like Adobe Premiere/After Effects/OBS, etc then I need a macro to send (eg. ^+5 to highlight the media browser within Premiere) are definied within the [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) file instead of just sending the shortcut itself. Edit that ini file with your own keyboard shortcuts to get things to work
 
 
 ## Explanation:
