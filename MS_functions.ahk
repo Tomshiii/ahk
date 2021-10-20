@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.3
+;\\v2.6.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.1
@@ -838,7 +838,7 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 
 ; ===========================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.6
+;		Photoshop \\ Last updated: v2.6.4
 ;
 ; ===========================================================================================================================================
 psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
@@ -990,6 +990,34 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 	WinWait("PNG Format Options")
 	SendInput("{Enter}")
 	blockOff()
+}
+
+psType(filetype) ;when you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want
+;&filetype is the name of the image you save to pick which filetype you want this function to click on
+{
+	MouseGetPos(&x, &y)
+	Send("{TAB}{RIGHT}") ;make sure you don't click anywhere before using this function OR put the caret back in the filename box
+	coordw()
+	sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
+	if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") %&filetype% ".png")
+		{
+			SendInput("{Enter}")
+			SendInput("+{Tab}")
+		}
+
+	else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") %&filetype% "2.png")
+		{
+			MouseMove(%&xpng%, %&ypng%)
+			SendInput("{Click}")
+			SendInput("+{Tab}")
+		}
+	else
+		{
+			blockOff()
+			toolFind("png drop down", "1000")
+			return
+		}
+	MouseMove(%&x%, %&y%)
 }
 
 ; ===========================================================================================================================================

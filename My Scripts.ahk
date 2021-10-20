@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.1
+;\\v2.6.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.6.1
+;\\v2.6.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.2.8
 
@@ -239,41 +239,8 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ;
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe Photoshop.exe")
-^+p:: ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
-{
-	MouseGetPos(&x, &y)
-	Send("{TAB}{RIGHT}")
-	coordw()
-	sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
-	if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
-		{
-			SendInput("{Enter}")
-			SendInput("+{Tab}")
-		}
-
-	else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
-		{
-			MouseMove(%&xpng%, %&ypng%)
-			SendInput("{Click}")
-			SendInput("+{Tab}")
-		}
-	else
-		{
-			blockOff()
-			toolFind("png drop down", "1000")
-			return
-		}
-	MouseMove(%&x%, %&y%)
-}
-/*
-	;the below code is how you can achieve the same as above but simply using inputs. Sometimes this would still fail because photoshop sucks, but it does the job just fine
-	Send "{TAB}{RIGHT}"
-	SendInput "{Up 21}" ;makes sure you have the top most option selected
-	sleep 50 ;this probably isn't needed, but I have here for saftey just because photoshop isn't the best performance wise
-	SendInput "{DOWN 17}"
-	Send "{Enter}+{Tab}"
- */
-;}
+^+p::psType("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
+^+j::psType("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
 XButton1::mousedrag(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 Xbutton2::mousedrag(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
