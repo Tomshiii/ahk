@@ -35,7 +35,6 @@ if not WinExist("ahk_exe obs64.exe")
 	SetWinDelay 0 ;makes windows move instantly
 	Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
-	Run "C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe"
 	Result := MsgBox("have you started the goxlr bruh",, 1)
 	if Result = "OK"
 		{
@@ -44,6 +43,7 @@ if not WinExist("ahk_exe obs64.exe")
 	else
 		return
 	next:
+	Run "C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe"
 	Run "C:\Program Files\ahk\ahk\shortcuts\obs64.lnk" ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
@@ -141,6 +141,11 @@ if not WinExist("ahk_exe obs64.exe")
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
 	if WinExist("ahk_exe ApplicationDj.exe")
 		{
+			WinMinimize()
+		}
+	if WinExist("ahk_exe LioranBoard Receiver.exe")
+		{
+			WinWait("ahk_exe LioranBoard Receiver.exe",, 3)
 			WinMinimize()
 		}
 }

@@ -270,6 +270,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 							MouseMove(%&xeye%, %&yeye%)
 							SendInput("{Click}")
 							MouseGetPos(&eyeX, &eyeY)
+							sleep 50
 						}
 					else
 						{
@@ -297,7 +298,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	SendInput("{Click Down}")
 	if A_ThisHotkey = textHotkey ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
 		{
-			MouseMove(%&eyeX%, %&eyeY%)
+			MouseMove(%&eyeX%, %&eyeY% - "5")
 			SendInput("{Click Up}")
 			MouseMove(%&xpos%, %&ypos%)
 			blockOff()
