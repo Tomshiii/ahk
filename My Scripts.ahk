@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.2
+;\\v2.6.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.6.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -171,12 +171,6 @@ F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to 
 F19 & XButton2::SendInput("^#{Right}") ;you don't need these two as a sendinput, the syntax highlighting I'm using just see's ^#Right as an error and it's annoying
 F19 & XButton1::SendInput("^#{Left}")
 
-;The below scripts are to move windows around with just my mouse
-F20 & WheelUp::#Up
-F20 & WheelDown::#Down
-F20 & Xbutton2::#Right
-F20 & Xbutton1::#Left
-
 ;The below scripts are to skip ahead in the youtube player with the mouse
 WheelRight::youMouse("l", "{Right}")
 WheelLeft::youMouse("j", "{Left}")
@@ -216,7 +210,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mous
 			SendInput("{Space}") ;if it finds a youtube window it will hit space to pause/play it
 		}
 	else
-		SendInput("{Media_Play_Pause}")
+		SendInput("{Media_Play_Pause}") ;if not clicked on firefox it will simply send through a regular play pause input
 }
 
 ;=============================================================================================================================================
@@ -245,7 +239,7 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 XButton1::mousedrag(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 Xbutton2::mousedrag(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 z::mousedrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
-!g::SendInput("!{t}" "b{Right}g") ;open gaussian blur
+!g::SendInput("!{t}" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
 F1::psSave()
 
 ;=============================================================================================================================================
@@ -323,7 +317,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 !p::preset("parametric") ;check MS_functions.ahk for the code for these presets
 !h::preset("hflip")
 !c::preset("croptom")
-!t::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk drags that preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+!t::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
@@ -335,5 +329,5 @@ WheelLeft::wheelEditPoint(previousEditPoint) ;goes to the next edit point toward
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
-F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F15
+F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 F20::audioDrag("bleep")
