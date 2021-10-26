@@ -1,89 +1,87 @@
 #SingleInstance Force
 SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0
-EnvSet("Windows", "C:\Program Files\ahk\ahk\ImageSearch\Windows\Settings\")
+EnvSet("Windows", "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\")
+
+;
+; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder
+;
 
 RunWait("ms-settings:apps-volume")
-sleep 300
+WinWait("Settings")
+if WinExist("Settings")
+    WinActivate()
 coordmode "pixel", "window"
 coordmode "mouse", "window"
-SendInput("{tab}")
-MouseMove(274, 126)
-Click()
-sleep 100
-if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffDARK.png")
+MouseMove(789, 375)
+if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox3.png")
     goto next
-else
+else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox.png")
+    goto next
+else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox2.png")
+    goto next
+else 
     {
-        sleep 100
-        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffLIGHT.png")
+        SendInput("{WheelDown 5}")
+        sleep 1000
+        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox3.png")
+            goto next
+        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox.png")
+            goto next
+        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox2.png")
             goto next
         else
             {
                 SendInput("{WheelDown 5}")
                 sleep 1000
-                if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffDARK.png")
+                if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox3.png")
                     goto next
-                else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffLIGHT.png")
+                if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox.png")
+                    goto next
+                else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox2.png")
                     goto next
                 else
                     {
                         SendInput("{WheelDown 5}")
-                        sleep 1000
-                        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffDARK.png")
-                            goto next
-                        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "ffLIGHT.png")
-                            goto next
-                        else
-                            {
-                                SendInput("{WheelDown 5}")
-                            }
                     }
             }
-                            
     }
 
 next:
-;MouseMove(%&ffX%, %&ffY%)
-;MouseGetPos(&pix, &piy)
-If PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ffY% + "40", 0xD8D8D8, 3)
+MouseMove(%&ffx%, %&ffy%)
+Click()
+sleep 500
+if ImageSearch(&outX, &outY, %&ffX% - "5", %&ffY%, 2567, 1447, "*2 " EnvGet("Windows") "output device.png")
     {
-        MouseMove(%&xcol%, %&ycol%)
-        Click()
-        MouseMove(-100, 0,, "R") ;moves out of the way so imagesearch can work
-        sleep 1000
-        if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "sample.png")
-            Click(%&syX%, %&syY%)
-        else
-            {
-                ToolTip("couldn't find anything I guess")
-                SetTimer(timeouttime, -2000)
-                    timeouttime()
-                    {
-                        ToolTip("")
-                    }
-                return
-            }
+        if ImageSearch(&devX, &devY, %&outX%, %&outY% - "30", %&outX% + 2500, %&outY% + "30", "*2 " EnvGet("Windows") "sample.png")
+            goto end
+        else if PixelSearch(&xcol, &ycol, %&outX%, %&outY% - "30", %&outX% + 2500, %&outY% + "30", 0x413C38, 3)
+                {
+                    MouseMove(%&xcol%, %&ycol%)
+                    click
+                    MouseGetPos(&newx, &newy)
+                    MouseMove(-100, 0,, "R")
+                    sleep 500
+                    if ImageSearch(&finalX, &finalY, %&newx% - "30", %&newy% - "200", %&newx% + "250", %&newy% + "700", "*2 " EnvGet("Windows") "sample3.png")
+                        {
+                            MsgBox("why")
+                            goto end
+                        }
+                        
+                    else if ImageSearch(&finalX, &finalY, %&newx% - "30", %&newy% - "200", %&newx% + "350", %&newy% + "900", "*2 " EnvGet("Windows") "sample2.png")
+                        {
+                            MouseMove(%&finalX%, %&finalY%)
+                            click
+                            goto end
+                        }
+                }
+            else
+                {
+                    return
+                }
+        
     }
-else if PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ffY% + "40", 0x979797, 3)
-    {
-        MouseMove(%&xcol%, %&ycol%)
-        Click()
-        MouseMove(-100, 0,, "R") ;moves out of the way so imagesearch can work
-        sleep 1000
-        if ImageSearch(&syX, &syY, 8, 8, 2567, 1447, "*4 " EnvGet("Windows") "sample.png")
-            Click(%&syX%, %&syY%)
-        else
-            {
-                ToolTip("couldn't find anything I guess")
-                SetTimer(timeouttime2, -2000)
-                    timeouttime2()
-                    {
-                        ToolTip("")
-                    }
-                return
-            }
-    }
+end:
 sleep 200
 WinClose("Settings")
 ExitApp()
