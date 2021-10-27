@@ -73,7 +73,7 @@ if not WinExist("ahk_exe obs64.exe")
 			SendInput "{UP}{TAB}{ENTER}"
 			sleep 200
 		}
-	WinMove 2553, -892, 1111, 1047  ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
+	WinMove 2554, -892, 1111, 1039  ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
 	Run "firefox.exe https://docs.google.com/presentation/d/1b6pCuOIrw4pEF6GACxrBh8C-mB4XsDeHLM50cj4jAkQ/edit#slide=id.g90e8195d3c_16_958" ;opens the AM route doc to pauline questions
 		if WinExist("ahk_exe firefox.exe")
 			WinActivate
@@ -136,7 +136,7 @@ if not WinExist("ahk_exe obs64.exe")
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, 432, 1080, 797  ;moves into position
+		WinMove 4479, 423, 1080, 800  ;moves into position
 	SetWorkingDir "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
 	if WinExist("ahk_exe ApplicationDj.exe")
