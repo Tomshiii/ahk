@@ -54,19 +54,15 @@ next:
 MouseMove(%&ffx%, %&ffy%)
 Click()
 sleep 500
-if ImageSearch(&outX, &outY, %&ffX% - "5", %&ffY%, 2567, 1447, "*2 " EnvGet("Windows") "output device.png")
+if ImageSearch(&devX, &devY, %&ffX%, %&ffY% - "30", %&ffX% + 2500, %&ffY% + "30", "*2 " EnvGet("Windows") "default.png")
+    goto end
+else
     {
-        if ImageSearch(&devX, &devY, %&outX%, %&outY% - "30", %&outX% + 2500, %&outY% + "30", "*2 " EnvGet("Windows") "default.png")
-            goto end
-        else
-            {
-                MouseMove(%&outX%, %&outY%)
-                MouseMove(850, 0,, "R")
-                click
-                SendInput("{Up 10}")
-                SendInput("{Enter}")
-            }
-        
+        SendInput("{Tab 3}")
+        sleep 100
+        SendInput("{Up 10}")
+        sleep 100
+       ; SendInput("{Enter}")
     }
 end:
 sleep 200
