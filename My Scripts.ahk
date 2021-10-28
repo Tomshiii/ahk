@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.3
+;\\v2.6.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.6.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -283,7 +283,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
 	KeyWait(A_PriorKey)
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2021" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2022" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	blockOn()
 	coords()
