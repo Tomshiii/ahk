@@ -114,9 +114,12 @@ F14:: ;open the "show more options" menu in win11
 	MouseGetPos(&mx, &my)
 	if ImageSearch(&x, &y, %&mx%, %&my%, %&mx% + "100", %&my% + "900","*5 C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Explorer\showmore.png")
 		{
+			SendInput("{Esc}" "+{F10}")
+			/*
 			MouseMove(%&x% + "3", %&y% + "3")
 			click
-			;MouseMove(%&mx%, %&my%) ;why does win11 open the new menu FROM the button instead of replacing the old menu ffs
+			MouseMove(%&mx%, %&my%) ;why does win11 open the new menu FROM the button instead of replacing the old menu ffs
+			 */ ;return it to this way if ms ever fixes^
 			return
 		}
 	else
