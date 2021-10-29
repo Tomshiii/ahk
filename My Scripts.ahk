@@ -109,6 +109,19 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
+F14:: ;open the "show more options" menu in win11
+{
+	MouseGetPos(&mx, &my)
+	if ImageSearch(&x, &y, %&mx%, %&my%, %&mx% + "100", %&my% + "900","*5 C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Explorer\showmore.png")
+		{
+			MouseMove(%&x% + "3", %&y% + "3")
+			click
+			;MouseMove(%&mx%, %&my%) ;why does win11 open the new menu FROM the button instead of replacing the old menu ffs
+			return
+		}
+	else
+		SendInput("+{F10}")
+}
 
 #HotIf WinActive("ahk_exe Code.exe")
 !a::vscode("MS") ;clicks on the my scripts script in vscode
