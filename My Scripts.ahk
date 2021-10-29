@@ -112,9 +112,10 @@ WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 F14:: ;open the "show more options" menu in win11
 {
 	MouseGetPos(&mx, &my)
-	if ImageSearch(&x, &y, %&mx%, %&my%, %&mx% + "100", %&my% + "900","*5 C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Explorer\showmore.png")
+	if ImageSearch(&x, &y, 0, 0, A_ScreenWidth, A_ScreenHeight, "*5 C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Explorer\showmore.png")
 		{
-			SendInput("{Esc}" "+{F10}")
+			SendInput("{Esc}")
+			SendInput("+{F10}")
 			/*
 			MouseMove(%&x% + "3", %&y% + "3")
 			click
