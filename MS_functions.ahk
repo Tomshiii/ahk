@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.5
+;\\v2.6.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2
@@ -34,6 +34,8 @@ EnvSet("AE", A_WorkingDir "\ImageSearch\AE\")
 EnvSet("Photoshop", A_WorkingDir "\ImageSearch\Photoshop\")
 EnvSet("Resolve", A_WorkingDir "\ImageSearch\Resolve\")
 EnvSet("VSCode", A_WorkingDir "\ImageSearch\VSCode\")
+
+PremiereVersion := "Adobe Premiere Pro 2022" ;set your version of Premiere here
 
 ; ===========================================================================================================================================
 ;
@@ -130,7 +132,7 @@ youMouse(tenS, fiveS) ;a function to skip in youtube
 wheelEditPoint(direction) ;move back and forth between edit points from anywhere in premiere
 ;&direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
 {
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2022" ;focuses the timeline
+	ControlFocus "DroverLord - Window Class3" , PremiereVersion ;focuses the timeline
 	SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
 }
 
@@ -260,7 +262,7 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	MouseGetPos(&xpos, &ypos)
 	if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE
 		{
-			ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2022" ;focuses the timeline
+			ControlFocus "DroverLord - Window Class3" , PremiereVersion ;focuses the timeline
 			SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
 			sleep 100
 			if ImageSearch(&x2, &y2, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "graphics.png")
@@ -366,7 +368,7 @@ noclips() ;this is simply a combination of repeat code that kept popping up in a
 {
 	coords()
 	blockOn()
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2022" ;focuses the timeline
+	ControlFocus "DroverLord - Window Class3" , PremiereVersion ;focuses the timeline
 	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -517,7 +519,7 @@ keyframe(filepath) ;this function is to either turn on keyframing, or create a n
 		MouseMove(%&keyx% + "3", %&keyy%)
 	Click()
 	end:
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2022" ;focuses the timeline
+	ControlFocus "DroverLord - Window Class3" , PremiereVersion ;focuses the timeline
 	MouseMove(%&xpos%, %&ypos%)
 	blockOff()
 }
@@ -719,7 +721,7 @@ gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure
 ;&amount is the value you want the gain to adjust (eg. -2, 6, etc)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2022"
+	ControlFocus "DroverLord - Window Class3" , PremiereVersion
 	if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
@@ -746,7 +748,7 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 ;&keyend is whatever key you want the function to wait for before finishing
 {
 ;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro 2022"
+	ControlFocus "DroverLord - Window Class3" , PremiereVersion
 	if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
@@ -1426,7 +1428,7 @@ numpad000() ;this function is to suppress the multiple keystrokes the "000" key 
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.4.4
+;		Fkey AutoLaunch \\ Last updated: v2.6.6
 ;
 ; ===========================================================================================================================================
 switchToExplorer()
@@ -1448,7 +1450,7 @@ switchToPremiere()
 		;Run, Adobe Premiere Pro.exe
 		;Adobe Premiere Pro CC 2017
 		; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
-		Run "Adobe Premiere Pro.exe"
+		Run A_ScriptDir "\shortcuts\Adobe Premiere Pro.exe.lnk"
 		}
 	else
 		if WinExist("ahk_class Premiere Pro")
@@ -1462,7 +1464,7 @@ switchToAE()
 		;Run, Adobe Premiere Pro.exe
 		;Adobe Premiere Pro CC 2017
 		; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
-		Run "AfterFX.exe"
+		Run A_ScriptDir "\shortcuts\AfterFX.exe.lnk"
 		}
 	else
 		if WinExist("ahk_exe AfterFX.exe")
