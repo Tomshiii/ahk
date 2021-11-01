@@ -1,33 +1,8 @@
 #SingleInstance Force
 SetWorkingDir("C:\Program Files\ahk\ahk")
 EnvSet("Premiere", A_WorkingDir "\ImageSearch\Premiere\")
-coordw() ;sets coordmode to "window"
-{
-	coordmode "pixel", "window"
-	coordmode "mouse", "window"
-}
-toolFind(message, timeout) ;create a tooltip for errors finding things
-;&message is what you want the tooltip to say after "couldn't find"
-;&timeout is how many ms you want the tooltip to last
-{
-	ToolTip("couldn't find " %&message%)
-	SetTimer(timeouttime, - %&timeout%)
-	timeouttime()
-	{
-		ToolTip("")
-	}
-}
-toolCust(message, timeout) ;create a tooltip with any message
-;&message is what you want the tooltip to say
-;&timeout is how many ms you want the tooltip to last
-{
-	ToolTip(%&message%)
-	SetTimer(timeouttime, - %&timeout%)
-	timeouttime()
-	{
-		ToolTip("")
-	}
-}
+#Include SD_functions.ahk
+
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
         coordw()

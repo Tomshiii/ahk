@@ -1,35 +1,7 @@
 ﻿SetWorkingDir("C:\Program Files\ahk\ahk")
 SetDefaultMouseSpeed 0
 EnvSet("Premiere", A_WorkingDir "\ImageSearch\Premiere\")
-coords() ;sets coordmode to "screen"
-{
-	coordmode "pixel", "screen"
-	coordmode "mouse", "screen"
-}
-blockOn() ;blocks all user inputs
-{
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess 
-}
-
-blockOff() ;turns off the blocks on user input
-{
-	blockinput "MouseMoveOff"
-	BlockInput "off"
-}
-toolFind(message, timeout) ;create a tooltip for errors finding things
-;&message is what you want the tooltip to say after "couldn't find"
-;&timeout is how many ms you want the tooltip to last
-{
-	ToolTip("couldn't find " %&message%)
-	SetTimer(timeouttime, - %&timeout%)
-	timeouttime()
-	{
-		ToolTip("")
-	}
-}
+#Include SD_functions.ahk
 
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
 	{

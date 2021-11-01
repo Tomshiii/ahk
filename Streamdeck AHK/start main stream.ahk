@@ -1,34 +1,7 @@
 ﻿sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
 SetDefaultMouseSpeed 0
-blockOn() ;blocks all user inputs
-{
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess 
-}
+#Include SD_functions.ahk
 
-coordw() ;sets coordmode to "window"
-{
-	coordmode "pixel", "window"
-	coordmode "mouse", "window"
-}
-
-blockOff() ;turns off the blocks on user input
-{
-	blockinput "MouseMoveOff"
-	BlockInput "off"
-}
-dock()
-{
-	sleep 1500
-	coordmode "pixel", "Window"
-	coordmode "mouse", "Window"
-	MouseMove 1128, 130 ;moves mouse to click the start button
-	click ;required for brothers queue program for automatic mii wii playback
-	sleep 1000
-	WinMinimize()
-}
 if not WinExist("ahk_exe obs64.exe")
 {
 	SetWorkingDir A_ScriptDir
