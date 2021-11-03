@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.9
+;\\v2.6.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2
@@ -1426,7 +1426,7 @@ numpad000() ;this function is to suppress the multiple keystrokes the "000" key 
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.6.9
+;		Fkey AutoLaunch \\ Last updated: v2.6.10
 ;
 ; ===========================================================================================================================================
 switchToExplorer()
@@ -1449,9 +1449,6 @@ switchToPremiere()
 {
 	if not WinExist("ahk_class Premiere Pro")
 		{
-		;Run, Adobe Premiere Pro.exe
-		;Adobe Premiere Pro CC 2017
-		; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
 		Run A_ScriptDir "\shortcuts\Adobe Premiere Pro.exe.lnk"
 		}
 	else
@@ -1463,10 +1460,9 @@ switchToAE()
 {
 	if not WinExist("ahk_exe AfterFX.exe")
 		{
-		;Run, Adobe Premiere Pro.exe
-		;Adobe Premiere Pro CC 2017
-		; Run, C:\Program Files\Adobe\Adobe Premiere Pro CC 2017\Adobe Premiere Pro.exe ;if you have more than one version instlaled, you'll have to specify exactly which one you want to open.
 		Run A_ScriptDir "\shortcuts\AfterFX.exe.lnk"
+		WinWait("ahk_exe AfterFX.exe")
+		WinActivate("ahk_exe AfterFX.exe")
 		}
 	else
 		if WinExist("ahk_exe AfterFX.exe")
@@ -1492,21 +1488,11 @@ switchToFirefox()
 			if WinExist("ahk_exe firefox.exe")
 				;WinRestore ahk_exe firefox.exe
 					WinActivate "ahk_exe firefox.exe"
-		;sometimes winactivate is not enough. the window is brought to the foreground, but not put into FOCUS.
-		;the below code should fix that.
-		;Controls := WinGetControlsHwnd("ahk_class MozillaWindowClass")
-		;WinGet hWnd ID ahk_class MozillaWindowClass
-		;Result := DllCall("SetForegroundWindow UInt hWnd")
-		;DllCall("SetForegroundWindow" UInt hWnd) 
 		}
 }
 
 switchToOtherFirefoxWindow()
 {
-;sendinput, {SC0E8} ;scan code of an unassigned key
-
-;Process Exist firefox.exe
-;msgbox errorLevel `n%errorLevel%
 	if (PID := ProcessExist("firefox.exe"))
 	{
 		GroupAdd "firefoxes", "ahk_class MozillaWindowClass"
