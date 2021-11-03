@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.8
+;\\v2.6.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2
@@ -1426,13 +1426,17 @@ numpad000() ;this function is to suppress the multiple keystrokes the "000" key 
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.6.6
+;		Fkey AutoLaunch \\ Last updated: v2.6.9
 ;
 ; ===========================================================================================================================================
 switchToExplorer()
 {
 	if not WinExist("ahk_class CabinetWClass")
-		Run "explorer.exe"
+		{
+			Run "explorer.exe"
+			WinWait("ahk_class CabinetWClass")
+			WinActivate "ahk_class CabinetWClass" ;in win11 running explorer won't always activate it, so it'll open in the backround
+		}
 	GroupAdd "explorers", "ahk_class CabinetWClass"
 	if WinActive("ahk_exe explorer.exe")
 		GroupActivate "explorers", "r"
