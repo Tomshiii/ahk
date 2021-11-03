@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.8
+;\\v2.2.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.6.2
 
@@ -225,7 +225,17 @@ Numpad8::unassigned()
 Numpad9::unassigned()
 
 NumpadSub::switchToExplorer()
-NumpadSub & NumpadMult::run "explorer.exe" ;just opens a new explorer window
+NumpadSub & NumpadMult::
+{
+	if not WinExist("ahk_class CabinetWClass")
+		{
+			Run "explorer.exe"
+			WinWait("ahk_class CabinetWClass")
+			WinActivate "ahk_class CabinetWClass" ;in win11 running explorer won't always activate it, so it'll open in the backround
+		}
+	else
+		Run "explorer.exe"
+}
 NumpadMult::unassigned()
 numpadAdd::switchToPremiere()
 NumpadEnter::unassigned()
