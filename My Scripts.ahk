@@ -180,7 +180,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 {
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, -260, 1080, 1488
+		WinMove 4480, -267, 1080, 1488
 }
 
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
