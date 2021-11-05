@@ -12,6 +12,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         if SelectedFolder = ""
             return
         DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
+        DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
+        DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
 
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
         coordw()

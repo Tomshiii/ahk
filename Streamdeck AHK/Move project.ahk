@@ -14,11 +14,15 @@ Move := DirSelect("*A:\_RC\Tomshi\2021", 3, "Pick the destination folder you wis
 if Move = ""
     return
 
-;;this part deletes the proxies folder if it exists and then moves your selected folder to the selected destination
+;;this part deletes the proxies folder and the draft folder if they exist and then moves your selected folder to the selected destination
 if DirExist(SelectedFolder "\proxies")
     DirDelete(SelectedFolder "\proxies", 1)
 if DirExist(SelectedFolder "\Proxies")
     DirDelete(SelectedFolder "\Proxies", 1)
+if DirExist(SelectedFolder "\draft")
+    DirDelete(SelectedFolder "\renders\draft" 1)
+if DirExist(SelectedFolder "\Draft")
+    DirDelete(SelectedFolder "\renders\Draft" 1)
 DirMove(SelectedFolder, Move "\" %&name%)
 
 ;;this part just opens the final directory
