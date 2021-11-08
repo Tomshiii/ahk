@@ -254,8 +254,8 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 preset(item) ;this preset is for the drag and drop effect presets in premiere
 ;&item in this function defines what it will type into the search box (the name of your preset within premiere)
 {
-	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	blockOn()
+	;KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coords()
 	MouseGetPos(&xpos, &ypos)
 	if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE
@@ -288,6 +288,8 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 		}
 	SendInput(effectsWindow) ;adjust this in the ini file
 	SendInput(findBox) ;adjust this in the ini file
+	sleep 50
+	SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
 	SendInput("^a{DEL}")
 	sleep 60
 	coordc() ;change caret coord mode to window
