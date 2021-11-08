@@ -74,7 +74,7 @@ DetectHiddenWindows(true)
 			ProcessClose("ApplicationDj.exe")
 		}
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, -267, 1080, 1488
+		WinMove 4480, -278, 1080, 1488
 	if WinExist("ahk_exe Docker Desktop.exe")
 		{
 			;WinRestore

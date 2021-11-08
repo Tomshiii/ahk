@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.6
+;\\v2.6.7
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.6.7
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -91,6 +91,7 @@ RWin::switchToVSC() ;run vscode
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
 PgDn::switchToFirefox() ;open firefox
 PgDn & End::switchToOtherFirefoxWindow() ;swap between firefox windows
+PrintScreen::SendInput("^+{Esc}")
 
 ;These two scripts are to open highlighted text in the ahk documentation
 AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
@@ -180,7 +181,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 {
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, -267, 1080, 1488
+		WinMove 4480, -278, 1080, 1488
 }
 
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
