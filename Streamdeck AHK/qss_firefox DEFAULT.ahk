@@ -8,7 +8,7 @@ EnvSet("Windows", "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\"
 ;
 
 MouseGetPos(&sx, &sy)
-RunWait("ms-settings:apps-volume")
+Run("ms-settings:apps-volume")
 WinWait("Settings")
 if WinExist("Settings")
     WinActivate()

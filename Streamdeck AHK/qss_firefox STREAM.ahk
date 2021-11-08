@@ -6,8 +6,9 @@ EnvSet("Windows", "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\"
 ;
 ; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder
 ;
+
 MouseGetPos(&sx, &sy)
-RunWait("ms-settings:apps-volume")
+Run("ms-settings:apps-volume")
 WinWait("Settings")
 if WinExist("Settings")
     WinActivate()
@@ -25,7 +26,7 @@ else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firef
 else 
     {
         SendInput("{WheelDown 5}")
-        sleep 1000
+        sleep 100
         if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox3.png")
             goto next
         if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox.png")
@@ -35,7 +36,7 @@ else
         else
             {
                 SendInput("{WheelDown 5}")
-                sleep 1000
+                sleep 100
                 if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox3.png")
                     goto next
                 if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox.png")
