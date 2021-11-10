@@ -39,15 +39,39 @@ This repo is to maintain work on the ahk v2.0 versions of my scripts. These scri
 
 
 ## Explanation:
-Item | Use
-:---: | :---
-Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk | An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/funciton that uses its. You do NOT need to run this ahk file, it is [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) in MS_Functions.ahk
-My Scripts.ahk | This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing). This was the original script before MS_functions.ahk and QMK.ahk came about
-QMK Keyboard.ahk | A script to allow separate function for my secondary keyboard (I use a little numpad). A script originally created by [Taran](https://github.com/TaranVH/) that I've modified to work in ahk v2.0 (and cut down to only applicable buttons).
-MS_functions.ahk | (My Scripts_functions) A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to; <br />![Untitled-1](https://user-images.githubusercontent.com/53557479/131491115-15476b22-935c-4344-a54d-0e1c25910cd5.png)<br />We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add <br />```func("variableX", "variableY")``` to scripts.
-Streaming.ahk | A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
+
+#### [Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk](https://github.com/Tomshiii/ahk/tree/main/KSA)
+An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses its. You do NOT need to run this ahk file, it is [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) in MS_Functions.ahk
+
+#### [My Scripts.ahk](https://github.com/Tomshiii/ahk/blob/main/My%20Scripts.ahk)
+This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
+
+#### [QMK Keyboard.ahk](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk)
+A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons).
+
+#### [MS_functions.ahk](https://github.com/Tomshiii/ahk/blob/main/MS_functions.ahk) (My Scripts_functions)
+A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to;
+```
+func(variableX, variableY)
+{
+  code(%&variableX%)
+  code(%&variableY%)
+}
+```
+We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add ```func("variableX", "variableY")``` to scripts.
+
+#### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)
+A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
 PC Startup.ahk | A script that does some things when my PC starts up to ensure proper function of my scripts as well as opening programs I'd otherwise have to open manually.
-Resolve_Example.ahk | An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough and thrown together.
-Alt_menu_acceleration_DISABLER.ahk | A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key.
-autodismiss error.ahk | A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
-right click premiere.ahk | A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button.
+
+#### [Resolve_Example.ahk](https://github.com/Tomshiii/ahk/blob/main/Resolve_Example.ahk)
+An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough, thrown together and contains nowhere near the same amount of features.
+
+#### [Alt_menu_acceleration_DISABLER.ahk](https://github.com/Tomshiii/ahk/blob/main/Alt_menu_acceleration_DISABLER.ahk)
+A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key.
+
+#### [autodismiss error.ahk](https://github.com/Tomshiii/ahk/blob/main/autodismiss%20error.ahk)
+A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
+
+#### [right click premiere.ahk](https://github.com/Tomshiii/ahk/blob/main/right%20click%20premiere.ahk)
+A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button.
