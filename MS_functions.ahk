@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.14
+;\\v2.6.15
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1
@@ -1389,7 +1389,7 @@ vscode(script) ;a script to quickly naviate between my scripts
 }
 ; ===========================================================================================================================================
 ;
-;		Firefox \\ Last updated: v2.6.14
+;		Firefox \\ Last updated: v2.6.15
 ;
 ; ===========================================================================================================================================
 fireWin(key, orig) ;this function will check to see if you're holding the left mouse button, then move the firefox window around however you like
@@ -1403,6 +1403,8 @@ fireWin(key, orig) ;this function will check to see if you're holding the left m
 	else
 		{
 			SendInput("{LButton Up}" %&key%)
+			if A_ThisHotkey = "RButton"
+				WinMinimize
 			if A_ThisHotkey = "F14" ;the hotkey you use to maximise the window
 				WinMaximize
 		}
