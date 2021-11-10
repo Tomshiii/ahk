@@ -247,7 +247,6 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 					SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 					return
 				}
-				
 		}
 	SendInput("{Space}") ;if it finds a youtube window it will hit space to pause/play it
 }
