@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.11
+;\\v2.6.12
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1
@@ -1386,6 +1386,23 @@ vscode(script) ;a script to quickly naviate between my scripts
 	SendInput("{Click}")
 	MouseMove(%&x%, %&y%)
 	blockOff()
+}
+; ===========================================================================================================================================
+;
+;		Firefox \\ Last updated: v2.6.12
+;
+; ===========================================================================================================================================
+fireWin(key) ;this function will check to see if you're holding the left mouse button, then move the firefox window around however you like
+;key is what key(s) you want the function to press to move a window around
+{
+	if not GetKeyState("LButton", "P")
+		return
+	else
+		{
+			SendInput("{LButton Up}" %&key%)
+			if A_ThisHotkey = "F14" ;the hotkey you use to maximise the window
+				WinMaximize
+		}
 }
 
 ; ===========================================================================================================================================

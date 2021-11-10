@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.8
+;\\v2.6.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.6.7
+;\\v2.6.12
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.2.9
 
@@ -214,44 +214,43 @@ F19 & XButton1::SendInput("^#{Left}")
 WheelRight::youMouse("l", "{Right}")
 WheelLeft::youMouse("j", "{Left}")
 
-Media_Play_Pause:: ;pauses youtube video if there is one. Not technically a mouse script, but fits in with the firefox #hotif
-{
-	if WinActive("ahk_exe firefox.exe")
-		{
-			SetTitleMatchMode 2
-			needle := "YouTube"
-			Loop 40
-				{
-					title := WinGetTitle("A")
-					;WinGetTitle title
-					if not WinActive("ahk_exe firefox.exe")
-						break
-					if (InStr(title, needle))
-						Break
-					Else
-						send "^{Tab}"
-					sleep 25
-					if A_Index = 8
-						switchToOtherFirefoxWindow()
-					if A_Index = 16
-						switchToOtherFirefoxWindow()
-					if A_Index = 24
-						switchToOtherFirefoxWindow()
-					if A_Index = 30
-						switchToOtherFirefoxWindow()
-					if A_Index = 36
-						{
-							SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
-							return
-						}
-						
-				}
-			SendInput("{Space}") ;if it finds a youtube window it will hit space to pause/play it
-		}
-	else
-		SendInput("{Media_Play_Pause}") ;if not clicked on firefox it will simply send through a regular play pause input
-}
+#HotIf WinActive("ahk_exe firefox.exe")
+F14::fireWin("") ;maximise
+XButton2::fireWin("#{Left}") ;snap left
+XButton1::fireWin("#{Right}") ;snap right
 
+Media_Play_Pause:: ;pauses youtube video if there is one.
+{
+	SetTitleMatchMode 2
+	needle := "YouTube"
+	Loop 40
+		{
+			title := WinGetTitle("A")
+			;WinGetTitle title
+			if not WinActive("ahk_exe firefox.exe")
+				break
+			if (InStr(title, needle))
+				Break
+			Else
+				send "^{Tab}"
+			sleep 25
+			if A_Index = 8
+				switchToOtherFirefoxWindow()
+			if A_Index = 16
+				switchToOtherFirefoxWindow()
+			if A_Index = 24
+				switchToOtherFirefoxWindow()
+			if A_Index = 30
+				switchToOtherFirefoxWindow()
+			if A_Index = 36
+				{
+					SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
+					return
+				}
+				
+		}
+	SendInput("{Space}") ;if it finds a youtube window it will hit space to pause/play it
+}
 ;=============================================================================================================================================
 ;
 ;		Discord
