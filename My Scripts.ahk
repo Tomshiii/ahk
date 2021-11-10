@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.11
+;\\v2.6.12
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.6.14
+;\\v2.6.16
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.2.9
 
@@ -215,10 +215,10 @@ WheelRight::youMouse("l", "{Right}")
 WheelLeft::youMouse("j", "{Left}")
 
 #HotIf WinActive("ahk_exe firefox.exe")
-F14::fireWin("", "{F14}") ;maximise
-XButton2::fireWin("#{Left}", "{XButton2}") ;snap left
-XButton1::fireWin("#{Right}", "{XButton1}") ;snap right
-RButton::fireWin("", "{RButton}")
+F14::fireWin("") ;maximise
+XButton2::fireWin("#{Left}") ;snap left
+XButton1::fireWin("#{Right}") ;snap right
+RButton::fireWin("") ;minimise
 
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {
