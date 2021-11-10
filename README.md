@@ -10,11 +10,11 @@ A lot of the code in the earliest versions my scripts was either inspired by, or
 
 You can watch me use some of these scripts in action while I edit away on twitch when I stream on my bot account: https://www.twitch.tv/botshiii
 
-### QMK Keyboard:
-My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [Hasu USB-USB converter](https://geekhack.org/index.php?topic=109514.0) allows you to use a second keyboard to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues
-
 ### AHK Version Information:
 This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo. They are severely outdated and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
+
+## QMK Keyboard:
+My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [Hasu USB-USB converter](https://geekhack.org/index.php?topic=109514.0) allows you to use a second keyboard to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues
 
 ## What to do:
 1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 Beta](https://www.autohotkey.com/v2/).
