@@ -36,7 +36,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 300
                 SendInput("^a{Del}" SelectedFolder) ;SEND PATH HERE
                 SendInput("{Enter}")
-                sleep 250
+                sleep 1000
                 SendInput("+{Tab 5}")
                 sleep 500
                 SendInput("{Enter}")
