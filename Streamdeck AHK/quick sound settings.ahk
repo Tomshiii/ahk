@@ -1,4 +1,5 @@
 #SingleInstance Force
 
-RunWait("ms-settings:apps-volume")
+Run("ms-settings:apps-volume")
+WinWait("Settings")
 WinActivate("Settings")
