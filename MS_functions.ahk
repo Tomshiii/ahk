@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.10
+;\\v2.6.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1
@@ -1428,7 +1428,7 @@ numpad000() ;this function is to suppress the multiple keystrokes the "000" key 
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.6.10
+;		Fkey AutoLaunch \\ Last updated: v2.6.11
 ;
 ; ===========================================================================================================================================
 switchToExplorer()
@@ -1579,6 +1579,21 @@ switchToYourPhone()
 		WinActivate "Your Phone" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+switchToEdge()
+{
+	if not WinExist("ahk_exe msedge.exe")
+		{
+			Run "msedge.exe"
+			WinWait("ahk_exe msedge.exe")
+			WinActivate("ahk_exe msedge.exe")
+		}
+	GroupAdd "git", "ahk_exe msedge.exe"
+	if WinActive("ahk_exe msedge.exe")
+		GroupActivate "git", "r"
+	else
+		if WinExist("ahk_exe msedge.exe")
+		WinActivate "ahk_exe msedge.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+}
 ; ===========================================================================================================================================
 ; Old
 ; ===========================================================================================================================================

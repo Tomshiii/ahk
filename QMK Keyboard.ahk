@@ -11,9 +11,9 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.9
+;\\v2.2.10
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.6.2
+;\\v2.6.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1
@@ -238,7 +238,7 @@ NumpadSub & NumpadMult::
 }
 NumpadMult::unassigned()
 numpadAdd::switchToPremiere()
-NumpadEnter::unassigned()
+NumpadEnter::switchToEdge()
 NumpadDot::unassigned()
 NumpadDiv::unassigned()
 Backspace::switchToAE()
