@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.13
+;\\v2.6.14
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1
@@ -1389,15 +1389,15 @@ vscode(script) ;a script to quickly naviate between my scripts
 }
 ; ===========================================================================================================================================
 ;
-;		Firefox \\ Last updated: v2.6.13
+;		Firefox \\ Last updated: v2.6.14
 ;
 ; ===========================================================================================================================================
-fireWin(key) ;this function will check to see if you're holding the left mouse button, then move the firefox window around however you like
+fireWin(key, orig) ;this function will check to see if you're holding the left mouse button, then move the firefox window around however you like
 ;key is what key(s) you want the function to press to move a window around
 {
 	if not GetKeyState("LButton", "P")
 		{
-			SendInput(A_ThisHotkey)
+			SendInput(%&orig%)
 			return
 		}
 	else
