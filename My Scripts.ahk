@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.12
+;\\v2.6.13
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.6.16
+;\\v2.6.17
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.2.9
 
@@ -89,9 +89,7 @@ PgUp::switchToExcel() ;run microsoft excel.
 Pause::switchToWindowSpy() ;run windowspy
 RWin::switchToVSC() ;run vscode
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
-PgDn::switchToFirefox() ;open firefox
-PgDn & End::switchToOtherFirefoxWindow() ;swap between firefox windows
-PgDn & Del::Run "firefox.exe" ;run a new window
+PgDn::firefoxTap() ;open firefox with one tap, switches between windows with two, runs another insance with three
 PrintScreen::SendInput("^+{Esc}")
 
 ;These two scripts are to open highlighted text in the ahk documentation

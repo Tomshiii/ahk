@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.16
+;\\v2.6.17
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1
@@ -1450,7 +1450,7 @@ numpad000() ;this function is to suppress the multiple keystrokes the "000" key 
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.6.11
+;		Fkey AutoLaunch \\ Last updated: v2.6.17
 ;
 ; ===========================================================================================================================================
 switchToExplorer()
@@ -1460,8 +1460,8 @@ switchToExplorer()
 			Run "explorer.exe"
 			WinWait("ahk_class CabinetWClass")
 			WinActivate "ahk_class CabinetWClass" ;in win11 running explorer won't always activate it, so it'll open in the backround
+			GroupAdd "explorers", "ahk_class CabinetWClass"
 		}
-	GroupAdd "explorers", "ahk_class CabinetWClass"
 	if WinActive("ahk_exe explorer.exe")
 		GroupActivate "explorers", "r"
 	else
@@ -1493,9 +1493,9 @@ switchToAE()
 		WinActivate "ahk_exe AfterFX.exe"
 }
 
-switchToFirefox()
+switchToFirefox() ;I use this as a nested function below in firefoxTap(), you can just use this separately
+
 {
-	sendinput "{SC0E8}" ;scan code of an unassigned key. Do I NEED this?
 	if not WinExist("ahk_class MozillaWindowClass")
 		Run "firefox.exe"
 	if WinActive("ahk_exe firefox.exe")
@@ -1515,25 +1515,60 @@ switchToFirefox()
 		}
 }
 
-switchToOtherFirefoxWindow()
+switchToOtherFirefoxWindow() ;I use this as a nested function below in firefoxTap(), you can just use this separately
 {
-	if (PID := ProcessExist("firefox.exe"))
-	{
-		GroupAdd "firefoxes", "ahk_class MozillaWindowClass"
-		if WinActive("ahk_class MozillaWindowClass")
-			GroupActivate "firefoxes", "r"
-		else
-			WinActivate "ahk_class MozillaWindowClass"
-	}
+	if WinExist("ahk_exe firefox.exe")
+		{
+			if WinActive("ahk_class MozillaWindowClass")
+				{
+					GroupAdd "firefoxes", "ahk_class MozillaWindowClass"
+					GroupActivate "firefoxes", "r"
+				}
+			else
+				WinActivate "ahk_class MozillaWindowClass"
+		}
 	else
 		Run "firefox.exe"
+}
+
+firefoxTap()
+{
+	static winc_presses := 0
+	if winc_presses > 0 ; SetTimer already started, so we log the keypress instead.
+	{
+		winc_presses += 1
+		return
+	}
+	; Otherwise, this is the first press of a new series. Set count to 1 and start
+	; the timer:
+	winc_presses := 1
+	SetTimer After400, -300 ; Wait for more presses within a 300 millisecond window.
+
+	After400()  ; This is a nested function.
+	{
+		if winc_presses = 1 ; The key was pressed once.
+		{
+			switchToFirefox()
+		}
+		else if winc_presses = 2 ; The key was pressed twice.
+		{
+			switchToOtherFirefoxWindow()
+		}
+		else if winc_presses > 2
+		{
+			Run "firefox.exe"
+		}
+		; Regardless of which action above was triggered, reset the count to
+		; prepare for the next series of presses:
+		winc_presses := 0
+	}
 }
 
 switchToVSC()
 {
 	if not WinExist("ahk_exe Code.exe")
 		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-	GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
+		GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
 	if WinActive("ahk_exe Code.exe")
 		GroupActivate "Code", "r"
 	else
@@ -1545,7 +1580,7 @@ switchToGithub()
 {
 	if not WinExist("ahk_exe GitHubDesktop.exe")
 		Run "C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
-	GroupAdd "git", "ahk_class Chrome_WidgetWin_1"
+		GroupAdd "git", "ahk_class Chrome_WidgetWin_1"
 	if WinActive("ahk_exe GitHubDesktop.exe")
 		GroupActivate "git", "r"
 	else
@@ -1557,7 +1592,7 @@ switchToStreamdeck()
 {
 	if not WinExist("ahk_exe StreamDeck.exe")
 		Run "C:\Program Files\Elgato\StreamDeck\StreamDeck.exe"
-	GroupAdd "stream", "ahk_class Qt5152QWindowIcon"
+		GroupAdd "stream", "ahk_class Qt5152QWindowIcon"
 	if WinActive("ahk_exe StreamDeck.exe")
 		GroupActivate "stream", "r"
 	else
@@ -1568,8 +1603,12 @@ switchToStreamdeck()
 switchToExcel()
 {
 	if not WinExist("ahk_exe EXCEL.EXE")
-		Run A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE"
-	GroupAdd "xlmain", "ahk_class XLMAIN"
+		{
+			Run A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE"
+			WinWait("ahk_exe EXCEL.EXE")
+			WinActivate("ahk_exe EXCEL.EXE")
+			GroupAdd "xlmain", "ahk_class XLMAIN"
+		}
 	if WinActive("ahk_exe EXCEL.EXE")
 		GroupActivate "xlmain", "r"
 	else
