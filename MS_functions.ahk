@@ -4,7 +4,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.17
+;\\v2.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1
@@ -40,19 +40,28 @@ EnvSet("VSCode", A_WorkingDir "\ImageSearch\VSCode\")
 ;		Coordmode \\ Last updated: v2.1.6
 ;
 ; ===========================================================================================================================================
-coords() ;sets coordmode to "screen"
+/* coords()
+ sets coordmode to "screen"
+ */
+coords()
 {
 	coordmode "pixel", "screen"
 	coordmode "mouse", "screen"
 }
 
-coordw() ;sets coordmode to "window"
+/* coordw()
+ sets coordmode to "window"
+ */
+coordw()
 {
 	coordmode "pixel", "window"
 	coordmode "mouse", "window"
 }
 
-coordc() ;sets coordmode to "caret"
+/* coordc()
+ * sets coordmode to "caret"
+ */
+coordc()
 {
 	coordmode "caret", "window"
 }
@@ -62,9 +71,13 @@ coordc() ;sets coordmode to "caret"
 ;		Tooltip \\ Last updated: v2.3.13
 ;
 ; ===========================================================================================================================================
-toolFind(message, timeout) ;create a tooltip for errors finding things
-;&message is what you want the tooltip to say after "couldn't find"
-;&timeout is how many ms you want the tooltip to last
+
+/* toolFind()
+ create a tooltip for errors finding things
+ * @param message is what you want the tooltip to say after "couldn't find"
+ * @param timeout is how many ms you want the tooltip to last
+ */
+toolFind(message, timeout)
 {
 	ToolTip("couldn't find " %&message%)
 	SetTimer(timeouttime, - %&timeout%)
@@ -74,9 +87,12 @@ toolFind(message, timeout) ;create a tooltip for errors finding things
 	}
 }
 
-toolCust(message, timeout) ;create a tooltip with any message
-;&message is what you want the tooltip to say
-;&timeout is how many ms you want the tooltip to last
+/* toolCust()
+ create a tooltip with any message
+ * @param message is what you want the tooltip to say
+ * @param timeout is how many ms you want the tooltip to last
+ */
+toolCust(message, timeout)
 {
 	ToolTip(%&message%)
 	SetTimer(timeouttime, - %&timeout%)
@@ -90,15 +106,21 @@ toolCust(message, timeout) ;create a tooltip with any message
 ;		Blockinput \\ Last updated: v2.0.1
 ;
 ; ===========================================================================================================================================
-blockOn() ;blocks all user inputs
+/* blockOn()
+ blocks all user inputs [IF YOU GET STUCK IN A SCRIPT USE CTRL + ALT + DEL to open task manager and close AHK]
+ */
+blockOn()
 {
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
-	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess 
+	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
 }
 
-blockOff() ;turns off the blocks on user input
+/* blockOff()
+ turns off the blocks on user input
+ */
+blockOff()
 {
 	blockinput "MouseMoveOff"
 	BlockInput "off"
@@ -109,9 +131,12 @@ blockOff() ;turns off the blocks on user input
 ;		Windows Scripts \\ Last updated: v2.6.1
 ;
 ; ===========================================================================================================================================
-youMouse(tenS, fiveS) ;a function to skip in youtube
-;&tenS is the hotkey for 10s skip in your direction of choice
-;&fiveS is the hotkey for 5s skip in your direction of choice
+/* youMouse()
+ a function to skip in youtube
+ @param tenS is the hotkey for 10s skip in your direction of choice
+ @param fiveS is the hotkey for 5s skip in your direction of choice
+ */
+youMouse(tenS, fiveS)
 {
 	if A_PriorKey = "Mbutton"
 		return
@@ -127,14 +152,20 @@ youMouse(tenS, fiveS) ;a function to skip in youtube
 	}
 }
 
-wheelEditPoint(direction) ;move back and forth between edit points from anywhere in premiere
-;&direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
+/* wheelEditPoint()
+ move back and forth between edit points from anywhere in premiere
+ @param direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
+ */
+wheelEditPoint(direction)
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
 	SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
 }
 
-monitorWarp(x, y) ;warp anywhere on your desktop
+/* monitorWarp()
+ warp anywhere on your desktop
+ */
+monitorWarp(x, y)
 {
 	coords()
 	MouseMove(%&x%, %&y%)
@@ -145,15 +176,17 @@ monitorWarp(x, y) ;warp anywhere on your desktop
 ;		discord \\ Last updated: v2.5.4
 ;
 ; ===========================================================================================================================================
-disc(button) ;This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
+/* disc()
+ This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
+ @param button in the png name of a screenshot of the button you want the function to press
+ */
+disc(button)
 ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME (otherwise you'll need your own screenshots.. tbh you'll probably need your own anyway). YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
 ;dark theme
 ;chat font scaling: 20px
 ;space between message groups: 16px
 ;zoom level: 100
 ;saturation; 70%
-
-;&button in the png name of a screenshot of the button you want the function to press
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw() ;important to leave this as window as otherwise the image search function will fail to find things
@@ -200,7 +233,7 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 			blockOff()
 		}
-	
+
 }
 
 ; ===========================================================================================================================================
@@ -208,15 +241,18 @@ disc(button) ;This function uses an imagesearch to look for buttons within the r
 ;		Mouse Drag \\ Last updated: v2.3
 ;
 ; ===========================================================================================================================================
-mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
-;&tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
-;&toolorig is the button you want the script to press to bring you back to your tool of choice
+/* mousedrag()
+ press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
+ @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
+ @param toolorig is the button you want the script to press to bring you back to your tool of choice
+ */
+mousedrag(tool, toolorig)
 {
 	click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-	SendInput %&tool% "{LButton Down}" 
+	SendInput %&tool% "{LButton Down}"
 	KeyWait(A_ThisHotkey)
 	SendInput("{LButton Up}")
-	SendInput %&toolorig% 
+	SendInput %&toolorig%
 }
 
 ; ===========================================================================================================================================
@@ -224,11 +260,14 @@ mousedrag(tool, toolorig) ;press a button(ideally a mouse button), this script t
 ;		better timeline movement \\ Last updated: v2.3.11
 ;
 ; ===========================================================================================================================================
-timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
-;&timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
-;x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
-;x2 is the furthest right pixel value of the timeline that will work with your cursor warping up to grab it
-;y1 is just below the bar that your mouse will be warping to, this way your mouse doesn't try doing things when you're doing other stuff above the timeline
+/* timeline()
+ a weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
+ @param timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
+ @param x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
+ @param x2 is the furthest right pixel value of the timeline that will work with your cursor warping up to grab it
+ @param y1 is just below the bar that your mouse will be warping to, this way your mouse doesn't try doing things when you're doing other stuff above the timeline
+ */
+timeline(timeline, x1, x2, y1)
 {
 	coordw()
 	MouseGetPos(&xpos, &ypos)
@@ -251,8 +290,11 @@ timeline(timeline, x1, x2, y1) ;a weaker version of the right click premiere scr
 ;		Premiere \\ Last updated: v2.6.2
 ;
 ; ===========================================================================================================================================
-preset(item) ;this preset is for the drag and drop effect presets in premiere
-;&item in this function defines what it will type into the search box (the name of your preset within premiere)
+/* preset()
+ this preset is for the drag and drop effect presets in premiere
+ @param item in this function defines what it will type into the search box (the name of your preset within premiere)
+ */
+preset(item)
 {
 	blockOn()
 	;KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
@@ -311,10 +353,13 @@ preset(item) ;this preset is for the drag and drop effect presets in premiere
 	blockOff()
 }
 
-num(xval, yval, scale) ;this function is to simply cut down repeated code on my numpad punch in scripts. it punches the video into my preset values for highlight videos
-;&xval is the pixel value you want this function to paste into the X coord text field in premiere
-;&yval is the pixel value you want this function to paste into the y coord text field in premiere
-;&scale is the scale value you want this function to paste into the scale text field in premiere
+/* num()
+ this function is to simply cut down repeated code on my numpad punch in scripts. it punches the video into my preset values for highlight videos
+ @param xval is the pixel value you want this function to paste into the X coord text field in premiere
+ @param yval is the pixel value you want this function to paste into the y coord text field in premiere
+ @param scale is the scale value you want this function to paste into the scale text field in premiere
+ */
+num(xval, yval, scale)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	coordw()
@@ -356,15 +401,18 @@ fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wo
 {
 	Click "{Click Up}"
 	sleep 10
-	Send %&data% 
+	Send %&data%
 	;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
 	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
 	sleep 50
 	send "{enter}"
 }
- */
+*/
 
-noclips() ;this is simply a combination of repeat code that kept popping up in a few functions below
+/* noclips()
+ this is simply a combination of repeat code that kept popping up in a few functions below
+ */
+noclips()
 {
 	coords()
 	blockOn()
@@ -379,13 +427,16 @@ noclips() ;this is simply a combination of repeat code that kept popping up in a
 					blockOff()
 					return
 				}
-		}	
+		}
 	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
 }
 
-valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
-;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+/* valuehold()
+ a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+ @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+ @param optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+ */
+valuehold(filepath, optional)
 {
 	MouseGetPos(&xpos, &ypos)
 	noclips()
@@ -463,8 +514,11 @@ valuehold(filepath, optional) ;a preset to warp to one of a videos values (scale
 		}
 }
 
-keyreset(filepath) ;this function is to turn off keyframing for a given property
-;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+/* keyreset()
+ this function is to turn off keyframing for a given property within premiere pro
+ @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+ */
+keyreset(filepath)
 {
 	MouseGetPos(&xpos, &ypos)
 	noclips()
@@ -485,8 +539,11 @@ keyreset(filepath) ;this function is to turn off keyframing for a given property
 	MouseMove(%&xpos%, %&ypos%)
 }
 
-keyframe(filepath) ;this function is to either turn on keyframing, or create a new keyframe at the cursor for a given property
-;&filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+/* keyframe()
+ this function is to either turn on keyframing, or create a new keyframe at the cursor for a given property within premiere pro
+ @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+ */
+keyframe(filepath)
 {
 	MouseGetPos(&xpos, &ypos)
 	noclips()
@@ -524,8 +581,11 @@ keyframe(filepath) ;this function is to either turn on keyframing, or create a n
 	blockOff()
 }
 
-audioDrag(sfxName) ;this function pulls an audio file out of the media browser and to the cursor
-;&sfxName is the name of whatever sound you want the function to pull onto the timeline
+/* audioDrag()
+ this function pulls an audio file out of the media browser and to the cursor (premiere pro)
+ @param sfxName is the name of whatever sound you want the function to pull onto the timeline
+ */
+audioDrag(sfxName)
 {
 	SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 	;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
@@ -570,7 +630,10 @@ audioDrag(sfxName) ;this function pulls an audio file out of the media browser a
 		blockOff()
 }
 
-movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+/* movepreview()
+ This function is to adjust the framing of a video within the preview window in premiere pro. Let go of this hotkey to confirm, simply tap this hotkey to reset values
+ */
+movepreview()
 {
 	coords()
 	blockOn()
@@ -583,7 +646,6 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 			toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 			return
 		}
-
 	sleep 100
 	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
@@ -613,7 +675,10 @@ movepreview() ;press then hold this hotkey and drag to move position. Let go of 
 		}
 }
 
-reset() ;This script moves to the reset button to reset the "motion" effects
+/* reset()
+ This script moves the cursor to the reset button to reset the "motion" effects
+ */
+reset()
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	coordw()
@@ -640,7 +705,10 @@ reset() ;This script moves to the reset button to reset the "motion" effects
 	blockOff()
 }
 
-hotkeyDeactivate() ;this simply allows manInput to work
+/* hotkeyDeactivate()
+ this simply allows manInput to work
+ */
+hotkeyDeactivate()
 {
 	Hotkey("~Numpad0", "r", "On") ;all of these "hotkeys" allow me to use my numpad to input numbers instead of having to take my hand off my mouse to press the numpad on my actual keyboard
 	Hotkey("~Numpad1", "r", "On") ;I have it call on "r" because, well, r isn't a key that exists on my numpad. if I put this value at something that's already defined, then the original macros will fire
@@ -657,7 +725,10 @@ hotkeyDeactivate() ;this simply allows manInput to work
 	Hotkey("~NumpadEnter", "r", "On")
 }
 
-hotkeyReactivate() ;this simply allows manInput to work
+/* hotkeyReactivate()
+ this simply allows manInput to work
+ */
+hotkeyReactivate()
 {
 	Hotkey("Numpad0", "Numpad0")
 	Hotkey("Numpad1", "Numpad1")
@@ -673,11 +744,14 @@ hotkeyReactivate() ;this simply allows manInput to work
 	Hotkey("NumpadEnter", "NumpadEnter")
 }
 
-manInput(property, optional, key1, key2, keyend) ;a script that will warp to and press any value in premiere to manually input a number
-;&property is the value you want to adjust
-;&key1 is the hotkey you use to activate this function
-;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
-;&keyend is whatever key you want the function to wait for before finishing
+/* manInput()
+ This function will warp to and press any value in premiere to manually input a number
+ @param property is the value you want to adjust
+ @param key1 is the hotkey you use to activate this function
+ @param key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
+ @param keyend is whatever key you want the function to wait for before finishing
+ */
+manInput(property, optional, key1, key2, keyend)
 {
 	coords()
 	blockOn()
@@ -717,8 +791,11 @@ manInput(property, optional, key1, key2, keyend) ;a script that will warp to and
 	blockOff()
 }
 
-gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure the timeline is in focus and a clip is selected
-;&amount is the value you want the gain to adjust (eg. -2, 6, etc)
+/* gain()
+ This function is to increase/decrease gain within premiere pro. This function will check to ensure the timeline is in focus and a clip is selected
+ @param amount is the value you want the gain to adjust (eg. -2, 6, etc)
+ */
+gain(amount)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
@@ -742,10 +819,13 @@ gain(amount) ;a macro to increase/decrease gain. This macro will check to ensure
 	SendInput("g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
 }
 
-gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro will check to ensure the timeline is in focus and a clip is selected
-;&key1 is the hotkey you use to activate this function
-;&key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
-;&keyend is whatever key you want the function to wait for before finishing
+/* gainSecondary()
+ This function opens up the gain menu within premiere pro so I can input it with my secondary keyboard. This function will also check to ensure the timeline is in focus and a clip is selected
+ @param key1 is the hotkey you use to activate this function
+ @param key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
+ @param keyend is whatever key you want the function to wait for before finishing
+ */
+gainSecondary(key1, key2, keyend)
 {
 ;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
@@ -778,15 +858,18 @@ gainSecondary(key1, key2, keyend) ;a macro to open up the gain menu. This macro 
 ;		After Effects \\ Last updated: v2.6
 ;
 ; ===========================================================================================================================================
-aevaluehold(button, property, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-;&button is the hotkey within after effects that's used to open up the property you want to adjust
-;&property is the filename of just the property itself ie. "scale" not "scale.png" or "scale2"
-;&optional is for when you need the mouse to move extra coords over to avoid the first "blue" text for some properties
+/* aevaluehold()
+ A function to warp to one of a videos values within After Effects (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+ @param button is the hotkey within after effects that's used to open up the property you want to adjust
+ @param property is the filename of just the property itself ie. "scale" not "scale.png" or "scale2"
+ @param optional is for when you need the mouse to move extra coords over to avoid the first "blue" text for some properties
+ */
+aevaluehold(button, property, optional)
 {
 	coordw()
 	MouseGetPos(&x, &y)
 	if(%&x% > 550 and %&x% < 2542) and (%&y% > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
-		{	
+		{
 			blockOn()
 			MouseGetPos(&X, &Y)
 			if ImageSearch(&selectX, &selectY, 8, 8, 299, 100, "*2 " EnvGet("AE") "selection.png")
@@ -844,8 +927,11 @@ aevaluehold(button, property, optional) ;a preset to warp to one of a videos val
 ;		Photoshop \\ Last updated: v2.6.4
 ;
 ; ===========================================================================================================================================
-psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
-;&image is the png name of the image that imagesearch will use
+/* psProp()
+ A function to warp to one of a photos values within Photoshop (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
+ @param image is the png name of the image that imagesearch will use
+ */
+psProp(image)
 {
 	coords()
 	MouseGetPos(&xpos, &ypos)
@@ -881,7 +967,7 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 					toolFind("the value you wish`nto adjust_2", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
-		}		
+		}
 	sleep 100 ;this sleep is necessary for the "tap" functionality below (in the 'else') to work
 	SendInput("{Click Down}")
 	if GetKeyState(A_ThisHotkey, "P")
@@ -902,7 +988,10 @@ psProp(image) ;a preset to warp to one of a photos values values (scale , x/y, r
 		}
 }
 
-psSave() ;This function is to speed through the twitch emote saving process. Doing this manually is incredibly tedious and annoying, so why do it manually?
+/* psSave()
+ This function is to speed through the twitch emote saving process within photoshop. Doing this manually is incredibly tedious and annoying, so why do it manually?
+ */
+psSave()
 ;This script will require the latest (or at least the version containing the "save as copy" window) version of photoshop to function
 ;PHOTOSHOP IS SLOW AS ALL HELL
 ;if things in this script don't work or get stuck, consider increasing the living hell out of the sleeps along the way
@@ -995,8 +1084,11 @@ psSave() ;This function is to speed through the twitch emote saving process. Doi
 	blockOff()
 }
 
-psType(filetype) ;when you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want
-;&filetype is the name of the image you save to pick which filetype you want this function to click on
+/* psType()
+ When you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want
+ @param filetype is the name of the image you save to pick which filetype you want this function to click on
+ */
+psType(filetype)
 {
 	MouseGetPos(&x, &y)
 	Send("{TAB}{RIGHT}") ;make sure you don't click anywhere before using this function OR put the caret back in the filename box
@@ -1028,10 +1120,13 @@ psType(filetype) ;when you try and save a copy of something in photoshop, it def
 ;		Resolve \\ Last updated: v2.6
 ;
 ; ===========================================================================================================================================
-Rscale(value, property, plus) ;to set the scale of a video within resolve
-;&value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
-;&property is the property you want this function to type a value into (eg. zoom)
-;&plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
+/* Rscale()
+ A function to set the scale of a video within resolve
+ @param value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
+ @param property is the property you want this function to type a value into (eg. zoom)
+ @param plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
+ */
+Rscale(value, property, plus)
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw()
@@ -1080,8 +1175,11 @@ Rscale(value, property, plus) ;to set the scale of a video within resolve
 	blockOff()
 }
 
-rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
-;&data is what the script is typing in the text box to reset its value
+/* rfElse()
+ A function that gets nested in the resolve scale, x/y and rotation scripts
+ @param data is what the script is typing in the text box to reset its value
+ */
+rfElse(data)
 ;this function, as you can probably tell, doesn't use an imagesearch. It absolutely SHOULD, but I don't use resolve and I guess I just never got around to coding in an imagesearch.
 {
 	SendInput("{Click Up}")
@@ -1094,10 +1192,12 @@ rfElse(data) ;a preset for the resolve scale, x/y and rotation scripts
 	Send("{Enter}")
 }
 
-REffect(folder, effect) ;apply any effect to the clip you're hovering over.
-;&folder is the name of your screenshots of the drop down sidebar option (in the effects window) you WANT to be active - both activated and deactivated
-;&effect is the name of the effect you want this function to type into the search box
-
+/* REffect()
+ A function to apply any effect to the clip you're hovering over within Resolve.
+ @param folder is the name of your screenshots of the drop down sidebar option (in the effects window) you WANT to be active - both activated and deactivated
+ @param effect is the name of the effect you want this function to type into the search box
+ */
+REffect(folder, effect)
 ;This function will, in order;
 ;Check to see if the effects window is open on the left side of the screen
 ;Check to make sure the effects sidebar is expanded
@@ -1124,7 +1224,6 @@ REffect(folder, effect) ;apply any effect to the clip you're hovering over.
 			return
 		}
 closeORopen:
-;MsgBox("close/open")
 	if ImageSearch(&xopen, &yopen, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") "open.png") ;checks to see if the effects window sidebar is open
 		goto EffectFolder
 	else if ImageSearch(&xclosed, &yclosed, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") "closed.png") ;checks to see if the effects window sidebar is closed
@@ -1140,7 +1239,6 @@ closeORopen:
 			return
 		}
 EffectFolder:
-	;MsgBox("effect folder")
 	if ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% ".png") ;checks to see if the drop down option you want is activated
 		goto SearchButton
 	else if ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
@@ -1154,9 +1252,8 @@ EffectFolder:
 			blockOff()
 			toolFind("the fxfolder", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 			return
-		}	
+		}
 SearchButton:
-;MsgBox("search button")
 	if ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " EnvGet("Resolve") "search2.png") ;checks to see if the search icon is deactivated
 		{
 			MouseMove(%&xs%, %&ys%)
@@ -1176,7 +1273,6 @@ SearchButton:
 			return
 		}
 final:
-;MsgBox("final")
 	sleep 50
 	SendInput(%&effect%)
 	MouseMove(0, 130,, "R")
@@ -1187,10 +1283,13 @@ final:
 	return
 }
 
-rvalhold(property, plus, rfelseval) ;this function provides similar functionality to my valuehold() function for premiere
-;&property refers to both of the screenshots (either active or not) for the property you wish to adjust
-;&plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
-;&rfelseval is the value you wish to pass to rfelse()
+/* rvalhold()
+ A function to provide similar functionality within Resolve to my valuehold() function for premiere
+ @param property refers to both of the screenshots (either active or not) for the property you wish to adjust
+ @param plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
+ @param rfelseval is the value you wish to pass to rfelse()
+ */
+rvalhold(property, plus, rfelseval)
 {
 	coordw()
 	blockOn()
@@ -1250,8 +1349,11 @@ rvalhold(property, plus, rfelseval) ;this function provides similar functionalit
 		}
 }
 
-rflip(button) ;this function searches for and presses the horizontal/vertical flip button
-;&button1 is the png name of a screenshot of the button you wish to click (either activated or deactivated)
+/* rflip()
+ A function to search for and press the horizontal/vertical flip button within Resolve
+ @param button is the png name of a screenshot of the button you wish to click (either activated or deactivated)
+ */
+rflip(button)
 {
 	coordw()
 	blockOn()
@@ -1272,7 +1374,7 @@ rflip(button) ;this function searches for and presses the horizontal/vertical fl
 	else if ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% "2.png") ;searches for the button when it is activated already
 		{
 			MouseMove(%&xho%, %&yho%)
-			click 
+			click
 			MouseMove(%&xpos%, %&ypos%)
 			blockOff()
 			return
@@ -1285,7 +1387,10 @@ rflip(button) ;this function searches for and presses the horizontal/vertical fl
 		}
 }
 
-rgain(value) ;this function allows you to adjust the gain of the selected clip similar to my gain macros in premiere. You can't pull this off quite as fast as you can in premiere, but it's still pretty useful
+/* rgain()
+ A function that allows you to adjust the gain of the selected clip within Resolve similar to my gain macros in premiere. You can't pull this off quite as fast as you can in premiere, but it's still pretty useful
+ */
+rgain(value) ;this
 ;&value is how much you want the gain to be adjusted by
 {
 	coordw()
@@ -1343,8 +1448,11 @@ rgain(value) ;this function allows you to adjust the gain of the selected clip s
 ;		VSCode \\ Last updated: v2.6.3
 ;
 ; ===========================================================================================================================================
-vscode(script) ;a script to quickly naviate between my scripts
-;&script is just what script I want to open
+/* vscode()
+ A function to quickly naviate between my scripts
+ @param script is just what script I want to open
+ */
+vscode(script)
 {
 	KeyWait(A_PriorKey)
 	coords()
@@ -1369,7 +1477,7 @@ vscode(script) ;a script to quickly naviate between my scripts
 		goto already
 	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_redHighlighted.png")
 		goto already
-	else 
+	else
 		{
 			blockOff()
 			toolFind("the script", "1000")
@@ -1392,8 +1500,11 @@ vscode(script) ;a script to quickly naviate between my scripts
 ;		Firefox \\ Last updated: v2.6.16
 ;
 ; ===========================================================================================================================================
-fireWin(key) ;this function will check to see if you're holding the left mouse button, then move the firefox window around however you like
-;key is what key(s) you want the function to press to move a window around
+/* fireWin()
+ A function that will check to see if you're holding the left mouse button, then move the firefox window around however you like
+ @param key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
+ */
+fireWin(key)
 {
 	if not GetKeyState("LButton", "P")
 		{
@@ -1415,7 +1526,10 @@ fireWin(key) ;this function will check to see if you're holding the left mouse b
 ;		QMK Stuff \\ Last updated: v2.5.~
 ;
 ; ===========================================================================================================================================
-numpad000() ;this function is to suppress the multiple keystrokes the "000" key sends on my secondary numpad and will in the future be used to do... something
+/* numpad000()
+ A function to suppress the multiple keystrokes the "000" key sends on my secondary numpad and will in the future be used to do... something
+ */
+numpad000()
 {
 		static winc_presses := 0
 		if winc_presses > 0 ; SetTimer already started, so we log the keypress instead.
@@ -1427,7 +1541,7 @@ numpad000() ;this function is to suppress the multiple keystrokes the "000" key 
 		; the timer:
 		winc_presses := 1
 		SetTimer After400, -50 ; Wait for more presses within a 400 millisecond window.
-	
+
 		After400()  ; This is a nested function.
 		{
 			if winc_presses = 1 ; The key was pressed once.
