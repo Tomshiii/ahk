@@ -1389,9 +1389,9 @@ rflip(button)
 
 /* rgain()
  A function that allows you to adjust the gain of the selected clip within Resolve similar to my gain macros in premiere. You can't pull this off quite as fast as you can in premiere, but it's still pretty useful
+ @param value is how much you want the gain to be adjusted by
  */
-rgain(value) ;this
-;&value is how much you want the gain to be adjusted by
+rgain(value)
 {
 	coordw()
 	blockOn()
