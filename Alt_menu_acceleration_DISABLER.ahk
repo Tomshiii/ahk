@@ -9,7 +9,7 @@ MaxHotkeysPerInterval := 2000
 ProcessSetPriority "H"
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\error.ico") ;changes the icon this script uses in the taskbar
 #SingleInstance force
-#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ;These next two lines are very important. You have to change the "menu mask key" away from being CTRL, to something that won't result in cross-talk. Read this thread to learn the details: https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
 A_MenuMaskKey := "vk07"  ; vk07 is unassigned. 

@@ -1,6 +1,6 @@
 SetWorkingDir A_ScriptDir
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
-#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.10
+;\\v2.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.6.11
 

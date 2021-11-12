@@ -1,5 +1,5 @@
 ﻿#SingleInstance Force
-#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 SetNumLockState "AlwaysOn" ;sets numlock to always on (you can still it for macros)
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still it for macros)
@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.13
+;\\v2.7
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.6.17
+;\\v2.7.1
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.2.9
+;\\v2.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1

@@ -1,10 +1,10 @@
 ﻿SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
-#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7
+;\\v2.7.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.2.1

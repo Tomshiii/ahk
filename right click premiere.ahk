@@ -4,7 +4,7 @@ InstallKeybdHook
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\mouse.ico")
 CoordMode "Mouse", "screen"
 CoordMode "Pixel", "screen"
-#Requires AutoHotkey v2.0-beta.1 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ; Please note this script was originally written by taran in ahk v1.1 so any of his comment ramblings will go on about code that won't function in ahk v2.0
 
