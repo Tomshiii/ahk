@@ -4,10 +4,10 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.1
+;\\v2.7.2
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.2.2.1
+;\\v2.2.3
 
 
 ; All Code in this script is linked to a function
@@ -19,7 +19,7 @@
 ; Then in our main scripts we call on these functions like:
 ; Hotkey::func("information")
 ; then whatever you place within the "" will be put wherever you have a %&variable%
-; I make use of code like this all throughout this script. All variables are explained underneath their respective functions
+; I make use of code like this all throughout this script. All variables are explained above their respective functions and dynamically display that information when you hover over a function if you're using VSCode
 
 ; I have made a concious effort throughout the workings of this script to keep out as many raw pixel coords as possible, preferring imagesearches to ensure correct mouse movements
 ; but even still, an imagesearch still has a definable area that it searches for each image, for example

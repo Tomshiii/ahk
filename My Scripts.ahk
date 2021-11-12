@@ -10,14 +10,14 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7
+;\\v2.7.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.3
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.2.2.1
+;\\v2.2.3
 
 ; ============================================================================================================================================
 ;
@@ -163,20 +163,6 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 ^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 ^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
-
-^+a::Run "C:\Program Files\ahk\ahk" ;opens my script directory
-
-;!a:: ;edit %a_ScriptDir% ;opens this script in notepad++ if you replace normal notepad with ++ \\don't recommend using this way at all, replacing notepad kinda sucks
-;!a:: Run *RunAs "C:\Program Files (x86)\Notepad++\notepad++.exe" "%A_ScriptFullPath%" ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred) \\use this way
-;Opens as admin bc of how I have my scripts located, if you don't need it elevated, remove *RunAs
-;!a:: ;ignore this version, comment it out and uncomment ^ for notepad++
-;{
-	;if WinExist("ahk_exe Code.exe") ;if vscode exists it'll simply activate it, if it doesn't, it'll open it
-	;		WinActivate
-	;else
-	;	Run "C:\Users\Tom\AppData\Local\\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
-;}
-
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 {
 	if WinExist("ahk_exe Discord.exe")
