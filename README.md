@@ -51,14 +51,14 @@ A script to allow separate function for my secondary keyboard. A script original
 
 #### [MS_functions.ahk](https://github.com/Tomshiii/ahk/blob/main/MS_functions.ahk) (My Scripts_functions)
 A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to;
-```
+```autohotkey
 func(variableX, variableY)
 {
   code(%&variableX%)
   code(%&variableY%)
 }
 ```
-We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add ```func("variableX", "variableY")``` to scripts.
+We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
 
 #### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)
 A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
