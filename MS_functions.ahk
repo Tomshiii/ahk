@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.2
+;\\v2.7.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3
@@ -287,7 +287,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.6.2
+;		Premiere \\ Last updated: v2.7.3
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -609,6 +609,7 @@ audioDrag(sfxName)
 			{
 				blockOff()
 				toolFind("sfx folder", "1000")
+				MouseMove(%&xpos%, %&ypos%)
 				return
 			}
 		next:
@@ -626,6 +627,7 @@ audioDrag(sfxName)
 			{
 				blockOff()
 				toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				MouseMove(%&xpos%, %&ypos%)
 				return
 			}
 		MouseMove(%&xpos%, %&ypos%)
@@ -1567,7 +1569,7 @@ numpad000()
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.6.17
+;		Fkey AutoLaunch \\ Last updated: v2.7.3
 ;
 ; ===========================================================================================================================================
 switchToExplorer()
