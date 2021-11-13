@@ -446,7 +446,7 @@ valuehold(filepath, optional)
 				{
 					toolCust("you aren't scrolled down", "1000")
 					blockOff()
-					KeyWait(A_ThisHotkey)
+					KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
 					return
 				}
 			else
@@ -465,6 +465,7 @@ valuehold(filepath, optional)
 		{
 			blockOff()
 			toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
 			return
 		}
 	colour:
@@ -476,6 +477,7 @@ valuehold(filepath, optional)
 		{
 			blockOff()
 			toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
 			return
 		}
 	sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
@@ -530,6 +532,7 @@ keyreset(filepath)
 		{
 			toolCust("you're already keyframing", "1000")
 			blockOff()
+			KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
 			return
 		}
 	click:
@@ -1574,8 +1577,8 @@ switchToExplorer()
 			Run "explorer.exe"
 			WinWait("ahk_class CabinetWClass")
 			WinActivate "ahk_class CabinetWClass" ;in win11 running explorer won't always activate it, so it'll open in the backround
-			GroupAdd "explorers", "ahk_class CabinetWClass"
 		}
+	GroupAdd "explorers", "ahk_class CabinetWClass"
 	if WinActive("ahk_exe explorer.exe")
 		GroupActivate "explorers", "r"
 	else
