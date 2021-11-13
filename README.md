@@ -52,6 +52,12 @@ A script to allow separate function for my secondary keyboard. A script original
 #### [MS_functions.ahk](https://github.com/Tomshiii/ahk/blob/main/MS_functions.ahk) (My Scripts_functions)
 A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to;
 ```autohotkey
+/* These are comments that dynamically display information when displayed in VSCode,
+but also serve as general comments for anyone else
+ This function does something
+ @param variableX is a value
+ @param variableY is another value
+ */
 func(variableX, variableY)
 {
   code(%&variableX%)
@@ -62,7 +68,9 @@ We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_F
 
 #### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)
 A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
-PC Startup.ahk | A script that does some things when my PC starts up to ensure proper function of my scripts as well as opening programs I'd otherwise have to open manually.
+
+#### [PC Startup.ahk](https://github.com/Tomshiii/ahk/blob/main/PC%20Startup.ahk)
+A script that is run on PC startup to launch all my AHK scripts, as well as deal with some programs I need.
 
 #### [Resolve_Example.ahk](https://github.com/Tomshiii/ahk/blob/main/Resolve_Example.ahk)
 An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough, thrown together and contains nowhere near the same amount of features.
