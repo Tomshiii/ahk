@@ -1724,8 +1724,8 @@ switchToExcel()
 			Run A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE"
 			WinWait("ahk_exe EXCEL.EXE")
 			WinActivate("ahk_exe EXCEL.EXE")
-			GroupAdd "xlmain", "ahk_class XLMAIN"
 		}
+	GroupAdd "xlmain", "ahk_class XLMAIN"
 	if WinActive("ahk_exe EXCEL.EXE")
 		GroupActivate "xlmain", "r"
 	else
