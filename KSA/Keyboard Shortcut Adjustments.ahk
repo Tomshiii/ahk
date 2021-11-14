@@ -302,6 +302,20 @@ replayBuffer := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "
  */
 sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
 
+/*
+ This value will send the keyboard shortcut you have set to enable the preview window within OBS Studio
+
+ Can be set within KSA.ahk/ini
+ */
+enableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Enable Preview")
+
+/*
+ This value will send the keyboard shortcut you have set to disable the preview window within OBS Studio
+
+ Can be set within KSA.ahk/ini
+ */
+disableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Disable Preview")
+
 ;[Hotkeys]
 
 /*

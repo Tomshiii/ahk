@@ -1,4 +1,9 @@
-﻿sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
+﻿/*
+ This value will send the keyboard shortcut you have set to save a clip from the Source Record Plugin within OBS Studio
+
+ Can be set within KSA.ahk/ini
+ */
+ sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
 SetDefaultMouseSpeed 0
 #Include SD_functions.ahk
 
