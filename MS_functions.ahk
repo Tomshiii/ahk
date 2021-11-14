@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.4
+;\\v2.7.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3
@@ -186,9 +186,9 @@ monitorWarp(x, y)
 		 {
 			 window := WinGetTitle("A")
 			 SendInput("{LButton Up}")
-			 if A_ThisHotkey = "RButton" ;this must be set to the hotkey you choose to use to minimise the window
+			 if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
 				 WinMinimize(window)
-			 if A_ThisHotkey = "F14" ;this must be set to the hotkey you choose to use to maximise the window
+			 if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
 				 WinMaximize(window)
 			 SendInput(%&key%)
 		 }

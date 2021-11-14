@@ -122,7 +122,7 @@ F14:: ;open the "show more options" menu in win11
 	colour3 := 0x353535 ;when already clicked on
 	colour4 := 0x777777 ;when already clicked on
 	colour := PixelGetColor(&mx, &my)
-	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer
+	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer. It is only necessary because I use the same button for both scripts.
 		{
 			SendInput("{LButton Up}")
 			WinMaximize
