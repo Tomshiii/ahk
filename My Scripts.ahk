@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.1
+;\\v2.7.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.7.1
+;\\v2.7.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.3
 
@@ -107,6 +107,11 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 ;		other
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
+F14::moveWin("") ;maximise
+XButton2::moveWin("#{Left}") ;snap left
+XButton1::moveWin("#{Right}") ;snap right
+RButton::moveWin("") ;minimise
+
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 F14:: ;open the "show more options" menu in win11
@@ -117,6 +122,12 @@ F14:: ;open the "show more options" menu in win11
 	colour3 := 0x353535 ;when already clicked on
 	colour4 := 0x777777 ;when already clicked on
 	colour := PixelGetColor(&mx, &my)
+	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer
+		{
+			SendInput("{LButton Up}")
+			WinMaximize
+			return
+		}
 	if ImageSearch(&x, &y, 0, 0, A_ScreenWidth, A_ScreenHeight, "*5 C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Explorer\showmore.png")
 		{
 			SendInput("{Esc}")
@@ -199,11 +210,6 @@ WheelRight::youMouse("l", "{Right}")
 WheelLeft::youMouse("j", "{Left}")
 
 #HotIf WinActive("ahk_exe firefox.exe")
-F14::fireWin("") ;maximise
-XButton2::fireWin("#{Left}") ;snap left
-XButton1::fireWin("#{Right}") ;snap right
-RButton::fireWin("") ;minimise
-
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {
 	SetTitleMatchMode 2

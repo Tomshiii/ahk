@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.3
+;\\v2.7.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3
@@ -128,7 +128,7 @@ blockOff()
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.6.1
+;		Windows Scripts \\ Last updated: v2.7.4
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -170,6 +170,29 @@ monitorWarp(x, y)
 	coords()
 	MouseMove(%&x%, %&y%)
 }
+
+/* moveWin()
+ A function that will check to see if you're holding the left mouse button, then move any window around however you like
+ @param key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
+ */
+ moveWin(key)
+ {
+	 if not GetKeyState("LButton", "P")
+		 {
+			 SendInput("{" A_ThisHotkey "}")
+			 return
+		 }
+	 else
+		 {
+			 window := WinGetTitle("A")
+			 SendInput("{LButton Up}")
+			 if A_ThisHotkey = "RButton" ;this must be set to the hotkey you choose to use to minimise the window
+				 WinMinimize(window)
+			 if A_ThisHotkey = "F14" ;this must be set to the hotkey you choose to use to maximise the window
+				 WinMaximize(window)
+			 SendInput(%&key%)
+		 }
+ }
 
 ; ===========================================================================================================================================
 ;
@@ -1499,31 +1522,6 @@ vscode(script)
 	SendInput("{Click}")
 	MouseMove(%&x%, %&y%)
 	blockOff()
-}
-; ===========================================================================================================================================
-;
-;		Firefox \\ Last updated: v2.6.16
-;
-; ===========================================================================================================================================
-/* fireWin()
- A function that will check to see if you're holding the left mouse button, then move the firefox window around however you like
- @param key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
- */
-fireWin(key)
-{
-	if not GetKeyState("LButton", "P")
-		{
-			SendInput("{" A_ThisHotkey "}")
-			return
-		}
-	else
-		{
-			SendInput("{LButton Up}" %&key%)
-			if A_ThisHotkey = "RButton"
-				WinMinimize
-			if A_ThisHotkey = "F14" ;the hotkey you use to maximise the window
-				WinMaximize
-		}
 }
 
 ; ===========================================================================================================================================
