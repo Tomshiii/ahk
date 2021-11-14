@@ -128,7 +128,7 @@ F14:: ;open the "show more options" menu in win11
 			WinMaximize
 			return
 		}
-	if ImageSearch(&x, &y, 0, 0, A_ScreenWidth, A_ScreenHeight, "*5 C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Explorer\showmore.png")
+	else if ImageSearch(&x, &y, 0, 0, A_ScreenWidth, A_ScreenHeight, "*5 C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Explorer\showmore.png")
 		{
 			SendInput("{Esc}")
 			SendInput("+{F10}")
@@ -139,7 +139,7 @@ F14:: ;open the "show more options" menu in win11
 			*/ ;return it to this way if ms ever fixes^
 			return
 		}
-	if (colour = colour1 || colour2)
+	else if (colour = colour1 || colour2)
 		{
 			SendInput("{Click}")
 			sleep 10
