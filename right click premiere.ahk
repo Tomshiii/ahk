@@ -77,7 +77,6 @@ else
 	sendinput "{Rbutton}" ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
 theEnd:
 }
-Return
 
 
 ;If you don't want to use Rbutton (the right mouse button), then you don't need to check for colors and things. This simplifies the script siginificantly.

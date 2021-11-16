@@ -107,11 +107,6 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 ;		other
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-F14::moveWin("") ;maximise
-XButton2::moveWin("#{Left}") ;snap left
-XButton1::moveWin("#{Right}") ;snap right
-RButton::moveWin("") ;minimise
-
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 F14:: ;open the "show more options" menu in win11
@@ -179,6 +174,11 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 	if WinExist("ahk_exe Discord.exe")
 		WinMove 4480, -278, 1080, 1488
 }
+
+F14::moveWin("") ;maximise
+XButton2::moveWin("#{Left}") ;snap left
+XButton1::moveWin("#{Right}") ;snap right
+RButton::moveWin("") ;minimise
 
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
 
