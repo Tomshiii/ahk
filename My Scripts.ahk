@@ -159,56 +159,6 @@ F14:: ;open the "show more options" menu in win11
 !q::vscode("QMK") ;clicks on my qmk script in vscode
 !c::vscode("Change") ;clicks on my changelog file in vscode
 
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;
-;		other - NOT an editor
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------
-GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
-GroupAdd("Editors", "ahk_exe AfterFX.exe")
-#HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
-^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
-^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
-^+d:: ;Make discord bigger so I can actually read stuff when not streaming
-{
-	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, -278, 1080, 1488
-}
-
-F14::moveWin("") ;maximise
-XButton2::moveWin("#{Left}") ;snap left
-XButton1::moveWin("#{Right}") ;snap right
-RButton::moveWin("") ;minimise
-
-^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
-
-^+c:: ;runs a google search of highlighted text
-{
-	A_Clipboard := "" ;clears the clipboard
-	Send "^c"
-	ClipWait ;waits for the clipboard to contain data
-	Run "https://www.google.com/search?d&q=" A_Clipboard
-}
-
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;
-;		Mouse Scripts
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;You can check out \mouse settings.png in the root repo to check what mouse buttons I have remapped
-
-;The below scripts are to accelerate scrolling
-F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
-F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
-
-;The below scripts are to swap between virtual desktops
-F19 & XButton2::SendInput("^#{Right}") ;you don't need these two as a sendinput, the syntax highlighting I'm using just see's ^#Right as an error and it's annoying
-F19 & XButton1::SendInput("^#{Left}")
-
-;The below scripts are to skip ahead in the youtube player with the mouse
-WheelRight::youMouse("l", "{Right}")
-WheelLeft::youMouse("j", "{Left}")
-
 #HotIf WinActive("ahk_exe firefox.exe")
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {
@@ -359,3 +309,54 @@ Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool 
 
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 F20::audioDrag("bleep")
+
+
+
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		other - NOT an editor
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------
+GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
+GroupAdd("Editors", "ahk_exe AfterFX.exe")
+#HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
+^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
+^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
+^+d:: ;Make discord bigger so I can actually read stuff when not streaming
+{
+	if WinExist("ahk_exe Discord.exe")
+		WinMove 4480, -278, 1080, 1488
+}
+
+F14::moveWin("") ;maximise
+XButton2::moveWin("#{Left}") ;snap left
+XButton1::moveWin("#{Right}") ;snap right
+RButton::moveWin("") ;minimise
+
+^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
+
+^+c:: ;runs a google search of highlighted text
+{
+	A_Clipboard := "" ;clears the clipboard
+	Send "^c"
+	ClipWait ;waits for the clipboard to contain data
+	Run "https://www.google.com/search?d&q=" A_Clipboard
+}
+
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		Mouse Scripts
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;You can check out \mouse settings.png in the root repo to check what mouse buttons I have remapped
+;The below scripts are to accelerate scrolling
+F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+
+;The below scripts are to swap between virtual desktops
+F19 & XButton2::SendInput("^#{Right}") ;you don't need these two as a sendinput, the syntax highlighting I'm using just see's ^#Right as an error and it's annoying
+F19 & XButton1::SendInput("^#{Left}")
+
+;The below scripts are to skip ahead in the youtube player with the mouse
+WheelRight::youMouse("l", "{Right}")
+WheelLeft::youMouse("j", "{Left}")
