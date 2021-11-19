@@ -59,8 +59,25 @@ if not WinExist("ahk_exe obs64.exe")
 			WinWaitActive "ahk_exe firefox.exe"
 	sleep 1000 ;waits before opening the next tab or firefox derps out
 	Run "firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager"
+	sleep 1000
+	Run "firefox.exe https://yoink.streamelements.com/activity-feed?activitiesToolbar=false&popout=true&theme=dark&withSetupWizard=false"
 	sleep 9000 
 	if WinExist("ahk_exe firefox.exe")
+		{
+			WinActivate
+			SetKeyDelay 100
+			Send "!d" ;opens the alt context menu to begin detatching the firefox tab
+			sleep 100
+			Send "+{TAB 3}"
+			sleep 100
+			Send "+{F10}"
+			sleep 100
+			Send "v"
+			sleep 100
+			Send "w"
+			sleep 1500
+		}
+	if WinExist("Twitch")
 		{
 			WinActivate
 			SetKeyDelay 100
@@ -79,6 +96,11 @@ if not WinExist("ahk_exe obs64.exe")
 			WinMove -6, 0, 1497, 886
 	WinWait("All Moons UPDATED v.1.3.0", , 10) ;WinMove 1218, 658, 1347, 747,, "All Moons UPDATED v.1.3.0"  ;moves browser tabs into position for stream
 		WinMove 1218, 658, 1347, 747
+	if WinExist("StreamElements")
+		{
+			WinActivate
+			WinMove 3644, -892, 843, 478
+		}
 	blockOn()
 	if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
 		{
@@ -110,7 +132,6 @@ if not WinExist("ahk_exe obs64.exe")
 	Run "C:\Program Files\Chatterino\chatterino.exe"
 	Run "C:\Program Files (x86)\foobar2000\foobar2000.exe"
 	Run "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe"
-	Run "C:\Users\Tom\AppData\Local\Programs\streamlabels\StreamLabels.exe"
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
 	if WinExist("ahk_exe Discord.exe")

@@ -50,7 +50,8 @@ dock() ;a function for Start Main Stream.ahk
 	sleep 1500
 	coordmode "pixel", "Window"
 	coordmode "mouse", "Window"
-	MouseMove 1128, 130 ;moves mouse to click the start button
+	MouseMove 1102, 129 ;moves mouse to click the start button
+	sleep 100
 	click ;required for brothers queue program for automatic mii wii playback
 	sleep 1000
 	WinMinimize()

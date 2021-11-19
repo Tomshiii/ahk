@@ -23,7 +23,7 @@ DetectHiddenWindows(true)
 		{
 			WinActivate
 			SendInput("!{F4}")
-			WinClose(,,2)
+			;WinClose(,,2)
 		}
 ;	if WinExist("Twitch") ;leaving this in will close the window you're using after a raid which is just annoying so I'd rather just manually close my dashboard window
 ;		{
@@ -93,5 +93,11 @@ DetectHiddenWindows(true)
 	if WinExist("ahk_exe Firebot v5.exe")
 		{
 			ProcessClose("Firebot v5.exe")
+		}
+	if WinExist("StreamElements - Activity feed")
+		{
+			WinActivate
+			SendInput("!{F4}")
+			WinClose(,,2)
 		}
 ExitApp
