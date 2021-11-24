@@ -9,6 +9,8 @@ if SelectedFolder = ""
 DirCreate(SelectedFolder "\videos")
 DirCreate(SelectedFolder "\proxies")
 DirCreate(SelectedFolder "\audio")
+DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
+DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
 
 ;; This part then just opens the project folder
 Run(SelectedFolder)
