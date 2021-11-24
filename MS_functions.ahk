@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.5
+;\\v2.7.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -310,7 +310,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.3
+;		Premiere \\ Last updated: v2.7.6
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -351,12 +351,16 @@ preset(item)
 					return
 				}
 		}
-	SendInput(effectsWindow) ;adjust this in the ini file
-	SendInput(findBox) ;adjust this in the ini file
-	sleep 50
-	SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
-	SendInput("^a{DEL}")
-	sleep 60
+	effectbox() ;this is simply to cut needing to repeat this code below
+	{
+		SendInput(effectsWindow) ;adjust this in the ini file
+		SendInput(findBox) ;adjust this in the ini file
+		sleep 50
+		SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+		SendInput("^a{DEL}")
+		sleep 60
+	}
+	effectbox()
 	coordc() ;change caret coord mode to window
 	CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
 	MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
@@ -373,6 +377,8 @@ preset(item)
 		}
 	MouseMove(%&xpos%, %&ypos%) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
 	SendInput("{Click Up}")
+	effectbox() ;this will delete whatever preset it had typed into the find box
+	SendInput(timelineWindow) ;this will rehighlight the timeline after deleting the text from the find box
 	blockOff()
 }
 
