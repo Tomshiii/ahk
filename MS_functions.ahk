@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.7
+;\\v2.7.8
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -128,7 +128,7 @@ blockOff()
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.7.4
+;		Windows Scripts \\ Last updated: v2.7.8
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -177,6 +177,19 @@ monitorWarp(x, y)
  */
  moveWin(key)
  {
+	 if WinActive("ahk_class CabinetWClass")
+		{
+			if A_ThisHotkey = "RButton"
+				{
+					if not GetKeyState("LButton", "P")
+						{
+							SendInput("{RButton Down}")
+							KeyWait("RButton")
+							SendInput("{RButton Up}")
+							return
+						}
+				}
+		}
 	 if not GetKeyState("LButton", "P")
 		 {
 			 SendInput("{" A_ThisHotkey "}")
