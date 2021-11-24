@@ -336,9 +336,14 @@ textHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Ho
 /*
  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
  */
- minimiseHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Minimise Hotkey")
+minimiseHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Minimise Hotkey")
 
- /*
+/*
  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
  */
- maximiseHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Maximise Hotkey")
+maximiseHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Maximise Hotkey")
+
+/*
+ This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+ */
+altKeywait := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Alt Keywait")

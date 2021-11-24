@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.6
+;\\v2.7.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -310,7 +310,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.6
+;		Premiere \\ Last updated: v2.7.7
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -320,7 +320,7 @@ timeline(timeline, x1, x2, y1)
 preset(item)
 {
 	blockOn()
-	;KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
+	KeyWait(altKeywait) ;change this within KSI.ini
 	coords()
 	MouseGetPos(&xpos, &ypos)
 	if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE
