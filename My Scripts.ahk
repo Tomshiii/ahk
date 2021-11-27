@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.2
+;\\v2.7.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -111,12 +111,6 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 F14:: ;open the "show more options" menu in win11
 {
-	MouseGetPos(&mx, &my)
-	colour1 := 0x4D4D4D
-	colour2 := 0xFFDA70
-	colour3 := 0x353535 ;when already clicked on
-	colour4 := 0x777777 ;when already clicked on
-	colour := PixelGetColor(&mx, &my)
 	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer. It is only necessary because I use the same button for both scripts.
 		{
 			SendInput("{LButton Up}")
@@ -134,23 +128,10 @@ F14:: ;open the "show more options" menu in win11
 			*/ ;return it to this way if ms ever fixes^
 			return
 		}
-	else if (colour = colour1 || colour2)
-		{
-			SendInput("{Click}")
-			sleep 10
-			SendInput("+{F10}")
-			return
-		}
-	else if (colour = colour3 || colour4) ;this isn't currently working properly and still clicks..?
-		{
-			SendInput("+{F10}")
-			return
-		}
 	else
 		{
 			SendInput("+{F10}")
-			return
-		}	
+		}
 }
 
 #HotIf WinActive("ahk_exe Code.exe")
@@ -325,7 +306,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 ^+d:: ;Make discord bigger so I can actually read stuff when not streaming
 {
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, -278, 1080, 1488
+		WinMove 4480, -278, 1080, 1497
 }
 
 F14::moveWin("") ;maximise
