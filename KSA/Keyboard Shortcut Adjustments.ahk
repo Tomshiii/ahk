@@ -38,6 +38,28 @@ effectsWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", 
  */
 timelineWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Timeline")
 
+;Below here is using the exact control property of the window, you'll need to use windowspy to get your own numbers
+/*
+ This value is the droverlord windowclass assigned to a panel within Premiere.
+
+ Can be set within KSA.ahk/ini
+ */
+focusEffectControls:= IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Effect Drover")
+
+/*
+ This value is the droverlord windowclass assigned to a panel within Premiere.
+
+ Can be set within KSA.ahk/ini
+ */
+focusTimeline:= IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Timeline Drover")
+
+/*
+ This value is the droverlord windowclass assigned to a panel within Premiere.
+
+ Can be set within KSA.ahk/ini
+ */
+focusMediaBrowser:= IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Media Browser Drover")
+
 ;==tools==
 /*
  This value will send the keyboard shortcut you have set to swap to the hand tool within Premiere
