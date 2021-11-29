@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.4
+;\\v2.7.5
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -228,7 +228,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	coords()
 	MouseGetPos(&xpos, &ypos)
 	;MouseMove 34, 917 ;location of the selection tool
-	if ImageSearch(&x, &y, 0, 854, 396, 1003, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
+	if ImageSearch(&x, &y, toolX1, toolY1, toolX2, toolY2, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
 	else
 		{

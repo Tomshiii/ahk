@@ -1,5 +1,90 @@
 ;All filepaths are absolute since this script gets #Include(ed) in other scripts that have different WorkingDir(s) than this one
 ;[Premiere]
+;==ImageSearch Coords==
+
+/*
+ This value is the first x coordinate for the imagesearch within the effect controls window within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+ecX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "EC x1")
+
+/*
+ This value is the first y coordinate for the imagesearch within the effect controls window within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+ecY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "EC y1")
+
+/*
+ This value is the second x coordinate for the imagesearch within the effect controls window within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+ecX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "EC x2")
+
+/*
+ This value is the second y coordinate for the imagesearch within the effect controls window within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+ecY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "EC y2")
+
+/*
+ This value is the first x coordinate for the imagesearch within the media browser window within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+mbX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "MB x1")
+
+/*
+ This value is the first y coordinate for the imagesearch within the media browser window within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+mbY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "MB y1")
+
+/*
+ This value is the second x coordinate for the imagesearch within the media browser window within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+mbX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "MB x2")
+
+/*
+ This value is the second y coordinate for the imagesearch within the media browser window within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+mbY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "MB y2")
+
+/*
+ This value is the first x coordinate for the imagesearch to find the toolbar panel within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+toolX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "tool x1")
+
+/*
+ This value is the first y coordinate for the imagesearch to find the toolbar panel within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+toolY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "tool y1")
+
+/*
+ This value is the second x coordinate for the imagesearch to find the toolbar panel within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+toolX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "tool x2")
+
+/*
+ This value is the second y coordinate for the imagesearch to find the toolbar panel within premiere pro.
+ 
+ Can be set within KSA.ahk/ini
+ */
+toolY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "tool y2")
 
 ;==activate windows==
 
@@ -38,27 +123,7 @@ effectsWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", 
  */
 timelineWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Timeline")
 
-;Below here is using the exact control property of the window, you'll need to use windowspy to get your own numbers
-/*
- This value is the droverlord windowclass assigned to a panel within Premiere.
 
- Can be set within KSA.ahk/ini
- */
-focusEffectControls:= IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Effect Drover")
-
-/*
- This value is the droverlord windowclass assigned to a panel within Premiere.
-
- Can be set within KSA.ahk/ini
- */
-focusTimeline:= IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Timeline Drover")
-
-/*
- This value is the droverlord windowclass assigned to a panel within Premiere.
-
- Can be set within KSA.ahk/ini
- */
-focusMediaBrowser:= IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Media Browser Drover")
 
 ;==tools==
 /*
@@ -74,6 +139,8 @@ handPrem := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Prem
  Can be set within KSA.ahk/ini
  */
 selectionPrem := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Selection")
+
+
 
 ;==other shortcuts==
 /*
@@ -153,6 +220,8 @@ speedMenu := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Pre
  */
 playheadtoCursor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Playhead to Cursor")
 
+
+
 ;==Labels==
 labelViolet := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Violet")
 labelIris := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Iris")
@@ -170,6 +239,12 @@ labelTan := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Prem
 labelGreen := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Green")
 labelRed := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Red")
 labelYellow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Yellow")
+
+
+
+
+
+
 
 ;[Photoshop]
 
@@ -203,6 +278,8 @@ selectionTool := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", 
  */
 zoomTool := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Photoshop", "Zoom")
 
+
+
 ;==hotkeys==
 
 /*
@@ -226,6 +303,11 @@ imageSize := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Pho
  */
 saveasCopy := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Photoshop", "Save As Copy")
 
+
+
+
+
+
 ;[After Effects]
 
 ;==tools==
@@ -244,6 +326,8 @@ handAE := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "After 
  */
 selectionAE := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "After Effects", "Selection")
 
+
+
 ;==hotkeys==
 
 /*
@@ -259,6 +343,8 @@ nextKeyframe := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "
  Can be set within KSA.ahk/ini
  */
 previousKeyframe := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "After Effects", "Previous Keyframe")
+
+
 
 ;==properties==
 
@@ -297,6 +383,10 @@ opacityProp := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "A
  */
 rotationProp := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "After Effects", "Rotation")
 
+
+
+
+
 ;[Resolve]
 
 ;==hotkeys==
@@ -307,6 +397,10 @@ rotationProp := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "
  Can be set within KSA.ahk/ini
  */
 resolveSelectPlayhead := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Resolve", "Select at Playhead")
+
+
+
+
 
 ;[OBS]
 
@@ -337,6 +431,10 @@ enableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini
  Can be set within KSA.ahk/ini
  */
 disableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Disable Preview")
+
+
+
+
 
 ;[Hotkeys]
 
