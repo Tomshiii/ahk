@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.11
+;\\v2.7.12
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -324,7 +324,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.11
+;		Premiere \\ Last updated: v2.7.12
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -371,8 +371,14 @@ preset(item)
 		SendInput(findBox) ;adjust this in the ini file
 		sleep 50
 		SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+		sleep 50
 		SendInput("^a{DEL}")
 		sleep 60
+		if WinExist("Delete Item")
+			{
+				SendInput("{Esc}")
+				toolCust("it tried to delete your preset", "2000")
+			}
 	}
 	effectbox()
 	coordc() ;change caret coord mode to window
