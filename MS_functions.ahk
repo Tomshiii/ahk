@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.10
+;\\v2.7.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -324,7 +324,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.10
+;		Premiere \\ Last updated: v2.7.11
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -385,6 +385,8 @@ preset(item)
 		{
 			MouseMove(%&eyeX%, %&eyeY% - "5")
 			SendInput("{Click Up}")
+			effectbox()
+			SendInput(timelineWindow)
 			MouseMove(%&xpos%, %&ypos%)
 			blockOff()
 			return
@@ -408,34 +410,34 @@ num(xval, yval, scale)
 	coordw()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-		SendInput(timelineWindow) ;adjust this in the ini file
-		SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-		if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
-			goto next
-		else
-			{
-				MouseMove(%&xpos%, %&ypos%)
-				blockOff()
-				toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
-			}
-		next:
-		if ImageSearch(&x2, &y2, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "motion2.png") ;moves to the motion tab
-			MouseMove(%&x2% + "10", %&y2% + "10")
-		else if ImageSearch(&x3, &y3, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "\motion3.png") ;this is a second check incase "motion" is already highlighted
-					MouseMove(%&x3% + "10", %&y3% + "10")
-		else ;if everything fails, this else will trigger
-			{
-				MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
-				blockOff()
-				toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-				return
-			}
-		SendInput("{Click}")
-		SendInput("{Tab 2}" %&xval% "{Tab}" %&yval% "{Tab}" %&scale% "{ENTER}")
-		SendInput("{Enter}")
-		MouseMove(%&xpos%, %&ypos%)
-		blockOff()
+	SendInput(timelineWindow) ;adjust this in the ini file
+	SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
+	if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
+		goto next
+	else
+		{
+			MouseMove(%&xpos%, %&ypos%)
+			blockOff()
+			toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
+	next:
+	if ImageSearch(&x2, &y2, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "motion2.png") ;moves to the motion tab
+		MouseMove(%&x2% + "10", %&y2% + "10")
+	else if ImageSearch(&x3, &y3, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "\motion3.png") ;this is a second check incase "motion" is already highlighted
+				MouseMove(%&x3% + "10", %&y3% + "10")
+	else ;if everything fails, this else will trigger
+		{
+			MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
+			blockOff()
+			toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+			return
+		}
+	SendInput("{Click}")
+	SendInput("{Tab 2}" %&xval% "{Tab}" %&yval% "{Tab}" %&scale% "{ENTER}")
+	SendInput("{Enter}")
+	MouseMove(%&xpos%, %&ypos%)
+	blockOff()
 }
 
 /* ;not used anymore
@@ -638,44 +640,44 @@ audioDrag(sfxName)
 	blockOn()
 	coords()
 	MouseGetPos(&xpos, &ypos)
-		SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
-		sleep 10
-		if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
-			{
-				MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
-				SendInput("{Click}")
-				goto next
-			}
-		else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
+	SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
+	sleep 10
+	if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+		{
+			MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
+			SendInput("{Click}")
 			goto next
-		else ;if everything fails, this else will trigger
-			{
-				blockOff()
-				toolFind("sfx folder", "1000")
-				MouseMove(%&xpos%, %&ypos%)
-				return
-			}
-		next:
-		SendInput(findBox) ;adjust this in the keyboard shortcuts ini file
-		coordc()
-		SendInput("^a{DEL}") ;deletes anything that might be in the search box
-		SendInput(%&sfxName%)
-		sleep 50
-		if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
-			{
-				MouseMove(%&vlx%, %&vly%)
-				SendInput("{Click Down}")
-			}
-		else
-			{
-				blockOff()
-				toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				MouseMove(%&xpos%, %&ypos%)
-				return
-			}
-		MouseMove(%&xpos%, %&ypos%)
-		SendInput("{Click Up}")
-		blockOff()
+		}
+	else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
+		goto next
+	else ;if everything fails, this else will trigger
+		{
+			blockOff()
+			toolFind("sfx folder", "1000")
+			MouseMove(%&xpos%, %&ypos%)
+			return
+		}
+	next:
+	SendInput(findBox) ;adjust this in the keyboard shortcuts ini file
+	coordc()
+	SendInput("^a{DEL}") ;deletes anything that might be in the search box
+	SendInput(%&sfxName%)
+	sleep 50
+	if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
+		{
+			MouseMove(%&vlx%, %&vly%)
+			SendInput("{Click Down}")
+		}
+	else
+		{
+			blockOff()
+			toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+			MouseMove(%&xpos%, %&ypos%)
+			return
+		}
+	MouseMove(%&xpos%, %&ypos%)
+	SendInput("{Click Up}")
+	blockOff()
 }
 
 /* movepreview()
