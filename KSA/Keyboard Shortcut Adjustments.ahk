@@ -86,6 +86,24 @@ toolX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premie
  */
 toolY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "tool y2")
 
+;movepreview() coords
+/*
+ This value is for the X coordinate for just off center of your preview window.
+
+ Can be set within KSA.ahk/ini
+ */
+moveX := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "move x")
+
+/*
+ This value is for the Y coordinate for just off center of your preview window.
+
+ Can be set within KSA.ahk/ini
+ */
+moveY := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "move y")
+
+
+
+
 ;==activate windows==
 
 /*

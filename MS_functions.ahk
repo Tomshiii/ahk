@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.12
+;\\v2.7.13
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -324,7 +324,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.12
+;		Premiere \\ Last updated: v2.7.13
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -706,7 +706,7 @@ movepreview()
 	if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
 		{ ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
 			Click
-			MouseMove(2300, 238) ;move to the preview window
+			MouseMove(moveX, moveY) ;move to the preview window
 			SendInput("{Click Down}")
 			blockOff()
 			KeyWait A_ThisHotkey
