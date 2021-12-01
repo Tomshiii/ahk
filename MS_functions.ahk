@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.13
+;\\v2.7.14
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -324,7 +324,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.13
+;		Premiere \\ Last updated: v2.7.14
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -683,6 +683,11 @@ audioDrag(sfxName)
 		}
 	MouseMove(%&xpos%, %&ypos%)
 	SendInput("{Click Up}")
+	SendInput(mediaBrowser)
+	SendInput(findBox)
+	SendInput("^a{DEL}" "{Enter}")
+	sleep 50
+	SendInput(timelineWindow)
 	blockOff()
 }
 
