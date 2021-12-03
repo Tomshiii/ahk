@@ -377,7 +377,17 @@ preset(item)
 		if WinExist("Delete Item")
 			{
 				SendInput("{Esc}")
-				toolCust("it tried to delete your preset", "2000")
+				sleep 50
+				SendInput(findBox)
+				sleep 50
+				SendInput("^a{DEL}")
+				sleep 60
+				if WinExist("Delete Item")
+					{
+						SendInput("{Esc}")
+						sleep 50
+						toolCust("it tried to delete your preset", "2000")
+					}
 			}
 	}
 	effectbox()
