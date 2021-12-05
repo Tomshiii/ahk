@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.5
+;\\v2.7.6
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -261,7 +261,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseMove(%&prx% + "5", %&pry% +"3")
 	SendInput("{Click Down}")
 	Sleep 100
-	MouseMove 2562, 223, "2"
+	MouseMove 3590, 702, "2"
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
 	blockOff()
