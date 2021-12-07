@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.14
+;\\v2.7.15
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -324,7 +324,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.14
+;		Premiere \\ Last updated: v2.7.15
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -377,7 +377,7 @@ preset(item)
 		if WinExist("Delete Item")
 			{
 				SendInput("{Esc}")
-				sleep 50
+				sleep 150
 				SendInput(findBox)
 				sleep 50
 				SendInput("^a{DEL}")
@@ -530,7 +530,7 @@ valuehold(filepath, optional)
 			return
 		}
 	colour:
-	if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+	if PixelSearch(&xcol, &ycol, %&x%, %&y% + "2", %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
 		MouseMove(%&xcol% + %&optional%, %&ycol%)
 	else if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "720", %&y% + "40", 0x295C4D, 3) ;searches for a different shade of blue as a fallback
 				MouseMove(%&xcol% + %&optional%, %&ycol%)

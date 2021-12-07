@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.6
+;\\v2.7.7
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -56,6 +56,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
+#SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
 #+r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
 {
 	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
@@ -80,6 +81,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
 			}
 }
+
+#+p::Suspend -1 ;suspends this script. Useful when playing games as this script will try and do whacky stuff while gaming
+#SuspendExempt false
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		launch programs
