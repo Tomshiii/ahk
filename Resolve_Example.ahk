@@ -8,7 +8,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2
+;\\v2.2.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.1
 
@@ -98,8 +98,8 @@ F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/de
 ;=========================================================
 ;		flips
 ;=========================================================
-!h::rflip("horizontal.png") ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
-!v::rflip("vertical.png") ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
+!h::rflip("horizontal") ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
+!v::rflip("vertical") ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
 
 ;=========================================================
 ;		Scale Adjustments

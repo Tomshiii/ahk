@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.15
+;\\v2.7.16
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.3.1
@@ -935,7 +935,7 @@ gainSecondary(key1, key2, keyend)
  @param property is the filename of just the property itself ie. "scale" not "scale.png" or "scale2"
  @param optional is for when you need the mouse to move extra coords over to avoid the first "blue" text for some properties
  */
-aevaluehold(button, property, optional)
+aevaluehold(button, property, optional) ;this function is incredibly touchy and I need to revisit it one day to improve it so that it's actually usable, but for now I don't really use it, after effects is just too jank
 {
 	coordw()
 	MouseGetPos(&x, &y)
@@ -1188,7 +1188,7 @@ psType(filetype)
 
 ; ===========================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.6
+;		Resolve \\ Last updated: v2.7.16
 ;
 ; ===========================================================================================================================================
 /* Rscale()
@@ -1204,18 +1204,18 @@ Rscale(value, property, plus)
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector.png")
 		goto video
-	else if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
+	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector2.png")
 		{
 			MouseMove(%&xi%, %&yi%)
 			click ;this opens the inspector tab
 			goto video
 		}
 	video:
-	if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
 		goto rest
-	else if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
+	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
 		{
 			MouseMove(%&xn%, %&yn%)
 			click ;"2196 139" ;this highlights the video tab
@@ -1228,9 +1228,9 @@ Rscale(value, property, plus)
 			return
 		}
 	rest:
-	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
+	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
 		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
-	else if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 		MouseMove(%&xz% + %&plus%, %&yz% + "5")
 	else
 		{
@@ -1280,13 +1280,13 @@ REffect(folder, effect)
 	coordw()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " EnvGet("Resolve") "effects.png") ;checks to see if the effects button is deactivated
+	if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " EnvGet("Resolve") "effects.png") ;checks to see if the effects button is deactivated
 		{
 			MouseMove(%&xe%, %&ye%)
 			SendInput("{Click}")
 			goto closeORopen
 		}
-	else if ImageSearch(&xe, &ye, 8, 8, 618, 122, "*1 " EnvGet("Resolve") "effects2.png") ;checks to see if the effects button is activated
+	else if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " EnvGet("Resolve") "effects2.png") ;checks to see if the effects button is activated
 		goto closeORopen
 	else ;if everything fails, this else will trigger
 		{
@@ -1295,9 +1295,9 @@ REffect(folder, effect)
 			return
 		}
 closeORopen:
-	if ImageSearch(&xopen, &yopen, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") "open.png") ;checks to see if the effects window sidebar is open
+	if ImageSearch(&xopen, &yopen, effectx1, effecty1, effectx2, effecty2, "*2 " EnvGet("Resolve") "open.png") ;checks to see if the effects window sidebar is open
 		goto EffectFolder
-	else if ImageSearch(&xclosed, &yclosed, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") "closed.png") ;checks to see if the effects window sidebar is closed
+	else if ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " EnvGet("Resolve") "closed.png") ;checks to see if the effects window sidebar is closed
 		{
 			MouseMove(%&xclosed%, %&yclosed%)
 			SendInput("{Click}")
@@ -1310,9 +1310,9 @@ closeORopen:
 			return
 		}
 EffectFolder:
-	if ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% ".png") ;checks to see if the drop down option you want is activated
+	if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " EnvGet("Resolve") %&folder% ".png") ;checks to see if the drop down option you want is activated
 		goto SearchButton
-	else if ImageSearch(&xfx, &yfx, 8, 114, 617, 1358, "*2 " EnvGet("Resolve") %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
+	else if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " EnvGet("Resolve") %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
 		{
 			MouseMove(%&xfx%, %&yfx%)
 			SendInput("{Click}")
@@ -1325,13 +1325,13 @@ EffectFolder:
 			return
 		}
 SearchButton:
-	if ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " EnvGet("Resolve") "search2.png") ;checks to see if the search icon is deactivated
+	if ImageSearch(&xs, &ys, effectx1, effecty1 + "300", effectx2, effecty2, "*2 " EnvGet("Resolve") "search2.png") ;checks to see if the search icon is deactivated
 		{
 			MouseMove(%&xs%, %&ys%)
 			SendInput("{Click}")
 			goto final
 		}
-	else if ImageSearch(&xs, &ys, 8, 118, 617, 1356, "*2 " EnvGet("Resolve") "search3.png") ;checks to see if the search icon is activated
+	else if ImageSearch(&xs, &ys, 8, 8 + "300", effectx2, effecty2, "*2 " EnvGet("Resolve") "search3.png") ;checks to see if the search icon is activated
 		{
 			MouseMove(%&xs%, %&ys%)
 			SendInput("{Click 2}")
@@ -1366,18 +1366,18 @@ rvalhold(property, plus, rfelseval)
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector.png")
 		goto video
-	else if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
+	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector2.png")
 		{
 			MouseMove(%&xi%, %&yi%)
 			click ;this opens the inspector tab
 			goto video
 		}
 	video:
-	if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
 		goto rest
-	else if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
+	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
 		{
 			MouseMove(%&xn%, %&yn%)
 			click ;"2196 139" ;this highlights the video tab
@@ -1391,9 +1391,9 @@ rvalhold(property, plus, rfelseval)
 		}
 	rest:
 	;MouseMove 2329, 215 ;moves to the scale value.
-	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
+	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
 		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
-	else if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 		MouseMove(%&xz% + %&plus%, %&yz% + "5")
 	else
 		{
@@ -1429,12 +1429,12 @@ rflip(button)
 	coordw()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "videoN.png") ;makes sure the video tab is selected
+	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "videoN.png") ;makes sure the video tab is selected
 		{
 			MouseMove(%&xn%, %&yn%)
 			click
 		}
-	if ImageSearch(&xh, &yh, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% ".png") ;searches for the button when it isn't activated already
+	if ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&button% ".png") ;searches for the button when it isn't activated already
 		{
 			MouseMove(%&xh%, %&yh%)
 			click
@@ -1442,7 +1442,7 @@ rflip(button)
 			blockOff()
 			return
 		}
-	else if ImageSearch(&xho, &yho, 2146, 168, 2556, 382, "*5 " EnvGet("Resolve") %&button% "2.png") ;searches for the button when it is activated already
+	else if ImageSearch(&xho, &yho, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&button% "2.png") ;searches for the button when it is activated already
 		{
 			MouseMove(%&xho%, %&yho%)
 			click
@@ -1468,18 +1468,18 @@ rgain(value)
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector.png")
 		goto audio
-	else if ImageSearch(&xi, &yi, 2142, 33, 2561, 115, "*2 " EnvGet("Resolve") "inspector2.png")
+	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector2.png")
 		{
 			MouseMove(%&xi%, %&yi%)
 			click ;this opens the inspector tab
 			goto audio
 		}
 	audio:
-	if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio2.png") ;if you're already in the audio tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "audio2.png") ;if you're already in the audio tab, it'll find this image then move on
 		goto rest
-	else if ImageSearch(&xn, &yn, 2148, 116, 2562, 169, "*5 " EnvGet("Resolve") "audio.png") ;if you aren't already in the audio tab, this line will search for it
+	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "audio.png") ;if you aren't already in the audio tab, this line will search for it
 		{
 			MouseMove(%&xn%, %&yn%)
 			click ;"2196 139" ;this highlights the video tab
@@ -1492,9 +1492,9 @@ rgain(value)
 			return
 		}
 	rest:
-	if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume.png") ;searches for the volume property
+	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") "volume.png") ;searches for the volume property
 		MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
-	else if ImageSearch(&xz, &yz, 2147, 86, 2561, 750, "*5 " EnvGet("Resolve") "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 		MouseMove(%&xz% + "215", %&yz% + "5")
 	else
 		{
