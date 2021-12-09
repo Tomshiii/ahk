@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.8
+;\\v2.7.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -281,6 +281,7 @@ F2::preset("parametric") ;check MS_functions.ahk for the code for these presets
 F5::preset("hflip")
 F3::preset("croptom")
 F4::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+F6::preset("tint 100")
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
