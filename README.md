@@ -41,7 +41,7 @@ My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](h
 ## Explanation:
 
 #### [Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk](https://github.com/Tomshiii/ahk/tree/main/KSA)
-An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses its. You do NOT need to run this ahk file, it is [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) in MS_Functions.ahk
+An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses it. You do NOT need to run this ahk file, it is [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) in MS_Functions.ahk
 
 #### [My Scripts.ahk](https://github.com/Tomshiii/ahk/blob/main/My%20Scripts.ahk)
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
