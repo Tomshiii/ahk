@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.9
+;\\v2.7.10
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.4
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -82,7 +82,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 			}
 }
 
-#+p::Suspend -1 ;suspends this script. Useful when playing games as this script will try and do whacky stuff while gaming
+#+`::Suspend -1 ;suspends this script. Useful when playing games as this script will try and do whacky stuff while gaming
 #SuspendExempt false
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
