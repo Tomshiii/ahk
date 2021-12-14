@@ -662,6 +662,8 @@ audioDrag(sfxName)
 		{
 			MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
 			SendInput("{Click}")
+			MouseMove(%&xpos%, %&ypos%)
+			sleep 100
 			goto next
 		}
 	else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
@@ -678,7 +680,7 @@ audioDrag(sfxName)
 	coordc()
 	SendInput("^a{DEL}") ;deletes anything that might be in the search box
 	SendInput(%&sfxName%)
-	sleep 50
+	sleep 150
 	if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
 		{
 			MouseMove(%&vlx%, %&vly%)
