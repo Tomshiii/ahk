@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.16
+;\\v2.7.17
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.4
@@ -324,7 +324,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.15
+;		Premiere \\ Last updated: v2.7.17
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -647,9 +647,10 @@ keyframe(filepath)
 
 /* audioDrag()
  this function pulls an audio file out of the media browser and to the cursor (premiere pro)
+ @param folder is the name of the screenshots of whatever folder you want the function to search for and click on
  @param sfxName is the name of whatever sound you want the function to pull onto the timeline
  */
-audioDrag(sfxName)
+audioDrag(folder, sfxName)
 {
 	SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 	;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
@@ -658,7 +659,7 @@ audioDrag(sfxName)
 	MouseGetPos(&xpos, &ypos)
 	SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 	sleep 10
-	if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "sfx.png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+	if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") %&folder% ".png") ;searches for my sfx folder in the media browser to see if it's already selected or not
 		{
 			MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
 			SendInput("{Click}")
@@ -666,7 +667,7 @@ audioDrag(sfxName)
 			sleep 100
 			goto next
 		}
-	else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "sfx2.png") ;if it is selected, this will see it, then move on
+	else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") %&folder% "2.png") ;if it is selected, this will see it, then move on
 		goto next
 	else ;if everything fails, this else will trigger
 		{
