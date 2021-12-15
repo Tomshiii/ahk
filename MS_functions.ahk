@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.18
+;\\v2.7.19
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.4
@@ -325,7 +325,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.18
+;		Premiere \\ Last updated: v2.7.19
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -658,6 +658,12 @@ audioDrag(sfxName)
 			blockOn()
 			coords()
 			MouseGetPos(&xpos, &ypos)
+			if ImageSearch(&listx, &listy, 3081, 745, 3591, 1265, "*2 " EnvGet("Premiere") "list view.png") ;checks to make sure you're in the list view
+				{
+					MouseMove(%&listx%, %&listy%)
+					SendInput("{Click}")
+					sleep 100
+				}
 			SendInput(projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
 			SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
 			;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
@@ -666,12 +672,12 @@ audioDrag(sfxName)
 			SendInput(%&sfxName%)
 			sleep 250 ;the project search is pretty slow so you might need to adjust this
 			coordw()
-			if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " EnvGet("Premiere") "audio.png")
+			if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " EnvGet("Premiere") "audio.png") ;searches for the audio image next to an audio file
 				{
 					MouseMove(%&vlx%, %&vly%)
 					SendInput("{Click Down}")
 				}
-			else if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " EnvGet("Premiere") "audio2.png")
+			else if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " EnvGet("Premiere") "audio2.png") ;searches for the audio image next to an audio file
 				{
 					MouseMove(%&vlx%, %&vly%)
 					SendInput("{Click Down}")
