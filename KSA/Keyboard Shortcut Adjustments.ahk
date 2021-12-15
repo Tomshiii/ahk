@@ -446,6 +446,34 @@ altKeywait := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Ho
   Can be set within KSA.ahk/ini
   */
  mbY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB y2")
+
+ /*
+  This value is the first x coordinate for the imagesearch within the sfx bin project window within premiere pro.
+  
+  Can be set within KSA.ahk/ini
+  */
+sfxX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "sfx x1")
+
+/*
+  This value is the first y coordinate for the imagesearch within the sfx bin project window within premiere pro.
+  
+  Can be set within KSA.ahk/ini
+  */
+sfxY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "sfx y1")
+
+/*
+  This value is the second x coordinate for the imagesearch within the sfx bin project window within premiere pro.
+  
+  Can be set within KSA.ahk/ini
+  */
+sfxX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "sfx x2")
+
+  /*
+  This value is the second y coordinate for the imagesearch within the sfx bin project window within premiere pro.
+  
+  Can be set within KSA.ahk/ini
+  */
+sfxY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "sfx y2")
  
  /*
   This value is the first x coordinate for the imagesearch to find the toolbar panel within premiere pro.

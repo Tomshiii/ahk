@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.17
+;\\v2.7.18
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.4
@@ -35,6 +35,7 @@ EnvSet("AE", A_WorkingDir "\ImageSearch\AE\")
 EnvSet("Photoshop", A_WorkingDir "\ImageSearch\Photoshop\")
 EnvSet("Resolve", A_WorkingDir "\ImageSearch\Resolve\")
 EnvSet("VSCode", A_WorkingDir "\ImageSearch\VSCode\")
+EnvSet("Explorer", A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\")
 
 ; ===========================================================================================================================================
 ;
@@ -324,7 +325,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.17
+;		Premiere \\ Last updated: v2.7.18
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -646,11 +647,61 @@ keyframe(filepath)
 }
 
 /* audioDrag()
- this function pulls an audio file out of the media browser and to the cursor (premiere pro)
- @param folder is the name of the screenshots of whatever folder you want the function to search for and click on
+ this function pulls an audio file out of a separate bin from the project window and back to the cursor (premiere pro)
  @param sfxName is the name of whatever sound you want the function to pull onto the timeline
  */
-audioDrag(folder, sfxName)
+audioDrag(sfxName)
+{
+	coords()
+	if ImageSearch(&sfxxx, &sfxyy, 3021, 710, 3589, 1261, "*2 " EnvGet("Premiere") "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
+		{
+			blockOn()
+			coords()
+			MouseGetPos(&xpos, &ypos)
+			SendInput(projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
+			SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
+			;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
+			SendInput(findBox)
+			SendInput("^a{DEL}") ;deletes anything that might be in the search box
+			SendInput(%&sfxName%)
+			sleep 250 ;the project search is pretty slow so you might need to adjust this
+			coordw()
+			if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " EnvGet("Premiere") "audio.png")
+				{
+					MouseMove(%&vlx%, %&vly%)
+					SendInput("{Click Down}")
+				}
+			else if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " EnvGet("Premiere") "audio2.png")
+				{
+					MouseMove(%&vlx%, %&vly%)
+					SendInput("{Click Down}")
+				}
+			else
+				{
+					blockOff()
+					toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+					coords()
+					MouseMove(%&xpos%, %&ypos%)
+					return
+				}
+			coords()
+			MouseMove(%&xpos%, %&ypos%)
+			SendInput("{Click Up}")
+			SendInput(projectsWindow)
+			SendInput(projectsWindow)
+			SendInput(findBox)
+			SendInput("^a{DEL}" "{Enter}")
+			SendInput(timelineWindow)
+			blockOff()
+		}
+	else
+		{
+			toolCust("you haven't opened the bin", "2000")
+		}
+}
+
+/*
+audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 {
 	SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 	;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
@@ -703,6 +754,7 @@ audioDrag(folder, sfxName)
 	SendInput(timelineWindow)
 	blockOff()
 }
+} */
 
 /* movepreview()
  This function is to adjust the framing of a video within the preview window in premiere pro. Let go of this hotkey to confirm, simply tap this hotkey to reset values

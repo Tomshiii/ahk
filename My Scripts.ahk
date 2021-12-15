@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.11
+;\\v2.7.13
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.7.17
+;\\v2.7.18
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.3
 
@@ -121,7 +121,7 @@ F14:: ;open the "show more options" menu in win11
 			WinMaximize
 			return
 		}
-	else if ImageSearch(&x, &y, 0, 0, A_ScreenWidth, A_ScreenHeight, "*5 C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Explorer\showmore.png")
+	else if ImageSearch(&x, &y, 0, 0, A_ScreenWidth, A_ScreenHeight, "*5 " EnvGet("Explorer") "showmore.png")
 		{
 			SendInput("{Esc}")
 			SendInput("+{F10}")
@@ -245,7 +245,9 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
-	KeyWait(A_PriorKey)
+	KeyWait("Alt")
+	if GetKeyState("Ctrl", "P")
+		goto added
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	blockOn()
@@ -255,6 +257,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		goto move
 	else if ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
 		goto move
+	else if ImageSearch(&prx, &pry, 2562, 190, 3594, 1261, "*2 " EnvGet("Premiere") "project2.png")
+		goto bin
 	else ;if everything fails, this else will trigger
 		{
 			blockOff()
@@ -268,7 +272,75 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseMove 3590, 702, "2"
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
+
+	bin:
+	Run("E:\Audio stuff")
+	WinWait("E:\Audio stuff")
+	WinActivate("E:\Audio stuff")
+	sleep 500
+	coordw()
+	MouseMove(0, 0)
+	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Explorer") "sfx.png")
+		{
+			MouseMove(%&foldx% + "9", %&foldy% + "5", 2)
+			SendInput("{Click Down}")
+			;sleep 2000
+			coords()
+			MouseMove(3240, 564, "2")
+			SendInput("{Click Up}")
+			switchToPremiere()
+			Sleep 2000
+		}
+	else
+		{
+			blockOff
+			toolFind("the sfx folder", "2000")
+			return
+		}
+	added:
+	coordw()
+	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " EnvGet("Premiere") "list view.png")
+		{
+			MouseMove(%&listx%, %&listy%)
+			SendInput("{Click}")
+			sleep 100
+		}
+	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " EnvGet("Premiere") "sfxinproj.png")
+		{
+			MouseMove(%&fold2x% + "5", %&fold2y% + "2")
+			SendInput("{Click 2}")
+			sleep 100
+		}
+	else
+		{
+			blockOff()
+			toolFind("the sfx folder in premiere", "2000")
+			return
+		}
+	if ImageSearch(&fold3x, &fold3y, 10, 3, 1038, 1072, "*2 " EnvGet("Premiere") "binsfx.png")
+		{
+			MouseMove(%&fold3x% + "5", %&fold3y% + "2")
+			SendInput("{Click Down}")
+			MouseMove(754, 1042, 2)
+			sleep 50
+			SendInput("{Click Up}")
+		}
+	else
+		{
+			blockOff()
+			toolFind("the bin", "2000")
+			return
+		}
+	coords()
+	MouseMove(%&xpos%, %&ypos%)
 	blockOff()
+}
+
+F7::
+{
+	SendInput(timelineWindow)
+	SendInput(selectAtPlayhead)
+	SendInput("^+1")
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -293,8 +365,8 @@ WheelLeft::wheelEditPoint(previousEditPoint) ;goes to the next edit point toward
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
-F19::audioDrag("sfx", "Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
-F20::audioDrag("sfx", "bleep")
+F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
+F20::audioDrag("bleep")
 
 
 
