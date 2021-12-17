@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.13
+;\\v2.7.14
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.18
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -245,6 +245,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
+	MouseGetPos(&xpos, &ypos)
 	KeyWait("Alt")
 	if GetKeyState("Ctrl", "P")
 		goto added
@@ -252,7 +253,6 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	blockOn()
 	coords()
-	MouseGetPos(&xpos, &ypos)
 	if ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
 		goto move
 	else if ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
