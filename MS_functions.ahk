@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.19
+;\\v2.8.0
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.4
@@ -26,7 +26,8 @@
 ; ImageSearch(&xpos, &ypos, 312, 64, 1066, 1479,~~~~~) (check the ahk documentation for what each number represents)
 ; searches in a rectangle defined by the above coords (pixel coords default to window unless you change it to something else)
 ; These values will be the only thing you should theoretically need to change to get things working in your own setups (outside of potentially needing your own screenshots for things as different setups can mean different colours etc etc)
-;I have tried to make as many of these values as possible directly editable within KSI.ini (for premiere at least for now, I might get around to other programs eventually) to make it both easier and faster for you to adjust these scripts to your own premiere layout. Take a look over there before looking around in here
+; Most premiere functions require no tinkering before getting started as we can sneakily grab the coordinates of some panels within premiere without needing to define them anywhere. Not all of my scripts have this kind of treatment though as sometimes it's just not practical, sometimes a function is so heavily reliant on my workspace/workflow that it would be a waste of time as you'd need to change a bunch of stuff anyway, or sometimes it's just not possible with the way I'm doing things.
+; For the functions that don't get this special treatment, I have tried to make as many of these values as possible directly editable within KSI.ini (for premiere at least for now, I might get around to other programs eventually) to make it both easier and faster for you to adjust these scripts to your own premiere layout. Take a look over there before looking around in here
 
 ;EnvSet allows you to store information to call later, via: EnvGet("Discord") for example, which cuts out the need to write ' A_WorkingDir "\ImageSearch\Discord\photoexample.png" ' for every piece of code
 EnvSet("Discord", A_WorkingDir "\ImageSearch\Discord\")
@@ -325,25 +326,29 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.7.19
+;		Premiere \\ Last updated: v2.8.0
 ;
 ; ===========================================================================================================================================
 /* preset()
- this preset is for the drag and drop effect presets in premiere
+ This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
  @param item in this function defines what it will type into the search box (the name of your preset within premiere)
  */
 preset(item)
 {
 	blockOn()
-	KeyWait(altKeywait) ;change this within KSI.ini
 	coords()
+	blockOn()
 	MouseGetPos(&xpos, &ypos)
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
 	if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE
 		{
 			ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
 			SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
 			sleep 100
-			if ImageSearch(&x2, &y2, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "graphics.png")
+			if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "graphics.png")
 				{
 					if ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " EnvGet("Premiere") "eye.png")
 						{
@@ -370,26 +375,62 @@ preset(item)
 	{
 		SendInput(effectsWindow) ;adjust this in the ini file
 		SendInput(findBox) ;adjust this in the ini file
-		sleep 50
-		SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
-		sleep 50
-		SendInput("^a{DEL}")
-		sleep 60
-		if WinExist("Delete Item")
+		CaretGetPos(&findx)
+		if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
 			{
-				SendInput("{Esc}")
-				sleep 150
-				SendInput(findBox)
-				sleep 50
-				SendInput("^a{DEL}")
-				sleep 60
-				if WinExist("Delete Item")
+				Loop 40
 					{
-						SendInput("{Esc}")
-						sleep 50
-						toolCust("it tried to delete your preset", "2000")
+						sleep 30
+						CaretGetPos(&findx)
+						if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+							break
+						if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+							{
+								blockOff()
+								toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+								return
+							}
 					}
 			}
+		SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+		SendInput("^a{DEL}")
+		SetTimer(delete, -250)
+		delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
+		{
+			if WinExist("Delete Item")
+				{
+					SendInput("{Esc}")
+					sleep 100
+					SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+					SendInput(findBox)
+					CaretGetPos(&find2x)
+					if %&find2x% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+						{
+							Loop 40
+								{
+									sleep 30
+									CaretGetPos(&find2x)
+									if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+										break
+									if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+										{
+											blockOff()
+											toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+											return
+										}
+								}
+						}
+					SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+					SendInput("^a{DEL}")
+					sleep 60
+					if WinExist("Delete Item")
+						{
+							SendInput("{Esc}")
+							sleep 50
+							toolCust("it tried to delete your preset", "2000")
+						}
+				}
+		}
 	}
 	effectbox()
 	coordc() ;change caret coord mode to window
@@ -424,12 +465,28 @@ preset(item)
 num(xval, yval, scale)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	coordw()
-	blockOn()
 	MouseGetPos(&xpos, &ypos)
+	coords()
+	blockOn()
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}
 	SendInput(timelineWindow) ;adjust this in the ini file
 	SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-	if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
 		goto next
 	else
 		{
@@ -439,9 +496,9 @@ num(xval, yval, scale)
 			return
 		}
 	next:
-	if ImageSearch(&x2, &y2, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "motion2.png") ;moves to the motion tab
+	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "motion2.png") ;moves to the motion tab
 		MouseMove(%&x2% + "10", %&y2% + "10")
-	else if ImageSearch(&x3, &y3, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "\motion3.png") ;this is a second check incase "motion" is already highlighted
+	else if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "\motion3.png") ;this is a second check incase "motion" is already highlighted
 				MouseMove(%&x3% + "10", %&y3% + "10")
 	else ;if everything fails, this else will trigger
 		{
@@ -457,42 +514,6 @@ num(xval, yval, scale)
 	blockOff()
 }
 
-/* ;not used anymore
-fElse(data) ;a preset for the premiere scale, x/y and rotation scripts ;these wont work for resolve in their current form, you could adjust it to fit easily by copying over that code
-;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
-{
-	Click "{Click Up}"
-	sleep 10
-	Send %&data%
-	;MouseMove x, y ;if you want to press the reset arrow, input the windows spy SCREEN coords here then comment out the above Send^
-	;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
-	sleep 50
-	send "{enter}"
-}
-*/
-
-/* noclips()
- this is simply a combination of repeat code that kept popping up in a few functions below
- */
-noclips()
-{
-	coords()
-	blockOn()
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
-		{
-			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-			sleep 50
-			if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-				{
-					toolCust("The wrong clips are selected", "1000")
-					blockOff()
-					return
-				}
-		}
-	SendInput(effectControls) ;adjust this in the keyboard shortcuts ini file
-}
-
 /* valuehold()
  a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
  @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
@@ -501,10 +522,27 @@ noclips()
 valuehold(filepath, optional)
 {
 	MouseGetPos(&xpos, &ypos)
-	noclips()
+	coords()
+	blockOn()
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}
 	if A_ThisHotkey = levelsHotkey ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
 		{ ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
-			if ImageSearch(&vidx, &vidy, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "video.png")
+			if ImageSearch(&vidx, &vidy, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "video.png")
 				{
 					toolCust("you aren't scrolled down", "1000")
 					blockOff()
@@ -515,13 +553,13 @@ valuehold(filepath, optional)
 				goto next
 		}
 	next:
-	if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for when you have the "toggle animation" keyframe button pressed
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for if the property you want to adjust is "selected"
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
 	else
 		{
@@ -582,23 +620,40 @@ valuehold(filepath, optional)
  this function is to turn off keyframing for a given property within premiere pro
  @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
  */
-keyreset(filepath)
+keyreset(filepath) ;I think this function is broken atm, I need to do something about it... soon
 {
 	MouseGetPos(&xpos, &ypos)
-	noclips()
-	if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% "2.png")
+	coords()
+	blockOn()
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% "2.png")
 		goto click
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% "4.png")
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% "4.png")
 		goto click
 	else
 		{
 			toolCust("you're already keyframing", "1000")
 			blockOff()
-			KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+			;KeyWait(A_PriorHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
 			return
 		}
 	click:
-	MouseMove(%&x% + "5", %&y% + "2")
+	MouseMove(%&x% + "7", %&y% + "4")
 	click
 	blockOff()
 	MouseMove(%&xpos%, %&ypos%)
@@ -611,18 +666,35 @@ keyreset(filepath)
 keyframe(filepath)
 {
 	MouseGetPos(&xpos, &ypos)
-	noclips()
-	if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% "2.png")
+	coords()
+	blockOn()
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% "2.png")
 		goto next
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% "4.png")
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% "4.png")
 		goto next
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% ".png")
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% ".png")
 		{
 			MouseMove(%&x% + "5", %&y% + "5")
 			Click()
 			goto end
 		}
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&filepath% "3.png")
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&filepath% "3.png")
 		{
 			MouseMove(%&x% + "5", %&y% + "5")
 			Click()
@@ -652,6 +724,7 @@ keyframe(filepath)
  */
 audioDrag(sfxName)
 {
+	;I wanted to use a method similar to other premiere functions above, that grab the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
 	coords()
 	if ImageSearch(&sfxxx, &sfxyy, 3021, 710, 3589, 1261, "*2 " EnvGet("Premiere") "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
 		{
@@ -668,7 +741,24 @@ audioDrag(sfxName)
 			SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
 			;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
 			SendInput(findBox)
-			SendInput("^a{DEL}") ;deletes anything that might be in the search box
+			CaretGetPos(&findx)
+			if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+				{
+					Loop 40
+						{
+							sleep 30
+							CaretGetPos(&findx)
+							if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+								break
+							if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+								{
+									blockOff()
+									toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+									return
+								}
+						}
+				}
+			SendInput("^a{DEL}")
 			SendInput(%&sfxName%)
 			sleep 250 ;the project search is pretty slow so you might need to adjust this
 			coordw()
@@ -696,6 +786,23 @@ audioDrag(sfxName)
 			SendInput(projectsWindow)
 			SendInput(projectsWindow)
 			SendInput(findBox)
+			CaretGetPos(&find2x)
+			if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+				{
+					Loop 40
+						{
+							sleep 30
+							CaretGetPos(&find2x)
+							if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+								break
+							if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+								{
+									blockOff()
+									toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+									return
+								}
+						}
+				}
 			SendInput("^a{DEL}" "{Enter}")
 			SendInput(timelineWindow)
 			blockOff()
@@ -704,7 +811,7 @@ audioDrag(sfxName)
 		{
 			toolCust("you haven't opened the bin", "2000")
 		}
-}
+ }
 
 /*
 audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
@@ -770,7 +877,25 @@ movepreview()
 	coords()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "motion.png") ;moves to the motion tab
+	coords()
+	blockOn()
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "motion.png") ;moves to the motion tab
 			MouseMove(%&x% + "25", %&y%)
 	else
 		{
@@ -791,7 +916,7 @@ movepreview()
 		}
 	else
 		{
-			if ImageSearch(&xcol, &ycol, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+			if ImageSearch(&xcol, &ycol, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
 					MouseMove(%&xcol%, %&ycol%)
 			else ;if everything fails, this else will trigger
 				{
@@ -813,12 +938,28 @@ movepreview()
 reset()
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	coordw()
+	coords()
 	blockOn()
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&x2, &y2, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "motion2.png") ;checks if the "motion" value is in view
+	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "motion2.png") ;checks if the "motion" value is in view
 		goto inputs
-	else if ImageSearch(&x2, &y2, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "motion3.png") ;checks if the "motion" value is in view
+	else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "motion3.png") ;checks if the "motion" value is in view
 		goto inputs
 	else
 		{
@@ -885,16 +1026,32 @@ hotkeyReactivate()
  */
 manInput(property, optional, key1, key2, keyend)
 {
+	MouseGetPos(&xpos, &ypos)
 	coords()
 	blockOn()
-	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+		{
+			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+			sleep 50
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+				{
+					toolCust("The wrong clips are selected", "1000")
+					blockOff()
+					return
+				}
+		}
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		goto colour
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for when you have the "toggle animation" keyframe button pressed
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&property% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&property% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for if the property you want to adjust is "selected"
-	else if ImageSearch(&x, &y, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") %&property% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") %&property% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
 	else ;if everything fails, this else will trigger
 		{
@@ -930,8 +1087,14 @@ manInput(property, optional, key1, key2, keyend)
 gain(amount)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-	if ImageSearch(&x3, &y3, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	coords()
+	blockOn()
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
 			goto inputs
@@ -952,7 +1115,7 @@ gain(amount)
 }
 
 /* gainSecondary()
- This function opens up the gain menu within premiere pro so I can input it with my secondary keyboard. This function will also check to ensure the timeline is in focus and a clip is selected
+ This function opens up the gain menu within premiere pro so I can input it with my secondary keyboard. This function will also check to ensure the timeline is in focus and a clip is selected. I don't really use this anymore
  @param key1 is the hotkey you use to activate this function
  @param key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
  @param keyend is whatever key you want the function to wait for before finishing
@@ -960,8 +1123,12 @@ gain(amount)
 gainSecondary(key1, key2, keyend)
 {
 ;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+	SendInput(effectControls)
+	SendInput(effectControls)
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &w, &h, effClassNN)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-	if ImageSearch(&x3, &y3, ecX1, ecY1, ecX2, ecY2, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + "700", %&efy% + "700", "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
 			goto inputs
@@ -1056,7 +1223,7 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
 
 ; ===========================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.6.4
+;		Photoshop \\ Last updated: v2.8.0
 ;
 ; ===========================================================================================================================================
 /* psProp()
@@ -1145,7 +1312,7 @@ psSave()
 		Send("{TAB}{RIGHT}")
 		coordw()
 		sleep 1000
-		if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngSel.png")
+		if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "png.png")
 			{
 				MouseMove(0, 0)
 				SendInput("{Enter 2}")
@@ -1153,7 +1320,7 @@ psSave()
 
 		else
 			{
-				if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "pngNotSel.png")
+				if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "png2.png")
 					{
 						MouseMove(%&xpng%, %&ypng%)
 						SendInput("{Click}")

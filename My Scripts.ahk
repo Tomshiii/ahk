@@ -34,15 +34,14 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ; Its purpose is to help speed up editing and random interactions with windows.
 ; You are free to modify this script to your own personal uses/needs
 ; Please give credit to the foundation if you build on top of it, similar to how I have below, otherwise you're free to do as you wish
-; Youtube playlist going through all my AHK changes/updates (https://www.youtube.com/playlist?list=PL8txOlLUZiqXXr2PNOsNSXeCB1171lQ1b)
+; Youtube playlist going through some of my AHK changes/updates (https://www.youtube.com/playlist?list=PL8txOlLUZiqXXr2PNOsNSXeCB1171lQ1b)
 ;
 ; ============================================================================================================================================
 
 ; A chunk of the code in the original versions of this script was either directly inspired by, or originally copied from Taran from LTT (https://github.com/TaranVH/) before
-; I modified it to fit v2.0 of ahk and made a bunch of other changes, his videos on the subject are what got me into AHK to begin with and what brought the foundation of the original
+; I eventually modified it to work with v2.0 of ahk and made a bunch of other changes. His videos on the subject are what got me into AHK to begin with and what brought the foundation of the original
 ; version of this script to life.
-; I use a streamdeck to run a lot of these scripts which is why a bunch of them are separated out into their own scripts in the \Streamdeck AHK\ folder
-; basic AHK is about all I know relating to code so the layout might not be "standard" but it helps me read it and maintain it which is more important since it's for personal use
+; I use a streamdeck to run a lot of my scripts which is why a bunch of them are separated out into their own scripts in the \Streamdeck AHK\ folder.
 
 ; I use to use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
 ; I now use VSCode which can be found here: https://code.visualstudio.com/
@@ -354,6 +353,7 @@ F5::preset("hflip")
 F3::preset("croptom")
 F4::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 F6::preset("tint 100")
+F8::preset("Highpass Me")
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

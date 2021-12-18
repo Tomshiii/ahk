@@ -392,62 +392,34 @@ altKeywait := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Ho
 ;[Premiere]
 
 /*
- This value is the first x coordinate for the imagesearch within the effect controls window within premiere pro.
- 
- Can be set within KSA.ahk/ini
- */
- ecX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "EC x1")
-
- /*
-  This value is the first y coordinate for the imagesearch within the effect controls window within premiere pro.
-  
-  Can be set within KSA.ahk/ini
-  */
- ecY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "EC y1")
- 
- /*
-  This value is the second x coordinate for the imagesearch within the effect controls window within premiere pro.
-  
-  Can be set within KSA.ahk/ini
-  */
- ecX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "EC x2")
- 
- /*
-  This value is the second y coordinate for the imagesearch within the effect controls window within premiere pro.
-  
-  Can be set within KSA.ahk/ini
-  */
- ecY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "EC y2")
- 
- /*
   This value is the first x coordinate for the imagesearch within the media browser window within premiere pro.
   
   Can be set within KSA.ahk/ini
   */
- mbX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB x1")
+mbX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB x1")
  
- /*
+/*
   This value is the first y coordinate for the imagesearch within the media browser window within premiere pro.
   
   Can be set within KSA.ahk/ini
   */
- mbY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB y1")
+mbY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB y1")
  
- /*
+/*
   This value is the second x coordinate for the imagesearch within the media browser window within premiere pro.
   
   Can be set within KSA.ahk/ini
   */
- mbX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB x2")
+mbX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB x2")
  
- /*
+/*
   This value is the second y coordinate for the imagesearch within the media browser window within premiere pro.
   
   Can be set within KSA.ahk/ini
   */
- mbY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB y2")
+mbY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "MB y2")
 
- /*
+/*
   This value is the first x coordinate for the imagesearch within the sfx bin project window within premiere pro.
   
   Can be set within KSA.ahk/ini
@@ -475,48 +447,48 @@ sfxX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSe
   */
 sfxY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "sfx y2")
  
- /*
+/*
   This value is the first x coordinate for the imagesearch to find the toolbar panel within premiere pro.
   
   Can be set within KSA.ahk/ini
   */
- toolX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool x1")
+toolX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool x1")
  
- /*
+/*
   This value is the first y coordinate for the imagesearch to find the toolbar panel within premiere pro.
   
   Can be set within KSA.ahk/ini
   */
- toolY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool y1")
+toolY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool y1")
  
- /*
+/*
   This value is the second x coordinate for the imagesearch to find the toolbar panel within premiere pro.
   
   Can be set within KSA.ahk/ini
   */
- toolX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool x2")
+toolX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool x2")
  
- /*
+/*
   This value is the second y coordinate for the imagesearch to find the toolbar panel within premiere pro.
   
   Can be set within KSA.ahk/ini
   */
- toolY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool y2")
+toolY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool y2")
  
  ;movepreview() coords
- /*
+/*
   This value is for the X coordinate for just off center of your preview window.
  
   Can be set within KSA.ahk/ini
   */
- moveX := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "move x")
+moveX := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "move x")
  
- /*
+/*
   This value is for the Y coordinate for just off center of your preview window.
  
   Can be set within KSA.ahk/ini
   */
- moveY := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "move y")
+moveY := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "move y")
  
 
 
@@ -528,113 +500,113 @@ sfxY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSe
  
  Can be set within KSA.ahk/ini
  */
- inspectx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "INSPECT x1")
+inspectx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "INSPECT x1")
 
- /*
+/*
   This value is the first y coordinate for the imagesearch to find the inspector button within Davinci Resolve.
   
   Can be set within KSA.ahk/ini
   */
- inspecty1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "INSPECT y1")
+inspecty1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "INSPECT y1")
  
- /*
+/*
   This value is the second x coordinate for the imagesearch to find the inspector button within Davinci Resolve.
   
   Can be set within KSA.ahk/ini
   */
- inspectx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "INSPECT x2")
+inspectx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "INSPECT x2")
  
- /*
+/*
   This value is the second y coordinate for the imagesearch to find the inspector button within Davinci Resolve.
   
   Can be set within KSA.ahk/ini
   */
- inspecty2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "INSPECT y2")
+inspecty2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "INSPECT y2")
  
  
- /*
+/*
   This value is the first x coordinate for the imagesearch to find the video button within Davinci Resolve.
   
   Can be set within KSA.ahk/ini
   */
- vidx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Video x1")
+vidx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Video x1")
  
- /*
+/*
   This value is the first y coordinate for the imagesearch to find the video button within Davinci Resolve.
   
   Can be set within KSA.ahk/ini
   */
- vidy1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Video y1")
+vidy1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Video y1")
  
- /*
+/*
   This value is the second x coordinate for the imagesearch to find the video button within Davinci Resolve.
   
   Can be set within KSA.ahk/ini
   */
- vidx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Video x2")
+vidx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Video x2")
  
- /*
+/*
   This value is the second y coordinate for the imagesearch to find the video button within Davinci Resolve.
   
   Can be set within KSA.ahk/ini
   */
- vidy2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Video y2")
+vidy2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Video y2")
  
  
- /*
+/*
   This value is the first x coordinate for the imagesearch to find your property of choice within the inspector window within Davinci Resolve
  
   Can be set within KSA.ahk/ini
   */
- propx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property x1")
+propx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property x1")
  
- /*
+/*
   This value is the first y coordinate for the imagesearch to find your property of choice within the inspector window within Davinci Resolve
  
   Can be set within KSA.ahk/ini
   */
- propy1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property y1")
+propy1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property y1")
  
- /*
+/*
   This value is the second x coordinate for the imagesearch to find your property of choice within the inspector window within Davinci Resolve
  
   Can be set within KSA.ahk/ini
   */
- propx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property x2")
+propx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property x2")
  
- /*
+/*
   This value is the second y coordinate for the imagesearch to find your property of choice within the inspector window within Davinci Resolve
  
   Can be set within KSA.ahk/ini
   */
- propy2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property y2")
+propy2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property y2")
  
  
- /*
+/*
   This value is the first x coordinate for the imagesearch to find everything required for the REffect() function.
  
   Can be set within KSA.ahk/ini
   */
- effectx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect x1")
+effectx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect x1")
  
- /*
+/*
   This value is the first y coordinate for the imagesearch to find everything required for the REffect() function.
  
   Can be set within KSA.ahk/ini
   */
- effecty1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect y1")
+effecty1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect y1")
  
- /*
+/*
   This value is the second x coordinate for the imagesearch to find everything required for the REffect() function.
  
   Can be set within KSA.ahk/ini
   */
- effectx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect x2")
+effectx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect x2")
  
- /*
+/*
   This value is the second y coordinate for the imagesearch to find everything required for the REffect() function.
  
   Can be set within KSA.ahk/ini
   */
- effecty2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect y2")
+effecty2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect y2")
  
