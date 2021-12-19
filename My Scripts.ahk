@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.15
+;\\v2.7.16
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.18
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -250,7 +250,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	SendInput(toolsWindow)
 	SendInput(toolsWindow)
 	toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&toolx, &tooly, &w, &h, toolsClassNN)
+	ControlGetPos(&toolx, &tooly,,, toolsClassNN)
 	;MouseMove 34, 917 ;location of the selection tool
 	if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + "200", %&tooly% + "100", "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
