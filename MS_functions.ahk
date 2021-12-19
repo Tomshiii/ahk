@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.0
+;\\v2.8.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.4
@@ -212,7 +212,7 @@ monitorWarp(x, y)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.5.4
+;		discord \\ Last updated: v2.8.1
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -226,10 +226,12 @@ disc(button)
 ;space between message groups: 16px
 ;zoom level: 100
 ;saturation; 70%
+;ensure this function only fires if discord is active ( #HotIf WinActive("ahk_exe Discord.exe") ) - VERY IMPORTANT
 {
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw() ;important to leave this as window as otherwise the image search function will fail to find things
 	MouseGetPos(&x, &y)
+	WinGetPos(,, &width, &height, "A")
 	blockOn()
 	click("right") ;this opens the right click context menu on the message you're hovering over
 	sleep 50 ;sleep required so the right click context menu has time to open
@@ -252,7 +254,7 @@ disc(button)
 	sleep 100
 	if A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
 		{
-			if ImageSearch(&xdir, &ydir, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are for the entire screen for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish.
+			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are for the entire window (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
 				{
 					MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 					Click
