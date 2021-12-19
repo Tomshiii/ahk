@@ -399,13 +399,6 @@ altKeywait := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Ho
 ;[Premiere]
 
 /*
- This value is how large of an imagesearch region you want the Effect Controls functions to use. Shouldn't need any larger than what I have set.
-
- Can be set within KSA.ahk/ini
- */
-effectISVal := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Effect Controls IS")
-
-/*
   This value is the first x coordinate for the imagesearch within the media browser window within premiere pro.
   
   Can be set within KSA.ahk/ini
