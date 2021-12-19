@@ -32,6 +32,13 @@ projectsWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini",
 effectsWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Effects")
 
 /*
+ This value will send the keyboard shortcut you have set to activate the Tools Window within Premiere.
+ 
+ Can be set within KSA.ahk/ini
+ */
+ toolsWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Tools")
+
+/*
  This value will send the keyboard shortcut you have set to activate the timeline Window within Premiere.
  
  Can be set within KSA.ahk/ini
@@ -447,35 +454,8 @@ sfxX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSe
   */
 sfxY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "sfx y2")
  
-/*
-  This value is the first x coordinate for the imagesearch to find the toolbar panel within premiere pro.
-  
-  Can be set within KSA.ahk/ini
-  */
-toolX1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool x1")
- 
-/*
-  This value is the first y coordinate for the imagesearch to find the toolbar panel within premiere pro.
-  
-  Can be set within KSA.ahk/ini
-  */
-toolY1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool y1")
- 
-/*
-  This value is the second x coordinate for the imagesearch to find the toolbar panel within premiere pro.
-  
-  Can be set within KSA.ahk/ini
-  */
-toolX2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool x2")
- 
-/*
-  This value is the second y coordinate for the imagesearch to find the toolbar panel within premiere pro.
-  
-  Can be set within KSA.ahk/ini
-  */
-toolY2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "tool y2")
- 
- ;movepreview() coords
+
+;movepreview() coords
 /*
   This value is for the X coordinate for just off center of your preview window.
  

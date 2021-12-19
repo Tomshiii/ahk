@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.14
+;\\v2.7.15
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.18
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -114,28 +114,45 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 F14:: ;open the "show more options" menu in win11
 {
+	MouseGetPos(&mx, &my)
+	WinGetPos(,, &width, &height, "A")
+	colour1 := 0x4D4D4D
+	colour2 := 0xFFDA70
+	colour3 := 0x353535 ;when already clicked on
+	colour4 := 0x777777 ;when already clicked on
+	colour := PixelGetColor(&mx, &my)
 	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer. It is only necessary because I use the same button for both scripts.
 		{
 			SendInput("{LButton Up}")
 			WinMaximize
 			return
 		}
-	else if ImageSearch(&x, &y, 0, 0, A_ScreenWidth, A_ScreenHeight, "*5 " EnvGet("Explorer") "showmore.png")
+	else if ImageSearch(&x, &y, 0, 0, %&width%, %&height%, "*5 " EnvGet("Explorer") "showmore.png")
 		{
 			SendInput("{Esc}")
+			SendInput("{Click}")
 			SendInput("+{F10}")
-			/*
-			MouseMove(%&x% + "3", %&y% + "3")
-			click
-			MouseMove(%&mx%, %&my%) ;why does win11 open the new menu FROM the button instead of replacing the old menu ffs
-			*/ ;return it to this way if ms ever fixes^
+			return
+		}
+	else if (colour = colour1 || colour2)
+		{
+			SendInput("{Click}")
+			sleep 50
+			SendInput("+{F10}")
+			return
+		}
+	else if (colour = colour3 || colour4)
+		{
+			SendInput("+{F10}")
 			return
 		}
 	else
 		{
 			SendInput("+{F10}")
-		}
+			return
+		}	
 }
+
 
 #HotIf WinActive("ahk_exe Code.exe")
 !a::vscode("MS") ;clicks on the my scripts script in vscode
@@ -230,8 +247,12 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 {
 	coords()
 	MouseGetPos(&xpos, &ypos)
+	SendInput(toolsWindow)
+	SendInput(toolsWindow)
+	toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&toolx, &tooly, &w, &h, toolsClassNN)
 	;MouseMove 34, 917 ;location of the selection tool
-	if ImageSearch(&x, &y, toolX1, toolY1, toolX2, toolY2, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
+	if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + "200", %&tooly% + "100", "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
 	else
 		{
@@ -271,7 +292,6 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseMove 3590, 702, "2"
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
-
 	bin:
 	Run("E:\Audio stuff")
 	WinWait("E:\Audio stuff")
