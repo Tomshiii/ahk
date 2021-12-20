@@ -399,6 +399,14 @@ altKeywait := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Ho
 ;[Premiere]
 
 /*
+ This value is how much you want the total pixel width of your Effect Controls panel to be divided by. Because in my workspace my EC panel is over 2k pixels, it slows down the performance of all scripts, so I divide it by 3.
+
+ This value can be set within KSA.ahk/ini
+ */
+ECDivide := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "EC Divide")
+
+
+/*
   This value is the first x coordinate for the imagesearch within the media browser window within premiere pro.
   
   Can be set within KSA.ahk/ini
