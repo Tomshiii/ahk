@@ -11,6 +11,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         SelectedFolder := DirSelect("*E:\", 3, "Create your desired folder then select it.")
         if SelectedFolder = ""
             return
+        DirCreate(SelectedFolder "\videos")
+        DirCreate(SelectedFolder "\audio")
         DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
         DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
         DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
