@@ -156,16 +156,17 @@ if not WinExist("ahk_exe obs64.exe")
 		{
 			WinMinimize()
 		}
-	if WinExist("ahk_exe LioranBoard Receiver.exe")
-		{
-			WinWait("ahk_exe LioranBoard Receiver.exe",, 3)
-			WinMinimize()
-		}
+	sleep 3000
 	if WinExist("ahk_exe foobar2000.exe")
 		{
 			WinActivate("ahk_exe foobar2000.exe")
 			SendInput("{Alt}p")
 			SendInput("a")
+		}
+	if WinExist("ahk_exe LioranBoard Receiver.exe")
+		{
+			WinWait("ahk_exe LioranBoard Receiver.exe",, 3)
+			WinMinimize()
 		}
 }
 else

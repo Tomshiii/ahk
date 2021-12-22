@@ -200,7 +200,7 @@
 
 
 ["** header **"]
-	"major_version" = "100"
+	"major_version" = "103"
 
 ["AE_TopLevelWindow"]
 	"SelectNextTab" = "(Alt+Shift+.)"
@@ -441,6 +441,7 @@
 	"PreviewShiftNumpad0" = "(Shift+Pad0)(Shift+PadInsert)"
 	"ShowConsole" = "(Ctrl+F12)"
 	"ShowDebugMonitor" = "(Ctrl+Shift+9)"
+	"TimeReverseKeyframes" = "(Ctrl+1)"
 	"ToggleTransmit" = "(PadSlash)"
 	"WriteStringFile" = "()"
 	"WriteVersionFile" = "(Ctrl+Shift+HELP)"
@@ -476,7 +477,6 @@
 
 ["CItem"]
 	"FastPreviewsAdaptiveResolution" = "(Ctrl+Alt+2)"
-	"FastPreviewsFastDraft" = "(Ctrl+Alt+4)"
 	"FastPreviewsOff" = "(Ctrl+Alt+1)"
 	"FastPreviewsWireframe" = "(Ctrl+Alt+5)"
 	"PurgeSnapshot1" = "(Ctrl+Shift+F5)"
@@ -705,7 +705,7 @@
 	"ShowHideProject" = "(Ctrl+0)"
 	"ShowHideRenderQueue" = "(Ctrl+Alt+0)"
 	"ShowHideTimePanel" = "(Ctrl+3)"
-	"ShowHideTools" = "(Ctrl+1)"
+	"ShowHideTools" = "()"
 	"ShowProjectTree" = "(Ctrl+F11)"
 	"ShowRulers" = "(Ctrl+R)"
 	"SplitLayer" = "(Ctrl+Shift+D)"
