@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.5
+;\\v2.8.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.4
@@ -212,7 +212,7 @@ monitorWarp(x, y)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.8.5
+;		discord \\ Last updated: v2.8.4
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -255,9 +255,12 @@ disc(button)
 	if A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
 		{
 			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are for the entire window (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
-				goto move
-			else if ImageSearch(&xdir, &ydir, replyx1, replyy1, replyx2, replyy2, "*2 " EnvGet("Discord") "DiscDirReply.bmp")
-				goto move
+				{
+					MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
+					Click
+					MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+					blockOff()
+				}
 			else
 				{
 					MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
@@ -265,12 +268,6 @@ disc(button)
 					toolFind("the @ ping button `n or you're in a DM", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
-			move:
-				MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
-				Click
-				MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
-				blockOff()
-				return
 		}
 	else
 		{
