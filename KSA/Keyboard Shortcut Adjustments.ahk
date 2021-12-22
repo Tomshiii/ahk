@@ -479,7 +479,35 @@ moveX := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSe
 moveY := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "move y")
  
 
+;[discord]
 
+/*
+  This value is the first x coordinate for the imagesearch to find the '@ON' reply button on discord incase the first attempt fails
+  
+  Can be set within KSA.ahk/ini
+  */
+replyx1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "reply x1")
+
+/*
+  This value is the first y coordinate for the imagesearch to find the '@ON' reply button on discord incase the first attempt fails
+  
+  Can be set within KSA.ahk/ini
+  */
+replyy1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "reply y1")
+
+/*
+  This value is the second x coordinate for the imagesearch to find the '@ON' reply button on discord incase the first attempt fails
+  
+  Can be set within KSA.ahk/ini
+  */
+replyx2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "reply x2")
+
+/*
+  This value is the second y coordinate for the imagesearch to find the '@ON' reply button on discord incase the first attempt fails
+  
+  Can be set within KSA.ahk/ini
+  */
+replyy2 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "reply y2")
 
 ;[Resolve]
 
