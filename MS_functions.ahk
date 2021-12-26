@@ -291,7 +291,12 @@ mousedrag(tool, toolorig)
 {
 	again()
 	{
-		if not GetKeyState("XButton2", "P")
+		if A_ThisHotkey = "XButton2"
+			{
+				if not GetKeyState(A_ThisHotkey, "P")
+					return
+			}
+		else if not GetKeyState(DragKeywait, "P")
 			return
 		click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
 		SendInput %&tool% "{LButton Down}"
@@ -302,7 +307,6 @@ mousedrag(tool, toolorig)
 		SendInput("{LButton Up}")
 		SendInput %&toolorig%
 	}
-
 	SetTimer(again, -400)
 	again()
 }
