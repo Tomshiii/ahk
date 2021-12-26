@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.8
+;\\v2.7.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.8.8
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -396,6 +396,39 @@ Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool 
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 F20::audioDrag("bleep")
 
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		Excel
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------
+#HotIf WinActive("ahk_exe EXCEL.EXE")
+F12:: ;This macro is to do quick time based math while using excel, input 2 hhmm values to find the difference between the two
+{
+	start1:
+	time1 := InputBox("Write the Start hhmm time here`nDon't use ':'", "Input Start Time", "w200 h110")
+	if time1.Result = "Cancel"
+		return
+	Length1 := StrLen(time1.Value)
+	if Length1 != "4"
+		{
+			MsgBox("You didn't write in hhmm format`nTry again", "Start Time")
+			goto start1
+		}
+	start2:
+	time2 := InputBox("Write the End hhmm time here`nDon't use ':'", "Input End Time", "w200 h110")
+	if time2.Result = "Cancel"
+		return
+	Length2 := StrLen(time2.Value)
+	if Length2 != "4"
+		{
+			MsgBox("You didn't write in hhmm format`nTry again", "End")
+			goto start2
+		}
+	diff := DateDiff("20220101" time2.Value, "20220101" time1.Value, "seconds")/"3600"
+	value := Round(diff, 2)
+	MsgBox(diff "`nor " value)
+	A_Clipboard := value
+}
 
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
