@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.4
+;\\v2.8.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5
@@ -328,7 +328,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.8.4
+;		Premiere \\ Last updated: v2.8.5
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -1090,11 +1090,37 @@ gain(amount)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	coords()
-	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
-	SendInput(timelineWindow)
+	try {
+		SendInput(effectControls)
+		SendInput(effectControls)
+		effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+		if effClassNN = "DroverLord - Window Class1"
+			{
+				SendInput("{Esc}")
+				return
+			}
+		if effClassNN = "DroverLord - Window Class3"
+			{
+				SendInput(effectControls)
+				SendInput(effectControls)
+				sleep 50
+				effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+				sleep 300
+			}
+		if effClassNN = "Edit1"
+			{
+				SendInput(%&amount% "{Enter}")
+				return
+			}
+		if !IsSetRef(&effClassNN)
+			return
+		toolCust(effClassNN, "500")
+		ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+		SendInput(timelineWindow)
+	} catch as e { ;for whatever reason, if you spam this function it sometimes errors out and can't continue, so instead of adding crazy sleeps just to make it work, we'll catch the error and just make it do nothing instead. A dirty solution, but the easiest one for now.
+			toolCust("An error occured!`nSpecifically: " e.Message "`nTry again!`nIt thought the window class was " effClassNN, "3000")
+			Exit
+	}
 	if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys

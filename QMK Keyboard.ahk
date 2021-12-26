@@ -11,7 +11,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3
+;\\v2.3.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.6.11
 
@@ -98,10 +98,11 @@ F24::return ;this line is mandatory for proper functionality
 SC05C::unassigned()
 
 Numpad0::valuehold("level", "0") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+#MaxThreadsBuffer True
 Numpad1::gain("-2") ;REDUCE GAIN BY -2db
-
 Numpad2::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 Numpad3::gain("6") ;INCREASE GAIN BY 6db
+#MaxThreadsBuffer false
 Numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
 Numpad5::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
 Numpad6::reset()  ;This script moves to the reset button to reset the "motion" effects
