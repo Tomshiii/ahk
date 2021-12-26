@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.6
+;\\v2.8.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5
@@ -279,7 +279,7 @@ disc(button)
 
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.8.6
+;		Mouse Drag \\ Last updated: v2.8.7
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
