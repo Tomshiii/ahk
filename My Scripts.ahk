@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.5
+;\\v2.7.6
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.18
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.3
+;\\v2.3.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.4
@@ -272,7 +272,10 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseGetPos(&xpos, &ypos)
 	KeyWait("Alt")
 	if GetKeyState("Ctrl", "P")
-		goto added
+		{
+			KeyWait("Ctrl")
+			goto added
+		}
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	blockOn()
@@ -345,7 +348,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			MouseMove(%&fold3x% + "5", %&fold3y% + "2")
 			SendInput("{Click Down}")
 			MouseMove(754, 1042, 2)
-			sleep 50
+			sleep 150
 			SendInput("{Click Up}")
 		}
 	else
