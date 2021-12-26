@@ -26,8 +26,9 @@ My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](h
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
 4. Save these scripts in "C:\Program Files\ahk\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
-5. Edit, then run any of the .ahk files to then use to your liking!
-  - Make sure to take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs as well as define coordinates for a large chunk of the imagesearches used within these scripts!
+5. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs as well as define coordinates for a large chunk of the imagesearches used within these scripts!
+6. Edit, then run any of the .ahk files to then use to your liking!
+
   - Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
      - autodismiss error
