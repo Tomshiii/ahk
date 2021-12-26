@@ -291,6 +291,8 @@ mousedrag(tool, toolorig)
 {
 	again()
 	{
+		if not GetKeyState("XButton2", "P")
+			return
 		click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
 		SendInput %&tool% "{LButton Down}"
 		if A_ThisHotkey = "XButton2"
