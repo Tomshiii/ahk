@@ -10,9 +10,9 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.7
+;\\v2.7.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.7.18
+;\\v2.8.8
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.3.1
 
@@ -215,9 +215,9 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ^+p::psType("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 ^+j::psType("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
-XButton1::mousedrag(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
-Xbutton2::mousedrag(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
-z::mousedrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 F1::SendInput("!{t}" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
 ;F1::psSave()
 
@@ -228,7 +228,7 @@ F1::SendInput("!{t}" "b{Right}g") ;open gaussian blur (should really just use th
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
 Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
-Xbutton2::mousedrag(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
 WheelRight::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 WheelLeft::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 

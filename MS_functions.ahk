@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.7
+;\\v2.8.8
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5
@@ -279,11 +279,11 @@ disc(button)
 
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.8.7
+;		Mouse Drag \\ Last updated: v2.8.8
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
- press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
+ press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). This version is specifically for Premiere Pro, the below function is for any other program
  @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
  @param toolorig is the button you want the script to press to bring you back to your tool of choice
  */
@@ -293,7 +293,7 @@ mousedrag(tool, toolorig)
 	{
 		if A_ThisHotkey = "XButton2"
 			{
-				if not GetKeyState(A_ThisHotkey, "P")
+				if not GetKeyState(A_ThisHotkey, "P") ;this is here so it doesn't reactivate if you quickly let go before the timer comes back around
 					return
 			}
 		else if not GetKeyState(DragKeywait, "P")
@@ -309,6 +309,20 @@ mousedrag(tool, toolorig)
 	}
 	SetTimer(again, -400)
 	again()
+}
+
+/* mousedrag()
+ press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
+ @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
+ @param toolorig is the button you want the script to press to bring you back to your tool of choice
+ */
+mousedragNotPrem(tool, toolorig)
+{
+	click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
+	SendInput %&tool% "{LButton Down}"
+	KeyWait(A_ThisHotkey)
+	SendInput("{LButton Up}")
+	SendInput %&toolorig%
 }
 
 ; ===========================================================================================================================================
