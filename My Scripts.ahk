@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.6
+;\\v2.7.7
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.7.18
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -390,6 +390,7 @@ F8::preset("Highpass Me")
 WheelRight::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
 WheelLeft::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
+LAlt & Xbutton2:: ;this is necessary for the below function to work
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20

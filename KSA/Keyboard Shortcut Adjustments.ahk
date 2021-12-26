@@ -390,7 +390,10 @@ maximiseHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini",
  */
 altKeywait := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Alt Keywait")
 
-
+/*
+ This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+ */
+DragKeywait := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Mousedrag Keywait")
 
 
 

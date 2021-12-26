@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.5
+;\\v2.8.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5
@@ -279,7 +279,7 @@ disc(button)
 
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.3
+;		Mouse Drag \\ Last updated: v2.8.6
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
@@ -289,11 +289,20 @@ disc(button)
  */
 mousedrag(tool, toolorig)
 {
-	click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-	SendInput %&tool% "{LButton Down}"
-	KeyWait(A_ThisHotkey)
-	SendInput("{LButton Up}")
-	SendInput %&toolorig%
+	again()
+	{
+		click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
+		SendInput %&tool% "{LButton Down}"
+		if A_ThisHotkey = "XButton2"
+			KeyWait(A_ThisHotkey)
+		else
+			KeyWait(DragKeywait) ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
+		SendInput("{LButton Up}")
+		SendInput %&toolorig%
+	}
+
+	SetTimer(again, -400)
+	again()
 }
 
 ; ===========================================================================================================================================
