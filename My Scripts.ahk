@@ -10,14 +10,14 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.10
+;\\v2.7.18 ~ This was accidentally changed in Release 2.2.5 until now. oops.
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.8.8
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.3.1
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.2.4
+;\\v2.2.5.1
 
 ; ============================================================================================================================================
 ;

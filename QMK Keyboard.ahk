@@ -16,7 +16,7 @@ A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=5768
 ;\\v2.6.11
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.2.5
+;\\v2.2.5.1
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE SIMPLY ADJUSTED IT TO WORK IN AHK v2.0
