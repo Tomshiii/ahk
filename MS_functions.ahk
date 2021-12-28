@@ -2093,6 +2093,36 @@ switchToEdge()
 		if WinExist("ahk_exe msedge.exe")
 		WinActivate "ahk_exe msedge.exe" ;you have to use WinActivatebottom if you didn't create a window group.
 }
+
+switchToMusic()
+{
+	GroupAdd("MusicPlayers", "ahk_exe wmplayer.exe")
+	GroupAdd("MusicPlayers", "ahk_exe vlc.exe")
+	GroupAdd("MusicPlayers", "ahk_exe AIMP.exe")
+	if not WinExist("ahk_group MusicPlayers")
+		{
+			toolCust("You have no music player open", "1000")
+			run("D:\Program Files\User\Music")
+		}
+	if WinActive("ahk_group MusicPlayers")
+		{
+			GroupActivate "MusicPlayers", "r"
+			IME := WinGetTitle("A")
+			if IME = "Default IME"
+				GroupActivate "MusicPlayers", "r"
+		}
+		
+	else
+		if WinExist("ahk_group MusicPlayers")
+			{
+				WinActivate
+				IME := WinGetTitle("A")
+				if IME = "Default IME"
+					WinActivate("ahk_group MusicPlayers")
+			}
+	;window := WinGetTitle("A") ;debugging
+	;toolCust(window, "1000") ;debugging
+}
 ; ===========================================================================================================================================
 ; Old
 ; ===========================================================================================================================================
