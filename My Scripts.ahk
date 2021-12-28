@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.18 ~ This was accidentally changed in Release 2.2.5 until now. oops.
+;\\v2.7.19
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.8.8
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -120,7 +120,7 @@ F14:: ;open the "show more options" menu in win11
 	colour2 := 0xFFDA70
 	colour3 := 0x353535 ;when already clicked on
 	colour4 := 0x777777 ;when already clicked on
-	colour := PixelGetColor(&mx, &my)
+	colour := PixelGetColor(%&mx%, %&my%)
 	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer. It is only necessary because I use the same button for both scripts.
 		{
 			SendInput("{LButton Up}")
@@ -129,30 +129,38 @@ F14:: ;open the "show more options" menu in win11
 		}
 	else if ImageSearch(&x, &y, 0, 0, %&width%, %&height%, "*5 " EnvGet("Explorer") "showmore.png")
 		{
-			SendInput("{Esc}")
+			;toolCust(colour "`n imagesearch fired", "1000") ;for debugging
+			;SendInput("{Esc}")
+			;SendInput("{Click}")
+			if colour = colour1 || colour = colour2
+				{
+					SendInput("{Click}")
+					SendInput("+{F10}")
+				}
+			else
+				SendInput("+{F10}" "+{F10}")
+			return
+		}
+	else if (colour = colour1 || colour = colour2)
+		{
+			;toolCust(colour "`n colour1&2 fired", "1000") ;for debugging
 			SendInput("{Click}")
 			SendInput("+{F10}")
 			return
 		}
-	else if (colour = colour1 || colour2)
+	else if (colour = colour3 || colour = colour4)
 		{
-			SendInput("{Click}")
-			sleep 50
-			SendInput("+{F10}")
-			return
-		}
-	else if (colour = colour3 || colour4)
-		{
+			;toolCust(colour "`n colour3&4 fired", "1000") ;for debugging
 			SendInput("+{F10}")
 			return
 		}
 	else
 		{
+			;toolCust(colour "`n final else fired", "1000") ;for debugging
 			SendInput("+{F10}")
 			return
 		}	
 }
-
 
 #HotIf WinActive("ahk_exe Code.exe")
 !a::vscode("MS") ;clicks on the my scripts script in vscode
