@@ -14,7 +14,7 @@ You can watch me use some of these scripts in action while I edit away on twitch
 This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo. They are severely outdated and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
 
 ## QMK Keyboard:
-My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [Hasu USB-USB converter](https://geekhack.org/index.php?topic=109514.0) allows you to use a second keyboard to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues
+My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [Hasu USB-USB converter](https://geekhack.org/index.php?topic=109514.0) or a custom keyboard, allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
 
 ## What to do:
 1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 Beta](https://www.autohotkey.com/v2/).
@@ -25,6 +25,7 @@ My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](h
      - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
+     - It is recommended you use VSCode as a lot of my variables have dynamic comments that can be viewed across the entire program that could help you understand what is going on.
 4. Save these scripts in "C:\Program Files\ahk\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
 5. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs as well as define coordinates for a large chunk of the imagesearches used within these scripts!
 6. Edit, then run any of the .ahk files to then use to your liking!
