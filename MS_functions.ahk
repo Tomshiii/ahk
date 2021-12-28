@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.9
+;\\v2.8.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5.1
@@ -212,7 +212,7 @@ monitorWarp(x, y)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.8.4
+;		discord \\ Last updated: v2.8.10
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -254,7 +254,7 @@ disc(button)
 	sleep 100
 	if A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
 		{
-			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are for the entire window (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+			if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
 				{
 					MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 					Click
@@ -311,7 +311,7 @@ mousedrag(tool, toolorig)
 	again()
 }
 
-/* mousedrag()
+/* mousedragNotPrem()
  press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
  @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
  @param toolorig is the button you want the script to press to bring you back to your tool of choice
