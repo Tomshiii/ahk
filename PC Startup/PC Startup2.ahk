@@ -5,11 +5,11 @@ If not WinExist("ahk_exe StreamDeck.exe")
     run '*RunAs "C:\Program Files\Elgato\StreamDeck\StreamDeck.exe"'
 if WinExist("ahk_exe Creative Cloud.exe")
     WinHide()
-
-SetTimer(open2, -2500) ;Simply putting a shortcut to these scripts in your startup folder works fine, I just eventually ended up doing it here after testing a few things and now it's just easier oops.
-open2()
-{
-    if WinExist("ahk_exe StreamDeck.exe")
-        WinHide()
-    ExitApp
-}
+if WinExist("ahk_exe StreamDeck.exe")
+    WinHide()
+else
+    {
+        WinWait("ahk_exe StreamDeck.exe")
+        WinHide("ahk_exe StreamDeck.exe")
+    }
+    
