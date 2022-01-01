@@ -1,29 +1,47 @@
-coords() ;sets coordmode to "screen"
+/* coords()
+ sets coordmode to "screen"
+ */
+coords()
 {
 	coordmode "pixel", "screen"
 	coordmode "mouse", "screen"
 }
-coordw() ;sets coordmode to "window"
+
+/* coordw()
+ sets coordmode to "window"
+ */
+coordw()
 {
 	coordmode "pixel", "window"
 	coordmode "mouse", "window"
 }
-blockOn() ;blocks all user inputs
+
+/* blockOn()
+ blocks all user inputs [IF YOU GET STUCK IN A SCRIPT USE CTRL + ALT + DEL to open task manager and close AHK]
+ */
+blockOn()
 {
 	BlockInput "SendAndMouse"
 	BlockInput "MouseMove"
 	BlockInput "On"
-	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess 
+	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
 }
 
-blockOff() ;turns off the blocks on user input
+/* blockOff()
+ turns off the blocks on user input
+ */
+blockOff()
 {
 	blockinput "MouseMoveOff"
 	BlockInput "off"
 }
-toolFind(message, timeout) ;create a tooltip for errors finding things
-;&message is what you want the tooltip to say after "couldn't find"
-;&timeout is how many ms you want the tooltip to last
+
+/* toolFind()
+ create a tooltip for errors finding things
+ * @param message is what you want the tooltip to say after "couldn't find"
+ * @param timeout is how many ms you want the tooltip to last
+ */
+toolFind(message, timeout)
 {
 	ToolTip("couldn't find " %&message%)
 	SetTimer(timeouttime, - %&timeout%)
@@ -32,10 +50,13 @@ toolFind(message, timeout) ;create a tooltip for errors finding things
 		ToolTip("")
 	}
 }
-
-toolCust(message, timeout) ;create a tooltip with any message
-;&message is what you want the tooltip to say
-;&timeout is how many ms you want the tooltip to last
+ 
+/* toolCust()
+  create a tooltip with any message
+  * @param message is what you want the tooltip to say
+  * @param timeout is how many ms you want the tooltip to last
+  */
+toolCust(message, timeout)
 {
 	ToolTip(%&message%)
 	SetTimer(timeouttime, - %&timeout%)
@@ -45,6 +66,10 @@ toolCust(message, timeout) ;create a tooltip with any message
 	}
 }
 
+/*
+ This function opens up the speed menu and sets the clips speed to whatever is set
+ @param amount is what speed you want your clip to be set to
+ */
 speed(amount)
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
@@ -68,6 +93,10 @@ speed(amount)
 	SendInput(speedMenu %&amount% "{ENTER}")
 }
 
+/*
+ This function finds the scale value, clicks on it, then makes your clip whatever value you want
+ @param amount is what you want the scale to be set to
+ */
 scale(amount)
 {
 	coords()
