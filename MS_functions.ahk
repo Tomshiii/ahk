@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.10
+;\\v2.8.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5.1
@@ -153,16 +153,6 @@ youMouse(tenS, fiveS)
 			SendInput(%&fiveS%)
 		WinActivate(lastactive)
 	}
-}
-
-/* wheelEditPoint()
- move back and forth between edit points from anywhere in premiere
- @param direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
- */
-wheelEditPoint(direction)
-{
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
 }
 
 /* monitorWarp()
@@ -357,7 +347,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.8.9
+;		Premiere \\ Last updated: v2.8.11
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -366,7 +356,6 @@ timeline(timeline, x1, x2, y1)
  */
 preset(item)
 {
-	blockOn()
 	coords()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
@@ -376,6 +365,7 @@ preset(item)
 	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
 	if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE
 		{
+			sleep 100
 			ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
 			SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
 			sleep 100
@@ -424,7 +414,7 @@ preset(item)
 					}
 			}
 		SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
-		SendInput("^a{DEL}")
+		SendInput("^a" "+{BackSpace}")
 		SetTimer(delete, -250)
 		delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
 		{
@@ -452,7 +442,7 @@ preset(item)
 								}
 						}
 					SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
-					SendInput("^a{DEL}")
+					SendInput("^a" "+{BackSpace}")
 					sleep 60
 					if WinExist("Delete Item")
 						{
@@ -484,6 +474,76 @@ preset(item)
 	SendInput("{Click Up}")
 	effectbox() ;this will delete whatever preset it had typed into the find box
 	SendInput(timelineWindow) ;this will rehighlight the timeline after deleting the text from the find box
+	blockOff()
+}
+
+/*
+ This function is to move to the effects window and highlight the search box to allow manual typing
+ */
+fxSearch()
+{
+	blockOn()
+	coords()
+	blockOn()
+	SendInput(effectsWindow)
+	SendInput(effectsWindow) ;adjust this in the ini file
+	SendInput(findBox) ;adjust this in the ini file
+	CaretGetPos(&findx)
+	if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+		{
+			Loop 40
+				{
+					sleep 30
+					CaretGetPos(&findx)
+					if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+						break
+					if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+						{
+							blockOff()
+							toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+							return
+						}
+				}
+		}
+	SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+	SendInput("^a" "+{BackSpace}")
+	SetTimer(delete, -250)
+	delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
+	{
+		if WinExist("Delete Item")
+			{
+				SendInput("{Esc}")
+				sleep 100
+				SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+				SendInput(findBox)
+				CaretGetPos(&find2x)
+				if %&find2x% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+					{
+						Loop 40
+							{
+								sleep 30
+								CaretGetPos(&find2x)
+								if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+									break
+								if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+									{
+										blockOff()
+										toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+										return
+									}
+							}
+					}
+				SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+				SendInput("^a" "+{BackSpace}")
+				sleep 60
+				if WinExist("Delete Item")
+					{
+						SendInput("{Esc}")
+						sleep 50
+						toolCust("it tried to delete your preset", "2000")
+					}
+			}
+	}
 	blockOff()
 }
 
@@ -789,7 +849,7 @@ audioDrag(sfxName)
 								}
 						}
 				}
-			SendInput("^a{DEL}")
+			SendInput("^a" "+{BackSpace}")
 			SendInput(%&sfxName%)
 			sleep 250 ;the project search is pretty slow so you might need to adjust this
 			coordw()
@@ -834,7 +894,7 @@ audioDrag(sfxName)
 								}
 						}
 				}
-			SendInput("^a{DEL}" "{Enter}")
+			SendInput("^a" "+{BackSpace}" "{Enter}")
 			SendInput(timelineWindow)
 			blockOff()
 		}
@@ -874,7 +934,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 	next:
 	SendInput(findBox) ;adjust this in the keyboard shortcuts ini file
 	coordc()
-	SendInput("^a{DEL}") ;deletes anything that might be in the search box
+	SendInput("^a" "+{BackSpace}") ;deletes anything that might be in the search box
 	SendInput(%&sfxName%)
 	sleep 150
 	if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
@@ -893,12 +953,22 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 	SendInput("{Click Up}")
 	SendInput(mediaBrowser)
 	SendInput(findBox)
-	SendInput("^a{DEL}" "{Enter}")
+	SendInput("^a" "+{BackSpace}" "{Enter}")
 	sleep 50
 	SendInput(timelineWindow)
 	blockOff()
 }
 } */
+
+/* wheelEditPoint()
+ move back and forth between edit points from anywhere in premiere
+ @param direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
+ */
+ wheelEditPoint(direction)
+ {
+	 ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+	 SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
+ }
 
 /* movepreview()
  This function is to adjust the framing of a video within the preview window in premiere pro. Let go of this hotkey to confirm, simply tap this hotkey to reset values
@@ -1101,12 +1171,12 @@ manInput(property, optional, key1, key2, keyend)
 		}
 	KeyWait(%&key1%) ;waits for you to let go of hotkey
 	KeyWait(%&key2%) ;waits for you to let go of hotkey
-	hotkeyDeactivate()
+	;hotkeyDeactivate()
 	SendInput("{Click}")
 	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
 	SendInput("{Enter}")
 	MouseMove(%&xpos%, %&ypos%)
-	hotkeyReactivate()
+	;hotkeyReactivate()
 	Click("middle")
 	blockOff()
 }
@@ -1119,8 +1189,7 @@ gain(amount)
 {
 	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	coords()
-	try
-		{
+	try {
 			loop 3 {
 			SendInput(effectControls)
 			SendInput(effectControls)
@@ -1204,7 +1273,7 @@ gainSecondary(key1, key2, keyend)
 }
 ; ===========================================================================================================================================
 ;
-;		After Effects \\ Last updated: v2.6
+;		After Effects \\ Last updated: v2.8.11
 ;
 ; ===========================================================================================================================================
 /* aevaluehold()
@@ -1269,6 +1338,65 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
 		}
 	else
 		toolCust("you're not hovering a track", "1000")
+}
+
+aePreset(preset)
+{
+	blockOn()
+	coords()
+	MouseGetPos(&x, &y)
+	colour := PixelGetColor(%&x%, %&y%)
+	if colour != 0x9E9E9E
+		{
+			toolCust("you aren't haven't selected a clip`nor aren't hovering the right spot", "1000")
+			blockOff()
+			Exit
+		}
+	SendInput("^4" "^5") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting
+	sleep 100
+	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " EnvGet("AE") "findbox.png")
+		goto move
+	else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " EnvGet("AE") "findbox2.png")
+		goto move
+	else
+		{
+			blockOff()
+			toolCust("couldn't find the magnifying glass", "1000")
+			return
+		}
+	move:
+	MouseMove(%&x2%, %&y2%)
+	SendInput("{Click}")
+	SendInput("^a" "+{BackSpace}")
+	CaretGetPos(&find)
+	if %&find% = ""
+		{
+			loop 10 {
+				sleep 30
+				CaretGetPos(&find2x)
+				if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+					break
+				toolCust("The function attempted " A_Index " times`n for a total of " A_Index * 30 "ms", "2000")
+				if A_Index > 10
+					{
+						blockOff()
+						toolCust("Couldn't determine the caret", "1000")
+						return
+					}
+			}
+		}
+	SendInput(%&preset%)
+	MouseMove(59, 43, 2, "R")
+	SendInput("{Click Down}")
+	MouseMove(%&x%, %&y%)
+	SendInput("{Click Up}")
+	MouseMove(%&x2%, %&y2%)
+	SendInput("{Click}")
+	SendInput("^a" "+{BackSpace}" "{Enter}")
+	MouseMove(%&x%, %&y%)
+	blockOff()
 }
 
 ; ===========================================================================================================================================
@@ -1888,7 +2016,7 @@ numpad000()
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.7.3
+;		Fkey AutoLaunch \\ Last updated: v2.8.11
 ;
 ; ===========================================================================================================================================
 switchToExplorer()
@@ -1980,7 +2108,7 @@ firefoxTap()
 	; Otherwise, this is the first press of a new series. Set count to 1 and start
 	; the timer:
 	winc_presses := 1
-	SetTimer After400, -300 ; Wait for more presses within a 300 millisecond window.
+	SetTimer After400, -180 ; Wait for more presses within a 300 millisecond window.
 
 	After400()  ; This is a nested function.
 	{
@@ -1994,7 +2122,7 @@ firefoxTap()
 		}
 		else if winc_presses > 2
 		{
-			Run "firefox.exe"
+			;
 		}
 		; Regardless of which action above was triggered, reset the count to
 		; prepare for the next series of presses:
@@ -2098,11 +2226,14 @@ switchToMusic()
 {
 	GroupAdd("MusicPlayers", "ahk_exe wmplayer.exe")
 	GroupAdd("MusicPlayers", "ahk_exe vlc.exe")
-	GroupAdd("MusicPlayers", "ahk_exe AIMP.exe")
+	GroupAdd("MusicPlayers", "ahk_exe AIMP.exe") 
+	GroupAdd("MusicPlayers", "ahk_exe foobar2000.exe")
 	if not WinExist("ahk_group MusicPlayers")
 		{
 			toolCust("You have no music player open", "1000")
 			run("D:\Program Files\User\Music")
+			WinWait("ahk_class CabinetWClass")
+			WinActivate "ahk_class CabinetWClass" ;in win11 running explorer won't always activate it, so it'll open in the backround
 		}
 	if WinActive("ahk_group MusicPlayers")
 		{
