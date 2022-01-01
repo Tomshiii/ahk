@@ -44,3 +44,70 @@ toolCust(message, timeout) ;create a tooltip with any message
 		ToolTip("")
 	}
 }
+
+speed(amount)
+{
+	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+		{
+			SendInput(timelineWindow selectAtPlayhead)
+			goto inputs
+		}
+	else
+		{
+			classNN := ControlGetClassNN(ControlGetFocus("A"))
+			if "DroverLord - Window Class3"
+				goto inputs
+			else
+				{
+					toolCust("gain macro couldn't figure`nout what to do", "1000")
+					return
+				}
+		}
+	inputs:
+	SendInput(speedMenu %&amount% "{ENTER}")
+}
+
+scale(amount)
+{
+	coords()
+	blockOn()
+	MouseGetPos &xpos, &ypos
+	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "scale.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+		{
+			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+				MouseMove(%&xcol%, %&ycol%)
+			else
+				{
+					blockOff()
+					toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}			
+		}
+	else ;this is for when you have the "toggle animation" keyframe button pressed
+		{
+			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+				{
+					If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+						MouseMove(%&xcol%, %&ycol%)
+					else
+						{
+							blockOff()
+							toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+							return
+						}			
+				}
+			else ;if everything fails, this else will trigger
+				{
+					blockOff()
+					toolFind("scale", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					return
+				}		
+		}
+	SendInput "{Click}"
+	SendInput(%&amount%)
+	SendInput("{Enter}")
+	MouseMove %&xpos%, %&ypos%
+	Click("middle")
+	blockOff()
+}
