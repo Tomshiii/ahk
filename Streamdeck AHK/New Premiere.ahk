@@ -1,8 +1,6 @@
 #SingleInstance Force
 SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0
-
-EnvSet("Premiere", "C:\Program Files\ahk\ahk\ImageSearch\Premiere\")
 #Include SD_functions.ahk
 
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
@@ -20,7 +18,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
         coordw()
         blockOn()
-        if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " EnvGet("Premiere") "newProj.png")
+        if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " Premiere "newProj.png")
             {
                 Click(%&x%, %&y%)
                 WinWait("New Project")
@@ -43,7 +41,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 500
                 SendInput("{Enter}")
                 sleep 1000
-                if ImageSearch(&xin, &yin, 0, 0, 629, 348, "*2 " EnvGet("Premiere") "ingest.png")
+                if ImageSearch(&xin, &yin, 0, 0, 629, 348, "*2 " Premiere "ingest.png")
                     {
                         Click(%&xin%, %&yin%)
                         sleep 500

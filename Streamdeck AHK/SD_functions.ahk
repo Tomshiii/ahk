@@ -1,3 +1,8 @@
+;These global variables will be used across some Streamdeck AHK scripts.
+#Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
+global Premiere := "C:\Program Files\ahk\ahk\ImageSearch\Premiere\"
+global Windows := "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\"
+
 /* coords()
  sets coordmode to "screen"
  */
@@ -73,7 +78,7 @@ toolCust(message, timeout)
 speed(amount)
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	If ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead)
 			goto inputs
@@ -102,7 +107,7 @@ scale(amount)
 	coords()
 	blockOn()
 	MouseGetPos &xpos, &ypos
-	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "scale.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " Premiere "scale.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		{
 			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
 				MouseMove(%&xcol%, %&ycol%)
@@ -115,7 +120,7 @@ scale(amount)
 		}
 	else ;this is for when you have the "toggle animation" keyframe button pressed
 		{
-			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " EnvGet("Premiere") "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " Premiere "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 				{
 					If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
 						MouseMove(%&xcol%, %&ycol%)

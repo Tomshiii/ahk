@@ -10,7 +10,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         WinWait("Sequence Settings")
         sleep 500
         MouseMove(0, 0)
-        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1920.png")
+        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " Premiere "seq1920.png")
             {
                 If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
                     {
@@ -27,7 +27,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         return
                     }
             }
-        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1280.png")
+        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " Premiere "seq1280.png")
             {
                 If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
                     {
@@ -44,7 +44,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         return
                     }
             }
-        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq720.png")
+        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " Premiere "seq720.png")
             {
                 If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
                     {
@@ -61,7 +61,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         return
                     }
             }
-        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " EnvGet("Premiere") "seq1080.png")
+        if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " Premiere "seq1080.png")
             SendInput("{Enter}")
     }
 else

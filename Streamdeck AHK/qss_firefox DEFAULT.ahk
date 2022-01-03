@@ -1,7 +1,7 @@
 #SingleInstance Force
 SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0
-EnvSet("Windows", "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\")
+#Include SD_functions.ahk
 
 ;
 ; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder
@@ -29,11 +29,11 @@ sleep 1000 ;this is necessary otherwise the imagesearches will try to fire befor
 try {
     loop {
         ToolTip("This function searched " A_Index " time(s)`nto find firefox")
-        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox3.png")
+        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox3.png")
             break
-        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox.png")
+        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox.png")
            break
-        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " EnvGet("Windows") "firefox2.png")
+        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox2.png")
             break
         ToolTip("")
         if A_Index > 5
@@ -49,7 +49,7 @@ try {
 MouseMove(%&ffx%, %&ffy%)
 Click()
 sleep 500
-if ImageSearch(&devX, &devY, %&ffX%, %&ffY% - "30", %&ffX% + 2500, %&ffY% + "30", "*2 " EnvGet("Windows") "default.png")
+if ImageSearch(&devX, &devY, %&ffX%, %&ffY% - "30", %&ffX% + 2500, %&ffY% + "30", "*2 " Windows "default.png")
     goto end
 else
     {

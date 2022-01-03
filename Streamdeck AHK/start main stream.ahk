@@ -160,8 +160,16 @@ if not WinExist("ahk_exe obs64.exe")
 	if WinExist("ahk_exe foobar2000.exe")
 		{
 			WinActivate("ahk_exe foobar2000.exe")
-			SendInput("{Alt}p")
-			SendInput("a")
+			sleep 1000
+			WinGetPos(,, &width, &height, "A")
+			MouseGetPos(&x, &y)
+			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " "C:\Program Files\ahk\ahk\ImageSearch\Foobar\streambeats.png")
+				{
+					MouseMove(%&xdir%, %&ydir%)
+					SendInput("{Click}")
+				}			
+			SendInput("!p" "a")
+			MouseMove(%&x%, %&y%)
 		}
 	if WinExist("ahk_exe LioranBoard Receiver.exe")
 		{
