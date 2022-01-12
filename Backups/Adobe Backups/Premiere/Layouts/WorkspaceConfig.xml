@@ -13,8 +13,7 @@
 <string>$$$/Premiere/FrontEnd/Effects=Effects</string>
 <string>$$$/Premiere/FrontEnd/Audio=Audio</string>
 <string>$$$/Premiere/FrontEnd/Metalogging=Metalogging</string>
-<string>$$$/Premiere/FrontEnd/Graphics=Graphics</string>
-<string>$$$/Premiere/FrontEnd/CaptionsSpace=Captions</string>
+<string>$$$/Premiere/FrontEnd/CaptionsGraphicsSpace=Captions and Graphics#{comment}DVAGE-6442</string>
 <string>$$$/Premiere/FrontEnd/Libraries=Libraries</string>
 <string>$$$/Premiere/FrontEnd/Production=Production</string>
 </array>
@@ -30,8 +29,10 @@
 <array>
 <array.type><ustring/></array.type>
 <ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\22.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\22.0\Profile-Tom\ArchivedLayouts\UserWorkspace_6.xml</ustring>
 <ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\22.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
 <ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\22.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
+<ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\22.0\Profile-Tom\Layouts\UserWorkspace_6.xml</ustring>
 <ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\22.0\Profile-Tom\Layouts\UserWorkspace5.xml</ustring>
 <ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\22.0\Profile-Tom\Layouts\UserWorkspace3.xml</ustring>
 <ustring>D:\Program Files\User\Documents\Adobe\Premiere Pro\22.0\Profile-Tom\Layouts\UserWorkspace12.xml</ustring>
@@ -70,10 +71,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>-31</int>
-<int type='signed' size='32'>2568</int>
-<int type='signed' size='32'>1408</int>
+<int type='signed' size='32'>-7</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>2551</int>
+<int type='signed' size='32'>1398</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -86,9 +87,11 @@
 <key>ModifiedTimes</key>
 <array>
 <array.type><string/></array.type>
-<string>20211215T031650.674473</string>
+<string>20220102T043215.207365</string>
+<string>20220106T090627.672326</string>
 <string>20201116T003810</string>
-<string>20211222T094406.028929</string>
+<string>20220106T090515.381355</string>
+<string>20220109T074951.194398</string>
 <string>20211129T055027.354664</string>
 <string>20210724T012431.372181</string>
 <string>20200630T070242</string>
@@ -109,8 +112,10 @@
 <array>
 <array.type><ustring/></array.type>
 <ustring>2021-2</ustring>
+<ustring>2022-01</ustring>
 <ustring>testing</ustring>
 <ustring>2021-2</ustring>
+<ustring>2022-01</ustring>
 <ustring>$$$/Premiere/FrontEnd/AllPanels=All Panels</ustring>
 <ustring>$$$/Premiere/FrontEnd/Assembly=Assembly</ustring>
 <ustring>$$$/Premiere/FrontEnd/Audio=Audio</ustring>
@@ -118,7 +123,7 @@
 <ustring>Dual Monitors</ustring>
 <ustring>$$$/Premiere/FrontEnd/Editing=Editing</ustring>
 <ustring>$$$/Premiere/FrontEnd/Effects=Effects</ustring>
-<ustring>$$$/Premiere/FrontEnd/Graphics=Graphics</ustring>
+<ustring>Graphics</ustring>
 <ustring>$$$/Premiere/FrontEnd/Learning=Learning</ustring>
 <ustring>$$$/Premiere/FrontEnd/Libraries=Libraries</ustring>
 <ustring>Strim</ustring>
@@ -136,6 +141,8 @@
 <array.type><int type='signed' size='32'/></array.type>
 <int type='signed' size='32'>0</int>
 <int type='signed' size='32'>0</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>

@@ -1,0 +1,1 @@
+Presets can be saved from within the presets panel in premiere

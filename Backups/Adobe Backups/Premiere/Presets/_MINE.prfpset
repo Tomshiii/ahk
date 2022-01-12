@@ -2,44 +2,51 @@
 <PremiereData Version="3">
 	<Tree ObjectRef="1"/>
 	<Tree ObjectID="1" ClassID="177f2841-dd5b-43bd-9d9a-79e231bd47dd" Version="1">
+		<RootBin ObjectRef="2"/>
 		<Node Version="1">
 		</Node>
-		<RootBin ObjectRef="2"/>
 	</Tree>
 	<BinTreeItem ObjectID="2" ClassID="5e0f46fa-384f-4c09-bc53-0b8e2b7005b5" Version="4">
+		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Node Version="1">
+			</Node>
+			<Name>Root</Name>
+		</TreeItemBase>
 		<Sorted>false</Sorted>
 		<Expanded>false</Expanded>
 		<Items Version="1">
 			<Item Index="0" ObjectRef="3"/>
 		</Items>
-		<TreeItemBase Version="4">
-			<Node Version="1">
-			</Node>
-			<Name>Root</Name>
-			<Locked>false</Locked>
-		</TreeItemBase>
 	</BinTreeItem>
 	<BinTreeItem ObjectID="3" ClassID="5e0f46fa-384f-4c09-bc53-0b8e2b7005b5" Version="4">
-		<Sorted>true</Sorted>
-		<Expanded>true</Expanded>
-		<Items Version="1">
-			<Item Index="0" ObjectRef="5"/>
-		</Items>
 		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="4"/>
 			<Node Version="1">
 				<Properties Version="1">
 					<HandlerEffects.EffectItemTree.PresetsBin>1</HandlerEffects.EffectItemTree.PresetsBin>
 				</Properties>
 			</Node>
 			<Name>Presets</Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="4"/>
 		</TreeItemBase>
+		<Sorted>true</Sorted>
+		<Expanded>true</Expanded>
+		<Items Version="1">
+			<Item Index="0" ObjectRef="5"/>
+		</Items>
 	</BinTreeItem>
 	<EffectBinItem ObjectID="4" ClassID="5f513d71-0018-4405-a10b-bf5597f99960" Version="1">
 		<Flavor>1</Flavor>
 	</EffectBinItem>
 	<BinTreeItem ObjectID="5" ClassID="5e0f46fa-384f-4c09-bc53-0b8e2b7005b5" Version="4">
+		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="6"/>
+			<Node Version="1">
+			</Node>
+			<Name>_MINE</Name>
+		</TreeItemBase>
 		<Sorted>true</Sorted>
 		<Expanded>false</Expanded>
 		<Items Version="1">
@@ -50,25 +57,19 @@
 			<Item Index="4" ObjectRef="42"/>
 			<Item Index="5" ObjectRef="67"/>
 			<Item Index="6" ObjectRef="87"/>
+			<Item Index="7" ObjectRef="94"/>
 		</Items>
-		<TreeItemBase Version="4">
-			<Node Version="1">
-			</Node>
-			<Name>_MINE</Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="6"/>
-		</TreeItemBase>
 	</BinTreeItem>
 	<EffectBinItem ObjectID="6" ClassID="5f513d71-0018-4405-a10b-bf5597f99960" Version="1">
 		<Flavor>1</Flavor>
 	</EffectBinItem>
 	<TreeItem ObjectID="7" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="8"/>
 			<Node Version="1">
 			</Node>
 			<Name>croptom</Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="8"/>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="8" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
@@ -221,11 +222,11 @@
 	</VideoComponentParam>
 	<TreeItem ObjectID="17" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="18"/>
 			<Node Version="1">
 			</Node>
 			<Name>gaussian blur 20</Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="18"/>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="18" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
@@ -323,11 +324,11 @@
 	</VideoComponentParam>
 	<TreeItem ObjectID="24" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="25"/>
 			<Node Version="1">
 			</Node>
 			<Name>HFLIP</Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="25"/>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="25" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
@@ -368,11 +369,11 @@
 	</VideoFilterComponent>
 	<TreeItem ObjectID="28" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="29"/>
 			<Node Version="1">
 			</Node>
 			<Name>Highpass Me</Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="29"/>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="29" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
@@ -489,7 +490,7 @@
 			</Component>
 			<AudioComponentType>0</AudioComponentType>
 			<FrameRate>5292000</FrameRate>
-			<AudioChannelLayout>[{"channellabel":0}]</AudioChannelLayout>
+			<AudioChannelLayout>{"SerializerWrappedObject":[{"channellabel":0}]}</AudioChannelLayout>
 			<ChannelType>0</ChannelType>
 		</AudioComponent>
 	</AudioFilterComponent>
@@ -589,11 +590,11 @@
 	</AudioComponentParam>
 	<TreeItem ObjectID="42" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="43"/>
 			<Node Version="1">
 			</Node>
 			<Name>loremipsum</Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="43"/>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="43" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
@@ -1012,11 +1013,11 @@
 	</VideoComponentParam>
 	<TreeItem ObjectID="67" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="68"/>
 			<Node Version="1">
 			</Node>
 			<Name>Parametric EQ </Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="68"/>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="68" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
@@ -1164,7 +1165,7 @@
 			</Component>
 			<AudioComponentType>0</AudioComponentType>
 			<FrameRate>5292000</FrameRate>
-			<AudioChannelLayout>[{"channellabel":0}]</AudioChannelLayout>
+			<AudioChannelLayout>{"SerializerWrappedObject":[{"channellabel":0}]}</AudioChannelLayout>
 			<ChannelType>0</ChannelType>
 		</AudioComponent>
 	</AudioFilterComponent>
@@ -1322,11 +1323,11 @@
 	</AudioComponentParam>
 	<TreeItem ObjectID="87" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="88"/>
 			<Node Version="1">
 			</Node>
 			<Name>tint 100</Name>
-			<Locked>false</Locked>
-			<Data ObjectRef="88"/>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="88" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
@@ -1421,4 +1422,49 @@
 		<Keyframes></Keyframes>
 		<Name>Amount to Tint</Name>
 	</VideoComponentParam>
+	<TreeItem ObjectID="94" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
+		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="95"/>
+			<Node Version="1">
+			</Node>
+			<Name>vflip</Name>
+		</TreeItemBase>
+	</TreeItem>
+	<FilterPresetItem ObjectID="95" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
+		<FilterPresets Version="1">
+			<FilterPreset Index="0" ObjectRef="96"/>
+		</FilterPresets>
+		<EffectItem Version="1">
+			<EffectIsShorcut>false</EffectIsShorcut>
+			<EffectFlavor>5</EffectFlavor>
+		</EffectItem>
+	</FilterPresetItem>
+	<FilterPreset ObjectID="96" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>8259753600000</AnchorOutPoint>
+		<AnchorInPoint>0</AnchorInPoint>
+		<MediaType>228cda18-3625-4d2d-951e-348879e4ed93</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="97"/>
+		<FilterMatchName>AE.ADBE Vertical Flip</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<VideoFilterComponent ObjectID="97" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
+		<VideoFilterType>2</VideoFilterType>
+		<MatchName>AE.ADBE Vertical Flip</MatchName>
+		<Component Version="6">
+			<Node Version="1">
+			</Node>
+			<ArchivedType>0</ArchivedType>
+			<InstanceName></InstanceName>
+			<Intrinsic>false</Intrinsic>
+			<DisplayName>Vertical Flip</DisplayName>
+			<Bypass>false</Bypass>
+			<ID>0</ID>
+		</Component>
+	</VideoFilterComponent>
 </PremiereData>

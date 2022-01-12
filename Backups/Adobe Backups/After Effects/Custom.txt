@@ -200,7 +200,7 @@
 
 
 ["** header **"]
-	"major_version" = "103"
+	"major_version" = "102"
 
 ["AE_TopLevelWindow"]
 	"SelectNextTab" = "(Alt+Shift+.)"
