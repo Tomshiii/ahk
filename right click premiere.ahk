@@ -45,36 +45,28 @@ playheadtoCursor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini
 Rbutton::
 {
 MouseGetPos &xpos, &ypos
-Color := PixelGetColor(%&xpos%, %&ypos%, "RGB")
-;PixelGetColor colorr, %X%, %Y%, RGB ;v1.1 code
+Color := PixelGetColor(%&xpos%, %&ypos%)
 if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
 	sendinput "{ESC}" ;in Premiere 13.0, ESCAPE will now deselect clips on the timeline, in addition to its other uses. i think it is good ot use here, now. But you can swap this out with CTRL SHIFT D if you like.
-;send ^+d ;in Premiere, set CTRL SHIFT D to "DESELECT ALL"
-if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = timeline8) ;alternatively, i think I can use "if in" for this kind of thing..
+	;send ^+d ;in Premiere, set CTRL SHIFT D to "DESELECT ALL"
+if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = timeline8)
 	{
 		;BREAKTHROUGH -- it looks like a middle mouse click will BRING FOCUS TO a panel without doing ANYTHING ELSE like selecting or going through tabs or anything. Unfortunately, i still can't know with AHK which panel is already in focus.
-		click "middle" ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
-		; tooltip, % GetKeyState("Rbutton", "P") ;<----this was essential for me to figure out EXACTLY how AHK wanted this query to be phrased. Why should i need the quotation marks?? Why does it return a 1 and 0, but for the other method, it returns U and D? Who the hell knows...
-		; if GetKeyState("$Rbutton") = D ;<--- see, this line did not work AT ALL.
-		if GetKeyState("Rbutton", "P") = 1 ;<----THIS is the only way to phrase this query.
+		click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
+		if GetKeyState("Rbutton", "P")
 			{
 			loop
 				{
 					SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
-					sleep 16 ;this loop will repeat every 16 milliseconds.
-					if GetKeyState("Rbutton", "P") = 0
-						{
-							tooltip
-							goto theEnd
-						}
+					sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
+					if not GetKeyState("Rbutton", "P")
+						return
 				}
 			}
-		;tooltip,
-		Send "{Escape}" ;in case you end up inside the "delete" right click menu from the timeline
-		;MouseClick, left ;notice how this is commented out. I deemed it inferior to using ESCAPE.
+		Send("{Escape}") ;in case you end up inside the "delete" right click menu from the timeline
 	}
 else
-	sendinput "{Rbutton}" ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
+	sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
 theEnd:
 }
 
@@ -84,6 +76,7 @@ theEnd:
 ;So, assuming you've mapped "move playhead to cursor" to the \ key, the problem is that it fires once, waits 1 second, and only then does it continue to fire.
 ;that's why I use a loop - to send constant keypresses, for a smooth experience.
 ;SCRIPT HAS NOT YET BEEN TESTED BY ME.
+;The below code was written by taran for ahk v1.1 and will not work if you're on ahk v2.0
 
 ;;;;;Mbutton::\ ;<----this would be the STUPID way of doing this. BAD BAD BAD! do not want!
 ; #ifwinactive ahk_exe adobe premiere pro.exe

@@ -1,11 +1,6 @@
-;Menu Tray Icon shell32.dll 110 ; changes the icon to a 🚫
-
-;SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 InstallKeybdHook true
-;#NoEnv
-;#NoTrayIcon ;comment this in if you do not want a tray icon.
 #SingleInstance
-MaxHotkeysPerInterval := 2000
+A_MaxHotkeysPerInterval := 2000
 ProcessSetPriority "H"
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\error.ico") ;changes the icon this script uses in the taskbar
 #SingleInstance force
@@ -70,7 +65,7 @@ A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
 ; ===== TO USE THE SCRIPT: ===== (This applies to the .exe and .ahk -- they are exactly the same.)
 
 
-;Note that the script will add a little red 🚫 to your taskbar, which can be right clicked to be disabled or exited from the menu.
+; Note that the script will add a little red 🚫 to your taskbar, which can be right clicked to be disabled or exited from the menu.
 
 ; You can hold down both ALT keys whenever you want to easily toggle this script on and off. This is useful for things like Premiere's keyboard shortcuts menu, which has ALT-nullification of its own.
 
