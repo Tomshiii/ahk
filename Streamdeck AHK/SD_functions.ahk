@@ -2,6 +2,7 @@
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 global Premiere := "C:\Program Files\ahk\ahk\ImageSearch\Premiere\"
 global Windows := "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\"
+global Chatterino := "C:\Program Files\ahk\ahk\ImageSearch\Chatterino\"
 
 /* coords()
  sets coordmode to "screen"

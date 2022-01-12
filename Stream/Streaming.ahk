@@ -65,19 +65,3 @@ F16::  ;temporary way to play full mii wii song using lioranboard
 	;SendInput, ^+9 ;Source Record OBS Plugin replay buffer must be set to this
 	sleep 10
 }
-
-F22:: ;opens editing playlist, moves vlc into a small window, changes its audio device to goxlr
-{
-	run "wmplayer.exe" ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
-	/*
-	SetKeyDelay 100 ;adds 100ms of delay between each "send" input (vlc can't take inputs too fast so this helps)
-		run "D:\Program Files\User\Music\pokemon.xspf"
-			if WinExist("ahk_exe vlc.exe")
-				WinActivate
-			else
-				WinWait "ahk_exe vlc.exe"
-		if WinExist("ahk_exe vlc.exe")
-		WinMove 2066, 0, 501, 412
-		Send "!ad{Down 3}{enter}"
-	*/
-}
