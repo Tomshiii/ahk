@@ -142,6 +142,13 @@ speedMenu := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Pre
  */
 playheadtoCursor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Playhead to Cursor")
 
+/*
+ This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+resetWorkspace := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "reset changes to workspace")
+
 
 
 ;==Labels==
@@ -230,7 +237,25 @@ saveasCopy := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Ph
 
 
 
+
+
+
 ;[After Effects]
+;==activate windows==
+
+/*
+ This value will send the keyboard shortcut you have set to show/hide the audio panel in Adobe After Effects
+
+ Can be set within KSA.ahk/ini
+ */
+audioAE := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "After Effects", "show/hide audio")
+
+/*
+ This value will send the keyboard shortcut you have set to show/hide the effects panel in Adobe After Effects
+
+ Can be set within KSA.ahk/ini
+ */
+effectsAE := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "After Effects", "show/hide effects")
 
 ;==tools==
 
@@ -309,6 +334,8 @@ rotationProp := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "
 
 
 
+
+
 ;[Resolve]
 
 ;==hotkeys==
@@ -319,6 +346,8 @@ rotationProp := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "
  Can be set within KSA.ahk/ini
  */
 resolveSelectPlayhead := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Resolve", "Select at Playhead")
+
+
 
 
 
@@ -399,6 +428,11 @@ DragKeywait := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "H
  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
  */
 speedHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Speed")
+
+/*
+ This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+ */
+longSkip := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "10s skip")
 
 ;[ImageSearchCoords]
 

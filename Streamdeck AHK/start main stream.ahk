@@ -53,7 +53,7 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 200
 		} */
 		;not using this currently
-	WinMove 2554, -892, 1104, 1087  ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
+	WinMove 2553, -926, 1104, 1087 ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
 	Run "firefox.exe https://docs.google.com/presentation/d/1b6pCuOIrw4pEF6GACxrBh8C-mB4XsDeHLM50cj4jAkQ/edit#slide=id.g90e8195d3c_16_958" ;opens the AM route doc to pauline questions
 		if WinExist("ahk_exe firefox.exe")
 			WinActivate
@@ -95,13 +95,13 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 1500
 		}
 	WinWait("Twitch", , 10) ;WinMove -6, 0, 1497, 886,, "Twitch"  ;moves browser tabs into position for stream
-			WinMove -6, 0, 1497, 886
+			WinMove -7, 0, 1497, 886
 	WinWait("All Moons UPDATED v.1.3.0", , 10) ;WinMove 1218, 658, 1347, 747,, "All Moons UPDATED v.1.3.0"  ;moves browser tabs into position for stream
 		WinMove 1218, 658, 1347, 747
 	if WinExist("StreamElements")
 		{
 			WinActivate
-			WinMove 3645, -892, 842, 509
+			WinMove 3643, -926, 840, 498
 		}
 	if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
 		{
@@ -157,7 +157,7 @@ if not WinExist("ahk_exe obs64.exe")
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4479, 457, 1080, 800  ;moves into position
+		WinMove 4479, 435, 1080, 800  ;moves into position
 	SetWorkingDir "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
 	if WinExist("ahk_exe ApplicationDj.exe")
@@ -167,7 +167,7 @@ if not WinExist("ahk_exe obs64.exe")
 	blockOn()
 	if WinExist("ahk_exe chatterino.exe")
 		{
-			WinMove(3650, -389, 830, 577)
+			WinMove(3648, -432, 830, 586)
 			WinActivate("ahk_exe chatterino.exe")
 				coordw()
 				WinGetPos(,, &width, &height, "A")

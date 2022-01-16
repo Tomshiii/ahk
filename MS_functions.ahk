@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.11
+;\\v2.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5.1
@@ -27,16 +27,17 @@
 ; searches in a rectangle defined by the above coords (pixel coords default to window unless you change it to something else)
 ; These values will be the only thing you should theoretically need to change to get things working in your own setups (outside of potentially needing your own screenshots for things as different setups can mean different colours etc etc)
 ; Most premiere functions require no tinkering before getting started as we can sneakily grab the coordinates of some panels within premiere without needing to define them anywhere. Not all of my scripts have this kind of treatment though as sometimes it's just not practical, sometimes a function is so heavily reliant on my workspace/workflow that it would be a waste of time as you'd need to change a bunch of stuff anyway, or sometimes it's just not possible with the way I'm doing things.
-; For the functions that don't get this special treatment, I have tried to make as many of these values as possible directly editable within KSI.ini (for premiere at least for now, I might get around to other programs eventually) to make it both easier and faster for you to adjust these scripts to your own premiere layout. Take a look over there before looking around in here
+; For the functions that don't get this special treatment, I have tried to make as many of these values as possible directly editable within KSI.ini to make it both easier and faster for you to adjust these scripts to your own layouts. Take a look over there before looking around in here
 
-;EnvSet allows you to store information to call later, via: EnvGet("Discord") for example, which cuts out the need to write ' A_WorkingDir "\ImageSearch\Discord\photoexample.png" ' for every piece of code
-EnvSet("Discord", A_WorkingDir "\ImageSearch\Discord\")
-EnvSet("Premiere", A_WorkingDir "\ImageSearch\Premiere\")
-EnvSet("AE", A_WorkingDir "\ImageSearch\AE\")
-EnvSet("Photoshop", A_WorkingDir "\ImageSearch\Photoshop\")
-EnvSet("Resolve", A_WorkingDir "\ImageSearch\Resolve\")
-EnvSet("VSCode", A_WorkingDir "\ImageSearch\VSCode\")
-EnvSet("Explorer", A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\")
+; Here we will define a bunch of global variables that we will reference in ImageSearches. This is simply to help cut down the amount of things needed to write out and also to just make things cleaner overall to look at and help discern. Please note I have no way to add dynamic comments to these for VSCode users.
+global Discord := A_WorkingDir "\ImageSearch\Discord\"
+global Premiere := A_WorkingDir "\ImageSearch\Premiere\"
+global AE := A_WorkingDir "\ImageSearch\AE\"
+global Photoshop := A_WorkingDir "\ImageSearch\Photoshop\"
+global Resolve := A_WorkingDir "\ImageSearch\Resolve\"
+global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
+global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
+global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
 ; ===========================================================================================================================================
 ;
@@ -76,7 +77,7 @@ coordc()
 ; ===========================================================================================================================================
 
 /* toolFind()
- create a tooltip for errors finding things
+ create a tooltip for errors trying when to find things
  * @param message is what you want the tooltip to say after "couldn't find"
  * @param timeout is how many ms you want the tooltip to last
  */
@@ -110,7 +111,7 @@ toolCust(message, timeout)
 ;
 ; ===========================================================================================================================================
 /* blockOn()
- blocks all user inputs [IF YOU GET STUCK IN A SCRIPT USE CTRL + ALT + DEL to open task manager and close AHK]
+ blocks all user inputs [IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (CTRL + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]
  */
 blockOn()
 {
@@ -131,7 +132,7 @@ blockOff()
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.7.10
+;		Windows Scripts \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -141,17 +142,18 @@ blockOff()
  */
 youMouse(tenS, fiveS)
 {
-	if A_PriorKey = "Mbutton"
+	if A_PriorKey = "Mbutton" ;ensures the hotkey doesn't fire while you're trying to open a link in a new tab
 		return
 	if WinExist("YouTube")
 	{
-		lastactive := WinGetID("A")
-		WinActivate()
-		if GetKeyState("F14", "P")
+		lastactive := WinGetID("A") ;fills the variable [lastavtive] with the ID of the current window
+		WinActivate() ;activates Youtube if there is a window of it open
+		sleep 25 ;sometimes the window won't activate fast enough
+		if GetKeyState(longSkip, "P") ;checks to see if you have a second key held down to see whether you want the function to skip 10s or 5s. If you hold down this second button, it will skip 10s
 			SendInput(%&tenS%)
 		else
-			SendInput(%&fiveS%)
-		WinActivate(lastactive)
+			SendInput(%&fiveS%) ;otherwise it will send 5s
+		WinActivate(lastactive) ;will reactivate the original window
 	}
 }
 
@@ -161,7 +163,7 @@ youMouse(tenS, fiveS)
 monitorWarp(x, y)
 {
 	coords()
-	MouseMove(%&x%, %&y%)
+	MouseMove(%&x%, %&y%, 2) ;I need the 2 here as I have multiple monitors and things can be funky moving that far that fast. random ahk problems. Change this if you only have 1/2 monitors and see if it works fine for you
 }
 
 /* moveWin()
@@ -170,11 +172,11 @@ monitorWarp(x, y)
  */
  moveWin(key)
  {
-	 if WinActive("ahk_class CabinetWClass")
+	if WinActive("ahk_class CabinetWClass") ;this if statement is to check whether windows explorer is active to ensure proper right click functionality is kept
 		{
 			if A_ThisHotkey = "RButton"
 				{
-					if not GetKeyState("LButton", "P")
+					if not GetKeyState("LButton", "P") ;checks to see if the Left mouse button is held down, if it isn't, the below code will fire. This is here so you can still right click and drag
 						{
 							SendInput("{RButton Down}")
 							KeyWait("RButton")
@@ -183,26 +185,26 @@ monitorWarp(x, y)
 						}
 				}
 		}
-	 if not GetKeyState("LButton", "P")
-		 {
-			 SendInput("{" A_ThisHotkey "}")
-			 return
-		 }
-	 else
-		 {
-			 window := WinGetTitle("A")
-			 SendInput("{LButton Up}")
-			 if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
-				 WinMinimize(window)
-			 if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
-				 WinMaximize(window)
-			 SendInput(%&key%)
-		 }
+	if not GetKeyState("LButton", "P") ;checks for the left mouse button as without this check the function will continue to work until you click somewhere else
+		{
+			SendInput("{" A_ThisHotkey "}")
+			return
+		}
+	else
+		{
+			window := WinGetTitle("A") ;grabs the title of the active window
+			SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
+			if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
+				WinMinimize(window)
+			if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
+				WinMaximize(window)
+			SendInput(%&key%)
+		}
  }
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.8.10
+;		discord \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -221,16 +223,16 @@ disc(button)
 	KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
 	coordw() ;important to leave this as window as otherwise the image search function will fail to find things
 	MouseGetPos(&x, &y)
-	WinGetPos(,, &width, &height, "A")
+	WinGetPos(,, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
 	blockOn()
 	click("right") ;this opens the right click context menu on the message you're hovering over
 	sleep 50 ;sleep required so the right click context menu has time to open
-	if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% +"400", "*2 " EnvGet("Discord") %&button%)
+	if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%) ;searches for the button you've requested
 			MouseMove(%&xpos%, %&ypos%)
 	else
 		{
 			sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-			if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% +"400", "*2 " EnvGet("Discord") %&button%)
+			if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%)
 				MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
 			else ;if everything fails, this else will trigger
 				{
@@ -244,7 +246,7 @@ disc(button)
 	sleep 100
 	if A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
 		{
-			if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " EnvGet("Discord") "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+			if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " Discord "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
 				{
 					MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
 					Click
@@ -255,7 +257,7 @@ disc(button)
 				{
 					MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 					blockOff()
-					toolFind("the @ ping button `n or you're in a DM", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolFind("the @ ping button`nor you're in a DM", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -264,12 +266,91 @@ disc(button)
 			MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
 			blockOff()
 		}
+}
 
+/*
+ This function will toggle the location of discord's window position
+ */
+discLocation()
+{
+	position0 := 4480, -303, 1081, 1537 ;we use position0 as a reference later to compare against another value. This is the same coordinates as disc0() down below, make sure you change THEM BOTH
+	position1 := 4480, -627, 1081, 1861 ;we use position1 as a reference later to compare against another value. This is the same coordinates as disc1() down below, make sure you change THEM BOTH
+	disc0() { ;define your first (defult) position here
+		WinMove(4480, -303, 1081, 1537, "ahk_exe Discord.exe")
+	}
+	disc1() { ;define your second position here
+		WinMove(4480, -627, 1081, 1861, "ahk_exe Discord.exe")
+	}
+	try { ;this try is here as if you close a window, then immediately try to fire this function there is no "original" window
+		original := WinGetID("A")
+	} catch as e {
+		toolCust("you tried to assign a closed`n window as the last active", "4000")
+		SendInput("{Click}")
+		return
+	}
+	static toggle := 0 ;this is what allows us to toggle discords position
+	if not WinExist("ahk_exe Discord.exe")
+		{
+			run("C:\Users\" A_UserName "\AppData\Local\Discord\Update.exe --processStart Discord.exe") ;this will run discord
+			WinWait("ahk_exe Discord.exe")
+			sleep 1000
+			WinActivate("ahk_exe Discord.exe")
+			result := WinGetPos(&X, &Y, &width, &height, "A") ;this will grab the x/y and width/height values of discord
+			if result = position0 ;here we are comparing discords current position to one of the values we defined above
+				{
+					toggle := 0
+					return
+				}
+			if result = position1 ;here we are comparing discords current position to one of the values we defined above
+				{
+					toggle := 1
+					return
+				}
+			if !(result = position0 or result = position1) ;here we're saying if it isn't in EITHER position we defined above, move it into a position
+				{
+					toggle := 0
+					disc0()
+					return
+				}
+			return
+		}
+	WinActivate("ahk_exe Discord.exe")
+	startLocation := WinGetPos(&X, &Y, &width, &height, "A") ;this will grab the x/y and width/height values of discord
+	if toggle < 1
+		{
+			toggle += 1
+			disc0()
+			newPos := WinGetPos(&X, &Y, &width, &height, "A") ;this will grab the x/y and width/height values of discord AGAIN
+			if newPos = startLocation ;so we can compare and ensure it has moved
+				disc1()
+			return
+		}
+	if toggle = 1
+		{
+			toggle -= 1
+			disc1()
+			newPos := WinGetPos(&X, &Y, &width, &height, "A") ;this will grab the x/y and width/height values of discord AGAIN
+			if newPos = startLocation ;so we can compare and ensure it has moved
+				disc0()
+			return
+		}
+	if toggle > 1 or toggle < 0 ;this is here just incase the value ever ends up bigger/smaller than it's supposed to
+		{
+			toggle := 0
+			toolCust("stop spamming the function please`nthe functions value was to large/small", "1000")
+			return
+		}
+	try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
+		WinActivate(original)
+	} catch as e {
+		toolCust("couldn't find original window", "2000")
+		return
+	}
 }
 
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.8.8
+;		Mouse Drag \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
@@ -281,7 +362,7 @@ mousedrag(tool, toolorig)
 {
 	again()
 	{
-		if A_ThisHotkey = "XButton2"
+		if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
 			{
 				if not GetKeyState(A_ThisHotkey, "P") ;this is here so it doesn't reactivate if you quickly let go before the timer comes back around
 					return
@@ -290,7 +371,7 @@ mousedrag(tool, toolorig)
 			return
 		click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
 		SendInput %&tool% "{LButton Down}"
-		if A_ThisHotkey = "XButton2"
+		if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
 			KeyWait(A_ThisHotkey)
 		else
 			KeyWait(DragKeywait) ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
@@ -347,7 +428,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Premiere \\ Last updated: v2.8.11
+;		Premiere \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /* preset()
@@ -359,19 +440,19 @@ preset(item)
 	coords()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
-	if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE
+	SendInput(effectControls) ;highlights the effect controls panel
+	SendInput(effectControls) ;premiere is dumb, focus things twice
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+	if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE - this if statement is code specific to text presets
 		{
 			sleep 100
 			ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
 			SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
 			sleep 100
-			if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "graphics.png")
+			if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
 				{
-					if ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " EnvGet("Premiere") "eye.png")
+					if ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " Premiere "eye.png") ;searches for the eye icon for the original text
 						{
 							MouseMove(%&xeye%, %&yeye%)
 							SendInput("{Click}")
@@ -482,7 +563,6 @@ preset(item)
  */
 fxSearch()
 {
-	blockOn()
 	coords()
 	blockOn()
 	SendInput(effectsWindow)
@@ -560,15 +640,15 @@ num(xval, yval, scale)
 	coords()
 	blockOn()
 	SendInput(effectControls)
-	SendInput(effectControls)
+	SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
 	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
 	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
@@ -577,7 +657,7 @@ num(xval, yval, scale)
 		}
 	SendInput(timelineWindow) ;adjust this in the ini file
 	SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "video.png") ;moves to the "video" section of the effects control window tab
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "video.png") ;moves to the "video" section of the effects control window tab
 		goto next
 	else
 		{
@@ -587,9 +667,9 @@ num(xval, yval, scale)
 			return
 		}
 	next:
-	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "motion2.png") ;moves to the motion tab
+	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion2.png") ;moves to the motion tab
 		MouseMove(%&x2% + "10", %&y2% + "10")
-	else if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "\motion3.png") ;this is a second check incase "motion" is already highlighted
+	else if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "\motion3.png") ;this is a second check incase "motion" is already highlighted
 				MouseMove(%&x3% + "10", %&y3% + "10")
 	else ;if everything fails, this else will trigger
 		{
@@ -606,7 +686,7 @@ num(xval, yval, scale)
 }
 
 /* valuehold()
- a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+ a preset to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
  @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
  @param optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
  */
@@ -616,15 +696,15 @@ valuehold(filepath, optional)
 	coords()
 	blockOn()
 	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+	SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
-		{
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+		{ ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
@@ -633,7 +713,7 @@ valuehold(filepath, optional)
 		}
 	if A_ThisHotkey = levelsHotkey ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
 		{ ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
-			if ImageSearch(&vidx, &vidy, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "video.png")
+			if ImageSearch(&vidx, &vidy, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "video.png")
 				{
 					toolCust("you aren't scrolled down", "1000")
 					blockOff()
@@ -644,13 +724,13 @@ valuehold(filepath, optional)
 				goto next
 		}
 	next:
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for when you have the "toggle animation" keyframe button pressed
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for if the property you want to adjust is "selected"
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
 	else
 		{
@@ -683,7 +763,7 @@ valuehold(filepath, optional)
 		}
 	else
 		{
-			if ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " EnvGet("Premiere") "reset.png") ;searches for the reset button to the right of the value you want to adjust
+			if ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust
 				{
 					MouseMove(%&x2%, %&y2%)
 					SendInput("{Click}")
@@ -717,24 +797,24 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
 	coords()
 	blockOn()
 	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+	SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
 					return
 				}
 		}
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% "2.png")
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "2.png")
 		goto click
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% "4.png")
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "4.png")
 		goto click
 	else
 		{
@@ -760,32 +840,32 @@ keyframe(filepath)
 	coords()
 	blockOn()
 	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+	SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
 					return
 				}
 		}
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% "2.png")
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "2.png")
 		goto next
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% "4.png")
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "4.png")
 		goto next
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% ".png")
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% ".png")
 		{
 			MouseMove(%&x% + "5", %&y% + "5")
 			Click()
 			goto end
 		}
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&filepath% "3.png")
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "3.png")
 		{
 			MouseMove(%&x% + "5", %&y% + "5")
 			Click()
@@ -798,9 +878,9 @@ keyframe(filepath)
 			return
 		}
 	next:
-	if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " EnvGet("Premiere") "keyframeButton.png")
+	if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " Premiere "keyframeButton.png")
 		MouseMove(%&keyx% + "3", %&keyy%)
-	else if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " EnvGet("Premiere") "keyframeButton2.png")
+	else if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " Premiere "keyframeButton2.png")
 		MouseMove(%&keyx% + "3", %&keyy%)
 	Click()
 	end:
@@ -815,14 +895,14 @@ keyframe(filepath)
  */
 audioDrag(sfxName)
 {
-	;I wanted to use a method similar to other premiere functions above, that grab the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
+	;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
 	coords()
-	if ImageSearch(&sfxxx, &sfxyy, 3021, 710, 3589, 1261, "*2 " EnvGet("Premiere") "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
+	if ImageSearch(&sfxxx, &sfxyy, 3021, 710, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
 		{
 			blockOn()
 			coords()
 			MouseGetPos(&xpos, &ypos)
-			if ImageSearch(&listx, &listy, 3081, 745, 3591, 1265, "*2 " EnvGet("Premiere") "list view.png") ;checks to make sure you're in the list view
+			if ImageSearch(&listx, &listy, 3081, 745, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
 				{
 					MouseMove(%&listx%, %&listy%)
 					SendInput("{Click}")
@@ -853,12 +933,12 @@ audioDrag(sfxName)
 			SendInput(%&sfxName%)
 			sleep 250 ;the project search is pretty slow so you might need to adjust this
 			coordw()
-			if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " EnvGet("Premiere") "audio.png") ;searches for the audio image next to an audio file
+			if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") ;searches for the audio image next to an audio file
 				{
 					MouseMove(%&vlx%, %&vly%)
 					SendInput("{Click Down}")
 				}
-			else if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " EnvGet("Premiere") "audio2.png") ;searches for the audio image next to an audio file
+			else if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
 				{
 					MouseMove(%&vlx%, %&vly%)
 					SendInput("{Click Down}")
@@ -914,7 +994,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 	MouseGetPos(&xpos, &ypos)
 	SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
 	sleep 10
-	if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") %&folder% ".png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+	if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere %&folder% ".png") ;searches for my sfx folder in the media browser to see if it's already selected or not
 		{
 			MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
 			SendInput("{Click}")
@@ -922,7 +1002,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 			sleep 100
 			goto next
 		}
-	else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") %&folder% "2.png") ;if it is selected, this will see it, then move on
+	else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere %&folder% "2.png") ;if it is selected, this will see it, then move on
 		goto next
 	else ;if everything fails, this else will trigger
 		{
@@ -937,7 +1017,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 	SendInput("^a" "+{BackSpace}") ;deletes anything that might be in the search box
 	SendInput(%&sfxName%)
 	sleep 150
-	if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " EnvGet("Premiere") "vlc.png") ;searches for the vlc icon to grab the track
+	if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere "vlc.png") ;searches for the vlc icon to grab the track
 		{
 			MouseMove(%&vlx%, %&vly%)
 			SendInput("{Click Down}")
@@ -958,7 +1038,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 	SendInput(timelineWindow)
 	blockOff()
 }
-} */
+*/
 
 /* wheelEditPoint()
  move back and forth between edit points from anywhere in premiere
@@ -978,25 +1058,23 @@ movepreview()
 	coords()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	coords()
-	blockOn()
 	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+	SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
 					return
 				}
 		}
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "motion.png") ;moves to the motion tab
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion.png") ;moves to the motion tab
 			MouseMove(%&x% + "25", %&y%)
 	else
 		{
@@ -1017,7 +1095,7 @@ movepreview()
 		}
 	else
 		{
-			if ImageSearch(&xcol, &ycol, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+			if ImageSearch(&xcol, &ycol, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
 					MouseMove(%&xcol%, %&ycol%)
 			else ;if everything fails, this else will trigger
 				{
@@ -1042,15 +1120,15 @@ reset()
 	coords()
 	blockOn()
 	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+	SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
@@ -1058,9 +1136,9 @@ reset()
 				}
 		}
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "motion2.png") ;checks if the "motion" value is in view
+	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion2.png") ;checks if the "motion" value is in view
 		goto inputs
-	else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "motion3.png") ;checks if the "motion" value is in view
+	else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
 		goto inputs
 	else
 		{
@@ -1071,7 +1149,7 @@ reset()
 	inputs:
 		SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
 		SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-		if ImageSearch(&xcol, &ycol, %&x2%, %&y2% - "20", %&x2% + "700", %&y2% + "20", "*2 " EnvGet("Premiere") "reset.png") ;this will look for the reset button directly next to the "motion" value
+		if ImageSearch(&xcol, &ycol, %&x2%, %&y2% - "20", %&x2% + "700", %&y2% + "20", "*2 " Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
 			MouseMove(%&xcol%, %&ycol%)
 		;SendInput, {WheelUp 10} ;not necessary as we use imagesearch to check for the motion value
 		click
@@ -1080,7 +1158,7 @@ reset()
 }
 
 /* hotkeyDeactivate()
- this simply allows manInput to work
+ this allowed the old version of manInput to work
  */
 hotkeyDeactivate()
 {
@@ -1100,7 +1178,7 @@ hotkeyDeactivate()
 }
 
 /* hotkeyReactivate()
- this simply allows manInput to work
+ this allowed the old version of manInput to work
  */
 hotkeyReactivate()
 {
@@ -1121,38 +1199,38 @@ hotkeyReactivate()
 /* manInput()
  This function will warp to and press any value in premiere to manually input a number
  @param property is the value you want to adjust
- @param key1 is the hotkey you use to activate this function
- @param key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
+ @param optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
+ @param keywaitkey is one of the activation hotkeys
  @param keyend is whatever key you want the function to wait for before finishing
  */
-manInput(property, optional, key1, key2, keyend)
+manInput(property, optional, keywaitkey, keyend)
 {
 	MouseGetPos(&xpos, &ypos)
 	coords()
 	blockOn()
 	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+	SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;searches to check if no clips are selected
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
 		{
 			SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
 			sleep 50
-			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+			if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
 				{
 					toolCust("The wrong clips are selected", "1000")
 					blockOff()
 					return
 				}
 		}
-	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+	if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		goto colour
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for when you have the "toggle animation" keyframe button pressed
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&property% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&property% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for if the property you want to adjust is "selected"
-	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") %&property% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+	else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&property% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
 		goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
 	else ;if everything fails, this else will trigger
 		{
@@ -1169,11 +1247,13 @@ manInput(property, optional, key1, key2, keyend)
 			toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
 			return
 		}
-	KeyWait(%&key1%) ;waits for you to let go of hotkey
-	KeyWait(%&key2%) ;waits for you to let go of hotkey
+	;use to be keywaits here.. I think it was for the below deactivate... maybe..
+	keywait(%&keywaitkey%)
 	;hotkeyDeactivate()
 	SendInput("{Click}")
+	ToolTip("manInput() is waiting for the " "'" %&keyend% "'" "`nkey to be pressed")
 	KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
+	ToolTip("")
 	SendInput("{Enter}")
 	MouseMove(%&xpos%, %&ypos%)
 	;hotkeyReactivate()
@@ -1187,15 +1267,16 @@ manInput(property, optional, key1, key2, keyend)
  */
 gain(amount)
 {
-	KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+	KeyWait(A_ThisHotkey)
+	Critical
 	coords()
 	try {
-			loop 3 {
+			loop {
 			SendInput(effectControls)
-			SendInput(effectControls)
+			SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
 			sleep 30
-			effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-			if effClassNN = "Edit1"
+			effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+			if effClassNN = "Edit1" ;checks for the gain window
 				{
 					SendInput(%&amount% "{Enter}")
 					return
@@ -1207,20 +1288,20 @@ gain(amount)
 			Exit
 		}
 	try {
-		ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+		ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
 	} catch as e {
 		toolCust("You're spamming too fast", "1000")
 		Exit
 	}
 	SendInput(timelineWindow)
-	if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
 			goto inputs
 		}
 	else
 		{
-			classNN := ControlGetClassNN(ControlGetFocus("A"))
+			classNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
 			if classNN = "DroverLord - Window Class3"
 				goto inputs
 			else
@@ -1231,6 +1312,7 @@ gain(amount)
 		}
 	inputs:
 	SendInput("g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
+	Critical("off")
 }
 
 /* gainSecondary()
@@ -1241,13 +1323,13 @@ gain(amount)
  */
 gainSecondary(key1, key2, keyend)
 {
-;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+	;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
 	SendInput(effectControls)
-	SendInput(effectControls)
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+	SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-	if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " EnvGet("Premiere") "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		{
 			SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
 			goto inputs
@@ -1273,7 +1355,7 @@ gainSecondary(key1, key2, keyend)
 }
 ; ===========================================================================================================================================
 ;
-;		After Effects \\ Last updated: v2.8.11
+;		After Effects \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /* aevaluehold()
@@ -1290,7 +1372,7 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
 		{
 			blockOn()
 			MouseGetPos(&X, &Y)
-			if ImageSearch(&selectX, &selectY, 8, 8, 299, 100, "*2 " EnvGet("AE") "selection.png")
+			if ImageSearch(&selectX, &selectY, 8, 8, 299, 100, "*2 " AE "selection.png")
 				{
 					MouseMove(%&selectX%, %&selectY%)
 					Click
@@ -1301,13 +1383,13 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
 			sleep 150
 			SendInput(%&button%) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
 			sleep 300 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
-			if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% ".png")
+			if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% ".png")
 				goto colour
-			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "2.png")
+			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "2.png")
 				goto colour
-			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "Key.png")
+			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "Key.png")
 				goto colour
-			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " EnvGet("AE") %&property% "Key2.png")
+			else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "Key2.png")
 				goto colour
 			else
 				{
@@ -1345,20 +1427,20 @@ aePreset(preset)
 	blockOn()
 	coords()
 	MouseGetPos(&x, &y)
-	colour := PixelGetColor(%&x%, %&y%)
-	if colour != 0x9E9E9E
+	colour := PixelGetColor(%&x%, %&y%) ;assigned the pixel colour at the mouse coords to the variable "colour"
+	if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
 		{
-			toolCust("you aren't haven't selected a clip`nor aren't hovering the right spot", "1000")
+			toolCust("you haven't selected a clip`nor aren't hovering the right spot", "1000")
 			blockOff()
 			Exit
 		}
-	SendInput("^4" "^5") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting
+	SendInput(audioAE effectsAE) ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
 	sleep 100
-	effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&efx, &efy, &width, &height, effClassNN)
-	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " EnvGet("AE") "findbox.png")
+	effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+	ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+	if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox.png")
 		goto move
-	else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " EnvGet("AE") "findbox2.png")
+	else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox2.png")
 		goto move
 	else
 		{
@@ -1371,7 +1453,7 @@ aePreset(preset)
 	SendInput("{Click}")
 	SendInput("^a" "+{BackSpace}")
 	CaretGetPos(&find)
-	if %&find% = ""
+	if %&find% = "" ;this loop is to make sure after effects finds the text field
 		{
 			loop 10 {
 				sleep 30
@@ -1388,20 +1470,22 @@ aePreset(preset)
 			}
 		}
 	SendInput(%&preset%)
-	MouseMove(59, 43, 2, "R")
+	sleep 100
+	MouseMove(59, 43, 2, "R") ;moves the mouse relative to the start position to ensure it always grabs the preset you want at mouse speed 2, this helps as after effects can be quite slow
 	SendInput("{Click Down}")
-	MouseMove(%&x%, %&y%)
+	MouseMove(%&x%, %&y%, "2") ;drags the preset back to the starting position (your layer) at mouse speed 2, it's important to slow down the mouse here or after effects won't register you're dragging the preset
+	sleep 100
 	SendInput("{Click Up}")
 	MouseMove(%&x2%, %&y2%)
 	SendInput("{Click}")
-	SendInput("^a" "+{BackSpace}" "{Enter}")
+	SendInput("^a" "+{BackSpace}" "{Enter}") ;deletes whatever was typed into the effects panel
 	MouseMove(%&x%, %&y%)
 	blockOff()
 }
 
 ; ===========================================================================================================================================
 ;
-;		Photoshop \\ Last updated: v2.8.0
+;		Photoshop \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /* psProp()
@@ -1414,13 +1498,13 @@ psProp(image)
 	MouseGetPos(&xpos, &ypos)
 	coordw()
 	blockOn()
-	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "text2.png") ;checks to see if you're typing
+	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "text2.png") ;checks to see if you're typing
 		SendInput("^{Enter}")
-	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "text.png") ;checks to see if you're in the text tool
+	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "text.png") ;checks to see if you're in the text tool
 		SendInput("v") ;if you are, it'll press v to go to the selection tool
-	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") "InTransform.png") ;checks to see if you're already in the free transform window
+	if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "InTransform.png") ;checks to see if you're already in the free transform window
 		{
-			if ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " EnvGet("Photoshop") %&image%) ;if you are, it'll then search for your button of choice and move to it
+			if ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " Photoshop %&image%) ;if you are, it'll then search for your button of choice and move to it
 				MouseMove(%&x%, %&y%)
 			else ;if everything fails, this else will trigger
 				{
@@ -1435,7 +1519,7 @@ psProp(image)
 			ToolTip("we must wait for photoshop`nbecause it's slow as hell")
 			sleep 300 ;photoshop is slow
 			ToolTip("")
-			if ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " EnvGet("Photoshop") %&image%) ;moves to the position variable
+			if ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " Photoshop %&image%) ;moves to the position variable
 				MouseMove(%&x%, %&y%)
 			else ;if everything fails, this else will trigger
 				{
@@ -1490,7 +1574,7 @@ psSave()
 		Send("{TAB}{RIGHT}")
 		coordw()
 		sleep 1000
-		if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "png.png")
+		if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop "png.png")
 			{
 				MouseMove(0, 0)
 				SendInput("{Enter 2}")
@@ -1498,7 +1582,7 @@ psSave()
 
 		else
 			{
-				if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") "png2.png")
+				if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop "png2.png")
 					{
 						MouseMove(%&xpng%, %&ypng%)
 						SendInput("{Click}")
@@ -1571,13 +1655,13 @@ psType(filetype)
 	Send("{TAB}{RIGHT}") ;make sure you don't click anywhere before using this function OR put the caret back in the filename box
 	coordw()
 	sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
-	if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") %&filetype% ".png")
+	if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop %&filetype% ".png")
 		{
 			SendInput("{Enter}")
 			SendInput("+{Tab}")
 		}
 
-	else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " EnvGet("Photoshop") %&filetype% "2.png")
+	else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop %&filetype% "2.png")
 		{
 			MouseMove(%&xpng%, %&ypng%)
 			SendInput("{Click}")
@@ -1594,7 +1678,7 @@ psType(filetype)
 
 ; ===========================================================================================================================================
 ;
-;		Resolve \\ Last updated: v2.7.16
+;		Resolve \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /* Rscale()
@@ -1610,18 +1694,18 @@ Rscale(value, property, plus)
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector.png")
 		goto video
-	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector2.png")
+	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
 		{
 			MouseMove(%&xi%, %&yi%)
 			click ;this opens the inspector tab
 			goto video
 		}
 	video:
-	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "video.png") ;if you're already in the video tab, it'll find this image then move on
 		goto rest
-	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
+	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") ;if you aren't already in the video tab, this line will search for it
 		{
 			MouseMove(%&xn%, %&yn%)
 			click ;"2196 139" ;this highlights the video tab
@@ -1634,9 +1718,9 @@ Rscale(value, property, plus)
 			return
 		}
 	rest:
-	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
+	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% ".png") ;searches for the property of choice
 		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
-	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 		MouseMove(%&xz% + %&plus%, %&yz% + "5")
 	else
 		{
@@ -1686,13 +1770,13 @@ REffect(folder, effect)
 	coordw()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " EnvGet("Resolve") "effects.png") ;checks to see if the effects button is deactivated
+	if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects.png") ;checks to see if the effects button is deactivated
 		{
 			MouseMove(%&xe%, %&ye%)
 			SendInput("{Click}")
 			goto closeORopen
 		}
-	else if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " EnvGet("Resolve") "effects2.png") ;checks to see if the effects button is activated
+	else if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects2.png") ;checks to see if the effects button is activated
 		goto closeORopen
 	else ;if everything fails, this else will trigger
 		{
@@ -1701,9 +1785,9 @@ REffect(folder, effect)
 			return
 		}
 closeORopen:
-	if ImageSearch(&xopen, &yopen, effectx1, effecty1, effectx2, effecty2, "*2 " EnvGet("Resolve") "open.png") ;checks to see if the effects window sidebar is open
+	if ImageSearch(&xopen, &yopen, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "open.png") ;checks to see if the effects window sidebar is open
 		goto EffectFolder
-	else if ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " EnvGet("Resolve") "closed.png") ;checks to see if the effects window sidebar is closed
+	else if ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "closed.png") ;checks to see if the effects window sidebar is closed
 		{
 			MouseMove(%&xclosed%, %&yclosed%)
 			SendInput("{Click}")
@@ -1716,9 +1800,9 @@ closeORopen:
 			return
 		}
 EffectFolder:
-	if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " EnvGet("Resolve") %&folder% ".png") ;checks to see if the drop down option you want is activated
+	if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve %&folder% ".png") ;checks to see if the drop down option you want is activated
 		goto SearchButton
-	else if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " EnvGet("Resolve") %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
+	else if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
 		{
 			MouseMove(%&xfx%, %&yfx%)
 			SendInput("{Click}")
@@ -1731,13 +1815,13 @@ EffectFolder:
 			return
 		}
 SearchButton:
-	if ImageSearch(&xs, &ys, effectx1, effecty1 + "300", effectx2, effecty2, "*2 " EnvGet("Resolve") "search2.png") ;checks to see if the search icon is deactivated
+	if ImageSearch(&xs, &ys, effectx1, effecty1 + "300", effectx2, effecty2, "*2 " Resolve "search2.png") ;checks to see if the search icon is deactivated
 		{
 			MouseMove(%&xs%, %&ys%)
 			SendInput("{Click}")
 			goto final
 		}
-	else if ImageSearch(&xs, &ys, 8, 8 + "300", effectx2, effecty2, "*2 " EnvGet("Resolve") "search3.png") ;checks to see if the search icon is activated
+	else if ImageSearch(&xs, &ys, 8, 8 + "300", effectx2, effecty2, "*2 " Resolve "search3.png") ;checks to see if the search icon is activated
 		{
 			MouseMove(%&xs%, %&ys%)
 			SendInput("{Click 2}")
@@ -1772,18 +1856,18 @@ rvalhold(property, plus, rfelseval)
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector.png")
 		goto video
-	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector2.png")
+	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
 		{
 			MouseMove(%&xi%, %&yi%)
 			click ;this opens the inspector tab
 			goto video
 		}
 	video:
-	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "video.png") ;if you're already in the video tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "video.png") ;if you're already in the video tab, it'll find this image then move on
 		goto rest
-	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "videoN.png") ;if you aren't already in the video tab, this line will search for it
+	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") ;if you aren't already in the video tab, this line will search for it
 		{
 			MouseMove(%&xn%, %&yn%)
 			click ;"2196 139" ;this highlights the video tab
@@ -1797,9 +1881,9 @@ rvalhold(property, plus, rfelseval)
 		}
 	rest:
 	;MouseMove 2329, 215 ;moves to the scale value.
-	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&property% ".png") ;searches for the property of choice
+	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% ".png") ;searches for the property of choice
 		MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
-	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 		MouseMove(%&xz% + %&plus%, %&yz% + "5")
 	else
 		{
@@ -1835,12 +1919,12 @@ rflip(button)
 	coordw()
 	blockOn()
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "videoN.png") ;makes sure the video tab is selected
+	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") ;makes sure the video tab is selected
 		{
 			MouseMove(%&xn%, %&yn%)
 			click
 		}
-	if ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&button% ".png") ;searches for the button when it isn't activated already
+	if ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% ".png") ;searches for the button when it isn't activated already
 		{
 			MouseMove(%&xh%, %&yh%)
 			click
@@ -1848,7 +1932,7 @@ rflip(button)
 			blockOff()
 			return
 		}
-	else if ImageSearch(&xho, &yho, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") %&button% "2.png") ;searches for the button when it is activated already
+	else if ImageSearch(&xho, &yho, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% "2.png") ;searches for the button when it is activated already
 		{
 			MouseMove(%&xho%, %&yho%)
 			click
@@ -1874,18 +1958,18 @@ rgain(value)
 	blockOn()
 	SendInput(resolveSelectPlayhead)
 	MouseGetPos(&xpos, &ypos)
-	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector.png")
+	if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector.png")
 		goto audio
-	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " EnvGet("Resolve") "inspector2.png")
+	else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
 		{
 			MouseMove(%&xi%, %&yi%)
 			click ;this opens the inspector tab
 			goto audio
 		}
 	audio:
-	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "audio2.png") ;if you're already in the audio tab, it'll find this image then move on
+	if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio2.png") ;if you're already in the audio tab, it'll find this image then move on
 		goto rest
-	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " EnvGet("Resolve") "audio.png") ;if you aren't already in the audio tab, this line will search for it
+	else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio.png") ;if you aren't already in the audio tab, this line will search for it
 		{
 			MouseMove(%&xn%, %&yn%)
 			click ;"2196 139" ;this highlights the video tab
@@ -1898,9 +1982,9 @@ rgain(value)
 			return
 		}
 	rest:
-	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") "volume.png") ;searches for the volume property
+	if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume.png") ;searches for the volume property
 		MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
-	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " EnvGet("Resolve") "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
+	else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
 		MouseMove(%&xz% + "215", %&yz% + "5")
 	else
 		{
@@ -1922,7 +2006,7 @@ rgain(value)
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.6.3
+;		VSCode \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -1935,24 +2019,24 @@ vscode(script)
 	coords()
 	blockOn()
 	MouseGetPos(&x, &y)
-	if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") "explorer.png")
+	if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png")
 		{
 			MouseMove(%&xex%, %&yex%)
 			SendInput("{Click}")
 			MouseMove(%&x%, %&y%)
 			sleep 50
 		}
-	if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_Changes.png")
+	if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_Changes.png")
 		goto click
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_nochanges.png")
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_nochanges.png")
 		goto click
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_red.png")
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_red.png")
 		goto click
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_Highlighted.png")
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_Highlighted.png")
 		goto already
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_ChangesHighlighted.png")
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_ChangesHighlighted.png")
 		goto already
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " EnvGet("VSCode") %&script% "_redHighlighted.png")
+	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_redHighlighted.png")
 		goto already
 	else
 		{
@@ -2016,9 +2100,12 @@ numpad000()
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.8.11
+;		Fkey AutoLaunch \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToExplorer()
 {
 	if not WinExist("ahk_class CabinetWClass")
@@ -2032,9 +2119,27 @@ switchToExplorer()
 		GroupActivate "explorers", "r"
 	else
 		if WinExist("ahk_class CabinetWClass")
-		WinActivate "ahk_class CabinetWClass" ;you have to use WinActivatebottom if you didn't create a window group.
+			WinActivate "ahk_class CabinetWClass" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+/*
+ This function when called will close all windows of the desired program EXCEPT the active one. Helpful when you accidentally have way too many windows explorer windows open.
+ @param program is the ahk_class or ahk_exe of the program you want this function to close
+ */
+closeOtherWindow(program)
+{
+	value := WinGetList(%&program%) ;gets a list of all open windows
+	toolCust(value.length - 1 " other window(s) closed", "1000") ;tooltip to display how many explorer windows are being closed
+	for this_value in value
+		{
+			if A_Index > 1 ;closes all windows that AREN'T the last active window
+				WinClose this_value
+		}
+}
+
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToPremiere()
 {
 	if not WinExist("ahk_class Premiere Pro")
@@ -2043,9 +2148,12 @@ switchToPremiere()
 		}
 	else
 		if WinExist("ahk_class Premiere Pro")
-		WinActivate "ahk_class Premiere Pro"
+			WinActivate "ahk_class Premiere Pro"
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToAE()
 {
 	if not WinExist("ahk_exe AfterFX.exe")
@@ -2056,11 +2164,29 @@ switchToAE()
 		}
 	else
 		if WinExist("ahk_exe AfterFX.exe")
-		WinActivate "ahk_exe AfterFX.exe"
+			WinActivate "ahk_exe AfterFX.exe"
 }
 
-switchToFirefox() ;I use this as a nested function below in firefoxTap(), you can just use this separately
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
+switchToPhoto()
+{
+	if not WinExist("ahk_exe Photoshop.exe")
+		{
+		Run A_ScriptDir "\shortcuts\Photoshop.exe.lnk"
+		WinWait("ahk_exe Photoshop.exe")
+		WinActivate("ahk_exe Photoshop.exe")
+		}
+	else
+		if WinExist("ahk_exe Photoshop.exe")
+			WinActivate "ahk_exe Photoshop.exe"
+}
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
+switchToFirefox()
 {
 	if not WinExist("ahk_class MozillaWindowClass")
 		Run "firefox.exe"
@@ -2081,6 +2207,9 @@ switchToFirefox() ;I use this as a nested function below in firefoxTap(), you ca
 		}
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToOtherFirefoxWindow() ;I use this as a nested function below in firefoxTap(), you can just use this separately
 {
 	if WinExist("ahk_exe firefox.exe")
@@ -2097,6 +2226,11 @@ switchToOtherFirefoxWindow() ;I use this as a nested function below in firefoxTa
 		Run "firefox.exe"
 }
 
+/*
+ This function will do different things depending on how many times you press the activation hotkey.
+ 1 press = switchToFirefox()
+ 2 press = switchToOtherFirefoxWindow()
+ */
 firefoxTap()
 {
 	static winc_presses := 0
@@ -2130,42 +2264,54 @@ firefoxTap()
 	}
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToVSC()
 {
 	if not WinExist("ahk_exe Code.exe")
-		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+		Run "C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe"
 		GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
 	if WinActive("ahk_exe Code.exe")
 		GroupActivate "Code", "r"
 	else
 		if WinExist("ahk_exe Code.exe")
-		WinActivate "ahk_exe Code.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+			WinActivate "ahk_exe Code.exe" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToGithub()
 {
 	if not WinExist("ahk_exe GitHubDesktop.exe")
-		Run "C:\Users\Tom\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
+		Run "C:\Users\" A_UserName "\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
 		GroupAdd "git", "ahk_class Chrome_WidgetWin_1"
 	if WinActive("ahk_exe GitHubDesktop.exe")
 		GroupActivate "git", "r"
 	else
 		if WinExist("ahk_exe GitHubDesktop.exe")
-		WinActivate "ahk_exe GitHubDesktop.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+			WinActivate "ahk_exe GitHubDesktop.exe" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToStreamdeck()
 {
 	if not WinExist("ahk_exe StreamDeck.exe")
-		Run "C:\Program Files\Elgato\StreamDeck\StreamDeck.exe"
+		Run A_ProgramFiles "\Elgato\StreamDeck\StreamDeck.exe"
 		GroupAdd "stream", "ahk_class Qt5152QWindowIcon"
 	if WinActive("ahk_exe StreamDeck.exe")
 		GroupActivate "stream", "r"
 	else
 		if WinExist("ahk_exe Streamdeck.exe")
-		WinActivate "ahk_exe StreamDeck.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+			WinActivate "ahk_exe StreamDeck.exe" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToExcel()
 {
 	if not WinExist("ahk_exe EXCEL.EXE")
@@ -2179,9 +2325,31 @@ switchToExcel()
 		GroupActivate "xlmain", "r"
 	else
 		if WinExist("ahk_exe EXCEL.EXE")
-		WinActivate "ahk_exe EXCEL.EXE"
+			WinActivate "ahk_exe EXCEL.EXE"
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
+ switchToWord()
+ {
+	 if not WinExist("ahk_exe WINWORD.EXE")
+		 {
+			 Run A_ProgramFiles "\Microsoft Office\root\Office16\WINWORD.EXE"
+			 WinWait("ahk_exe WINWORD.EXE")
+			 WinActivate("ahk_exe WINWORD.EXE")
+		 }
+	 GroupAdd "wordgroup", "ahk_class wordgroup"
+	 if WinActive("ahk_exe WINWORD.EXE")
+		 GroupActivate "wordgroup", "r"
+	 else
+		 if WinExist("ahk_exe WINWORD.EXE")
+			 WinActivate "ahk_exe WINWORD.EXE"
+ }
+
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToWindowSpy()
 {
 	if not WinExist("WindowSpy.ahk")
@@ -2191,21 +2359,27 @@ switchToWindowSpy()
 		GroupActivate "winspy", "r"
 	else
 		if WinExist("WindowSpy.ahk")
-		WinActivate "WindowSpy.ahk" ;you have to use WinActivatebottom if you didn't create a window group.
+			WinActivate "WindowSpy.ahk" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToYourPhone()
 {
 	if not WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
-		Run "C:\Program Files\ahk\ahk\shortcuts\Your Phone.lnk"
+		Run A_ProgramFiles "\ahk\ahk\shortcuts\Your Phone.lnk"
 	GroupAdd "yourphone", "ahk_class ApplicationFrameWindow"
 	if WinActive("Your Phone")
 		GroupActivate "yourphone", "r"
 	else
 		if WinExist("Your Phone")
-		WinActivate "Your Phone" ;you have to use WinActivatebottom if you didn't create a window group.
+			WinActivate "Your Phone" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToEdge()
 {
 	if not WinExist("ahk_exe msedge.exe")
@@ -2219,9 +2393,12 @@ switchToEdge()
 		GroupActivate "git", "r"
 	else
 		if WinExist("ahk_exe msedge.exe")
-		WinActivate "ahk_exe msedge.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+			WinActivate "ahk_exe msedge.exe" ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
+/*
+ This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+ */
 switchToMusic()
 {
 	GroupAdd("MusicPlayers", "ahk_exe wmplayer.exe")
@@ -2230,99 +2407,153 @@ switchToMusic()
 	GroupAdd("MusicPlayers", "ahk_exe foobar2000.exe")
 	if not WinExist("ahk_group MusicPlayers")
 		{
-			toolCust("You have no music player open", "1000")
-			run("D:\Program Files\User\Music")
-			WinWait("ahk_class CabinetWClass")
-			WinActivate "ahk_class CabinetWClass" ;in win11 running explorer won't always activate it, so it'll open in the backround
+			if WinExist("Which MP to open?")
+				return
+			;if there is no music player open, a custom GUI window will open asking which program you'd like to open
+			MyGui := Gui("AlwaysOnTop", "Which MP to open?") ;creates our GUI window
+			MyGui.SetFont("S10") ;Sets the size of the font
+			MyGui.SetFont("W600") ;Sets the weight of the font (thickness)
+			MyGui.Opt("+Resize +MinSize200x10") ;Sets a minimum size for the window
+			;now we define the elements of the GUI window
+			;defining AIMP
+			AIMPGUI := MyGui.Add("Button", "", "AIMP")
+			AIMPGUI.OnEvent("Click", AIMP)
+			;defining Foobar
+			FoobarGUI := MyGui.Add("Button", "", "Foobar")
+			FoobarGUI.OnEvent("Click", Foobar)
+			;defining Windows Media Player
+			WMPGUI := MyGui.Add("Button", "X100 Y7", "WMP")
+			WMPGUI.OnEvent("Click", WMP)
+			;defining VLC
+			VLCGUI := MyGui.Add("Button", "", "VLC")
+			VLCGUI.OnEvent("Click", VLC)
+			;defining music folder
+			FOLDERGUI := MyGui.Add("Button", "X12 Y85", "MUSIC FOLDER")
+			FOLDERGUI.OnEvent("Click", MUSICFOLDER)
+			;Finished with definitions
+			MyGui.Show()
+			;below is what happens when you click on each name
+			AIMP(*) {
+				Run("C:\Program Files (x86)\AIMP\AIMP.exe")
+				WinWait("ahk_exe AIMP.exe")
+				WinActivate("ahk_exe AIMP.exe")
+				MyGui.Destroy()
+			}
+			Foobar(*) {
+				Run("C:\Program Files (x86)\foobar2000\foobar2000.exe")
+				WinWait("ahk_exe foobar2000.exe")
+				WinActivate("ahk_exe foobar2000.exe")
+				MyGui.Destroy()
+			}
+			WMP(*) {
+				Run("C:\Program Files (x86)\Windows Media Player\wmplayer.exe")
+				WinWait("ahk_exe wmplayer.exe")
+				WinActivate("ahk_exe wmplayer.exe")
+				MyGui.Destroy()
+			}
+			VLC(*) {
+				Run("C:\Program Files (x86)\VideoLAN\VLC\vlc.exe")
+				WinWait("ahk_exe vlc.exe")
+				WinActivate("ahk_exe vlc.exe")
+				MyGui.Destroy()
+			}
+			MUSICFOLDER(*) {
+				Run("D:\Program Files\User\Music\")
+				WinWait("Music")
+				WinActivate("Music")
+				MyGui.Destroy()
+			}
 		}
 	if WinActive("ahk_group MusicPlayers")
 		{
 			GroupActivate "MusicPlayers", "r"
-			IME := WinGetTitle("A")
-			if IME = "Default IME"
-				GroupActivate "MusicPlayers", "r"
+			loop {
+				IME := WinGetTitle("A")
+				if IME = "Default IME"
+					GroupActivate "MusicPlayers", "r"
+				if IME != "Default IME"
+					break
+			}
 		}
-		
 	else
 		if WinExist("ahk_group MusicPlayers")
 			{
 				WinActivate
-				IME := WinGetTitle("A")
-				if IME = "Default IME"
-					WinActivate("ahk_group MusicPlayers")
+				loop {
+					IME := WinGetTitle("A")
+					if IME = "Default IME"
+						WinActivate("ahk_group MusicPlayers")
+					if IME != "Default IME"
+						break
+				}
 			}
 	;window := WinGetTitle("A") ;debugging
 	;toolCust(window, "1000") ;debugging
 }
+
+musicGUI()
+{
+	if WinExist("Which MP to open?")
+		return
+	;if there is no music player open, a custom GUI window will open asking which program you'd like to open
+	MyGui := Gui("AlwaysOnTop", "Which MP to open?") ;creates our GUI window
+	MyGui.SetFont("S10") ;Sets the size of the font
+	MyGui.SetFont("W600") ;Sets the weight of the font (thickness)
+	MyGui.Opt("+Resize +MinSize200x10") ;Sets a minimum size for the window
+	;now we define the elements of the GUI window
+	;defining AIMP
+	AIMPGUI := MyGui.Add("Button", "", "AIMP")
+	AIMPGUI.OnEvent("Click", AIMP)
+	;defining Foobar
+	FoobarGUI := MyGui.Add("Button", "", "Foobar")
+	FoobarGUI.OnEvent("Click", Foobar)
+	;defining Windows Media Player
+	WMPGUI := MyGui.Add("Button", "X100 Y7", "WMP")
+	WMPGUI.OnEvent("Click", WMP)
+	;defining VLC
+	VLCGUI := MyGui.Add("Button", "", "VLC")
+	VLCGUI.OnEvent("Click", VLC)
+	;defining music folder
+	FOLDERGUI := MyGui.Add("Button", "X12 Y85", "MUSIC FOLDER")
+	FOLDERGUI.OnEvent("Click", MUSICFOLDER)
+	;Finished with definitions
+	MyGui.Show()
+	;below is what happens when you click on each name
+	AIMP(*) {
+		Run("C:\Program Files (x86)\AIMP\AIMP.exe")
+		WinWait("ahk_exe AIMP.exe")
+		WinActivate("ahk_exe AIMP.exe")
+		MyGui.Destroy()
+	}
+	Foobar(*) {
+		Run("C:\Program Files (x86)\foobar2000\foobar2000.exe")
+		WinWait("ahk_exe foobar2000.exe")
+		WinActivate("ahk_exe foobar2000.exe")
+		MyGui.Destroy()
+	}
+	WMP(*) {
+		Run("C:\Program Files (x86)\Windows Media Player\wmplayer.exe")
+		WinWait("ahk_exe wmplayer.exe")
+		WinActivate("ahk_exe wmplayer.exe")
+		MyGui.Destroy()
+	}
+	VLC(*) {
+		Run("C:\Program Files (x86)\VideoLAN\VLC\vlc.exe")
+		WinWait("ahk_exe vlc.exe")
+		WinActivate("ahk_exe vlc.exe")
+		MyGui.Destroy()
+	}
+	MUSICFOLDER(*) {
+		Run("D:\Program Files\User\Music\")
+		WinWait("Music")
+		WinActivate("Music")
+		MyGui.Destroy()
+	}
+}
 ; ===========================================================================================================================================
 ; Old
 ; ===========================================================================================================================================
-/* ;this was the old way of doing the discord functions (v2.0.7) that included just right clicking and making the user do things. I've saved the one with all variations of code it went through, the other two have been removed for cleanup as they were functionally identical
-;PLEASE NOTE, I ORIGINALLY HAD THIS SCRIPT WARP THE MOUSE TO CERTAIN POSITIONS TO HIT THE RESPECTIVE BUTTONS BUT THE POSITION OF BUTTONS IN DISCORD WITHIN THE RIGHT CLICK CONTEXT MENU CHANGE DEPENDING ON WHAT PERMS YOU HAVE IN A SERVER, SO IT WOULD ALWAYS TRY TO DO RANDOM THINGS LIKE PIN A MESSAGE OR OPEN A THREAD. There isn't really anything you can do about that. I initially tried to just send through multiple down/up inputs but apparently discord rate limits you to like 1 input every .5-1s so that's fun.
-discedit()
-{
-	{
-		coords()
-		MouseGetPos(&x, &y)
-		blockOn()
-		if(%&y% > 876) ;this value will need to be adjusted per your monitor. Because my monitor is rotated to sit vertically, "lower" on my screen is actually a higher y pixel value, hence the > instead of <
-			{
-				click "right"
-				MouseMove(%&x%, 948) ;this value will need to be adjusted per your monitor - it's where the edit button sits when your mouse is towards the bottom of discord
-				MouseMove(29, 0,, "R")
-				;blockOff()
-				;keywait "LButton", "D" ;tried to make it so the user presses the button you want since it moves everywhere depending on what perms you have in a server
-				;click					;but it was too disorienting to make the user move, click, then warp the mouse back to the og position so
-				;MouseMove(%&x%, %&y%)	;this is the best you can do here with the limitations of discord
-			}
-		else
-			{
-				click "right"
-				MouseMove(29, 111,, "R") ;the y value here will need to be adjusted per your monitor
-				;blockOff()				;I'll preserve this code in this first script, but remove it from the following two examples
-				;keywait "LButton", "D"
-				;click
-				;MouseMove(%&x%, %&y%)
-			}
-		blockOff()
-	}
-}
-
-this is the original way of doing value hold. Theoretically this isn't that bad, but if I move my effect controls too much, it would theoretically break
-valuehold(x1, y1, x2, y2, button, data, optional) ;a preset to warp to one of a videos values (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-;&x1 is the pixel value for the first x coord for PixelSearch
-;&y1 is the pixel value for the first y coord for PixelSearch
-;&x2 is the pixel value for the second x coord for PixelSearch
-;&y2 is the pixel value for the second y coord for PixelSearch
-;&button is what button the function is being activated by (if you call this function from F1, put F1 here for example)
-;&data is what the script is typing in the text box (what your reset values are. ie 960 for a pixel coord, or 100 for scale)
-;&optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
-{
-	coords()
-	blockOn()
-	MouseGetPos(&xpos, &ypos)
-		;MouseMove 226, 1079 ;move to the "x" value
-		;if ImageSearch(&x, &y, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\position.png") ;moves to the position variable ;using an imagesearch here like this is only useful if I make the mouse move across until it "finds" the blue text. idk how to do that yet so this is getting commented out for now
-			;MouseMove(%&x%, %&y%)
-		if PixelSearch(&xcol, &ycol, %&x1%, %&y1%, %&x2%, %&y2%, 0x288ccf, 3) ;looks for the blue text to the right of scale
-			MouseMove(%&xcol% + %&optional%, %&ycol%)
-		sleep 100
-		SendInput("{Click Down}")
-			if GetKeyState(%&button%, "P")
-			{
-				blockOff()
-				KeyWait %&button%
-				SendInput("{Click Up}")
-				MouseMove(%&xpos%, %&ypos%)
-			}
-			else
-			{
-				fElse(%&data%) ;check MS_functions.ahk for the code to this preset
-				MouseMove(%&xpos%, %&ypos%)
-				blockOff()
-			}
-}
-
+/*
 gain() ;old gain code (v2.3.14)to use imagesearch instead of the ClassNN information
 	/*
 	if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png")

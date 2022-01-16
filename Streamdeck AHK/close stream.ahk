@@ -7,10 +7,10 @@ DetectHiddenWindows(true)
 
 				WinActivate
 				sleep 50
-				WinMove 2553, -892, 1111, 1047
+				WinMove 2553, -926, 1104, 1087
 				coordmode "pixel", "window"
 				coordmode "mouse", "window"
-				MouseMove(1022, 926)
+				MouseMove(1017, 927)
 				click
 			}
 	if WinExist("ahk_exe foobar2000.exe")
@@ -75,7 +75,7 @@ DetectHiddenWindows(true)
 			ProcessClose("ApplicationDj.exe")
 		}
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, -280, 1080, 1537
+		WinMove 4480, -303, 1081, 1537
 	if WinExist("ahk_exe Docker Desktop.exe")
 		{
 			;WinRestore

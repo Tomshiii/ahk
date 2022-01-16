@@ -7,25 +7,28 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\keyboard.ico")
 ;SetCapsLockState "AlwaysOff" ;having this on broke my main script for whatever reason
 SetNumLockState "AlwaysOn"
 #SingleInstance Force ;only one instance of this script may run at a time!
-A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
+;A_MenuMaskKey := "vk07" ;https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.3.1
+;\\v2.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.6.11
+;\\v2.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5.1
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE SIMPLY ADJUSTED IT TO WORK IN AHK v2.0
-; ALSO I CURRENTLY ONLY USE A LIL NUMPAD NOT A WHOLE KEYBOARD SO EVERYTHING ELSE HAS BEEN REMOVED
+; ALSO I AM CURRENTLY USING A PLANCK EZ CUSTOM KEYBOARD WITH CUSTOM QMK FIRMWARE AND NOT USING THE HASU USB -> USB CONVERTER. Check Release v2.2.5.1 and below for a version of this script written for a small secondary numpad
 ; ANY OF THE SCRIPTS IN THIS FILE CAN BE PULLED OUT AND THEN REPLACED ON A NORMAL KEY ON YOUR NORMAL KEYBOARD
 ; This script looked very different when initially committed. Its messiness was too much of a pain for me so I've stripped a bunch of
 ; unnecessary comments
 ; \\\\\\\\///////////
 
+/*
+ This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet
+ */
 unassigned() ;create a tooltip for unused keys
 {
 	ToolTip(A_ThisHotkey " is unassigned")
@@ -36,12 +39,33 @@ unassigned() ;create a tooltip for unused keys
 	}
 }
 
+/*
+ This function is specifically designed for this script as I have a button designed to be pressed alongside another just to open new windows
+ @param key is the activation key of the program (not the key to run an additional window). These are NOT listed in KSA simply because this script is so incredibly specific to my workflow
+ @param classorexe is just defining if we're trying to grab the class or exe
+ @param activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
+ @param runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
+ */
+newWin(key, classorexe, activate, runval)
+{
+	KeyWait(%&key%) ;prevent spamming
+	if not WinExist("ahk_" %&classorexe% . %&activate%)
+		{
+			Run(%&runval%)
+			WinWait("ahk_" %&classorexe% . %&activate%)
+			WinActivate("ahk_" %&classorexe% . %&activate%) ;in win11 running explorer won't always activate it, so it'll open in the backround
+		}
+	else
+		Run(%&runval%)
+}
+
+/* 
 dele() ;this is here so manInput() can work, you can just ignore this
 {
 	SendInput("{BackSpace}")
 }
 
-/* ;added functionality in my main script to reload all scripts
+;added functionality in my main script to reload all scripts
 !+r::
 {
 	Reload
@@ -85,7 +109,6 @@ dele() ;this is here so manInput() can work, you can just ignore this
 ;;The Corsair K55 keyboard fires the up and down keystrokes instantly.
 
 ;Numlock is an AWFUL key. I prefer to leave it permanently on.
-;It's been changed to International 6 (SC05C), so you can use it with no fear that it'll mess up your numpad.
 
 ;DEFINE SEPARATE PROGRAMS FIRST, THEN ANYTHING YOU WANT WHEN NO PROGRAM IS ACTIVE ->
 
@@ -94,84 +117,170 @@ dele() ;this is here so manInput() can work, you can just ignore this
 #HotIf WinActive("ahk_exe Adobe Premiere Pro.exe") and getKeyState("F24", "P")
 ;
 ;===========================================================================
-F24::return ;this line is mandatory for proper functionality
-SC05C::unassigned()
+;F24::return ;this line is mandatory for proper functionality
 
-Numpad0::valuehold("level", "0") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
-#MaxThreadsBuffer True
-Numpad1::gain("-2") ;REDUCE GAIN BY -2db
-Numpad2::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
-Numpad3::gain("6") ;INCREASE GAIN BY 6db
-#MaxThreadsBuffer false
-Numpad4::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-Numpad5::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-Numpad6::reset()  ;This script moves to the reset button to reset the "motion" effects
-Numpad7::valuehold("scale", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-Numpad8::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-Numpad9::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+BackSpace::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+SC028 & SC027::manInput("scale", "0", "SC027", "NumpadEnter") ;manually input a scale value
+SC028 & /::manInput("position", "0", "/", "NumpadEnter") ;manually input an x value
+SC028 & .::manInput("position", "60", ".", "NumpadEnter") ;manually input a y value
+SC028 & k::manInput("rotation", "0", "k", "NumpadEnter") ;manually input a rotation value
+SC028 & m::manInput("opacity", "0", "m", "NumpadEnter") ;manually input an opacity value
+SC028 & l::manInput("level", "0", "l", "NumpadEnter") ;manually input a level value
+Enter::reset()
+Enter & SC027::keyreset("scale")
+Enter & /::keyreset("position")
+Enter & .::keyreset("position")
+Enter & l::keyreset("level")
+Enter & k::keyreset("rotation")
+Enter & m::keyreset("opacity")
+Right::unassigned()
 
-;numpadSub::unassigned() ;assigned to file explorer
-NumpadMult::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-NumpadAdd::valuehold("opacity", "0")
-NumpadEnter::unassigned()
-NumpadDot::unassigned()
-NumpadDiv::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-;Backspace::unassigned() ;assigned to after effects
-SC00B::unassigned()
+p::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
+SC027::valuehold("scale", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+/::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+;Up::unassigned()
 
-;manInput() & gainSecondary()
-SC05C & Numpad1::gainSecondary("SC05C", "Numpad1", "NumpadEnter") ;manually input a gain value
+o::preset("parametric")
+l::valuehold("level", "0") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+.::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+;Down::unassigned()
 
-SC05C & Numpad7::manInput("scale", "0", "SC05C", "Numpad7", "NumpadEnter") ;manually input a scale value
-SC05C & Numpad8::manInput("position", "0", "SC05C", "Numpad8", "NumpadEnter") ;manually input an x value
-SC05C & Numpad9::manInput("position", "60", "SC05C", "Numpad9", "NumpadEnter") ;manually input a y value
-SC05C & NumpadMult::manInput("rotation", "0", "SC05C", "Numpad9", "NumpadEnter") ;manually input a rotation value
-SC05C & NumpadAdd::manInput("opacity", "0", "SC05C", "Numpad9", "NumpadEnter") ;manually input an opacity value
+i::preset("croptom")
+k::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+,::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+;Left::unassigned()
 
-;keyframe()
-NumpadEnter & Numpad0::keyframe("level")
-NumpadEnter & Numpad7::keyframe("scale")
-NumpadEnter & Numpad8::keyframe("position")
-NumpadEnter & Numpad9::keyframe("position") ;just incase
-NumpadEnter & NumpadMult::keyframe("rotation")
-NumpadEnter & NumpadAdd::keyframe("opacity")
-; -
-Numpad6 & Numpad0::keyreset("level")
-Numpad6 & Numpad7::keyreset("scale")
-Numpad6 & Numpad8::keyreset("position")
-Numpad6 & Numpad9::keyreset("position") ;just incase
-Numpad6 & NumpadMult::keyreset("rotation")
-Numpad6 & NumpadAdd::keyreset("opacity")
+u::preset("hflip")
+j & SC027::keyframe("scale")
+j & /::keyframe("position")
+j & .::keyframe("position")
+j & l::keyframe("level")
+j & k::keyframe("rotation")
+j & m::keyframe("opacity")
+m::valuehold("opacity", "0")
+;PgUp::unassigned()
 
-e::dele() ;this is here so manInput() can function properly, it's weird, ignore it
-r::unassigned() ;this is here so manInput() can function properly, it's weird, ignore it
+y::preset("vflip")
+h::fxSearch()
+n::unassigned()
+;Space::unassigned()
+
+t::preset("tint 100")
+g::
+{
+	SendInput(timelineWindow)
+	SendInput(selectAtPlayhead)
+	SendInput("^+1")
+}
+b::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+b & Right::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+
+r::preset("Highpass Me")
+f:: ;this macro is to open the speed menu
+{
+	SendInput(timelineWindow)
+	SendInput(timelineWindow)
+	try {
+		loop 3 {
+			effClassNN := ControlGetClassNN(ControlGetFocus("A"))
+			if effClassNN != "DroverLord - Window Class3"
+				break
+			sleep 30
+		}
+	} catch as e {
+		toolCust("something broke", "1000")
+		Exit
+	}
+	SendInput(selectAtPlayhead speedHotkey)
+}
+v::unassigned()
+;PgDn::unassigned()
+
+e::gain("-2") ;REDUCE GAIN BY -2db
+d::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
+c::gain("-6") ;REDUCE GAIN BY -6db
+End::gain("6") ;INCREASE GAIN BY 6db
+
+w::unassigned()
+s::unassigned()
+x::unassigned()
+;F15::unassigned()
+
+q::unassigned()
+a::unassigned()
+z::unassigned()
+F16::unassigned()
+
+;Tab::unassigned()
+Esc::unassigned()
+F13::unassigned()
+Home::unassigned()
 
 ;===========================================================================
 ;
 #HotIf WinActive("ahk_exe AfterFX.exe") and getKeyState("F24", "P")
 ;
 ;===========================================================================
-SC05C::unassigned()
+;F24::return ;this line is mandatory for proper functionality
 
-Numpad0::unassigned()
-Numpad1::unassigned()
-Numpad2::unassigned()
-Numpad3::unassigned()
-Numpad4::unassigned()
-Numpad5::unassigned()
-Numpad6::unassigned()
-Numpad7::aevaluehold(scaleProp, "scale", "0") ;check the keyboard shortcut ini file to adjust hotkeys
-Numpad8::aevaluehold(positionProp, "position", "0") ;check the keyboard shortcut ini file to adjust hotkeys
-Numpad9::aevaluehold(positionProp, "position", "30") ;check the keyboard shortcut ini file to adjust hotkeys
+BackSpace::unassigned()
+SC028::unassigned()
+Enter::unassigned()
+;Right::unassigned()
 
-;numpadSub::unassigned() ;assigned to file explorer
-NumpadMult::aevaluehold(rotationProp, "rotation", "30") ;check the keyboard shortcut ini file to adjust hotkeys
-;NumpadAdd::unassigned() ;assigned to premiere
-NumpadEnter::unassigned()
-NumpadDot::unassigned()
-NumpadDiv::aevaluehold(opacityProp, "opacity", "0") ;check the keyboard shortcut ini file to adjust hotkeys
-;Backspace::unassigned() ;assigned to after effects
-SC00B::unassigned()
+p::aePreset("gaussian blur")
+SC027::aevaluehold(scaleProp, "scale", "0") ;check the keyboard shortcut ini file to adjust hotkeys
+/::aevaluehold(positionProp, "position", "0") ;check the keyboard shortcut ini file to adjust hotkeys
+;Up::unassigned()
+
+o::unassigned()
+l::unassigned()
+.::aevaluehold(positionProp, "position", "30") ;check the keyboard shortcut ini file to adjust hotkeys
+;Down::unassigned()
+
+i::unassigned()
+k::aevaluehold(rotationProp, "rotation", "30") ;check the keyboard shortcut ini file to adjust hotkeys
+,::unassigned()
+;Left::unassigned()
+
+u::unassigned()
+j::unassigned()
+m::aevaluehold(opacityProp, "opacity", "0") ;check the keyboard shortcut ini file to adjust hotkeys
+;PgUp::unassigned()
+
+y::unassigned()
+h::unassigned()
+n::unassigned()
+;Space::unassigned()
+
+t::unassigned()
+g::unassigned()
+b::unassigned()
+
+r::unassigned()
+f::unassigned()
+v::unassigned()
+;PgDn::unassigned()
+
+e::unassigned()
+d::unassigned()
+c::unassigned()
+End::unassigned()
+
+w::aePreset("Drop Shadow")
+s::unassigned()
+x::unassigned()
+;F15::unassigned()
+
+q::unassigned()
+a::unassigned()
+z::unassigned()
+F16::unassigned()
+
+;Tab::unassigned()
+Esc::unassigned()
+F13::unassigned()
+Home::unassigned()
 
 
 ;=============================================================================================================================================
@@ -179,105 +288,237 @@ SC00B::unassigned()
 #HotIf getKeyState("F24", "P") and WinActive("ahk_exe Photoshop.exe")
 ;
 ;=============================================================================================================================================
-F24::return ;this line is mandatory for proper functionality
-SC05C::unassigned()
+;F24::return ;this line is mandatory for proper functionality
 
-Numpad0::unassigned()
-Numpad1::unassigned()
-Numpad2::unassigned()
-Numpad3::unassigned()
-Numpad4::unassigned()
-numpad5::psProp("rotate.png")
-Numpad6::unassigned()
-Numpad7::psProp("scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
-Numpad8::psProp("x.png")
-Numpad9::psProp("y.png")
+BackSpace::unassigned()
+SC028::unassigned()
+Enter::unassigned()
+;Right::unassigned()
 
-;numpadSub::unassigned() ;assigned to file explorer
-NumpadMult::unassigned()
-;NumpadAdd::unassigned() ;assigned to premiere
-NumpadEnter::unassigned()
-NumpadDot::unassigned()
-NumpadDiv::unassigned()
-;Backspace::unassigned() ;assigned to after effects
-SC00B::unassigned()
+p::SendInput("!{t}" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
+SC027::psProp("scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
+/::psProp("x.png")
+;Up::unassigned()
+o::unassigned()
+l::unassigned()
+.::psProp("y.png")
+;Down::unassigned()
 
+i::unassigned()
+k::psProp("rotate.png")
+,::unassigned()
+;Left::unassigned()
 
+u::unassigned()
+j::unassigned()
+m::unassigned()
+;PgUp::unassigned()
+
+y::unassigned()
+h::unassigned()
+n::unassigned()
+;Space::unassigned()
+
+t::unassigned()
+g::unassigned()
+b::unassigned()
+
+r::unassigned()
+f::unassigned()
+v::unassigned()
+;PgDn::unassigned()
+
+e::unassigned()
+d::unassigned()
+c::unassigned()
+End::unassigned()
+
+w::unassigned()
+s::unassigned()
+x::unassigned()
+;F15::unassigned()
+
+q::unassigned()
+a::unassigned()
+z::unassigned()
+F16::unassigned()
+
+;Tab::unassigned()
+Esc::unassigned()
+F13::unassigned()
+Home::unassigned()
 
 ;===========================================================================
 ;
 #HotIf getKeyState("F24", "P") ;<--Everything after this line will only happen on the secondary keyboard that uses F24.
 ;
 ;===========================================================================
-F24::return ;this line is mandatory for proper functionality
+;F24::return ;this line is mandatory for proper functionality
 
+BackSpace::unassigned()
+SC028::unassigned() ; ' key
+Enter::unassigned()
+Enter & Up::closeOtherWindow("ahk_class CabinetWClass")
+Right::unassigned()
+Right & Up::newWin("Up", "class", "CabinetWClass", "explorer.exe")
 
-SC05C::unassigned()
+p::unassigned()
+SC027::unassigned()
+/::unassigned()
+Up::switchToExplorer()
 
-Numpad0::unassigned()
-Numpad1::unassigned()
-Numpad2::unassigned()
-Numpad3::unassigned()
-Numpad4::unassigned()
-Numpad5::unassigned()
-Numpad6::unassigned()
-Numpad7::unassigned()
-Numpad8::unassigned()
-Numpad9::unassigned()
+o::unassigned()
+l::unassigned()
+.::unassigned()
+Down::switchToPremiere()
 
-NumpadSub::switchToExplorer()
-NumpadSub & NumpadMult::
+i::unassigned()
+k::unassigned()
+,::unassigned()
+Left::switchToAE()
+
+u::unassigned()
+j::unassigned()
+m::unassigned()
+SC149::firefoxTap()
+Enter & SC149::closeOtherWindow("ahk_class MozillaWindowClass")
+Right & PgUp::newWin("PgUp", "exe", "firefox.exe", "firefox.exe")
+
+y::unassigned()
+h::unassigned()
+n:: ;this macro is to find the difference between 2 24h timecodes
 {
-	if not WinExist("ahk_class CabinetWClass")
+	start1:
+	time1 := InputBox("Write the Start hhmm time here`nDon't use ':'", "Input Start Time", "w200 h110")
+	if time1.Result = "Cancel"
+		return
+	Length1 := StrLen(time1.Value)
+	if Length1 != "4"
 		{
-			Run "explorer.exe"
-			WinWait("ahk_class CabinetWClass")
-			WinActivate "ahk_class CabinetWClass" ;in win11 running explorer won't always activate it, so it'll open in the backround
+			MsgBox("You didn't write in hhmm format`nTry again", "Start Time")
+			goto start1
 		}
-	else
-		Run "explorer.exe"
+	if time1.Value > 2359
+		{
+			MsgBox("You didn't write in hhmm format`nTry again", "Start Time")
+			goto start1
+		}
+	start2:
+	time2 := InputBox("Write the End hhmm time here`nDon't use ':'", "Input End Time", "w200 h110")
+	if time2.Result = "Cancel"
+		return
+	Length2 := StrLen(time2.Value)
+	if Length2 != "4"
+		{
+			MsgBox("You didn't write in hhmm format`nTry again", "End")
+			goto start2
+		}
+	if time2.Value > 2359
+		{
+			MsgBox("You didn't write in hhmm format`nTry again", "Start Time")
+			goto start2
+		}
+	diff := DateDiff("20220101" time2.Value, "20220101" time1.Value, "seconds")/"3600"
+	value := Round(diff, 2)
+	A_Clipboard := value
+	toolCust(diff "`nor " value, "2000")
 }
-NumpadMult::unassigned()
-numpadAdd::switchToPremiere()
-NumpadEnter::switchToEdge()
-NumpadDot::unassigned()
-NumpadDiv::unassigned()
-Backspace::switchToAE()
-SC00B::unassigned()
+Space::switchToEdge()
+Right & Space::newWin("Space", "exe", "msedge.exe", "msedge.exe")
+Enter & Space::closeOtherWindow("ahk_exe msedge.exe")
 
+t::unassigned()
+g::unassigned()
+b::unassigned()
 
+r::unassigned()
+f::unassigned()
+v::unassigned()
+PgDn::switchToMusic()
+Right & PgDn::musicGUI()
 
+e::unassigned()
+d::unassigned()
+c::unassigned()
+End::unassigned()
 
+w::unassigned()
+s::unassigned()
+x::unassigned()
+F15::switchToPhoto()
 
+q::unassigned()
+a::unassigned()
+z::unassigned()
+F16::unassigned()
 
-
-
-
-
+;Tab::unassigned()
+Esc::unassigned()
+F13::unassigned()
+Home::unassigned()
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
 Everything I use so you can easy copy paste for new programs
 
-SC05C::unassigned()
 
-Numpad0::unassigned()
-Numpad1::unassigned()
-Numpad2::unassigned()
-Numpad3::unassigned()
-Numpad4::unassigned()
-Numpad5::unassigned()
-Numpad6::unassigned()
-Numpad7::unassigned()
-Numpad8::unassigned()
-Numpad9::unassigned()
 
-;numpadSub::unassigned() ;assigned to file explorer
-NumpadMult::unassigned()
-;NumpadAdd::unassigned() ;assigned to premiere
-NumpadEnter::unassigned()
-NumpadDot::unassigned()
-NumpadDiv::unassigned()
-;Backspace::unassigned() ;assigned to after effects
-SC00B::unassigned()
+BackSpace::unassigned()
+SC028::unassigned() ; ' key
+Enter::unassigned()
+;Right::unassigned()
+
+p::unassigned()
+SC027::unassigned()
+/::unassigned()
+;Up::unassigned()
+
+o::unassigned()
+l::unassigned()
+.::unassigned()
+;Down::unassigned()
+
+i::unassigned()
+k::unassigned()
+,::unassigned()
+;Left::unassigned()
+
+u::unassigned()
+j::unassigned()
+m::unassigned()
+;PgUp::unassigned()
+
+y::unassigned()
+h::unassigned()
+n::unassigned()
+;Space::unassigned()
+
+t::unassigned()
+g::unassigned()
+b::unassigned()
+
+r::unassigned()
+f::unassigned()
+v::unassigned()
+;PgDn::unassigned()
+
+e::unassigned()
+d::unassigned()
+c::unassigned()
+End::unassigned()
+
+w::unassigned()
+s::unassigned()
+x::unassigned()
+F15::unassigned()
+
+q::unassigned()
+a::unassigned()
+z::unassigned()
+F16::unassigned()
+
+;Tab::unassigned()
+Esc::unassigned()
+F13::unassigned()
+Home::unassigned()
  */

@@ -1,20 +1,23 @@
-# ahk
+# ![](https://bit.ly/3fjVx8t) ahk [![](https://img.shields.io/github/v/release/Tomshiii/ahk)](https://github.com/Tomshiii/ahk/releases) [![](https://img.shields.io/github/last-commit/tomshiii/ahk/dev?label=last%20commit%20%28dev%29)](https://github.com/Tomshiii/ahk/commits/dev) [![](https://img.shields.io/github/license/tomshiii/ahk)](https://github.com/tomshiii/ahk/blob/main/LICENSE)
+
 This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane and random interactions with a computer.
 
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
-- Video walking through an early version of the [Release 2.1 update](https://youtu.be/JF_WISVJsPU)
-  - Video walking through _all (at the time)_ of my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo)
-      - Video walking through even older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
+- Video walking through an early version of the [Release v2.1 update](https://youtu.be/JF_WISVJsPU) || my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo) || older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
 
-A lot of the code in the earliest versions my scripts was either inspired by, or taken from Taran from LTT (https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into a ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I personally have gone through them and made them function in ahk v2.0).
+[![](https://user-images.githubusercontent.com/53557479/149133968-6c1ff2e0-0140-4eda-95e3-e56164d263a4.png) ![](https://img.shields.io/youtube/channel/subscribers/UCJu2dToEHzuovY6suetkcdQ?style=flat)](https://www.youtube.com/c/tomshiii)
 
-You can watch me use some of these scripts in action while I edit away on twitch when I stream on my bot account: https://www.twitch.tv/botshiii
+A lot of the code in the earliest versions my scripts was either inspired by, or taken from [Taran from LTT](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into a ahk v2.0 compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I personally have gone through them and made them function in ahk v2.0).
+
+You can watch me use some of these scripts in action while I edit away on twitch when I stream on my bot account:
+
+[![](https://user-images.githubusercontent.com/53557479/149135097-0f9ae87a-5157-4524-ae75-34b6aaf81c30.png) ![](https://img.shields.io/twitch/status/botshiii)](https://www.twitch.tv/botshiii)
 
 ### AHK Version Information:
 This repo is to maintain work on the ahk v2.0 versions of my scripts. These scripts ***will not*** work in ahk v1.1, if you want v1.1 compliant versions of these scripts, check [releases 1.0-1.2](https://github.com/Tomshiii/ahk/releases) in this repo. They are severely outdated and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
 
 ## QMK Keyboard:
-My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [Hasu USB-USB converter](https://geekhack.org/index.php?topic=109514.0) or a custom keyboard, allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
+My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [Hasu USB-USB converter](https://geekhack.org/index.php?topic=109514.0) OR a custom keyboard along with custom firmware, allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
 
 ## What to do:
 1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 Beta](https://www.autohotkey.com/v2/).
@@ -26,11 +29,12 @@ My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](h
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
      - It is recommended you use VSCode as a lot of my variables have dynamic comments that can be viewed across the entire program that could help you understand what is going on.
-4. Save these scripts in "C:\Program Files\ahk\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder perms so it doesn't harass you about admin privileges all the time)
+4. Save these scripts in "C:\Program Files\ahk\ahk\" if you want all the directory information to just line up without any editing. (you may have to give this folder permissions within windows so it doesn't harass you about admin privileges all the time)
 5. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs as well as define coordinates for a large chunk of the imagesearches used within these scripts!
 6. Edit, then run any of the .ahk files to then use to your liking!
+- If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
 
-  - Scripts that will work with no tinkering include ->
+- Scripts that will work with no tinkering include ->
      - Alt Menu acceleration disabler
      - autodismiss error
      
@@ -49,7 +53,8 @@ An ini file/ahk script combo for defining all keyboard shortcuts for programs th
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
 
 #### [QMK Keyboard.ahk](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk)
-A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons).
+A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.2.6+](https://github.com/Tomshiii/ahk/releases/tag/v2.2.6) I use a Planck Ez custom keyboard.
+Check out [\Secondary Keyboard Files](https://github.com/Tomshiii/ahk/tree/main/Secondary%20Keyboard%20Files) for more information on how that works.
 
 #### [MS_functions.ahk](https://github.com/Tomshiii/ahk/blob/main/MS_functions.ahk) (My Scripts_functions)
 A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [#Include(d)](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to;

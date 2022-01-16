@@ -10,11 +10,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.19
+;\\v2.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.8.8
+;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.3.1
+;\\v2.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5.1
@@ -32,7 +32,11 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
 ; Its purpose is to help speed up editing and random interactions with windows.
-; You are free to modify this script to your own personal uses/needs
+; Copyright (C) <2022>  <Tom Tomshi>
+;
+; You are free to modify this script to your own personal uses/needs, but you must follow the terms shown in the license file in the root directory of this repo (basically just keep source code available)
+; You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>
+;
 ; Please give credit to the foundation if you build on top of it, similar to how I have below, otherwise you're free to do as you wish
 ; Youtube playlist going through some of my AHK changes/updates (https://www.youtube.com/playlist?list=PL8txOlLUZiqXXr2PNOsNSXeCB1171lQ1b)
 ;
@@ -47,7 +51,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ; I now use VSCode which can be found here: https://code.visualstudio.com/
 ; AHK (and v2.0) syntax highlighting can be installed within the program itself.
 
-;Any EnvGet() are defined in MS_Functions.ahk
+; If you EVER get stuck in some code within any of these scripts REFRESH THE SCRIPT - by default I have it set to win + shift + r - and it will work anywhere (unless you're clicked on a program run as admin) if refreshing doesn't work open up task manager with ctrl + shift + esc and use your keyboard to find all instances of autohotkey and force close them
 
 ;=============================================================================================================================================
 ;
@@ -77,7 +81,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 				if WinExist("ahk_exe Code.exe")
 						WinActivate
 				else
-					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+					Run "C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe"
 			}
 }
 
@@ -88,12 +92,13 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;		launch programs
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
+#HotIf not GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
 PgUp::switchToExcel() ;run microsoft excel.
 Pause::switchToWindowSpy() ;run windowspy
 RWin::switchToVSC() ;run vscode
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
-PgDn::firefoxTap() ;open firefox with one tap, switches between windows with two, runs another insance with three
 PrintScreen::SendInput("^+{Esc}")
+PgDn::switchToWord()
 
 ;These two scripts are to open highlighted text in the ahk documentation
 AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
@@ -103,6 +108,23 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	Send("^c")
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
+}
+F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random
+{
+	run "C:\Program Files (x86)\foobar2000\foobar2000.exe" ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
+	WinWait("ahk_exe foobar2000.exe")
+	if WinExist("ahk_exe foobar2000.exe")
+		WinActivate
+	sleep 1000
+	WinGetPos(,, &width, &height, "A")
+	MouseGetPos(&x, &y)
+	if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " A_WorkingDir "\ImageSearch\Foobar\pokemon.png")
+		{
+			MouseMove(%&xdir%, %&ydir%)
+			SendInput("{Click}")
+		}			
+	SendInput("!p" "a")
+	MouseMove(%&x%, %&y%)
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,7 +138,7 @@ F14:: ;open the "show more options" menu in win11
 {
 	MouseGetPos(&mx, &my)
 	WinGetPos(,, &width, &height, "A")
-	colour1 := 0x4D4D4D
+	colour1 := 0x4D4D4D ;when hovering a folder
 	colour2 := 0xFFDA70
 	colour3 := 0x353535 ;when already clicked on
 	colour4 := 0x777777 ;when already clicked on
@@ -127,37 +149,37 @@ F14:: ;open the "show more options" menu in win11
 			WinMaximize
 			return
 		}
-	else if ImageSearch(&x, &y, 0, 0, %&width%, %&height%, "*5 " EnvGet("Explorer") "showmore.png")
+	else if ImageSearch(&x, &y, 0, 0, %&width%, %&height%, "*5 " Explorer "showmore.png")
 		{
 			;toolCust(colour "`n imagesearch fired", "1000") ;for debugging
 			;SendInput("{Esc}")
 			;SendInput("{Click}")
 			if colour = colour1 || colour = colour2
 				{
-					SendInput("{Click}")
-					SendInput("+{F10}")
+					;SendInput("{Click}")
+					SendInput("{Esc 3}" "+{F10}")
 				}
 			else
-				SendInput("+{F10}" "+{F10}")
+				SendInput("{Esc}" "+{F10}" "+{F10}")
 			return
 		}
 	else if (colour = colour1 || colour = colour2)
 		{
 			;toolCust(colour "`n colour1&2 fired", "1000") ;for debugging
 			SendInput("{Click}")
-			SendInput("+{F10}")
+			SendInput("{Esc}" "+{F10}")
 			return
 		}
 	else if (colour = colour3 || colour = colour4)
 		{
 			;toolCust(colour "`n colour3&4 fired", "1000") ;for debugging
-			SendInput("+{F10}")
+			SendInput("{Esc}" "+{F10}")
 			return
 		}
 	else
 		{
 			;toolCust(colour "`n final else fired", "1000") ;for debugging
-			SendInput("+{F10}")
+			SendInput("{Esc}" "+{F10}")
 			return
 		}	
 }
@@ -171,34 +193,67 @@ F14:: ;open the "show more options" menu in win11
 #HotIf WinActive("ahk_exe firefox.exe")
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {
+	coords()
+	MouseGetPos(&x, &y)
+	coordw()
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	Loop 40
+	title := WinGetTitle("A")
+	if (InStr(title, needle))
 		{
-			title := WinGetTitle("A")
-			;WinGetTitle title
-			if not WinActive("ahk_exe firefox.exe")
-				break
-			if (InStr(title, needle))
-				Break
-			Else
-				send "^{Tab}"
-			sleep 25
-			if A_Index = 8
-				switchToOtherFirefoxWindow()
-			if A_Index = 16
-				switchToOtherFirefoxWindow()
-			if A_Index = 24
-				switchToOtherFirefoxWindow()
-			if A_Index = 30
-				switchToOtherFirefoxWindow()
-			if A_Index = 36
-				{
-					SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
-					return
-				}
+			SendInput("{Space}")
+			return
 		}
-	SendInput("{Space}") ;if it finds a youtube window it will hit space to pause/play it
+	else loop {
+		WinGetPos(,, &width,, "A")
+		if ImageSearch(&xpos, &ypos, 0, 0, %&width%, "60", "*2 " firefox "youtube1.png")
+			{
+				MouseMove(%&xpos%, %&ypos%, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
+				SendInput("{Click}")
+				coords()
+				MouseMove(%&x%, %&y%, 2)
+				break
+			}
+		else if ImageSearch(&xpos, &ypos, 0, 0, %&width%, "60", "*2 " firefox "youtube2.png")
+			{
+				MouseMove(%&xpos%, %&ypos%, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
+				SendInput("{Click}")
+				coords()
+				MouseMove(%&x%, %&y%, 2)
+				break
+			}
+		else
+			switchToOtherFirefoxWindow()
+		if A_Index > 5
+			{
+				toolCust("Couldn't find a youtube tab", "1000")
+				WinActivate(title) ;reactivates the original window
+				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
+				return
+			}
+	}
+	SendInput("{Space}")
+}
+
+;the below disables the numpad on youtube so you don't accidentally skip around a video
+Numpad0::
+Numpad1::
+Numpad2::
+Numpad3::
+Numpad4::
+Numpad5::
+Numpad6::
+Numpad7::
+Numpad8::
+Numpad9::
+{
+	SetTitleMatchMode 2
+	needle := "YouTube"
+	title := WinGetTitle("A")
+	if (InStr(title, needle))
+		return
+	else
+		SendInput("{" A_ThisHotkey "}")
 }
 ;=============================================================================================================================================
 ;
@@ -226,7 +281,6 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
-F1::SendInput("!{t}" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
 ;F1::psSave()
 
 ;=============================================================================================================================================
@@ -246,7 +300,7 @@ WheelLeft::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to 
 ;
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
-;There use to be a lot of scripts about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
+;There use to be a lot of macros about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
@@ -261,10 +315,10 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
 	;MouseMove 34, 917 ;location of the selection tool
 	if %&height% < 80 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
-		multiply := "2"
+		multiply := "3"
 	else
 		multiply := "1"
-	if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height% * multiply, "*2 " EnvGet("Premiere") "selection.png") ;moves to the selection tool
+	if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height% * multiply, "*2 " Premiere "selection.png") ;moves to the selection tool
 			MouseMove(%&x%, %&y%)
 	else
 		{
@@ -284,15 +338,17 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			KeyWait("Ctrl")
 			goto added
 		}
+	SendInput(resetWorkspace)
+	sleep 1500
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	blockOn()
 	coords()
-	if ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project.png") ;searches for the project window to grab the track
+	if ImageSearch(&prx, &pry, 1792, 711, 2559, 1391, "*2 " Premiere "project.png") ;searches for the project window to grab the track
 		goto move
-	else if ImageSearch(&prx, &pry, 1244, 940, 2558, 1394, "*2 " EnvGet("Premiere") "project2.png") ;searches for the project window to grab the track
+	else if ImageSearch(&prx, &pry, 1792, 711, 2559, 1391, "*2 " Premiere "project2.png") ;searches for the project window to grab the track
 		goto move
-	else if ImageSearch(&prx, &pry, 2562, 190, 3594, 1261, "*2 " EnvGet("Premiere") "project2.png")
+	else if ImageSearch(&prx, &pry, 2562, 160, 3594, 1261, "*2 " Premiere "project2.png")
 		goto bin
 	else ;if everything fails, this else will trigger
 		{
@@ -314,7 +370,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	sleep 500
 	coordw()
 	MouseMove(0, 0)
-	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " EnvGet("Explorer") "sfx.png")
+	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Explorer "sfx.png")
 		{
 			MouseMove(%&foldx% + "9", %&foldy% + "5", 2)
 			SendInput("{Click Down}")
@@ -323,7 +379,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			MouseMove(3240, 564, "2")
 			SendInput("{Click Up}")
 			switchToPremiere()
-			Sleep 2000
+			WinWaitClose("Import Files")
+			sleep 100
 		}
 	else
 		{
@@ -333,13 +390,13 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 	added:
 	coordw()
-	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " EnvGet("Premiere") "list view.png")
+	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " Premiere "list view.png")
 		{
 			MouseMove(%&listx%, %&listy%)
 			SendInput("{Click}")
 			sleep 100
 		}
-	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " EnvGet("Premiere") "sfxinproj.png")
+	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj.png")
 		{
 			MouseMove(%&fold2x% + "5", %&fold2y% + "2")
 			SendInput("{Click 2}")
@@ -351,7 +408,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			toolFind("the sfx folder in premiere", "2000")
 			return
 		}
-	if ImageSearch(&fold3x, &fold3y, 10, 3, 1038, 1072, "*2 " EnvGet("Premiere") "binsfx.png")
+	if ImageSearch(&fold3x, &fold3y, 10, 3, 1038, 1072, "*2 " Premiere "binsfx.png")
 		{
 			MouseMove(%&fold3x% + "5", %&fold3y% + "2")
 			SendInput("{Click Down}")
@@ -370,26 +427,6 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	blockOff()
 }
 
-F7::
-{
-	SendInput(timelineWindow)
-	SendInput(selectAtPlayhead)
-	SendInput("^+1")
-}
-
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;
-;		Drag and Drop Effect Presets
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------
-F1::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
-F2::preset("parametric") ;check MS_functions.ahk for the code for these presets
-F5::preset("hflip")
-F3::preset("croptom")
-F4::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
-F6::preset("tint 100")
-F8::preset("Highpass Me")
-
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
@@ -406,41 +443,6 @@ F20::audioDrag("bleep")
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
-;		Excel
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------
-#HotIf WinActive("ahk_exe EXCEL.EXE")
-F12:: ;This macro is to do quick time based math while using excel, input 2 hhmm values to find the difference between the two
-{
-	start1:
-	time1 := InputBox("Write the Start hhmm time here`nDon't use ':'", "Input Start Time", "w200 h110")
-	if time1.Result = "Cancel"
-		return
-	Length1 := StrLen(time1.Value)
-	if Length1 != "4"
-		{
-			MsgBox("You didn't write in hhmm format`nTry again", "Start Time")
-			goto start1
-		}
-	start2:
-	time2 := InputBox("Write the End hhmm time here`nDon't use ':'", "Input End Time", "w200 h110")
-	if time2.Result = "Cancel"
-		return
-	Length2 := StrLen(time2.Value)
-	if Length2 != "4"
-		{
-			MsgBox("You didn't write in hhmm format`nTry again", "End")
-			goto start2
-		}
-	diff := DateDiff("20220101" time2.Value, "20220101" time1.Value, "seconds")/"3600"
-	value := Round(diff, 2)
-	A_Clipboard := value
-	toolCust(diff "`nor " value, "2000")
-}
-
-
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;
 ;		other - NOT an editor
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -449,11 +451,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 ^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
 ^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
-^+d:: ;Make discord bigger so I can actually read stuff when not streaming
-{
-	if WinExist("ahk_exe Discord.exe")
-		WinMove 4480, -280, 1080, 1537
-}
+^+d::discLocation() ;Make discord bigger so I can actually read stuff when not streaming
 
 F14::moveWin("") ;maximise
 XButton2::moveWin("#{Left}") ;snap left
