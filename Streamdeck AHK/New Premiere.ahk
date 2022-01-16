@@ -9,8 +9,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         SelectedFolder := DirSelect("*E:\", 3, "Create your desired folder then select it.")
         if SelectedFolder = ""
             return
-        DirCreate(SelectedFolder "\videos")
-        DirCreate(SelectedFolder "\audio")
+        DirCreate(SelectedFolder "\videos") ;creates a video folder if there isn't one already
+        DirCreate(SelectedFolder "\audio") ;creates an audio folder if there isn't one already
         DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
         DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
         DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
@@ -42,7 +42,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 SendInput("{Enter}")
                 sleep 1000
                 if ImageSearch(&xin, &yin, 0, 0, 629, 348, "*2 " Premiere "ingest.png")
-                    {
+                    { ;this whole thing relies on a lot of well timed sleeps that are tailored to my systems performance when performing this macro, chances are if you're on a slower system some of these may need to be boosted (especially the longer ones)
                         Click(%&xin%, %&yin%)
                         sleep 500
                         SendInput("{Tab 6}" "{Space}")

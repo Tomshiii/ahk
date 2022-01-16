@@ -5,6 +5,7 @@ if WinExist("Google Slides")
         if WinActive()
             {
                 SendInput("{Right}")
+                ExitApp()
             }
         else
             {

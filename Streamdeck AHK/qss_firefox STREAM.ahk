@@ -22,8 +22,7 @@ if WinExist("Settings")
     WinActivate()
 if WinActive("Settings")
     WinMaximize()
-coordmode "pixel", "window"
-coordmode "mouse", "window"
+coordw()
 MouseMove(789, 375)
 sleep 1000 ;this is necessary otherwise the imagesearches will try to fire before the window even loads
 try {

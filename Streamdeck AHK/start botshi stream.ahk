@@ -12,8 +12,8 @@ if not WinExist("ahk_exe obs64.exe")
 		MouseGetPos &xposP, &yposP
 		blockOn()
 		WinActivate("ahk_exe obs64.exe")
-		SendInput "{Click}!p" ;I have to physically click on streamelements obs before it will accept any inputs, I have no idea why, this didn't happen originally but started happening in obs 27
-		sleep 200 ;either these sleeps are necessary, or every SendInput needs to be on a separate line, obs can't take inputs that fast and breaks
+		SendInput "!p"
+		sleep 200
 		SendInput "{DOWN 6}"
 		sleep 200
 		SendInput "{ENTER}"
