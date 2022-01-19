@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9
+;\\v2.9.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5.1
@@ -2006,57 +2006,53 @@ rgain(value)
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.9
+;		VSCode \\ Last updated: v2.9.1
 ;
 ; ===========================================================================================================================================
 /* vscode()
- A function to quickly naviate between my scripts
- @param script is just what script I want to open
- */
+ A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
+ @param script is what script I want to open and is referenced within the code itself. You cannot simply write anything for this value and you must change some associated code as well
+*/
 vscode(script)
 {
+	/* The below will define how far down the Y axis each script is */
+	change := 479
+	msFunc := 533
+	myScripts := 560
+	qmk := 587
+	/*           */
 	KeyWait(A_PriorKey)
-	coords()
+	coordw()
 	blockOn()
 	MouseGetPos(&x, &y)
-	if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png")
+	if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png") ;this imagesearch is checking to ensure you're in the explorer tab
 		{
 			MouseMove(%&xex%, %&yex%)
 			SendInput("{Click}")
 			MouseMove(%&x%, %&y%)
 			sleep 50
 		}
-	if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_Changes.png")
-		goto click
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_nochanges.png")
-		goto click
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_red.png")
-		goto click
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_Highlighted.png")
-		goto already
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_ChangesHighlighted.png")
-		goto already
-	else if ImageSearch(&xpos, &ypos, 0, 0, 460, 1390, "*2 " VSCodeImage %&script% "_redHighlighted.png")
-		goto already
-	else
+	if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "collapse.png") ;this imagesearch finds the collapse folders button, presses it twice, then moves across and presses the refresh button
 		{
-			blockOff()
-			toolFind("the script", "1000")
-			return
+			MouseMove(%&xex%, %&yex%)
+			SendInput("{Click 2}")
+			MouseMove(-271, 40,, "R")
+			SendInput("{Click}")
 		}
-	already:
-	{
-		blockOff()
-		toolCust("you're already in the &" %&script% A_Space "script`nyou dork", "2000")
-		return
-	}
-	click:
-	MouseMove(%&xpos%, %&ypos%)
+	;;the below references whatever you put in the () of the function call itself and is used to be able to move multiple different amounts. Feel free to change the above values and what the calls are called to your needs
+	if %&script% = "change"
+		MouseMove(0, change,, "R")
+	if %&script% = "msFunc"
+		MouseMove(0, msFunc,, "R")
+	if %&script% = "myScripts"
+		MouseMove(0, myScripts,, "R")
+	if %&script% = "qmk"
+		MouseMove(0, qmk,, "R")
 	SendInput("{Click}")
 	MouseMove(%&x%, %&y%)
+	SendInput(focusCode)
 	blockOff()
 }
-
 ; ===========================================================================================================================================
 ;
 ;		QMK Stuff \\ Last updated: v2.5.~
@@ -2100,7 +2096,7 @@ numpad000()
 
 ; ===========================================================================================================================================
 ;
-;		Fkey AutoLaunch \\ Last updated: v2.9
+;		switch/launch scripts \\ Last updated: v2.9
 ;
 ; ===========================================================================================================================================
 /*

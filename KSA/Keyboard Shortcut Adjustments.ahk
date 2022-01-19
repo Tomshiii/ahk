@@ -434,6 +434,14 @@ speedHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "H
  */
 longSkip := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "10s skip")
 
+/*
+ This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+*/
+focusCode := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "focus code")
+
+
+
+
 ;[ImageSearchCoords]
 
 ;[Premiere]

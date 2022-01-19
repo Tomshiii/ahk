@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.1
+;\\v2.8.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -185,10 +185,10 @@ F14:: ;open the "show more options" menu in win11
 }
 
 #HotIf WinActive("ahk_exe Code.exe")
-!a::vscode("MS") ;clicks on the my scripts script in vscode
-!f::vscode("Func") ;clicks on my msfunctions script in vscode 
-!q::vscode("QMK") ;clicks on my qmk script in vscode
-!c::vscode("Change") ;clicks on my changelog file in vscode
+!a::vscode("myScripts") ;clicks on the my scripts script in vscode
+!f::vscode("msFunc") ;clicks on my msfunctions script in vscode 
+!q::vscode("qmk") ;clicks on my qmk script in vscode
+!c::vscode("change") ;clicks on my changelog file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 Media_Play_Pause:: ;pauses youtube video if there is one.
