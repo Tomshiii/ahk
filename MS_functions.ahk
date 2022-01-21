@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.1
+;\\v2.9.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.2.5.1
@@ -204,7 +204,7 @@ monitorWarp(x, y)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.9
+;		discord \\ Last updated: v2.9.2
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -273,13 +273,13 @@ disc(button)
  */
 discLocation()
 {
-	position0 := 4480, -303, 1081, 1537 ;we use position0 as a reference later to compare against another value. This is the same coordinates as disc0() down below, make sure you change THEM BOTH
-	position1 := 4480, -627, 1081, 1861 ;we use position1 as a reference later to compare against another value. This is the same coordinates as disc1() down below, make sure you change THEM BOTH
+	position0 := 4480, -123, 1081, 1537 ;we use position0 as a reference later to compare against another value. This is the same coordinates as disc0() down below, make sure you change THEM BOTH
+	position1 := -1080, 75, 1080, 1537 ;we use position1 as a reference later to compare against another value. This is the same coordinates as disc1() down below, make sure you change THEM BOTH
 	disc0() { ;define your first (defult) position here
-		WinMove(4480, -303, 1081, 1537, "ahk_exe Discord.exe")
+		WinMove(4480, -123, 1081, 1537, "ahk_exe Discord.exe")
 	}
 	disc1() { ;define your second position here
-		WinMove(4480, -627, 1081, 1861, "ahk_exe Discord.exe")
+		WinMove(-1080, 75, 1080, 1537, "ahk_exe Discord.exe")
 	}
 	try { ;this try is here as if you close a window, then immediately try to fire this function there is no "original" window
 		original := WinGetID("A")
@@ -2006,7 +2006,7 @@ rgain(value)
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.9.1
+;		VSCode \\ Last updated: v2.9.2
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -2038,6 +2038,12 @@ vscode(script)
 			SendInput("{Click 2}")
 			MouseMove(-271, 40,, "R")
 			SendInput("{Click}")
+		}
+	else
+		{
+			toolFind("the collapse folders button", "1000")
+			blockOff()
+			return
 		}
 	;;the below references whatever you put in the () of the function call itself and is used to be able to move multiple different amounts. Feel free to change the above values and what the calls are called to your needs
 	if %&script% = "change"
