@@ -1,4 +1,4 @@
-# ![](https://bit.ly/3fjVx8t) ahk [![](https://img.shields.io/github/v/release/Tomshiii/ahk)](https://github.com/Tomshiii/ahk/releases) [![](https://img.shields.io/github/last-commit/tomshiii/ahk/dev?label=last%20commit%20%28dev%29)](https://github.com/Tomshiii/ahk/commits/dev) [![](https://img.shields.io/github/license/tomshiii/ahk)](https://github.com/tomshiii/ahk/blob/main/LICENSE)
+# [![](https://bit.ly/3fjVx8t)](https://github.com/Tomshiii/ahk/tree/main) ahk [![](https://img.shields.io/github/v/release/Tomshiii/ahk)](https://github.com/Tomshiii/ahk/releases) [![](https://img.shields.io/github/last-commit/tomshiii/ahk/dev?label=last%20commit%20%28dev%29)](https://github.com/Tomshiii/ahk/commits/dev) [![](https://img.shields.io/github/license/tomshiii/ahk?color=orange)](https://github.com/tomshiii/ahk/blob/main/LICENSE)
 
 This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane and random interactions with a computer.
 
