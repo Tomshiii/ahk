@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.2
+;\\v2.8.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -343,13 +343,15 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	sleep 1500
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
+	coordw()
+	ClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
 	blockOn()
-	coords()
-	if ImageSearch(&prx, &pry, 1792, 711, 2559, 1391, "*2 " Premiere "project.png") ;searches for the project window to grab the track
+	if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project.png") ;searches for the project window to grab the track
 		goto move
-	else if ImageSearch(&prx, &pry, 1792, 711, 2559, 1391, "*2 " Premiere "project2.png") ;searches for the project window to grab the track
+	else if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
 		goto move
-	else if ImageSearch(&prx, &pry, 2562, 160, 3594, 1261, "*2 " Premiere "project2.png")
+	else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png")
 		goto bin
 	else ;if everything fails, this else will trigger
 		{
@@ -360,6 +362,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	move:
 	MouseMove(%&prx% + "5", %&pry% +"3")
 	SendInput("{Click Down}")
+	coords()
 	Sleep 100
 	MouseMove 3590, 702, "2"
 	SendInput("{Click Up}")
