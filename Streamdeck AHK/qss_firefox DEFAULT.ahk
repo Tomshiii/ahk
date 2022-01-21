@@ -54,7 +54,7 @@ else
     {
         SendInput("{Tab 3}")
         sleep 100
-        SendInput("{Up 10}")
+        SendInput("{Up 11}")
         sleep 100
        ; SendInput("{Enter}")
     }

@@ -53,7 +53,7 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 200
 		} */
 		;not using this currently
-	WinMove 2553, -926, 1104, 1087 ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
+	WinMove 2553, -890, 1104, 1087 ;Moves obs into position, important for me to keep because streamelements obs is wider and ruins main obs
 	Run "firefox.exe https://docs.google.com/presentation/d/1b6pCuOIrw4pEF6GACxrBh8C-mB4XsDeHLM50cj4jAkQ/edit#slide=id.g90e8195d3c_16_958" ;opens the AM route doc to pauline questions
 		if WinExist("ahk_exe firefox.exe")
 			WinActivate
@@ -101,7 +101,7 @@ if not WinExist("ahk_exe obs64.exe")
 	if WinExist("StreamElements")
 		{
 			WinActivate
-			WinMove 3643, -926, 840, 498
+			WinMove 3646, -890, 836, 495
 		}
 	if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
 		{
@@ -157,7 +157,7 @@ if not WinExist("ahk_exe obs64.exe")
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run "chrome.exe https://www.twitch.tv/popout/tomshi/chat"
 	if WinExist("ahk_exe Discord.exe")
-		WinMove 4479, 435, 1080, 800  ;moves into position
+		WinMove -1080, 75, 1080, 1537  ;moves into position
 	SetWorkingDir "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
 	Run "F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe"
 	if WinExist("ahk_exe ApplicationDj.exe")
@@ -167,7 +167,7 @@ if not WinExist("ahk_exe obs64.exe")
 	blockOn()
 	if WinExist("ahk_exe chatterino.exe")
 		{
-			WinMove(3648, -432, 830, 586)
+			WinMove(3648, -398, 830, 586)
 			WinActivate("ahk_exe chatterino.exe")
 				coordw()
 				WinGetPos(,, &width, &height, "A")
@@ -180,6 +180,23 @@ if not WinExist("ahk_exe obs64.exe")
 						return
 					}
 		}
+	else
+		{
+			WinWait("ahk_exe chatterino.exe")
+			WinActivate("ahk_exe chatterino.exe")
+			WinMove(3648, -398, 830, 586)
+			WinActivate("ahk_exe chatterino.exe")
+				coordw()
+				WinGetPos(,, &width, &height, "A")
+				if ImageSearch(&xpos, &ypos, 0, 0, %&width%, %&height%/ "3", "*2 " Chatterino "tomshiactive.png")
+					return
+				else if ImageSearch(&xpos, &ypos, 0, 0, %&width%, %&height%/ "3", "*2 " Chatterino "tomshinotactive.png")
+					{
+						MouseMove(%&xpos%, %&ypos%)
+						SendInput("{Click}")
+						return
+					}
+		}	
 	sleep 3000
 	if WinExist("ahk_exe foobar2000.exe")
 		{
