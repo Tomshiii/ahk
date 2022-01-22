@@ -10,7 +10,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.3
+;\\v2.8.4
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -37,7 +37,7 @@ updateChecker() {
 			ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 			if ignore = "no"
 				{
-					Result := MsgBox("You're using an outdated version of these scripts`nYou're on Release " MyRelease " while the latest release is " version "`nPress Okay OR the Windows key + F1 (at any time) to get updated scripts OR Press Cancel to not prompt again", "Outdated Scripts", "1 48 4096")
+					Result := MsgBox("You're using an outdated version of these scripts`nYou're on Release " MyRelease " while the latest release is " version "`n`nPress Okay OR {Windows key + F1} (at any time) to get updated scripts`nPress Cancel to not prompt again", "Outdated Scripts", "1 48 4096")
 					if Result = "OK"
 						Run(url)
 					else
