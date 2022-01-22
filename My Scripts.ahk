@@ -17,7 +17,19 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 ;\\v2.4
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.3
+global MyRelease := "v2.3"
+
+;\\The below code will check what version you're running on startup/reload
+whr := ComObject("WinHttp.WinHttpRequest.5.1")
+whr.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
+whr.Send()
+; Using 'true' above and the call below allows the script to remain responsive.
+whr.WaitForResponse()
+version := whr.ResponseText
+if version = MyRelease
+	toolCust("You have the latest Release " MyRelease, "1000")
+else
+	toolCust("You're using an outdated version of these scripts`nYou're on Release " MyRelease " while the latest release is " version "`nCheck Tomshi's Github for updated scripts", "3000")
 
 ; ============================================================================================================================================
 ;
