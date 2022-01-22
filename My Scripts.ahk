@@ -20,16 +20,45 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 global MyRelease := "v2.3"
 
 ;\\The below code will check what version you're running on startup/reload
-whr := ComObject("WinHttp.WinHttpRequest.5.1")
-whr.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
-whr.Send()
-; Using 'true' above and the call below allows the script to remain responsive.
-whr.WaitForResponse()
-version := whr.ResponseText
-if version = MyRelease
-	toolCust("You have the latest Release " MyRelease, "1000")
-else
-	toolCust("You're using an outdated version of these scripts`nYou're on Release " MyRelease " while the latest release is " version "`nCheck Tomshi's Github for updated scripts", "3000")
+updateChecker() {
+	whr := ComObject("WinHttp.WinHttpRequest.5.1")
+	whr.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
+	whr.Send()
+	; Using 'true' above and the call below allows the script to remain responsive.
+	whr.WaitForResponse()
+	version := whr.ResponseText
+	if version = MyRelease
+		;toolCust("You have the latest Release " MyRelease, "1000")
+		;leaving this in would be annoying I guess
+		Exit()
+	else
+		{
+			url := '"https://github.com/tomshiii/ahk/releases/latest"'
+			ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+			if ignore = "no"
+				{
+					Result := MsgBox("You're using an outdated version of these scripts`nYou're on Release " MyRelease " while the latest release is " version "`nPress Okay OR the Windows key + F1 (at any time) to get updated scripts OR Press Cancel to not prompt again", "Outdated Scripts", "1 48 4096")
+					if Result = "OK"
+						Run(url)
+					else
+						{
+							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+						}
+					Hotkey(getUpdate, f1)
+					f1(ThisHotkey) {
+						Run(url)
+					}
+				}
+			else if ignore = "yes"
+				toolCust("You're using an outdated version of these scripts", "1000")
+			else if ignore = "stop"
+				Exit()
+			else
+				toolCust("You put something else in the ignore.ini file you goose", "1000")
+		}
+}
+updateChecker() ;runs the update checker
+;\\end of update checker
 
 ; ============================================================================================================================================
 ;
