@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.3
+;\\v2.9.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3
@@ -1422,6 +1422,10 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
 		toolCust("you're not hovering a track", "1000")
 }
 
+/* aepreset()
+ This function allows you to drag and drop effects onto a clip within After Effects at the press of a button
+ @param preset is the name of your preset that you wish to drag onto your clip
+ */
 aePreset(preset)
 {
 	blockOn()
@@ -2102,7 +2106,7 @@ numpad000()
 
 ; ===========================================================================================================================================
 ;
-;		switch/launch scripts \\ Last updated: v2.9.3
+;		switch/launch scripts \\ Last updated: v2.9.4
 ;
 ; ===========================================================================================================================================
 /*
@@ -2415,7 +2419,7 @@ switchToMusic()
 			MyGui := Gui("AlwaysOnTop", "Which MP to open?") ;creates our GUI window
 			MyGui.SetFont("S10") ;Sets the size of the font
 			MyGui.SetFont("W600") ;Sets the weight of the font (thickness)
-			MyGui.Opt("+Resize +MinSize250x10") ;Sets a minimum size for the window
+			MyGui.Opt("+Resize +MinSize290x10") ;Sets a minimum size for the window
 			;now we define the elements of the GUI window
 			;defining AIMP
 			aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", A_WorkingDir "\Support Files\images\aimp.png")
@@ -2426,16 +2430,16 @@ switchToMusic()
 			FoobarGUI := MyGui.Add("Button", "X40 Y40", "Foobar")
 			FoobarGUI.OnEvent("Click", Foobar)
 			;defining Windows Media Player
-			wmplogo := MyGui.Add("Picture", "w25 h-1 X120 Y9", A_WorkingDir "\Support Files\images\wmp.png")
-			WMPGUI := MyGui.Add("Button", "X150 Y7", "WMP")
+			wmplogo := MyGui.Add("Picture", "w25 h-1 X140 Y9", A_WorkingDir "\Support Files\images\wmp.png")
+			WMPGUI := MyGui.Add("Button", "X170 Y7", "WMP")
 			WMPGUI.OnEvent("Click", WMP)
 			;defining VLC
-			vlclogo := MyGui.Add("Picture", "w28 h-1 X118 Y42", A_WorkingDir "\Support Files\images\vlc.png")
-			VLCGUI := MyGui.Add("Button", "X150 Y40", "VLC")
+			vlclogo := MyGui.Add("Picture", "w28 h-1 X138 Y42", A_WorkingDir "\Support Files\images\vlc.png")
+			VLCGUI := MyGui.Add("Button", "X170 Y40", "VLC")
 			VLCGUI.OnEvent("Click", VLC)
 			;defining music folder
-			folderlogo := MyGui.Add("Picture", "w25 h-1  X12 Y86", A_WorkingDir "\Support Files\images\explorer.png")
-			FOLDERGUI := MyGui.Add("Button", "X40 Y85", "MUSIC FOLDER")
+			folderlogo := MyGui.Add("Picture", "w25 h-1  X14 Y86", A_WorkingDir "\Support Files\images\explorer.png")
+			FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
 			FOLDERGUI.OnEvent("Click", MUSICFOLDER)
 			;Finished with definitions
 			MyGui.Show()
@@ -2506,7 +2510,7 @@ musicGUI()
 	MyGui := Gui("AlwaysOnTop", "Which MP to open?") ;creates our GUI window
 	MyGui.SetFont("S10") ;Sets the size of the font
 	MyGui.SetFont("W600") ;Sets the weight of the font (thickness)
-	MyGui.Opt("+Resize +MinSize250x10") ;Sets a minimum size for the window
+	MyGui.Opt("+Resize +MinSize290x10") ;Sets a minimum size for the window
 	;now we define the elements of the GUI window
 	;defining AIMP
 	aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", A_WorkingDir "\Support Files\images\aimp.png")
@@ -2517,16 +2521,16 @@ musicGUI()
 	FoobarGUI := MyGui.Add("Button", "X40 Y40", "Foobar")
 	FoobarGUI.OnEvent("Click", Foobar)
 	;defining Windows Media Player
-	wmplogo := MyGui.Add("Picture", "w25 h-1 X120 Y9", A_WorkingDir "\Support Files\images\wmp.png")
-	WMPGUI := MyGui.Add("Button", "X150 Y7", "WMP")
+	wmplogo := MyGui.Add("Picture", "w25 h-1 X140 Y9", A_WorkingDir "\Support Files\images\wmp.png")
+	WMPGUI := MyGui.Add("Button", "X170 Y7", "WMP")
 	WMPGUI.OnEvent("Click", WMP)
 	;defining VLC
-	vlclogo := MyGui.Add("Picture", "w28 h-1 X118 Y42", A_WorkingDir "\Support Files\images\vlc.png")
-	VLCGUI := MyGui.Add("Button", "X150 Y40", "VLC")
+	vlclogo := MyGui.Add("Picture", "w28 h-1 X138 Y42", A_WorkingDir "\Support Files\images\vlc.png")
+	VLCGUI := MyGui.Add("Button", "X170 Y40", "VLC")
 	VLCGUI.OnEvent("Click", VLC)
 	;defining music folder
-	folderlogo := MyGui.Add("Picture", "w25 h-1  X12 Y86", A_WorkingDir "\Support Files\images\explorer.png")
-	FOLDERGUI := MyGui.Add("Button", "X40 Y85", "MUSIC FOLDER")
+	folderlogo := MyGui.Add("Picture", "w25 h-1  X14 Y86", A_WorkingDir "\Support Files\images\explorer.png")
+	FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
 	FOLDERGUI.OnEvent("Click", MUSICFOLDER)
 	;Finished with definitions
 	MyGui.Show()
