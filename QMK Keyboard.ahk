@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4
+;\\v2.4.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 
@@ -395,12 +395,12 @@ n:: ;this macro is to find the difference between 2 24h timecodes
 	Length1 := StrLen(time1.Value)
 	if Length1 != "4"
 		{
-			MsgBox("You didn't write in hhmm format`nTry again", "Start Time")
+			MsgBox("You didn't write in hhmm format`nTry again", "Start Time", "16")
 			goto start1
 		}
 	if time1.Value > 2359
 		{
-			MsgBox("You didn't write in hhmm format`nTry again", "Start Time")
+			MsgBox("You didn't write in hhmm format`nTry again", "Start Time", "16")
 			goto start1
 		}
 	start2:
@@ -410,12 +410,12 @@ n:: ;this macro is to find the difference between 2 24h timecodes
 	Length2 := StrLen(time2.Value)
 	if Length2 != "4"
 		{
-			MsgBox("You didn't write in hhmm format`nTry again", "End")
+			MsgBox("You didn't write in hhmm format`nTry again", "End Time", "16")
 			goto start2
 		}
 	if time2.Value > 2359
 		{
-			MsgBox("You didn't write in hhmm format`nTry again", "Start Time")
+			MsgBox("You didn't write in hhmm format`nTry again", "End Time", "16")
 			goto start2
 		}
 	diff := DateDiff("20220101" time2.Value, "20220101" time1.Value, "seconds")/"3600"
