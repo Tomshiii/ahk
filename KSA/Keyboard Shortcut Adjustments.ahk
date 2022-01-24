@@ -8,6 +8,13 @@
  
  Can be set within KSA.ahk/ini
  */
+programMonitor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Program Monitor")
+
+/*
+ This value will send the keyboard shortcut you have set to activate the Effect Controls Window within Premiere.
+ 
+ Can be set within KSA.ahk/ini
+ */
 effectControls := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Effect Controls")
 
 /*

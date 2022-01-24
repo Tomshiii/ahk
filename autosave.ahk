@@ -4,6 +4,22 @@ A_MaxHotkeysPerInterval := 2000
 
 ;This script will autosave your premire pro project every 5min since adobe refuses to actually do so. Thanks adobe.
 
+/*
+ This value will send the keyboard shortcut you have set to activate the Effect Controls Window within Premiere.
+ 
+ Can be set within KSA.ahk/ini
+ */
+programMonitor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Program Monitor")
+
+/*
+ This value will send the keyboard shortcut you have set to activate the timeline Window within Premiere.
+ 
+ Can be set within KSA.ahk/ini
+ */
+ timelineWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Timeline")
+
+global Premiere := A_WorkingDir "\ImageSearch\Premiere\"
+
 /* blockOn()
  blocks all user inputs [IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (CTRL + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]
  */
@@ -42,21 +58,58 @@ toolCust(message, timeout)
 save:
 if WinExist("ahk_exe Adobe Premiere Pro.exe")
     {
+        stop := ""
         try {
-            id := WinGetTitle("A")
+            id := WinGetClass("A")
+            title := WinGetTitle("A")
         } catch as e {
             toolCust("couldn't grab active window", "1000")
         }
         blockOn()
-        WinActivate("ahk_exe Adobe Premiere Pro.exe")
+        ;ToolTip("Saving your Premiere project")
+        if not WinActive("ahk_exe Adobe Premiere Pro.exe")
+            {
+                WinActivate("ahk_exe Adobe Premiere Pro.exe")
+                sleep 500
+                ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+            }
         sleep 1000
+        if id = "Premiere Pro"
+           try {
+                ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+                SendInput(programMonitor)
+                SendInput(programMonitor)
+                sleep 500
+                toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+                ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+                sleep 500
+                if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "stop.png")
+                    {
+                        toolCust("found stop button", "1000")
+                        stop := "yes"
+                    }
+                else
+                    stop := "no"
+            } catch as er {
+                toolCust("failed to find play/stop button", "1000")
+            }
         SendInput("^s")
+        WinWaitClose("Save Project")
+        ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+        sleep 1000
+        if stop = "yes"
+            {
+                SendInput(timelineWindow)
+                SendInput(timelineWindow)
+                SendInput("{Space}")
+            }
         try {
-            WinActivate(id)
+            WinActivate(title)
         } catch as e {
             toolCust("couldn't activate original window", "1000")
         }
         blockOff()
+        ToolTip("")
         sleep 300000
         goto save
     }
