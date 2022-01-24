@@ -8,13 +8,14 @@ SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
+#Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.4
+;\\v2.8.5
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4
+;\\v2.4.2
 
 ;\\CURRENT RELEASE VERSION
 global MyRelease := "v2.3"
@@ -111,8 +112,10 @@ updateChecker() ;runs the update checker
 		PostMessage 0x0111, 65303,,, "Resolve_Example.ahk - AutoHotkey"
 	if WinExist("textreplace.ahk")
 		PostMessage 0x0111, 65303,,, "textreplace.ahk - AutoHotkey"
-	if WinExist("right click premiere.ahk")
-		PostMessage 0x0111, 65303,,, "right click premiere.ahk - AutoHotkey"
+	;if WinExist("right click premiere.ahk")
+	;	PostMessage 0x0111, 65303,,, "right click premiere.ahk - AutoHotkey"
+	if WinExist("ahk_exe Adobe Premiere Pro.exe")
+		PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
 	Reload
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
@@ -425,7 +428,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			SendInput("{Click Up}")
 			switchToPremiere()
 			WinWaitClose("Import Files")
-			sleep 100
+			sleep 1000
 		}
 	else
 		{
@@ -435,6 +438,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 	added:
 	coordw()
+	WinActivate("ahk_exe Adobe Premiere Pro.exe")
 	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " Premiere "list view.png")
 		{
 			MouseMove(%&listx%, %&listy%)

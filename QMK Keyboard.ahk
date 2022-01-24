@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.1
+;\\v2.4.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 
@@ -169,7 +169,7 @@ t::preset("tint 100")
 g::
 {
 	SendInput(timelineWindow)
-	SendInput(selectAtPlayhead)
+	;SendInput(selectAtPlayhead)
 	SendInput("^+1")
 }
 b::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level

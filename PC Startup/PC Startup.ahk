@@ -5,7 +5,9 @@ run A_WorkingDir "\My Scripts.ahk"
 run A_WorkingDir "\QMK Keyboard.ahk"
 run A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk"
 run A_WorkingDir "\autodismiss error.ahk"
-run A_WorkingDir "\right click premiere.ahk"
+;run A_WorkingDir "\right click premiere.ahk" ;#include(d) in main script now
+run A_WorkingDir "\autosave.ahk"
+
 if not WinExist("ahk_exe Creative Cloud.exe")
     run "C:\Program Files\Adobe\Adobe Creative Cloud\ACC\Creative Cloud.exe"
 

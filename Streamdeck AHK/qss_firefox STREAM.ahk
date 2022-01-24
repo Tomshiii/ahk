@@ -56,12 +56,13 @@ else
         ;sleep 500
         SendInput("{Up 10}")
         sleep 100
-        SendInput("{Down 5}")
+        SendInput("{Down 2}")
         sleep 100
         ;SendInput("{Enter}")
     }
 end:
 sleep 200
 WinClose("Settings")
+coords()
 MouseMove(%&sx%, %&sy%)
 ExitApp()

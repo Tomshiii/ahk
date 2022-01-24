@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.4
+;\\v2.9.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3
@@ -2020,10 +2020,10 @@ rgain(value)
 vscode(script)
 {
 	/* The below will define how far down the Y axis each script is */
-	change := 479
-	msFunc := 533
-	myScripts := 560
-	qmk := 587
+	change := 496
+	msFunc := 550
+	myScripts := 577
+	qmk := 604
 	/*           */
 	KeyWait(A_PriorKey)
 	coordw()

@@ -61,5 +61,6 @@ else
 end:
 sleep 200
 WinClose("Settings")
+coords()
 MouseMove(%&sx%, %&sy%)
 ExitApp()
