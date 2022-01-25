@@ -11,7 +11,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.5
+;\\v2.8.6
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -129,7 +129,14 @@ updateChecker() ;runs the update checker
 			}
 }
 
-#+`::Suspend -1 ;suspends this script. Useful when playing games as this script will try and do whacky stuff while gaming
+#+`::
+{
+	if A_IsSuspended = 0
+		toolCust("you suspended hotkeys from the main script", "1000")
+	else
+		toolCust("you renabled hotkeys from the main script", "1000")
+	Suspend(-1) ;suspends this script. Useful when playing games as this script will try and do whacky stuff while gaming
+}
 #SuspendExempt false
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

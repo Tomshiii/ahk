@@ -55,10 +55,23 @@ toolCust(message, timeout)
 	}
 }
 
+#+1::
+{
+    if A_IsPaused = 0
+        {
+            toolCust("you paused the autosave script", "1000")
+            sleep 1500
+        }
+    else
+        toolCust("you unpaused the autosave script", "1000")
+    Pause -1 ;pauses/unpauses this script.
+}
+
 save:
 if WinExist("ahk_exe Adobe Premiere Pro.exe")
     {
         stop := ""
+        ToolTip("Your Premiere Pro project is being saved!`nHold tight!")
         try {
             id := WinGetClass("A")
             title := WinGetTitle("A")
@@ -85,7 +98,7 @@ if WinExist("ahk_exe Adobe Premiere Pro.exe")
                 sleep 500
                 if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "stop.png")
                     {
-                        toolCust("found stop button", "1000")
+                        toolCust("If you were playing back anything, this function should resume it", "1000")
                         stop := "yes"
                     }
                 else
