@@ -1,7 +1,7 @@
 # <> Release 2.3.0.1 - Update Checker & Hotfix
 
 - Added `autosave.ahk` to automatically save a premiere file every 5min since adobe refuses to do it properly
-- `My Scripts.ahk` now check for updates on startup to ensure you're on the latest release
+- `My Scripts.ahk` now checks for updates on startup to ensure you're on the latest release
 
 ## > MS_functions
 - Added logos to `switchtoMusic()` & `musicGUI()`

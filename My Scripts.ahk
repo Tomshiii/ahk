@@ -19,7 +19,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 
 ;\\CURRENT RELEASE VERSION
 global MyRelease := "2.3"
-global MyReleaseBeta := "2.3"
+global MyReleaseBeta := "2.3.0.1"
 
 ; ============================================================================================================================================
 ;
