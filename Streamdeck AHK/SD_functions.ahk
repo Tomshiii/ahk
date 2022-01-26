@@ -4,6 +4,32 @@ global Premiere := "C:\Program Files\ahk\ahk\ImageSearch\Premiere\"
 global Windows := "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\"
 global Chatterino := "C:\Program Files\ahk\ahk\ImageSearch\Chatterino\"
 
+;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
+obsLocation()
+{
+	WinMove 2553, -890, 1104, 1087
+}
+
+chatterinoLocationBotshi()
+{
+	WinMove(3468, 190, 662, 772)
+}
+
+chatterinoLocationTomshi()
+{
+	WinMove(3648, -398, 830, 586)
+}
+
+streamelementsLocation()
+{
+	WinMove 3646, -890, 836, 495
+}
+
+discordLocation()
+{
+	WinMove -1080, 75, 1080, 1537
+}
+
 /* coords()
  sets coordmode to "screen"
  */
