@@ -11,7 +11,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.7
+;\\v2.8.8
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -59,8 +59,11 @@ global MyRelease := "v2.3"
 ;
 ;
 ; =======================================================================================================================================
-;\\The below code will check what version you're running on startup/reload
+;\\The below code will check what version you're running on startup
 updateChecker() {
+	;checks if script was reloaded
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
+		return
 	;release version
 	whr := ComObject("WinHttp.WinHttpRequest.5.1")
 	whr.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
