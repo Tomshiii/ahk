@@ -1,0 +1,64 @@
+# <> Release 2.3 - Planck Ez Glow + Fix & Feature Update
+
+# Changes
+- All EnvSet()/EnvGet() replaced with `global` variables instead
+- Changed all path instances that contained my computers login name `Tom` to `A_Username` instead for broader compatibility
+- Added the `GNU GENERAL PUBLIC LICENSE v3` to the repo
+- Added additional comments to most scripts to help explain what's going on
+
+## > QMK Keyboard
+- Entire script rewritten as I have upgraded from a tiny 19 key numpad to a 47 key `Planck EZ` *custom keyboard* with custom firmware created by @JivanYatra to simulate what I was doing with the HASU usb->usb convertor
+    - All firmware files/contributions from @JivanYatra along with info on how it works can be found in [\Secondary Keyboard Files]
+    - A few macros moved from `My Scripts.ahk` -> `QMK Keyboard.ahk`
+- Added newWin() to cut repeat code of running a new instance of a desired program
+
+## > MS_functions
+
+### - fixes/changes
+- Further changes to gain() to help catch errors
+- Fixed mouseDrag() code to completely use variables
+- disc() now only searches the bottom half of the window for the `"@ON"` reply ping instead of the entire window
+- Swapped all instances of `"^a{Del}"` with `"^a" "+{BackSpace}"` as it's more macro friendly
+- manInput() will now create a tooltip telling you it's waiting for you to hit your end key so you don't get confused at losing control of inputs
+- monitorWarp() now moves at mouse speed `"2"` as moving across multiple monitors can be a bit finicky at max speed
+- Added dynamic comments to all switchTo() functions
+- youMouse() now sleeps for 25ms to ensure the youtube window is activated in time
+    - now also uses a KSA variable for the 10s skip activation hotkey
+- Removed a bunch of old code from the bottom of the script
+- Rewrote vscode() so that it can be used without needing so many screenshots which allows easy switching of themes
+### - additions
+- Added switchToMusic() to cycle between/open music players. Will also create a GUI to choose which player to open if none already are
+    - Added musicGUI() to just launch the custom gui to pick a music player to open
+- Added switchToPhoto() to launch photoshop
+- Added switchToWord() to launch MS Word
+- Added fxSearch() to highlight the effects window in premiere to allow manual searching for effects
+- Added aePreset()] to bring preset drag and drop functionality to after effects similar to premiere
+- Added closeOtherWindow() to close all windows of the specified program except the active window
+- Added discLocation()] to toggle the location of my discord window between multiple monitors
+
+## > My Scripts
+### - fixes/changes
+- Adjusted "show more options" script to try and mitigate it entering a hidden explorer menu
+- Updated firefox `Media_Play_Pause` macro to search for the youtube logo in the tab instead of cycling through all active windows to find a youtube tab
+- `RAlt & p` macro now resets any changes to the workspace so it's always correct
+    - it also now waits for the Import Files progress window to disappear before continuing
+    - it also grabs the ClassNN value to get the project windows location/dimensions without needing hard coded pixel values
+- Fixed win11 `F14 "Show More Options"` macro as it wasn't actually referencing the mouse coords
+- Added a small sleep to `SC03A & v` macro as if you're typing it wasn't working
+### - additions
+- Added a [not GetKeyState()] to help with the changes to `QMK Keyboard.ahk`
+- Added a list of macros to disable the numpad on youtube to stop accidentally jumping around a video
+
+## > Streamdeck AHK
+- qss_firefox scripts now attempts up to 5 times to find firefox before giving up ***without*** erroring out.
+- All speed/scale scripts turned into functions instead
+    - Fixed all scale scripts not including KSA.ahk
+- All streamdeck scripts now have dynamic comments for their functions
+- Cleaned up most scripts and added more comments
+
+## > Other Changes
+- PC Startup2.ahk now waits for the streamdeck software to open before moving on
+- Cleaned up Taran's `right click premiere.ahk` & `Alt_menu_acceleration_DISABLER.ahk` script
+- Updated all `\Backups` as well as changed all informational txt/md files to ini files so they can be coupled with ahk files to automatically open the desired filepath
+- Deleted an old .ico file
+- Update readme
