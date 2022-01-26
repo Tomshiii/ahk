@@ -11,14 +11,15 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.9
+;\\v2.8.10
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.2
 
 ;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3"
+global MyRelease := "2.3"
+global MyReleaseBeta := "2.3"
 
 ; ============================================================================================================================================
 ;
@@ -64,17 +65,93 @@ updateChecker() {
 	;checks if script was reloaded
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
 		return
+	;beta release
+	beta := ComObject("WinHttp.WinHttpRequest.5.1")
+	beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/ReleaseBeta.txt")
+	beta.Send()
+	beta.WaitForResponse()
+	global betaversion := beta.ResponseText
+	;check if local version is the same as release
+	if betaversion = MyReleaseBeta
+		goto main
+	else if betaversion > MyReleaseBeta
+		{
+			ignorebeta := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
+			if ignorebeta = "no"
+				{
+					;grabbing changelog info
+					changebeta := ComObject("WinHttp.WinHttpRequest.5.1")
+					changebeta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelogbeta.txt")
+					changebeta.Send()
+					changebeta.WaitForResponse()
+					LatestChangeLogBeta := changebeta.ResponseText
+
+					;create gui
+					MyGuibeta := Gui("", "Scripts Release " betaversion)
+					MyGuibeta.SetFont("S11")
+					MyGuibeta.Opt("+Resize +MinSize600x400 +MaxSize600x400")
+					;set title
+					Title := MyGuibeta.Add("Text", "H40 W500", "New Scripts - Beta Release " betaversion)
+					Title.SetFont("S15")
+					;set download button
+					downloadbutt := MyGuibeta.Add("Button", "X445 Y350", "Download")
+					downloadbutt.OnEvent("Click", downbeta)
+					;set cancel button
+					cancelbutt := MyGuibeta.Add("Button", "Default X530 Y350", "Cancel")
+					cancelbutt.OnEvent("Click", closeguibeta)
+					;set changelog
+					ChangeLogbeta := MyGuibeta.Add("Edit", "X8 Y50 r18 -WantCtrlA ReadOnly w590")
+					;set "don't prompt again" checkbox
+					nopromptbeta := MyGuibeta.Add("Checkbox", "vNoPrompt X260 Y357", "Don't prompt for beta again")
+					nopromptbeta.OnEvent("Click", promptbeta)
+					;getting value for changelog
+					ChangeLogbeta.Value := LatestChangeLogBeta
+					
+					MyGuibeta.Show()
+					promptbeta(*) {
+						if nopromptbeta.Value = 1
+							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
+						if nopromptbeta.Value = 0
+							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
+					}
+					downbeta(*) {
+						MyGuibeta.Destroy()
+						downloadLocation := FileSelect("D", , "Where do you wish to download Release " betaversion)
+						if downloadLocation = ""
+							return
+						else
+							{
+								ToolTip("Updated scripts are downloading")
+								Download("https://github.com/Tomshiii/ahk/releases/download/" betaversion "/v" betaversion ".zip", downloadLocation "\v" betaversion ".zip")
+								toolCust("Release " betaversion " of the scripts has been downloaded to " downloadLocation, "3000")
+								run(downloadLocation)
+								return
+							}
+					}
+					closeguibeta(*) {
+						MyGuibeta.Destroy()
+						return
+					}
+				}
+			else if ignorebeta = "yes"
+				toolCust("You're using an outdated version of these scripts", "1000")
+			else if ignorebeta = "stop"
+				return
+			else
+				toolCust("You put something else in the ignore.ini file you goose", "1000")
+		}
+	main:
 	;release version
-	whr := ComObject("WinHttp.WinHttpRequest.5.1")
-	whr.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
-	whr.Send()
-	whr.WaitForResponse()
-	global version := whr.ResponseText
+	main := ComObject("WinHttp.WinHttpRequest.5.1")
+	main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
+	main.Send()
+	main.WaitForResponse()
+	global version := main.ResponseText
+	;check if local version is the same as release
 	if version = MyRelease
 		return
-	else
+	else if version > MyRelease
 		{
-			url := '"https://github.com/tomshiii/ahk/releases/latest"'
 			ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 			if ignore = "no"
 				{
@@ -103,6 +180,9 @@ updateChecker() {
 					;set "don't prompt again" checkbox
 					noprompt := MyGui.Add("Checkbox", "vNoPrompt X300 Y357", "Don't prompt again")
 					noprompt.OnEvent("Click", prompt)
+					;set "beta alerts" checkbox
+					nobetaprompt := MyGui.Add("Checkbox", "vnobetaprompt X120 Y357", "Get Beta Release alerts")
+					nobetaprompt.OnEvent("Click", betaprompt)
 					;getting value for changelog
 					ChangeLog.Value := LatestChangeLog
 					
@@ -113,6 +193,12 @@ updateChecker() {
 						if noprompt.Value = 0
 							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 					}
+					betaprompt(*) {
+						if nobetaprompt.Value = 1
+							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
+						if nobetaprompt.Value = 0
+							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
+					}
 					down(*) {
 						MyGui.Destroy()
 						downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
@@ -121,8 +207,8 @@ updateChecker() {
 						else
 							{
 								ToolTip("Updated scripts are downloading")
-								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version ".zip", downloadLocation "\" version ".zip")
-								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "1000")
+								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/v" version ".zip", downloadLocation "\v" version ".zip")
+								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "3000")
 								run(downloadLocation)
 								return
 							}
@@ -154,15 +240,15 @@ updateChecker() ;runs the update checker
 {
 	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
 	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-	if WinExist("QMK Keyboard.ahk")
+	if WinExist("QMK Keyboard.ahk - AutoHotkey")
 		PostMessage 0x0111, 65303,,, "QMK Keyboard.ahk - AutoHotkey"
-	if WinExist("Resolve_Example.ahk")
+	if WinExist("Resolve_Example.ahk - AutoHotkey")
 		PostMessage 0x0111, 65303,,, "Resolve_Example.ahk - AutoHotkey"
-	if WinExist("textreplace.ahk")
+	if WinExist("textreplace.ahk - AutoHotkey")
 		PostMessage 0x0111, 65303,,, "textreplace.ahk - AutoHotkey"
-	;if WinExist("right click premiere.ahk")
+	;if WinExist("right click premiere.ahk - AutoHotkey")
 	;	PostMessage 0x0111, 65303,,, "right click premiere.ahk - AutoHotkey"
-	if WinExist("ahk_exe Adobe Premiere Pro.exe")
+	if WinExist("autosave.ahk - AutoHotkey")
 		PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
 	Reload
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
