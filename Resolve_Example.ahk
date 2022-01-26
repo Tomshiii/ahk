@@ -3,7 +3,7 @@ SetDefaultMouseSpeed 0
 #SingleInstance Force
 ; SetNumLockState "AlwaysOn" ;uncomment if you want numlock to always be ON
 ; SetCapsLockState "AlwaysOff" ;uncomment if you want capslock to always be OFF
-TraySetIcon("C:\Program Files\ahk\ahk\Icons\resolve.png")
+TraySetIcon(A_WorkingDir "\Icons\resolve.png")
 #Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script ;includes function definitions so they don't clog up this script
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 

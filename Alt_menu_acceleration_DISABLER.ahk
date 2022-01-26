@@ -2,7 +2,7 @@ InstallKeybdHook true
 #SingleInstance
 A_MaxHotkeysPerInterval := 2000
 ProcessSetPriority "H"
-TraySetIcon("C:\Program Files\ahk\ahk\Icons\error.ico") ;changes the icon this script uses in the taskbar
+TraySetIcon(A_WorkingDir "\Icons\error.ico") ;changes the icon this script uses in the taskbar
 #SingleInstance force
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 

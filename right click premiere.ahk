@@ -1,7 +1,7 @@
 ﻿#SingleInstance force ; only 1 instance of this script may run at a time.
 InstallMouseHook
 InstallKeybdHook
-;TraySetIcon("C:\Program Files\ahk\ahk\Icons\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
+;TraySetIcon(A_WorkingDir "\Icons\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
 CoordMode "Mouse", "screen"
 CoordMode "Pixel", "screen"
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
