@@ -11,7 +11,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.8
+;\\v2.8.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -115,11 +115,12 @@ updateChecker() {
 					}
 					down(*) {
 						MyGui.Destroy()
-						downloadLocation := DirSelect("::{20d04fe0-3aea-1069-a2d8-08002b30309d}", "3", "Where do you wish to download Release " version)
+						downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
 						if downloadLocation = ""
 							return
 						else
 							{
+								ToolTip("Updated scripts are downloading")
 								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version ".zip", downloadLocation "\" version ".zip")
 								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "1000")
 								run(downloadLocation)
