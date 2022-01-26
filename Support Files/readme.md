@@ -6,3 +6,4 @@ This directory is here simply to *assist* other scripts.
 - `ignore.ini` is for the update checker to know if you want to be prompted or not
 - `mouse settings.png` is just a backup of my mouse settings
 - `Release.txt` is for the update checker to pull information off github
+- `ReleaseBeta.txt` is for the update checker to pull information off github
