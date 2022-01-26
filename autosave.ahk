@@ -85,7 +85,12 @@ if WinExist("ahk_exe Adobe Premiere Pro.exe")
             {
                 WinActivate("ahk_exe Adobe Premiere Pro.exe")
                 sleep 500
-                ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+                try {
+                    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+                } catch as win {
+                    toolCust("", "10")
+                }
+                
             }
         sleep 1000
         if id = "Premiere Pro"
@@ -109,7 +114,11 @@ if WinExist("ahk_exe Adobe Premiere Pro.exe")
             }
         SendInput("^s")
         WinWaitClose("Save Project")
-        ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+        try {
+            ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+        } catch as win {
+            toolCust("", "10")
+        }
         sleep 1000
         if stop = "yes"
             {
