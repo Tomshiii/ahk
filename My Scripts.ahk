@@ -11,7 +11,7 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.6
+;\\v2.8.7
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -19,47 +19,6 @@ TraySetIcon("C:\Program Files\ahk\ahk\Icons\myscript.png") ;changes the icon thi
 
 ;\\CURRENT RELEASE VERSION
 global MyRelease := "v2.3"
-
-;\\The below code will check what version you're running on startup/reload
-updateChecker() {
-	whr := ComObject("WinHttp.WinHttpRequest.5.1")
-	whr.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
-	whr.Send()
-	; Using 'true' above and the call below allows the script to remain responsive.
-	whr.WaitForResponse()
-	version := whr.ResponseText
-	if version = MyRelease
-		;toolCust("You have the latest Release " MyRelease, "1000")
-		;leaving this in would be annoying I guess
-		Exit()
-	else
-		{
-			url := '"https://github.com/tomshiii/ahk/releases/latest"'
-			ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
-			if ignore = "no"
-				{
-					Result := MsgBox("You're using an outdated version of these scripts`nYou're on Release " MyRelease " while the latest release is " version "`n`nPress Okay OR {Windows key + F1} (at any time) to get updated scripts`nPress Cancel to not prompt again", "Outdated Scripts", "1 48 4096")
-					if Result = "OK"
-						Run(url)
-					else
-						{
-							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
-						}
-					Hotkey(getUpdate, f1)
-					f1(ThisHotkey) {
-						Run(url)
-					}
-				}
-			else if ignore = "yes"
-				toolCust("You're using an outdated version of these scripts", "1000")
-			else if ignore = "stop"
-				Exit()
-			else
-				toolCust("You put something else in the ignore.ini file you goose", "1000")
-		}
-}
-updateChecker() ;runs the update checker
-;\\end of update checker
 
 ; ============================================================================================================================================
 ;
@@ -94,6 +53,91 @@ updateChecker() ;runs the update checker
 ; AHK (and v2.0) syntax highlighting can be installed within the program itself.
 
 ; If you EVER get stuck in some code within any of these scripts REFRESH THE SCRIPT - by default I have it set to win + shift + r - and it will work anywhere (unless you're clicked on a program run as admin) if refreshing doesn't work open up task manager with ctrl + shift + esc and use your keyboard to find all instances of autohotkey and force close them
+
+; =======================================================================================================================================
+;
+;
+;
+; =======================================================================================================================================
+;\\The below code will check what version you're running on startup/reload
+updateChecker() {
+	;release version
+	whr := ComObject("WinHttp.WinHttpRequest.5.1")
+	whr.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
+	whr.Send()
+	whr.WaitForResponse()
+	global version := whr.ResponseText
+	if version = MyRelease
+		return
+	else
+		{
+			url := '"https://github.com/tomshiii/ahk/releases/latest"'
+			ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+			if ignore = "no"
+				{
+					;grabbing changelog info
+					change := ComObject("WinHttp.WinHttpRequest.5.1")
+					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelog.txt")
+					change.Send()
+					change.WaitForResponse()
+					LatestChangeLog := change.ResponseText
+
+					;create gui
+					MyGui := Gui("", "Scripts Release " version)
+					MyGui.SetFont("S11")
+					MyGui.Opt("+Resize +MinSize600x400 +MaxSize600x400")
+					;set title
+					Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
+					Title.SetFont("S15")
+					;set download button
+					downloadbutt := MyGui.Add("Button", "X445 Y350", "Download")
+					downloadbutt.OnEvent("Click", Down)
+					;set cancel button
+					cancelbutt := MyGui.Add("Button", "Default X530 Y350", "Cancel")
+					cancelbutt.OnEvent("Click", closegui)
+					;set changelog
+					ChangeLog := MyGui.Add("Edit", "X8 Y50 r18 -WantCtrlA ReadOnly w590")
+					;set "don't prompt again" checkbox
+					noprompt := MyGui.Add("Checkbox", "vNoPrompt X300 Y357", "Don't prompt again")
+					noprompt.OnEvent("Click", prompt)
+					;getting value for changelog
+					ChangeLog.Value := LatestChangeLog
+					
+					MyGui.Show()
+					prompt(*) {
+						if noprompt.Value = 1
+							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+						if noprompt.Value = 0
+							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+					}
+					down(*) {
+						MyGui.Destroy()
+						downloadLocation := DirSelect("::{20d04fe0-3aea-1069-a2d8-08002b30309d}", "3", "Where do you wish to download Release " version)
+						if downloadLocation = ""
+							return
+						else
+							{
+								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version ".zip", downloadLocation "\" version ".zip")
+								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "1000")
+								run(downloadLocation)
+								return
+							}
+					}
+					closegui(*) {
+						MyGui.Destroy()
+						return
+					}
+				}
+			else if ignore = "yes"
+				toolCust("You're using an outdated version of these scripts", "1000")
+			else if ignore = "stop"
+				return
+			else
+				toolCust("You put something else in the ignore.ini file you goose", "1000")
+		}
+}
+updateChecker() ;runs the update checker
+;\\end of update checker
 
 ;=============================================================================================================================================
 ;
