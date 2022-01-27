@@ -73,6 +73,9 @@ func(variableX, variableY)
 ```
 We then [#include](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
 
+#### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
+A script that will automatically save an Adobe Premiere Pro project every 5min because its built in autosave is practically useless
+
 #### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)
 A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
 
