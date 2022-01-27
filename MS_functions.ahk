@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.5
+;\\v2.9.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3
@@ -2010,21 +2010,15 @@ rgain(value)
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.9.2
+;		VSCode \\ Last updated: v2.9.6
 ;
 ; ===========================================================================================================================================
 /* vscode()
  A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
- @param script is what script I want to open and is referenced within the code itself. You cannot simply write anything for this value and you must change some associated code as well
+ @param script is the amount of pixels down the mouse must move from the collapse button to open the script I want.
 */
 vscode(script)
 {
-	/* The below will define how far down the Y axis each script is */
-	change := 496
-	msFunc := 550
-	myScripts := 577
-	qmk := 604
-	/*           */
 	KeyWait(A_PriorKey)
 	coordw()
 	blockOn()
@@ -2036,6 +2030,8 @@ vscode(script)
 			MouseMove(%&x%, %&y%)
 			sleep 50
 		}
+	SendInput(focusWork) ;vscode hides the buttons now all of a sudden.. thanks vscode
+	sleep 50
 	if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "collapse.png") ;this imagesearch finds the collapse folders button, presses it twice, then moves across and presses the refresh button
 		{
 			MouseMove(%&xex%, %&yex%)
@@ -2049,15 +2045,7 @@ vscode(script)
 			blockOff()
 			return
 		}
-	;;the below references whatever you put in the () of the function call itself and is used to be able to move multiple different amounts. Feel free to change the above values and what the calls are called to your needs
-	if %&script% = "change"
-		MouseMove(0, change,, "R")
-	if %&script% = "msFunc"
-		MouseMove(0, msFunc,, "R")
-	if %&script% = "myScripts"
-		MouseMove(0, myScripts,, "R")
-	if %&script% = "qmk"
-		MouseMove(0, qmk,, "R")
+	MouseMove(0, %&script%,, "R")
 	SendInput("{Click}")
 	MouseMove(%&x%, %&y%)
 	SendInput(focusCode)

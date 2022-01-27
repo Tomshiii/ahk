@@ -11,9 +11,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.11
+;\\v2.8.12
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.9
+;\\v2.9.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.2
 
@@ -375,10 +375,10 @@ F14:: ;open the "show more options" menu in win11
 }
 
 #HotIf WinActive("ahk_exe Code.exe")
-!a::vscode("myScripts") ;clicks on the my scripts script in vscode
-!f::vscode("msFunc") ;clicks on my msfunctions script in vscode 
-!q::vscode("qmk") ;clicks on my qmk script in vscode
-!c::vscode("change") ;clicks on my changelog file in vscode
+!a::vscode("577") ;clicks on the my scripts script in vscode
+!f::vscode("550") ;clicks on my msfunctions script in vscode 
+!q::vscode("604") ;clicks on my qmk script in vscode
+!c::vscode("496") ;clicks on my changelog file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 Media_Play_Pause:: ;pauses youtube video if there is one.
