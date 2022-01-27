@@ -11,15 +11,15 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.10
+;\\v2.8.11
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.9
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.2
 
 ;\\CURRENT RELEASE VERSION
-global MyRelease := "2.3"
-global MyReleaseBeta := "2.3.0.1"
+global MyRelease := "v2.3"
+;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 ; ============================================================================================================================================
 ;
@@ -65,19 +65,21 @@ updateChecker() {
 	;checks if script was reloaded
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
 		return
+	;if I ever choose to do beta release channels
+	/*
 	;beta release
-	beta := ComObject("WinHttp.WinHttpRequest.5.1")
-	beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/ReleaseBeta.txt")
-	beta.Send()
-	beta.WaitForResponse()
-	global betaversion := beta.ResponseText
-	;check if local version is the same as release
-	if betaversion = MyReleaseBeta
-		goto main
-	else if betaversion > MyReleaseBeta
+	ignorebeta := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
+	if ignorebeta = "no"
 		{
-			ignorebeta := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
-			if ignorebeta = "no"
+			beta := ComObject("WinHttp.WinHttpRequest.5.1")
+			beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/ReleaseBeta.txt")
+			beta.Send()
+			beta.WaitForResponse()
+			global betaversion := beta.ResponseText
+			;check if local version is the same as release
+			if betaversion = MyReleaseBeta
+				goto main
+			else
 				{
 					;grabbing changelog info
 					changebeta := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -106,7 +108,7 @@ updateChecker() {
 					nopromptbeta.OnEvent("Click", promptbeta)
 					;getting value for changelog
 					ChangeLogbeta.Value := LatestChangeLogBeta
-					
+
 					MyGuibeta.Show()
 					promptbeta(*) {
 						if nopromptbeta.Value = 1
@@ -122,7 +124,7 @@ updateChecker() {
 						else
 							{
 								ToolTip("Updated scripts are downloading")
-								Download("https://github.com/Tomshiii/ahk/releases/download/" betaversion "/v" betaversion ".zip", downloadLocation "\v" betaversion ".zip")
+								Download("https://github.com/Tomshiii/ahk/releases/download/" betaversion "/" betaversion ".zip", downloadLocation "\" betaversion ".zip")
 								toolCust("Release " betaversion " of the scripts has been downloaded to " downloadLocation, "3000")
 								run(downloadLocation)
 								return
@@ -133,27 +135,28 @@ updateChecker() {
 						return
 					}
 				}
-			else if ignorebeta = "yes"
-				toolCust("You're using an outdated version of these scripts", "1000")
-			else if ignorebeta = "stop"
-				return
-			else
-				toolCust("You put something else in the ignore.ini file you goose", "1000")
 		}
+	else if ignorebeta = "yes"
+		toolCust("You're using an outdated version of these scripts", "1000")
+	else if ignorebeta = "stop"
+		return
+	else
+		toolCust("You put something else in the ignore.ini file you goose", "1000")
+	*/
 	main:
 	;release version
-	main := ComObject("WinHttp.WinHttpRequest.5.1")
-	main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
-	main.Send()
-	main.WaitForResponse()
-	global version := main.ResponseText
-	;check if local version is the same as release
-	if version = MyRelease
-		return
-	else if version > MyRelease
+	ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+	if ignore = "no"
 		{
-			ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
-			if ignore = "no"
+			;check if local version is the same as release
+			main := ComObject("WinHttp.WinHttpRequest.5.1")
+			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
+			main.Send()
+			main.WaitForResponse()
+			global version := main.ResponseText
+			if version = MyRelease
+				return
+			else
 				{
 					;grabbing changelog info
 					change := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -181,11 +184,11 @@ updateChecker() {
 					noprompt := MyGui.Add("Checkbox", "vNoPrompt X300 Y357", "Don't prompt again")
 					noprompt.OnEvent("Click", prompt)
 					;set "beta alerts" checkbox
-					nobetaprompt := MyGui.Add("Checkbox", "vnobetaprompt X120 Y357", "Get Beta Release alerts")
-					nobetaprompt.OnEvent("Click", betaprompt)
+					;nobetaprompt := MyGui.Add("Checkbox", "vnobetaprompt X120 Y357", "Get Beta Release alerts")
+					;nobetaprompt.OnEvent("Click", betaprompt)
 					;getting value for changelog
 					ChangeLog.Value := LatestChangeLog
-					
+
 					MyGui.Show()
 					prompt(*) {
 						if noprompt.Value = 1
@@ -193,12 +196,14 @@ updateChecker() {
 						if noprompt.Value = 0
 							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 					}
+					/*
 					betaprompt(*) {
 						if nobetaprompt.Value = 1
 							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
 						if nobetaprompt.Value = 0
 							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
 					}
+					*/
 					down(*) {
 						MyGui.Destroy()
 						downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
@@ -207,7 +212,7 @@ updateChecker() {
 						else
 							{
 								ToolTip("Updated scripts are downloading")
-								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/v" version ".zip", downloadLocation "\v" version ".zip")
+								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version ".zip", downloadLocation "\" version ".zip")
 								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "3000")
 								run(downloadLocation)
 								return
@@ -218,13 +223,13 @@ updateChecker() {
 						return
 					}
 				}
-			else if ignore = "yes"
-				toolCust("You're using an outdated version of these scripts", "1000")
-			else if ignore = "stop"
-				return
-			else
-				toolCust("You put something else in the ignore.ini file you goose", "1000")
 		}
+		else if ignore = "yes"
+			toolCust("You're using an outdated version of these scripts", "1000")
+		else if ignore = "stop"
+			return
+		else
+			toolCust("You put something else in the ignore.ini file you goose", "1000")
 }
 updateChecker() ;runs the update checker
 ;\\end of update checker
