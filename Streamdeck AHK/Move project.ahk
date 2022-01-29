@@ -23,16 +23,31 @@ if DirExist(SelectedFolder "\renders\draft")
     DirDelete(SelectedFolder "\renders\draft", 1)
 if DirExist(SelectedFolder "\renders\Draft")
     DirDelete(SelectedFolder "\renders\Draft", 1)
+if DirExist(SelectedFolder "\Adobe Premiere Pro Auto-Save")
+    DirDelete(SelectedFolder "\Adobe Premiere Pro Auto-Save", 1)
+if DirExist(SelectedFolder "\Adobe Premiere Pro Audio Previews")
+    DirDelete(SelectedFolder "\Adobe Premiere Pro Audio Previews", 1)
 
 ;;this part deletes any temp files if you have premiere/after effects set to save them next to their media
 FileDelete(SelectedFolder "\videos\*.pek")
 FileDelete(SelectedFolder "\videos\*.pkf")
+FileDelete(SelectedFolder "\audio\*.pek")
+FileDelete(SelectedFolder "\audio\*.pkf")
 FileDelete(SelectedFolder "\*.cfa")
 FileDelete(SelectedFolder "\*.pek")
 
-;;this part will delete any cache files buried within premiere's appdata folder because its settings to do so automatically literally never work. this will only happen if you use this script within the first week of a month
-if A_DD < 8
-    FileDelete(A_AppData "\Adobe\Common\Media Cache Files\*ims")
+;;this part will delete any cache files buried within premiere's appdata folder because its settings to do so automatically literally never work. this will only happen if the folder is larger than you set below (in GB)
+
+;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
+largestSize := 15
+;then below checks the size and deletes if too large
+FolderSize := 0
+WhichFolder := A_AppData "\Adobe\Common\Media Cache Files\" 
+Loop Files, WhichFolder "\*.*", "R"
+    FolderSize += A_LoopFileSize
+convert := FolderSize/"1073741824"
+if convert >= largestSize
+    FileDelete(A_AppData "\Adobe\Common\Media Cache Files\*.ims")
 
 ;;this part then moves your selected folder to the selected destination folder
 DirMove(SelectedFolder, Move "\" %&name%)
