@@ -390,6 +390,13 @@ enableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini
  */
 disableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Disable Preview")
 
+/*
+ This value will send the keyboard shortcut you have set to disable the preview window within OBS Studio
+
+ Can be set within KSA.ahk/ini
+*/
+screenshotOBS := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Screenshot")
+
 
 
 
