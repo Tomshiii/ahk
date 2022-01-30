@@ -4,7 +4,7 @@
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.6
+;\\v2.9.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.0.1
@@ -2094,7 +2094,7 @@ numpad000()
 
 ; ===========================================================================================================================================
 ;
-;		switch/launch scripts \\ Last updated: v2.9.4
+;		switch/launch scripts \\ Last updated: v2.9.7
 ;
 ; ===========================================================================================================================================
 /*
@@ -2400,69 +2400,7 @@ switchToMusic()
 	GroupAdd("MusicPlayers", "ahk_exe AIMP.exe") 
 	GroupAdd("MusicPlayers", "ahk_exe foobar2000.exe")
 	if not WinExist("ahk_group MusicPlayers")
-		{
-			if WinExist("Which MP to open?")
-				return
-			;if there is no music player open, a custom GUI window will open asking which program you'd like to open
-			MyGui := Gui("AlwaysOnTop", "Which MP to open?") ;creates our GUI window
-			MyGui.SetFont("S10") ;Sets the size of the font
-			MyGui.SetFont("W600") ;Sets the weight of the font (thickness)
-			MyGui.Opt("+Resize +MinSize290x10") ;Sets a minimum size for the window
-			;now we define the elements of the GUI window
-			;defining AIMP
-			aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", A_WorkingDir "\Support Files\images\aimp.png")
-			AIMPGUI := MyGui.Add("Button", "X40 Y7", "AIMP")
-			AIMPGUI.OnEvent("Click", AIMP)
-			;defining Foobar
-			foobarlogo := MyGui.Add("Picture", "w20 h-1 X14 Y40", A_WorkingDir "\Support Files\images\foobar.png")
-			FoobarGUI := MyGui.Add("Button", "X40 Y40", "Foobar")
-			FoobarGUI.OnEvent("Click", Foobar)
-			;defining Windows Media Player
-			wmplogo := MyGui.Add("Picture", "w25 h-1 X140 Y9", A_WorkingDir "\Support Files\images\wmp.png")
-			WMPGUI := MyGui.Add("Button", "X170 Y7", "WMP")
-			WMPGUI.OnEvent("Click", WMP)
-			;defining VLC
-			vlclogo := MyGui.Add("Picture", "w28 h-1 X138 Y42", A_WorkingDir "\Support Files\images\vlc.png")
-			VLCGUI := MyGui.Add("Button", "X170 Y40", "VLC")
-			VLCGUI.OnEvent("Click", VLC)
-			;defining music folder
-			folderlogo := MyGui.Add("Picture", "w25 h-1  X14 Y86", A_WorkingDir "\Support Files\images\explorer.png")
-			FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
-			FOLDERGUI.OnEvent("Click", MUSICFOLDER)
-			;Finished with definitions
-			MyGui.Show()
-			;below is what happens when you click on each name
-			AIMP(*) {
-				Run("C:\Program Files (x86)\AIMP\AIMP.exe")
-				WinWait("ahk_exe AIMP.exe")
-				WinActivate("ahk_exe AIMP.exe")
-				MyGui.Destroy()
-			}
-			Foobar(*) {
-				Run("C:\Program Files (x86)\foobar2000\foobar2000.exe")
-				WinWait("ahk_exe foobar2000.exe")
-				WinActivate("ahk_exe foobar2000.exe")
-				MyGui.Destroy()
-			}
-			WMP(*) {
-				Run("C:\Program Files (x86)\Windows Media Player\wmplayer.exe")
-				WinWait("ahk_exe wmplayer.exe")
-				WinActivate("ahk_exe wmplayer.exe")
-				MyGui.Destroy()
-			}
-			VLC(*) {
-				Run("C:\Program Files (x86)\VideoLAN\VLC\vlc.exe")
-				WinWait("ahk_exe vlc.exe")
-				WinActivate("ahk_exe vlc.exe")
-				MyGui.Destroy()
-			}
-			MUSICFOLDER(*) {
-				Run("S:\Program Files\User\Music\")
-				WinWait("Music")
-				WinActivate("Music")
-				MyGui.Destroy()
-			}
-		}
+		musicGUI()
 	if WinActive("ahk_group MusicPlayers")
 		{
 			GroupActivate "MusicPlayers", "r"
@@ -2490,16 +2428,21 @@ switchToMusic()
 	;toolCust(window, "1000") ;debugging
 }
 
+/*
+ This function creates a GUI for the user to select which media player they wish to open.
+ Currently offers AIMP, Foobar, WMP & VLC.
+ This function is also used within switchToMusic()
+ */
 musicGUI()
 {
-	if WinExist("Which MP to open?")
+	if WinExist("Music to open?")
 		return
 	;if there is no music player open, a custom GUI window will open asking which program you'd like to open
-	MyGui := Gui("AlwaysOnTop", "Which MP to open?") ;creates our GUI window
+	MyGui := Gui("AlwaysOnTop", "Music to open?") ;creates our GUI window
 	MyGui.SetFont("S10") ;Sets the size of the font
 	MyGui.SetFont("W600") ;Sets the weight of the font (thickness)
-	MyGui.Opt("+Resize +MinSize290x10") ;Sets a minimum size for the window
-	;now we define the elements of the GUI window
+	MyGui.Opt("+Resize +MinSize260x120 +MaxSize260x120") ;Sets a minimum size for the window
+	;#now we define the elements of the GUI window
 	;defining AIMP
 	aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", A_WorkingDir "\Support Files\images\aimp.png")
 	AIMPGUI := MyGui.Add("Button", "X40 Y7", "AIMP")
@@ -2520,7 +2463,9 @@ musicGUI()
 	folderlogo := MyGui.Add("Picture", "w25 h-1  X14 Y86", A_WorkingDir "\Support Files\images\explorer.png")
 	FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
 	FOLDERGUI.OnEvent("Click", MUSICFOLDER)
-	;Finished with definitions
+	;add an invisible button since removing the default off all the others did nothing
+	removedefault := MyGui.Add("Button", "Default Y155", "_")
+	;#finished with definitions
 	MyGui.Show()
 	;below is what happens when you click on each name
 	AIMP(*) {
