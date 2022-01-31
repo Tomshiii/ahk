@@ -1,4 +1,8 @@
-﻿#SingleInstance Force
+﻿;\\CURRENT RELEASE VERSION
+global MyRelease := "v2.3.0.1"
+;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
+
+#SingleInstance Force
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 SetNumLockState "AlwaysOn" ;sets numlock to always on (you can still it for macros)
@@ -16,10 +20,6 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.3
-
-;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.0.1"
-;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 ; ============================================================================================================================================
 ;
@@ -150,14 +150,17 @@ updateChecker() {
 		{
 			;check if local version is the same as release
 			main := ComObject("WinHttp.WinHttpRequest.5.1")
-			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
+			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/update-checker-changes/My%20Scripts.ahk")
 			main.Send()
 			main.WaitForResponse()
-			global version := main.ResponseText
+			string := main.ResponseText
+			global version := SubStr(string, 49, 57)
+			;global version := main.ResponseText
 			if version = MyRelease
 				return
 			else
 				{
+					;MsgBox(version)
 					;grabbing changelog info
 					change := ComObject("WinHttp.WinHttpRequest.5.1")
 					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelog.txt")
