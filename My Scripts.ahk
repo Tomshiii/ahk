@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9
+;\\v2.10
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -72,14 +72,14 @@ updateChecker() {
 	if ignorebeta = "no"
 		{
 			beta := ComObject("WinHttp.WinHttpRequest.5.1")
-			beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/ReleaseBeta.txt")
+			beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/update-checker-changes/My%20Scripts.ahk")
 			beta.Send()
 			beta.WaitForResponse()
-			global betaversion := beta.ResponseText
+			string := beta.ResponseText
+			global betaversion := SubStr(string, 88, 8)
+			;global betaversion := beta.ResponseText
 			;check if local version is the same as release
-			if betaversion = MyReleaseBeta
-				goto main
-			else
+			if VerCompare(MyReleaseBeta, betaversion) < 0
 				{
 					;grabbing changelog info
 					changebeta := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -135,6 +135,8 @@ updateChecker() {
 						return
 					}
 				}
+			else
+				goto main				
 		}
 	else if ignorebeta = "yes"
 		toolCust("You're using an outdated version of these scripts", "1000")
@@ -154,13 +156,10 @@ updateChecker() {
 			main.Send()
 			main.WaitForResponse()
 			string := main.ResponseText
-			global version := SubStr(string, 49, 57)
+			global version := SubStr(string, 51, 8)
 			;global version := main.ResponseText
-			if version = MyRelease
-				return
-			else
+			if VerCompare(MyRelease, version) < 0
 				{
-					;MsgBox(version)
 					;grabbing changelog info
 					change := ComObject("WinHttp.WinHttpRequest.5.1")
 					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelog.txt")
@@ -245,13 +244,15 @@ updateChecker() {
 						return
 					}
 				}
+			else
+				return				
 		}
-		else if ignore = "yes"
-			toolCust("You're using an outdated version of these scripts", "1000")
-		else if ignore = "stop"
-			return
-		else
-			toolCust("You put something else in the ignore.ini file you goose", "1000")
+	else if ignore = "yes"
+		toolCust("You're using an outdated version of these scripts", "1000")
+	else if ignore = "stop"
+		return
+	else
+		toolCust("You put something else in the ignore.ini file you goose", "1000")
 }
 updateChecker() ;runs the update checker
 ;\\end of update checker
