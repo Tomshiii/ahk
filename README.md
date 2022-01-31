@@ -53,8 +53,9 @@ This script is the "central" script if you will. A lot of my windows scripts are
 A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.2.6+](https://github.com/Tomshiii/ahk/releases/tag/v2.2.6) I use a Planck Ez custom keyboard.
 Check out [\Secondary Keyboard Files](https://github.com/Tomshiii/ahk/tree/main/Secondary%20Keyboard%20Files) for more information on how that works.
 
-#### [MS_functions.ahk](https://github.com/Tomshiii/ahk/blob/main/MS_functions.ahk) (My Scripts_functions)
-A separate ahk file to define functions so they don't have to clog up the main script. You don't need to manually run this file, it gets [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) separately within scripts that need it. A function is defined similar to;
+#### [Functions.ahk](https://github.com/Tomshiii/ahk/blob/main/Functions.ahk)
+A sort of "hub" script that includes all [individual function files](https://github.com/Tomshiii/ahk/tree/main/Functions) into it so that ***it*** can then be [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in other scripts. You don't need to manually run this file.
+A function is defined similar to;
 ```autohotkey
 /* These are comments that dynamically display information when displayed in VSCode,
 but also serve as general comments for anyone else
@@ -68,7 +69,7 @@ func(variableX, variableY)
   code(%&variableY%)
 }
 ```
-We then [`#include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) MS_Functions in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
+We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
 A script that will automatically save an Adobe Premiere Pro project every 5min because its built in autosave is practically useless

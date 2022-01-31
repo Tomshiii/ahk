@@ -1,0 +1,2 @@
+# Info
+This directory is to separate out all of the functions I use for various programs. All of these functions use to be in one big ahk file, but it was getting way too large for its own good and was becoming a bit too much to work with.

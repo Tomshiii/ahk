@@ -7,15 +7,15 @@ SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script uses in the taskbar
-#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
+#Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.12
+;\\v2.9
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.9.6
+;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.2
+;\\v2.4.3
 
 ;\\CURRENT RELEASE VERSION
 global MyRelease := "v2.3.0.1"
@@ -60,7 +60,7 @@ global MyRelease := "v2.3.0.1"
 ;
 ;
 ; =======================================================================================================================================
-;\\The below code will check what version you're running on startup
+;\\The function below will check what version you're running on startup
 updateChecker() {
 	;checks if script was reloaded
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
@@ -205,6 +205,13 @@ updateChecker() {
 					}
 					*/
 					down(*) {
+						MyGui.Opt("Disabled")
+						yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
+						if yousure = "Cancel"
+							{
+								MyGui.Opt("-Disabled")
+								return
+							}
 						MyGui.Destroy()
 						downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
 						if downloadLocation = ""
@@ -215,6 +222,18 @@ updateChecker() {
 								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version ".zip", downloadLocation "\" version ".zip")
 								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "3000")
 								run(downloadLocation)
+								ToolTip("Your current scripts are being backed up!")
+								if DirExist(A_Temp "\" version)
+									DirDelete(A_Temp "\" version)
+								try {
+									DirCopy(A_WorkingDir, A_Temp "\" version)
+									DirMove(A_Temp "\" version, A_WorkingDir "\Backups\Script Backups", "1")
+									if DirExist(A_Temp "\" version)
+										DirDelete(A_Temp "\" version)
+									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups' folder", "3000")
+								} catch as e {
+									toolCust("There was an error trying to backup your current scripts", "2000")
+								}
 								return
 							}
 					}
