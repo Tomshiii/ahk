@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.0.1"
+global MyRelease := "v2.3.0.1" ;returnvalueMyRelease
 ;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 #SingleInstance Force
@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.10.1
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -72,11 +72,13 @@ updateChecker() {
 	if ignorebeta = "no"
 		{
 			beta := ComObject("WinHttp.WinHttpRequest.5.1")
-			beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/update-checker-changes/My%20Scripts.ahk")
+			beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
 			beta.Send()
 			beta.WaitForResponse()
 			string := beta.ResponseText
-			global betaversion := SubStr(string, 88, 8)
+			foundpos := InStr(string, ";",,,3)
+			end := foundpos - ;something, you'll have to test this
+			global version := SubStr(string, 88, end)
 			;global betaversion := beta.ResponseText
 			;check if local version is the same as release
 			if VerCompare(MyReleaseBeta, betaversion) < 0
@@ -152,11 +154,13 @@ updateChecker() {
 		{
 			;check if local version is the same as release
 			main := ComObject("WinHttp.WinHttpRequest.5.1")
-			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/update-checker-changes/My%20Scripts.ahk")
+			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
 			main.Send()
 			main.WaitForResponse()
 			string := main.ResponseText
-			global version := SubStr(string, 51, 8)
+			foundpos := InStr(string, ";",,,2)
+			end := foundpos - "54"
+			global version := SubStr(string, 51, end)
 			;global version := main.ResponseText
 			if VerCompare(MyRelease, version) < 0
 				{
