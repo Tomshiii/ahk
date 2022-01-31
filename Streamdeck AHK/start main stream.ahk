@@ -14,7 +14,7 @@ if not WinExist("ahk_exe obs64.exe")
 	Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
 	Run "C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe"
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
-	Result := MsgBox("have you started the goxlr bruh",, 1)
+	Result := MsgBox("have you started the goxlr bruh",, "1 4096")
 	if Result = "OK"
 		{
 			goto next
