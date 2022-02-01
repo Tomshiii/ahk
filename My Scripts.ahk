@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.0.150" ;returnvalueMyRelease
+global MyRelease := "v2.3.0.10" ;returnvalueMyRelease
 ;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 #SingleInstance Force
@@ -154,13 +154,14 @@ updateChecker() {
 		{
 			;check if local version is the same as release
 			main := ComObject("WinHttp.WinHttpRequest.5.1")
-			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
+			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/update-checker-test/My%20Scripts.ahk")
 			main.Send()
 			main.WaitForResponse()
 			string := main.ResponseText
 			foundpos := InStr(string, ";",,,2)
-			end := foundpos - "54"
+			end := foundpos - "53"
 			global version := SubStr(string, 51, end)
+			MsgBox(version)
 			;global version := main.ResponseText
 			if VerCompare(MyRelease, version) < 0
 				{
