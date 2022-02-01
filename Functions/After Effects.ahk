@@ -1,11 +1,6 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.9
 
-; ===========================================================================================================================================
-;
-;		After Effects \\ Last updated: v2.9
-;
-; ===========================================================================================================================================
 /* aevaluehold()
  A function to warp to one of a videos values within After Effects (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
  @param button is the hotkey within after effects that's used to open up the property you want to adjust

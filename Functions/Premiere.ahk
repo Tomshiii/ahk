@@ -1,11 +1,6 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9
+;\\v2.9.1
 
-; ===========================================================================================================================================
-;
-;		Premiere \\ Last updated: v2.9
-;
-; ===========================================================================================================================================
 /* preset()
  This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
  @param item in this function defines what it will type into the search box (the name of your preset within premiere)

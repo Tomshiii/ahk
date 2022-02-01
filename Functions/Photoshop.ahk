@@ -1,11 +1,6 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.9
 
-; ===========================================================================================================================================
-;
-;		Photoshop \\ Last updated: v2.9
-;
-; ===========================================================================================================================================
 /* psProp()
  A function to warp to one of a photos values within Photoshop (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
  @param image is the png name of the image that imagesearch will use

@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.1
+;\\v2.10.2
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -76,7 +76,7 @@ updateChecker() {
 			beta.Send()
 			beta.WaitForResponse()
 			string := beta.ResponseText
-			foundposbeta := := InStr(string, 'v',,,3)
+			foundposbeta := InStr(string, 'v',,,3)
 			endposbeta := InStr(string, '"', , foundposbeta, 1)
 			endbeta := endposbeta - foundposbeta
 			global betaversion := SubStr(string, foundposbeta, endbeta)
@@ -119,16 +119,43 @@ updateChecker() {
 							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
 					}
 					downbeta(*) {
-						MyGuibeta.Destroy()
-						downloadLocation := FileSelect("D", , "Where do you wish to download Release " betaversion)
-						if downloadLocation = ""
+						MyGuibeta.Opt("Disabled")
+						yousurebeta := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
+						if yousurebeta = "Cancel"
+							{
+								MyGuibeta.Opt("-Disabled")
+								return
+							}
+							MyGuibeta.Destroy()
+						downloadLocationbeta := FileSelect("D", , "Where do you wish to download Release " betaversion)
+						if downloadLocationbeta = ""
 							return
 						else
 							{
 								ToolTip("Updated scripts are downloading")
-								Download("https://github.com/Tomshiii/ahk/releases/download/" betaversion "/" betaversion ".zip", downloadLocation "\" betaversion ".zip")
-								toolCust("Release " betaversion " of the scripts has been downloaded to " downloadLocation, "3000")
-								run(downloadLocation)
+								Download("https://github.com/Tomshiii/ahk/releases/download/" betaversion "/" betaversion ".zip", downloadLocationbeta "\" betaversion ".zip")
+								toolCust("Release " betaversion " of the scripts has been downloaded to " downloadLocationbeta, "3000")
+								run(downloadLocationbeta)
+								ToolTip("Your current scripts are being backed up!")
+								if DirExist(A_Temp "\" MyReleaseBeta)
+									DirDelete(A_Temp "\" MyReleaseBeta, 1)
+								if DirExist(A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta)
+									{
+										newbackupbeta := MsgBox("You already have a backup of Release " MyReleaseBeta "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
+										if newbackupbeta = "Yes"
+											DirDelete(A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta, 1)
+										else
+											return
+									}
+								try {
+									DirCopy(A_WorkingDir, A_Temp "\" MyReleaseBeta)
+									DirMove(A_Temp "\" MyReleaseBeta, A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta, "1")
+									if DirExist(A_Temp "\" MyReleaseBeta)
+										DirDelete(A_Temp "\" MyReleaseBeta, 1)
+									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyReleaseBeta "' folder", "3000")
+								} catch as e {
+									toolCust("There was an error trying to backup your current scripts", "2000")
+								}
 								return
 							}
 					}
@@ -229,14 +256,22 @@ updateChecker() {
 								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "3000")
 								run(downloadLocation)
 								ToolTip("Your current scripts are being backed up!")
-								if DirExist(A_Temp "\" version)
-									DirDelete(A_Temp "\" version)
+								if DirExist(A_Temp "\" MyRelease)
+									DirDelete(A_Temp "\" MyRelease, 1)
+								if DirExist(A_WorkingDir "\Backups\Script Backups\" MyRelease)
+									{
+										newbackup := MsgBox("You already have a backup of Release " MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
+										if newbackup = "Yes"
+											DirDelete(A_WorkingDir "\Backups\Script Backups\" MyRelease, 1)
+										else
+											return
+									}
 								try {
-									DirCopy(A_WorkingDir, A_Temp "\" version)
-									DirMove(A_Temp "\" version, A_WorkingDir "\Backups\Script Backups", "1")
-									if DirExist(A_Temp "\" version)
-										DirDelete(A_Temp "\" version)
-									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups' folder", "3000")
+									DirCopy(A_WorkingDir, A_Temp "\" MyRelease)
+									DirMove(A_Temp "\" MyRelease, A_WorkingDir "\Backups\Script Backups\" MyRelease, "1")
+									if DirExist(A_Temp "\" MyRelease)
+										DirDelete(A_Temp "\" MyRelease, 1)
+									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", "3000")
 								} catch as e {
 									toolCust("There was an error trying to backup your current scripts", "2000")
 								}

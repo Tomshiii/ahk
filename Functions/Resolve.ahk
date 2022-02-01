@@ -1,11 +1,6 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.9
 
-; ===========================================================================================================================================
-;
-;		Resolve \\ Last updated: v2.9
-;
-; ===========================================================================================================================================
 /* Rscale()
  A function to set the scale of a video within resolve
  @param value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
