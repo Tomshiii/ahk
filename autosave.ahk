@@ -17,7 +17,7 @@ programMonitor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini",
  
  Can be set within KSA.ahk/ini
  */
- timelineWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Timeline")
+timelineWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Timeline")
 
 global Premiere := A_WorkingDir "\ImageSearch\Premiere\"
 
@@ -67,6 +67,11 @@ toolCust(message, timeout)
         toolCust("you unpaused the autosave script", "1000")
     Pause -1 ;pauses/unpauses this script.
 }
+
+
+;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT HERE
+minutes := 7.5
+global ms := minutes * 60000
 
 save:
 if WinExist("ahk_exe Adobe Premiere Pro.exe")
@@ -133,7 +138,7 @@ if WinExist("ahk_exe Adobe Premiere Pro.exe")
         }
         blockOff()
         ToolTip("")
-        sleep 300000
+        sleep ms
         goto save
     }
 else
