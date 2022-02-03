@@ -702,11 +702,224 @@ suspender_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini",
 suspender_hotkey_ini := IniRead("userHotkeys.ini", "Windows", "suspender")
 suspender_replaced := StrReplace(reloader_replaced, suspender_hotkey_replace, suspender_hotkey_ini)
 
+excel_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "excel")
+excel_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "excel")
+excel_replaced := StrReplace(suspender_replaced, excel_hotkey_replace, excel_hotkey_ini)
+
+windowspy_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "windowspy")
+windowspy_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "windowspy")
+windowspy_replaced := StrReplace(excel_replaced, windowspy_hotkey_replace, windowspy_hotkey_ini)
+
+vscode_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "vscode")
+vscode_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "vscode")
+vscode_replaced := StrReplace(windowspy_replaced, vscode_hotkey_replace, vscode_hotkey_ini)
+
+streamdeck_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "streamdeck")
+streamdeck_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "streamdeck")
+streamdeck_replaced := StrReplace(vscode_replaced, streamdeck_hotkey_replace, streamdeck_hotkey_ini)
+
+taskmanger_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "taskmanger")
+taskmanger_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "taskmanger")
+taskmanger_replaced := StrReplace(streamdeck_replaced, taskmanger_hotkey_replace, taskmanger_hotkey_ini)
 
 
-if FileExist(A_WorkingDir "\" Release "\My Scripts.ahk")
-    FileDelete(A_WorkingDir "\" Release "\My Scripts.ahk")
-FileAppend(final_replaced, A_WorkingDir "\" Release "\My Scripts.ahk")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -741,59 +954,9 @@ FileAppend(final_replaced, A_WorkingDir "\" Release "\My Scripts.ahk")
 
 
 /*
-Loop
-    {
-        ini := FileRead(A_WorkingDir "\userHotkeys.ini")
-        
-        line := InStr(ini, "=",,, A_Index)
-        forchar := A_Index + 64
-        if forchar > 89
-            forchar := A_Index + 71
-        num := Chr(forchar)
-        firstlinepos := InStr(ini, "]",,, 1)
-        removesquareread := StrReplace(ini, "]", '"',, &Count)
-        if A_Index > 59
-            num := "a" Chr(forchar)
-     
-        if A_Index = 1
-            {
-                
-                firstlinestart := firstlinepos + 3
-                endlinestart := line + 2
-                endlineendpos := InStr(ini, '"',,, 2)
-                endlineend := endlineendpos - 1
-                namelength := line - firstlinestart
-                name := SubStr(ini, firstlinestart, namelength)
-                hotkeyused := SubStr(ini, endlinestart, endlineend)
-                FileAppend(num " := SubStr(myscripts_string, 1, " name "_begin - 1)`n", "Installer.ahk")
-                FileAppend("FileAppend(" num A_Space name "_hotkey" A_Space "'::', A_WorkingDir '\v2.3.1\My Scripts.ahk')`n`n", "Installer.ahk")
-            }
-        else
-            {
-                lineminus := InStr(ini, "=",,, A_Index - 1)
-                namefind := InStr(removesquareread, '"',, line, -1)
-                namestart := namefind + 3
-                nameend := line - namestart
-                nameindex := SubStr(removesquareread, namestart, nameend)
-                hotkeystart := line + 2
-                hotkeyendpos := InStr(removesquareread, '"',, line, 2)
-                hotkeyend := hotkeyendpos - 1
-                hotkeyused := SubStr(removesquareread, hotkeystart, hotkeyend)
-                ;previous
-                namefindprev := InStr(removesquareread, '"',, lineminus, -1)
-                namestartprev := namefindprev + 3
-                nameendprev := lineminus - namestartprev
-                nameindexprev := SubStr(removesquareread, namestartprev, nameendprev)
-                hotkeystart := lineminus + 2
-                hotkeyendpos := InStr(removesquareread, '"',, lineminus, 2)
-                hotkeyend := hotkeyendpos - 1
-                hotkeyused := SubStr(removesquareread, hotkeystart, hotkeyend)
-                ;writing
-                FileAppend(num "length := " nameindex "_begin - " nameindexprev "_endpos - 1`n", "Installer.ahk")
-                FileAppend(num " := SubStr(myscripts_string, " nameindexprev "_endpos, " num "length)`n", "Installer.ahk")
-                FileAppend("FileAppend(" num A_Space nameindex '_hotkey "::", A_WorkingDir "\v2.3.1\My Scripts.ahk")`n`n', "Installer.ahk")
-            }
-    }
+if FileExist(A_WorkingDir "\" Release "\My Scripts.ahk")
+    FileDelete(A_WorkingDir "\" Release "\My Scripts.ahk")
+FileAppend(final_replaced, A_WorkingDir "\" Release "\My Scripts.ahk")
 */
 
 
@@ -814,252 +977,3 @@ Loop
 
 
 
-
-
-
-
-
-/*
-A := SubStr(myscripts_string, 1, reloader_begin - 1)
-FileAppend(A reloader_hotkey '::', A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Blength := suspender_begin - reloader_endpos - 1
-B := SubStr(myscripts_string, reloader_endpos, Blength)
-FileAppend(B suspender_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Clength := excel_begin - suspender_endpos - 1
-C := SubStr(myscripts_string, suspender_endpos, Clength)
-FileAppend(C excel_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Dlength := windowspy_begin - excel_endpos - 1
-D := SubStr(myscripts_string, excel_endpos, Dlength)
-FileAppend(D windowspy_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Elength := vscode_begin - windowspy_endpos - 1
-E := SubStr(myscripts_string, windowspy_endpos, Elength)
-FileAppend(E vscode_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Flength := streamdeck_begin - vscode_endpos - 1
-F := SubStr(myscripts_string, vscode_endpos, Flength)
-FileAppend(F streamdeck_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Glength := taskmanger_begin - streamdeck_endpos - 1
-G := SubStr(myscripts_string, streamdeck_endpos, Glength)
-FileAppend(G taskmanger_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Hlength := word_begin - taskmanger_endpos - 1
-H := SubStr(myscripts_string, taskmanger_endpos, Hlength)
-FileAppend(H word_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Ilength := akhdocu_begin - word_endpos - 1
-I := SubStr(myscripts_string, word_endpos, Ilength)
-FileAppend(I akhdocu_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Jlength := ahksearch_begin - akhdocu_endpos - 1
-J := SubStr(myscripts_string, akhdocu_endpos, Jlength)
-FileAppend(J ahksearch_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Klength := streamfoobar_begin - ahksearch_endpos - 1
-K := SubStr(myscripts_string, ahksearch_endpos, Klength)
-FileAppend(K streamfoobar_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Llength := explorerback_begin - streamfoobar_endpos - 1
-L := SubStr(myscripts_string, streamfoobar_endpos, Llength)
-FileAppend(L explorerback_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Mlength := showmore_begin - explorerback_endpos - 1
-M := SubStr(myscripts_string, explorerback_endpos, Mlength)
-FileAppend(M showmore_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Nlength := vscodems_begin - showmore_endpos - 1
-N := SubStr(myscripts_string, showmore_endpos, Nlength)
-FileAppend(N vscodems_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Olength := vscodefunc_begin - vscodems_endpos - 1
-O := SubStr(myscripts_string, vscodems_endpos, Olength)
-FileAppend(O vscodefunc_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Plength := vscodeqmk_begin - vscodefunc_endpos - 1
-P := SubStr(myscripts_string, vscodefunc_endpos, Plength)
-FileAppend(P vscodeqmk_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Qlength := vscodechange_begin - vscodeqmk_endpos - 1
-Q := SubStr(myscripts_string, vscodeqmk_endpos, Qlength)
-FileAppend(Q vscodechange_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Rlength := pauseyoutube_begin - vscodechange_endpos - 1
-R := SubStr(myscripts_string, vscodechange_endpos, Rlength)
-FileAppend(R pauseyoutube_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Slength := discedit_begin - pauseyoutube_endpos - 1
-S := SubStr(myscripts_string, pauseyoutube_endpos, Slength)
-FileAppend(S discedit_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Tlength := discreply_begin - discedit_endpos - 1
-T := SubStr(myscripts_string, discedit_endpos, Tlength)
-FileAppend(T discreply_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Ulength := discreact_begin - discreply_endpos - 1
-U := SubStr(myscripts_string, discreply_endpos, Ulength)
-FileAppend(U discreact_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Vlength := discdelete_begin - discreact_endpos - 1
-V := SubStr(myscripts_string, discreact_endpos, Vlength)
-FileAppend(V discdelete_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Wlength := png_begin - discdelete_endpos - 1
-W := SubStr(myscripts_string, discdelete_endpos, Wlength)
-FileAppend(W png_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Xlength := jpg_begin - png_endpos - 1
-X := SubStr(myscripts_string, png_endpos, Xlength)
-FileAppend(X jpg_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-Ylength := photopen_begin - jpg_endpos - 1
-Y := SubStr(myscripts_string, jpg_endpos, Ylength)
-FileAppend(Y photopen_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-alength := photoselect_begin - photopen_endpos - 1
-a := SubStr(myscripts_string, photopen_endpos, alength)
-FileAppend(a photoselect_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-blength := photozoom_begin - photoselect_endpos - 1
-b := SubStr(myscripts_string, photoselect_endpos, blength)
-FileAppend(b photozoom_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-clength := aetimeline_begin - photozoom_endpos - 1
-c := SubStr(myscripts_string, photozoom_endpos, clength)
-FileAppend(c aetimeline_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-dlength := aeselection_begin - aetimeline_endpos - 1
-d := SubStr(myscripts_string, aetimeline_endpos, dlength)
-FileAppend(d aeselection_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-elength := aenextframe_begin - aeselection_endpos - 1
-e := SubStr(myscripts_string, aeselection_endpos, elength)
-FileAppend(e aenextframe_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-flength := aepreviousframe_begin - aenextframe_endpos - 1
-f := SubStr(myscripts_string, aenextframe_endpos, flength)
-FileAppend(f aepreviousframe_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-glength := premzoomout_begin - aepreviousframe_endpos - 1
-g := SubStr(myscripts_string, aepreviousframe_endpos, glength)
-FileAppend(g premzoomout_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-hlength := premselecttool_begin - premzoomout_endpos - 1
-h := SubStr(myscripts_string, premzoomout_endpos, hlength)
-FileAppend(h premselecttool_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-ilength := premproject_begin - premselecttool_endpos - 1
-i := SubStr(myscripts_string, premselecttool_endpos, ilength)
-FileAppend(i premproject_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-jlength := premnextedit_begin - premproject_endpos - 1
-j := SubStr(myscripts_string, premproject_endpos, jlength)
-FileAppend(j premnextedit_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-klength := prempreviousedit_begin - premnextedit_endpos - 1
-k := SubStr(myscripts_string, premnextedit_endpos, klength)
-FileAppend(k prempreviousedit_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-llength := premnudgedown_begin - prempreviousedit_endpos - 1
-l := SubStr(myscripts_string, prempreviousedit_endpos, llength)
-FileAppend(l premnudgedown_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-mlength := premmousedrag1_begin - premnudgedown_endpos - 1
-m := SubStr(myscripts_string, premnudgedown_endpos, mlength)
-FileAppend(m premmousedrag1_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-nlength := premmousedrag2_begin - premmousedrag1_endpos - 1
-n := SubStr(myscripts_string, premmousedrag1_endpos, nlength)
-FileAppend(n premmousedrag2_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-olength := premgoose_begin - premmousedrag2_endpos - 1
-o := SubStr(myscripts_string, premmousedrag2_endpos, olength)
-FileAppend(o premgoose_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-plength := prembleep_begin - premgoose_endpos - 1
-p := SubStr(myscripts_string, premgoose_endpos, plength)
-FileAppend(p prembleep_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-qlength := monitor2_begin - prembleep_endpos - 1
-q := SubStr(myscripts_string, prembleep_endpos, qlength)
-FileAppend(q monitor2_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-rlength := monitor1_begin - monitor2_endpos - 1
-r := SubStr(myscripts_string, monitor2_endpos, rlength)
-FileAppend(r monitor1_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-slength := disclocation_begin - monitor1_endpos - 1
-s := SubStr(myscripts_string, monitor1_endpos, slength)
-FileAppend(s disclocation_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-tlength := winmax_begin - disclocation_endpos - 1
-t := SubStr(myscripts_string, disclocation_endpos, tlength)
-FileAppend(t winmax_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-ulength := winleft_begin - winmax_endpos - 1
-u := SubStr(myscripts_string, winmax_endpos, ulength)
-FileAppend(u winleft_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-vlength := winright_begin - winleft_endpos - 1
-v := SubStr(myscripts_string, winleft_endpos, vlength)
-FileAppend(v winright_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-wlength := winmin_begin - winright_endpos - 1
-w := SubStr(myscripts_string, winright_endpos, wlength)
-FileAppend(w winmin_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-xlength := alwaysontop_begin - winmin_endpos - 1
-x := SubStr(myscripts_string, winmin_endpos, xlength)
-FileAppend(x alwaysontop_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-ylength := searchgoogle_begin - alwaysontop_endpos - 1
-y := SubStr(myscripts_string, alwaysontop_endpos, ylength)
-FileAppend(y searchgoogle_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-zlength := wheelup_begin - searchgoogle_endpos - 1
-z := SubStr(myscripts_string, searchgoogle_endpos, zlength)
-FileAppend(z wheelup_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-aalength := wheeldown_begin - wheelup_endpos - 1
-aa := SubStr(myscripts_string, wheelup_endpos, aalength)
-FileAppend(aa wheeldown_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-bblength := virtualright_begin - wheeldown_endpos - 1
-bb := SubStr(myscripts_string, wheeldown_endpos, bblength)
-FileAppend(bb virtualright_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-cclength := virtualleft_begin - virtualright_endpos - 1
-cc := SubStr(myscripts_string, virtualright_endpos, cclength)
-FileAppend(cc virtualleft_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-ddlength := wheelup_begin - virtualleft_endpos - 1
-dd := SubStr(myscripts_string, virtualleft_endpos, ddlength)
-FileAppend(dd wheelup_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-eelength := wheeldown_begin - wheelup_endpos - 1
-ee := SubStr(myscripts_string, wheelup_endpos, eelength)
-FileAppend(ee wheeldown_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-fflength := virtualright_begin - wheeldown_endpos - 1
-ff := SubStr(myscripts_string, wheeldown_endpos, fflength)
-FileAppend(ff virtualright_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-gglength := virtualleft_begin - virtualright_endpos - 1
-gg := SubStr(myscripts_string, virtualright_endpos, gglength)
-FileAppend(gg virtualleft_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-hhlength := youskipfor_begin - virtualleft_endpos - 1
-hh := SubStr(myscripts_string, virtualleft_endpos, hhlength)
-FileAppend(hh youskipfor_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-iilength := youskipback_begin - youskipfor_endpos - 1
-ii := SubStr(myscripts_string, youskipfor_endpos, iilength)
-FileAppend(ii youskipback_hotkey "::", A_WorkingDir "\" Release "\My Scripts.ahk")
-
-;will place from the youskipback_hotkey : all the way to the end of the script
-final := SubStr(myscripts_string, youskipfor_endpos)
-FileAppend(final, A_WorkingDir "\" Release "\My Scripts.ahk")
- */
