@@ -451,13 +451,13 @@ F14:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("577") ;clicks on the my scripts script in vscode
+!a::vscode("590") ;clicks on the my scripts script in vscode
 ;vscodefuncHotkey;
 !f::vscode("550") ;clicks on my functions script in vscode 
 ;vscodeqmkHotkey;
-!q::vscode("604") ;clicks on my qmk script in vscode
+!q::vscode("624") ;clicks on my qmk script in vscode
 ;vscodechangeHotkey;
-!c::vscode("496") ;clicks on my changelog file in vscode
+!c::vscode("510") ;clicks on my changelog file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;

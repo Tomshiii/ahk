@@ -414,6 +414,11 @@ levelsHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "
 replyHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Reply")
 
 /*
+  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+  */
+functionHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "VSCode Function")
+
+/*
  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
  */
 textHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Text")
