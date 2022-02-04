@@ -15,6 +15,7 @@ firetip()
 		ToolTip("")
 	}
 }
+coords()
 MouseGetPos(&sx, &sy)
 Run("ms-settings:apps-volume")
 WinWait("Settings")
@@ -64,5 +65,5 @@ end:
 sleep 200
 WinClose("Settings")
 coords()
-MouseMove(%&sx%, %&sy%)
+MouseMove(%&sx%, %&sy%, 2)
 ExitApp()

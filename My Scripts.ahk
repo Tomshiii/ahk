@@ -16,7 +16,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.10.3
-;\\Minimum Version of "MS_Functions.ahk" Required for this script
+;\\Minimum Version of "Functions.ahk" Required for this script
 ;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.3
@@ -28,7 +28,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ;									--------------------------------------------------------------------------------
 ;												Everything in this script is functional within v2.0
 ;											any code like "blockon()" "coords()" etc are all defined
-;										in the MS_functions.ahk script. Look there for specific code to edit
+;										in the various Functions.ahk scripts. Look there for specific code to edit
 ;
 ; ============================================================================================================================================
 ;
@@ -451,13 +451,13 @@ F14:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("577") ;clicks on the my scripts script in vscode
+!a::vscode("590") ;clicks on the my scripts script in vscode
 ;vscodefuncHotkey;
 !f::vscode("550") ;clicks on my functions script in vscode 
 ;vscodeqmkHotkey;
-!q::vscode("604") ;clicks on my qmk script in vscode
+!q::vscode("624") ;clicks on my qmk script in vscode
 ;vscodechangeHotkey;
-!c::vscode("496") ;clicks on my changelog file in vscode
+!c::vscode("510") ;clicks on my changelog file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
@@ -555,11 +555,11 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ^+j::psType("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
 ;photopenHotkey;
-XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;photoselectHotkey;
-Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;photozoomHotkey;
-z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;F1::psSave()
 
 ;=============================================================================================================================================
@@ -569,9 +569,9 @@ z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool 
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
 ;aetimelineHotkey;
-Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton1::timeline("981", "550", "2542", "996") ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aeselectionHotkey;
-Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aenextframeHotkey;
 WheelRight::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 ;aepreviousframeHotkey;
@@ -731,7 +731,7 @@ Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 ;premmousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;premmousedrag2Hotkey;
-Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 ;premgooseHotkey;
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
