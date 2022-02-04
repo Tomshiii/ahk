@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.2
+;\\v2.10.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
 ;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
@@ -303,6 +303,7 @@ updateChecker() ;runs the update checker
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
+;reloaderHotkey;
 #+r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
 {
 	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
@@ -330,6 +331,7 @@ updateChecker() ;runs the update checker
 			}
 }
 
+;suspenderHotkey;
 #+`::
 {
 	if A_IsSuspended = 0
@@ -345,15 +347,23 @@ updateChecker() ;runs the update checker
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf not GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
+;excelHotkey;
 PgUp::switchToExcel() ;run microsoft excel.
+;windowspyHotkey;
 Pause::switchToWindowSpy() ;run windowspy
+;vscodeHotkey;
 RWin::switchToVSC() ;run vscode
+;streamdeckHotkey;
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
+;taskmangerHotkey;
 PrintScreen::SendInput("^+{Esc}")
+;wordHotkey;
 PgDn::switchToWord()
 
 ;These two scripts are to open highlighted text in the ahk documentation
+;akhdocuHotkey;
 AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
+;ahksearchHotkey;
 ^AppsKey:: ;opens highlighted ahk command in the documentation
 {
 	A_Clipboard := "" ;clears the clipboard
@@ -361,6 +371,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
+;streamfoobarHotkey;
 F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random
 {
 	run "C:\Program Files (x86)\foobar2000\foobar2000.exe" ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
@@ -385,7 +396,9 @@ F22:: ;opens foobar, ensures the right playlist is selected, then makes it selec
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
+;explorerbackHotkey;
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
+;showmoreHotkey;
 F14:: ;open the "show more options" menu in win11
 {
 	MouseGetPos(&mx, &my)
@@ -437,12 +450,17 @@ F14:: ;open the "show more options" menu in win11
 }
 
 #HotIf WinActive("ahk_exe Code.exe")
+;vscodemsHotkey;
 !a::vscode("577") ;clicks on the my scripts script in vscode
-!f::vscode("550") ;clicks on my msfunctions script in vscode 
+;vscodefuncHotkey;
+!f::vscode("550") ;clicks on my functions script in vscode 
+;vscodeqmkHotkey;
 !q::vscode("604") ;clicks on my qmk script in vscode
+;vscodechangeHotkey;
 !c::vscode("496") ;clicks on my changelog file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
+;pauseyoutubeHotkey;
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {
 	coords()
@@ -516,9 +534,13 @@ Numpad9::
 ;SCO3A is the scancode for the CapsLock button. Had issues with using "CapsLock" as it would require a refresh every now and then before these discord scripts would work. Currently testing using the scancodes to see if that fixes it.
 ;alright scancodes didn't fix it, idk why but sometimes this function won't work until you refresh the main script. Might have to do with where I have it located in this script, maybe pulling it out into it's own script would fix it, or maybe discord is just dumb, who knows.
 ;scratch that, figured out what it is, in my qmk keyboard script I also had setcapslock to off and for whatever reason if that script was reloaded, my main script would break
+;disceditHotkey;
 SC03A & e::disc("DiscEdit.png") ;edit the message you're hovering over
+;discreplyHotkey;
 SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+;discreactHotkey;
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
+;discdeleteHotkey;
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 
 ;=============================================================================================================================================
@@ -527,11 +549,16 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ;
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe Photoshop.exe")
+;pngHotkey;
 ^+p::psType("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
+;jpgHotkey;
 ^+j::psType("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
+;photopenHotkey;
 XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+;photoselectHotkey;
 Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+;photozoomHotkey;
 z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;F1::psSave()
 
@@ -541,9 +568,13 @@ z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool 
 ;
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
+;aetimelineHotkey;
 Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+;aeselectionHotkey;
 Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+;aenextframeHotkey;
 WheelRight::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
+;aepreviousframeHotkey;
 WheelLeft::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 
 ;=============================================================================================================================================
@@ -556,7 +587,9 @@ WheelLeft::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to 
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
+;premzoomoutHotkey;
 SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
+;premselecttoolHotkey;
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coords()
@@ -581,7 +614,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	click
 	MouseMove %&xpos%, %&ypos%
 }
-
+;premprojectHotkey;
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
 	MouseGetPos(&xpos, &ypos)
@@ -689,13 +722,20 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
+;premnexteditHotkey;
 WheelRight::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
+;prempreviouseditHotkey;
 WheelLeft::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
+;premnudgedownHotkey;
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
+;premmousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
+;premmousedrag2Hotkey;
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
+;premgooseHotkey;
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
+;prembleepHotkey;
 F20::audioDrag("bleep")
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -706,17 +746,26 @@ F20::audioDrag("bleep")
 GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
+;monitor2Hotkey;
 ^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
+;monitor1Hotkey;
 ^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
-^+d::discLocation() ;Make discord bigger so I can actually read stuff when not streaming
+;disclocationHotkey;
+^+d::discLocation() ;Move discord between multiple monitors
 
+;winmaxHotkey;
 F14::moveWin("") ;maximise
+;winleftHotkey;
 XButton2::moveWin("#{Left}") ;snap left
+;winrightHotkey;
 XButton1::moveWin("#{Right}") ;snap right
+;winminHotkey;
 RButton::moveWin("") ;minimise
 
+;alwaysontopHotkey;
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
 
+;searchgoogleHotkey;
 ^+c:: ;runs a google search of highlighted text
 {
 	A_Clipboard := "" ;clears the clipboard
@@ -732,13 +781,19 @@ RButton::moveWin("") ;minimise
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;You can check out \mouse settings.png in the root repo to check what mouse buttons I have remapped
 ;The below scripts are to accelerate scrolling
+;wheelupHotkey;
 F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+;wheeldownHotkey;
 F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 
 ;The below scripts are to swap between virtual desktops
+;virtualrightHotkey;
 F19 & XButton2::SendInput("^#{Right}") ;you don't need these two as a sendinput, the syntax highlighting I'm using just see's ^#Right as an error and it's annoying
+;virtualleftHotkey;
 F19 & XButton1::SendInput("^#{Left}")
 
 ;The below scripts are to skip ahead in the youtube player with the mouse
+;youskipforHotkey;
 WheelRight::youMouse("l", "{Right}")
+;youskipbackHotkey;
 WheelLeft::youMouse("j", "{Left}")
