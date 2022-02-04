@@ -54,7 +54,7 @@ psProp(image)
     else ;since we're in photoshop here, we'll simply make the "tap" functionality have ahk hit enter twice so it exits out of the free transform
         {
             Click("{Click Up}")
-            ;fElse(%&data%) ;check MS_functions.ahk for the code to this preset
+            ;fElse(%&data%) ;check the various Functions scripts for the code to this preset
             MouseMove(%&xpos%, %&ypos%)
             SendInput("{Enter 2}")
             blockOff()
