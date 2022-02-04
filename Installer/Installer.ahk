@@ -2,15 +2,21 @@
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 
+;script version
+;v2.3.1a1
 ;This file must be in the same directory as the folder v{Release} that you downloaded from github. 
 
 global Release := "v2.3.1"
-;find users myscripts file
+
+;\\begin script to find users myscript hotkeys
+;select users version of my scripts.ahk file
 selectfile := FileSelect("1",, "Select your local version of 'My Scripts.ahk'", "*.ahk")
+if selectfile = ""
+    return
 myscripts_string := FileRead(selectfile)
-
+;defining the release version of the script
 replace_release := FileRead(A_WorkingDir "\" Release "\My Scripts.ahk")
-
+;below is gathering the users custom set hotkeys
 ;reloaderhotkey
 if reloader_foundpos := InStr(myscripts_string, "reloaderHotkey", 1,, 1)
     {
@@ -629,300 +635,570 @@ if youskipback_foundpos := InStr(myscripts_string, "youskipbackHotkey", 1,, 1)
     }
 
 
+;\\ end portion of the script that gathers the users custom hotkeys
 
 
+/* ;a simple loop to easily create the code below this loop. Requires manual replacement of the ini values, may also fail towards the end and repaste everything. Saves a bunch of time tho so still worth
+Loop x ;replace x with the amount of hotkeys
+    {
+        ini := FileRead(A_WorkingDir "\userHotkeys.ini")
+        line := InStr(ini, "=",,, A_Index)
+        ;forchar := A_Index + 64
+        ;if forchar > 90
+        ;    forchar := A_Index + 71
+        ;num := Chr(forchar)
+        firstlinepos := InStr(ini, "]",,, 1)
+        removesquareread := StrReplace(ini, "]", '"',, &Count)
+        if A_Index = 1
+            {
+                firstlinestart := firstlinepos + 3
+                namelength := line - firstlinestart
+                name := SubStr(ini, firstlinestart, namelength)
 
+                FileAppend("try`n    {`n        " name "_hotkey_ini := IniRead(" '"' "userHotkeys.ini" '"' ", " '"' "Windows" '"' ", " '"' name '"' ")`n", "Installer.ahk")
+                FileAppend("        " name "_hotkey_replace := IniRead(A_WorkingDir " '"' "\Support\originalHotkeys.ini" '"' ", " '"' "Windows" '"' ", " '"' name '"' ")`n", "Installer.ahk")
+                FileAppend("        " name "_replaced := StrReplace(replace_release, " name "_hotkey_replace, " name "_hotkey_ini)`n", "Installer.ahk")
+                FileAppend("    } catch as e {`n", "Installer.ahk")
+                FileAppend("        MsgBox(" '"' "The installer encountered an error while trying to replace the hotkeys in Release " '"' " Release " '"' " with the users custom hotkeys" '"' ")`n", "Installer.ahk")
+                FileAppend("        return`n    }`n", "Installer.ahk")
+            }
+        else
+            {
+                lineminus := InStr(ini, "=",,, A_Index - 1)
+                namefind := InStr(removesquareread, '"',, line, -1)
+                namestart := namefind + 3
+                nameend := line - namestart
+                nameindex := SubStr(removesquareread, namestart, nameend)
+                ;previous
+                namefindprev := InStr(removesquareread, '"',, lineminus, -1)
+                namestartprev := namefindprev + 3
+                nameendprev := lineminus - namestartprev
+                nameindexprev := SubStr(removesquareread, namestartprev, nameendprev)
+                ;writing
 
+                FileAppend("try`n    {`n        " nameindex "_hotkey_ini := IniRead(" '"' "userHotkeys.ini" '"' ", " '"' "Windows" '"' ", " '"' nameindex '"' ")`n", "Installer.ahk")
+                FileAppend("        " nameindex "_hotkey_replace := IniRead(A_WorkingDir " '"' "\Support\originalHotkeys.ini" '"' ", " '"' "Windows" '"' ", " '"' nameindex '"' ")`n", "Installer.ahk")
+                FileAppend("        " nameindex "_replaced := StrReplace(" nameindexprev "_replaced, " nameindex "_hotkey_replace, " nameindex "_hotkey_ini)`n", "Installer.ahk")
+                FileAppend("    } catch as e {`n", "Installer.ahk")
+                FileAppend("        MsgBox(" '"' "The installer encountered an error while trying to replace the hotkeys in Release " '"' " Release " '"' " with the users custom hotkeys" '"' ")`n", "Installer.ahk")
+                FileAppend("        return`n    }`n", "Installer.ahk")
+            }
+    }
+ */
 
+;replacing hotkeys with users stuff
 
-
-;replacing with user stuff
+msg := MsgBox("So far, this installer has generated an ini file listing all the hotkeys you've set as a replacement to the original version of these scripts.`nBeyond this point the installer will attempt to replace the Release " Release " version of [My Scripts.ahk] with these custom hotkeys`nDo you wish to continue?", "WARNING", "4 32 256 4096")
+if msg = "No"
+    return
 try
     {
         reloader_hotkey_ini := IniRead("userHotkeys.ini", "Windows", "reloader")
         reloader_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Windows", "reloader")
-        reloader_replaced := StrReplace(replace_release, reloader_hotkey_replace, reloader_hotkey_ini)
+        reloader_replaced := StrReplace(replace_release, reloader_hotkey_replace, reloader_hotkey_ini, 1,, 1)
     } catch as e {
-        MsgBox("The installer encountered an error while trying to replace`nthe hotkeys in Release " Release " with the users custom hotkeys")
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        suspender_hotkey_ini := IniRead("userHotkeys.ini", "Windows", "suspender")
+        suspender_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Windows", "suspender")
+        suspender_replaced := StrReplace(reloader_replaced, suspender_hotkey_replace, suspender_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        excel_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "excel")
+        excel_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "excel")
+        excel_replaced := StrReplace(suspender_replaced, excel_hotkey_replace, excel_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        windowspy_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "windowspy")
+        windowspy_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "windowspy")
+        windowspy_replaced := StrReplace(excel_replaced, windowspy_hotkey_replace, windowspy_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        vscode_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "vscode")
+        vscode_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "vscode")
+        vscode_replaced := StrReplace(windowspy_replaced, vscode_hotkey_replace, vscode_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        streamdeck_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "streamdeck")
+        streamdeck_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "streamdeck")
+        streamdeck_replaced := StrReplace(vscode_replaced, streamdeck_hotkey_replace, streamdeck_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        taskmanger_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "taskmanger")
+        taskmanger_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "taskmanger")
+        taskmanger_replaced := StrReplace(streamdeck_replaced, taskmanger_hotkey_replace, taskmanger_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        word_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "word")
+        word_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "word")
+        word_replaced := StrReplace(taskmanger_replaced, word_hotkey_replace, word_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        akhdocu_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "akhdocu")
+        akhdocu_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "akhdocu")
+        akhdocu_replaced := StrReplace(word_replaced, akhdocu_hotkey_replace, akhdocu_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        ahksearch_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "ahksearch")
+        ahksearch_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "ahksearch")
+        ahksearch_replaced := StrReplace(akhdocu_replaced, ahksearch_hotkey_replace, ahksearch_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        streamfoobar_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "streamfoobar")
+        streamfoobar_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "streamfoobar")
+        streamfoobar_replaced := StrReplace(ahksearch_replaced, streamfoobar_hotkey_replace, streamfoobar_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        explorerback_hotkey_ini := IniRead("userHotkeys.ini", "Other", "explorerback")
+        explorerback_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other", "explorerback")
+        explorerback_replaced := StrReplace(streamfoobar_replaced, explorerback_hotkey_replace, explorerback_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        showmore_hotkey_ini := IniRead("userHotkeys.ini", "Other", "showmore")
+        showmore_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other", "showmore")
+        showmore_replaced := StrReplace(explorerback_replaced, showmore_hotkey_replace, showmore_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        vscodems_hotkey_ini := IniRead("userHotkeys.ini", "Other", "vscodems")
+        vscodems_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other", "vscodems")
+        vscodems_replaced := StrReplace(showmore_replaced, vscodems_hotkey_replace, vscodems_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        vscodefunc_hotkey_ini := IniRead("userHotkeys.ini", "Other", "vscodefunc")
+        vscodefunc_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other", "vscodefunc")
+        vscodefunc_replaced := StrReplace(vscodems_replaced, vscodefunc_hotkey_replace, vscodefunc_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        vscodeqmk_hotkey_ini := IniRead("userHotkeys.ini", "Other", "vscodeqmk")
+        vscodeqmk_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other", "vscodeqmk")
+        vscodeqmk_replaced := StrReplace(vscodefunc_replaced, vscodeqmk_hotkey_replace, vscodeqmk_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        vscodechange_hotkey_ini := IniRead("userHotkeys.ini", "Other", "vscodechange")
+        vscodechange_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other", "vscodechange")
+        vscodechange_replaced := StrReplace(vscodeqmk_replaced, vscodechange_hotkey_replace, vscodechange_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        pauseyoutube_hotkey_ini := IniRead("userHotkeys.ini", "Other", "pauseyoutube")
+        pauseyoutube_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other", "pauseyoutube")
+        pauseyoutube_replaced := StrReplace(vscodechange_replaced, pauseyoutube_hotkey_replace, pauseyoutube_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        discedit_hotkey_ini := IniRead("userHotkeys.ini", "Discord", "discedit")
+        discedit_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Discord", "discedit")
+        discedit_replaced := StrReplace(pauseyoutube_replaced, discedit_hotkey_replace, discedit_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        discreply_hotkey_ini := IniRead("userHotkeys.ini", "Discord", "discreply")
+        discreply_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Discord", "discreply")
+        discreply_replaced := StrReplace(discedit_replaced, discreply_hotkey_replace, discreply_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        discreact_hotkey_ini := IniRead("userHotkeys.ini", "Discord", "discreact")
+        discreact_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Discord", "discreact")
+        discreact_replaced := StrReplace(discreply_replaced, discreact_hotkey_replace, discreact_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        discdelete_hotkey_ini := IniRead("userHotkeys.ini", "Discord", "discdelete")
+        discdelete_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Discord", "discdelete")
+        discdelete_replaced := StrReplace(discreact_replaced, discdelete_hotkey_replace, discdelete_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        png_hotkey_ini := IniRead("userHotkeys.ini", "Photoshop", "png")
+        png_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Photoshop", "png")
+        png_replaced := StrReplace(discdelete_replaced, png_hotkey_replace, png_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        jpg_hotkey_ini := IniRead("userHotkeys.ini", "Photoshop", "jpg")
+        jpg_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Photoshop", "jpg")
+        jpg_replaced := StrReplace(png_replaced, jpg_hotkey_replace, jpg_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        photopen_hotkey_ini := IniRead("userHotkeys.ini", "Photoshop", "photopen")
+        photopen_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Photoshop", "photopen")
+        photopen_replaced := StrReplace(jpg_replaced, photopen_hotkey_replace, photopen_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        photoselect_hotkey_ini := IniRead("userHotkeys.ini", "Photoshop", "photoselect")
+        photoselect_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Photoshop", "photoselect")
+        photoselect_replaced := StrReplace(photopen_replaced, photoselect_hotkey_replace, photoselect_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        photozoom_hotkey_ini := IniRead("userHotkeys.ini", "Photoshop", "photozoom")
+        photozoom_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Photoshop", "photozoom")
+        photozoom_replaced := StrReplace(photoselect_replaced, photozoom_hotkey_replace, photozoom_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        aetimeline_hotkey_ini := IniRead("userHotkeys.ini", "After Effects", "aetimeline")
+        aetimeline_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "After Effects", "aetimeline")
+        aetimeline_replaced := StrReplace(photozoom_replaced, aetimeline_hotkey_replace, aetimeline_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        aeselection_hotkey_ini := IniRead("userHotkeys.ini", "After Effects", "aeselection")
+        aeselection_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "After Effects", "aeselection")
+        aeselection_replaced := StrReplace(aetimeline_replaced, aeselection_hotkey_replace, aeselection_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        aenextframe_hotkey_ini := IniRead("userHotkeys.ini", "After Effects", "aenextframe")
+        aenextframe_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "After Effects", "aenextframe")
+        aenextframe_replaced := StrReplace(aeselection_replaced, aenextframe_hotkey_replace, aenextframe_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        aepreviousframe_hotkey_ini := IniRead("userHotkeys.ini", "After Effects", "aepreviousframe")
+        aepreviousframe_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "After Effects", "aepreviousframe")
+        aepreviousframe_replaced := StrReplace(aenextframe_replaced, aepreviousframe_hotkey_replace, aepreviousframe_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        premzoomout_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "premzoomout")
+        premzoomout_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "premzoomout")
+        premzoomout_replaced := StrReplace(aepreviousframe_replaced, premzoomout_hotkey_replace, premzoomout_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        premselecttool_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "premselecttool")
+        premselecttool_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "premselecttool")
+        premselecttool_replaced := StrReplace(premzoomout_replaced, premselecttool_hotkey_replace, premselecttool_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        premproject_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "premproject")
+        premproject_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "premproject")
+        premproject_replaced := StrReplace(premselecttool_replaced, premproject_hotkey_replace, premproject_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        premnextedit_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "premnextedit")
+        premnextedit_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "premnextedit")
+        premnextedit_replaced := StrReplace(premproject_replaced, premnextedit_hotkey_replace, premnextedit_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        prempreviousedit_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "prempreviousedit")
+        prempreviousedit_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "prempreviousedit")
+        prempreviousedit_replaced := StrReplace(premnextedit_replaced, prempreviousedit_hotkey_replace, prempreviousedit_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        premnudgedown_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "premnudgedown")
+        premnudgedown_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "premnudgedown")
+        premnudgedown_replaced := StrReplace(prempreviousedit_replaced, premnudgedown_hotkey_replace, premnudgedown_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        premmousedrag1_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "premmousedrag1")
+        premmousedrag1_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "premmousedrag1")
+        premmousedrag1_replaced := StrReplace(premnudgedown_replaced, premmousedrag1_hotkey_replace, premmousedrag1_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        premmousedrag2_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "premmousedrag2")
+        premmousedrag2_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "premmousedrag2")
+        premmousedrag2_replaced := StrReplace(premmousedrag1_replaced, premmousedrag2_hotkey_replace, premmousedrag2_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        premgoose_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "premgoose")
+        premgoose_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "premgoose")
+        premgoose_replaced := StrReplace(premmousedrag2_replaced, premgoose_hotkey_replace, premgoose_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        prembleep_hotkey_ini := IniRead("userHotkeys.ini", "Premiere", "prembleep")
+        prembleep_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Premiere", "prembleep")
+        prembleep_replaced := StrReplace(premgoose_replaced, prembleep_hotkey_replace, prembleep_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        monitor2_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "monitor2")
+        monitor2_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "monitor2")
+        monitor2_replaced := StrReplace(prembleep_replaced, monitor2_hotkey_replace, monitor2_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        monitor1_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "monitor1")
+        monitor1_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "monitor1")
+        monitor1_replaced := StrReplace(monitor2_replaced, monitor1_hotkey_replace, monitor1_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        disclocation_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "disclocation")
+        disclocation_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "disclocation")
+        disclocation_replaced := StrReplace(monitor1_replaced, disclocation_hotkey_replace, disclocation_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        winmax_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "winmax")
+        winmax_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "winmax")
+        winmax_replaced := StrReplace(disclocation_replaced, winmax_hotkey_replace, winmax_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        winleft_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "winleft")
+        winleft_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "winleft")
+        winleft_replaced := StrReplace(winmax_replaced, winleft_hotkey_replace, winleft_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        winright_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "winright")
+        winright_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "winright")
+        winright_replaced := StrReplace(winleft_replaced, winright_hotkey_replace, winright_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        winmin_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "winmin")
+        winmin_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "winmin")
+        winmin_replaced := StrReplace(winright_replaced, winmin_hotkey_replace, winmin_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        alwaysontop_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "alwaysontop")
+        alwaysontop_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "alwaysontop")
+        alwaysontop_replaced := StrReplace(winmin_replaced, alwaysontop_hotkey_replace, alwaysontop_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        searchgoogle_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "searchgoogle")
+        searchgoogle_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "searchgoogle")
+        searchgoogle_replaced := StrReplace(alwaysontop_replaced, searchgoogle_hotkey_replace, searchgoogle_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        wheelup_hotkey_ini := IniRead("userHotkeys.ini", "Mouse Scripts", "wheelup")
+        wheelup_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Mouse Scripts", "wheelup")
+        wheelup_replaced := StrReplace(searchgoogle_replaced, wheelup_hotkey_replace, wheelup_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        wheeldown_hotkey_ini := IniRead("userHotkeys.ini", "Mouse Scripts", "wheeldown")
+        wheeldown_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Mouse Scripts", "wheeldown")
+        wheeldown_replaced := StrReplace(wheelup_replaced, wheeldown_hotkey_replace, wheeldown_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        virtualright_hotkey_ini := IniRead("userHotkeys.ini", "Mouse Scripts", "virtualright")
+        virtualright_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Mouse Scripts", "virtualright")
+        virtualright_replaced := StrReplace(wheeldown_replaced, virtualright_hotkey_replace, virtualright_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        virtualleft_hotkey_ini := IniRead("userHotkeys.ini", "Mouse Scripts", "virtualleft")
+        virtualleft_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Mouse Scripts", "virtualleft")
+        virtualleft_replaced := StrReplace(virtualright_replaced, virtualleft_hotkey_replace, virtualleft_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        youskipfor_hotkey_ini := IniRead("userHotkeys.ini", "Mouse Scripts", "youskipfor")
+        youskipfor_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Mouse Scripts", "youskipfor")
+        youskipfor_replaced := StrReplace(virtualleft_replaced, youskipfor_hotkey_replace, youskipfor_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
+try
+    {
+        youskipback_hotkey_ini := IniRead("userHotkeys.ini", "Mouse Scripts", "youskipback")
+        youskipback_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Mouse Scripts", "youskipback")
+        youskipback_replaced := StrReplace(youskipfor_replaced, youskipback_hotkey_replace, youskipback_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
         return
     }
 
-suspender_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Windows", "suspender")
-suspender_hotkey_ini := IniRead("userHotkeys.ini", "Windows", "suspender")
-suspender_replaced := StrReplace(reloader_replaced, suspender_hotkey_replace, suspender_hotkey_ini)
-
-excel_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "excel")
-excel_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "excel")
-excel_replaced := StrReplace(suspender_replaced, excel_hotkey_replace, excel_hotkey_ini)
-
-windowspy_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "windowspy")
-windowspy_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "windowspy")
-windowspy_replaced := StrReplace(excel_replaced, windowspy_hotkey_replace, windowspy_hotkey_ini)
-
-vscode_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "vscode")
-vscode_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "vscode")
-vscode_replaced := StrReplace(windowspy_replaced, vscode_hotkey_replace, vscode_hotkey_ini)
-
-streamdeck_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "streamdeck")
-streamdeck_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "streamdeck")
-streamdeck_replaced := StrReplace(vscode_replaced, streamdeck_hotkey_replace, streamdeck_hotkey_ini)
-
-taskmanger_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Launch Scripts", "taskmanger")
-taskmanger_hotkey_ini := IniRead("userHotkeys.ini", "Launch Scripts", "taskmanger")
-taskmanger_replaced := StrReplace(streamdeck_replaced, taskmanger_hotkey_replace, taskmanger_hotkey_ini)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
+;before this point, the script has slowly been building up all replacements, if none of them failed, it will get to here and replace the entire file with the changes
 if FileExist(A_WorkingDir "\" Release "\My Scripts.ahk")
     FileDelete(A_WorkingDir "\" Release "\My Scripts.ahk")
-FileAppend(final_replaced, A_WorkingDir "\" Release "\My Scripts.ahk")
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FileAppend(youskipback_replaced, A_WorkingDir "\" Release "\My Scripts.ahk")
+;\\end of hotkey replacements
+MsgBox("Hotkey replacement complete!")
