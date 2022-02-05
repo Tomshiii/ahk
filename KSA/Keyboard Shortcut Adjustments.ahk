@@ -390,6 +390,13 @@ enableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini
  */
 disableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Disable Preview")
 
+/*
+ This value will send the keyboard shortcut you have set to disable the preview window within OBS Studio
+
+ Can be set within KSA.ahk/ini
+*/
+screenshotOBS := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Screenshot")
+
 
 
 
@@ -405,6 +412,11 @@ levelsHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "
  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
  */
 replyHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Reply")
+
+/*
+  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+  */
+functionHotkey := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "VSCode Function")
 
 /*
  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
@@ -454,7 +466,7 @@ focusWork := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hot
 /*
  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
 */
-getUpdate := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "update scripts")
+;getUpdate := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Hotkeys", "update scripts")
 
 
 ;[ImageSearchCoords]

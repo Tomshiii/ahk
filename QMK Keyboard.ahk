@@ -1,5 +1,5 @@
 SetWorkingDir A_ScriptDir
-#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
+#Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
@@ -11,12 +11,12 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.2
+;\\v2.4.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.9
+;\\v2.10
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.3.0.1
+;\\v2.3.1
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE SIMPLY ADJUSTED IT TO WORK IN AHK v2.0
@@ -57,6 +57,42 @@ newWin(key, classorexe, activate, runval)
 		}
 	else
 		Run(%&runval%)
+}
+
+/* numpad000()
+ A function to suppress multiple keystrokes or to do different things with multiple presses of the same key. This function is here for reference moreso than actual use
+ */
+numpad000()
+{
+		static winc_presses := 0
+		if winc_presses > 0 ; SetTimer already started, so we log the keypress instead.
+		{
+			winc_presses += 1
+			return
+		}
+		; Otherwise, this is the first press of a new series. Set count to 1 and start
+		; the timer:
+		winc_presses := 1
+		SetTimer After400, -50 ; Wait for more presses within a 400 millisecond window.
+
+		After400()  ; This is a nested function.
+		{
+			if winc_presses = 1 ; The key was pressed once.
+			{
+				sleep 10  ; Open a folder.
+			}
+			else if winc_presses = 2 ; The key was pressed twice.
+			{
+				; PUT CODE HERE LATER ````````````````````````````````
+			}
+			else if winc_presses > 2
+			{
+				sleep 10
+			}
+			; Regardless of which action above was triggered, reset the count to
+			; prepare for the next series of presses:
+			winc_presses := 0
+		}
 }
 
 /* 

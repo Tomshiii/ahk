@@ -1,4 +1,8 @@
-﻿#SingleInstance Force
+﻿;\\CURRENT RELEASE VERSION
+global MyRelease := "v2.3.1"
+;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
+
+#SingleInstance Force
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 SetNumLockState "AlwaysOn" ;sets numlock to always on (you can still it for macros)
@@ -7,19 +11,15 @@ SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script uses in the taskbar
-#Include "MS_functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
+#Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.12
-;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.9.6
+;\\v2.10.3
+;\\Minimum Version of "Functions.ahk" Required for this script
+;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.2
-
-;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.0.1"
-;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
+;\\v2.4.3
 
 ; ============================================================================================================================================
 ;
@@ -28,7 +28,7 @@ global MyRelease := "v2.3.0.1"
 ;									--------------------------------------------------------------------------------
 ;												Everything in this script is functional within v2.0
 ;											any code like "blockon()" "coords()" etc are all defined
-;										in the MS_functions.ahk script. Look there for specific code to edit
+;										in the various Functions.ahk scripts. Look there for specific code to edit
 ;
 ; ============================================================================================================================================
 ;
@@ -60,7 +60,7 @@ global MyRelease := "v2.3.0.1"
 ;
 ;
 ; =======================================================================================================================================
-;\\The below code will check what version you're running on startup
+;\\The function below will check what version you're running on startup
 updateChecker() {
 	;checks if script was reloaded
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
@@ -72,18 +72,20 @@ updateChecker() {
 	if ignorebeta = "no"
 		{
 			beta := ComObject("WinHttp.WinHttpRequest.5.1")
-			beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/ReleaseBeta.txt")
+			beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
 			beta.Send()
 			beta.WaitForResponse()
-			global betaversion := beta.ResponseText
+			string := beta.ResponseText
+			foundposbeta := InStr(string, 'v',,,3)
+			endposbeta := InStr(string, '"', , foundposbeta, 1)
+			endbeta := endposbeta - foundposbeta
+			global betaversion := SubStr(string, foundposbeta, endbeta)
 			;check if local version is the same as release
-			if betaversion = MyReleaseBeta
-				goto main
-			else
+			if VerCompare(MyReleaseBeta, betaversion) < 0
 				{
 					;grabbing changelog info
 					changebeta := ComObject("WinHttp.WinHttpRequest.5.1")
-					changebeta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelogbeta.txt")
+					changebeta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
 					changebeta.Send()
 					changebeta.WaitForResponse()
 					LatestChangeLogBeta := changebeta.ResponseText
@@ -117,16 +119,43 @@ updateChecker() {
 							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
 					}
 					downbeta(*) {
-						MyGuibeta.Destroy()
-						downloadLocation := FileSelect("D", , "Where do you wish to download Release " betaversion)
-						if downloadLocation = ""
+						MyGuibeta.Opt("Disabled")
+						yousurebeta := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
+						if yousurebeta = "Cancel"
+							{
+								MyGuibeta.Opt("-Disabled")
+								return
+							}
+							MyGuibeta.Destroy()
+						downloadLocationbeta := FileSelect("D", , "Where do you wish to download Release " betaversion)
+						if downloadLocationbeta = ""
 							return
 						else
 							{
 								ToolTip("Updated scripts are downloading")
-								Download("https://github.com/Tomshiii/ahk/releases/download/" betaversion "/" betaversion ".zip", downloadLocation "\" betaversion ".zip")
-								toolCust("Release " betaversion " of the scripts has been downloaded to " downloadLocation, "3000")
-								run(downloadLocation)
+								Download("https://github.com/Tomshiii/ahk/releases/download/" betaversion "/" betaversion ".zip", downloadLocationbeta "\" betaversion ".zip")
+								toolCust("Release " betaversion " of the scripts has been downloaded to " downloadLocationbeta, "3000")
+								run(downloadLocationbeta)
+								ToolTip("Your current scripts are being backed up!")
+								if DirExist(A_Temp "\" MyReleaseBeta)
+									DirDelete(A_Temp "\" MyReleaseBeta, 1)
+								if DirExist(A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta)
+									{
+										newbackupbeta := MsgBox("You already have a backup of Release " MyReleaseBeta "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
+										if newbackupbeta = "Yes"
+											DirDelete(A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta, 1)
+										else
+											return
+									}
+								try {
+									DirCopy(A_WorkingDir, A_Temp "\" MyReleaseBeta)
+									DirMove(A_Temp "\" MyReleaseBeta, A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta, "1")
+									if DirExist(A_Temp "\" MyReleaseBeta)
+										DirDelete(A_Temp "\" MyReleaseBeta, 1)
+									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyReleaseBeta "' folder", "3000")
+								} catch as e {
+									toolCust("There was an error trying to backup your current scripts", "2000")
+								}
 								return
 							}
 					}
@@ -135,6 +164,8 @@ updateChecker() {
 						return
 					}
 				}
+			else
+				goto main				
 		}
 	else if ignorebeta = "yes"
 		toolCust("You're using an outdated version of these scripts", "1000")
@@ -150,17 +181,19 @@ updateChecker() {
 		{
 			;check if local version is the same as release
 			main := ComObject("WinHttp.WinHttpRequest.5.1")
-			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/Release.txt")
+			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
 			main.Send()
 			main.WaitForResponse()
-			global version := main.ResponseText
-			if version = MyRelease
-				return
-			else
+			string := main.ResponseText
+			foundpos := InStr(string, 'v',,,2)
+			endpos := InStr(string, '"', , foundpos, 1)
+			end := endpos - foundpos
+			global version := SubStr(string, foundpos, end)
+			if VerCompare(MyRelease, version) < 0
 				{
 					;grabbing changelog info
 					change := ComObject("WinHttp.WinHttpRequest.5.1")
-					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelog.txt")
+					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
 					change.Send()
 					change.WaitForResponse()
 					LatestChangeLog := change.ResponseText
@@ -205,6 +238,13 @@ updateChecker() {
 					}
 					*/
 					down(*) {
+						MyGui.Opt("Disabled")
+						yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
+						if yousure = "Cancel"
+							{
+								MyGui.Opt("-Disabled")
+								return
+							}
 						MyGui.Destroy()
 						downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
 						if downloadLocation = ""
@@ -215,6 +255,26 @@ updateChecker() {
 								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version ".zip", downloadLocation "\" version ".zip")
 								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "3000")
 								run(downloadLocation)
+								ToolTip("Your current scripts are being backed up!")
+								if DirExist(A_Temp "\" MyRelease)
+									DirDelete(A_Temp "\" MyRelease, 1)
+								if DirExist(A_WorkingDir "\Backups\Script Backups\" MyRelease)
+									{
+										newbackup := MsgBox("You already have a backup of Release " MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
+										if newbackup = "Yes"
+											DirDelete(A_WorkingDir "\Backups\Script Backups\" MyRelease, 1)
+										else
+											return
+									}
+								try {
+									DirCopy(A_WorkingDir, A_Temp "\" MyRelease)
+									DirMove(A_Temp "\" MyRelease, A_WorkingDir "\Backups\Script Backups\" MyRelease, "1")
+									if DirExist(A_Temp "\" MyRelease)
+										DirDelete(A_Temp "\" MyRelease, 1)
+									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", "3000")
+								} catch as e {
+									toolCust("There was an error trying to backup your current scripts", "2000")
+								}
 								return
 							}
 					}
@@ -223,13 +283,15 @@ updateChecker() {
 						return
 					}
 				}
+			else
+				return				
 		}
-		else if ignore = "yes"
-			toolCust("You're using an outdated version of these scripts", "1000")
-		else if ignore = "stop"
-			return
-		else
-			toolCust("You put something else in the ignore.ini file you goose", "1000")
+	else if ignore = "yes"
+		toolCust("You're using an outdated version of these scripts", "1000")
+	else if ignore = "stop"
+		return
+	else
+		toolCust("You put something else in the ignore.ini file you goose", "1000")
 }
 updateChecker() ;runs the update checker
 ;\\end of update checker
@@ -241,6 +303,7 @@ updateChecker() ;runs the update checker
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
+;reloaderHotkey;
 #+r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
 {
 	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
@@ -268,6 +331,7 @@ updateChecker() ;runs the update checker
 			}
 }
 
+;suspenderHotkey;
 #+`::
 {
 	if A_IsSuspended = 0
@@ -283,15 +347,23 @@ updateChecker() ;runs the update checker
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf not GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
+;excelHotkey;
 PgUp::switchToExcel() ;run microsoft excel.
+;windowspyHotkey;
 Pause::switchToWindowSpy() ;run windowspy
+;vscodeHotkey;
 RWin::switchToVSC() ;run vscode
+;streamdeckHotkey;
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
+;taskmangerHotkey;
 PrintScreen::SendInput("^+{Esc}")
+;wordHotkey;
 PgDn::switchToWord()
 
 ;These two scripts are to open highlighted text in the ahk documentation
+;akhdocuHotkey;
 AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
+;ahksearchHotkey;
 ^AppsKey:: ;opens highlighted ahk command in the documentation
 {
 	A_Clipboard := "" ;clears the clipboard
@@ -299,6 +371,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
+;streamfoobarHotkey;
 F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random
 {
 	run "C:\Program Files (x86)\foobar2000\foobar2000.exe" ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
@@ -323,7 +396,9 @@ F22:: ;opens foobar, ensures the right playlist is selected, then makes it selec
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
+;explorerbackHotkey;
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
+;showmoreHotkey;
 F14:: ;open the "show more options" menu in win11
 {
 	MouseGetPos(&mx, &my)
@@ -375,12 +450,17 @@ F14:: ;open the "show more options" menu in win11
 }
 
 #HotIf WinActive("ahk_exe Code.exe")
-!a::vscode("577") ;clicks on the my scripts script in vscode
-!f::vscode("550") ;clicks on my msfunctions script in vscode 
-!q::vscode("604") ;clicks on my qmk script in vscode
-!c::vscode("496") ;clicks on my changelog file in vscode
+;vscodemsHotkey;
+!a::vscode("590") ;clicks on the my scripts script in vscode
+;vscodefuncHotkey;
+!f::vscode("550") ;clicks on my functions script in vscode 
+;vscodeqmkHotkey;
+!q::vscode("624") ;clicks on my qmk script in vscode
+;vscodechangeHotkey;
+!c::vscode("510") ;clicks on my changelog file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
+;pauseyoutubeHotkey;
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {
 	coords()
@@ -454,9 +534,13 @@ Numpad9::
 ;SCO3A is the scancode for the CapsLock button. Had issues with using "CapsLock" as it would require a refresh every now and then before these discord scripts would work. Currently testing using the scancodes to see if that fixes it.
 ;alright scancodes didn't fix it, idk why but sometimes this function won't work until you refresh the main script. Might have to do with where I have it located in this script, maybe pulling it out into it's own script would fix it, or maybe discord is just dumb, who knows.
 ;scratch that, figured out what it is, in my qmk keyboard script I also had setcapslock to off and for whatever reason if that script was reloaded, my main script would break
+;disceditHotkey;
 SC03A & e::disc("DiscEdit.png") ;edit the message you're hovering over
+;discreplyHotkey;
 SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+;discreactHotkey;
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
+;discdeleteHotkey;
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 
 ;=============================================================================================================================================
@@ -465,12 +549,17 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ;
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe Photoshop.exe")
+;pngHotkey;
 ^+p::psType("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
+;jpgHotkey;
 ^+j::psType("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
-XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
-Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
-z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+;photopenHotkey;
+XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+;photoselectHotkey;
+Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+;photozoomHotkey;
+z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;F1::psSave()
 
 ;=============================================================================================================================================
@@ -479,9 +568,13 @@ z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool 
 ;
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
-Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
-Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+;aetimelineHotkey;
+Xbutton1::timeline("981", "550", "2542", "996") ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
+;aeselectionHotkey;
+Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
+;aenextframeHotkey;
 WheelRight::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
+;aepreviousframeHotkey;
 WheelLeft::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 
 ;=============================================================================================================================================
@@ -494,7 +587,9 @@ WheelLeft::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to 
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
+;premzoomoutHotkey;
 SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
+;premselecttoolHotkey;
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coords()
@@ -519,7 +614,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	click
 	MouseMove %&xpos%, %&ypos%
 }
-
+;premprojectHotkey;
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
 	MouseGetPos(&xpos, &ypos)
@@ -627,13 +722,20 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
+;premnexteditHotkey;
 WheelRight::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
+;prempreviouseditHotkey;
 WheelLeft::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
+;premnudgedownHotkey;
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
+;premmousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
-Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+;premmousedrag2Hotkey;
+Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
+;premgooseHotkey;
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
+;prembleepHotkey;
 F20::audioDrag("bleep")
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -644,17 +746,26 @@ F20::audioDrag("bleep")
 GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
+;monitor2Hotkey;
 ^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
+;monitor1Hotkey;
 ^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
-^+d::discLocation() ;Make discord bigger so I can actually read stuff when not streaming
+;disclocationHotkey;
+^+d::discLocation() ;Move discord between multiple monitors
 
+;winmaxHotkey;
 F14::moveWin("") ;maximise
+;winleftHotkey;
 XButton2::moveWin("#{Left}") ;snap left
+;winrightHotkey;
 XButton1::moveWin("#{Right}") ;snap right
+;winminHotkey;
 RButton::moveWin("") ;minimise
 
+;alwaysontopHotkey;
 ^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
 
+;searchgoogleHotkey;
 ^+c:: ;runs a google search of highlighted text
 {
 	A_Clipboard := "" ;clears the clipboard
@@ -670,13 +781,19 @@ RButton::moveWin("") ;minimise
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;You can check out \mouse settings.png in the root repo to check what mouse buttons I have remapped
 ;The below scripts are to accelerate scrolling
+;wheelupHotkey;
 F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+;wheeldownHotkey;
 F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 
 ;The below scripts are to swap between virtual desktops
+;virtualrightHotkey;
 F19 & XButton2::SendInput("^#{Right}") ;you don't need these two as a sendinput, the syntax highlighting I'm using just see's ^#Right as an error and it's annoying
+;virtualleftHotkey;
 F19 & XButton1::SendInput("^#{Left}")
 
 ;The below scripts are to skip ahead in the youtube player with the mouse
+;youskipforHotkey;
 WheelRight::youMouse("l", "{Right}")
+;youskipbackHotkey;
 WheelLeft::youMouse("j", "{Left}")
