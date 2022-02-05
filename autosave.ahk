@@ -62,6 +62,10 @@ toolCust(message, timeout)
         {
             toolCust("you paused the autosave script", "1000")
             sleep 1500
+            loop {
+                sleep ms
+                toolCust("You currently have the autosave script paused`nDon't forget to turn it back on!", "3000")
+            } until A_IsPaused = 1
         }
     else
         toolCust("you unpaused the autosave script", "1000")
