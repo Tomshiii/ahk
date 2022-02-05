@@ -196,8 +196,60 @@ updateChecker() {
 					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
 					change.Send()
 					change.WaitForResponse()
-					LatestChangeLog := change.ResponseText
-
+					ChangeLog := change.ResponseText
+					;\\removing the warning about linking to commits
+					beginwarn := InStr(ChangeLog, "###### **_",,, 1)
+					endwarnfind := InStr(ChangeLog, "_**",,, 1)
+					endend := endwarnfind + 5
+					warnlength := endend - beginwarn
+					removewarn := SubStr(ChangeLog, beginwarn, warnlength)
+					warn := StrReplace(ChangeLog, removewarn, "", 1,, 1)
+					;\\
+					;\\deleting all [] surrounding links
+					deletesquare1 := StrReplace(warn, "]", "")
+					deletesquare2 := StrReplace(deletesquare1, "[", "")
+					;\\
+					;dealing with directories we'll need
+					if not DirExist(A_Temp "\tomshi")
+						DirCreate(A_Temp "\tomshi")
+					if FileExist(A_Temp "\tomshi\changelog.ini")
+						FileDelete(A_Temp "\tomshi\changelog.ini")
+					if FileExist(A_Temp "\tomshi\changelog.txt")
+						FileDelete(A_Temp "\tomshi\changelog.txt")
+					;create baseline changelog
+					FileAppend(deletesquare2, A_Temp "\tomshi\changelog.txt")
+					;keys counts how many links are found
+					keys := 0
+					loop { ;this loop will go through and copy all urls to an ini file
+						findurl := InStr(deletesquare2, "https://bit.ly",,, A_Index)
+						if findurl = 0
+							break
+						beginurl := findurl - 1
+						findendurl := InStr(deletesquare2, ")",, findurl, 1)
+						findendend := findendurl + 1
+						urllength := findendend - beginurl
+						removeulr := SubStr(deletesquare2, beginurl, urllength)
+						valueurl := IniWrite(removeulr, A_Temp "\tomshi\changelog.ini", "urls", A_Index)
+						keys += 1
+					}
+					loop keys { ;this loop will go through and remove all url's from the changelog
+						read := FileRead(A_Temp "\tomshi\changelog.txt")
+						refurl := IniRead(A_Temp "\tomshi\changelog.ini", "urls", A_Index)
+						attempt := StrReplace(read, refurl, "")
+						if FileExist(A_Temp "\tomshi\changelog.txt")
+							FileDelete(A_Temp "\tomshi\changelog.txt")
+						FileAppend(attempt, A_Temp "\tomshi\changelog.txt")
+						finalchange := FileRead(A_Temp "\tomshi\changelog.txt")
+					}
+					if IsSet(finalchange) ;if there are no links and finalchange hasn't recieved a value, it will fall back to the original response from the changelog on github
+						LatestChangeLog := finalchange
+					else
+						LatestChangeLog := change.ResponseText
+					;we now delete those temp files
+					if FileExist(A_Temp "\tomshi\changelog.ini")
+						FileDelete(A_Temp "\tomshi\changelog.ini")
+					if FileExist(A_Temp "\tomshi\changelog.txt")
+						FileDelete(A_Temp "\tomshi\changelog.txt")
 					;create gui
 					MyGui := Gui("", "Scripts Release " version)
 					MyGui.SetFont("S11")
