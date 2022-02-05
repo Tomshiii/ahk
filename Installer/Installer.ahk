@@ -3,7 +3,7 @@
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 
 ;script version
-;v2.3.1a1
+;v2.3.1a2
 ;This file must be in the same directory as the folder v{Release} that you downloaded from github. 
 
 global Release := "v2.3.1"
@@ -14,6 +14,19 @@ selectfile := FileSelect("1",, "Select your local version of 'My Scripts.ahk'", 
 if selectfile = ""
     return
 myscripts_string := FileRead(selectfile)
+
+;checking to ensure the user script is above v2.3.1 - the minimum required
+userversionvpos := InStr(myscripts_string, 'v',,,2)
+userversionendpos := InStr(myscripts_string, '"', , userversionvpos, 1)
+userversionstartpos := userversionvpos + 1
+userversionend := userversionendpos - userversionstartpos
+userversion := SubStr(myscripts_string, userversionstartpos, userversionend)
+if VerCompare(userversion, "2.3.1") < 0
+    {
+        MsgBox("This installer will only function on a script higher than v2.3.1`nThe selected script is on v" userversion)
+        return
+    }
+
 ;defining the release version of the script
 replace_release := FileRead(A_WorkingDir "\" Release "\My Scripts.ahk")
 ;below is gathering the users custom set hotkeys
