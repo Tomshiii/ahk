@@ -6,7 +6,7 @@ SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory i
 ;v2.3.1a2
 ;This file must be in the same directory as the folder v{Release} that you downloaded from github. 
 
-global Release := "v2.3.1"
+global Release := "v2.3.1.1"
 
 ;\\begin script to find users myscript hotkeys
 ;select users version of my scripts.ahk file
