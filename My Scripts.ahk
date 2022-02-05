@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.0.1"
+global MyRelease := "v2.3.0.0"
 ;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 #SingleInstance Force
@@ -193,10 +193,83 @@ updateChecker() {
 				{
 					;grabbing changelog info
 					change := ComObject("WinHttp.WinHttpRequest.5.1")
-					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelog.txt")
+					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/changelog-string-changes/Support%20Files/changelog.txt")
 					change.Send()
 					change.WaitForResponse()
-					LatestChangeLog := change.ResponseText
+					ChangeLog := change.ResponseText
+					beginwarn := InStr(ChangeLog, "###### **_",,, 1)
+					endwarnfind := InStr(ChangeLog, "_**",,, 1)
+					endend := endwarnfind + 5
+					warnlength := endend - beginwarn
+					removewarn := SubStr(ChangeLog, beginwarn, warnlength)
+					warn := StrReplace(ChangeLog, removewarn, "", 1,, 1)
+					deletesquare1 := StrReplace(warn, "]", "")
+					deletesquare2 := StrReplace(deletesquare1, "[", "")
+					if not DirExist(A_Temp "\tomshi")
+						DirCreate(A_Temp "\tomshi")
+					if FileExist(A_Temp "\tomshi\changelog.txt")
+						FileDelete(A_Temp "\tomshi\changelog.txt")
+					loop {
+						findurl := InStr(deletesquare2, "https://bit.ly",,, A_Index)
+								if findurl = 0
+									break
+						beginurl := findurl - 1
+						findendurl := InStr(deletesquare2, ")",, findurl, 1)
+						findendend := findendurl + 1
+						urllength := findendend - beginurl
+						removeulr := SubStr(deletesquare2, beginurl, urllength)
+						url := StrReplace(deletesquare2, removeulr, "")
+						append := SubStr(1, findend)
+					}
+
+
+
+
+					/*
+					loop {
+						;if A_Index < 2
+							{
+								if not DirExist(A_Temp "\tomshi")
+									DirCreate(A_Temp "\tomshi")
+								findurl := InStr(deletesquare2, "https://bit.ly",,, A_Index)
+								if findurl = 0
+									break
+								beginurl := findurl - 1
+								findendurl := InStr(deletesquare2, ")",, findurl, 1)
+								findendend := findendurl + 1
+								urllength := findendend - beginurl
+								removeulr := SubStr(deletesquare2, beginurl, urllength)
+								url := StrReplace(deletesquare2, removeulr, "")
+								if FileExist(A_Temp "\tomshi\changelog.txt")
+									FileDelete(A_Temp "\tomshi\changelog.txt")
+								FileAppend(url, A_Temp "\tomshi\changelog.txt")
+								;LatestChangeLog := url
+							}
+						/*else
+							{
+								forchar := A_Index + 64
+								if forchar > 90
+								    forchar := A_Index + 71
+								num := Chr(forchar)
+								valueurl_%num% := FileRead(A_Temp "\tomshi\changelog.txt")
+								findurl := InStr(valueurl_%num%, "https://bit.ly",,, num)
+								if findurl = 0
+									break
+
+								beginurl := findurl - 1
+								findendurl := InStr(valueurl_%num%, ")",, findurl, 1)
+								findendend := findendurl + 1
+								urllength := findendend - beginurl
+								removeulr := SubStr(valueurl_%num%, beginurl, urllength)
+								url := StrReplace(valueurl_%num%, removeulr, "")
+								if FileExist(A_Temp "\tomshi\changelog.txt")
+									FileDelete(A_Temp "\tomshi\changelog.txt")
+								FileAppend(url, A_Temp "\tomshi\changelog.txt")
+							}
+												
+					} */
+					LatestChangeLog := FileRead(A_Temp "\tomshi\changelog.txt")	
+					
 
 					;create gui
 					MyGui := Gui("", "Scripts Release " version)
