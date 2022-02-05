@@ -13,7 +13,7 @@
 ;\\v2.10
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.3.0.1
+;\\v2.3.1
 
 ; All of my functions use to be contained within this individual file but have since been split off into their own individual files which can be found in the \Functions\ folder in the root of the directory
 

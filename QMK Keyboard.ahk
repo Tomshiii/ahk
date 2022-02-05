@@ -13,10 +13,10 @@ SetNumLockState "AlwaysOn"
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.4.3
 ;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.9
+;\\v2.10
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.3.0.1
+;\\v2.3.1
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE SIMPLY ADJUSTED IT TO WORK IN AHK v2.0
