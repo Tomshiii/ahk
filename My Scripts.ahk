@@ -85,7 +85,7 @@ updateChecker() {
 				{
 					;grabbing changelog info
 					changebeta := ComObject("WinHttp.WinHttpRequest.5.1")
-					changebeta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelogbeta.txt")
+					changebeta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
 					changebeta.Send()
 					changebeta.WaitForResponse()
 					LatestChangeLogBeta := changebeta.ResponseText
@@ -193,7 +193,7 @@ updateChecker() {
 				{
 					;grabbing changelog info
 					change := ComObject("WinHttp.WinHttpRequest.5.1")
-					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelog.txt")
+					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
 					change.Send()
 					change.WaitForResponse()
 					LatestChangeLog := change.ResponseText
