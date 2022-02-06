@@ -3,7 +3,7 @@
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 
 ;script version
-;v2.3.1a2
+;v2.3.1.2a1
 ;This file must be in the same directory as the folder v{Release} that you downloaded from github. 
 
 global Release := "v2.3.1.1"
@@ -579,6 +579,17 @@ if searchgoogle_foundpos := InStr(myscripts_string, "searchgoogleHotkey", 1,, 1)
         searchgoogle_end := searchgoogle_endpos - searchgoogle_begin - 2
         searchgoogle_hotkey := SubStr(myscripts_string, searchgoogle_begin, searchgoogle_end)
         IniWrite('"' searchgoogle_hotkey '"', "userHotkeys.ini", "Other - Not an Editor", "searchgoogle")
+    }
+;capitaliseHotkey
+if capitaliseHotkey_foundpos := InStr(myscripts_string, "capitaliseHotkey", 1,, 1)
+    {
+        capitaliseHotkey_findend := InStr(myscripts_string, ':',, capitaliseHotkey_foundpos, 2)
+        capitaliseHotkey_endpos := capitaliseHotkey_findend + 1
+        capitaliseHotkey_findbegin := InStr(myscripts_string, ";",, capitaliseHotkey_foundpos, 1)
+        capitaliseHotkey_begin := capitaliseHotkey_findbegin + 3
+        capitaliseHotkey_end := capitaliseHotkey_endpos - capitaliseHotkey_begin - 2
+        capitaliseHotkey_hotkey := SubStr(myscripts_string, capitaliseHotkey_begin, capitaliseHotkey_end)
+        IniWrite('"' capitaliseHotkey_hotkey '"', "userHotkeys.ini", "Other - Not an Editor", "capitalise")
     }
 ;wheelupHotkey
 if wheelup_foundpos := InStr(myscripts_string, "wheelupHotkey", 1,, 1)
@@ -1208,10 +1219,18 @@ try
         MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
         return
     }
-
+try
+    {
+        capitalise_hotkey_ini := IniRead("userHotkeys.ini", "Other - Not an Editor", "capitalise")
+        capitalise_hotkey_replace := IniRead(A_WorkingDir "\Support\originalHotkeys.ini", "Other - Not an Editor", "capitalise")
+        capitalise_replaced := StrReplace(youskipback_replaced, capitalise_hotkey_replace, capitalise_hotkey_ini, 1,, 1)
+    } catch as e {
+        MsgBox("The installer encountered an error while trying to replace the hotkeys in Release " Release " with the users custom hotkeys")
+        return
+    }
 ;before this point, the script has slowly been building up all replacements, if none of them failed, it will get to here and replace the entire file with the changes
 if FileExist(A_WorkingDir "\" Release "\My Scripts.ahk")
     FileDelete(A_WorkingDir "\" Release "\My Scripts.ahk")
-FileAppend(youskipback_replaced, A_WorkingDir "\" Release "\My Scripts.ahk")
+FileAppend(capitalise_replaced, A_WorkingDir "\" Release "\My Scripts.ahk")
 ;\\end of hotkey replacements
 MsgBox("Hotkey replacement complete!")

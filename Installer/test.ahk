@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.1"
+global MyRelease := "v2.3.1.1"
 ;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 #SingleInstance Force
@@ -15,8 +15,8 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.2
-;\\Minimum Version of "MS_Functions.ahk" Required for this script
+;\\v2.10.4
+;\\Minimum Version of "Functions.ahk" Required for this script
 ;\\v2.10
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.3
@@ -28,7 +28,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ;									--------------------------------------------------------------------------------
 ;												Everything in this script is functional within v2.0
 ;											any code like "blockon()" "coords()" etc are all defined
-;										in the MS_functions.ahk script. Look there for specific code to edit
+;										in the various Functions.ahk scripts. Look there for specific code to edit
 ;
 ; ============================================================================================================================================
 ;
@@ -85,7 +85,7 @@ updateChecker() {
 				{
 					;grabbing changelog info
 					changebeta := ComObject("WinHttp.WinHttpRequest.5.1")
-					changebeta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelogbeta.txt")
+					changebeta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
 					changebeta.Send()
 					changebeta.WaitForResponse()
 					LatestChangeLogBeta := changebeta.ResponseText
@@ -193,11 +193,63 @@ updateChecker() {
 				{
 					;grabbing changelog info
 					change := ComObject("WinHttp.WinHttpRequest.5.1")
-					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/Support%20Files/changelog.txt")
+					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
 					change.Send()
 					change.WaitForResponse()
-					LatestChangeLog := change.ResponseText
-
+					ChangeLog := change.ResponseText
+					;\\removing the warning about linking to commits
+					beginwarn := InStr(ChangeLog, "###### **_",,, 1)
+					endwarnfind := InStr(ChangeLog, "_**",,, 1)
+					endend := endwarnfind + 5
+					warnlength := endend - beginwarn
+					removewarn := SubStr(ChangeLog, beginwarn, warnlength)
+					warn := StrReplace(ChangeLog, removewarn, "", 1,, 1)
+					;\\
+					;\\deleting all [] surrounding links
+					deletesquare1 := StrReplace(warn, "]", "")
+					deletesquare2 := StrReplace(deletesquare1, "[", "")
+					;\\
+					;dealing with directories we'll need
+					if not DirExist(A_Temp "\tomshi")
+						DirCreate(A_Temp "\tomshi")
+					if FileExist(A_Temp "\tomshi\changelog.ini")
+						FileDelete(A_Temp "\tomshi\changelog.ini")
+					if FileExist(A_Temp "\tomshi\changelog.txt")
+						FileDelete(A_Temp "\tomshi\changelog.txt")
+					;create baseline changelog
+					FileAppend(deletesquare2, A_Temp "\tomshi\changelog.txt")
+					;keys counts how many links are found
+					keys := 0
+					loop { ;this loop will go through and copy all urls to an ini file
+						findurl := InStr(deletesquare2, "https://bit.ly",,, A_Index)
+						if findurl = 0
+							break
+						beginurl := findurl - 1
+						findendurl := InStr(deletesquare2, ")",, findurl, 1)
+						findendend := findendurl + 1
+						urllength := findendend - beginurl
+						removeulr := SubStr(deletesquare2, beginurl, urllength)
+						valueurl := IniWrite(removeulr, A_Temp "\tomshi\changelog.ini", "urls", A_Index)
+						keys += 1
+					}
+					loop keys { ;this loop will go through and remove all url's from the changelog
+						read := FileRead(A_Temp "\tomshi\changelog.txt")
+						refurl := IniRead(A_Temp "\tomshi\changelog.ini", "urls", A_Index)
+						attempt := StrReplace(read, refurl, "")
+						if FileExist(A_Temp "\tomshi\changelog.txt")
+							FileDelete(A_Temp "\tomshi\changelog.txt")
+						FileAppend(attempt, A_Temp "\tomshi\changelog.txt")
+						finalchange := FileRead(A_Temp "\tomshi\changelog.txt")
+					}
+					if IsSet(finalchange) ;if there are no links and finalchange hasn't recieved a value, it will fall back to the original response from the changelog on github
+						LatestChangeLog := finalchange
+					else
+						LatestChangeLog := change.ResponseText
+					;we now delete those temp files
+					if FileExist(A_Temp "\tomshi\changelog.ini")
+						FileDelete(A_Temp "\tomshi\changelog.ini")
+					if FileExist(A_Temp "\tomshi\changelog.txt")
+						FileDelete(A_Temp "\tomshi\changelog.txt")
 					;create gui
 					MyGui := Gui("", "Scripts Release " version)
 					MyGui.SetFont("S11")
@@ -451,13 +503,13 @@ F14:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("577") ;clicks on the my scripts script in vscode
+!a::vscode("590") ;clicks on the my scripts script in vscode
 ;vscodefuncHotkey;
 !f::vscode("550") ;clicks on my functions script in vscode 
 ;vscodeqmkHotkey;
-!q::vscode("604") ;clicks on my qmk script in vscode
+!q::vscode("624") ;clicks on my qmk script in vscode
 ;vscodechangeHotkey;
-!c::vscode("496") ;clicks on my changelog file in vscode
+!c::vscode("510") ;clicks on my changelog file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
@@ -555,11 +607,11 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ^+j::psType("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
 ;photopenHotkey;
-XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;photoselectHotkey;
-Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;photozoomHotkey;
-z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;F1::psSave()
 
 ;=============================================================================================================================================
@@ -569,9 +621,9 @@ z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool 
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
 ;aetimelineHotkey;
-Xbutton1::timeline("981", "550", "2542", "996") ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton1::timeline("981", "550", "2542", "996") ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aeselectionHotkey;
-Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aenextframeHotkey;
 WheelRight::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 ;aepreviousframeHotkey;
@@ -731,7 +783,7 @@ Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 ;premmousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;premmousedrag2Hotkey;
-Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check MS_functions.ahk for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 ;premgooseHotkey;
 F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
@@ -772,6 +824,18 @@ RButton::moveWin("") ;minimise
 	Send "^c"
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://www.google.com/search?d&q=" A_Clipboard
+}
+
+;capitaliseHotkey;
+SC03A & c:: ;capitilises highlighted text
+{
+	A_Clipboard := "" ;clears the clipboard
+	Send("^c")
+	ClipWait ;waits for the clipboard to contain data
+	SendInput("{BackSpace}")
+	StringtoCapital := A_Clipboard
+	StringtoCapital := StrUpper(StringtoCapital)
+	SendInput(StringtoCapital)
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
