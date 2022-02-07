@@ -467,12 +467,12 @@ audioDrag(sfxName)
 {
     ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
     coords()
-    if ImageSearch(&sfxxx, &sfxyy, 3021, 710, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
+    if ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
         {
             blockOn()
             coords()
             MouseGetPos(&xpos, &ypos)
-            if ImageSearch(&listx, &listy, 3081, 745, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
+            if ImageSearch(&listx, &listy, 3082, 664, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
                 {
                     MouseMove(%&listx%, %&listy%)
                     SendInput("{Click}")
