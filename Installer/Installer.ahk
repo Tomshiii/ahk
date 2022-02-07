@@ -3,7 +3,7 @@
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 
 ;script version
-;v2.3.1.2a1
+;v2.3.1.2a2
 ;This file must be in the same directory as the folder v{Release} that you downloaded from github. 
 
 global Release := "v2.3.1.1"
@@ -75,8 +75,8 @@ if windowspy_foundpos := InStr(myscripts_string, "windowspyHotkey", 1,, 1)
         IniWrite('"' windowspy_hotkey '"', "userHotkeys.ini", "Launch Scripts", "windowspy")
     }
 ;vscodeHotkey
+if vscode_foundpos := InStr(myscripts_string, "vscodeHotkey", 1,, 1)
 {
-    vscode_foundpos := InStr(myscripts_string, "vscodeHotkey", 1,, 1)
     vscode_findend := InStr(myscripts_string, ':',, vscode_foundpos, 2)
     vscode_endpos := vscode_findend + 1
     vscode_findbegin := InStr(myscripts_string, ";",, vscode_foundpos, 1)
