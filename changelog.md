@@ -6,3 +6,4 @@
 - Added a hotkey to [replace highlighted text](https://bit.ly/3ot2YiC) with all caps
 
 ### > Other Changes
+- Removed the reminder in `autosave.ahk` as it made it impossible to unpause the script
