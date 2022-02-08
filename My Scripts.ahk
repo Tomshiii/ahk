@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.6
+;\\v2.10.7
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.3
 
@@ -829,10 +829,34 @@ F20::audioDrag("bleep")
 GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
-;monitor2Hotkey;
-^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
-;monitor1Hotkey;
-^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
+;discordHotkey;
+^+w:: ;this hotkey is to click the "discord" button in discord to access your dm's 
+{
+	if WinExist("ahk_exe Discord.exe")
+		{
+			WinActivate("ahk_exe Discord.exe")
+			WinGetPos(&nx, &ny, &width, &height, "A")
+			if ImageSearch(&x, &y, %&nx%, %&ny%, %&nx% + "200", %&ny% + "200", "*2 " Discord "dm1.png")
+				goto move
+			else if ImageSearch(&x, &y, %&nx%, %&ny%, %&nx% + "200", %&ny% + "200", "*2 " Discord "dm2.png")
+				{
+					toolCust("Discord is now activated", "500")
+					return
+				}
+			else
+				{
+					toolCust("couldn't find the dm button", "1000")
+					return
+				}
+				move:
+				blockOn()
+				MouseGetPos(&origx, &origy)
+				MouseMove(%&x%, %&y%, 2)
+				SendInput("{Click}")
+				MouseMove(%&origx%, %&origy%, 2)
+				blockOff()
+		}
+}
 ;disclocationHotkey;
 ^+d::switchToDisc()
 

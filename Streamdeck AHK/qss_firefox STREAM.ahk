@@ -57,7 +57,7 @@ else
         ;sleep 500
         SendInput("{Up 10}")
         sleep 100
-        SendInput("{Down 2}")
+        SendInput("{Down 3}")
         sleep 100
         ;SendInput("{Enter}")
     }

@@ -8,6 +8,8 @@
 ## > My Scripts
 - Added a hotkey to [replace highlighted text](https://bit.ly/3ot2YiC) with all caps
 - Moved the hotkey to Pause from `autosave.ahk` -> `My Scripts.ahk` so that I can actually remind the user it is paused
+- Removed `monitorwarp()` hotkeys as I wasn't using them
+    - Replaced with a new hotkey for discord to click the "discord" button within the program to access dm's
 
 ### > Other Changes
 - Removed the reminder in `autosave.ahk` as it made it impossible to unpause the script
