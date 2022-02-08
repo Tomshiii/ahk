@@ -15,9 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.4
-;\\Minimum Version of "Functions.ahk" Required for this script
-;\\v2.10
+;\\v2.10.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.3
 
@@ -803,7 +801,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 ;monitor1Hotkey;
 ^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
 ;disclocationHotkey;
-^+d::discLocation() ;Move discord between multiple monitors
+^+d::switchToDisc()
 
 ;winmaxHotkey;
 F14::moveWin("") ;maximise

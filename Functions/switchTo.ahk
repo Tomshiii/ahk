@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.7
+;\\v2.9.8
 
 /*
  This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
@@ -63,6 +63,21 @@ switchToAE()
     else
         if WinExist("ahk_exe AfterFX.exe")
             WinActivate "ahk_exe AfterFX.exe"
+}
+
+/*
+ This switchTo function will quickly switch to the specified program. If there isn't an open window of the desired program, this function will open one
+ */
+switchToDisc()
+{
+    if not WinExist("ahk_exe Discord.exe")
+        {
+            Run("C:\Users\Tom\AppData\Local\Discord\Update.exe --processStart Discord.exe")
+            WinWait("ahk_exe Discord.exe")
+            WinMove(-1080, -320, 1080, 1646, "ahk_exe Discord.exe") ; I have discord on a certain monitor in a certain spot
+        }
+    else
+        WinActivate("ahk_exe Discord.exe")
 }
 
 /*
