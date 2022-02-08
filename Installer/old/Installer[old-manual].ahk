@@ -3,14 +3,13 @@
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 
 ;script version
-;v2.3.1.2a3
+;v2.3.1.2a2
 ;This file must be in the same directory as the folder v{Release} that you downloaded from github. 
 
 global Release := "v2.3.1.1"
 
 ;\\begin script to find users myscript hotkeys
 ;select users version of my scripts.ahk file
-MsgBox("First you need to select your own local version of`n[My Scripts.ahk]", "Info", "64 4096")
 selectfile := FileSelect("1",, "Select your local version of 'My Scripts.ahk'", "*.ahk")
 if selectfile = ""
     return
@@ -31,70 +30,6 @@ if VerCompare(userversion, "2.3.1") < 0
 ;defining the release version of the script
 replace_release := FileRead(A_WorkingDir "\" Release "\My Scripts.ahk")
 ;below is gathering the users custom set hotkeys
-
-doublecheck := MsgBox("If you have added any ';xHotkey; tags yourself this installer might fail`nPress cancel if you do not wish to continue", "Info", "1 64 4096")
-if doublecheck = "Cancel"
-    return
-;dealing with directories we'll need
-if not DirExist(A_Temp "\tomshi")
-    DirCreate(A_Temp "\tomshi")
-if FileExist(A_Temp "\tomshi\hotkeyrelease.ini")
-    FileDelete(A_Temp "\tomshi\hotkeyrelease.ini")
-if FileExist(A_Temp "\tomshi\hotkeyuser.ini")
-    FileDelete(A_Temp "\tomshi\hotkeyuser.ini")
-;create baseline changelog
-FileAppend(replace_release, A_Temp "\tomshi\My Scripts.ahk")
-;keys counts how many links are found
-keys := 0
-loop {
-    ;FINDING HOTKEYS IN RELEASE FILE
-    findHotkey := InStr(replace_release, "Hotkey;",,, A_Index)
-    if findHotkey = 0
-        break
-    Hotkey_begin := findHotkey + 9
-    findHotkey_end := InStr(replace_release, ":",, findHotkey, 2)
-    hotkey_end := findHotkey_end - 1
-    Hotkey_length := hotkey_end - Hotkey_begin
-    hotkey_sub := SubStr(replace_release, Hotkey_begin, Hotkey_length)
-    valuehotkey := IniWrite(hotkey_sub, A_Temp "\tomshi\hotkeyrelease.ini", "hotkeys", A_Index)
-    ;FINDING HOTKEYS IN USER FILE
-    findHotkey2 := InStr(myscripts_string, "Hotkey;",,, A_Index)
-    if findHotkey2 = 0
-        break
-    Hotkey_begin2 := findHotkey2 + 9
-    findHotkey2_end := InStr(myscripts_string, ":",, findHotkey2, 2)
-    hotkey_end2 := findHotkey2_end - 1
-    Hotkey_length2 := hotkey_end2 - Hotkey_begin2
-    hotkey_sub2 := SubStr(myscripts_string, Hotkey_begin2, Hotkey_length2)
-    valuehotkey2 := IniWrite(hotkey_sub2, A_Temp "\tomshi\hotkeyuser.ini", "hotkeys", A_Index)
-    ;MsgBox("begin " Hotkey_begin "`nend " hotkey_end "`nlength " Hotkey_length "`nstring ." hotkey_sub ".") ;debugging
-    keys += 1
-}
-loop keys {
-    read := FileRead(A_Temp "\tomshi\My Scripts.ahk")
-    refhotkey := IniRead(A_Temp "\tomshi\hotkeyrelease.ini", "hotkeys", A_Index)
-    replacehotkey := IniRead(A_Temp "\tomshi\hotkeyuser.ini", "hotkeys", A_Index)
-    attempt := StrReplace(read, refhotkey, replacehotkey, 1,, 1)
-    if FileExist(A_Temp "\tomshi\My Scripts.ahk")
-        FileDelete(A_Temp "\tomshi\My Scripts.ahk")
-    FileAppend(attempt, A_Temp "\tomshi\My Scripts.ahk")
-}
-if FileExist(A_WorkingDir "\" Release "\My Scripts.ahk")
-    FileDelete(A_WorkingDir "\" Release "\My Scripts.ahk")
-if FileExist(A_Temp "\tomshi\My Scripts.ahk")
-    FileMove(A_Temp "\tomshi\My Scripts.ahk", A_WorkingDir "\" Release "\My Scripts.ahk")
-if FileExist(A_Temp "\tomshi\hotkeyrelease.ini")
-    FileMove(A_Temp "\tomshi\hotkeyrelease.ini", A_WorkingDir "\hotkeyrelease.ini", 1)
-if FileExist(A_Temp "\tomshi\hotkeyuser.ini")
-    FileMove(A_Temp "\tomshi\hotkeyuser.ini", A_WorkingDir "\hotkeyuser.ini", 1)
-
-
-
-
-
-
-
-/*
 ;reloaderhotkey
 if reloader_foundpos := InStr(myscripts_string, "reloaderHotkey", 1,, 1)
     {
@@ -725,7 +660,7 @@ if youskipback_foundpos := InStr(myscripts_string, "youskipbackHotkey", 1,, 1)
 
 
 ;\\ end portion of the script that gathers the users custom hotkeys
-*/
+
 
 /* ;a simple loop to easily create the code below this loop. Requires manual replacement of the ini values, may also fail towards the end and repaste everything. Saves a bunch of time tho so still worth
 Loop x ;replace x with the amount of hotkeys
@@ -776,7 +711,7 @@ Loop x ;replace x with the amount of hotkeys
  */
 
 ;replacing hotkeys with users stuff
-/* 
+
 msg := MsgBox("So far, this installer has generated an ini file listing all the hotkeys you've set as a replacement to the original version of these scripts.`nBeyond this point the installer will attempt to replace the Release " Release " version of [My Scripts.ahk] with these custom hotkeys`nDo you wish to continue?", "WARNING", "4 32 256 4096")
 if msg = "No"
     return
@@ -1299,4 +1234,3 @@ if FileExist(A_WorkingDir "\" Release "\My Scripts.ahk")
 FileAppend(capitalise_replaced, A_WorkingDir "\" Release "\My Scripts.ahk")
 ;\\end of hotkey replacements
 MsgBox("Hotkey replacement complete!")
- */
