@@ -7,6 +7,7 @@
 
 ## > My Scripts
 - Added a hotkey to [replace highlighted text](https://bit.ly/3ot2YiC) with all caps
+- Moved the hotkey to Pause from `autosave.ahk` -> `My Scripts.ahk` so that I can actually remind the user it is paused
 
 ### > Other Changes
 - Removed the reminder in `autosave.ahk` as it made it impossible to unpause the script

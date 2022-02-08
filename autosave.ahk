@@ -56,7 +56,7 @@ toolCust(message, timeout)
 	}
 }
 
-#+1::
+/* #+1::
 {
     if A_IsPaused = 0
         {
@@ -67,7 +67,7 @@ toolCust(message, timeout)
     else
         toolCust("you unpaused the autosave script", "1000")
     Pause -1 ;pauses/unpauses this script.
-}
+} */
 
 
 

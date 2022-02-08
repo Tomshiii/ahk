@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.5
+;\\v2.10.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.3
 
@@ -389,6 +389,39 @@ updateChecker() ;runs the update checker
 	else
 		toolCust("you renabled hotkeys from the main script", "1000")
 	Suspend(-1) ;suspends this script. Useful when playing games as this script will try and do whacky stuff while gaming
+}
+
+;pauseautosaveHotkey;
+#+1:: ;this is a toggle to pause/unpause the autosave script. Will also remind the user the script is paused
+{
+	pausetoggle()
+	{
+		DetectHiddenWindows True
+		WM_COMMAND := 0x0111
+		ID_FILE_PAUSE := 65403
+		PostMessage WM_COMMAND, ID_FILE_PAUSE,,, A_WorkingDir "\autosave.ahk ahk_class AutoHotkey"
+	}
+	static toggle := 0
+	if toggle = 0
+		{
+			toggle := 1
+			pausetoggle()
+			toolCust("You paused the autosave script", "1000")
+			SetTimer(reminder, -450000)
+			reminder()
+			{
+				toolCust("Don't forget you have the autosave script paused!", "3000")
+				SetTimer(, -450000)
+			}
+			return
+		}
+	if toggle = 1
+		{
+			toggle := 0
+			pausetoggle()
+			toolCust("You unpaused the autosave script", "1000")
+			SetTimer(reminder, 0)
+		}		
 }
 #SuspendExempt false
 ;---------------------------------------------------------------------------------------------------------------------------------------------
