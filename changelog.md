@@ -10,3 +10,4 @@
 
 ### > Other Changes
 - Removed the reminder in `autosave.ahk` as it made it impossible to unpause the script
+- Added `focusChat.ahk` to focus my chat window using my streamdeck

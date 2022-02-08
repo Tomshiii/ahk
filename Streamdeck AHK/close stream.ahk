@@ -4,7 +4,7 @@ DetectHiddenWindows(true)
 		WinClose(,,1)
 	if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			{
-
+				MouseGetPos(&x, &y)
 				WinActivate
 				sleep 50
 				WinMove 2553, -890, 1104, 1087
@@ -12,6 +12,7 @@ DetectHiddenWindows(true)
 				coordmode "mouse", "window"
 				MouseMove(1020, 929)
 				click
+				MouseMove(%&x%, %&y%)
 			}
 	if WinExist("ahk_exe foobar2000.exe")
 		{
@@ -75,7 +76,7 @@ DetectHiddenWindows(true)
 			ProcessClose("ApplicationDj.exe")
 		}
 	if WinExist("ahk_exe Discord.exe")
-		WinMove -1080, 75, 1080, 1537
+		WinMove -1080, -320, 1080, 1646
 	if WinExist("ahk_exe Docker Desktop.exe")
 		{
 			;WinRestore

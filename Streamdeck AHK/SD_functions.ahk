@@ -17,17 +17,17 @@ chatterinoLocationBotshi()
 
 chatterinoLocationTomshi()
 {
-	WinMove(3648, -398, 830, 586)
+	WinMove(3648, -398, 832, 586)
 }
 
 streamelementsLocation()
 {
-	WinMove 3646, -890, 836, 495
+	WinMove 3646, -892, 842, 498
 }
 
 discordLocation()
 {
-	WinMove -1080, 75, 1080, 1537
+	WinMove -1080, -320, 1080, 1646
 }
 
 /* coords()
