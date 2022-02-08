@@ -7,7 +7,7 @@ DetectHiddenWindows(true)
 				MouseGetPos(&x, &y)
 				WinActivate
 				sleep 50
-				WinMove 2553, -890, 1104, 1087
+				WinMove 2553, -892, 1104, 1087
 				coordmode "pixel", "window"
 				coordmode "mouse", "window"
 				MouseMove(1020, 929)
