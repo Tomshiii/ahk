@@ -625,6 +625,7 @@ SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;thi
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
+^+t::Run(A_WorkingDir "\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 ;=============================================================================================================================================
 ;
