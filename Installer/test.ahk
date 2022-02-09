@@ -451,7 +451,7 @@ F22:: ;opens foobar, ensures the right playlist is selected, then makes it selec
 ;explorerbackHotkey;
 WheelLeft::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 ;showmoreHotkey;
-F14:: ;open the "show more options" menu in win11
+F18:: ;open the "show more options" menu in win11
 {
 	MouseGetPos(&mx, &my)
 	WinGetPos(,, &width, &height, "A")
@@ -602,7 +602,7 @@ SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe Photoshop.exe")
 ;pngHotkey;
-^+p::psType("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
+^s::psType("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 ;jpgHotkey;
 ^+j::psType("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
@@ -860,4 +860,4 @@ F19 & XButton1::SendInput("^#{Left}")
 ;youskipforHotkey;
 WheelRight::youMouse("l", "{Right}")
 ;youskipbackHotkey;
-WheelLeft::youMouse("j", "{Left}")
+WheelUp::youMouse("j", "{Left}")
