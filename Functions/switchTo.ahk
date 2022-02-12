@@ -77,7 +77,10 @@ switchToDisc()
             WinMove(-1080, -320, 1080, 1646, "ahk_exe Discord.exe") ; I have discord on a certain monitor in a certain spot
         }
     else
-        WinActivate("ahk_exe Discord.exe")
+        {
+            WinActivate("ahk_exe Discord.exe")
+            toolCust("Discord is now active", "500") ;this is simply because it's difficult to tell when discord has focus if it was already open
+        }
 }
 
 /*
