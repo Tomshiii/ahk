@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.7
+;\\v2.10.8
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.3
 
@@ -368,6 +368,8 @@ updateChecker() ;runs the update checker
 	;	PostMessage 0x0111, 65303,,, "right click premiere.ahk - AutoHotkey"
 	if WinExist("autosave.ahk - AutoHotkey")
 		PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
+	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+		PostMessage 0x0111, 65303,,, "premiere_fullscreen_check.ahk - AutoHotkey"
 	Reload
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4

@@ -74,6 +74,9 @@ We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `F
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
 A script that will automatically save an Adobe Premiere Pro project every 5min because its built in autosave is practically useless
 
+#### [premiere_fullscreen_check.ahk](https://github.com/Tomshiii/ahk/blob/main/premiere_fullscreen_check.ahk)
+A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts
+
 #### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)
 A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
 
