@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.8
+;\\v2.10.9
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.3
 
@@ -219,7 +219,7 @@ updateChecker() {
 					;keys counts how many links are found
 					keys := 0
 					loop { ;this loop will go through and copy all urls to an ini file
-						findurl := InStr(deletesquare2, "https://bit.ly",,, A_Index)
+						findurl := InStr(deletesquare2, "https://",,, A_Index)
 						if findurl = 0
 							break
 						beginurl := findurl - 1
