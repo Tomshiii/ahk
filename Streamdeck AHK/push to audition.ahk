@@ -1,5 +1,8 @@
-﻿If WinActive("ahk_exe Adobe Premiere Pro.exe")
+﻿#Include "SD_functions.ahk"
+If WinActive("ahk_exe Adobe Premiere Pro.exe")
 	{
+		pauseautosave()
+        pausewindowmax()
 		;select the track you wish to push to audition then watch as it does it automatically
 		SendInput "{Click Right}"
 		sleep 200
@@ -14,11 +17,8 @@
 		if WinExist("ahk_exe Adobe Audition.exe")		
 			WinMaximize "ahk_exe Adobe Audition.exe" ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
 		sleep 4000 ;audition is slow asf to load
-		coordmode "pixel", "Screen"
-		coordmode "mouse", "Screen"
-		BlockInput "SendAndMouse"
-		BlockInput "MouseMove"
-		BlockInput "On"
+		coords()
+		blockOn()
 		MouseGetPos &xposP, &yposP
 		MouseMove 1192, 632 ;moves the mouse to the middle of MY screen
 		SendInput "{click}" ;clicks in the middle of the screen to ensure the current audio is actually selected, audition is just jank as hell and it's easier to just add this step than to deal with it not working sometimes
@@ -35,10 +35,12 @@
 		SendInput "{click}"
 		SendInput "^s" ;saves so the changes translate over to premiere
 		MouseMove %&xposP%, %&yposP%
-		blockinput "MouseMoveOff"
-		BlockInput "off"
+		sleep 1000
+		blockOff()
 		WinMinimize "ahk_exe Adobe Audition.exe" ;minimises audition and reactivates premiere
 		WinActivate "ahk_exe Adobe Premiere Pro.exe"
+		pauseautosave()
+        pausewindowmax()
 	}
 else
     sleep 100

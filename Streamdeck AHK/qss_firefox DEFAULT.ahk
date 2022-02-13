@@ -15,6 +15,8 @@ firetip()
 		ToolTip("")
 	}
 }
+pauseautosave()
+pausewindowmax()
 coords()
 MouseGetPos(&sx, &sy)
 Run("ms-settings:apps-volume")
@@ -39,12 +41,16 @@ try {
         if A_Index > 5
             {
                 firetip()
+                pauseautosave()
+                pausewindowmax()
                 return
             }
     }
 } catch as e {
+    pauseautosave()
+    pausewindowmax()
     firetip()
-    Exit
+    return
 }
 MouseMove(%&ffx%, %&ffy%)
 Click()
@@ -64,4 +70,6 @@ sleep 200
 WinClose("Settings")
 coords()
 MouseMove(%&sx%, %&sy%, 2)
+pauseautosave()
+pausewindowmax()
 ExitApp()

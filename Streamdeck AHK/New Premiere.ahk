@@ -5,12 +5,12 @@ SetDefaultMouseSpeed 0
 
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
-        pauseautosave()
-        pausewindowmax()
         ;; This part makes you select the folder you wish to create the project in
         SelectedFolder := DirSelect("*E:\", 3, "Create your desired folder then select it.")
         if SelectedFolder = ""
             return
+        pauseautosave()
+        pausewindowmax()
         DirCreate(SelectedFolder "\videos") ;creates a video folder if there isn't one already
         DirCreate(SelectedFolder "\audio") ;creates an audio folder if there isn't one already
         DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
@@ -80,6 +80,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                     }
                 else
                     {
+                        pauseautosave()
+                        pausewindowmax()
                         blockOff()
                         toolFind("the ingest tab", "1000")
                         return
@@ -87,6 +89,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
             }
         else
             {
+                pauseautosave()
+                pausewindowmax()
                 blockOff()
                 toolFind("the new project button", "1000")
                 return
