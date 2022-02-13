@@ -22,7 +22,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         blockOn()
         if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " Premiere "newProj.png")
             {
-                Click(%&x%, %&y%)
+                MouseMove(%&x%, %&y%)
+                SendInput("{Click}")
                 WinWait("New Project")
                 blockOff()
                 IB := InputBox("Enter the name of your project", "Project", "w100 h100")
@@ -45,7 +46,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 1000
                 if ImageSearch(&xin, &yin, 0, 0, 629, 348, "*2 " Premiere "ingest.png")
                     { ;this whole thing relies on a lot of well timed sleeps that are tailored to my systems performance when performing this macro, chances are if you're on a slower system some of these may need to be boosted (especially the longer ones)
-                        Click(%&xin%, %&yin%)
+                        MouseMove(%&xin%, %&yin%)
+                        SendInput("{Click}")
                         sleep 500
                         SendInput("{Tab 6}" "{Space}")
                         sleep 1000

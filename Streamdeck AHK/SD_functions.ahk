@@ -174,7 +174,7 @@ scale(amount)
 }
 
 /*
- This function toggles a pause on the autosave ahk script
+ This function toggles a pause on the autosave ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
  */
 pauseautosave()
 {
@@ -183,7 +183,7 @@ pauseautosave()
 		{
 			WM_COMMAND := 0x0111
 			ID_FILE_PAUSE := 65403
-			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, A_WorkingDir "\autosave.ahk ahk_class AutoHotkey"
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "C:\Program Files\ahk\ahk\autosave.ahk ahk_class AutoHotkey"
 		}
 	else
 		{
@@ -194,7 +194,7 @@ pauseautosave()
 }
 
 /*
- This function toggles a pause on the premiere_fullscreen_check ahk script
+ This function toggles a pause on the premiere_fullscreen_check ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
  */
 pausewindowmax()
 {
@@ -203,7 +203,7 @@ pausewindowmax()
 		{
 			WM_COMMAND := 0x0111
 			ID_FILE_PAUSE := 65403
-			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, A_WorkingDir "\premiere_fullscreen_check.ahk ahk_class AutoHotkey"
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "C:\Program Files\ahk\ahk\premiere_fullscreen_check.ahk ahk_class AutoHotkey"
 		}
 	else
 		{
