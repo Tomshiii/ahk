@@ -7,3 +7,8 @@
 
 ## > Streamdeck AHK
 - Added functions to pause both the `autosave.ahk` & `premiere_fullscreen_check.ahk` scripts so they don't try to fire during other scripts
+
+## > Other Changes
+- `premiere_fullscreen_check.ahk` will no longer try to fire on windows disconnected from the main premiere window
+    - Fixed a mistake causing it to only add 1s to the timer instead of 10s
+    - Made the frequency the script checks a user adjustable variable for convenience

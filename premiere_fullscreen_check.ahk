@@ -11,30 +11,40 @@ Using window spy get your windows normal fullscreen W & H pixel values (NOT the 
 */
 normal_W := 2576
 normal_H := 1416
-
 normal := normal_W ", " normal_H
+
+;//enter your desired frequency in SECONDS in `fire_frequency` then leave `fire` as it is. By default you will see this script checks every 10s
+fire_frequency := 10
+global fire := fire_frequency * 1000
 
 start:
 if WinExist("ahk_exe Adobe Premiere Pro.exe")
-    SetTimer(check, -11000)
+    SetTimer(check, -1000 -fire)
 else
     goto start
 
 check()
 {
     if not WinActive("ahk_exe Adobe Premiere Pro.exe")
-        SetTimer(, -10000) ;if premiere isn't currently active when it gets to this check, it will wait 10s before checking again
+        SetTimer(, -fire) ;if premiere isn't currently active when it gets to this check, it will wait 10s before checking again
     else
         {
-            WinGetPos(,, &width, &height)
-            reference := %&width% ", " %&height%
-            ;MsgBox(reference "`n" normal) ;debugging
-            if reference != normal
+            title := WinGetTitle("A")
+            ;toolCust(title, "1000") ;debugging
+            if title = ""
+                SetTimer(, -fire)
+            else
                 {
-                    SendInput("!{Space}")
-                    sleep 50
-                    SendInput("x")
+                    WinGetPos(,, &width, &height)
+                    reference := %&width% ", " %&height%
+                    ;MsgBox(reference "`n" normal) ;debugging
+                    if reference != normal
+                        {
+                            SendInput("!{Space}")
+                            sleep 50
+                            SendInput("x")
+                        }
+                    SetTimer(, -fire) ;adds 10s to the timer and will check again after that time has elapsed
                 }
-            SetTimer(, -1000) ;adds 10s to the timer and will check again after that time has elapsed
         }
 }
