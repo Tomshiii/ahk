@@ -5,6 +5,8 @@ SetDefaultMouseSpeed 0
 
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
+        pauseautosave()
+        pausewindowmax()
         ;; This part makes you select the folder you wish to create the project in
         SelectedFolder := DirSelect("*E:\", 3, "Create your desired folder then select it.")
         if SelectedFolder = ""
@@ -72,6 +74,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         sleep 1000
                         blockOff()
                         Run(SelectedFolder) ;open an explorer window for your selected directory
+                        pauseautosave()
+                        pausewindowmax()
                         return
                     }
                 else

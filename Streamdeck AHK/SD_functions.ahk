@@ -172,3 +172,42 @@ scale(amount)
 	Click("middle")
 	blockOff()
 }
+
+/*
+ This function toggles a pause on the autosave ahk script
+ */
+pauseautosave()
+{
+	DetectHiddenWindows True
+	if WinExist("autosave.ahk - AutoHotkey")
+		{
+			WM_COMMAND := 0x0111
+			ID_FILE_PAUSE := 65403
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, A_WorkingDir "\autosave.ahk ahk_class AutoHotkey"
+		}
+	else
+		{
+			toolCust("autosave ahk script isn't open", "1000")
+			ExitApp()
+		}
+		
+}
+
+/*
+ This function toggles a pause on the premiere_fullscreen_check ahk script
+ */
+pausewindowmax()
+{
+	DetectHiddenWindows True
+	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+		{
+			WM_COMMAND := 0x0111
+			ID_FILE_PAUSE := 65403
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, A_WorkingDir "\premiere_fullscreen_check.ahk ahk_class AutoHotkey"
+		}
+	else
+		{
+			toolCust("fullscreen ahk script isn't open", "1000")
+			ExitApp()
+		}
+}

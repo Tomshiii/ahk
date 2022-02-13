@@ -4,3 +4,6 @@
 
 ## > My Scripts
 - `updateChecker()` now removes all urls from the generated changelog instead of just bit.ly links
+
+## > Streamdeck AHK
+- Added functions to pause both the `autosave.ahk` & `premiere_fullscreen_check.ahk` scripts so they don't try to fire during other scripts
