@@ -10,7 +10,7 @@ FullFileName := SelectedFolder
 SplitPath FullFileName, &name
 
 ;;this part makes you select the destination folder
-Move := DirSelect("*A:\_RC\Tomshi\2021", 3, "Pick the destination folder you wish everything to move to.")
+Move := DirSelect("*A:\_RC\Tomshi\2022", 3, "Pick the destination folder you wish everything to move to.")
 if Move = ""
     return
 
