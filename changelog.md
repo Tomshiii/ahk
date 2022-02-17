@@ -9,6 +9,8 @@
 - Added functions to pause both the `autosave.ahk` & `premiere_fullscreen_check.ahk` scripts so they don't try to fire during other scripts
 
 ## > Other Changes
-- `premiere_fullscreen_check.ahk` will no longer try to fire on windows disconnected from the main premiere window
+- `premiere_fullscreen_check.ahk`
+    - Will no longer try to fire on panels disconnected from the main premiere window
+    - Checks to make sure the user is idle on the keyboard for 2s before firing
     - Fixed a mistake causing it to only add 1s to the timer instead of 10s
-    - Made the frequency the script checks a user adjustable variable for convenience
+    - Made the frequency the script fires a user adjustable variable for convenience
