@@ -10,9 +10,15 @@ FullFileName := SelectedFolder
 SplitPath FullFileName, &name
 
 ;;this part makes you select the destination folder
+move:
 Move := DirSelect("*A:\_RC\Tomshi\2022", 3, "Pick the destination folder you wish everything to move to.")
 if Move = ""
     return
+if Move = SelectedFolder
+    {
+        MsgBox("You can't move a folder to the same dir`nYou're going to crash ahk, is that what you want?")
+        goto move
+    }
 
 ;;this part deletes the proxies folder and the draft folder if they exist
 if DirExist(SelectedFolder "\proxies")
@@ -25,6 +31,8 @@ if DirExist(SelectedFolder "\renders\Draft")
     DirDelete(SelectedFolder "\renders\Draft", 1)
 if DirExist(SelectedFolder "\Adobe Premiere Pro Auto-Save")
     DirDelete(SelectedFolder "\Adobe Premiere Pro Auto-Save", 1)
+if DirExist(SelectedFolder "\Adobe After Effects Auto-Save")
+    DirDelete(SelectedFolder "\Adobe After Effects Auto-Save", 1)
 if DirExist(SelectedFolder "\Adobe Premiere Pro Audio Previews")
     DirDelete(SelectedFolder "\Adobe Premiere Pro Audio Previews", 1)
 
