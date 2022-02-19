@@ -7,6 +7,7 @@
 
 ## > Streamdeck AHK
 - Added functions to pause both the `autosave.ahk` & `premiere_fullscreen_check.ahk` scripts so they don't try to fire during other scripts
+- Stream start/end scripts close/open `autosave.ahk` & `premiere_fullscreen_check.ahk` respectively
 
 ## > Other Changes
 - `premiere_fullscreen_check.ahk`

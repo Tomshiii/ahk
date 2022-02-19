@@ -11,6 +11,12 @@ if not WinExist("ahk_exe obs64.exe")
 {
 	SetWorkingDir A_ScriptDir
 	SetWinDelay 0 ;makes windows move instantly
+	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
+	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+	if WinExist("autosave.ahk - AutoHotkey")
+		WinClose()
+	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+		WinClose()
 	Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
 	Run "C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe"
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
@@ -54,12 +60,12 @@ if not WinExist("ahk_exe obs64.exe")
 		} */
 		;not using this currently
 	obsLocation() ;Moves obs into position
-	Run "firefox.exe https://docs.google.com/presentation/d/1b6pCuOIrw4pEF6GACxrBh8C-mB4XsDeHLM50cj4jAkQ/edit#slide=id.g90e8195d3c_16_958" ;opens the AM route doc to pauline questions
+/* 	Run "firefox.exe https://docs.google.com/presentation/d/1b6pCuOIrw4pEF6GACxrBh8C-mB4XsDeHLM50cj4jAkQ/edit#slide=id.g90e8195d3c_16_958" ;opens the AM route doc to pauline questions
 		if WinExist("ahk_exe firefox.exe")
 			WinActivate
 		else
 			WinWaitActive "ahk_exe firefox.exe"
-	sleep 1000 ;waits before opening the next tab or firefox derps out
+	sleep 1000 ;waits before opening the next tab or firefox derps out */
 	Run "firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager"
 	sleep 1000
 	Run "firefox.exe https://yoink.streamelements.com/activity-feed?activitiesToolbar=false&popout=true&theme=dark&withSetupWizard=false"
@@ -79,7 +85,7 @@ if not WinExist("ahk_exe obs64.exe")
 			Send "w"
 			sleep 1500
 		}
-	if WinExist("Twitch")
+/* 	if WinExist("Twitch")
 		{
 			WinActivate
 			SetKeyDelay 100
@@ -93,9 +99,9 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 100
 			Send "w"
 			sleep 1500
-		}
+		} */
 	WinWait("Twitch", , 10) ;WinMove -6, 0, 1497, 886,, "Twitch"  ;moves browser tabs into position for stream
-			WinMove -7, 0, 1497, 886
+		WinMove -7, 0, 1497, 886
 	WinWait("All Moons UPDATED v.1.3.0", , 10) ;WinMove 1218, 658, 1347, 747,, "All Moons UPDATED v.1.3.0"  ;moves browser tabs into position for stream
 		WinMove 1218, 658, 1347, 747
 	if WinExist("StreamElements")
