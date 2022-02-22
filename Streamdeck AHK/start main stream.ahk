@@ -13,10 +13,10 @@ if not WinExist("ahk_exe obs64.exe")
 	SetWinDelay 0 ;makes windows move instantly
 	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
 	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-	if WinExist("autosave.ahk - AutoHotkey")
+	/* if WinExist("autosave.ahk - AutoHotkey")
 		WinClose()
 	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
-		WinClose()
+		WinClose() */
 	Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
 	Run "C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe"
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
@@ -100,10 +100,10 @@ if not WinExist("ahk_exe obs64.exe")
 			Send "w"
 			sleep 1500
 		} */
-	WinWait("Twitch", , 10) ;WinMove -6, 0, 1497, 886,, "Twitch"  ;moves browser tabs into position for stream
+	WinWait("Twitch", , 10) ;moves browser tabs into position for stream
 		WinMove -7, 0, 1497, 886
-	WinWait("All Moons UPDATED v.1.3.0", , 10) ;WinMove 1218, 658, 1347, 747,, "All Moons UPDATED v.1.3.0"  ;moves browser tabs into position for stream
-		WinMove 1218, 658, 1347, 747
+	;WinWait("All Moons UPDATED v.1.3.0", , 10) ;moves browser tabs into position for stream
+	;	WinMove 1218, 658, 1347, 747
 	if WinExist("StreamElements")
 		{
 			WinActivate

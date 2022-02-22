@@ -1,10 +1,10 @@
 ﻿#SingleInstance Force
 DetectHiddenWindows(true)
 SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-if not WinExist("autosave.ahk - AutoHotkey")
+/* if not WinExist("autosave.ahk - AutoHotkey")
 	Run("C:\Program Files\ahk\ahk\autosave.ahk")
 if not WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
-	Run("C:\Program Files\ahk\ahk\premiere_fullscreen_check.ahk")
+	Run("C:\Program Files\ahk\ahk\premiere_fullscreen_check.ahk") */
 if WinExist("Streaming.ahk")
 	WinClose(,,1)
 if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus

@@ -678,7 +678,6 @@ SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk
 ;premselecttoolHotkey;
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
-	coords()
 	MouseGetPos(&xpos, &ypos)
 	SendInput(toolsWindow)
 	SendInput(toolsWindow)
@@ -686,17 +685,42 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
 	ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
 	;MouseMove 34, 917 ;location of the selection tool
+	if %&width% = 0 || %&height% = 0
+		{
+			loop {
+				;for whatever reason, if you're clicked on another panel, then try to hit this hotkey, `ControlGetPos` refuses to actually get any value, I have no idea why. This loop will attempt to get that information anyway, but if it fails will fallback to the hotkey you have set within premiere
+				;toolCust(A_Index "`n" %&width% "`n" %&height%, "100")
+				if %&width% != 0 || %&height% != 0
+					break
+				if A_Index > 3
+					{
+						SendInput(selectionPrem)
+						toolCust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", "2000")
+						return
+					}
+				sleep 100
+				SendInput(toolsWindow)
+				toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+				ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+			}
+		}
 	if %&height% < 80 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
 		multiply := "3"
 	else
 		multiply := "1"
-	if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height% * multiply, "*2 " Premiere "selection.png") ;moves to the selection tool
-			MouseMove(%&x%, %&y%)
-	else
-		{
-			toolFind("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-			return
-		}
+	loop {
+		if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height% * multiply, "*2 " Premiere "selection.png") ;moves to the selection tool
+			{
+				MouseMove(%&x%, %&y%)
+				break
+			}
+		sleep 100
+		if A_Index > 3
+			{
+				toolFind("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				return
+			}
+	}
 	click
 	MouseMove %&xpos%, %&ypos%
 }
@@ -740,8 +764,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseMove(%&xpos%, %&ypos%)
 	bin:
 	Run("E:\Audio stuff")
-	WinWait("E:\Audio stuff")
-	WinActivate("E:\Audio stuff")
+	WinWait("Audio stuff")
+	WinActivate("Audio stuff")
 	sleep 500
 	coordw()
 	MouseMove(0, 0)
@@ -788,8 +812,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			MouseMove(%&fold3x% + "5", %&fold3y% + "2")
 			SendInput("{Click Down}")
-			MouseMove(754, 1042, 2)
-			sleep 150
+			MouseMove(754, 1000, 2)
+			sleep 250
 			SendInput("{Click Up}")
 		}
 	else

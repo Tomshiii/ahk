@@ -262,6 +262,10 @@ num(xval, yval, scale)
  */
 valuehold(filepath, optional)
 {
+    ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
+    ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
+    ;You can plug your own x distance in by changing the value below
+    xdist := 210
     MouseGetPos(&xpos, &ypos)
     coords()
     blockOn()
@@ -310,10 +314,8 @@ valuehold(filepath, optional)
             return
         }
     colour:
-    if PixelSearch(&xcol, &ycol, %&x%, %&y% + "2", %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+    if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + xdist, %&y% + "40", 0x205cce, 2)
         MouseMove(%&xcol% + %&optional%, %&ycol%)
-    else if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "720", %&y% + "40", 0x295C4D, 3) ;searches for a different shade of blue as a fallback
-                MouseMove(%&xcol% + %&optional%, %&ycol%)
     else
         {
             blockOff()
