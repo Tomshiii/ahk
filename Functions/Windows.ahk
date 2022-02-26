@@ -280,7 +280,7 @@ vscode(script)
     if A_ThisHotkey = functionHotkey ;this opens my \functions folder as well as opening my main functions script
         {
             MouseGetPos(&origx, &origy)
-            MouseMove(0, 80,, "R")
+            MouseMove(0, 105,, "R")
             SendInput("{Click}")
             MouseMove(%&origx%, %&origy% + 180)
         }
