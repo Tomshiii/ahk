@@ -38,6 +38,7 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
                 {
                     blockOff()
                     toolFind("the property you're after", "1000")
+                    errorLog("aevaluehold()", "Couldn't find the property the user was after")
                     KeyWait(A_ThisHotkey)
                     return
                 }
@@ -62,7 +63,10 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
                 }
         }
     else
-        toolCust("you're not hovering a track", "1000")
+        {
+            toolCust("you're not hovering a track", "1000")
+            errorLog("aevaluehold()", "User not hovering over a track")
+        }
 }
 
 /* aepreset()
@@ -78,6 +82,7 @@ aePreset(preset)
     if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
         {
             toolCust("you haven't selected a clip`nor aren't hovering the right spot", "1000")
+            errorLog("aePreset()", "User not hovering over the right spot on the track")
             blockOff()
             Exit
         }
@@ -93,6 +98,7 @@ aePreset(preset)
         {
             blockOff()
             toolCust("couldn't find the magnifying glass", "1000")
+            errorLog("aePreset()", "Couldn't find the magnifying glass")
             return
         }
     move:
@@ -112,6 +118,7 @@ aePreset(preset)
                     {
                         blockOff()
                         toolCust("Couldn't determine the caret", "1000")
+                        errorLog("aePreset()", "Function couldn't determine the caret position")
                         return
                     }
             }

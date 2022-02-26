@@ -10,7 +10,7 @@
 #Include "%A_ScriptDir%\Functions\Windows.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.10.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.1.3
@@ -214,6 +214,28 @@ timeline(timeline, x1, x2, y1)
 		}
 	else
 		return
+}
+
+
+; ===========================================================================================================================================
+;
+;		Error Log \\ Last updated: v2.10.1
+;
+; ===========================================================================================================================================
+
+/*
+ A function designed to log errors in scripts if they occur
+ @param functionName is the name of the current function you wish to log
+ @param error is what text you want logged to explain the error
+ */
+errorLog(functionName, error)
+{
+	if not DirExist(A_WorkingDir "\Error Logs")
+		DirCreate(A_WorkingDir "\Error Logs")
+	if not FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+		FileAppend(A_Hour ":" A_Min ":" A_Sec "." A_MSec " // " %&functionName% " encountered the following error: " %&error%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+	else
+		FileAppend("`n" A_Hour ":" A_Min ":" A_Sec "." A_MSec " // " %&functionName% " encountered the following error: " %&error%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }
 
 

@@ -15,9 +15,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.9
+;\\v2.10.10
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.3
+;\\v2.4.4
 
 ; ============================================================================================================================================
 ;
@@ -718,6 +718,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		if A_Index > 3
 			{
 				toolFind("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				errorLog("SC03A & v", "Couldn't find the selection tool")
 				return
 			}
 	}
@@ -752,6 +753,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+			errorLog("RAlt & p", "Couldn't find the project window")
 			return
 		}
 	move:
@@ -785,6 +787,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff
 			toolFind("the sfx folder", "2000")
+			errorLog("RAlt & p", "Couldn't find the sfx folder in Windows Explorer")
 			return
 		}
 	added:
@@ -806,6 +809,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("the sfx folder in premiere", "2000")
+			errorLog("RAlt & p", "Couldn't find the sfx folder in Premiere Pro")
 			return
 		}
 	if ImageSearch(&fold3x, &fold3y, 10, 3, 1038, 1072, "*2 " Premiere "binsfx.png")
@@ -820,6 +824,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("the bin", "2000")
+			errorLog("RAlt & p", "Couldn't find the bin")
 			return
 		}
 	coords()
@@ -873,15 +878,16 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 			else
 				{
 					toolCust("couldn't find the dm button", "1000")
+					errorLog("^+w", "Couldn't find the dm button")
 					return
 				}
-				move:
-				blockOn()
-				MouseGetPos(&origx, &origy)
-				MouseMove(%&x%, %&y%, 2)
-				SendInput("{Click}")
-				MouseMove(%&origx%, %&origy%, 2)
-				blockOff()
+			move:
+			blockOn()
+			MouseGetPos(&origx, &origy)
+			MouseMove(%&x%, %&y%, 2)
+			SendInput("{Click}")
+			MouseMove(%&origx%, %&origy%, 2)
+			blockOff()
 		}
 }
 ;disclocationHotkey;

@@ -92,35 +92,53 @@ disc(button)
 ;ensure this function only fires if discord is active ( #HotIf WinActive("ahk_exe Discord.exe") ) - VERY IMPORTANT
 {
     KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
-    coordw() ;important to leave this as window as otherwise the image search function will fail to find things
+    coordw() ;having this here makes an imagesearch later fail to function, that's pretty cool
     MouseGetPos(&x, &y)
-    WinGetPos(,, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
+    WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
+    ;MsgBox("x " %&nx% "`ny " %&ny% "`nwidth " %&width% "`nheight " %&height%) ;testing
     blockOn()
     click("right") ;this opens the right click context menu on the message you're hovering over
     sleep 50 ;sleep required so the right click context menu has time to open
-    if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%) ;searches for the button you've requested
-            MouseMove(%&xpos%, %&ypos%)
-    else
-        {
-            sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-            if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%)
-                MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
-            else ;if everything fails, this else will trigger
-                {
-                    MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
-                    blockOff()
-                    toolFind("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-                    return
-                }
-        }
+    loop {
+        if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%) ;searches for the button you've requested
+            {
+                MouseMove(%&xpos%, %&ypos%)
+                break
+            }
+        sleep 50
+        if A_Index > 10 ;after waiting over 0.5s the function will excecute the below
+            {
+                MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+                blockOff()
+                toolFind("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog("disc()", "Was unable to find the requested button")
+                return
+            }
+    }
     Click
     sleep 100
     if A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
         {
-            if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " Discord "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+            if ImageSearch(&x2, &y2, %&nx%, %&ny%/"3", %&width%, %&height%, "*2 " Discord "dm1.png")
                 {
-                    MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
-                    Click
+                    loop {
+                            if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " Discord "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+                                {
+                                    ;ToolTip("")
+                                    MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
+                                    Click
+                                    MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+                                    blockOff()
+                                    return
+                                }
+                            ;ToolTip(A_Index)
+                            if A_Index > 10
+                                {
+                                    toolFind("the @ ping button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                                    errorLog("disc()", "Was unable to find the @ reply ping button")
+                                    break
+                                }
+                        }
                     MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
                     blockOff()
                 }
@@ -128,7 +146,6 @@ disc(button)
                 {
                     MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
                     blockOff()
-                    toolFind("the @ ping button`nor you're in a DM", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
                     return
                 }
         }
@@ -156,6 +173,7 @@ discLocation()
         original := WinGetID("A")
     } catch as e {
         toolCust("you tried to assign a closed`n window as the last active", "4000")
+        errorLog("discLocation()", "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it")
         SendInput("{Click}")
         return
     }
@@ -208,13 +226,15 @@ discLocation()
     if toggle > 1 or toggle < 0 ;this is here just incase the value ever ends up bigger/smaller than it's supposed to
         {
             toggle := 0
-            toolCust("stop spamming the function please`nthe functions value was to large/small", "1000")
+            toolCust("stop spamming the function please`nthe functions value was too large/small", "1000")
+            errorLog("discLocation()", "Function hit an unexpected toggle number")
             return
         }
     try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
         WinActivate(original)
     } catch as e {
         toolCust("couldn't find original window", "2000")
+        errorLog("discLocation()", "Function couldn't activate the original window")
         return
     }
 }
@@ -253,6 +273,7 @@ vscode(script)
     else
         {
             toolFind("the collapse folders button", "1000")
+            errorLog("vscode()", "Couldn't find the 'collapse folders' button")
             blockOff()
             return
         }

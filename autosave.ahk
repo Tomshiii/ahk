@@ -2,6 +2,7 @@
 A_MaxHotkeysPerInterval := 2000
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 TraySetIcon(A_WorkingDir "\Icons\save.ico") ;changes the icon this script uses in the taskbar
+#Include Functions.ahk
 
 ;This script will autosave your premire pro project every 5min since adobe refuses to actually do so. Thanks adobe.
 
@@ -21,53 +22,6 @@ timelineWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini",
 
 global Premiere := A_WorkingDir "\ImageSearch\Premiere\"
 
-/* blockOn()
- blocks all user inputs [IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (CTRL + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]
- */
-blockOn()
- {
-     BlockInput "SendAndMouse"
-     BlockInput "MouseMove"
-     BlockInput "On"
-     ;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
- }
- 
-/* blockOff()
-  turns off the blocks on user input
-  */
-blockOff()
- {
-     blockinput "MouseMoveOff"
-     BlockInput "off"
- }
-
-/* toolCust()
- create a tooltip with any message
- * @param message is what you want the tooltip to say
- * @param timeout is how many ms you want the tooltip to last
- */
-toolCust(message, timeout)
-{
-	ToolTip(%&message%)
-	SetTimer(timeouttime, - %&timeout%)
-	timeouttime()
-	{
-		ToolTip("")
-	}
-}
-
-/* #+1::
-{
-    if A_IsPaused = 0
-        {
-            ToolTip("you paused the autosave script")
-            sleep 1000
-            ToolTip("")
-        }
-    else
-        toolCust("you unpaused the autosave script", "1000")
-    Pause -1 ;pauses/unpauses this script.
-} */
 
 
 
@@ -95,6 +49,7 @@ save()
         title := WinGetTitle("A")
     } catch as e {
         toolCust("couldn't grab active window", "1000")
+        errorLog("autosave.ahk", "Couldn't define the active window")
     }
     blockOn()
     ;ToolTip("Saving your Premiere project")
@@ -127,6 +82,7 @@ save()
                 stop := "no"
         } catch as er {
             toolCust("failed to find play/stop button", "1000")
+            errorLog("autosave.ahk", "Couldn't find the play/stop button")
         }
     SendInput("^s")
     WinWaitClose("Save Project")
@@ -146,6 +102,7 @@ save()
         WinActivate(title)
     } catch as e {
         toolCust("couldn't activate original window", "1000")
+        errorLog("autosave.ahk", "Couldn't activate the original active window")
     }
     blockOff()
     ToolTip("")

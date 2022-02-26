@@ -23,6 +23,7 @@ psProp(image)
                 {
                     blockOff()
                     toolFind("the value you wish`nto adjust_1", "1000")
+                    errorLog("psProp()", "Was unable to find the value the user wished to adjust")
                     return
                 }
         }
@@ -39,6 +40,7 @@ psProp(image)
                     MouseMove(%&xpos%, %&ypos%)
                     blockOff()
                     toolFind("the value you wish`nto adjust_2", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                    errorLog("psProp()", "Was unable to find the value the user wished to adjust")
                     return
                 }
         }
@@ -92,7 +94,6 @@ psSave()
                 MouseMove(0, 0)
                 SendInput("{Enter 2}")
             }
-
         else
             {
                 if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop "png2.png")
@@ -108,6 +109,7 @@ psSave()
                         MouseMove(0, 0)
                         blockOff()
                         toolFind("png", "1000")
+                        errorLog("psSave()", "Was unable to find the png option")
                         return
                     }
             }
@@ -184,6 +186,7 @@ psType(filetype)
         {
             blockOff()
             toolFind("png drop down", "1000")
+            errorLog("psType()", "Was unable to find the filetype option")
             return
         }
     MouseMove(%&x%, %&y%)
