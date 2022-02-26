@@ -86,6 +86,8 @@ else
 
 save()
 {
+    if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
+        reload
     stop := ""
     ToolTip("Your Premiere Pro project is being saved!`nHold tight!")
     try {
