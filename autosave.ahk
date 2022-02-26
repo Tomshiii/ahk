@@ -55,9 +55,9 @@ save()
     ;ToolTip("Saving your Premiere project")
     if not WinActive("ahk_exe Adobe Premiere Pro.exe")
         {
-            WinActivate("ahk_exe Adobe Premiere Pro.exe")
-            sleep 500
             try {
+                WinActivate("ahk_exe Adobe Premiere Pro.exe")
+                sleep 500
                 ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
             } catch as win {
                 toolCust("", "10")

@@ -1,0 +1,11 @@
+# Error Logs
+This folder will contain any generated error logs to help the user determine where scripts are going wrong if they happen to miss the tooltips as sometimes multiple can be generated, or they can contain information that just flashes by too fast.
+
+Log files will be laid out like so;
+
+```
+HH:MM:SS.MS // `Function` encountered the following error: `Error`
+
+23:00:46.106 // vscode() encountered the following error: Couldn't find the 'collapse folders' button
+23:01:05.695 // valueHold() encountered the following error: The user wasn't scrolled down
+```
