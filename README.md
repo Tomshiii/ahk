@@ -95,7 +95,7 @@ A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogu
 #### [right click premiere.ahk](https://github.com/Tomshiii/ahk/blob/main/right%20click%20premiere.ahk)
 A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button.
 
-#### [`\Error Logs`](https://github.com/Tomshiii/ahk/tree/main/Error%20Logs)
+#### [\Error Logs]
 Anytime a macro/script encounters an error it will be logged in a txt file in this directory to help you catch anything that isn't working as intended so that in the event that the tooltip disappears too quickly, you can still dig in and see everything going on
 
 Eg.
