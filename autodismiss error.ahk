@@ -12,7 +12,8 @@ A_MaxHotkeysPerInterval := 2000
 DetectHiddenText "1"
 
 lol:
-if WinWait("Warning ahk_exe Adobe Premiere Pro.exe")
+if WinActive("Warning ahk_exe Adobe Premiere Pro.exe")
     sendinput "{enter}"
-sleep 100
+else
+    WinWait("Warning ahk_exe Adobe Premiere Pro.exe")
 goto lol

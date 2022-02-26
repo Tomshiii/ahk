@@ -22,7 +22,10 @@ start:
 if WinExist("ahk_exe Adobe Premiere Pro.exe")
     SetTimer(check, -1000 -fire)
 else
-    goto start
+    {
+        WinWait("ahk_exe Adobe Premiere Pro.exe")
+        goto start
+    }
 
 check()
 {

@@ -10,3 +10,5 @@
 - `SC03A & v` macro given more logic as it would constantly fail on first use
 
 ## > Other Changes
+- `autosave.ahk` changed to function off of a timer instead of sleeps
+- Minor changes to `autodismiss error.ahk` & `premiere_fullscreen_check.ahk` so they aren't constantly spam waiting for their respective windows

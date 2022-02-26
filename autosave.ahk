@@ -75,78 +75,78 @@ toolCust(message, timeout)
 minutes := 7.5
 global ms := minutes * 60000
 
-save:
+start:
 if WinExist("ahk_exe Adobe Premiere Pro.exe")
-    {
-        stop := ""
-        ToolTip("Your Premiere Pro project is being saved!`nHold tight!")
-        try {
-            id := WinGetClass("A")
-            title := WinGetTitle("A")
-        } catch as e {
-            toolCust("couldn't grab active window", "1000")
-        }
-        blockOn()
-        ;ToolTip("Saving your Premiere project")
-        if not WinActive("ahk_exe Adobe Premiere Pro.exe")
-            {
-                WinActivate("ahk_exe Adobe Premiere Pro.exe")
-                sleep 500
-                try {
-                    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-                } catch as win {
-                    toolCust("", "10")
-                }
-                
-            }
-        sleep 1000
-        if id = "Premiere Pro"
-           try {
-                ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-                SendInput(programMonitor)
-                SendInput(programMonitor)
-                sleep 500
-                toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-                ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-                sleep 500
-                if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "stop.png")
-                    {
-                        toolCust("If you were playing back anything, this function should resume it", "1000")
-                        stop := "yes"
-                    }
-                else
-                    stop := "no"
-            } catch as er {
-                toolCust("failed to find play/stop button", "1000")
-            }
-        SendInput("^s")
-        WinWaitClose("Save Project")
-        try {
-            ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-        } catch as win {
-            toolCust("", "10")
-        }
-        sleep 1000
-        if stop = "yes"
-            {
-                SendInput(timelineWindow)
-                SendInput(timelineWindow)
-                SendInput("{Space}")
-            }
-        try {
-            WinActivate(title)
-        } catch as e {
-            toolCust("couldn't activate original window", "1000")
-        }
-        blockOff()
-        ToolTip("")
-        sleep ms
-        goto save
-    }
+    SetTimer(save, -ms)
 else
     {
         WinWait("ahk_exe Adobe Premiere Pro.exe")
-        sleep 10000
-        goto save
+        goto start
     }
+
+save()
+{
+    stop := ""
+    ToolTip("Your Premiere Pro project is being saved!`nHold tight!")
+    try {
+        id := WinGetClass("A")
+        title := WinGetTitle("A")
+    } catch as e {
+        toolCust("couldn't grab active window", "1000")
+    }
+    blockOn()
+    ;ToolTip("Saving your Premiere project")
+    if not WinActive("ahk_exe Adobe Premiere Pro.exe")
+        {
+            WinActivate("ahk_exe Adobe Premiere Pro.exe")
+            sleep 500
+            try {
+                ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+            } catch as win {
+                toolCust("", "10")
+            }
+        }
+    sleep 1000
+    if id = "Premiere Pro"
+       try {
+            ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+            SendInput(programMonitor)
+            SendInput(programMonitor)
+            sleep 500
+            toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+            ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+            sleep 500
+            if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "stop.png")
+                {
+                    toolCust("If you were playing back anything, this function should resume it", "1000")
+                    stop := "yes"
+                }
+            else
+                stop := "no"
+        } catch as er {
+            toolCust("failed to find play/stop button", "1000")
+        }
+    SendInput("^s")
+    WinWaitClose("Save Project")
+    try {
+        ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+    } catch as win {
+        toolCust("", "10")
+    }
+    sleep 1000
+    if stop = "yes"
+        {
+            SendInput(timelineWindow)
+            SendInput(timelineWindow)
+            SendInput("{Space}")
+        }
+    try {
+        WinActivate(title)
+    } catch as e {
+        toolCust("couldn't activate original window", "1000")
+    }
+    blockOff()
+    ToolTip("")
+    SetTimer(, -ms)
+}
 
