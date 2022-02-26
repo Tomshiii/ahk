@@ -298,21 +298,25 @@ valuehold(filepath, optional)
                 goto next
         }
     next:
-    if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour
-    else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for when you have the "toggle animation" keyframe button pressed
-    else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for if the property you want to adjust is "selected"
-    else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
-    else
-        {
-            blockOff()
-            toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-            return
-        }
+    loop 3 {
+        ToolTip(A_Index)
+        if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+            goto colour
+        else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+            goto colour ;this is for when you have the "toggle animation" keyframe button pressed
+        else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+            goto colour ;this is for if the property you want to adjust is "selected"
+        else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+            goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
+        if A_Index = 3
+            {
+                blockOff()
+                toolFind("the image after " A_Index " attempts`nx " %&efx% "`ny " %&efy% "`nwidth " %&width% "`nheight " %&height%, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
+                KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                return
+            }
+        sleep 50
+    }
     colour:
     if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + xdist, %&y% + "40", 0x205cce, 2)
         MouseMove(%&xcol% + %&optional%, %&ycol%)
@@ -357,6 +361,7 @@ valuehold(filepath, optional)
             MouseMove(%&xpos%, %&ypos%)
             blockOff()
         }
+    ToolTip("")
 }
 
 /* keyreset()
