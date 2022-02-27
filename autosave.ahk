@@ -4,26 +4,9 @@ A_MaxHotkeysPerInterval := 2000
 TraySetIcon(A_WorkingDir "\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include Functions.ahk
 
-;This script will autosave your premire pro project every 5min since adobe refuses to actually do so. Thanks adobe.
-
-/*
- This value will send the keyboard shortcut you have set to activate the Effect Controls Window within Premiere.
- 
- Can be set within KSA.ahk/ini
- */
-programMonitor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Program Monitor")
-
-/*
- This value will send the keyboard shortcut you have set to activate the timeline Window within Premiere.
- 
- Can be set within KSA.ahk/ini
- */
-timelineWindow := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Timeline")
+;This script will autosave your premire pro project every 7.5min since adobe refuses to actually do so. Thanks adobe.
 
 global Premiere := A_WorkingDir "\ImageSearch\Premiere\"
-
-
-
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT HERE
 minutes := 7.5

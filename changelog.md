@@ -24,3 +24,4 @@ Eg.
 ## > Other Changes
 - `autosave.ahk` changed to function off of a timer instead of sleeps
 - Minor changes to `autodismiss error.ahk` & `premiere_fullscreen_check.ahk` so they aren't constantly spam waiting for their respective windows
+- Removed all hard coded references to `C:\Program Files\ahk\ahk` which is the dir that ***I*** have these scripts. After this update all you should need to do is change the `location` variable in `KSA.ahk` to your own custom path and the scripts should work flawlessly

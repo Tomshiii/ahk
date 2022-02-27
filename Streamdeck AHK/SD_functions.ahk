@@ -1,8 +1,8 @@
 ;These global variables will be used across some Streamdeck AHK scripts.
 #Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
-global Premiere := "C:\Program Files\ahk\ahk\ImageSearch\Premiere\"
-global Windows := "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\"
-global Chatterino := "C:\Program Files\ahk\ahk\ImageSearch\Chatterino\"
+global Premiere := location "\ImageSearch\Premiere\"
+global Windows := location "\ImageSearch\Windows\Win11\Settings\"
+global Chatterino := location "\ImageSearch\Chatterino\"
 
 ;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()

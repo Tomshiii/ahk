@@ -444,6 +444,7 @@ ScrollLock::switchToStreamdeck() ;run the streamdeck program
 PrintScreen::SendInput("^+{Esc}")
 ;wordHotkey;
 PgDn::switchToWord()
+Insert::run("C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe")
 
 ;These two scripts are to open highlighted text in the ahk documentation
 ;akhdocuHotkey;
