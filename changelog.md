@@ -1,6 +1,6 @@
 # <> Release 2.3.2 - Error Log
 
-This release brings along the function `errorLog()` that can be used to log instances of a script failing to do what it was supposed to do and append it into a generated `\Error Logs` directory in files sorted by `YYYY_MM_DD_ErrorLog.txt`.
+This release brings along the function `errorLog()` that can be used to log instances of a script failing to do what it was supposed to do and append it into a generated `\Error Logs\*.txt` directory/file. Files are sorted by `YYYY_MM_DD_ErrorLog.txt`.
 
 Eg.
 ```
@@ -11,6 +11,7 @@ Eg.
 ## > Functions
 - `valuehold()` will no longer work with "any" value panel length and is now hard coded. Allowing it to work across a broader length made it unreliable and more likely to grab the incorrect value. While I do try to make as many functions as possible as flexible as possible, when it comes to this specific function, accuracy is far more important
     - *Currently testing a loop to search multiple times for the desired value in an attempt to minimise failed attempts*
+    - Moved some code into a `try{}` `catch{}` combo in an attempt to catch an edge case error
 - `disc()` now loops trying to find the desired button instead of waiting a set `500ms` on initial failure
     - Also loops to try and find the `@ reply ping` button
     - Now has logic to tell if it's in a dm or not so the tooltip about the `@ reply ping` won't fire in a dm

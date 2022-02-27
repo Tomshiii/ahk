@@ -282,8 +282,14 @@ valuehold(filepath, optional)
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
+        errorLog("valuehold()", "Function couldn't determine the ClassNN of the Effects Controls panel")
+        return
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
@@ -325,7 +331,7 @@ valuehold(filepath, optional)
             {
                 blockOff()
                 toolFind("the image after " A_Index " attempts`nx " %&efx% "`ny " %&efy% "`nwidth " %&width% "`nheight " %&height%, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog("valueHold()", "Failed to find the appropiate image")
+                errorLog("valueHold()", "Failed to find the appropiate image after " A_Index " attempts`nx " %&efx% "`ny " %&efy% "`nwidth " %&width% "`nheight ")
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 return
             }
