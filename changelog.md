@@ -15,6 +15,7 @@ Eg.
 - `disc()` now loops trying to find the desired button instead of waiting a set `500ms` on initial failure
     - Also loops to try and find the `@ reply ping` button
     - Now has logic to tell if it's in a dm or not so the tooltip about the `@ reply ping` won't fire in a dm
+- Moved the remaining functions from `Functions.ahk` to the new `General.ahk` so that I can `#Include` it in all the other function files to make creating and editing functions easier within VSCode
 
 ## > My Scripts
 - `Alt & p` macro has been updated to work with a newer win11 update (21H2)
