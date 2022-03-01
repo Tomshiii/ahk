@@ -1,7 +1,7 @@
 ;#SingleInstance Force ;don't want to accidentally start a second instance while it's mid move
 
 ;; This part makes you select the folder you wish to move
-SelectedFolder := DirSelect("*E:\", 3, "Pick the folder you wish to move.")
+SelectedFolder := FileSelect("D2", "E:\", "Pick the folder you wish to move.")
 if SelectedFolder = ""
     return
 
@@ -11,7 +11,7 @@ SplitPath FullFileName, &name
 
 ;;this part makes you select the destination folder
 move:
-Move := DirSelect("*A:\_RC\Tomshi\2022", 3, "Pick the destination folder you wish everything to move to.")
+Move := FileSelect("D2", "A:\_RC\Tomshi\2022", "Pick the destination folder you wish everything to move to.")
 if Move = ""
     return
 if Move = SelectedFolder

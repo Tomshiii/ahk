@@ -1,7 +1,7 @@
 #SingleInstance Force
 
 ;; This part makes you select the folder you wish to create the nested folders in
-SelectedFolder := DirSelect("*E:\", 3, "Create your desired folder then select it.")
+SelectedFolder := FileSelect("D2", "E:\", "Create your desired folder then select it.")
 if SelectedFolder = ""
     return
 
@@ -11,6 +11,8 @@ DirCreate(SelectedFolder "\proxies")
 DirCreate(SelectedFolder "\audio")
 DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
 DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
+FileCopy(A_ScriptDir "\checklist.ahk", SelectedFolder)
+Run(SelectedFolder "\checklist.ahk")
 
 ;; This part then just opens the project folder
 Run(SelectedFolder)
