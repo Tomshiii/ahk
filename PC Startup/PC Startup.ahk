@@ -1,4 +1,4 @@
-SetWorkingDir "C:\Program Files\ahk\ahk"
+SetWorkingDir "E:\Github\ahk"
 ;// This script is included more as a backup for myself and not really because it's helpful.
 
 run A_WorkingDir "\My Scripts.ahk"

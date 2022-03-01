@@ -29,7 +29,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
      - It is recommended you use VSCode as a lot of my variables have dynamic comments that can be viewed across the entire program that could help you understand what is going on.
-4. Save these scripts wherever you wish (I use "`C:\Program Files\ahk\ahk\`" if you want all the directory information to just line up without any editing *[you may have to give this folder permissions within windows so it doesn't harass you about admin privileges all the time]*) but if you wish to use a custom directory, simply change the `location :=` variable in `KSA.ahk` and you should be set.
+4. Save these scripts wherever you wish (I use "`E:\Github\ahk\`" if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, simply change the `location :=` variable in `KSA.ahk` & `SD_functions.ahk` and you should be set.
 5. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs as well as define coordinates for a large chunk of the imagesearches used within these scripts!
 6. Edit, then run any of the .ahk files to then use to your liking!
 - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!

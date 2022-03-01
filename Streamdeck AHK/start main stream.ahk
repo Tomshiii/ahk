@@ -1,11 +1,5 @@
-﻿/*
- This value will send the keyboard shortcut you have set to save a clip from the Source Record Plugin within OBS Studio
-
- Can be set within KSA.ahk/ini
- */
-sourceRecord1 := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
-SetDefaultMouseSpeed 0
-#Include SD_functions.ahk
+﻿#Include SD_functions.ahk
+location := "E:\Github\ahk"
 
 if not WinExist("ahk_exe obs64.exe")
 {
@@ -17,7 +11,7 @@ if not WinExist("ahk_exe obs64.exe")
 		WinClose()
 	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
 		WinClose() */
-	Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
+	Run '*RunAs' location "\Stream\Streaming.ahk"
 	Run "C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe"
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
 	Result := MsgBox("have you started the goxlr bruh",, "1 4096")
@@ -28,7 +22,7 @@ if not WinExist("ahk_exe obs64.exe")
 	else
 		return
 	next:
-	Run "C:\Program Files\ahk\ahk\shortcuts\obs64.lnk" ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
+	Run location "\shortcuts\obs64.lnk" ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
 		else
@@ -139,7 +133,7 @@ if not WinExist("ahk_exe obs64.exe")
 			WinMinimize()
 		}
 	blockOff()
-	Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\ApplicationDj.exe"
+	Run location "\TomSongQueueue\Builds\ApplicationDj.exe"
 	sleep 2500 ;it needed some time to open
 	blockOn()
 	if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus

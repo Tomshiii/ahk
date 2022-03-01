@@ -1,10 +1,11 @@
 ﻿#Include SD_functions.ahk
+location := "E:\Github\ahk"
 if not WinExist("ahk_exe obs64.exe")
 	{
-		Run '*RunAs "C:\Program Files\ahk\ahk\Stream\Streaming.ahk"'
+		Run '*RunAs' location "\Stream\Streaming.ahk"
 		Run "C:\Program Files\Chatterino\chatterino.exe"
 		MsgBox("have you opened the goxlr stuff yet bud",, "262144")
-		Run "C:\Program Files\ahk\ahk\shortcuts\obs64.lnk" ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
+		Run location "\shortcuts\obs64.lnk" ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs
 		WinWaitActive("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus.
 		obsLocation()
 		sleep 3000 ;waits a little bit once obs has opened so it doesn't crash

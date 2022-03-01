@@ -247,6 +247,9 @@ discLocation()
 ; ===========================================================================================================================================
 /* vscode()
   A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
+  It will also either work or not depending on what theme you have installed, I am currently using `one dark pro`
+  It will also depend on how "zoomed in" you have vscode
+  It also functions differently if you only have 1 repo cloned instead of multiple
   @param script is the amount of pixels down the mouse must move from the collapse button to open the script I want.
  */
 vscode(script)

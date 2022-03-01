@@ -36,7 +36,6 @@ timeline5 := 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT 
 timeline6 := 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
 timeline8 := 0x202020
-playheadtoCursor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Playhead to Cursor")
 
 #HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
 ;HotIfWinActive "ahk_exe Adobe Premiere Pro.exe" ;exact name was gotten from windowspy

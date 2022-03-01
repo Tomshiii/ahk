@@ -1,5 +1,5 @@
 ;These global variables will be used across some Streamdeck AHK scripts.
-#Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
+#Include "E:\Github\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
 global Premiere := location "\ImageSearch\Premiere\"
 global Windows := location "\ImageSearch\Windows\Win11\Settings\"
 global Chatterino := location "\ImageSearch\Chatterino\"
