@@ -93,7 +93,7 @@ disc(button)
 ;ensure this function only fires if discord is active ( #HotIf WinActive("ahk_exe Discord.exe") ) - VERY IMPORTANT
 {
     KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
-    coordw() ;having this here makes an imagesearch later fail to function, that's pretty cool
+    coordw()
     MouseGetPos(&x, &y)
     WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
     ;MsgBox("x " %&nx% "`ny " %&ny% "`nwidth " %&width% "`nheight " %&height%) ;testing

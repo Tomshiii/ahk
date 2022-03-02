@@ -11,7 +11,7 @@ if not WinExist("ahk_exe obs64.exe")
 		WinClose()
 	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
 		WinClose() */
-	Run '*RunAs' location "\Stream\Streaming.ahk"
+	Run '*RunAs ' location "\Stream\Streaming.ahk"
 	Run "C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe"
 	Run "C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe"
 	Result := MsgBox("have you started the goxlr bruh",, "1 4096")
@@ -151,7 +151,6 @@ if not WinExist("ahk_exe obs64.exe")
 		}
 	blockOff()
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
-	Run "C:\Program Files\Chatterino\chatterino.exe"
 	Run "C:\Program Files (x86)\foobar2000\foobar2000.exe"
 	Run "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe"
 	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
@@ -165,38 +164,6 @@ if not WinExist("ahk_exe obs64.exe")
 			WinMinimize()
 		}
 	blockOn()
-	if WinExist("ahk_exe chatterino.exe")
-		{
-			chatterinoLocationTomshi()
-			WinActivate("ahk_exe chatterino.exe")
-				coordw()
-				WinGetPos(,, &width, &height, "A")
-				if ImageSearch(&xpos, &ypos, 0, 0, %&width%, %&height%/ "3", "*2 " Chatterino "tomshiactive.png")
-					return
-				else if ImageSearch(&xpos, &ypos, 0, 0, %&width%, %&height%/ "3", "*2 " Chatterino "tomshinotactive.png")
-					{
-						MouseMove(%&xpos%, %&ypos%)
-						SendInput("{Click}")
-						return
-					}
-		}
-	else
-		{
-			WinWait("ahk_exe chatterino.exe")
-			WinActivate("ahk_exe chatterino.exe")
-			chatterinoLocationTomshi()
-			WinActivate("ahk_exe chatterino.exe")
-				coordw()
-				WinGetPos(,, &width, &height, "A")
-				if ImageSearch(&xpos, &ypos, 0, 0, %&width%, %&height%/ "3", "*2 " Chatterino "tomshiactive.png")
-					return
-				else if ImageSearch(&xpos, &ypos, 0, 0, %&width%, %&height%/ "3", "*2 " Chatterino "tomshinotactive.png")
-					{
-						MouseMove(%&xpos%, %&ypos%)
-						SendInput("{Click}")
-						return
-					}
-		}	
 	sleep 3000
 	if WinExist("ahk_exe foobar2000.exe")
 		{
@@ -204,7 +171,7 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 1000
 			WinGetPos(,, &width, &height, "A")
 			MouseGetPos(&x, &y)
-			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " "C:\Program Files\ahk\ahk\ImageSearch\Foobar\streambeats.png")
+			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " location "\ImageSearch\Foobar\streambeats.png")
 				{
 					MouseMove(%&xdir%, %&ydir%)
 					SendInput("{Click}")

@@ -6,7 +6,7 @@ SetDefaultMouseSpeed 0
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
         ;; This part makes you select the folder you wish to create the project in
-        SelectedFolder := DirSelect("*E:\", 3, "Create your desired folder then select it.")
+        SelectedFolder := FileSelect("D2", "E:\", "Select your desired Folder. This Script will create the necessary sub folders")
         if SelectedFolder = ""
             return
         pauseautosave()
@@ -20,6 +20,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
         coordw()
         blockOn()
+        sleep 200
         if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " Premiere "newProj.png")
             {
                 MouseMove(%&x%, %&y%)
@@ -76,6 +77,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         sleep 1000
                         blockOff()
                         Run(SelectedFolder) ;open an explorer window for your selected directory
+                        FileCopy(A_ScriptDir "\checklist.ahk", SelectedFolder)
+                        Run(SelectedFolder "\checklist.ahk")
                         pauseautosave()
                         pausewindowmax()
                         return

@@ -2,7 +2,7 @@
 location := "E:\Github\ahk"
 if not WinExist("ahk_exe obs64.exe")
 	{
-		Run '*RunAs' location "\Stream\Streaming.ahk"
+		Run '*RunAs ' location "\Stream\Streaming.ahk"
 		Run "C:\Program Files\Chatterino\chatterino.exe"
 		MsgBox("have you opened the goxlr stuff yet bud",, "262144")
 		Run location "\shortcuts\obs64.lnk" ;opening shortcuts helps to make sure obs and ahk have the same admin level so ahk can interact with it, otherwise obs wont accept inputs

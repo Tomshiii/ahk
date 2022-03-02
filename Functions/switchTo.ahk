@@ -75,7 +75,7 @@ switchToDisc()
         {
             Run("C:\Users\Tom\AppData\Local\Discord\Update.exe --processStart Discord.exe")
             WinWait("ahk_exe Discord.exe")
-            WinMove(-1080, -320, 1080, 1646, "ahk_exe Discord.exe") ; I have discord on a certain monitor in a certain spot
+            WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe") ; I have discord on a certain monitor in a certain spot
         }
     else
         {

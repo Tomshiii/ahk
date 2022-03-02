@@ -7,7 +7,7 @@ global Chatterino := location "\ImageSearch\Chatterino\"
 ;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()
 {
-	WinMove 2553, -892, 1104, 1087
+	WinMove 2553, -906, 970, 1087
 }
 
 chatterinoLocationBotshi()
@@ -22,12 +22,12 @@ chatterinoLocationTomshi()
 
 streamelementsLocation()
 {
-	WinMove(3586, -892, 901, 499, "StreamElements - Activity feed")
+	WinMove(3513,  -906, 974, 1087, "StreamElements - Activity feed")
 }
 
 discordLocation()
 {
-	WinMove -1080, -320, 1080, 1646
+	WinMove -1080, -274, 1080, 1600
 }
 
 /* coords()
@@ -183,7 +183,7 @@ pauseautosave()
 		{
 			WM_COMMAND := 0x0111
 			ID_FILE_PAUSE := 65403
-			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "C:\Program Files\ahk\ahk\autosave.ahk ahk_class AutoHotkey"
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, location "\autosave.ahk ahk_class AutoHotkey"
 		}
 	else
 		{
@@ -203,7 +203,7 @@ pausewindowmax()
 		{
 			WM_COMMAND := 0x0111
 			ID_FILE_PAUSE := 65403
-			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "C:\Program Files\ahk\ahk\premiere_fullscreen_check.ahk ahk_class AutoHotkey"
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, location "\premiere_fullscreen_check.ahk ahk_class AutoHotkey"
 		}
 	else
 		{
