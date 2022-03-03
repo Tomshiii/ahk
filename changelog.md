@@ -18,11 +18,12 @@ Eg.
 - Moved the remaining functions from `Functions.ahk` to the new `General.ahk` so that I can `#Include` it in all the other function files to make creating and editing functions easier within VSCode
 
 ## > My Scripts
-- `Alt & p` macro has been updated to work with a newer win11 update (21H2)
+- `Alt & p` macro has been updated to function on a newer win11 update (21H2)
 - `SC03A & v` macro given more logic as it would constantly fail on first use
 
 ## > Other Changes
 - `autosave.ahk` changed to function off of a timer instead of sleeps
+    - Moved ability to pause `autosave.ahk` back into its own script
 - Minor changes to `autodismiss error.ahk` & `premiere_fullscreen_check.ahk` so they aren't constantly spam waiting for their respective windows
-- Removed all hard coded references to `C:\Program Files\ahk\ahk` which is the dir that ***I*** have these scripts. After this update all you should need to do is change the `location` variable in `KSA.ahk` to your own custom path and the scripts should work flawlessly
+- Removed as many hard coded references to `C:\Program Files\ahk\ahk` which is the dir that ***I*** (use to) have these scripts. After this update all you should need to do is change the `location` variable in `KSA.ahk`  & `SD_functions.ahk` and most scripts should function as intended. (*some `Streamdeck AHK` scripts still have hard coded dir's*)
 - Changed a few `DirSelect` to `FileSelect` with the folder option enabled as they're easier/quicker to navigate

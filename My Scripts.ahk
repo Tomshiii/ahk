@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.10
+;\\v2.10.11
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.4
 
@@ -392,39 +392,6 @@ updateChecker() ;runs the update checker
 		toolCust("you renabled hotkeys from the main script", "1000")
 	Suspend(-1) ;suspends this script. Useful when playing games as this script will try and do whacky stuff while gaming
 }
-
-;pauseautosaveHotkey;
-#+1:: ;this is a toggle to pause/unpause the autosave script. Will also remind the user the script is paused
-{
-	pausetoggle()
-	{
-		DetectHiddenWindows True
-		WM_COMMAND := 0x0111
-		ID_FILE_PAUSE := 65403
-		PostMessage WM_COMMAND, ID_FILE_PAUSE,,, A_WorkingDir "\autosave.ahk ahk_class AutoHotkey"
-	}
-	static toggle := 0
-	if toggle = 0
-		{
-			toggle := 1
-			pausetoggle()
-			toolCust("You paused the autosave script", "1000")
-			SetTimer(reminder, -450000)
-			reminder()
-			{
-				toolCust("Don't forget you have the autosave script paused!", "3000")
-				SetTimer(, -450000)
-			}
-			return
-		}
-	if toggle = 1
-		{
-			toggle := 0
-			pausetoggle()
-			toolCust("You unpaused the autosave script", "1000")
-			SetTimer(reminder, 0)
-		}		
-}
 #SuspendExempt false
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
@@ -741,8 +708,27 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	coordw()
-	ClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
+	sleep 100
+	try {
+		loop {
+			ClassNN := ControlGetClassNN(ControlGetFocus("A"))
+			ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
+			if ClassNN != "DroverLord - Window Class3"
+				break
+			if A_Index > 5
+				{
+					toolCust("Function failed to find project window", "1000")
+					errorLog("RAlt & p", "Function failed to find ClassNN value that wasn't the timeline")
+					return
+				}
+		}
+	} catch as e
+		{
+			toolCust("Function failed to find project window", "1000")
+			errorLog("RAlt & p", "Function failed to find ClassNN value that wasn't the timeline")
+			return
+		}
+	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN)
 	blockOn()
 	if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project.png") ;searches for the project window to grab the track
 		goto move
@@ -762,7 +748,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	SendInput("{Click Down}")
 	coords()
 	Sleep 100
-	MouseMove 3590, 702, "2"
+	MouseMove 3369, 702, 2
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
 	bin:
@@ -813,13 +799,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			errorLog("RAlt & p", "Couldn't find the sfx folder in Premiere Pro")
 			return
 		}
-	if ImageSearch(&fold3x, &fold3y, 10, 3, 1038, 1072, "*2 " Premiere "binsfx.png")
+	if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " Premiere "binsfx.png")
 		{
-			MouseMove(%&fold3x% + "5", %&fold3y% + "2")
+			MouseMove(%&fold3x% + "20", %&fold3y% + "4", 2)
 			SendInput("{Click Down}")
-			MouseMove(754, 1000, 2)
+			sleep 2000
+			MouseMove(772, 993, 2)
 			sleep 250
-			SendInput("{Click Up}")
+			SendInput("{Click Up Left}")
 		}
 	else
 		{
