@@ -7,7 +7,7 @@ global Chatterino := location "\ImageSearch\Chatterino\"
 ;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()
 {
-	WinMove 2553, -906, 970, 1087
+	WinMove 2553, -906,  956, 1047
 }
 
 chatterinoLocationBotshi()
