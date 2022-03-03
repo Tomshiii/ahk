@@ -318,8 +318,21 @@ valuehold(filepath, optional)
                 goto next
         }
     next:
-    loop 3 {
-        ToolTip(A_Index)
+    loop {
+        if A_Index > 1
+            {
+                ToolTip(A_Index)
+                SendInput(effectControls)
+                SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                try {
+                    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+                    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+                } catch as e {
+                    toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
+                    errorLog("valuehold()", "Function couldn't determine the ClassNN of the Effects Controls panel")
+                    return
+                }
+            }
         if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
             goto colour
         else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
@@ -328,7 +341,7 @@ valuehold(filepath, optional)
             goto colour ;this is for if the property you want to adjust is "selected"
         else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
             goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
-        if A_Index = 3
+        if A_Index > 3
             {
                 blockOff()
                 toolFind("the image after " A_Index " attempts`nx " %&efx% "`ny " %&efy% "`nwidth " %&width% "`nheight " %&height%, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
