@@ -1,4 +1,4 @@
-﻿Run "C:\Program Files\ahk\ahk\TomSongQueueue\Builds\ApplicationDj.exe" ;runs the queue program incase it opened too late
+﻿Run "E:\Github\ahk\TomSongQueueue\Builds\ApplicationDj.exe" ;runs the queue program incase it opened too late
 if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
 	WinActivate
 else

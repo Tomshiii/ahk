@@ -7,6 +7,8 @@ global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
+;\\v2.10.2
+
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.1.6
@@ -180,20 +182,31 @@ timeline(timeline, x1, x2, y1)
  
 ; ===========================================================================================================================================
 ;
-;		Error Log \\ Last updated: v2.10.1
+;		Error Log \\ Last updated: v2.10.2
 ;
 ; ===========================================================================================================================================
 /* errorLog()
   A function designed to log errors in scripts if they occur
-  @param functionName is the name of the current function you wish to log
+  @param func just type `A_ThisFunc`
   @param error is what text you want logged to explain the error
+  @param line just type `A_LineNumber`
   */
-errorLog(functionName, error)
+errorLog(func, error, line)
 {
     if not DirExist(A_WorkingDir "\Error Logs")
         DirCreate(A_WorkingDir "\Error Logs")
     if not FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-        FileAppend(A_Hour ":" A_Min ":" A_Sec "." A_MSec " // " %&functionName% " encountered the following error: " %&error%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+        {
+            text := ""
+            if A_ScriptName = "QMK Keyboard.ahk"
+                text := " (might be incorrect if launching macro from secondary keyboard)"
+            FileAppend(A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: " A_ScriptName text ", Line: " %&line%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+        }
     else
-        FileAppend("`n" A_Hour ":" A_Min ":" A_Sec "." A_MSec " // " %&functionName% " encountered the following error: " %&error%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+        {
+            text := ""
+            if A_ScriptName = "QMK Keyboard.ahk"
+                text := " (might be incorrect if launching macro from secondary keyboard)"
+            FileAppend("`n" A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" A_ScriptName "``" text ", Line: " %&line%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+        }
 }

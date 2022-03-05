@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.8
+;\\v2.9.9
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -76,7 +76,7 @@ moveWin(key)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.9.8
+;		discord \\ Last updated: v2.9.9
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -112,7 +112,7 @@ disc(button)
                 MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
                 blockOff()
                 toolFind("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog("disc()", "Was unable to find the requested button")
+                errorLog(A_ThisFunc, "Was unable to find the requested button", A_LineNumber)
                 return
             }
     }
@@ -136,7 +136,7 @@ disc(button)
                             if A_Index > 10
                                 {
                                     toolFind("the @ ping button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-                                    errorLog("disc()", "Was unable to find the @ reply ping button")
+                                    errorLog(A_ThisFunc, "Was unable to find the @ reply ping button", A_LineNumber)
                                     break
                                 }
                         }
@@ -174,7 +174,7 @@ discLocation()
         original := WinGetID("A")
     } catch as e {
         toolCust("you tried to assign a closed`n window as the last active", "4000")
-        errorLog("discLocation()", "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it")
+        errorLog(A_ThisFunc, "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it", A_LineNumber)
         SendInput("{Click}")
         return
     }
@@ -228,21 +228,21 @@ discLocation()
         {
             toggle := 0
             toolCust("stop spamming the function please`nthe functions value was too large/small", "1000")
-            errorLog("discLocation()", "Function hit an unexpected toggle number")
+            errorLog(A_ThisFunc, "Function hit an unexpected toggle number", A_LineNumber)
             return
         }
     try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
         WinActivate(original)
     } catch as e {
         toolCust("couldn't find original window", "2000")
-        errorLog("discLocation()", "Function couldn't activate the original window")
+        errorLog(A_ThisFunc, "Function couldn't activate the original window", A_LineNumber)
         return
     }
 }
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.9.8
+;		VSCode \\ Last updated: v2.9.9
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -277,7 +277,7 @@ vscode(script)
     else
         {
             toolFind("the collapse folders button", "1000")
-            errorLog("vscode()", "Couldn't find the 'collapse folders' button")
+            errorLog(A_ThisFunc, "Couldn't find the 'collapse folders' button", A_LineNumber)
             blockOff()
             return
         }

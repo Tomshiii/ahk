@@ -72,7 +72,7 @@ func(variableX, variableY)
 We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
-A script that will automatically save an Adobe Premiere Pro project every 5min because its built in autosave is practically useless
+A script that will automatically save an Adobe Premiere Pro project every 7.5min because Adobe's built in autosave is practically useless and fails to function a lot
 
 #### [premiere_fullscreen_check.ahk](https://github.com/Tomshiii/ahk/blob/main/premiere_fullscreen_check.ahk)
 A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts

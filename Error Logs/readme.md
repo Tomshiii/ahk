@@ -4,8 +4,8 @@ This folder will contain any generated error logs to help the user determine whe
 Log files will be laid out like so;
 
 ```
-HH:MM:SS.MS // `Function` encountered the following error: `Error`
+HH:MM:SS.MS // `Function/hotkey` encountered the following error: `Error` // Script: `Script Name`, Line: `Line Number`
 
-23:00:46.106 // vscode() encountered the following error: Couldn't find the 'collapse folders' button
-23:01:05.695 // valueHold() encountered the following error: The user wasn't scrolled down
+01:28:31.951 // `^+w` encountered the following error: "Couldn't find the dm button" // Script: `My Scripts.ahk`, Line: 876
+01:31:00.548 // `movepreview` encountered the following error: "Couldn't find the motion tab" // Script: `QMK Keyboard.ahk` (might be incorrect if launching macro from secondary keyboard), Line: 712
 ```

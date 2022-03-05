@@ -15,9 +15,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.11
+;\\v2.10.12
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.4
+;\\v2.4.5
 
 ; ============================================================================================================================================
 ;
@@ -324,6 +324,7 @@ updateChecker() {
 									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", "3000")
 								} catch as e {
 									toolCust("There was an error trying to backup your current scripts", "2000")
+									errorLog(A_ThisFunc, "There was an error trying to backup your current scripts", A_LineNumber)
 								}
 								return
 							}
@@ -337,11 +338,17 @@ updateChecker() {
 				return				
 		}
 	else if ignore = "yes"
-		toolCust("You're using an outdated version of these scripts", "1000")
+		{
+			toolCust("You're using an outdated version of these scripts", "1000")
+			errorLog(A_ThisFunc, "You're using an outdated version of these scripts", A_LineNumber)
+		}
 	else if ignore = "stop"
 		return
 	else
-		toolCust("You put something else in the ignore.ini file you goose", "1000")
+		{
+			toolCust("You put something else in the ignore.ini file you goose", "1000")
+			errorLog(A_ThisFunc, "You put something else in the ignore.ini file you goose", A_LineNumber)
+		}
 }
 updateChecker() ;runs the update checker
 ;\\end of update checker
@@ -686,7 +693,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		if A_Index > 3
 			{
 				toolFind("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				errorLog("SC03A & v", "Couldn't find the selection tool")
+				errorLog(A_ThisHotkey, "Couldn't find the selection tool", A_LineNumber)
 				return
 			}
 	}
@@ -718,14 +725,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			if A_Index > 5
 				{
 					toolCust("Function failed to find project window", "1000")
-					errorLog("RAlt & p", "Function failed to find ClassNN value that wasn't the timeline")
+					errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 					return
 				}
 		}
 	} catch as e
 		{
 			toolCust("Function failed to find project window", "1000")
-			errorLog("RAlt & p", "Function failed to find ClassNN value that wasn't the timeline")
+			errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 			return
 		}
 	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN)
@@ -740,7 +747,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-			errorLog("RAlt & p", "Couldn't find the project window")
+			errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineNumber)
 			return
 		}
 	move:
@@ -774,7 +781,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff
 			toolFind("the sfx folder", "2000")
-			errorLog("RAlt & p", "Couldn't find the sfx folder in Windows Explorer")
+			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Windows Explorer", A_LineNumber)
 			return
 		}
 	added:
@@ -796,7 +803,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("the sfx folder in premiere", "2000")
-			errorLog("RAlt & p", "Couldn't find the sfx folder in Premiere Pro")
+			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Premiere Pro", A_LineNumber)
 			return
 		}
 	if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " Premiere "binsfx.png")
@@ -812,7 +819,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("the bin", "2000")
-			errorLog("RAlt & p", "Couldn't find the bin")
+			errorLog(A_ThisHotkey, "Couldn't find the bin", A_LineNumber)
 			return
 		}
 	coords()
@@ -866,7 +873,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 			else
 				{
 					toolCust("couldn't find the dm button", "1000")
-					errorLog("^+w", "Couldn't find the dm button")
+					errorLog(A_ThisHotkey, "Couldn't find the dm button", A_LineNumber)
 					return
 				}
 			move:

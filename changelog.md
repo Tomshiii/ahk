@@ -4,14 +4,15 @@ This release brings along the function `errorLog()` that can be used to log inst
 
 Eg.
 ```
-18:05:10.403 // valueHold() encountered the following error: The user wasn't scrolled down
+01:28:31.951 // `^+w` encountered the following error: "Couldn't find the dm button" // Script: `My Scripts.ahk`, Line: 876
 ```
 # ◇ Further Changelog
 
 ## > Functions
 - `valuehold()` will no longer work with "any" value panel length and is now hard coded. Allowing it to work across a broader length made it unreliable and more likely to grab the incorrect value. While I do try to make as many functions as possible as flexible as possible, when it comes to this specific function, accuracy is far more important
-    - *Currently testing a loop to search multiple times for the desired value in an attempt to minimise failed attempts*
+    - Will now loop searching for the desired property as sometimes it would miss on first attempt
     - Moved some code into a `try{}` `catch{}` combo in an attempt to catch an edge case error
+    - Added a `200ms` sleep before moving the cursor back to its starting coords to stop ahk from failing to do so
 - `disc()` now loops trying to find the desired button instead of waiting a set `500ms` on initial failure
     - Also loops to try and find the `@ reply ping` button
     - Now has logic to tell if it's in a dm or not so the tooltip about the `@ reply ping` won't fire in a dm

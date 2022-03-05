@@ -23,18 +23,10 @@ else
 ;pauseautosaveHotkey;
 #+1:: ;this is a toggle to pause/unpause the autosave script. Will also remind the user the script is paused
 {
-	/* pausetoggle()
-	{
-		DetectHiddenWindows True
-		WM_COMMAND := 0x0111
-		ID_FILE_PAUSE := 65403
-		PostMessage WM_COMMAND, ID_FILE_PAUSE,,, A_WorkingDir "\autosave.ahk ahk_class AutoHotkey"
-	} */
 	static toggle := 0
 	if toggle = 0
 		{
 			toggle := 1
-			;pausetoggle()
             SetTimer(save, 0)
 			toolCust("You paused the autosave script", "1000")
 			SetTimer(reminder, -450000)
@@ -48,7 +40,6 @@ else
 	if toggle = 1
 		{
 			toggle := 0
-			;pausetoggle()
             SetTimer(save, -ms)
 			toolCust("You unpaused the autosave script", "1000")
 			SetTimer(reminder, 0)
@@ -65,7 +56,7 @@ save()
         title := WinGetTitle("A")
     } catch as e {
         toolCust("couldn't grab active window", "1000")
-        errorLog("autosave.ahk", "Couldn't define the active window")
+        errorLog(A_ThisFunc, "autosave.ahk", "Couldn't define the active window")
     }
     blockOn()
     ;ToolTip("Saving your Premiere project")
@@ -98,7 +89,7 @@ save()
                 stop := "no"
         } catch as er {
             toolCust("failed to find play/stop button", "1000")
-            errorLog("autosave.ahk", "Couldn't find the play/stop button")
+            errorLog(A_ThisFunc, "autosave.ahk", "Couldn't find the play/stop button")
         }
     SendInput("^s")
     WinWaitClose("Save Project")
@@ -118,7 +109,7 @@ save()
         WinActivate(title)
     } catch as e {
         toolCust("couldn't activate original window", "1000")
-        errorLog("autosave.ahk", "Couldn't activate the original active window")
+        errorLog(A_ThisFunc, "autosave.ahk", "Couldn't activate the original active window")
     }
     blockOff()
     ToolTip("")
