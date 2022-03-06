@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.10
+;\\v2.9.11
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -76,7 +76,7 @@ moveWin(key)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.9.9
+;		discord \\ Last updated: v2.9.10
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -245,7 +245,7 @@ discLocation()
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.9.9
+;		VSCode \\ Last updated: v2.9.11
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -280,7 +280,7 @@ vscode(script)
     else
         {
             toolFind("the collapse folders button", "1000")
-            errorLog(A_ThisFunc "()", "Couldn't find the 'collapse folders' button", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the `collapse folders` button", A_LineNumber)
             blockOff()
             return
         }
