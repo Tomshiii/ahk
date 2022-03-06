@@ -7,7 +7,7 @@ global Chatterino := location "\ImageSearch\Chatterino\"
 ;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()
 {
-	WinMove 2553, -906,  956, 1047
+	WinMove(2553, -906,  956, 1047)
 }
 
 chatterinoLocationBotshi()
@@ -27,7 +27,7 @@ streamelementsLocation()
 
 discordLocation()
 {
-	WinMove -1080, -274, 1080, 1600
+	WinMove(-1080,  -1494, 1080, 1479)
 }
 
 /* coords()

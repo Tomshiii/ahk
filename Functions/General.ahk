@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
-;\\v2.10.2
+;\\v2.10.3
 
 ; ===========================================================================================================================================
 ;
@@ -182,12 +182,12 @@ timeline(timeline, x1, x2, y1)
  
 ; ===========================================================================================================================================
 ;
-;		Error Log \\ Last updated: v2.10.2
+;		Error Log \\ Last updated: v2.10.3
 ;
 ; ===========================================================================================================================================
 /* errorLog()
   A function designed to log errors in scripts if they occur
-  @param func just type `A_ThisFunc`
+  @param func just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey` if it's a hotkey
   @param error is what text you want logged to explain the error
   @param line just type `A_LineNumber`
   */

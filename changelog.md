@@ -5,6 +5,7 @@ This release brings along the function `errorLog()` that can be used to log inst
 Eg.
 ```
 01:28:31.951 // `^+w` encountered the following error: "Couldn't find the dm button" // Script: `My Scripts.ahk`, Line: 876
+13:53:47.797 // `disc()` encountered the following error: "Was unable to find the requested button" // Script: `My Scripts.ahk`, Line: 118
 ```
 # ◇ Further Changelog
 
@@ -26,5 +27,5 @@ Eg.
 - `autosave.ahk` changed to function off of a timer instead of sleeps
     - Moved ability to pause `autosave.ahk` back into its own script
 - Minor changes to `autodismiss error.ahk` & `premiere_fullscreen_check.ahk` so they aren't constantly spam waiting for their respective windows
-- Removed as many hard coded references to `C:\Program Files\ahk\ahk` which is the dir that ***I*** (use to) have these scripts. After this update all you should need to do is change the `location` variable in `KSA.ahk`  & `SD_functions.ahk` and most scripts should function as intended. (*some `Streamdeck AHK` scripts still have hard coded dir's*)
+- Removed as many hard coded references to `C:\Program Files\ahk\ahk` which is the dir that ***I*** (use to) have these scripts. After this update all you should need to do is change the `location` variable in `KSA.ahk`  & `SD_functions.ahk` and most scripts should function as intended. (*some `Streamdeck AHK` scripts still have hard coded dir's due to filepath limitations*)
 - Changed a few `DirSelect` to `FileSelect` with the folder option enabled as they're easier/quicker to navigate

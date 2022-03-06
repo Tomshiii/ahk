@@ -17,7 +17,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.10.12
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.5
+;\\v2.4.6
 
 ; ============================================================================================================================================
 ;
@@ -324,7 +324,7 @@ updateChecker() {
 									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", "3000")
 								} catch as e {
 									toolCust("There was an error trying to backup your current scripts", "2000")
-									errorLog(A_ThisFunc, "There was an error trying to backup your current scripts", A_LineNumber)
+									errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineNumber)
 								}
 								return
 							}
@@ -340,14 +340,14 @@ updateChecker() {
 	else if ignore = "yes"
 		{
 			toolCust("You're using an outdated version of these scripts", "1000")
-			errorLog(A_ThisFunc, "You're using an outdated version of these scripts", A_LineNumber)
+			errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineNumber)
 		}
 	else if ignore = "stop"
 		return
 	else
 		{
 			toolCust("You put something else in the ignore.ini file you goose", "1000")
-			errorLog(A_ThisFunc, "You put something else in the ignore.ini file you goose", A_LineNumber)
+			errorLog(A_ThisFunc "()", "You put something else in the ignore.ini file you goose", A_LineNumber)
 		}
 }
 updateChecker() ;runs the update checker

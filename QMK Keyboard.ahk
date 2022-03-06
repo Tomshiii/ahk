@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.5
+;\\v2.4.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.1.3
@@ -223,7 +223,7 @@ f:: ;this macro is to open the speed menu
 		}
 	} catch as e {
 		toolCust("something broke", "1000")
-		errorLog(A_ThisFunc, "Encountered an error attempting to get the ControlClassNN", A_LineNumber)
+		errorLog(A_ThisFunc "()", "Encountered an error attempting to get the ControlClassNN", A_LineNumber)
 		Exit
 	}
 	SendInput(selectAtPlayhead speedHotkey)

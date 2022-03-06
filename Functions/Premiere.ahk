@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.3
+;\\v2.9.4
 #Include General.ahk
 
 /* preset()
@@ -34,7 +34,7 @@ preset(item)
                         {
                             blockOff()
                             toolFind("the eye icon", "1000")
-                            errorLog(A_ThisFunc, "Couldn't find the eye icon", A_LineNumber)
+                            errorLog(A_ThisFunc "()", "Couldn't find the eye icon", A_LineNumber)
                             return
                         }
                 }
@@ -42,7 +42,7 @@ preset(item)
                 {
                     blockOff()
                     toolFind("the graphics tab", "1000")
-                    errorLog(A_ThisFunc, "Couldn't find the graphics tab", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Couldn't find the graphics tab", A_LineNumber)
                     return
                 }
         }
@@ -63,7 +63,7 @@ preset(item)
                             {
                                 blockOff()
                                 toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
-                                errorLog(A_ThisFunc, "Premiere couldn't find the findbox", A_LineNumber)
+                                errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                 return
                             }
                     }
@@ -92,7 +92,7 @@ preset(item)
                                         {
                                             blockOff()
                                             toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
-                                            errorLog(A_ThisFunc, "Premiere couldn't find the findbox", A_LineNumber)
+                                            errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                             return
                                         }
                                 }
@@ -105,7 +105,7 @@ preset(item)
                             SendInput("{Esc}")
                             sleep 50
                             toolCust("it tried to delete your preset", "2000")
-                            errorLog(A_ThisFunc, "The function attempted to delete the users preset and was aborted", A_LineNumber)
+                            errorLog(A_ThisFunc "()", "The function attempted to delete the users preset and was aborted", A_LineNumber)
                         }
                 }
         }
@@ -157,7 +157,7 @@ fxSearch()
                         {
                             blockOff()
                             toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
-                            errorLog(A_ThisFunc, "Premiere couldn't find the findbox", A_LineNumber)
+                            errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                             return
                         }
                 }
@@ -186,7 +186,7 @@ fxSearch()
                                     {
                                         blockOff()
                                         toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
-                                        errorLog(A_ThisFunc, "Premiere couldn't find the findbox", A_LineNumber)
+                                        errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                         return
                                     }
                             }
@@ -199,7 +199,7 @@ fxSearch()
                         SendInput("{Esc}")
                         sleep 50
                         toolCust("it tried to delete your preset", "2000")
-                        errorLog(A_ThisFunc, "The function attempted to delete the users preset and was aborted", A_LineNumber)
+                        errorLog(A_ThisFunc "()", "The function attempted to delete the users preset and was aborted", A_LineNumber)
                     }
             }
     }
@@ -230,7 +230,7 @@ num(xval, yval, scale)
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
-                    errorLog(A_ThisFunc, "No clips were selected", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -244,7 +244,7 @@ num(xval, yval, scale)
             MouseMove(%&xpos%, %&ypos%)
             blockOff()
             toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc, "Couldn't find the video section", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineNumber)
             return
         }
     next:
@@ -257,7 +257,7 @@ num(xval, yval, scale)
             MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
             blockOff()
             toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc, "Couldn't find the motion tab", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the motion tab", A_LineNumber)
             return
         }
     SendInput("{Click}")
@@ -289,7 +289,7 @@ valuehold(filepath, optional)
         ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
     } catch as e {
         toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
-        errorLog(A_ThisFunc, "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
         return
     }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
@@ -300,7 +300,7 @@ valuehold(filepath, optional)
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
-                    errorLog(A_ThisFunc, "The wrong clips are selected", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "The wrong clips are selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -310,7 +310,7 @@ valuehold(filepath, optional)
             if ImageSearch(&vidx, &vidy, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "video.png")
                 {
                     toolCust("you aren't scrolled down", "1000")
-                    errorLog(A_ThisFunc, "The user wasn't scrolled down", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "The user wasn't scrolled down", A_LineNumber)
                     blockOff()
                     KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     return
@@ -330,7 +330,7 @@ valuehold(filepath, optional)
                     ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
                 } catch as e {
                     toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
-                    errorLog(A_ThisFunc, "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
                     MouseMove(%&xpos%, %&ypos%)
                     return
                 }
@@ -347,7 +347,7 @@ valuehold(filepath, optional)
             {
                 blockOff()
                 toolFind("the image after " A_Index " attempts`nx " %&efx% "`ny " %&efy% "`nwidth " %&width% "`nheight " %&height%, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(A_ThisFunc, "Failed to find the appropiate image after " A_Index " attempts ~~ x " %&efx% " ~~ y " %&efy% " ~~ width " %&width% " ~~ height " %&height%, A_LineNumber)
+                errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " %&efx% " ~~ y " %&efy% " ~~ width " %&width% " ~~ height " %&height%, A_LineNumber)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(%&xpos%, %&ypos%)
                 return
@@ -361,7 +361,7 @@ valuehold(filepath, optional)
         {
             blockOff()
             toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc, "Failed to find the blue 'value' text", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineNumber)
             KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
             MouseMove(%&xpos%, %&ypos%)
             return
@@ -398,7 +398,7 @@ valuehold(filepath, optional)
                     MouseMove(%&xpos%, %&ypos%)
                     blockOff()
                     toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(A_ThisFunc, "Failed to find reset button", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Failed to find reset button", A_LineNumber)
                     return
                 }
             MouseMove(%&xpos%, %&ypos%)
@@ -428,7 +428,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
-                    errorLog(A_ThisFunc, "No clips were selected", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -440,7 +440,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
     else
         {
             toolCust("you're already keyframing", "1000")
-            errorLog(A_ThisFunc, "The user was already keyframing", A_LineNumber)
+            errorLog(A_ThisFunc "()", "The user was already keyframing", A_LineNumber)
             blockOff()
             ;KeyWait(A_PriorHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
             return
@@ -473,7 +473,7 @@ keyframe(filepath)
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
-                    errorLog(A_ThisFunc, "No clips were selected", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -497,7 +497,7 @@ keyframe(filepath)
     else
         {
             toolCust("Couldn't find the desired value", "1000")
-            errorLog(A_ThisFunc, "Couldn't find the desired value", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the desired value", A_LineNumber)
             blockOff()
             return
         }
@@ -549,7 +549,7 @@ audioDrag(sfxName)
                                 {
                                     blockOff()
                                     toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
-                                    errorLog(A_ThisFunc, "Premiere couldn't find the findbox", A_LineNumber)
+                                    errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                     return
                                 }
                         }
@@ -572,7 +572,7 @@ audioDrag(sfxName)
                 {
                     blockOff()
                     toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(A_ThisFunc, "Couldn't find the audio image", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineNumber)
                     coords()
                     MouseMove(%&xpos%, %&ypos%)
                     return
@@ -596,7 +596,7 @@ audioDrag(sfxName)
                                 {
                                     blockOff()
                                     toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
-                                    errorLog(A_ThisFunc, "Premiere couldn't find the findbox", A_LineNumber)
+                                    errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                     return
                                 }
                         }
@@ -608,7 +608,7 @@ audioDrag(sfxName)
     else
         {
             toolCust("you haven't opened the bin", "2000")
-            errorLog(A_ThisFunc, "User hasn't opened the required bin", A_LineNumber)
+            errorLog(A_ThisFunc "()", "User hasn't opened the required bin", A_LineNumber)
         }
 }
 
@@ -698,7 +698,7 @@ movepreview()
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
-                    errorLog(A_ThisFunc, "No clips were selected", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -709,7 +709,7 @@ movepreview()
         {
             blockOff()
             toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc, "Couldn't find the motion tab", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the motion tab", A_LineNumber)
             KeyWait(A_ThisHotkey)
             return
         }
@@ -733,7 +733,7 @@ movepreview()
                     blockOff()
                     MouseMove(%&xpos%, %&ypos%)
                     toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(A_ThisFunc, "Couldn't find the reset button", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Couldn't find the reset button", A_LineNumber)
                     return
                 }
             Click
@@ -763,7 +763,7 @@ reset()
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
-                    errorLog(A_ThisFunc, "No clips were selected", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -777,7 +777,7 @@ reset()
         {
             blockOff()
             toolFind("the motion value", "1000")
-            errorLog(A_ThisFunc, "Couldn't find the motion image", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the motion image", A_LineNumber)
             return
         }
     inputs:
@@ -854,7 +854,7 @@ manInput(property, optional, keywaitkey, keyend)
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
-                    errorLog(A_ThisFunc, "No clips were selected", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -871,7 +871,7 @@ manInput(property, optional, keywaitkey, keyend)
         {
             blockOff()
             toolFind("the property you wish to adjust", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc, "Couldn't find the users requested property", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the users requested property", A_LineNumber)
             return
         }
     colour:
@@ -881,7 +881,7 @@ manInput(property, optional, keywaitkey, keyend)
         {
             blockOff()
             toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc, "Failed to find the blue 'value' text", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineNumber)
             return
         }
     ;use to be keywaits here.. I think it was for the below deactivate... maybe..
@@ -944,7 +944,7 @@ gain(amount)
             else
                 {
                     toolCust("gain macro couldn't figure`nout what to do", "1000")
-                    errorLog(A_ThisFunc, "Function was unable to determine how to proceed", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineNumber)
                     return
                 }
         }
@@ -980,7 +980,7 @@ gainSecondary(key1, key2, keyend)
             else
                 {
                     toolCust("gain macro couldn't figure`nout what to do", "1000")
-                    errorLog(A_ThisFunc, "Function was unable to determine how to proceed", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineNumber)
                     return
                 }
         }

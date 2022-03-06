@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.9
+;\\v2.9.10
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -107,12 +107,15 @@ disc(button)
                 break
             }
         sleep 50
+        if A_Index > 4
+            ToolTip(A_ThisFunc "() has attempted to find the desired button " A_Index " times")
         if A_Index > 10 ;after waiting over 0.5s the function will excecute the below
             {
+                ToolTip("")
                 MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
                 blockOff()
-                toolFind("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(A_ThisFunc, "Was unable to find the requested button", A_LineNumber)
+                toolFind("the requested button after " A_Index " attempts", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog(A_ThisFunc "()", "Was unable to find the requested button", A_LineNumber)
                 return
             }
     }
@@ -136,7 +139,7 @@ disc(button)
                             if A_Index > 10
                                 {
                                     toolFind("the @ ping button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-                                    errorLog(A_ThisFunc, "Was unable to find the @ reply ping button", A_LineNumber)
+                                    errorLog(A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineNumber)
                                     break
                                 }
                         }
@@ -174,7 +177,7 @@ discLocation()
         original := WinGetID("A")
     } catch as e {
         toolCust("you tried to assign a closed`n window as the last active", "4000")
-        errorLog(A_ThisFunc, "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it", A_LineNumber)
         SendInput("{Click}")
         return
     }
@@ -228,14 +231,14 @@ discLocation()
         {
             toggle := 0
             toolCust("stop spamming the function please`nthe functions value was too large/small", "1000")
-            errorLog(A_ThisFunc, "Function hit an unexpected toggle number", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Function hit an unexpected toggle number", A_LineNumber)
             return
         }
     try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
         WinActivate(original)
     } catch as e {
         toolCust("couldn't find original window", "2000")
-        errorLog(A_ThisFunc, "Function couldn't activate the original window", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Function couldn't activate the original window", A_LineNumber)
         return
     }
 }
@@ -277,7 +280,7 @@ vscode(script)
     else
         {
             toolFind("the collapse folders button", "1000")
-            errorLog(A_ThisFunc, "Couldn't find the 'collapse folders' button", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the 'collapse folders' button", A_LineNumber)
             blockOff()
             return
         }
