@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
-;\\v2.10.3
+;\\v2.10.4
 
 ; ===========================================================================================================================================
 ;
@@ -182,7 +182,7 @@ timeline(timeline, x1, x2, y1)
  
 ; ===========================================================================================================================================
 ;
-;		Error Log \\ Last updated: v2.10.3
+;		Error Log \\ Last updated: v2.10.4
 ;
 ; ===========================================================================================================================================
 /* errorLog()
@@ -200,7 +200,7 @@ errorLog(func, error, line)
             text := ""
             if A_ScriptName = "QMK Keyboard.ahk"
                 text := " (might be incorrect if launching macro from secondary keyboard)"
-            FileAppend(A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: " A_ScriptName text ", Line: " %&line%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+            FileAppend(A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" A_ScriptName "``" text ", Line: " %&line%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
         }
     else
         {
