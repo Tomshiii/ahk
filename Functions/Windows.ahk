@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.11
+;\\v2.9.12
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.9
+;		Windows Scripts \\ Last updated: v2.9.12
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -18,14 +18,22 @@ youMouse(tenS, fiveS)
         return
     if WinExist("YouTube")
     {
-        lastactive := WinGetID("A") ;fills the variable [lastavtive] with the ID of the current window
+        try {
+            lastactive := WinGetID("A") ;fills the variable [lastavtive] with the ID of the current window
+        }
         WinActivate() ;activates Youtube if there is a window of it open
         sleep 25 ;sometimes the window won't activate fast enough
         if GetKeyState(longSkip, "P") ;checks to see if you have a second key held down to see whether you want the function to skip 10s or 5s. If you hold down this second button, it will skip 10s
             SendInput(%&tenS%)
         else
             SendInput(%&fiveS%) ;otherwise it will send 5s
-        WinActivate(lastactive) ;will reactivate the original window
+        try {
+            WinActivate(lastactive) ;will reactivate the original window
+        } catch as e {
+            toolCust("Failed to get information on the previously active window", "1000")
+            errorLog(A_ThisFunc "()", "Failed to get information on previously active window", A_LineNumber)
+        }
+
     }
 }
 
@@ -64,13 +72,18 @@ moveWin(key)
         }
     else
         {
-            window := WinGetTitle("A") ;grabs the title of the active window
-            SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
-            if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
-                WinMinimize(window)
-            if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
-                WinMaximize(window)
-            SendInput(%&key%)
+            try {
+                window := WinGetTitle("A") ;grabs the title of the active window
+                SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
+                if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
+                    WinMinimize(window)
+                if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
+                    WinMaximize(window)
+                SendInput(%&key%)
+            } catch as e {
+                toolCust("Failed to get information on current active window", "1000")
+                errorLog(A_ThisFunc "()", "Failed to get information on current active window", A_LineNumber)
+            }
         }
 }
 

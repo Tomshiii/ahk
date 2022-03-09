@@ -523,7 +523,9 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 	coordw()
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	title := WinGetTitle("A")
+	try {
+		title := WinGetTitle("A")
+	}
 	if (InStr(title, needle))
 		{
 			SendInput("{Space}")
@@ -552,7 +554,12 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 		if A_Index > 5
 			{
 				toolCust("Couldn't find a youtube tab", "1000")
-				WinActivate(title) ;reactivates the original window
+				try {
+					WinActivate(title) ;reactivates the original window
+				} catch as e {
+					toolCust("Failed to get information on last active window", "1000")
+					errorLog(A_ThisFunc "()", "Failed to get information on last active window", A_LineNumber)
+				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 				return
 			}
@@ -574,7 +581,9 @@ Numpad9::
 {
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	title := WinGetTitle("A")
+	try {
+		title := WinGetTitle("A")
+	}
 	if (InStr(title, needle))
 		return
 	else
