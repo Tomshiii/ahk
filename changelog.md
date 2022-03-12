@@ -5,3 +5,4 @@
 
 ## > Other Changes
 - Put all `WinGet` in a `try {}/catch {}` to stop any errors when attempting to get information on/activate a no longer open process
+- Minor changes to `RAlt & p` hotkey

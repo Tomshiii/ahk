@@ -739,13 +739,13 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 			return
 		}
-	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN)
+	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN) ;debugging
 	blockOn()
 	if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project.png") ;searches for the project window to grab the track
 		goto move
 	else if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
 		goto move
-	else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png")
+	else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
 		goto bin
 	else ;if everything fails, this else will trigger
 		{
@@ -753,13 +753,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
 			errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineNumber)
 			return
+			;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
 		}
 	move:
 	MouseMove(%&prx% + "5", %&pry% +"3")
 	SendInput("{Click Down}")
 	coords()
 	Sleep 100
-	MouseMove 3369, 702, 2
+	MouseMove 3592, 444, 2
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
 	bin:
@@ -810,22 +811,24 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Premiere Pro", A_LineNumber)
 			return
 		}
-	if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " Premiere "binsfx.png")
-		{
-			MouseMove(%&fold3x% + "20", %&fold3y% + "4", 2)
-			SendInput("{Click Down}")
-			sleep 2000
-			MouseMove(772, 993, 2)
-			sleep 250
-			SendInput("{Click Up Left}")
-		}
-	else
-		{
-			blockOff()
-			toolFind("the bin", "2000")
-			errorLog(A_ThisHotkey, "Couldn't find the bin", A_LineNumber)
-			return
-		}
+	loop {
+		if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " Premiere "binsfx.png")
+			{
+				MouseMove(%&fold3x% + "20", %&fold3y% + "4", 2)
+				SendInput("{Click Down}")
+				MouseMove(772, 993, 2)
+				sleep 250
+				SendInput("{Click Up Left}")
+				break
+			}
+		if A_Index > 5
+			{
+				blockOff()
+				toolFind("the bin", "2000")
+				errorLog(A_ThisHotkey, "Couldn't find the bin", A_LineNumber)
+				return
+			}
+	}		
 	coords()
 	MouseMove(%&xpos%, %&ypos%)
 	blockOff()
