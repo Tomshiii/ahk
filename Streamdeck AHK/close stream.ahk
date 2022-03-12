@@ -1,4 +1,5 @@
 ﻿#SingleInstance Force
+#Include SD_functions.ahk
 DetectHiddenWindows(true)
 SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
 /* if not WinExist("autosave.ahk - AutoHotkey")
@@ -12,10 +13,10 @@ if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into fo
 			MouseGetPos(&x, &y)
 			WinActivate
 			sleep 50
-			WinMove 2553, -892, 1104, 1087
+			obsLocation()
 			coordmode "pixel", "window"
 			coordmode "mouse", "window"
-			MouseMove(1020, 929)
+			MouseMove(880, 889)
 			click
 			MouseMove(%&x%, %&y%)
 		}
@@ -81,7 +82,7 @@ if WinExist("ahk_exe ApplicationDj.exe")
 		ProcessClose("ApplicationDj.exe")
 	}
 if WinExist("ahk_exe Discord.exe")
-	WinMove -1080, -320, 1080, 1646
+	discordLocation()
 if WinExist("ahk_exe Docker Desktop.exe")
 	{
 		;WinRestore
