@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.13
+;\\v2.10.14
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.6
 
@@ -798,7 +798,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			SendInput("{Click}")
 			sleep 100
 		}
-	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj.png")
+	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj.png") || ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj2.png")
 		{
 			MouseMove(%&fold2x% + "5", %&fold2y% + "2")
 			SendInput("{Click 2}")
