@@ -2,6 +2,7 @@
 
 ## > Functions
 - Fixed missing backticks (\`) from `errorLog()`
+    - Streamlined function to remove repeat code
 - Fixed program filepaths in `switchTo.ahk`
 
 ## > Other Changes

@@ -193,20 +193,13 @@ timeline(timeline, x1, x2, y1)
   */
 errorLog(func, error, line)
 {
+    start := ""
+    text := ""
     if not DirExist(A_WorkingDir "\Error Logs")
         DirCreate(A_WorkingDir "\Error Logs")
-    if not FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-        {
-            text := ""
-            if A_ScriptName = "QMK Keyboard.ahk"
-                text := " (might be incorrect if launching macro from secondary keyboard)"
-            FileAppend(A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" A_ScriptName "``" text ", Line: " %&line%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-        }
-    else
-        {
-            text := ""
-            if A_ScriptName = "QMK Keyboard.ahk"
-                text := " (might be incorrect if launching macro from secondary keyboard)"
-            FileAppend("`n" A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" A_ScriptName "``" text ", Line: " %&line%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-        }
+    if FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+        start := "`n"
+    if A_ScriptName = "QMK Keyboard.ahk"
+        text := " (might be incorrect if launching macro from secondary keyboard)"
+    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" A_ScriptName "``" text ", Line: " %&line%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }
