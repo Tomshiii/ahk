@@ -77,8 +77,12 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         sleep 1000
                         blockOff()
                         Run(SelectedFolder) ;open an explorer window for your selected directory
-                        FileCopy(A_ScriptDir "\checklist.ahk", SelectedFolder)
-                        Run(SelectedFolder "\checklist.ahk")
+                        try {
+                            FileCopy("E:\Github\ahk\releases\checklist ahk draft\checklist.ahk", SelectedFolder)
+                            Run(SelectedFolder "\checklist.ahk")
+                        } catch as e {
+                            toolCust("File not found", "1000")
+                        }
                         pauseautosave()
                         pausewindowmax()
                         return

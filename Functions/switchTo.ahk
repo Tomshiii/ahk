@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.8
+;\\v2.9.9
 #Include General.ahk
 
 /*
@@ -187,7 +187,7 @@ firefoxTap()
 switchToVSC()
 {
     if not WinExist("ahk_exe Code.exe")
-        Run "C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+        Run "C:\Program Files\Microsoft VS Code\Code.exe"
         GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
     if WinActive("ahk_exe Code.exe")
         GroupActivate "Code", "r"
@@ -392,7 +392,7 @@ musicGUI()
     MyGui.Show()
     ;below is what happens when you click on each name
     AIMP(*) {
-        Run("C:\Program Files (x86)\AIMP\AIMP.exe")
+        Run("C:\Program Files (x86)\AIMP3\AIMP.exe")
         WinWait("ahk_exe AIMP.exe")
         WinActivate("ahk_exe AIMP.exe")
         MyGui.Destroy()

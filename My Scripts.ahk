@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.14
+;\\v2.10.15
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.6
 
@@ -414,6 +414,8 @@ RWin::switchToVSC() ;run vscode
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
 ;taskmangerHotkey;
 PrintScreen::SendInput("^+{Esc}")
+;excelHotkey;
+PgUp::switchToExcel()
 
 ;These two scripts are to open highlighted text in the ahk documentation
 ;akhdocuHotkey;
@@ -869,24 +871,9 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 	if WinExist("ahk_exe Discord.exe")
 		{
 			WinActivate("ahk_exe Discord.exe")
-			WinGetPos(&nx, &ny, &width, &height, "A")
-			if ImageSearch(&x, &y, %&nx%, %&ny%, %&nx% + "200", %&ny% + "200", "*2 " Discord "dm1.png")
-				goto move
-			else if ImageSearch(&x, &y, %&nx%, %&ny%, %&nx% + "200", %&ny% + "200", "*2 " Discord "dm2.png")
-				{
-					toolCust("Discord is now activated", "500")
-					return
-				}
-			else
-				{
-					toolCust("couldn't find the dm button", "1000")
-					errorLog(A_ThisHotkey, "Couldn't find the dm button", A_LineNumber)
-					return
-				}
-			move:
 			blockOn()
 			MouseGetPos(&origx, &origy)
-			MouseMove(%&x%, %&y%, 2)
+			MouseMove(34, 52, 2)
 			SendInput("{Click}")
 			MouseMove(%&origx%, %&origy%, 2)
 			blockOff()
