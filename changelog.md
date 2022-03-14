@@ -1,5 +1,8 @@
 # <> Release 2.3.2.1
 
+## > My Scripts
+- On first startup will now delete `Error Logs` older than `30 Days`
+
 ## > Functions
 - Fixed missing backticks (\`) from `errorLog()`
     - Streamlined function to remove repeat code

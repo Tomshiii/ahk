@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.15
+;\\v2.10.16
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.6
 
@@ -61,7 +61,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ;\\The function below will check what version you're running on startup
 updateChecker() {
 	;checks if script was reloaded
-	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
 	;if I ever choose to do beta release channels
 	/*
@@ -352,6 +352,17 @@ updateChecker() {
 }
 updateChecker() ;runs the update checker
 ;\\end of update checker
+
+;\\ Deleting Log files older than 30 days
+oldError() {
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+		return
+	loop files, A_WorkingDir "\Error Logs\*.txt"
+	if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
+		FileDelete(A_LoopFileFullPath)
+}
+oldError() ;runs the loop to delete old log files
+;\\ end of loop to delete old log files
 
 ;=============================================================================================================================================
 ;
