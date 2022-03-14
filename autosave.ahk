@@ -56,7 +56,7 @@ save()
         title := WinGetTitle("A")
     } catch as e {
         toolCust("couldn't grab active window", "1000")
-        errorLog(A_ThisFunc "()", "autosave.ahk", "Couldn't define the active window")
+        errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineNumber)
     }
     blockOn()
     ;ToolTip("Saving your Premiere project")
@@ -89,7 +89,7 @@ save()
                 stop := "no"
         } catch as er {
             toolCust("failed to find play/stop button", "1000")
-            errorLog(A_ThisFunc "()", "autosave.ahk", "Couldn't find the play/stop button")
+            errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineNumber)
         }
     SendInput("^s")
     WinWaitClose("Save Project")
@@ -109,7 +109,7 @@ save()
         WinActivate(title)
     } catch as e {
         toolCust("couldn't activate original window", "1000")
-        errorLog(A_ThisFunc "()", "autosave.ahk", "Couldn't activate the original active window")
+        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
     }
     blockOff()
     ToolTip("")
