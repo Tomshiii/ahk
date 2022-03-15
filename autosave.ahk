@@ -93,6 +93,19 @@ save()
         }
     SendInput("^s")
     WinWaitClose("Save Project")
+
+    ;\\ if ae is open we'll save it too
+    if WinExist("ahk_exe AfterFX.exe")
+        {
+            WinActivate("ahk_exe AfterFX.exe")
+            sleep 500
+            SendInput("^s")
+            WinWaitClose("Save Project")
+            WinActivate("ahk_exe Adobe Premiere Pro.exe")
+            sleep 500
+        }
+    ;\\
+
     try {
         ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
     } catch as win {

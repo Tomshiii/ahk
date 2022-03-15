@@ -8,13 +8,20 @@
  */
 preset(item)
 {
+    KeyWait(A_ThisHotkey)
+    ToolTip("Your Preset is being dragged")
     coords()
     blockOn()
     MouseGetPos(&xpos, &ypos)
     SendInput(effectControls) ;highlights the effect controls panel
     SendInput(effectControls) ;premiere is dumb, focus things twice
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE - this if statement is code specific to text presets
         {
             sleep 100
@@ -53,13 +60,14 @@ preset(item)
         CaretGetPos(&findx)
         if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
             {
-                Loop 40
-                    {
+                Loop {
+                        if A_Index > 5
+                            SendInput(findBox) ;adjust this in the ini file
                         sleep 30
                         CaretGetPos(&findx)
                         if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                             break
-                        if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+                        if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                             {
                                 blockOff()
                                 toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
@@ -82,13 +90,13 @@ preset(item)
                     CaretGetPos(&find2x)
                     if %&find2x% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                         {
-                            Loop 40
-                                {
+                            Loop {
                                     sleep 30
+                                    SendInput(findBox)
                                     CaretGetPos(&find2x)
                                     if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                                         break
-                                    if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+                                    if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                         {
                                             blockOff()
                                             toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
@@ -115,7 +123,8 @@ preset(item)
     CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
     MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
     SendInput %&item% ;create a preset of any effect, must be in a folder as well
-    MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
+    sleep 50
+    MouseMove 0, 60,, "R" ;move down to the saved preset (must be in an additional folder)
     SendInput("{Click Down}")
     if A_ThisHotkey = textHotkey ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
         {
@@ -132,6 +141,7 @@ preset(item)
     effectbox() ;this will delete whatever preset it had typed into the find box
     SendInput(timelineWindow) ;this will rehighlight the timeline after deleting the text from the find box
     blockOff()
+    ToolTip("")
 }
 
 /*
@@ -688,8 +698,13 @@ movepreview()
     MouseGetPos(&xpos, &ypos)
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
