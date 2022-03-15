@@ -13,3 +13,4 @@
 - Minor changes to `RAlt & p` hotkey
 - Removed `ImageSearches` from `^+w` hotkey
 - Fixed incorrect variables in uses of `errorLog()` in `autosave.ahk`
+- Removed unnecessary references to a `SetWorkingDir` in some `Streamdeck AHK` scripts
