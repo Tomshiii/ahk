@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.16
+;\\v2.10.17
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.6
 
@@ -674,8 +674,13 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	SendInput(toolsWindow)
 	SendInput(toolsWindow)
 	sleep 50
-	toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+	try {
+        toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }	
 	;MouseMove 34, 917 ;location of the selection tool
 	if %&width% = 0 || %&height% = 0
 		{
