@@ -4,7 +4,12 @@
 - First startup of `My Scripts.ahk` will now delete `Error Logs` older than `30 Days`
 - Fixed some missing backticks (\`) in the output
 - Streamlined function to remove repeat code
+
+### > autosave
 - Fixed incorrect variables in uses of `errorLog()` in `autosave.ahk`
+- Will now check during the save process if After Effects is open & save it if it is
+- No longer tries to fire while using other windows (ie. rendering, adjusting gain, etc)
+- Added comments to explain what blocks of code are doing
 
 ## > Functions
 - Fixed program filepaths in `switchTo.ahk`
@@ -17,5 +22,4 @@
 - Put all instances of `ControlGetClassNN` into a `try {}/catch {}` to avoid potential crashes
 - Minor changes to `RAlt & p` hotkey
 - Removed `ImageSearches` from `^+w` hotkey
-- `autosave.ahk` will now check during the save process if After Effects is open & save it if it is
 - Removed unnecessary references to a `SetWorkingDir` in some `Streamdeck AHK` scripts

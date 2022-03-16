@@ -49,8 +49,11 @@ save()
 {
     if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
+
     stop := ""
     ToolTip("Your Premiere Pro project is being saved!`nHold tight!")
+
+    ;\\ first we grab information on the active window
     try {
         id := WinGetClass("A")
         title := WinGetTitle("A")
@@ -58,8 +61,9 @@ save()
         toolCust("couldn't grab active window", "1000")
         errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineNumber)
     }
+
+    ;\\ next we activate premiere
     blockOn()
-    ;ToolTip("Saving your Premiere project")
     if not WinActive("ahk_exe Adobe Premiere Pro.exe")
         {
             try {
@@ -71,6 +75,29 @@ save()
             }
         }
     sleep 1000
+
+    ;\\ now we check to make sure you're not doing something other than using the timeline
+    try {
+        premCheck := WinGetTitle("A")
+        titlecheck := InStr(premCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+    } catch as e {
+        toolCust("Premiere wasn't determined to be the active window", "1000")
+        errorLog(A_ThisFunc "()", "Premiere wasn't determined to be the active window", A_LineNumber)
+    }
+    if not titlecheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+        {
+            toolCust("You're currently doing something`nautosave has be cancelled", "2000")
+            try {
+                WinActivate(title)
+            } catch as e {
+                toolCust("couldn't activate original window", "1000")
+                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+            }
+            blockOff()
+            SetTimer(, -ms)
+        }
+
+    ;\\ Now we check to see if the user is playing back a video
     if id = "Premiere Pro"
        try {
             ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
@@ -91,6 +118,8 @@ save()
             toolCust("failed to find play/stop button", "1000")
             errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineNumber)
         }
+
+    ;\\ before finally saving
     SendInput("^s")
     WinWaitClose("Save Project")
 
@@ -104,28 +133,34 @@ save()
             WinActivate("ahk_exe Adobe Premiere Pro.exe")
             sleep 500
         }
-    ;\\
-
+        
+    ;\\ now we refocus premiere
     try {
         ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
     } catch as win {
         toolCust("", "10")
     }
     sleep 1000
+
+    ;\\ if a video was playing, we now start it up again
     if stop = "yes"
         {
             SendInput(timelineWindow)
             SendInput(timelineWindow)
             SendInput("{Space}")
         }
-    try {
-        WinActivate(title)
-    } catch as e {
-        toolCust("couldn't activate original window", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
-    }
+    ;\\ before finally refocusing the original window
+    if not id = "Premiere Pro"
+        {
+            try {
+                WinActivate(title)
+            } catch as e {
+                toolCust("couldn't activate original window", "1000")
+                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+            }
+        }
     blockOff()
     ToolTip("")
-    SetTimer(, -ms)
+    SetTimer(, -ms) ;reset the timer
 }
 
