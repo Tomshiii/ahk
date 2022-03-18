@@ -5,7 +5,7 @@
 - Fixed some missing backticks (\`) in the output
 - Streamlined function to remove repeat code
 
-### > autosave
+## > autosave
 - Fixed incorrect variables in uses of `errorLog()` in `autosave.ahk`
 - Will now check during the save process if After Effects is open & save it if it is
 - No longer tries to fire while using other windows (ie. rendering, adjusting gain, etc)

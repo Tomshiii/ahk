@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.2"
+global MyRelease := "v2.3.2.1"
 ;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 #SingleInstance Force
