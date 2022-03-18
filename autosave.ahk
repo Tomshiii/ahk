@@ -86,6 +86,7 @@ save()
     }
     if not titlecheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
         {
+            blockOff()
             toolCust("You're currently doing something`nautosave has be cancelled", "2000")
             try {
                 WinActivate(title)
@@ -93,7 +94,6 @@ save()
                 toolCust("couldn't activate original window", "1000")
                 errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
             }
-            blockOff()
             SetTimer(, -ms)
         }
 
