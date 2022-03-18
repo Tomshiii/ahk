@@ -1,2 +1,2 @@
 ## About
-this folder is just a collection of the shortcuts I use within a few scripts. This folder isn't super necessary for your own use, but once I needed a shortcut for one of my functions I figured I should probably include it in the repo.
+This folder is just a collection of the shortcuts I use within a few scripts. This folder isn't super necessary for your own use, but once I needed a shortcut for one of my functions I figured I should probably include it in the repo.
