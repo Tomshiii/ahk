@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.6
+;\\v2.9.7
 #Include General.ahk
 
 /* preset()
@@ -57,12 +57,17 @@ preset(item)
     {
         SendInput(effectsWindow) ;adjust this in the ini file
         SendInput(findBox) ;adjust this in the ini file
+        toolCust("if you hear windows, blame premiere", "1000")
         CaretGetPos(&findx)
         if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
             {
                 Loop {
                         if A_Index > 5
-                            SendInput(findBox) ;adjust this in the ini file
+                            {
+                                SendInput(findBox) ;adjust this in the ini file
+                                toolCust("if you hear windows, blame premiere", "2000")
+                                errorLog(A_ThisFunc "()", "If you're looking here because you heard windows beep, it's because this function loops trying to find the search box in premiere but sometimes premiere is dumb and doesn't find it when it's supposed to, then when you send the hotkey again windows complains. Thanks Adobe.", A_LineNumber)
+                            }
                         sleep 30
                         CaretGetPos(&findx)
                         if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -87,12 +92,14 @@ preset(item)
                     sleep 100
                     SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
                     SendInput(findBox)
+                    toolCust("if you hear windows, blame premiere", "2000")
                     CaretGetPos(&find2x)
                     if %&find2x% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                         {
                             Loop {
                                     sleep 30
                                     SendInput(findBox)
+                                    toolCust("if you hear windows, blame premiere", "2000")
                                     CaretGetPos(&find2x)
                                     if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                                         break
