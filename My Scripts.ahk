@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.17
+;\\v2.10.18
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.6
 
@@ -693,6 +693,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 					{
 						SendInput(selectionPrem)
 						toolCust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", "2000")
+						errorLog(A_ThisHotkey, "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineNumber)
 						return
 					}
 				sleep 100
@@ -714,8 +715,9 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		sleep 100
 		if A_Index > 3
 			{
-				toolFind("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				errorLog(A_ThisHotkey, "Couldn't find the selection tool", A_LineNumber)
+				SendInput(selectionPrem)
+				toolFind("selection tool`nUsed the selection hotkey instead", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				errorLog(A_ThisHotkey, "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineNumber)
 				return
 			}
 	}
@@ -782,9 +784,9 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
 	bin:
-	Run("E:\Audio stuff")
-	WinWait("Audio stuff")
-	WinActivate("Audio stuff")
+	Run("E:\_Editing stuff")
+	WinWait("_Editing stuff")
+	WinActivate("_Editing stuff")
 	sleep 500
 	coordw()
 	MouseMove(0, 0)

@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
-;\\v2.10.4
+;\\v2.10.5
 
 ; ===========================================================================================================================================
 ;
@@ -42,7 +42,7 @@ coordc()
  
 ; ===========================================================================================================================================
 ;
-;		Tooltip \\ Last updated: v2.3.13
+;		Tooltip \\ Last updated: v2.10.5
 ;
 ; ===========================================================================================================================================
  
@@ -53,7 +53,7 @@ coordc()
   */
 toolFind(message, timeout)
 {
-    ToolTip("couldn't find " %&message%)
+    ToolTip("Couldn't find " %&message%)
     SetTimer(timeouttime, - %&timeout%)
     timeouttime()
     {
