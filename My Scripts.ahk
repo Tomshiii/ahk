@@ -15,9 +15,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.18
+;\\v2.10.19
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.6
+;\\v2.4.7
 
 ; ============================================================================================================================================
 ;
@@ -56,6 +56,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ; =======================================================================================================================================
 ;
 ;
+;				STARTUP
 ;
 ; =======================================================================================================================================
 ;\\The function below will check what version you're running on startup
@@ -353,7 +354,7 @@ updateChecker() {
 updateChecker() ;runs the update checker
 ;\\end of update checker
 
-;\\ Deleting Log files older than 30 days
+;\\ Deleting ErrorLog files older than 30 days
 oldError() {
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
@@ -363,6 +364,61 @@ oldError() {
 }
 oldError() ;runs the loop to delete old log files
 ;\\ end of loop to delete old log files
+
+;\\ Deleting Adobe temp files when they're bigger than the specified amount (in GB)
+;Adobe's "max" limits are stupid and terrible, this function acts as a sanity check
+adobeTemp() {
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+		return
+	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
+	largestSize := 15
+
+	;first we set our counts to 0
+	MediaCacheSize := 0
+	PeakFilesSize := 0
+	AEFilesSize := 0
+	;then we define some filepaths, MediaCahce & PeakFiles are Adobe defaults, AEFiles has to be set within after effects' cache settings
+	MediaCache := A_AppData "\Adobe\Common\Media Cache Files\"
+	PeakFiles := A_AppData "\Adobe\Common\Peak Files"
+	AEFiles := A_AppData "\Adobe\Common\AE"
+	;AGAIN ~~ for the above AE folder to exist you have to set it WITHIN THE AE CACHE SETTINGS, it IS NOT THE DEFAULT
+
+	;now we check the listed directories and add up the size of all the files
+	Loop Files, MediaCache "\*.*", "R"
+		MediaCacheSize += A_LoopFileSize
+	loop files, PeakFiles "\*.*", "R"
+		PeakFilesSize += A_LoopFileSize
+	loop files, AEFiles "\*.*", "R"
+		AEFilesSize += A_LoopFileSize
+	total := MediaCacheSize + PeakFilesSize + AEFilesSize
+
+	;then we convert that byte total to GB
+	convert := total/"1073741824"
+	;now if the total is bigger than the set number, we loop those directories and delete all the files
+	if convert >= largestSize
+		{
+			try {
+				loop files, MediaCache "\*.*"
+					FileDelete(A_LoopFileFullPath)
+			} catch {
+				errorLog(A_ThisFunc "()", "Loop failed to delete cache files", A_LineNumber)
+			}
+			try {
+				loop files, PeakFiles "\*.*", "R"
+					FileDelete(A_LoopFileFullPath)
+			} catch {
+				errorLog(A_ThisFunc "()", "Loop failed to delete cache files", A_LineNumber)
+			}
+			try {
+				loop files, AEFiles "\*.*", "R"
+					FileDelete(A_LoopFileFullPath)
+			} catch {
+				errorLog(A_ThisFunc "()", "Loop failed to delete cache files", A_LineNumber)
+			}
+		}
+}
+adobeTemp()
+;\\ end of loops to delete adobe cache files
 
 ;=============================================================================================================================================
 ;

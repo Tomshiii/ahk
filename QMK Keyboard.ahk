@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.6
+;\\v2.4.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.2.1
@@ -228,7 +228,7 @@ f:: ;this macro is to open the speed menu
 	}
 	SendInput(selectAtPlayhead speedHotkey)
 }
-v::unassigned()
+;v::unassigned()
 ;PgDn::unassigned()
 
 e::gain("-2") ;REDUCE GAIN BY -2db
@@ -294,7 +294,7 @@ b::unassigned()
 
 r::unassigned()
 f::unassigned()
-v::unassigned()
+;v::unassigned()
 ;PgDn::unassigned()
 
 e::unassigned()
@@ -360,7 +360,7 @@ b::unassigned()
 
 r::unassigned()
 f::unassigned()
-v::unassigned()
+;v::unassigned()
 ;PgDn::unassigned()
 
 e::unassigned()
@@ -468,7 +468,21 @@ b::unassigned()
 
 r::unassigned()
 f::unassigned()
-v::unassigned()
+v:: ;open checklist for current edit
+{
+	dir := FileSelect("D2", "E:\comms", "Pick the Edit Directory")
+	if dir = ""
+		return
+	if FileExist(dir "\checklist.ahk")
+		Run(dir "\checklist.ahk")
+	else
+		try {
+			FileCopy("E:\Github\ahk\releases\checklist ahk draft\checklist.ahk", dir)
+			Run(dir "\checklist.ahk")
+		} catch as e {
+			toolCust("File not found", "1000")
+		}
+}
 PgDn::switchToMusic()
 Right & PgDn::musicGUI()
 
@@ -534,7 +548,7 @@ b::unassigned()
 
 r::unassigned()
 f::unassigned()
-v::unassigned()
+;v::unassigned()
 ;PgDn::unassigned()
 
 e::unassigned()

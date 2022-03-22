@@ -41,7 +41,7 @@ else
 		{
 			toggle := 0
             SetTimer(save, -ms)
-			toolCust("You unpaused the autosave script", "1000")
+			toolCust("You resumed the autosave script", "1000")
 			SetTimer(reminder, 0)
 		}		
 }
