@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.19
+;\\v2.10.20
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -378,7 +378,7 @@ adobeTemp() {
 	PeakFilesSize := 0
 	AEFilesSize := 0
 	;then we define some filepaths, MediaCahce & PeakFiles are Adobe defaults, AEFiles has to be set within after effects' cache settings
-	MediaCache := A_AppData "\Adobe\Common\Media Cache Files\"
+	MediaCache := A_AppData "\Adobe\Common\Media Cache Files"
 	PeakFiles := A_AppData "\Adobe\Common\Peak Files"
 	AEFiles := A_AppData "\Adobe\Common\AE"
 	;AGAIN ~~ for the above AE folder to exist you have to set it WITHIN THE AE CACHE SETTINGS, it IS NOT THE DEFAULT
@@ -398,7 +398,7 @@ adobeTemp() {
 	if convert >= largestSize
 		{
 			try {
-				loop files, MediaCache "\*.*"
+				loop files, MediaCache "\*.*", "R"
 					FileDelete(A_LoopFileFullPath)
 			} catch {
 				errorLog(A_ThisFunc "()", "Loop failed to delete cache files", A_LineNumber)
@@ -417,7 +417,7 @@ adobeTemp() {
 			}
 		}
 }
-adobeTemp()
+adobeTemp() ;runs the loop to delete cache files
 ;\\ end of loops to delete adobe cache files
 
 ;=============================================================================================================================================
