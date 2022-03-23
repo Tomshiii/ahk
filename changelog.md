@@ -1,10 +1,25 @@
-# <> Release 2.3.1.1 - Hotfix
+# <> Release 2.3.2.1 - Hotfix
 
-###### **_Please note: in this changelog I will be linking to commits, these commits might not be the latest version of said code as things are changing all the time and adding dates would get incredibly confusing, don't copy/paste from these linked commits, check out the current version of the code in the script files themselves._**
+## > Error Logs
+- First startup of `My Scripts.ahk` will now delete `Error Logs` older than `30 Days`
+- Fixed some missing backticks (\`) in the output
+- Streamlined function to remove repeat code
 
-## > My Scripts
-- [#5] `updateChecker()` will now grab the changelog information directly off github and automatically scrub any url's from it
+## > autosave
+- Fixed incorrect variables in uses of `errorLog()` in `autosave.ahk`
+- Will now check during the save process if After Effects is open & save it if it is
+- No longer tries to fire while using other windows (ie. rendering, adjusting gain, etc)
+- Added comments to explain what blocks of code are doing
 
-### > Other Changes
-- `autosave.ahk` will now [remind the user](https://bit.ly/3J5cd0l) if they have it paused
-- Updated all backups
+## > Functions
+- Fixed program filepaths in `switchTo.ahk`
+- `preset()` adjustments to avoid opening properties window
+    - General improvements to make more reliable
+    - Now waits for activation hotkey to be released before proceeding to avoid spam activations
+
+## > Other Changes
+- Put all `WinGet` in a `try {}/catch {}` to stop any errors when attempting to get information on/activate a no longer open process
+- Put all instances of `ControlGetClassNN` into a `try {}/catch {}` to avoid potential crashes
+- Minor changes to `RAlt & p` hotkey
+- Removed `ImageSearches` from `^+w` hotkey
+- Removed unnecessary references to a `SetWorkingDir` in some `Streamdeck AHK` scripts

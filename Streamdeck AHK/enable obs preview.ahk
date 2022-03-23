@@ -3,7 +3,7 @@
 
  Can be set within KSA.ahk/ini
  */
- enableOBSPreview := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Enable Preview")
+ enableOBSPreview := IniRead("E:\Github\ahk\KSA\Keyboard Shortcuts.ini", "OBS", "Enable Preview")
 
 if WinExist("ahk_exe obs64.exe")
     {

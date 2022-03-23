@@ -14,10 +14,10 @@ You can watch me use some of these scripts in action while I edit away on twitch
 [![](https://user-images.githubusercontent.com/53557479/149135097-0f9ae87a-5157-4524-ae75-34b6aaf81c30.png) ![](https://img.shields.io/twitch/status/botshiii)](https://www.twitch.tv/botshiii)
 
 ### AHK Version Information:
-This repo is to maintain work on the `ahk v2.0` versions of my scripts. These scripts **_will not_** work in `ahk v1.1`, the only versions of these scripts that will work with `ahk v1.1` are Releases [1.0](https://github.com/Tomshiii/ahk/releases/tag/v1.0)/[1.1](https://github.com/Tomshiii/ahk/releases/tag/v1.1)/[1.2](https://github.com/Tomshiii/ahk/releases/tag/v1.2) in this repo. They are _severely_ outdated, are practically missing all current versions of scripts, and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
+This repo is to maintain work on the `ahk v2.0` versions of my scripts. These scripts **_will not_** work in `ahk v1.1`, the only versions of these scripts that will work with `ahk v1.1` are Releases [1.0](https://github.com/Tomshiii/ahk/releases/tag/v1.0)/[1.1](https://github.com/Tomshiii/ahk/releases/tag/v1.1)/[1.2](https://github.com/Tomshiii/ahk/releases/tag/v1.2) in this repo. They are _severely_ outdated, are practically missing everything found in the current versions of scripts, and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
 
 ## QMK Keyboard:
-My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [Hasu USB-USB converter](https://geekhack.org/index.php?topic=109514.0) OR a custom keyboard along with custom firmware, allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
+My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) OR `a custom keyboard` along with `custom firmware`, allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
 
 ## What to do:
 1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 Beta](https://www.autohotkey.com/v2/).
@@ -29,7 +29,7 @@ My scripts now have support for a secondary keyboard with [[QMK Keyboard.ahk]](h
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
      - It is recommended you use VSCode as a lot of my variables have dynamic comments that can be viewed across the entire program that could help you understand what is going on.
-4. Save these scripts in "`C:\Program Files\ahk\ahk\`" if you want all the directory information to just line up without any editing. (you may have to give this folder permissions within windows so it doesn't harass you about admin privileges all the time)
+4. Save these scripts wherever you wish (I use "`E:\Github\ahk\`" if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, simply change the `location :=` variable in `KSA.ahk` & `SD_functions.ahk` and most scripts should function as intended. (*some `Streamdeck AHK` scripts still have hard coded dir's*)
 5. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs as well as define coordinates for a large chunk of the imagesearches used within these scripts!
 6. Edit, then run any of the .ahk files to then use to your liking!
 - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
@@ -72,7 +72,10 @@ func(variableX, variableY)
 We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
-A script that will automatically save an Adobe Premiere Pro project every 5min because its built in autosave is practically useless
+A script that will automatically save an Adobe Premiere Pro project every 7.5min because Adobe's built in autosave is practically useless and fails to function a lot
+
+#### [premiere_fullscreen_check.ahk](https://github.com/Tomshiii/ahk/blob/main/premiere_fullscreen_check.ahk)
+A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts
 
 #### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)
 A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
@@ -91,3 +94,11 @@ A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogu
 
 #### [right click premiere.ahk](https://github.com/Tomshiii/ahk/blob/main/right%20click%20premiere.ahk)
 A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button.
+
+#### [\Error Logs](https://github.com/Tomshiii/ahk/tree/main/Error%20Logs)
+Anytime a macro/script encounters an error it will be logged in a txt file in this directory to help you catch anything that isn't working as intended so that in the event that the tooltip disappears too quickly, you can still dig in and see everything going on
+
+Eg.
+```
+18:05:10.403 // valueHold() encountered the following error: The user wasn't scrolled down
+```

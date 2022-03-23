@@ -1,10 +1,10 @@
-﻿#SingleInstance force ; only 1 instance of this script may run at a time.
-InstallMouseHook
-InstallKeybdHook
+﻿;#SingleInstance force ; only 1 instance of this script may run at a time.
+/* InstallMouseHook
+InstallKeybdHook */
 ;TraySetIcon(A_WorkingDir "\Icons\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
-CoordMode "Mouse", "screen"
-CoordMode "Pixel", "screen"
-#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
+/* CoordMode "Mouse", "screen"
+CoordMode "Pixel", "screen" */
+;#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ; Please note this script was originally written by taran in ahk v1.1 so any of his comment ramblings will go on about code that won't function in ahk v2.0
 
@@ -36,7 +36,6 @@ timeline5 := 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT 
 timeline6 := 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
 timeline8 := 0x202020
-playheadtoCursor := IniRead("C:\Program Files\ahk\ahk\KSA\Keyboard Shortcuts.ini", "Premiere", "Playhead to Cursor")
 
 #HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
 ;HotIfWinActive "ahk_exe Adobe Premiere Pro.exe" ;exact name was gotten from windowspy

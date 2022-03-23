@@ -1,5 +1,6 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9
+;\\v2.9.3
+#Include General.ahk
 
 /* Rscale()
  A function to set the scale of a video within resolve
@@ -35,6 +36,7 @@ Rscale(value, property, plus)
             blockOff()
             MouseMove(%&xpos%, %&ypos%)
             toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineNumber)
             return
         }
     rest:
@@ -46,6 +48,7 @@ Rscale(value, property, plus)
         {
             blockOff()
             toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineNumber)
             return
         }
     click
@@ -102,6 +105,7 @@ REffect(folder, effect)
         {
             blockOff()
             toolFind("the effects button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the effects button", A_LineNumber)
             return
         }
 closeORopen:
@@ -117,6 +121,7 @@ closeORopen:
         {
             blockOff()
             toolFind("open/close button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the open/close button", A_LineNumber)
             return
         }
 EffectFolder:
@@ -132,6 +137,7 @@ EffectFolder:
         {
             blockOff()
             toolFind("the fxfolder", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the fxfolder", A_LineNumber)
             return
         }
 SearchButton:
@@ -151,6 +157,7 @@ SearchButton:
         {
             blockOff()
             toolFind("search button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the search button", A_LineNumber)
             return
         }
 final:
@@ -197,6 +204,7 @@ rvalhold(property, plus, rfelseval)
             blockOff()
             MouseMove(%&xpos%, %&ypos%)
             toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineNumber)
             return
         }
     rest:
@@ -209,6 +217,7 @@ rvalhold(property, plus, rfelseval)
         {
             blockOff()
             toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineNumber)
             return
         }
     sleep 100
@@ -265,6 +274,7 @@ rflip(button)
             blockOff()
             MouseMove(%&xpos%, %&ypos%)
             toolFind("desired button", "1000")
+            errorLog(A_ThisFunc "()", "Was unable to find the desired button", A_LineNumber)
         }
 }
 
@@ -299,6 +309,7 @@ rgain(value)
             blockOff()
             MouseMove(%&xpos%, %&ypos%)
             toolFind("audio tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the audio tab", A_LineNumber)
             return
         }
     rest:
@@ -310,6 +321,7 @@ rgain(value)
         {
             blockOff()
             toolFind("your desired property", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineNumber)
             return
         }
     SendInput("{Click 2}")

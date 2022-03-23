@@ -1,5 +1,6 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.1
+;\\v2.9.7
+#Include General.ahk
 
 /* preset()
  This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
@@ -7,13 +8,20 @@
  */
 preset(item)
 {
+    KeyWait(A_ThisHotkey)
+    ToolTip("Your Preset is being dragged")
     coords()
     blockOn()
     MouseGetPos(&xpos, &ypos)
     SendInput(effectControls) ;highlights the effect controls panel
     SendInput(effectControls) ;premiere is dumb, focus things twice
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE - this if statement is code specific to text presets
         {
             sleep 100
@@ -33,6 +41,7 @@ preset(item)
                         {
                             blockOff()
                             toolFind("the eye icon", "1000")
+                            errorLog(A_ThisFunc "()", "Couldn't find the eye icon", A_LineNumber)
                             return
                         }
                 }
@@ -40,6 +49,7 @@ preset(item)
                 {
                     blockOff()
                     toolFind("the graphics tab", "1000")
+                    errorLog(A_ThisFunc "()", "Couldn't find the graphics tab", A_LineNumber)
                     return
                 }
         }
@@ -47,19 +57,26 @@ preset(item)
     {
         SendInput(effectsWindow) ;adjust this in the ini file
         SendInput(findBox) ;adjust this in the ini file
+        toolCust("if you hear windows, blame premiere", "1000")
         CaretGetPos(&findx)
         if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
             {
-                Loop 40
-                    {
+                Loop {
+                        if A_Index > 5
+                            {
+                                SendInput(findBox) ;adjust this in the ini file
+                                toolCust("if you hear windows, blame premiere", "2000")
+                                errorLog(A_ThisFunc "()", "If you're looking here because you heard windows beep, it's because this function loops trying to find the search box in premiere but sometimes premiere is dumb and doesn't find it when it's supposed to, then when you send the hotkey again windows complains. Thanks Adobe.", A_LineNumber)
+                            }
                         sleep 30
                         CaretGetPos(&findx)
                         if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                             break
-                        if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+                        if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                             {
                                 blockOff()
                                 toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                 return
                             }
                     }
@@ -75,19 +92,22 @@ preset(item)
                     sleep 100
                     SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
                     SendInput(findBox)
+                    toolCust("if you hear windows, blame premiere", "2000")
                     CaretGetPos(&find2x)
                     if %&find2x% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                         {
-                            Loop 40
-                                {
+                            Loop {
                                     sleep 30
+                                    SendInput(findBox)
+                                    toolCust("if you hear windows, blame premiere", "2000")
                                     CaretGetPos(&find2x)
                                     if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                                         break
-                                    if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+                                    if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                         {
                                             blockOff()
                                             toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                            errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                             return
                                         }
                                 }
@@ -100,6 +120,7 @@ preset(item)
                             SendInput("{Esc}")
                             sleep 50
                             toolCust("it tried to delete your preset", "2000")
+                            errorLog(A_ThisFunc "()", "The function attempted to delete the users preset and was aborted", A_LineNumber)
                         }
                 }
         }
@@ -109,7 +130,8 @@ preset(item)
     CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
     MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
     SendInput %&item% ;create a preset of any effect, must be in a folder as well
-    MouseMove 40, 68,, "R" ;move down to the saved preset (must be in an additional folder)
+    sleep 50
+    MouseMove 0, 60,, "R" ;move down to the saved preset (must be in an additional folder)
     SendInput("{Click Down}")
     if A_ThisHotkey = textHotkey ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
         {
@@ -126,6 +148,7 @@ preset(item)
     effectbox() ;this will delete whatever preset it had typed into the find box
     SendInput(timelineWindow) ;this will rehighlight the timeline after deleting the text from the find box
     blockOff()
+    ToolTip("")
 }
 
 /*
@@ -151,6 +174,7 @@ fxSearch()
                         {
                             blockOff()
                             toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                            errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                             return
                         }
                 }
@@ -179,6 +203,7 @@ fxSearch()
                                     {
                                         blockOff()
                                         toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                        errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                         return
                                     }
                             }
@@ -191,6 +216,7 @@ fxSearch()
                         SendInput("{Esc}")
                         sleep 50
                         toolCust("it tried to delete your preset", "2000")
+                        errorLog(A_ThisFunc "()", "The function attempted to delete the users preset and was aborted", A_LineNumber)
                     }
             }
     }
@@ -211,8 +237,13 @@ num(xval, yval, scale)
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN)
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -221,6 +252,7 @@ num(xval, yval, scale)
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -234,6 +266,7 @@ num(xval, yval, scale)
             MouseMove(%&xpos%, %&ypos%)
             blockOff()
             toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineNumber)
             return
         }
     next:
@@ -246,6 +279,7 @@ num(xval, yval, scale)
             MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
             blockOff()
             toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Couldn't find the motion tab", A_LineNumber)
             return
         }
     SendInput("{Click}")
@@ -262,13 +296,24 @@ num(xval, yval, scale)
  */
 valuehold(filepath, optional)
 {
-    MouseGetPos(&xpos, &ypos)
+    ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
+    ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
+    ;You can plug your own x distance in by changing the value below
+    xdist := 210
     coords()
+    MouseGetPos(&xpos, &ypos)
+    ;toolCust("x " %&xpos% "`ny " %&ypos%, "1000") ;testing stuff
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
+        return
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
@@ -277,6 +322,7 @@ valuehold(filepath, optional)
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
+                    errorLog(A_ThisFunc "()", "The wrong clips are selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -286,6 +332,7 @@ valuehold(filepath, optional)
             if ImageSearch(&vidx, &vidy, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "video.png")
                 {
                     toolCust("you aren't scrolled down", "1000")
+                    errorLog(A_ThisFunc "()", "The user wasn't scrolled down", A_LineNumber)
                     blockOff()
                     KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     return
@@ -294,31 +341,51 @@ valuehold(filepath, optional)
                 goto next
         }
     next:
-    if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour
-    else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for when you have the "toggle animation" keyframe button pressed
-    else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for if the property you want to adjust is "selected"
-    else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
-    else
-        {
-            blockOff()
-            toolFind("the image", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-            return
-        }
+    loop {
+        if A_Index > 1
+            {
+                ToolTip(A_Index)
+                SendInput(effectControls)
+                SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                try {
+                    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+                    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+                } catch as e {
+                    toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
+                    errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
+                    MouseMove(%&xpos%, %&ypos%)
+                    return
+                }
+            }
+        if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+            break
+        else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+            break ;this is for when you have the "toggle animation" keyframe button pressed
+        else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+            break ;this is for if the property you want to adjust is "selected"
+        else if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+            break ;this is for if the property you want to adjust is "selected" and you're keyframing
+        if A_Index > 3
+            {
+                blockOff()
+                toolFind("the image after " A_Index " attempts`nx " %&efx% "`ny " %&efy% "`nwidth " %&width% "`nheight " %&height%, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " %&efx% " ~~ y " %&efy% " ~~ width " %&width% " ~~ height " %&height%, A_LineNumber)
+                KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                MouseMove(%&xpos%, %&ypos%)
+                return
+            }
+        sleep 50
+    }
     colour:
-    if PixelSearch(&xcol, &ycol, %&x%, %&y% + "2", %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the value you want to adjust
+    if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + xdist, %&y% + "40", 0x205cce, 2)
         MouseMove(%&xcol% + %&optional%, %&ycol%)
-    else if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "720", %&y% + "40", 0x295C4D, 3) ;searches for a different shade of blue as a fallback
-                MouseMove(%&xcol% + %&optional%, %&ycol%)
     else
         {
             blockOff()
             toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineNumber)
             KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+            MouseMove(%&xpos%, %&ypos%)
             return
         }
     sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
@@ -329,7 +396,10 @@ valuehold(filepath, optional)
             blockOff()
             KeyWait(A_ThisHotkey)
             SendInput("{Click Up}" "{Enter}")
+            sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
             MouseMove(%&xpos%, %&ypos%)
+            /* MouseGetPos(&testx, &testy) ;testing stuff
+            MsgBox("og x " %&xpos% "`nog y " %&ypos% "`ncurrent x " %&testx% "`ncurrent y " %&testy%) */
         }
     else
         {
@@ -350,11 +420,13 @@ valuehold(filepath, optional)
                     MouseMove(%&xpos%, %&ypos%)
                     blockOff()
                     toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                    errorLog(A_ThisFunc "()", "Failed to find reset button", A_LineNumber)
                     return
                 }
             MouseMove(%&xpos%, %&ypos%)
             blockOff()
         }
+    ToolTip("")
 }
 
 /* keyreset()
@@ -368,8 +440,13 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -378,6 +455,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -389,6 +467,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
     else
         {
             toolCust("you're already keyframing", "1000")
+            errorLog(A_ThisFunc "()", "The user was already keyframing", A_LineNumber)
             blockOff()
             ;KeyWait(A_PriorHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
             return
@@ -411,8 +490,13 @@ keyframe(filepath)
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -421,6 +505,7 @@ keyframe(filepath)
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -443,7 +528,8 @@ keyframe(filepath)
         }
     else
         {
-            toolCust("ya broke it", "1000")
+            toolCust("Couldn't find the desired value", "1000")
+            errorLog(A_ThisFunc "()", "Couldn't find the desired value", A_LineNumber)
             blockOff()
             return
         }
@@ -467,12 +553,12 @@ audioDrag(sfxName)
 {
     ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
     coords()
-    if ImageSearch(&sfxxx, &sfxyy, 3021, 710, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
+    if ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
         {
             blockOn()
             coords()
             MouseGetPos(&xpos, &ypos)
-            if ImageSearch(&listx, &listy, 3081, 745, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
+            if ImageSearch(&listx, &listy, 3082, 664, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
                 {
                     MouseMove(%&listx%, %&listy%)
                     SendInput("{Click}")
@@ -495,6 +581,7 @@ audioDrag(sfxName)
                                 {
                                     blockOff()
                                     toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                    errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                     return
                                 }
                         }
@@ -517,6 +604,7 @@ audioDrag(sfxName)
                 {
                     blockOff()
                     toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+                    errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineNumber)
                     coords()
                     MouseMove(%&xpos%, %&ypos%)
                     return
@@ -540,6 +628,7 @@ audioDrag(sfxName)
                                 {
                                     blockOff()
                                     toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                    errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
                                     return
                                 }
                         }
@@ -551,6 +640,7 @@ audioDrag(sfxName)
     else
         {
             toolCust("you haven't opened the bin", "2000")
+            errorLog(A_ThisFunc "()", "User hasn't opened the required bin", A_LineNumber)
         }
 }
 
@@ -630,8 +720,13 @@ movepreview()
     MouseGetPos(&xpos, &ypos)
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -640,6 +735,7 @@ movepreview()
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -650,6 +746,8 @@ movepreview()
         {
             blockOff()
             toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Couldn't find the motion tab", A_LineNumber)
+            KeyWait(A_ThisHotkey)
             return
         }
     sleep 100
@@ -672,6 +770,7 @@ movepreview()
                     blockOff()
                     MouseMove(%&xpos%, %&ypos%)
                     toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                    errorLog(A_ThisFunc "()", "Couldn't find the reset button", A_LineNumber)
                     return
                 }
             Click
@@ -691,8 +790,13 @@ reset()
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -701,6 +805,7 @@ reset()
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -714,6 +819,7 @@ reset()
         {
             blockOff()
             toolFind("the motion value", "1000")
+            errorLog(A_ThisFunc "()", "Couldn't find the motion image", A_LineNumber)
             return
         }
     inputs:
@@ -780,8 +886,13 @@ manInput(property, optional, keywaitkey, keyend)
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -790,6 +901,7 @@ manInput(property, optional, keywaitkey, keyend)
             if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineNumber)
                     blockOff()
                     return
                 }
@@ -806,6 +918,7 @@ manInput(property, optional, keywaitkey, keyend)
         {
             blockOff()
             toolFind("the property you wish to adjust", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Couldn't find the users requested property", A_LineNumber)
             return
         }
     colour:
@@ -815,6 +928,7 @@ manInput(property, optional, keywaitkey, keyend)
         {
             blockOff()
             toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineNumber)
             return
         }
     ;use to be keywaits here.. I think it was for the below deactivate... maybe..
@@ -877,6 +991,7 @@ gain(amount)
             else
                 {
                     toolCust("gain macro couldn't figure`nout what to do", "1000")
+                    errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineNumber)
                     return
                 }
         }
@@ -896,8 +1011,13 @@ gainSecondary(key1, key2, keyend)
     ;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
     if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
         {
@@ -912,6 +1032,7 @@ gainSecondary(key1, key2, keyend)
             else
                 {
                     toolCust("gain macro couldn't figure`nout what to do", "1000")
+                    errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineNumber)
                     return
                 }
         }

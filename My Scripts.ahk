@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.1.1"
+global MyRelease := "v2.3.2.1"
 ;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 #SingleInstance Force
@@ -12,14 +12,12 @@ SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
-#Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one thing get funky and break because of priorities and stuff
+#Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.4
-;\\Minimum Version of "Functions.ahk" Required for this script
-;\\v2.10
+;\\v2.10.17
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.3
+;\\v2.4.6
 
 ; ============================================================================================================================================
 ;
@@ -63,7 +61,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ;\\The function below will check what version you're running on startup
 updateChecker() {
 	;checks if script was reloaded
-	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
 	;if I ever choose to do beta release channels
 	/*
@@ -221,7 +219,7 @@ updateChecker() {
 					;keys counts how many links are found
 					keys := 0
 					loop { ;this loop will go through and copy all urls to an ini file
-						findurl := InStr(deletesquare2, "https://bit.ly",,, A_Index)
+						findurl := InStr(deletesquare2, "https://",,, A_Index)
 						if findurl = 0
 							break
 						beginurl := findurl - 1
@@ -326,6 +324,7 @@ updateChecker() {
 									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", "3000")
 								} catch as e {
 									toolCust("There was an error trying to backup your current scripts", "2000")
+									errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineNumber)
 								}
 								return
 							}
@@ -339,14 +338,31 @@ updateChecker() {
 				return				
 		}
 	else if ignore = "yes"
-		toolCust("You're using an outdated version of these scripts", "1000")
+		{
+			toolCust("You're using an outdated version of these scripts", "1000")
+			errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineNumber)
+		}
 	else if ignore = "stop"
 		return
 	else
-		toolCust("You put something else in the ignore.ini file you goose", "1000")
+		{
+			toolCust("You put something else in the ignore.ini file you goose", "1000")
+			errorLog(A_ThisFunc "()", "You put something else in the ignore.ini file you goose", A_LineNumber)
+		}
 }
 updateChecker() ;runs the update checker
 ;\\end of update checker
+
+;\\ Deleting Log files older than 30 days
+oldError() {
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+		return
+	loop files, A_WorkingDir "\Error Logs\*.txt"
+	if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
+		FileDelete(A_LoopFileFullPath)
+}
+oldError() ;runs the loop to delete old log files
+;\\ end of loop to delete old log files
 
 ;=============================================================================================================================================
 ;
@@ -370,6 +386,8 @@ updateChecker() ;runs the update checker
 	;	PostMessage 0x0111, 65303,,, "right click premiere.ahk - AutoHotkey"
 	if WinExist("autosave.ahk - AutoHotkey")
 		PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
+	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+		PostMessage 0x0111, 65303,,, "premiere_fullscreen_check.ahk - AutoHotkey"
 	Reload
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
@@ -399,8 +417,6 @@ updateChecker() ;runs the update checker
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf not GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
-;excelHotkey;
-PgUp::switchToExcel() ;run microsoft excel.
 ;windowspyHotkey;
 Pause::switchToWindowSpy() ;run windowspy
 ;vscodeHotkey;
@@ -409,8 +425,8 @@ RWin::switchToVSC() ;run vscode
 ScrollLock::switchToStreamdeck() ;run the streamdeck program
 ;taskmangerHotkey;
 PrintScreen::SendInput("^+{Esc}")
-;wordHotkey;
-PgDn::switchToWord()
+;excelHotkey;
+PgUp::switchToExcel()
 
 ;These two scripts are to open highlighted text in the ahk documentation
 ;akhdocuHotkey;
@@ -503,13 +519,13 @@ F14:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("590") ;clicks on the my scripts script in vscode
+!a::vscode("635") ;clicks on the my scripts script in vscode
 ;vscodefuncHotkey;
-!f::vscode("550") ;clicks on my functions script in vscode 
+!f::vscode("580") ;clicks on my functions script in vscode 
 ;vscodeqmkHotkey;
-!q::vscode("624") ;clicks on my qmk script in vscode
+!q::vscode("685") ;clicks on my qmk script in vscode
 ;vscodechangeHotkey;
-!c::vscode("510") ;clicks on my changelog file in vscode
+!c::vscode("550") ;clicks on my changelog file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
@@ -520,7 +536,9 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 	coordw()
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	title := WinGetTitle("A")
+	try {
+		title := WinGetTitle("A")
+	}
 	if (InStr(title, needle))
 		{
 			SendInput("{Space}")
@@ -549,7 +567,12 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 		if A_Index > 5
 			{
 				toolCust("Couldn't find a youtube tab", "1000")
-				WinActivate(title) ;reactivates the original window
+				try {
+					WinActivate(title) ;reactivates the original window
+				} catch as e {
+					toolCust("Failed to get information on last active window", "1000")
+					errorLog(A_ThisFunc "()", "Failed to get information on last active window", A_LineNumber)
+				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 				return
 			}
@@ -571,7 +594,9 @@ Numpad9::
 {
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	title := WinGetTitle("A")
+	try {
+		title := WinGetTitle("A")
+	}
 	if (InStr(title, needle))
 		return
 	else
@@ -594,6 +619,7 @@ SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;thi
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
+^+t::Run(A_WorkingDir "\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 ;=============================================================================================================================================
 ;
@@ -644,25 +670,55 @@ SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk
 ;premselecttoolHotkey;
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
-	coords()
 	MouseGetPos(&xpos, &ypos)
 	SendInput(toolsWindow)
 	SendInput(toolsWindow)
 	sleep 50
-	toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+	try {
+        toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }	
 	;MouseMove 34, 917 ;location of the selection tool
+	if %&width% = 0 || %&height% = 0
+		{
+			loop {
+				;for whatever reason, if you're clicked on another panel, then try to hit this hotkey, `ControlGetPos` refuses to actually get any value, I have no idea why. This loop will attempt to get that information anyway, but if it fails will fallback to the hotkey you have set within premiere
+				;toolCust(A_Index "`n" %&width% "`n" %&height%, "100")
+				if %&width% != 0 || %&height% != 0
+					break
+				if A_Index > 3
+					{
+						SendInput(selectionPrem)
+						toolCust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", "2000")
+						return
+					}
+				sleep 100
+				SendInput(toolsWindow)
+				toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+				ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+			}
+		}
 	if %&height% < 80 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
 		multiply := "3"
 	else
 		multiply := "1"
-	if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height% * multiply, "*2 " Premiere "selection.png") ;moves to the selection tool
-			MouseMove(%&x%, %&y%)
-	else
-		{
-			toolFind("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-			return
-		}
+	loop {
+		if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height% * multiply, "*2 " Premiere "selection.png") ;moves to the selection tool
+			{
+				MouseMove(%&x%, %&y%)
+				break
+			}
+		sleep 100
+		if A_Index > 3
+			{
+				toolFind("selection tool", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				errorLog(A_ThisHotkey, "Couldn't find the selection tool", A_LineNumber)
+				return
+			}
+	}
 	click
 	MouseMove %&xpos%, %&ypos%
 }
@@ -681,33 +737,54 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	coordw()
-	ClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
+	sleep 100
+	try {
+		loop {
+			ClassNN := ControlGetClassNN(ControlGetFocus("A"))
+			ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
+			if ClassNN != "DroverLord - Window Class3"
+				break
+			if A_Index > 5
+				{
+					toolCust("Function failed to find project window", "1000")
+					errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
+					return
+				}
+		}
+	} catch as e
+		{
+			toolCust("Function failed to find project window", "1000")
+			errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
+			return
+		}
+	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN) ;debugging
 	blockOn()
 	if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project.png") ;searches for the project window to grab the track
 		goto move
 	else if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
 		goto move
-	else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png")
+	else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
 		goto bin
 	else ;if everything fails, this else will trigger
 		{
 			blockOff()
 			toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+			errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineNumber)
 			return
+			;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
 		}
 	move:
 	MouseMove(%&prx% + "5", %&pry% +"3")
 	SendInput("{Click Down}")
 	coords()
 	Sleep 100
-	MouseMove 3590, 702, "2"
+	MouseMove 3592, 444, 2
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
 	bin:
 	Run("E:\Audio stuff")
-	WinWait("E:\Audio stuff")
-	WinActivate("E:\Audio stuff")
+	WinWait("Audio stuff")
+	WinActivate("Audio stuff")
 	sleep 500
 	coordw()
 	MouseMove(0, 0)
@@ -727,6 +804,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff
 			toolFind("the sfx folder", "2000")
+			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Windows Explorer", A_LineNumber)
 			return
 		}
 	added:
@@ -738,7 +816,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			SendInput("{Click}")
 			sleep 100
 		}
-	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj.png")
+	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj.png") || ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj2.png")
 		{
 			MouseMove(%&fold2x% + "5", %&fold2y% + "2")
 			SendInput("{Click 2}")
@@ -748,22 +826,27 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("the sfx folder in premiere", "2000")
+			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Premiere Pro", A_LineNumber)
 			return
 		}
-	if ImageSearch(&fold3x, &fold3y, 10, 3, 1038, 1072, "*2 " Premiere "binsfx.png")
-		{
-			MouseMove(%&fold3x% + "5", %&fold3y% + "2")
-			SendInput("{Click Down}")
-			MouseMove(754, 1042, 2)
-			sleep 150
-			SendInput("{Click Up}")
-		}
-	else
-		{
-			blockOff()
-			toolFind("the bin", "2000")
-			return
-		}
+	loop {
+		if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " Premiere "binsfx.png")
+			{
+				MouseMove(%&fold3x% + "20", %&fold3y% + "4", 2)
+				SendInput("{Click Down}")
+				MouseMove(772, 993, 2)
+				sleep 250
+				SendInput("{Click Up Left}")
+				break
+			}
+		if A_Index > 5
+			{
+				blockOff()
+				toolFind("the bin", "2000")
+				errorLog(A_ThisHotkey, "Couldn't find the bin", A_LineNumber)
+				return
+			}
+	}		
 	coords()
 	MouseMove(%&xpos%, %&ypos%)
 	blockOff()
@@ -798,12 +881,22 @@ F20::audioDrag("bleep")
 GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
-;monitor2Hotkey;
-^!w::monitorWarp("5044", "340") ;this simply warps my mouse to my far monitor bc I'm lazy YEP
-;monitor1Hotkey;
-^!+w::monitorWarp("1280", "720") ;this simply warps my mouse to my main monitor bc I'm lazy YEP
+;discordHotkey;
+^+w:: ;this hotkey is to click the "discord" button in discord to access your dm's 
+{
+	if WinExist("ahk_exe Discord.exe")
+		{
+			WinActivate("ahk_exe Discord.exe")
+			blockOn()
+			MouseGetPos(&origx, &origy)
+			MouseMove(34, 52, 2)
+			SendInput("{Click}")
+			MouseMove(%&origx%, %&origy%, 2)
+			blockOff()
+		}
+}
 ;disclocationHotkey;
-^+d::discLocation() ;Move discord between multiple monitors
+^+d::switchToDisc()
 
 ;winmaxHotkey;
 F14::moveWin("") ;maximise

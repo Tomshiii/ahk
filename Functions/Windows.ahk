@@ -1,9 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.7
+;\\v2.9.12
+#Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.9
+;		Windows Scripts \\ Last updated: v2.9.12
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -17,14 +18,22 @@ youMouse(tenS, fiveS)
         return
     if WinExist("YouTube")
     {
-        lastactive := WinGetID("A") ;fills the variable [lastavtive] with the ID of the current window
+        try {
+            lastactive := WinGetID("A") ;fills the variable [lastavtive] with the ID of the current window
+        }
         WinActivate() ;activates Youtube if there is a window of it open
         sleep 25 ;sometimes the window won't activate fast enough
         if GetKeyState(longSkip, "P") ;checks to see if you have a second key held down to see whether you want the function to skip 10s or 5s. If you hold down this second button, it will skip 10s
             SendInput(%&tenS%)
         else
             SendInput(%&fiveS%) ;otherwise it will send 5s
-        WinActivate(lastactive) ;will reactivate the original window
+        try {
+            WinActivate(lastactive) ;will reactivate the original window
+        } catch as e {
+            toolCust("Failed to get information on the previously active window", "1000")
+            errorLog(A_ThisFunc "()", "Failed to get information on previously active window", A_LineNumber)
+        }
+
     }
 }
 
@@ -63,19 +72,24 @@ moveWin(key)
         }
     else
         {
-            window := WinGetTitle("A") ;grabs the title of the active window
-            SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
-            if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
-                WinMinimize(window)
-            if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
-                WinMaximize(window)
-            SendInput(%&key%)
+            try {
+                window := WinGetTitle("A") ;grabs the title of the active window
+                SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
+                if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
+                    WinMinimize(window)
+                if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
+                    WinMaximize(window)
+                SendInput(%&key%)
+            } catch as e {
+                toolCust("Failed to get information on current active window", "1000")
+                errorLog(A_ThisFunc "()", "Failed to get information on current active window", A_LineNumber)
+            }
         }
 }
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.9.2
+;		discord \\ Last updated: v2.9.10
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -92,35 +106,56 @@ disc(button)
 ;ensure this function only fires if discord is active ( #HotIf WinActive("ahk_exe Discord.exe") ) - VERY IMPORTANT
 {
     KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
-    coordw() ;important to leave this as window as otherwise the image search function will fail to find things
+    coordw()
     MouseGetPos(&x, &y)
-    WinGetPos(,, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
+    WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
+    ;MsgBox("x " %&nx% "`ny " %&ny% "`nwidth " %&width% "`nheight " %&height%) ;testing
     blockOn()
     click("right") ;this opens the right click context menu on the message you're hovering over
     sleep 50 ;sleep required so the right click context menu has time to open
-    if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%) ;searches for the button you've requested
-            MouseMove(%&xpos%, %&ypos%)
-    else
-        {
-            sleep 500 ;this is a second attempt incase discord was too slow and didn't catch the button location the first time
-            if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%)
-                MouseMove(%&xpos%, %&ypos%) ;Move to the location of the button
-            else ;if everything fails, this else will trigger
-                {
-                    MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
-                    blockOff()
-                    toolFind("the requested button", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-                    return
-                }
-        }
+    loop {
+        if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%) ;searches for the button you've requested
+            {
+                MouseMove(%&xpos%, %&ypos%)
+                break
+            }
+        sleep 50
+        if A_Index > 4
+            ToolTip(A_ThisFunc "() has attempted to find the desired button " A_Index " times")
+        if A_Index > 10 ;after waiting over 0.5s the function will excecute the below
+            {
+                ToolTip("")
+                MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+                blockOff()
+                toolFind("the requested button after " A_Index " attempts", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog(A_ThisFunc "()", "Was unable to find the requested button", A_LineNumber)
+                return
+            }
+    }
     Click
     sleep 100
     if A_ThisHotkey = replyHotkey ;SET THIS ACTIVATION HOTKEY IN THE KEYBOARD SHORTCUTS.ini FILE
         {
-            if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " Discord "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+            if ImageSearch(&x2, &y2, %&nx%, %&ny%/"3", %&width%, %&height%, "*2 " Discord "dm1.png")
                 {
-                    MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
-                    Click
+                    loop {
+                            if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " Discord "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+                                {
+                                    ;ToolTip("")
+                                    MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
+                                    Click
+                                    MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+                                    blockOff()
+                                    return
+                                }
+                            ;ToolTip(A_Index)
+                            if A_Index > 10
+                                {
+                                    toolFind("the @ ping button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                                    errorLog(A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineNumber)
+                                    break
+                                }
+                        }
                     MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
                     blockOff()
                 }
@@ -128,7 +163,6 @@ disc(button)
                 {
                     MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
                     blockOff()
-                    toolFind("the @ ping button`nor you're in a DM", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
                     return
                 }
         }
@@ -156,6 +190,7 @@ discLocation()
         original := WinGetID("A")
     } catch as e {
         toolCust("you tried to assign a closed`n window as the last active", "4000")
+        errorLog(A_ThisFunc "()", "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it", A_LineNumber)
         SendInput("{Click}")
         return
     }
@@ -208,24 +243,29 @@ discLocation()
     if toggle > 1 or toggle < 0 ;this is here just incase the value ever ends up bigger/smaller than it's supposed to
         {
             toggle := 0
-            toolCust("stop spamming the function please`nthe functions value was to large/small", "1000")
+            toolCust("stop spamming the function please`nthe functions value was too large/small", "1000")
+            errorLog(A_ThisFunc "()", "Function hit an unexpected toggle number", A_LineNumber)
             return
         }
     try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
         WinActivate(original)
     } catch as e {
         toolCust("couldn't find original window", "2000")
+        errorLog(A_ThisFunc "()", "Function couldn't activate the original window", A_LineNumber)
         return
     }
 }
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.9.7
+;		VSCode \\ Last updated: v2.9.11
 ;
 ; ===========================================================================================================================================
 /* vscode()
   A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
+  It will also either work or not depending on what theme you have installed, I am currently using `one dark pro`
+  It will also depend on how "zoomed in" you have vscode
+  It also functions differently if you only have 1 repo cloned instead of multiple
   @param script is the amount of pixels down the mouse must move from the collapse button to open the script I want.
  */
 vscode(script)
@@ -253,13 +293,14 @@ vscode(script)
     else
         {
             toolFind("the collapse folders button", "1000")
+            errorLog(A_ThisFunc "()", "Couldn't find the `collapse folders` button", A_LineNumber)
             blockOff()
             return
         }
     if A_ThisHotkey = functionHotkey ;this opens my \functions folder as well as opening my main functions script
         {
             MouseGetPos(&origx, &origy)
-            MouseMove(0, 80,, "R")
+            MouseMove(0, 105,, "R")
             SendInput("{Click}")
             MouseMove(%&origx%, %&origy% + 180)
         }

@@ -1,13 +1,13 @@
 ;These global variables will be used across some Streamdeck AHK scripts.
-#Include "C:\Program Files\ahk\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
-global Premiere := "C:\Program Files\ahk\ahk\ImageSearch\Premiere\"
-global Windows := "C:\Program Files\ahk\ahk\ImageSearch\Windows\Win11\Settings\"
-global Chatterino := "C:\Program Files\ahk\ahk\ImageSearch\Chatterino\"
+#Include "E:\Github\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
+global Premiere := location "\ImageSearch\Premiere\"
+global Windows := location "\ImageSearch\Windows\Win11\Settings\"
+global Chatterino := location "\ImageSearch\Chatterino\"
 
 ;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()
 {
-	WinMove 2553, -890, 1104, 1087
+	WinMove(2553, -906,  973, 1047)
 }
 
 chatterinoLocationBotshi()
@@ -17,17 +17,17 @@ chatterinoLocationBotshi()
 
 chatterinoLocationTomshi()
 {
-	WinMove(3648, -398, 830, 586)
+	WinMove(3648, -398, 832, 586)
 }
 
 streamelementsLocation()
 {
-	WinMove 3646, -890, 836, 495
+	WinMove(3513,  -906, 974, 1047, "StreamElements - Activity feed")
 }
 
 discordLocation()
 {
-	WinMove -1080, 75, 1080, 1537
+	WinMove(-1080,  -274, 1080, 1600)
 }
 
 /* coords()
@@ -171,4 +171,43 @@ scale(amount)
 	MouseMove %&xpos%, %&ypos%
 	Click("middle")
 	blockOff()
+}
+
+/*
+ This function toggles a pause on the autosave ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
+ */
+pauseautosave()
+{
+	DetectHiddenWindows True
+	if WinExist("autosave.ahk - AutoHotkey")
+		{
+			WM_COMMAND := 0x0111
+			ID_FILE_PAUSE := 65403
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, location "\autosave.ahk ahk_class AutoHotkey"
+		}
+	else
+		{
+			toolCust("autosave ahk script isn't open", "1000")
+			ExitApp()
+		}
+		
+}
+
+/*
+ This function toggles a pause on the premiere_fullscreen_check ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
+ */
+pausewindowmax()
+{
+	DetectHiddenWindows True
+	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+		{
+			WM_COMMAND := 0x0111
+			ID_FILE_PAUSE := 65403
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, location "\premiere_fullscreen_check.ahk ahk_class AutoHotkey"
+		}
+	else
+		{
+			toolCust("fullscreen ahk script isn't open", "1000")
+			ExitApp()
+		}
 }

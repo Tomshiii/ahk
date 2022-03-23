@@ -1,5 +1,6 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.7
+;\\v2.9.9
+#Include General.ahk
 
 /*
  This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
@@ -63,6 +64,24 @@ switchToAE()
     else
         if WinExist("ahk_exe AfterFX.exe")
             WinActivate "ahk_exe AfterFX.exe"
+}
+
+/*
+ This switchTo function will quickly switch to the specified program. If there isn't an open window of the desired program, this function will open one
+ */
+switchToDisc()
+{
+    if not WinExist("ahk_exe Discord.exe")
+        {
+            Run("C:\Users\Tom\AppData\Local\Discord\Update.exe --processStart Discord.exe")
+            WinWait("ahk_exe Discord.exe")
+            WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe") ; I have discord on a certain monitor in a certain spot
+        }
+    else
+        {
+            WinActivate("ahk_exe Discord.exe")
+            toolCust("Discord is now active", "500") ;this is simply because it's difficult to tell when discord has focus if it was already open
+        }
 }
 
 /*
@@ -168,7 +187,7 @@ firefoxTap()
 switchToVSC()
 {
     if not WinExist("ahk_exe Code.exe")
-        Run "C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+        Run "C:\Program Files\Microsoft VS Code\Code.exe"
         GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
     if WinActive("ahk_exe Code.exe")
         GroupActivate "Code", "r"
@@ -373,7 +392,7 @@ musicGUI()
     MyGui.Show()
     ;below is what happens when you click on each name
     AIMP(*) {
-        Run("C:\Program Files (x86)\AIMP\AIMP.exe")
+        Run("C:\Program Files (x86)\AIMP3\AIMP.exe")
         WinWait("ahk_exe AIMP.exe")
         WinActivate("ahk_exe AIMP.exe")
         MyGui.Destroy()

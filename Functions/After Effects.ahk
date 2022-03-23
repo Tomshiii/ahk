@@ -1,5 +1,6 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9
+;\\v2.9.4
+#Include General.ahk
 
 /* aevaluehold()
  A function to warp to one of a videos values within After Effects (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
@@ -38,6 +39,7 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
                 {
                     blockOff()
                     toolFind("the property you're after", "1000")
+                    errorLog(A_ThisFunc "()", "Couldn't find the property the user was after", A_LineNumber)
                     KeyWait(A_ThisHotkey)
                     return
                 }
@@ -62,7 +64,10 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
                 }
         }
     else
-        toolCust("you're not hovering a track", "1000")
+        {
+            toolCust("you're not hovering a track", "1000")
+            errorLog(A_ThisFunc "()", "User not hovering over a track", A_LineNumber)
+        }
 }
 
 /* aepreset()
@@ -78,13 +83,19 @@ aePreset(preset)
     if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
         {
             toolCust("you haven't selected a clip`nor aren't hovering the right spot", "1000")
+            errorLog(A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineNumber)
             blockOff()
             Exit
         }
     SendInput(audioAE effectsAE) ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
     sleep 100
-    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
     if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox.png")
         goto move
     else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox2.png")
@@ -93,6 +104,7 @@ aePreset(preset)
         {
             blockOff()
             toolCust("couldn't find the magnifying glass", "1000")
+            errorLog(A_ThisFunc "()", "Couldn't find the magnifying glass", A_LineNumber)
             return
         }
     move:
@@ -112,6 +124,7 @@ aePreset(preset)
                     {
                         blockOff()
                         toolCust("Couldn't determine the caret", "1000")
+                        errorLog(A_ThisFunc "()","Function couldn't determine the caret position", A_LineNumber)
                         return
                     }
             }

@@ -1,4 +1,4 @@
-SetWorkingDir "C:\Program Files\ahk\ahk"
+SetWorkingDir "E:\Github\ahk"
 ;// This script is included more as a backup for myself and not really because it's helpful.
 
 run A_WorkingDir "\My Scripts.ahk"
@@ -7,6 +7,7 @@ run A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk"
 run A_WorkingDir "\autodismiss error.ahk"
 ;run A_WorkingDir "\right click premiere.ahk" ;#include(d) in main script now
 run A_WorkingDir "\autosave.ahk"
+run A_WorkingDir "\premiere_fullscreen_check.ahk"
 
 if not WinExist("ahk_exe Creative Cloud.exe")
     run "C:\Program Files\Adobe\Adobe Creative Cloud\ACC\Creative Cloud.exe"

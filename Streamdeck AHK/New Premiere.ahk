@@ -6,9 +6,11 @@ SetDefaultMouseSpeed 0
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
         ;; This part makes you select the folder you wish to create the project in
-        SelectedFolder := DirSelect("*E:\", 3, "Create your desired folder then select it.")
+        SelectedFolder := FileSelect("D2", "E:\", "Select your desired Folder. This Script will create the necessary sub folders")
         if SelectedFolder = ""
             return
+        pauseautosave()
+        pausewindowmax()
         DirCreate(SelectedFolder "\videos") ;creates a video folder if there isn't one already
         DirCreate(SelectedFolder "\audio") ;creates an audio folder if there isn't one already
         DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
@@ -18,9 +20,11 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
         coordw()
         blockOn()
+        sleep 200
         if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " Premiere "newProj.png")
             {
-                Click(%&x%, %&y%)
+                MouseMove(%&x%, %&y%)
+                SendInput("{Click}")
                 WinWait("New Project")
                 blockOff()
                 IB := InputBox("Enter the name of your project", "Project", "w100 h100")
@@ -43,7 +47,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 1000
                 if ImageSearch(&xin, &yin, 0, 0, 629, 348, "*2 " Premiere "ingest.png")
                     { ;this whole thing relies on a lot of well timed sleeps that are tailored to my systems performance when performing this macro, chances are if you're on a slower system some of these may need to be boosted (especially the longer ones)
-                        Click(%&xin%, %&yin%)
+                        MouseMove(%&xin%, %&yin%)
+                        SendInput("{Click}")
                         sleep 500
                         SendInput("{Tab 6}" "{Space}")
                         sleep 1000
@@ -72,10 +77,20 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         sleep 1000
                         blockOff()
                         Run(SelectedFolder) ;open an explorer window for your selected directory
+                        try {
+                            FileCopy("E:\Github\ahk\releases\checklist ahk draft\checklist.ahk", SelectedFolder)
+                            Run(SelectedFolder "\checklist.ahk")
+                        } catch as e {
+                            toolCust("File not found", "1000")
+                        }
+                        pauseautosave()
+                        pausewindowmax()
                         return
                     }
                 else
                     {
+                        pauseautosave()
+                        pausewindowmax()
                         blockOff()
                         toolFind("the ingest tab", "1000")
                         return
@@ -83,6 +98,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
             }
         else
             {
+                pauseautosave()
+                pausewindowmax()
                 blockOff()
                 toolFind("the new project button", "1000")
                 return
