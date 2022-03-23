@@ -1,10 +1,7 @@
 # <> Release 2.3.2.2 - 
 
 ## > My Scripts
-- Added `adobeTemp()` to delete Adobe cache files if they're larger than a determined amount
-
-## > Functions
-- Capitalised the output of `toolFind()`
+- Added `adobeTemp()` to delete Adobe cache files on first startup if they're larger than a user determined amount; `15GB` by default
 
 ## > autosave
 - Now grabs the `ProcessName` instead of the `ClassName` to make reactivating the original window far more reliable
@@ -13,3 +10,4 @@
 
 ## > Other Changes
 - Minor changes to `SC03A & v` macro
+- Capitalised the output of `toolFind()`

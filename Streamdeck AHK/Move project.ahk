@@ -46,7 +46,7 @@ FileDelete(SelectedFolder "\*.pek")
 
 ;;this part will delete any cache files buried within premiere's appdata folder because its settings to do so automatically literally never work. this will only happen if the folder is larger than you set below (in GB)
 
-;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
+/* ;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
 largestSize := 15
 ;then below checks the size and deletes if too large
 FolderSize := 0
@@ -55,7 +55,7 @@ Loop Files, WhichFolder "\*.*", "R"
     FolderSize += A_LoopFileSize
 convert := FolderSize/"1073741824"
 if convert >= largestSize
-    FileDelete(A_AppData "\Adobe\Common\Media Cache Files\*.ims")
+    FileDelete(A_AppData "\Adobe\Common\Media Cache Files\*.ims") */
 
 ;;this part then moves your selected folder to the selected destination folder
 DirMove(SelectedFolder, Move "\" %&name%)

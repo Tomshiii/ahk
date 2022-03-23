@@ -11,7 +11,7 @@ DirCreate(SelectedFolder "\proxies")
 DirCreate(SelectedFolder "\audio")
 DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
 DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
-FileCopy(A_ScriptDir "\checklist.ahk", SelectedFolder)
+FileCopy("E:\Github\ahk\releases\checklist ahk draft\checklist.ahk", SelectedFolder)
 Run(SelectedFolder "\checklist.ahk")
 
 ;; This part then just opens the project folder

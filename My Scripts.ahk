@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.20
+;\\v2.10.21
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -164,7 +164,7 @@ updateChecker() {
 					}
 				}
 			else
-				goto main				
+				goto main
 		}
 	else if ignorebeta = "yes"
 		toolCust("You're using an outdated version of these scripts", "1000")
@@ -336,7 +336,7 @@ updateChecker() {
 					}
 				}
 			else
-				return				
+				return
 		}
 	else if ignore = "yes"
 		{
@@ -509,7 +509,7 @@ F22:: ;opens foobar, ensures the right playlist is selected, then makes it selec
 		{
 			MouseMove(%&xdir%, %&ydir%)
 			SendInput("{Click}")
-		}			
+		}
 	SendInput("!p" "a")
 	MouseMove(%&x%, %&y%)
 }
@@ -570,14 +570,14 @@ F14:: ;open the "show more options" menu in win11
 			;toolCust(colour "`n final else fired", "1000") ;for debugging
 			SendInput("{Esc}" "+{F10}")
 			return
-		}	
+		}
 }
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
 !a::vscode("635") ;clicks on the my scripts script in vscode
 ;vscodefuncHotkey;
-!f::vscode("580") ;clicks on my functions script in vscode 
+!f::vscode("580") ;clicks on my functions script in vscode
 ;vscodeqmkHotkey;
 !q::vscode("685") ;clicks on my qmk script in vscode
 ;vscodechangeHotkey;
@@ -736,7 +736,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
     } catch as e {
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
-    }	
+    }
 	;MouseMove 34, 917 ;location of the selection tool
 	if %&width% = 0 || %&height% = 0
 		{
@@ -783,6 +783,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 ;premprojectHotkey;
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
+	coords()
 	MouseGetPos(&xpos, &ypos)
 	KeyWait("Alt")
 	if GetKeyState("Ctrl", "P")
@@ -904,7 +905,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				errorLog(A_ThisHotkey, "Couldn't find the bin", A_LineNumber)
 				return
 			}
-	}		
+	}
 	coords()
 	MouseMove(%&xpos%, %&ypos%)
 	blockOff()
@@ -940,7 +941,7 @@ GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 ;discordHotkey;
-^+w:: ;this hotkey is to click the "discord" button in discord to access your dm's 
+^+w:: ;this hotkey is to click the "discord" button in discord to access your dm's
 {
 	if WinExist("ahk_exe Discord.exe")
 		{
