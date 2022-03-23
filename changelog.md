@@ -2,6 +2,10 @@
 
 ## > My Scripts
 - Added `adobeTemp()` to delete Adobe cache files on first startup if they're larger than a user determined amount; `15GB` by default
+- Fixed a few `ErrorLog` outputs
+
+## > Error Logs
+- Now grabs and displays a whole bunch of system information on first firing of the current day 
 
 ## > autosave
 - Now grabs the `ProcessName` instead of the `ClassName` to make reactivating the original window far more reliable

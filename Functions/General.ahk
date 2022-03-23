@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
-;\\v2.10.5
+;\\v2.10.6
 
 ; ===========================================================================================================================================
 ;
@@ -182,7 +182,7 @@ timeline(timeline, x1, x2, y1)
  
 ; ===========================================================================================================================================
 ;
-;		Error Log \\ Last updated: v2.10.4
+;		Error Log \\ Last updated: v2.10.6
 ;
 ; ===========================================================================================================================================
 /* errorLog()
@@ -197,9 +197,31 @@ errorLog(func, error, line)
     text := ""
     if not DirExist(A_WorkingDir "\Error Logs")
         DirCreate(A_WorkingDir "\Error Logs")
-    if FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-        start := "`n"
+    if not FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+        {
+            try {
+                ;These values can be found at the following link (and the other appropriate tabs) - https://docs.microsoft.com/en-gb/windows/win32/cimwin32prov/win32-process
+                For Process in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_Process")
+                    OSNameResult := Process.OSName
+                removePathPos := InStr(OSNameResult, "|",,, 1)
+                OSName := SubStr(OSNameResult, 1, removePathPos - 1)
+                For OperatingSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_OperatingSystem")
+                    OSArch := OperatingSystem.OSArchitecture
+                For Processor in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_Processor")
+                    CPU := Processor.Name
+                For ComputerSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_ComputerSystem")
+                    Logical := ComputerSystem.NumberOfLogicalProcessors
+                For ComputerSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_ComputerSystem")
+                    Response := ComputerSystem.TotalPhysicalMemory / "1073741824"
+                For OperatingSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_OperatingSystem")
+                    Response2 := OperatingSystem.FreePhysicalMemory / "1048576"
+                Memory := Round(Response, 2)
+                FreePhysMem := Round(Response2, 2)
+                time := A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "." A_MSec
+                start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ OS`n" A_Tab "\\ " OSName "`n" A_Tab "\\ " A_OSVersion "`n" A_Tab "\\ " OSArch "`n\\ CPU`n" A_Tab "\\ " CPU "`n" A_Tab "\\ Logical Processors - " Logical "`n\\ Total Physical Memory - " Memory "GB`n" A_Tab "\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
+            }
+        }
     if A_ScriptName = "QMK Keyboard.ahk"
         text := " (might be incorrect if launching macro from secondary keyboard)"
-    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" A_ScriptName "``" text ", Line: " %&line%, A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" A_ScriptName "``" text ", Line: " %&line% "`n", A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }

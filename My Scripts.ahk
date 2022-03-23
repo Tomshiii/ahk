@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.21
+;\\v2.10.22
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -627,7 +627,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 					WinActivate(title) ;reactivates the original window
 				} catch as e {
 					toolCust("Failed to get information on last active window", "1000")
-					errorLog(A_ThisFunc "()", "Failed to get information on last active window", A_LineNumber)
+					errorLog(A_ThisHotkey, "Failed to get information on last active window", A_LineNumber)
 				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 				return
@@ -735,7 +735,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
     } catch as e {
         toolCust("Couldn't find the ClassNN value", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+        errorLog(A_ThisHotkey, "Couldn't find the ClassNN value", A_LineNumber)
     }
 	;MouseMove 34, 917 ;location of the selection tool
 	if %&width% = 0 || %&height% = 0
