@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
-;\\v2.10.6
+;\\v2.10.7
 
 ; ===========================================================================================================================================
 ;
@@ -182,7 +182,7 @@ timeline(timeline, x1, x2, y1)
  
 ; ===========================================================================================================================================
 ;
-;		Error Log \\ Last updated: v2.10.6
+;		Error Log \\ Last updated: v2.10.7
 ;
 ; ===========================================================================================================================================
 /* errorLog()
@@ -204,7 +204,10 @@ errorLog(func, error, line)
                 For Process in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_Process")
                     OSNameResult := Process.OSName
                 removePathPos := InStr(OSNameResult, "|",,, 1)
-                OSName := SubStr(OSNameResult, 1, removePathPos - 1)
+                if removePathPos != 0
+                    OSName := SubStr(OSNameResult, 1, removePathPos - 1)
+                else
+                    OSName := OSNameResult
                 For OperatingSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_OperatingSystem")
                     OSArch := OperatingSystem.OSArchitecture
                 For Processor in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_Processor")
