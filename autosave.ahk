@@ -4,13 +4,21 @@ A_MaxHotkeysPerInterval := 2000
 TraySetIcon(A_WorkingDir "\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include Functions.ahk
 
-;This script will autosave your premire pro project every 7.5min since adobe refuses to actually do so. Thanks adobe.
+;This script will autosave your premire pro project every 7.5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 
 global Premiere := A_WorkingDir "\ImageSearch\Premiere\"
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT HERE
 minutes := 7.5
 global ms := minutes * 60000
+
+;SET THE AMOUNT OF SECONDS OF PRIOR KEYBOARD ACTIVITY YOU WANT THE SCRIPT TO USE TO STOP ITSELF FROM FIRING
+secondsIdle := 1.25
+global idle := secondsIdle * 1000
+
+;SET THE AMOUNT OF SECONDS YOU WANT THE SCRIPT TO WAIT BEFORE RETRYING TO SAVE AFTER THE ABOVE IDLE ACTIVITY STOP OCCURS
+secondsRetry := 10
+global retry := secondsRetry * 1000
 
 start:
 if WinExist("ahk_exe Adobe Premiere Pro.exe")
@@ -50,13 +58,19 @@ save()
     if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
 
+    if A_TimeIdleKeyboard <= idle
+        {
+            SetTimer(, -retry)
+            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in 10s", "3000")
+            goto end2
+        }
+
     stop := ""
     ToolTip("Your Premiere Pro project is being saved!`nHold tight!")
 
     ;\\ first we grab information on the active window
     try {
-        id := WinGetClass("A")
-        title := WinGetTitle("A")
+        id := WinGetProcessName("A")
     } catch as e {
         toolCust("couldn't grab active window", "1000")
         errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineNumber)
@@ -69,7 +83,8 @@ save()
             try {
                 WinActivate("ahk_exe Adobe Premiere Pro.exe")
                 sleep 500
-                ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+                SendInput(timelineWindow)
+                SendInput(timelineWindow)
             } catch as win {
                 toolCust("", "10")
             }
@@ -89,24 +104,26 @@ save()
             blockOff()
             toolCust("You're currently doing something`nautosave has be cancelled", "2000")
             try {
-                WinActivate(title)
+                WinActivate("ahk_exe " id)
             } catch as e {
                 toolCust("couldn't activate original window", "1000")
                 errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
             }
             SetTimer(, -ms)
+            goto end2
         }
 
     ;\\ Now we check to see if the user is playing back a video
-    if id = "Premiere Pro"
+    if id = "Adobe Premiere Pro.exe"
        try {
-            ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+            SendInput(timelineWindow)
+            SendInput(timelineWindow)
             SendInput(programMonitor)
             SendInput(programMonitor)
-            sleep 500
+            sleep 250
             toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
             ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-            sleep 500
+            sleep 250
             if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "stop.png")
                 {
                     toolCust("If you were playing back anything, this function should resume it", "1000")
@@ -121,6 +138,7 @@ save()
 
     ;\\ before finally saving
     SendInput("^s")
+    WinWait("Save Project")
     WinWaitClose("Save Project")
 
     ;\\ if ae is open we'll save it too
@@ -129,38 +147,47 @@ save()
             WinActivate("ahk_exe AfterFX.exe")
             sleep 500
             SendInput("^s")
+            sleep 250
             WinWaitClose("Save Project")
-            WinActivate("ahk_exe Adobe Premiere Pro.exe")
-            sleep 500
         }
+
+    ;\\ if the originally active window isn't premiere, we don't want to refocus it so we'll jump straight to the end
+    if id != "Adobe Premiere Pro.exe"
+        goto end
         
-    ;\\ now we refocus premiere
+    ;\\ if the orginally active window IS premiere, we now refocus premiere
     try {
-        ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-    } catch as win {
-        toolCust("", "10")
+        sleep 250
+        WinActivate("ahk_exe Adobe Premiere Pro.exe")
+    } catch as e {
+        toolCust("couldn't activate Premiere Pro", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
     }
-    sleep 1000
 
     ;\\ if a video was playing, we now start it up again
     if stop = "yes"
         {
+            sleep 250
             SendInput(timelineWindow)
             SendInput(timelineWindow)
+            sleep 100
             SendInput("{Space}")
+            blockOff()
+            ToolTip("")
+            SetTimer(, -ms) ;reset the timer
+            goto end2
         }
-    ;\\ before finally refocusing the original window
-    if not id = "Premiere Pro"
-        {
-            try {
-                WinActivate(title)
-            } catch as e {
-                toolCust("couldn't activate original window", "1000")
-                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
-            }
-        }
+    
+    end:
+    try {
+        WinActivate("ahk_exe " id) ;attempt to reactivate the original window
+    } catch as e {
+        toolCust("couldn't activate original window", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+    }
     blockOff()
     ToolTip("")
     SetTimer(, -ms) ;reset the timer
+    end2:
 }
 
