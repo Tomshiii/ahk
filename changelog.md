@@ -3,6 +3,7 @@
 ## > My Scripts
 - Added `adobeTemp()` to delete Adobe cache files on first startup if they're larger than a user determined amount; `15GB` by default
 - Fixed a few `ErrorLog` outputs
+- Change all `WheelLeft/WheelRight` to new `F{key}` assignments as LGHUB has recently broken those keys
 
 ## > Error Logs
 - Now grabs and displays a whole bunch of system information on first firing of the current day 
