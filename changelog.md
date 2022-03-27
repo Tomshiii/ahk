@@ -16,3 +16,4 @@
 ## > Other Changes
 - Minor changes to `SC03A & v` macro
 - Capitalised the output of `toolFind()`
+- `qss_firefox.ahk` scripts now check the active window during their loop to ensure the settings window gets activated
