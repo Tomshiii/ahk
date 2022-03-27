@@ -61,7 +61,7 @@ save()
     if A_TimeIdleKeyboard <= idle
         {
             SetTimer(, -retry)
-            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in 10s", "3000")
+            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
             goto end2
         }
 
