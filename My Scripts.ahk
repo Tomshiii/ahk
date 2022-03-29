@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.23
+;\\v2.10.24
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -972,15 +972,18 @@ RButton::moveWin("") ;minimise
 ;searchgoogleHotkey;
 ^+c:: ;runs a google search of highlighted text
 {
+	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
 	Send "^c"
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://www.google.com/search?d&q=" A_Clipboard
+	A_Clipboard := previous
 }
 
 ;capitaliseHotkey;
 SC03A & c:: ;capitilises highlighted text
 {
+	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
 	ClipWait ;waits for the clipboard to contain data
@@ -988,6 +991,7 @@ SC03A & c:: ;capitilises highlighted text
 	StringtoCapital := A_Clipboard
 	StringtoCapital := StrUpper(StringtoCapital)
 	SendInput(StringtoCapital)
+	A_Clipboard := previous
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
