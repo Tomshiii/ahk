@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.24
+;\\v2.10.25
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -521,7 +521,7 @@ F22:: ;opens foobar, ensures the right playlist is selected, then makes it selec
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
 ;explorerbackHotkey;
-F16::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
+F21::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 ;showmoreHotkey;
 F14:: ;open the "show more options" menu in win11
 {
@@ -707,9 +707,9 @@ Xbutton1::timeline("981", "550", "2542", "996") ;check the various Functions scr
 ;aeselectionHotkey;
 Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aepreviousframeHotkey;
-F16::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
+F21::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 ;aenextframeHotkey;
-F17::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
+F23::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 
 ;=============================================================================================================================================
 ;
@@ -917,9 +917,17 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;prempreviouseditHotkey;
-F16::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
+F21::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
 ;premnexteditHotkey;
-F17::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
+F23::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
+;playstopHotkey;
+F15::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse button
+;nudgeupHotkey;
+F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
+;premslowDownHotkey;
+F14 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
+;premspeedUpHotkey;
+F14 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
 ;premnudgedownHotkey;
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 ;premmousedrag1Hotkey;
@@ -1014,6 +1022,6 @@ F19 & XButton1::SendInput("^#{Left}")
 
 ;The below scripts are to skip ahead in the youtube player with the mouse
 ;youskipbackHotkey;
-F16::youMouse("j", "{Left}")
+F21::youMouse("j", "{Left}")
 ;youskipforHotkey;
-F17::youMouse("l", "{Right}")
+F23::youMouse("l", "{Right}")

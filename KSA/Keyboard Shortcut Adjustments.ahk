@@ -125,6 +125,13 @@ previousEditPoint := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere",
 nudgeDown := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Nudge Clip Down")
 
 /*
+ This value will send the keyboard shortcut you have set to nudge up clips on the timeline within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+nudgeUp := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Nudge Clip Up")
+
+/*
  This value will send the keyboard shortcut you have set to select the clip at playhead within Premiere
 
  Can be set within KSA.ahk/ini
@@ -159,6 +166,26 @@ playheadtoCursor := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", 
  */
 resetWorkspace := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "reset changes to workspace")
 
+/*
+ This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+speedUpPlayback := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "speed up playback")
+
+/*
+ This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+slowDownPlayback := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "slow down playback")
+
+/*
+ This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+playStop := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "play/stop")
 
 
 ;==Labels==
