@@ -1,5 +1,8 @@
 # <> Release 2.3.2.3
 
+## > Functions
+- Small adjustment to the formatting of system information in `errorLog()`
+
 ## > My Scripts
 - Clipboard macros (`^+c` & `SC03A & c`) now store the original value of the clipboard, then returns it at the end of the macro
 - Adjusted recent `F{key}` changes as they were conflicting with other hotkeys
