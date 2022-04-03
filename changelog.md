@@ -7,3 +7,4 @@
 
 ## > Other Changes
 - Added `convert mkv2mp3.ahk`
+- `autosave.ahk` will now reload itself if you have it paused but then close Premiere to stop the reminder message from appearing when it isn't required

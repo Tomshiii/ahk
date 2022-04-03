@@ -40,7 +40,10 @@ else
 			SetTimer(reminder, -ms)
 			reminder()
 			{
-				toolCust("Don't forget you have the autosave script paused!", "3000")
+                if WinExist("ahk_exe Adobe Premiere Pro.exe")
+				    toolCust("Don't forget you have the autosave script paused!", "3000")
+                else
+                    reload
 				SetTimer(, -ms)
 			}
 			return
