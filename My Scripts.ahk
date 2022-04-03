@@ -400,20 +400,14 @@ adobeTemp() {
 			try {
 				loop files, MediaCache "\*.*", "R"
 					FileDelete(A_LoopFileFullPath)
-			} catch {
-				errorLog(A_ThisFunc "()", "Loop failed to delete cache files", A_LineNumber)
 			}
 			try {
 				loop files, PeakFiles "\*.*", "R"
 					FileDelete(A_LoopFileFullPath)
-			} catch {
-				errorLog(A_ThisFunc "()", "Loop failed to delete cache files", A_LineNumber)
 			}
 			try {
 				loop files, AEFiles "\*.*", "R"
 					FileDelete(A_LoopFileFullPath)
-			} catch {
-				errorLog(A_ThisFunc "()", "Loop failed to delete cache files", A_LineNumber)
 			}
 		}
 }
