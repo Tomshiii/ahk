@@ -2,6 +2,7 @@
 
 ## > Functions
 - Small adjustment to the formatting of system information in `errorLog()`
+- Updated `collapse.png` for `vscode()`
 
 ## > My Scripts
 - Clipboard macros (`^+c` & `SC03A & c`) now store the original value of the clipboard, then returns it at the end of the macro
