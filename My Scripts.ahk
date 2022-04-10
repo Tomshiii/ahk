@@ -582,7 +582,7 @@ F14:: ;open the "show more options" menu in win11
 ;vscodemsHotkey;
 !a::vscode("635") ;clicks on the my scripts script in vscode
 ;vscodefuncHotkey;
-!f::vscode("580") ;clicks on my functions script in vscode
+!f::vscode("600") ;clicks on my functions script in vscode
 ;vscodeqmkHotkey;
 !q::vscode("685") ;clicks on my qmk script in vscode
 ;vscodechangeHotkey;
