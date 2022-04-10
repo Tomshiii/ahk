@@ -108,11 +108,12 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
     timeline6 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
     timeline7 := 0x28282E ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
 	playhead := 0x572523
+	playhead2 := 0xE64B3D
     MouseGetPos &xpos, &ypos
     Color := PixelGetColor(%&xpos%, %&ypos%)
     if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
         sendinput "^+a" ;this is deselect all by default within resolve
-    if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = playhead)
+    if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = playhead || Color = playhead2)
         {
             if GetKeyState("Rbutton", "P")
                 {
