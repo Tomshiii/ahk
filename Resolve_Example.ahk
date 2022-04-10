@@ -8,7 +8,7 @@ TraySetIcon(A_WorkingDir "\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.4
+;\\v2.2.5
 ;\\Minimum Version of "Resolve.ahk" Required for this script
 ;\\v2.9.4
 
@@ -95,40 +95,47 @@ F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/de
 ;		better timeline movement
 ;
 ;=========================================================
+;set the y value of your "seek bar" in resolve (the part of the timeline you can left click to move the playhead)
+timeline0 := 827
+;set colours
+timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
+timeline2 := 0x39393E ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
+timeline3 := 0x28282E ;the timeline color inside in/out points on a NON targeted track
+timeline4 := 0x1E1E22 ;the color of the bare timeline NOT inside the in out points
+timeline5 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
+timeline6 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+timeline7 := 0x28282E ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+playhead := 0x572523
+playhead2 := 0xE64B3D
 Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible. It will require you to set the y coordinate of your seek bar below as Resolve doesn't have a "move playhead to cursor" hotkey like premiere does
 {
-	;set the y value of your "seek bar" in resolve (the part of the timeline you can left click to move the playhead)
-	timeline := 827
-	;set colours
-	timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
-    timeline2 := 0x39393E ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
-    timeline3 := 0x28282E ;the timeline color inside in/out points on a NON targeted track
-    timeline4 := 0x1E1E22 ;the color of the bare timeline NOT inside the in out points
-    timeline5 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
-    timeline6 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
-    timeline7 := 0x28282E ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
-	playhead := 0x572523
-	playhead2 := 0xE64B3D
+    blockOn()
     MouseGetPos &xpos, &ypos
     Color := PixelGetColor(%&xpos%, %&ypos%)
-    if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
+    /* if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
         SendInput(resolveDeselect)
+        */
+        ;not sure if the above is really needed within resolve. I'm not entirely sure their purpose within premiere and as I don't use resolve I'm unsure of the edge case scenarios you'd run into where this may be necessary
     if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = playhead || Color = playhead2)
         {
             if GetKeyState("Rbutton", "P")
                 {
-                    blockOn()
-                    MouseMove(%&xpos%, timeline) ;this will warp the mouse to the top part of your timeline defined by &timeline
+                    
+                    MouseMove(%&xpos%, timeline0) ;this will warp the mouse to the top part of your timeline defined by &timeline
                     SendInput("{Click Down}")
                     MouseMove(%&xpos%, %&ypos%)
                     blockOff()
                     KeyWait(A_ThisHotkey)
                     SendInput("{Click Up}")
+                    return
                 }
             SendInput(resolveDeselect) ;in case you end up inside the "delete" right click menu from the timeline
+            blockOff()
+            return
         }
     else
         sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
+        blockOff()
 }
 ;=========================================================
 ;
