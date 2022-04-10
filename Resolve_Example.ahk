@@ -8,7 +8,7 @@ TraySetIcon(A_WorkingDir "\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.3
+;\\v2.2.4
 ;\\Minimum Version of "Resolve.ahk" Required for this script
 ;\\v2.9.4
 
@@ -112,7 +112,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
     MouseGetPos &xpos, &ypos
     Color := PixelGetColor(%&xpos%, %&ypos%)
     if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
-        sendinput "^+a" ;this is deselect all by default within resolve
+        SendInput(resolveDeselect)
     if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = playhead || Color = playhead2)
         {
             if GetKeyState("Rbutton", "P")
@@ -125,7 +125,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
                     KeyWait(A_ThisHotkey)
                     SendInput("{Click Up}")
                 }
-            Send("^+a") ;in case you end up inside the "delete" right click menu from the timeline
+            SendInput(resolveDeselect) ;in case you end up inside the "delete" right click menu from the timeline
         }
     else
         sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.

@@ -384,6 +384,12 @@ rotationProp := IniRead(location "\KSA\Keyboard Shortcuts.ini", "After Effects",
  */
 resolveSelectPlayhead := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Resolve", "Select at Playhead")
 
+/*
+ This value will send the keyboard shortcut you have set to select the clip at playhead within Resolve
+
+ Can be set within KSA.ahk/ini
+ */
+resolveDeselect := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Resolve", "Deselect all")
 
 
 
