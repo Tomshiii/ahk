@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.25
+;\\v2.10.26
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -374,9 +374,7 @@ adobeTemp() {
 	largestSize := 15
 
 	;first we set our counts to 0
-	MediaCacheSize := 0
-	PeakFilesSize := 0
-	AEFilesSize := 0
+	CacheSize := 0
 	;then we define some filepaths, MediaCahce & PeakFiles are Adobe defaults, AEFiles has to be set within after effects' cache settings
 	MediaCache := A_AppData "\Adobe\Common\Media Cache Files"
 	PeakFiles := A_AppData "\Adobe\Common\Peak Files"
@@ -385,18 +383,30 @@ adobeTemp() {
 
 	;now we check the listed directories and add up the size of all the files
 	Loop Files, MediaCache "\*.*", "R"
-		MediaCacheSize += A_LoopFileSize
+		{
+			cacheround := Round(CacheSize / 1073741824, 2)
+			ToolTip(A_LoopFileShortName " - " cacheround "/" largestSize "GB")
+			CacheSize += A_LoopFileSize
+		}
 	loop files, PeakFiles "\*.*", "R"
-		PeakFilesSize += A_LoopFileSize
+		{
+			cacheround := Round(CacheSize / 1073741824, 2)
+			ToolTip(A_LoopFileShortName " - " cacheround "/" largestSize "GB")
+			CacheSize += A_LoopFileSize
+		}
 	loop files, AEFiles "\*.*", "R"
-		AEFilesSize += A_LoopFileSize
-	total := MediaCacheSize + PeakFilesSize + AEFilesSize
-
+		{
+			cacheround := Round(CacheSize / 1073741824, 2)
+			ToolTip(A_LoopFileShortName " - " cacheround "/" largestSize "GB")
+			CacheSize += A_LoopFileSize
+		}
+	toolCust("Total Adobe cache size - " cacheround "/" largestSize "GB", "1500")
 	;then we convert that byte total to GB
-	convert := total/"1073741824"
+	convert := CacheSize/"1073741824"
 	;now if the total is bigger than the set number, we loop those directories and delete all the files
 	if convert >= largestSize
 		{
+			ToolTip(A_ThisFunc " is currently deleting temp files")
 			try {
 				loop files, MediaCache "\*.*", "R"
 					FileDelete(A_LoopFileFullPath)
@@ -409,6 +419,7 @@ adobeTemp() {
 				loop files, AEFiles "\*.*", "R"
 					FileDelete(A_LoopFileFullPath)
 			}
+			ToolTip("")
 		}
 }
 adobeTemp() ;runs the loop to delete cache files

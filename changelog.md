@@ -9,6 +9,7 @@
 - Adjusted recent `F{key}` changes as they were conflicting with other hotkeys
 - Added new hotkeys to manipulate playback within Premiere's timline using just the mouse
 - Removed `catch {}`'s from `adobeTemp()` as it was stopping the script from finishing
+- `adobeTemp()` now produces a tooltip when it runs to show how large your cache files total to
 
 ## > Other Changes
 - Added `convert mkv2mp3.ahk`
