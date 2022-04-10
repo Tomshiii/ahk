@@ -8,9 +8,9 @@ TraySetIcon(A_WorkingDir "\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.2
-;\\Minimum Version of "MS_Functions.ahk" Required for this script
-;\\v2.10
+;\\v2.2.3
+;\\Minimum Version of "Resolve.ahk" Required for this script
+;\\v2.9.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.2.2
@@ -29,33 +29,7 @@ TraySetIcon(A_WorkingDir "\Icons\resolve.png")
 ; ==================================================================================================
 #HotIf ;WinNotActive("ahk_exe Resolve.exe")
 
-;^!a:: Run "C:\Program Files (x86)\Notepad++\notepad++.exe", A_ScriptFullPath ;opens in notepad++ without needing to fully replace notepad with notepad++ (preferred)
-;best way to open this script if you don't use vscode
-
-;!a:: ;if for whatever reason you choose to use vscode instead of notepad++, use this version instead of above
-;{
-;	if WinExist("ahk_exe Code.exe") ;opens in vscode (how I edit it)
-;			WinActivate
-;	else
-;		Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe" ;opens in vscode (how I edit it)
-;}
-
-/* ;added functionality in my main script to reload all scripts
-^!r::
-{
-	Reload
-	Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
-	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
-	if Result = "Yes"
-	{
-		if WinExist("ahk_exe Code.exe")
-				WinActivate
-		else
-				Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
-	}
-}
-*/
+;any code you want to run all the time should go here
 
 ; ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -113,16 +87,48 @@ F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/de
 ;		Drag and Drop Effect Presets
 ;
 ;=========================================================
-!g::REffect("openfx", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track. Check MS_functions.ahk for the preset code
-; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords. x (80 in this example) will always remain the same, so just grab the new y coords and you've added a new macro
+!g::REffect("openfx", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track.
+; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords.
 
 ;=========================================================
 ;
-;		better timeline movement (don't use rightclick, you'll lose context menus)
+;		better timeline movement
 ;
 ;=========================================================
-XButton1::timeline("827", "856", "2550", "845") ;check MS_Functions.ahk for code
-
+Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible. It will require you to set the y coordinate of your seek bar below as Resolve doesn't have a "move playhead to cursor" hotkey like premiere does
+{
+	;set the y value of your "seek bar" in resolve (the part of the timeline you can left click to move the playhead)
+	timeline := 827
+	;set colours
+	timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
+    timeline2 := 0x39393E ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
+    timeline3 := 0x28282E ;the timeline color inside in/out points on a NON targeted track
+    timeline4 := 0x1E1E22 ;the color of the bare timeline NOT inside the in out points
+    timeline5 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
+    timeline6 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+    timeline7 := 0x28282E ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+	playhead := 0x572523
+    MouseGetPos &xpos, &ypos
+    Color := PixelGetColor(%&xpos%, %&ypos%)
+    if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
+        sendinput "^+a" ;this is deselect all by default within resolve
+    if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = playhead)
+        {
+            if GetKeyState("Rbutton", "P")
+                {
+                    blockOn()
+                    MouseMove(%&xpos%, timeline) ;this will warp the mouse to the top part of your timeline defined by &timeline
+                    SendInput("{Click Down}")
+                    MouseMove(%&xpos%, %&ypos%)
+                    blockOff()
+                    KeyWait(A_ThisHotkey)
+                    SendInput("{Click Up}")
+                }
+            Send("^+a") ;in case you end up inside the "delete" right click menu from the timeline
+        }
+    else
+        sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
+}
 ;=========================================================
 ;
 ;		gain

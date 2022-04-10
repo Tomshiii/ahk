@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.3
+;\\v2.9.4
 #Include General.ahk
 
 /* Rscale()
@@ -253,6 +253,11 @@ rflip(button)
             MouseMove(%&xn%, %&yn%)
             click
         }
+    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*5 " Resolve "inspector2.png")
+        {
+            MouseMove(%&xi%, %&yi%)
+            click
+        }
     if ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% ".png") ;searches for the button when it isn't activated already
         {
             MouseMove(%&xh%, %&yh%)
@@ -333,5 +338,6 @@ rgain(value)
     SendInput(gain)
     SendInput("{Enter}")
     MouseMove(%&xpos%, %&ypos%)
+    SendInput("{MButton}")
     blockOff()
 }
