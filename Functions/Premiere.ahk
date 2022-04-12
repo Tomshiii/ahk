@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.7
+;\\v2.9.8
 #Include General.ahk
 
 /* preset()
@@ -314,7 +314,7 @@ valuehold(filepath, optional)
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
         return
     }
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -727,7 +727,7 @@ movepreview()
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
     }
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -740,17 +740,39 @@ movepreview()
                     return
                 }
         }
-    if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion.png") ;moves to the motion tab
-            MouseMove(%&x% + "25", %&y%)
-    else
-        {
-            blockOff()
-            toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Couldn't find the motion tab", A_LineNumber)
-            KeyWait(A_ThisHotkey)
-            return
-        }
-    sleep 100
+    loop {
+        if A_Index > 1
+            {
+                ToolTip(A_Index)
+                SendInput(effectControls)
+                SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                try {
+                    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+                    ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+                } catch as e {
+                    toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
+                    errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
+                    MouseMove(%&xpos%, %&ypos%)
+                    return
+                }
+            }
+        if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion.png") ;moves to the motion tab
+                {
+                    MouseMove(%&x% + "25", %&y%)
+                    break
+                }
+        if A_Index > 3
+            {
+                blockOff()
+                toolFind("the image after " A_Index " attempts`nx " %&efx% "`ny " %&efy% "`nwidth " %&width% "`nheight " %&height%, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " %&efx% " ~~ y " %&efy% " ~~ width " %&width% " ~~ height " %&height%, A_LineNumber)
+                KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                MouseMove(%&xpos%, %&ypos%)
+                return
+            }
+        sleep 50
+    }
+    sleep 50
     if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
         { ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
             Click
@@ -778,6 +800,7 @@ movepreview()
             MouseMove(%&xpos%, %&ypos%)
             blockOff()
         }
+    ToolTip("")
 }
 
 /* reset()
