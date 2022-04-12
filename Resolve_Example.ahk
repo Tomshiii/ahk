@@ -120,7 +120,6 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
         {
             if GetKeyState("Rbutton", "P")
                 {
-                    
                     MouseMove(%&xpos%, timeline0) ;this will warp the mouse to the top part of your timeline defined by &timeline
                     SendInput("{Click Down}")
                     MouseMove(%&xpos%, %&ypos%)
