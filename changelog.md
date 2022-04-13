@@ -13,6 +13,7 @@
 - Updated `collapse.png` for `vscode()`
 - Updated `ImageSearch` images for `disc()`
 - `movepreview()` now loops trying to find the required image similar to `valuehold()`
+- `switchToDisc()` now checks to see if discord is maximised before attempting to move it into position
 
 ## > My Scripts
 - Clipboard macros (`^+c` & `SC03A & c`) now store the original value of the clipboard, then returns it at the end of the macro

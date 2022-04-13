@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.9
+;\\v2.9.10
 #Include General.ahk
 
 /*
@@ -71,15 +71,23 @@ switchToAE()
  */
 switchToDisc()
 {
+    move() { ;creating a function out of the winmove so you can easily adjust the value
+        WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe")
+    }
     if not WinExist("ahk_exe Discord.exe")
         {
             Run("C:\Users\Tom\AppData\Local\Discord\Update.exe --processStart Discord.exe")
             WinWait("ahk_exe Discord.exe")
-            WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe") ; I have discord on a certain monitor in a certain spot
+            if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
+                WinRestore() ;winrestore will unmaximise it
+            move() ;moves it into position after opening
         }
     else
         {
             WinActivate("ahk_exe Discord.exe")
+            if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
+                WinRestore() ;winrestore will unmaximise it
+            move() ; just incase it isn't in the right spot/fullscreened for some reason
             toolCust("Discord is now active", "500") ;this is simply because it's difficult to tell when discord has focus if it was already open
         }
 }
