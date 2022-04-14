@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.26
+;\\v2.10.27
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -400,7 +400,13 @@ adobeTemp() {
 			ToolTip(A_LoopFileShortName " - " cacheround "/" largestSize "GB")
 			CacheSize += A_LoopFileSize
 		}
-	toolCust("Total Adobe cache size - " cacheround "/" largestSize "GB", "1500")
+	if CacheSize > 0
+		toolCust("Total Adobe cache size - " cacheround "/" largestSize "GB", "1500")
+	else
+		{
+			toolCust("Total Adobe cache size - " CacheSize "/" largestSize "GB", "1500")
+			return
+		}
 	;then we convert that byte total to GB
 	convert := CacheSize/"1073741824"
 	;now if the total is bigger than the set number, we loop those directories and delete all the files
