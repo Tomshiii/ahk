@@ -139,7 +139,7 @@ disc(button)
             if ImageSearch(&x2, &y2, %&nx%, %&ny%/"3", %&width%, %&height%, "*2 " Discord "dm1.png")
                 {
                     loop {
-                            if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " Discord "DiscDirReply.bmp") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+                            if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
                                 {
                                     ;ToolTip("")
                                     MouseMove(%&xdir%, %&ydir%) ;moves to the @ location

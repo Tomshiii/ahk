@@ -44,7 +44,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 ## Explanation:
 
 #### [Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk](https://github.com/Tomshiii/ahk/tree/main/KSA)
-An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses it. You do NOT need to run this ahk file, it is [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in MS_Functions.ahk
+An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses it. You do NOT need to run this ahk file, it is [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in `Functions.ahk`
 
 #### [My Scripts.ahk](https://github.com/Tomshiii/ahk/blob/main/My%20Scripts.ahk)
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
@@ -72,7 +72,7 @@ func(variableX, variableY)
 We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
-A script that will automatically save an Adobe Premiere Pro project every 7.5min because Adobe's built in autosave is practically useless and fails to function a lot
+A script that will automatically save an Adobe Premiere Pro/After Effects project every 7.5min because Adobe's built in autosave is practically useless and fails to function a lot
 
 #### [premiere_fullscreen_check.ahk](https://github.com/Tomshiii/ahk/blob/main/premiere_fullscreen_check.ahk)
 A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts
@@ -100,5 +100,6 @@ Anytime a macro/script encounters an error it will be logged in a txt file in th
 
 Eg.
 ```
-18:05:10.403 // valueHold() encountered the following error: The user wasn't scrolled down
+15:58:38.367 // `audioDrag()` encountered the following error: "User hasn't opened the required bin"
+// Script: `My Scripts.ahk`, Line: 643
 ```

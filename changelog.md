@@ -27,6 +27,6 @@
 ## > Other Changes
 - Added `convert mkv2mp3.ahk`
 - `autosave.ahk` will now reload itself if you have it "paused" but then close Premiere to stop the reminder message from appearing when it isn't required
-- Fixed incorrect link in `readme.md`
+- Fixed incorrect link & lingering reference to an old script name in `readme.md`
 - Fixed `tiktok project.ahk` still containing old path
     - Updated all `ImageSearch` images for newer version of Premiere Pro
