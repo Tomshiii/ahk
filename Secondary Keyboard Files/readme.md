@@ -1,4 +1,4 @@
-###### **_it is not recommended to use these files on your own keyboard as that could in a best case scenario do nothing, but in a worst case break something. Do not flash these to your own board unless you know exactly what you're about to do, these files are here for my own backups and to provide credit for the contributions made by JivanYatra_**
+###### **_It is not recommended to use these files on your own keyboard as that could in a best case scenario do nothing, but in a worst case break something. Do not flash these to your own board unless you know exactly what you're about to do, these files are here for my own backups and to provide credit for the contributions made by JivanYatra_**
 
 # Info
 This folder contains all the files necessary to allow ***my*** secondary keyboard (Planck EZ Glow) to work alongside my main keyboard without stepping on its toes by wrapping each keystroke in an `F24` keystroke. This allows me to differentiate between the two keyboards with ahk.
@@ -26,4 +26,5 @@ k::func()
 # Contributions & Credits
 The files contained in this folder are the generous works of ***JivanYatra*** and without their kindness and help, I would still be stuck on a tiny little numpad. Huge thank you to them for all of their hard work as well as all the code and custom firmware to make it all happen.
 
-### Their github: > https://github.com/jivanyatra
+- Jivanyatra's github > https://github.com/jivanyatra
+- The repo containing information about this firmware > https://github.com/jivanyatra/planck_ez_glow_macros
