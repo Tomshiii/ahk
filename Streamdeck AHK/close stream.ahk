@@ -16,7 +16,7 @@ if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into fo
 			obsLocation()
 			coordmode "pixel", "window"
 			coordmode "mouse", "window"
-			MouseMove(880, 889)
+			MouseMove(900, 875)
 			click
 			MouseMove(%&x%, %&y%)
 		}

@@ -22,7 +22,7 @@ chatterinoLocationTomshi()
 
 streamelementsLocation()
 {
-	WinMove(3513,  -906, 974, 1047, "StreamElements - Activity feed")
+	WinMove(3513,  -936, 974, 1047, "StreamElements - Activity feed")
 }
 
 discordLocation()
