@@ -5,23 +5,18 @@ if not WinExist("ahk_exe obs64.exe")
 {
 	SetWorkingDir A_ScriptDir
 	SetWinDelay 0 ;makes windows move instantly
-	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
-	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-	/* if WinExist("autosave.ahk - AutoHotkey")
-		WinClose()
-	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
-		WinClose() */
 	Run('*RunAs ' location "\Stream\Streaming.ahk")
+	Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe")
 	Run("C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe")
 	Run("C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe")
-	Result := MsgBox("have you started the goxlr bruh",, "1 4096")
+	/* Result := MsgBox("have you started the goxlr bruh",, "1 4096")
 	if Result = "OK"
 		{
 			goto next
 		}
 	else
 		return
-	next:
+	next: */
 	Run(location "\shortcuts\obs64.lnk") ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate

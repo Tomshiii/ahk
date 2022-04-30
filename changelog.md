@@ -30,4 +30,5 @@
 - Fixed incorrect link & lingering reference to an old script name in `readme.md`
 - Fixed `tiktok project.ahk` still containing old path
     - Updated all `ImageSearch` images for newer version of Premiere Pro
+- Added `tiktok voice.ahk` to generate text to speech files using a python script created by [`oscie57`](https://github.com/oscie57/tiktok-voice)
 - Updated `Secondary Keyboard Files` by @JivanYatra
