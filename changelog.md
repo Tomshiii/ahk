@@ -1,4 +1,4 @@
-# <> Release 2.3.2.3
+# <> Release 2.3.3 - Stability Update
 
 ## > Resolve_Example
 - Added functionality similar to `right click premiere.ahk`
