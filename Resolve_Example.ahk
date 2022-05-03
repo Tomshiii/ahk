@@ -8,7 +8,7 @@ TraySetIcon(A_WorkingDir "\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.5
+;\\v2.2.6
 ;\\Minimum Version of "Resolve.ahk" Required for this script
 ;\\v2.9.4
 
@@ -95,8 +95,8 @@ F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/de
 ;		better timeline movement
 ;
 ;=========================================================
-;set the y value of your "seek bar" in resolve (the part of the timeline you can left click to move the playhead)
-timeline0 := 827
+;set the y value of your "seek bar" in resolve (the part of the timeline you can left click to move the playhead). Make this value the lowest possible pixel you can using the "Window" coordinate in WindowSpy
+timeline0 := 871
 ;set colours
 timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
 timeline2 := 0x39393E ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
@@ -109,8 +109,15 @@ playhead := 0x572523
 playhead2 := 0xE64B3D
 Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible. It will require you to set the y coordinate of your seek bar below as Resolve doesn't have a "move playhead to cursor" hotkey like premiere does
 {
+    coordw()
     blockOn()
     MouseGetPos &xpos, &ypos
+    if %&ypos% < timeline0
+        {
+            SendInput("{Rbutton}")
+            blockOff
+            return
+        }
     Color := PixelGetColor(%&xpos%, %&ypos%)
     /* if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
         SendInput(resolveDeselect)
