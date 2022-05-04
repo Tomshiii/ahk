@@ -35,7 +35,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ; Copyright (C) <2022>  <Tom Tomshi>
 ;
 ; You are free to modify this script to your own personal uses/needs, but you must follow the terms shown in the license file in the root directory of this repo (basically just keep source code available)
-; You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>
+; You should have received a copy of the GNU General Public License along with this script.  If not, see <https://www.gnu.org/licenses/>
 ;
 ; Please give credit to the foundation if you build on top of it, similar to how I have below, otherwise you're free to do as you wish
 ; Youtube playlist going through some of my AHK changes/updates (https://www.youtube.com/playlist?list=PL8txOlLUZiqXXr2PNOsNSXeCB1171lQ1b)

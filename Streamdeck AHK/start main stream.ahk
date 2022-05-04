@@ -106,7 +106,7 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 1500
 			coordmode("pixel", "Window")
 			coordmode("mouse", "Window")
-			MouseMove(1102, 129) ;moves mouse to click the start button
+			MouseMove(1102, 129, 3) ;moves mouse to click the start button
 			sleep 1000
 			SendInput("{Click}") ;required for brothers queue program for automatic mii wii playback
 			sleep 2000

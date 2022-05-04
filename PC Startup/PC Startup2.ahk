@@ -6,7 +6,8 @@ If not WinExist("ahk_exe StreamDeck.exe")
 if WinExist("ahk_exe Creative Cloud.exe")
     WinClose() ;closing these programs just pushes them into the hidden part of the taskbar, which is what I want
 if WinExist("ahk_exe GoXLR App.exe") ;I don't want the goxlr software open on startup because I don't have my goxlr turned on 24/7 and if you turn the goxlr on when the software is already open you have to change to a profile and back before it'll recognise what's going on
-    ProcessClose("GoXLR App.exe")
+    ;ProcessClose("GoXLR App.exe") ;new pc setup has forced me to power my goxlr off the same powerboard so closing it here is pointless
+    WinMinimize("ahk_exe GoXLR App.exe")
 if WinExist("ahk_exe StreamDeck.exe")
     WinClose() ;closing these programs just pushes them into the hidden part of the taskbar, which is what I want
 else

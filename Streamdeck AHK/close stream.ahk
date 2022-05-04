@@ -8,17 +8,16 @@ if not WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
 	Run("C:\Program Files\ahk\ahk\premiere_fullscreen_check.ahk") */
 if WinExist("Streaming.ahk")
 	WinClose(,,1)
-if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
+if WinExist("ahk_exe obs64.exe")
 		{
+			coords()
 			MouseGetPos(&x, &y)
 			WinActivate
 			sleep 50
 			obsLocation()
-			coordmode "pixel", "window"
-			coordmode "mouse", "window"
-			MouseMove(900, 875)
+			MouseMove(3440, 20, 2)
 			click
-			MouseMove(%&x%, %&y%)
+			MouseMove(%&x%, %&y%, 2)
 		}
 if WinExist("ahk_exe foobar2000.exe")
 	{
