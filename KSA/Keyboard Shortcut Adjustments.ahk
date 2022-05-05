@@ -187,6 +187,12 @@ slowDownPlayback := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", 
  */
 playStop := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "play/stop")
 
+/*
+ This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+ premIngest := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "ingest")
 
 ;==Labels==
 labelViolet := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Violet")
