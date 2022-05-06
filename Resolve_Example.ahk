@@ -95,8 +95,6 @@ F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/de
 ;		better timeline movement
 ;
 ;=========================================================
-;set the y value of your "seek bar" in resolve (the part of the timeline you can left click to move the playhead). Make this value the lowest possible pixel you can using the "Window" coordinate in WindowSpy
-timeline0 := 871
 ;set colours
 timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
 timeline2 := 0x39393E ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
@@ -109,10 +107,29 @@ playhead := 0x572523
 playhead2 := 0xE64B3D
 Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible. It will require you to set the y coordinate of your seek bar below as Resolve doesn't have a "move playhead to cursor" hotkey like premiere does
 {
+    scrub := 0
     coordw()
     blockOn()
     MouseGetPos &xpos, &ypos
-    if %&ypos% < timeline0
+    if ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png")
+        {
+            scrub := %&speakY% + 74
+            goto cont
+        }
+    else if ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
+        {
+            scrub := %&speakY% + 74
+            goto cont
+        }
+    else
+        {
+            blockOff()
+            toolCust("Couldn't find reference point for scrub bar", "2000")
+            errorLog(A_ThisHotkey, "Couldn't find reference point for scrub bar", A_LineNumber)
+            return
+        }
+    cont:
+    if %&ypos% < scrub
         {
             SendInput("{Rbutton}")
             blockOff
@@ -127,7 +144,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
         {
             if GetKeyState("Rbutton", "P")
                 {
-                    MouseMove(%&xpos%, timeline0) ;this will warp the mouse to the top part of your timeline defined by &timeline
+                    MouseMove(%&xpos%, scrub) ;this will warp the mouse to the top part of your timeline defined by &timeline
                     SendInput("{Click Down}")
                     MouseMove(%&xpos%, %&ypos%)
                     blockOff()

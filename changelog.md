@@ -6,6 +6,7 @@
 
 ## > Resolve_Example.ahk
 - Returned right click functionality when clicking on the scrubbing bar itself
+- Right click scrubbing will now work regardless of the position of the scrub bar
 
 ## > Other Changes
 - Fixed `New Premiere.ahk` to work with `Premiere v22.3.1`
