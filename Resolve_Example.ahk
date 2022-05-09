@@ -8,7 +8,7 @@ TraySetIcon(A_WorkingDir "\Icons\resolve.png")
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.2.6
+;\\v2.2.7
 ;\\Minimum Version of "Resolve.ahk" Required for this script
 ;\\v2.9.4
 
@@ -111,6 +111,12 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
     coordw()
     blockOn()
     MouseGetPos &xpos, &ypos
+    if not ImageSearch(&editx, &editY, 0, A_ScreenHeight / 2, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "edit.png")
+        {
+            SendInput("{RButton}")
+            blockOff()
+            return
+        }
     if ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png")
         {
             scrub := %&speakY% + 74
