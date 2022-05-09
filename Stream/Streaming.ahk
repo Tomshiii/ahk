@@ -44,7 +44,7 @@ F17:: ;Run "E:\Github\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboard sen
 		Run location "\TomSongQueueue\Builds\SongQueuer.exe"
 }
 
-F16::  ;temporary way to play full mii wii song using lioranboard
+F22::  ;temporary way to play full mii wii song using lioranboard
 {
 	songs := IniRead(location "\Stream\Streaming.ini", "Number", "Left")
 	IniWrite(songs + 1, location "\Stream\Streaming.ini", "Number", "Left")

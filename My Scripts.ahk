@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.28
+;\\v2.10.29
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -371,7 +371,7 @@ adobeTemp() {
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
 	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
-	largestSize := 30
+	largestSize := 45
 
 	;first we set our counts to 0
 	CacheSize := 0
@@ -507,7 +507,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 }
 ;streamfoobarHotkey;
-F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random
+^F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random
 {
 	run "C:\Program Files (x86)\foobar2000\foobar2000.exe" ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
 	WinWait("ahk_exe foobar2000.exe")
