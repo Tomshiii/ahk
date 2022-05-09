@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.29
+;\\v2.10.30
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -932,7 +932,7 @@ F21::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the 
 ;premnexteditHotkey;
 F23::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
 ;playstopHotkey;
-F15::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse button
+F18::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse button
 ;nudgeupHotkey;
 F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
 ;premslowDownHotkey;
