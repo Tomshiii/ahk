@@ -3,6 +3,8 @@
 ## > My Scripts
 - Increased the default size limit of `adobeTemp()` from `15GB` -> `45GB`
 - Added `SC03A & v` which makes all highlighted text lowercase
+- Added `#c` to centre the active window on the main display
+- Added `#f` to fullscreen the active window if it isn't already or release it from fullscreen if it is already
 
 ## > Resolve_Example.ahk
 - Returned right click functionality when clicking on the scrubbing bar itself

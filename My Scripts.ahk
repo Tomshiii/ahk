@@ -1026,6 +1026,45 @@ SC03A & v:: ;lowercases highlighted text
 	SendInput(StringtoLower)
 	A_Clipboard := previous
 }
+
+;centreHotkey;
+#c::
+{
+	try {
+		title := WinGetTitle("A")
+	} catch as e {
+		toolCust("Couldn't determine the active window", "1000")
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		return
+	}
+	if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
+		WinRestore(title) ;winrestore will unmaximise it
+	newWidth := 1600
+	newHeight := 900
+	newX := A_ScreenWidth / 2 - newWidth / 2
+	newY := newX / 2
+	; Move any window that's not the desktop
+	try{
+		WinMove(newX, newY, newWidth, newHeight, title)
+	}
+}
+
+;fullscreenHotkey;
+#f::
+{
+	try {
+		title := WinGetTitle("A")
+	} catch as e {
+		toolCust("Couldn't determine the active window", "1000")
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		return
+	}
+	if WinGetMinMax(title) = 0 ;a return value of 1 means it is maximised
+		WinMaximize(title) ;winrestore will unmaximise it
+	else
+		WinRestore(title)
+}
+
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
