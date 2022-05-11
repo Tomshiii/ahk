@@ -17,3 +17,4 @@
 - Fixed overlap of two `F16` keys
     - Updated `mouse settings.png` as it was quite outdated
 - Added `Fkeys used.xlsx` to keep track of where fkeys beyond `F12` are being used
+- Add keymap image to `\Secondary Keyboard Files` to show the current way to adjust the backlight of my current secondary keyboard
