@@ -1,5 +1,8 @@
 # <> Release 2.3.3.1 - 
 
+## > Functions
+- `disc()` now increases the `y` value it searches for buttons on each loop of ImageSearch as in some servers there will be many more options in the right click context menu depending on permissions the user has
+
 ## > My Scripts
 - Increased the default size limit of `adobeTemp()` from `15GB` -> `45GB`
 - Added `SC03A & v` which makes all highlighted text lowercase

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.12
+;\\v2.9.13
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -89,7 +89,7 @@ moveWin(key)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.9.10
+;		discord \\ Last updated: v2.9.13
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -105,6 +105,7 @@ disc(button)
 ;saturation; 70%
 ;ensure this function only fires if discord is active ( #HotIf WinActive("ahk_exe Discord.exe") ) - VERY IMPORTANT
 {
+    yheight := 400
     KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
     coordw()
     MouseGetPos(&x, &y)
@@ -114,12 +115,13 @@ disc(button)
     click("right") ;this opens the right click context menu on the message you're hovering over
     sleep 50 ;sleep required so the right click context menu has time to open
     loop {
-        if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + "400", "*2 " Discord %&button%) ;searches for the button you've requested
+        if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + yheight, "*2 " Discord %&button%) ;searches for the button you've requested
             {
                 MouseMove(%&xpos%, %&ypos%)
                 break
             }
         sleep 50
+        yheight += 100
         if A_Index > 4
             ToolTip(A_ThisFunc "() has attempted to find the desired button " A_Index " times")
         if A_Index > 10 ;after waiting over 0.5s the function will excecute the below

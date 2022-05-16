@@ -8,7 +8,8 @@ goxlr() {
     sleep 1000
     Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe")
     WinWait("ahk_exe GoXLR App.exe")
-    sleep 1000
+    WinActivate("ahk_exe GoXLR App.exe")
+    sleep 5000
     WinMinimize("ahk_exe GoXLR App.exe")
 }
 
