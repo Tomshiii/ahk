@@ -3,8 +3,8 @@ SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0
 #Include SD_functions.ahk
 
-;This version of the script (5th May, 2022) is designed for Premiere v22.3.1
-;Previous versions compatible with Premiere v22.3 cana be found in previous releases of this repo
+;This version of the script (from 5th May, 2022) is designed for Premiere v22.3.1
+;Previous versions compatible with Premiere v22.3 can be found in previous releases of this repo
 
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
@@ -47,6 +47,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 1000
                 WinActivate("ahk_exe Adobe Premiere Pro.exe")
                 SendInput(IB.Value) ;INSERT PROJECT NAME HERE
+                sleep 100
                 SendInput("{Tab}")
                 sleep 200
                 SendInput("{Space}")
