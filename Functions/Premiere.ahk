@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.8
+;\\v2.9.9
 #Include General.ahk
 
 /* preset()
@@ -708,6 +708,7 @@ wheelEditPoint(direction)
 {
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
+    KeyWait(A_ThisHotkey) ;prevents hotkey spam
 }
 
 /* movepreview()

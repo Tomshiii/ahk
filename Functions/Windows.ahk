@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.13
+;\\v2.9.14
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -260,7 +260,7 @@ discLocation()
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.9.11
+;		VSCode \\ Last updated: v2.9.14
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -276,7 +276,7 @@ vscode(script)
     coordw()
     blockOn()
     MouseGetPos(&x, &y)
-    if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png") ;this imagesearch is checking to ensure you're in the explorer tab
+    if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png") || ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer2.png") ;this imagesearch is checking to ensure you're in the explorer tab
         {
             MouseMove(%&xex%, %&yex%)
             SendInput("{Click}")
