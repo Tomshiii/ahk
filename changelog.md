@@ -13,6 +13,7 @@
 - Added `SC03A & v` which makes all highlighted text lowercase
 - Added `#c` to centre the active window on the main display
 - Added `#f` to fullscreen the active window if it isn't already or release it from fullscreen if it is already
+- `^AppsKey` now returns the original clipboard after completion
 
 ## > Resolve_Example.ahk
 `Right Click to scrub timeline` >>
@@ -24,6 +25,7 @@
 - Fixed `New Premiere.ahk` to work with `Premiere v22.3.1`
 - Added `GoXLR` Backups
 - Fixed overlap of two `F16` keys
+- Updated comments to be more explanitory
 
 `\Secondary Keyboard Files`
 - Updated `mouse settings.png` as it was quite outdated

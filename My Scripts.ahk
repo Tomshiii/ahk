@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.32
+;\\v2.10.33
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.7
 
@@ -59,7 +59,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ;				STARTUP
 ;
 ; =======================================================================================================================================
-;\\The function below will check what version you're running on startup
+/* updateChecker()
+ This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the main branch of the github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog. This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
+ */
 updateChecker() {
 	;checks if script was reloaded
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
@@ -354,7 +356,9 @@ updateChecker() {
 updateChecker() ;runs the update checker
 ;\\end of update checker
 
-;\\ Deleting ErrorLog files older than 30 days
+/*
+ This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
+ */
 oldError() {
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
@@ -365,8 +369,9 @@ oldError() {
 oldError() ;runs the loop to delete old log files
 ;\\ end of loop to delete old log files
 
-;\\ Deleting Adobe temp files when they're bigger than the specified amount (in GB)
-;Adobe's "max" limits are stupid and terrible, this function acts as a sanity check
+/*
+ This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check. It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder tree to the actual default or set it to a similar place
+ */
 adobeTemp() {
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
@@ -469,13 +474,13 @@ adobeTemp() ;runs the loop to delete cache files
 }
 
 ;suspenderHotkey;
-#+`::
+#+`:: ;this hotkey is to suspent THIS script. This is helpful when playing games as this script will try to fire and do whacky stuff while you're playing games
 {
 	if A_IsSuspended = 0
 		toolCust("you suspended hotkeys from the main script", "1000")
 	else
 		toolCust("you renabled hotkeys from the main script", "1000")
-	Suspend(-1) ;suspends this script. Useful when playing games as this script will try and do whacky stuff while gaming
+	Suspend(-1) ; toggle suspends this script.
 }
 #SuspendExempt false
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -485,15 +490,15 @@ adobeTemp() ;runs the loop to delete cache files
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf not GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
 ;windowspyHotkey;
-Pause::switchToWindowSpy() ;run windowspy
+Pause::switchToWindowSpy() ;run/swap to windowspy
 ;vscodeHotkey;
-RWin::switchToVSC() ;run vscode
+RWin::switchToVSC() ;run/swap to vscode
 ;streamdeckHotkey;
-ScrollLock::switchToStreamdeck() ;run the streamdeck program
+ScrollLock::switchToStreamdeck() ;run/swap to the streamdeck program
 ;taskmangerHotkey;
-PrintScreen::SendInput("^+{Esc}")
+PrintScreen::SendInput("^+{Esc}") ;open taskmanager
 ;excelHotkey;
-PgUp::switchToExcel()
+PgUp::switchToExcel() ;run/swap to excel
 
 ;These two scripts are to open highlighted text in the ahk documentation
 ;akhdocuHotkey;
@@ -501,13 +506,15 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 ;ahksearchHotkey;
 ^AppsKey:: ;opens highlighted ahk command in the documentation
 {
+	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
 	ClipWait ;waits for the clipboard to contain data
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
+	A_Clipboard := previous
 }
 ;streamfoobarHotkey;
-^F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random
+^F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random. This is for my stream.
 {
 	run "C:\Program Files (x86)\foobar2000\foobar2000.exe" ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
 	WinWait("ahk_exe foobar2000.exe")
@@ -536,6 +543,7 @@ F21::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 ;showmoreHotkey;
 F14:: ;open the "show more options" menu in win11
 {
+	;Keep in mind I use dark mode on win11. Things will be different in light mode/other versions of windows
 	MouseGetPos(&mx, &my)
 	WinGetPos(,, &width, &height, "A")
 	colour1 := 0x4D4D4D ;when hovering a folder
@@ -586,13 +594,13 @@ F14:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("635") ;clicks on the my scripts script in vscode
+!a::vscode("635") ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
-!f::vscode("600") ;clicks on my functions script in vscode
+!f::vscode("600") ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::vscode("685") ;clicks on my qmk script in vscode
+!q::vscode("685") ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
-!c::vscode("550") ;clicks on my changelog file in vscode
+!c::vscode("550") ;clicks on my `changelog` file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
