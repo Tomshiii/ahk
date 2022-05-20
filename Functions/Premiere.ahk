@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.9
+;\\v2.9.10
 #Include General.ahk
 
 /* preset()
@@ -19,8 +19,10 @@ preset(item)
         effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
         ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
     } catch as e {
+        blockOff()
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+        return
     }
     if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE - this if statement is code specific to text presets
         {
@@ -241,8 +243,10 @@ num(xval, yval, scale)
         effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
         ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
     } catch as e {
+        blockOff()
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+        return
     }
     ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
@@ -310,6 +314,7 @@ valuehold(filepath, optional)
         effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
         ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
     } catch as e {
+        blockOff()
         toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineNumber)
         return

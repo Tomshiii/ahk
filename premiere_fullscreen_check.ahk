@@ -48,9 +48,11 @@ check()
                             ;MsgBox(reference "`n" normal) ;debugging
                             if reference != normal
                                 {
+                                    blockOn()
                                     SendInput("!{Space}")
                                     sleep 50
                                     SendInput("x")
+                                    blockOff()
                                 }
                             SetTimer(, -fire) ;adds 10s to the timer and will check again after that time has elapsed
                         }

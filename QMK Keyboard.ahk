@@ -264,23 +264,23 @@ Enter::unassigned()
 ;Right::unassigned()
 
 p::aePreset("gaussian blur")
-SC027::aevaluehold(scaleProp, "scale", "0") ;check the keyboard shortcut ini file to adjust hotkeys
-/::aevaluehold(positionProp, "position", "0") ;check the keyboard shortcut ini file to adjust hotkeys
+SC027::aeScaleAndPos()
+/::unassigned()
 ;Up::unassigned()
 
 o::unassigned()
 l::unassigned()
-.::aevaluehold(positionProp, "position", "30") ;check the keyboard shortcut ini file to adjust hotkeys
+.::unassigned()
 ;Down::unassigned()
 
 i::unassigned()
-k::aevaluehold(rotationProp, "rotation", "30") ;check the keyboard shortcut ini file to adjust hotkeys
+k::unassigned()
 ,::unassigned()
 ;Left::unassigned()
 
 u::unassigned()
 j::unassigned()
-m::aevaluehold(opacityProp, "opacity", "0") ;check the keyboard shortcut ini file to adjust hotkeys
+m::unassigned()
 ;PgUp::unassigned()
 
 y::unassigned()

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.4
+;\\v2.9.5
 #Include General.ahk
 
 /* aevaluehold()
@@ -139,6 +139,54 @@ aePreset(preset)
     MouseMove(%&x2%, %&y2%)
     SendInput("{Click}")
     SendInput("^a" "+{BackSpace}" "{Enter}") ;deletes whatever was typed into the effects panel
+    MouseMove(%&x%, %&y%)
+    blockOff()
+}
+
+/* scaleAndPos()
+ This function is to quickly begin keyframing the scale & position values.
+ */
+aeScaleAndPos()
+{
+    KeyWait(A_ThisHotkey)
+    ;blockOn()
+    coords()
+    MouseGetPos(&x, &y)
+    colour := PixelGetColor(%&x%, %&y%) ;assigned the pixel colour at the mouse coords to the variable "colour"
+    if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
+        {
+            toolCust("you haven't selected a clip`nor aren't hovering the right spot", "1000")
+            errorLog(A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineNumber)
+            blockOff()
+            Exit
+        }
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+    }
+    ;ToolTip(efx ", " efy) ;debugging
+    SendInput(audioAE "s") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
+    sleep 200
+    if ImageSearch(&xscale, &yscale, %&x% - 200, %&y% - 40, %&x% + 500, %&y% + 50, "*2 " AE "scale.png")
+        goto next
+    else
+        {
+            blockOff()
+            toolFind("The Scale property", "1000")
+            errorLog(A_ThisFunc, "Couldn't find the Scale property", A_LineNumber)
+            return
+        }
+    next:
+    MouseMove(%&xscale%, %&yscale%)
+    SendInput("{Click}")
+    SendInput("p")
+    Sleep 50
+    SendInput("{Click}")
+    Sleep 50
+    SendInput("u" "u")
     MouseMove(%&x%, %&y%)
     blockOff()
 }
