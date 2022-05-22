@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.33
+;\\v2.10.34
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.8
 
@@ -66,130 +66,23 @@ updateChecker() {
 	;checks if script was reloaded
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
-	;if I ever choose to do beta release channels
-	/*
-	;beta release
-	ignorebeta := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
-	if ignorebeta = "no"
-		{
-			beta := ComObject("WinHttp.WinHttpRequest.5.1")
-			beta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
-			beta.Send()
-			beta.WaitForResponse()
-			string := beta.ResponseText
-			foundposbeta := InStr(string, 'v',,,3)
-			endposbeta := InStr(string, '"', , foundposbeta, 1)
-			endbeta := endposbeta - foundposbeta
-			global betaversion := SubStr(string, foundposbeta, endbeta)
-			;check if local version is the same as release
-			if VerCompare(MyReleaseBeta, betaversion) < 0
-				{
-					;grabbing changelog info
-					changebeta := ComObject("WinHttp.WinHttpRequest.5.1")
-					changebeta.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
-					changebeta.Send()
-					changebeta.WaitForResponse()
-					LatestChangeLogBeta := changebeta.ResponseText
-
-					;create gui
-					MyGuibeta := Gui("", "Scripts Release " betaversion)
-					MyGuibeta.SetFont("S11")
-					MyGuibeta.Opt("+Resize +MinSize600x400 +MaxSize600x400")
-					;set title
-					Title := MyGuibeta.Add("Text", "H40 W500", "New Scripts - Beta Release " betaversion)
-					Title.SetFont("S15")
-					;set download button
-					downloadbutt := MyGuibeta.Add("Button", "X445 Y350", "Download")
-					downloadbutt.OnEvent("Click", downbeta)
-					;set cancel button
-					cancelbutt := MyGuibeta.Add("Button", "Default X530 Y350", "Cancel")
-					cancelbutt.OnEvent("Click", closeguibeta)
-					;set changelog
-					ChangeLogbeta := MyGuibeta.Add("Edit", "X8 Y50 r18 -WantCtrlA ReadOnly w590")
-					;set "don't prompt again" checkbox
-					nopromptbeta := MyGuibeta.Add("Checkbox", "vNoPrompt X260 Y357", "Don't prompt for beta again")
-					nopromptbeta.OnEvent("Click", promptbeta)
-					;getting value for changelog
-					ChangeLogbeta.Value := LatestChangeLogBeta
-
-					MyGuibeta.Show()
-					promptbeta(*) {
-						if nopromptbeta.Value = 1
-							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
-						if nopromptbeta.Value = 0
-							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
-					}
-					downbeta(*) {
-						MyGuibeta.Opt("Disabled")
-						yousurebeta := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
-						if yousurebeta = "Cancel"
-							{
-								MyGuibeta.Opt("-Disabled")
-								return
-							}
-							MyGuibeta.Destroy()
-						downloadLocationbeta := FileSelect("D", , "Where do you wish to download Release " betaversion)
-						if downloadLocationbeta = ""
-							return
-						else
-							{
-								ToolTip("Updated scripts are downloading")
-								Download("https://github.com/Tomshiii/ahk/releases/download/" betaversion "/" betaversion ".zip", downloadLocationbeta "\" betaversion ".zip")
-								toolCust("Release " betaversion " of the scripts has been downloaded to " downloadLocationbeta, "3000")
-								run(downloadLocationbeta)
-								ToolTip("Your current scripts are being backed up!")
-								if DirExist(A_Temp "\" MyReleaseBeta)
-									DirDelete(A_Temp "\" MyReleaseBeta, 1)
-								if DirExist(A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta)
-									{
-										newbackupbeta := MsgBox("You already have a backup of Release " MyReleaseBeta "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
-										if newbackupbeta = "Yes"
-											DirDelete(A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta, 1)
-										else
-											return
-									}
-								try {
-									DirCopy(A_WorkingDir, A_Temp "\" MyReleaseBeta)
-									DirMove(A_Temp "\" MyReleaseBeta, A_WorkingDir "\Backups\Script Backups\" MyReleaseBeta, "1")
-									if DirExist(A_Temp "\" MyReleaseBeta)
-										DirDelete(A_Temp "\" MyReleaseBeta, 1)
-									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyReleaseBeta "' folder", "3000")
-								} catch as e {
-									toolCust("There was an error trying to backup your current scripts", "2000")
-								}
-								return
-							}
-					}
-					closeguibeta(*) {
-						MyGuibeta.Destroy()
-						return
-					}
-				}
-			else
-				goto main
-		}
-	else if ignorebeta = "yes"
-		toolCust("You're using an outdated version of these scripts", "1000")
-	else if ignorebeta = "stop"
-		return
-	else
-		toolCust("You put something else in the ignore.ini file you goose", "1000")
-	*/
 	main:
 	;release version
+	;Get the current release version from github
+	main := ComObject("WinHttp.WinHttpRequest.5.1")
+	main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
+	main.Send()
+	main.WaitForResponse()
+	string := main.ResponseText
+	foundpos := InStr(string, 'v',,,2)
+	endpos := InStr(string, '"', , foundpos, 1)
+	end := endpos - foundpos
+	global version := SubStr(string, foundpos, end)
+	toolCust("Current " A_ScriptName " Version = " MyRelease "`nCurrent Release = " version, "2000")
+	;checking to see if the user wishes to ignore updates
 	ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 	if ignore = "no"
 		{
-			;check if local version is the same as release
-			main := ComObject("WinHttp.WinHttpRequest.5.1")
-			main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
-			main.Send()
-			main.WaitForResponse()
-			string := main.ResponseText
-			foundpos := InStr(string, 'v',,,2)
-			endpos := InStr(string, '"', , foundpos, 1)
-			end := endpos - foundpos
-			global version := SubStr(string, foundpos, end)
 			if VerCompare(MyRelease, version) < 0
 				{
 					;grabbing changelog info
@@ -342,8 +235,18 @@ updateChecker() {
 		}
 	else if ignore = "yes"
 		{
-			toolCust("You're using an outdated version of these scripts", "1000")
-			errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineNumber)
+			if VerCompare(MyRelease, version) < 0
+				{
+					toolCust("You're using an outdated version of these scripts", "1000")
+					errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineNumber)
+					return
+				}
+			else
+				{
+					toolCust("This script will not prompt you with a download/changelog when a new version is available", "2000")
+					errorLog(A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineNumber)
+					return
+				}
 		}
 	else if ignore = "stop"
 		return
@@ -351,6 +254,7 @@ updateChecker() {
 		{
 			toolCust("You put something else in the ignore.ini file you goose", "1000")
 			errorLog(A_ThisFunc "()", "You put something else in the ignore.ini file you goose", A_LineNumber)
+			return
 		}
 }
 updateChecker() ;runs the update checker
@@ -375,6 +279,8 @@ oldError() ;runs the loop to delete old log files
 adobeTemp() {
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
+	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+		WinWaitClose("ahk_class tooltips_class32")
 	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
 	largestSize := 45
 
