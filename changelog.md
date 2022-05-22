@@ -1,4 +1,4 @@
-# <> Release 2.3.3.1 - 
+# <> Release 2.3.4 - Stability Update
 
 ## > Functions
 - `disc()` now increases the `y` value it searches for buttons on each loop of ImageSearch as in some servers there will be many more options in the right click context menu depending on permissions the user has

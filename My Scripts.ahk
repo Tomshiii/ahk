@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.3"
+global MyRelease := "v2.3.4"
 ;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 #SingleInstance Force
@@ -17,7 +17,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.10.33
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.7
+;\\v2.4.8
 
 ; ============================================================================================================================================
 ;
