@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.34
+;\\v2.11.0
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.8
 
@@ -78,7 +78,7 @@ updateChecker() {
 	endpos := InStr(string, '"', , foundpos, 1)
 	end := endpos - foundpos
 	global version := SubStr(string, foundpos, end)
-	toolCust("Current " A_ScriptName " Version = " MyRelease "`nCurrent Release = " version, "2000")
+	toolCust("Current " A_ScriptName " Version = " MyRelease "`nCurrent Github Release = " version, "2000")
 	;checking to see if the user wishes to ignore updates
 	ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 	if ignore = "no"
@@ -260,6 +260,48 @@ updateChecker() {
 updateChecker() ;runs the update checker
 ;\\end of update checker
 
+/* firstCheck()
+ This function checks to see if it is the first time you're running the script to then give you some general information regarding the script
+ */
+firstCheck() {
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+		return
+	if WinExist("Scripts Release " version)
+		WinWaitClose("Scripts Release " version)
+	first := IniRead(A_WorkingDir "\Support Files\ignore.ini", "First", "first", "yes")
+	if first != "yes"
+		return
+	else
+		{
+			MyGui := Gui("", "Scripts Release " MyRelease)
+			MyGui.SetFont("S11")
+			MyGui.Opt("-Resize AlwaysOnTop")
+			;set title
+			Title := MyGui.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
+			Title.SetFont("S15")
+			;text
+			text := MyGui.Add("Text", "W580 X8 Y50", "Congratulations!`nYou've gotten these scripts to load without any runtime errors! (hopefully).`nYou've taken the first step to really getting the most out of these scripts! (or you've just recently updated and intend on quickly dismissing this box).`nIf this is your first time running these scripts lets go over a few things.`nFirstly, at anytime press;")
+			text2 := MyGui.Add("Text", "W580 X8 Y147", "#{F1} (windows button + F1)") 
+			text2.SetFont("underline bold")
+			text3 := MyGui.Add("Text", "W580 X8 Y167", "To quickly pull up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!`n`nThe purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me. These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.`nAt anytime if you get stuck in a script press:")
+			text4 := MyGui.Add("Text", "W580 X8 Y397", "#+r (windows button + shift + r)") 
+			text4.SetFont("underline bold")
+			text5 :=MyGui.Add("Text", "W580 X8 Y417", "To refresh all scripts (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey). Alternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked")
+			;Mention that you can refresh at anytime using #+r
+
+			button := MyGui.Add("Button", "X525", "Close")
+			button.OnEvent("Click", close)
+			MyGui.OnEvent("Escape", close)
+			MyGui.OnEvent("Close", close)
+			close(*) {
+				IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "First", "first")
+				MyGui.Destroy()
+			}
+			MyGui.Show("AutoSize")
+		}
+}
+firstCheck()
+
 /*
  This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
  */
@@ -281,6 +323,8 @@ adobeTemp() {
 		return
 	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
 		WinWaitClose("ahk_class tooltips_class32")
+	if WinExist("Scripts Release " MyRelease)
+		WinWaitClose("Scripts Release " MyRelease)
 	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
 	largestSize := 45
 
@@ -341,7 +385,6 @@ adobeTemp() {
 }
 adobeTemp() ;runs the loop to delete cache files
 ;\\ end of loops to delete adobe cache files
-
 ;=============================================================================================================================================
 ;
 ;		Windows
@@ -377,6 +420,163 @@ adobeTemp() ;runs the loop to delete cache files
 				else
 					Run "C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe"
 			}
+}
+
+;activescriptsHotkey;
+#F1:: ;This hotkey pulls up a GUI that gives information regarding all current active scripts, as well as offering the ability to close/open any of them by simply unchecking/checking the corresponding box
+{
+	detect() {
+		DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
+		SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+	}
+	detect()
+	MyGui := Gui("", "Tomshi Scripts Release " MyRelease)
+	MyGui.SetFont("S11")
+	MyGui.Opt("-Resize AlwaysOnTop")
+	;nofocus
+	;add an invisible button since removing the default off all the others did nothing
+    removedefault := MyGui.Add("Button", "Default X0 Y0 w0 h0", "_")
+	;active scripts
+	text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
+	text.SetFont("S13")
+	if A_IsSuspended = 0
+		my := MyGui.Add("CheckBox", "Checked1", "My Scripts.ahk")
+	else
+		my := MyGui.Add("CheckBox", "Checked0", "My Scripts.ahk")
+	my.ToolTip := "Clicking this checkbox will toggle suspend the script"
+	my.OnEvent("Click", myClick)
+	if WinExist("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
+		alt := MyGui.Add("CheckBox", "Checked1", "Alt_menu_acceleration_DISABLER.ahk")
+	else
+		alt := MyGui.Add("CheckBox", "Checked0", "Alt_menu_acceleration_DISABLER.ahk")
+	alt.ToolTip := "Clicking this checkbox will open/close the script"
+	alt.OnEvent("Click", altClick)
+	if WinExist("autodismiss error.ahk - AutoHotkey")
+		autodis := MyGui.Add("CheckBox", "Checked1", "autodismiss error.ahk")
+	else
+		autodis := MyGui.Add("CheckBox", "Checked0", "autodismiss error.ahk")
+	autodis.ToolTip := "Clicking this checkbox will open/close the script"
+	autodis.OnEvent("Click", autodisClick)
+	if WinExist("autosave.ahk - AutoHotkey")
+		autosave := MyGui.Add("CheckBox", "Checked1", "autosave.ahk")
+	else
+		autosave := MyGui.Add("CheckBox", "Checked0", "autosave.ahk")
+	autosave.ToolTip := "Clicking this checkbox will open/close the script. Reopening it will restart the autosave timer"
+	autosave.OnEvent("Click", autosaveClick)
+	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+		premFull := MyGui.Add("CheckBox", "Checked1", "premiere_fullscreen_check.ahk")
+	else
+		premFull := MyGui.Add("CheckBox", "Checked0", "premiere_fullscreen_check.ahk")
+	premFull.ToolTip := "Clicking this checkbox will open/close the script"
+	premFull.OnEvent("Click", premFullClick)
+	if WinExist("QMK Keyboard.ahk - AutoHotkey")
+		qmk := MyGui.Add("CheckBox", "Checked1", "QMK Keyboard.ahk")
+	else
+		qmk := MyGui.Add("CheckBox", "Checked0", "QMK Keyboard.ahk")
+	qmk.ToolTip := "Clicking this checkbox will open/close the script"
+	qmk.OnEvent("Click", qmkClick)
+	if WinExist("Resolve_Example.ahk - AutoHotkey")
+		resolve := MyGui.Add("CheckBox", "Checked1", "Resolve_Example.ahk")
+	else
+		resolve := MyGui.Add("CheckBox", "Checked0", "Resolve_Example.ahk")
+	resolve.ToolTip := "Clicking this checkbox will open/close the script"
+	resolve.OnEvent("Click", resolveClick)
+
+	;images
+	myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Icons\myscript.png")
+	altImage := MyGui.Add("Picture", "w20 h-1 X275 Y57", A_WorkingDir "\Icons\error.ico")
+	autodisImage := MyGui.Add("Picture", "w20 h-1 X275 Y81", A_WorkingDir "\Icons\dismiss.ico")
+	autosaveImage := MyGui.Add("Picture", "w20 h-1 X275 Y105", A_WorkingDir "\Icons\save.ico")
+	premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y130", A_WorkingDir "\Icons\fullscreen.ico")
+	qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y154", A_WorkingDir "\Icons\keyboard.ico")
+	resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y177", A_WorkingDir "\Icons\resolve.png")
+
+	;the below code allows for the tooltips on hover
+	;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
+	OnMessage(0x0200, On_WM_MOUSEMOVE)
+	On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
+	{
+		static PrevHwnd := 0
+		if (Hwnd != PrevHwnd)
+		{
+			Text := "", ToolTip() ; Turn off any previous tooltip.
+			CurrControl := GuiCtrlFromHwnd(Hwnd)
+			if CurrControl
+			{
+				if !CurrControl.HasProp("ToolTip")
+					return ; No tooltip for this control.
+				Text := CurrControl.ToolTip
+				SetTimer () => ToolTip(Text), -1000
+				SetTimer () => ToolTip(), -4000 ; Remove the tooltip.
+			}
+			PrevHwnd := Hwnd
+		}
+	}
+	;below is all of the callback functions
+	myClick(*){
+		myVal := my.Value
+		if myVal = 1
+			Suspend(-1)
+		else
+			Suspend(-1)
+	}
+	qmkClick(*){
+		detect()
+		qmkVal := qmk.Value
+		if qmkVal = 1
+			Run(A_WorkingDir "\QMK Keyboard.ahk") ;this line can technically never happen but oh well
+		else
+			WinClose("QMK Keyboard.ahk - AutoHotkey")
+	}
+	resolveClick(*){
+		detect()
+		resolveVal := resolve.Value
+		if resolveVal = 1
+			Run(A_WorkingDir "\Resolve_Example.ahk") ;this line can technically never happen but oh well
+		else
+			WinClose("Resolve_Example.ahk - AutoHotkey")
+	}
+	autosaveClick(*){
+		detect()
+		autosaveVal := autosave.Value
+		if autosaveVal = 1
+			Run(A_WorkingDir "\autosave.ahk") ;this line can technically never happen but oh well
+		else
+			WinClose("autosave.ahk - AutoHotkey")
+	}
+	premFullClick(*){
+		detect()
+		premFullVal := premFull.Value
+		if premFullVal = 1
+			Run(A_WorkingDir "\premiere_fullscreen_check.ahk") ;this line can technically never happen but oh well
+		else
+			WinClose("premiere_fullscreen_check.ahk - AutoHotkey")
+	}
+	altClick(*){
+		detect()
+		altVal := alt.Value
+		if altVal = 1
+			Run(A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk") ;this line can technically never happen but oh well
+		else
+			WinClose("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
+	}
+	autodisClick(*){
+		detect()
+		autodisVal := autodis.Value
+		if autodisVal = 1
+			Run(A_WorkingDir "\autodismiss error.ahk") ;this line can technically never happen but oh well
+		else
+			WinClose("autodismiss error.ahk - AutoHotkey")
+	}
+	
+	MyGui.OnEvent("Escape", escape)
+	escape(*) {
+		MyGui.Destroy()
+	}
+
+	MyGui.Show("Center AutoSize")
+
+	;add images next to checkboxes
 }
 
 ;suspenderHotkey;

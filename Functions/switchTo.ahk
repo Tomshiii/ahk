@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.10
+;\\v2.9.11
 #Include General.ahk
 
 /*
@@ -372,7 +372,7 @@ musicGUI()
     MyGui := Gui("AlwaysOnTop", "Music to open?") ;creates our GUI window
     MyGui.SetFont("S10") ;Sets the size of the font
     MyGui.SetFont("W600") ;Sets the weight of the font (thickness)
-    MyGui.Opt("+Resize +MinSize260x120 +MaxSize260x120") ;Sets a minimum size for the window
+    MyGui.Opt("-Resize +MinSize260x120 +MaxSize260x120") ;Sets a minimum size for the window
     ;#now we define the elements of the GUI window
     ;defining AIMP
     aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", A_WorkingDir "\Support Files\images\aimp.png")
@@ -395,7 +395,7 @@ musicGUI()
     FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
     FOLDERGUI.OnEvent("Click", MUSICFOLDER)
     ;add an invisible button since removing the default off all the others did nothing
-    removedefault := MyGui.Add("Button", "Default Y155", "_")
+    removedefault := MyGui.Add("Button", "Default X0 Y0 W0 H0", "_")
     ;#finished with definitions
     MyGui.Show()
     ;below is what happens when you click on each name
