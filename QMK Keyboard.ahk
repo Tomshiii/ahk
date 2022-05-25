@@ -51,7 +51,7 @@ newWin(key, classorexe, activate, runval)
 		{
 			Run(%&runval%)
 			WinWait("ahk_" %&classorexe% . %&activate%)
-			WinActivate("ahk_" %&classorexe% . %&activate%) ;in win11 running explorer won't always activate it, so it'll open in the backround
+			WinActivate("ahk_" %&classorexe% . %&activate%) ;in win11 running things won't always activate it and will open in the backround
 		}
 	else
 		Run(%&runval%)

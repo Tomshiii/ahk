@@ -6,16 +6,16 @@ InstallKeybdHook */
 CoordMode "Pixel", "screen" */
 ;#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 
-; I NO LONGER RUN THIS SCRIPT SEPARATELY. I was running into issues with scripts loading after this one and it then breaking so to compensate I run it WITHIN the `My Scripts.ahk` so it never breaks
+; I NO LONGER RUN THIS SCRIPT SEPARATELY. I was running into issues with scripts loading after this one and it then breaking so to compensate I run it WITHIN the `My Scripts.ahk` so it never breaks -Tomshi
 
 
-; Please note this script was originally written by taran in ahk v1.1 so any of his comment ramblings will go on about code that won't function in ahk v2.0
+; Please note this script was originally written by taran in ahk v1.1 so any of his comment ramblings will go on about code that won't function in ahk v2.0 -Tomshi
 
 ;THIS IS A GREAT FIRST SCRIPT FOR AHK NOOBS! IT WORKS WITH VERY LITTLE SETUP. JUST READ THE STUFF BELOW! YAY! 
 ;VIDEO EXPLANATION:  https://youtu.be/O6ERELse_QY?t=23m40s
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; NOTE THAT YOU MUST ASSIGN \ (backslash) to "Move playhead to cursor" in Premiere's keyboard shortcuts panel! and set it up within KSA
+; NOTE THAT YOU MUST ASSIGN "Move playhead to cursor" in Premiere's keyboard shortcuts panel as well as "Playhead to Cursor" in KSA.ini in this directory to the same thing for this script to function properly! -Tomshi
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ;NOTE: This does not, and cannot work on the timeline where there are no tracks visible.
@@ -38,7 +38,6 @@ timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN t
 timeline8 := 0x202020
 
 #HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
-;HotIfWinActive "ahk_exe Adobe Premiere Pro.exe" ;exact name was gotten from windowspy
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
 
 Rbutton::
@@ -56,10 +55,20 @@ if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timel
 			{
 			loop
 				{
+					static left := 0
 					SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 					sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
+					if GetKeyState("LButton", "P") ;this code and the check below are additions by Tomshi
+						left := 1
 					if not GetKeyState("Rbutton", "P")
-						return
+						{
+							if left = 1 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
+								{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
+									SendInput(playStop)
+									left := 0
+								}
+							return
+						}
 				}
 			}
 		Send("{Escape}") ;in case you end up inside the "delete" right click menu from the timeline

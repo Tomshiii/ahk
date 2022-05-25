@@ -16,6 +16,7 @@
 
 ## > Other Changes
 - Small changes to `musicGUI()`
+- Pressing `Lbutton` during the use of `right click premiere.ahk` will now begin playback on the timeline once you've finished moving the playhead
 
 `premiere_fullscreen_check.ahk`
 - Default fire rate changed from `10s` to `5s`

@@ -22,7 +22,7 @@ switchToExplorer()
 }
 
 /*
- This function when called will close all windows of the desired program EXCEPT the active one. Helpful when you accidentally have way too many windows explorer windows open.
+ This function when called will close all windows of the desired program EXCEPT the active one. Helpful when you accidentally have way too many windows open.
  @param program is the ahk_class or ahk_exe of the program you want this function to close
  */
 closeOtherWindow(program)
