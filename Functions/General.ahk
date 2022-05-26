@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
-;\\v2.10.7
+;\\v2.10.8
 
 ; ===========================================================================================================================================
 ;
@@ -103,7 +103,7 @@ blockOff()
  
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.9
+;		Mouse Drag \\ Last updated: v2.10.8
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
@@ -113,6 +113,8 @@ blockOff()
   */
 mousedrag(tool, toolorig)
 {
+    if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
+        return
     again()
     {
         if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time

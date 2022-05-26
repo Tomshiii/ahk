@@ -56,16 +56,25 @@ if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timel
 			loop
 				{
 					static left := 0
+					static xbutton := 0
 					SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 					sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
 					if GetKeyState("LButton", "P") ;this code and the check below are additions by Tomshi
 						left := 1
+					if GetKeyState("XButton2", "P") ;this code and the check below are additions by Tomshi
+						{
+							xbutton := 1
+							left := 1
+						}
 					if not GetKeyState("Rbutton", "P")
 						{
-							if left = 1 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
+							if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
 								{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
 									SendInput(playStop)
+									if xbutton > 0 ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
+										SendInput(speedUpPlayback)
 									left := 0
+									xbutton := 0
 								}
 							return
 						}
