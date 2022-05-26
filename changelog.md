@@ -24,7 +24,6 @@ This release is focused around improving the experience of first time users of m
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
 - Pressing `XButton2` while holding down `RButton` will begin sped up playback once you've finished moving the playhead
     - mousedrag() was updated to allow for this change
-    - `F14 & F21::` & `F14 & F23::` hotkeys changed to `XButton2 & F21/23::` respectively for consistency with the above change
 
 `premiere_fullscreen_check.ahk`
 - Default fire rate changed from `10s` to `5s`
