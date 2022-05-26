@@ -268,11 +268,11 @@ firstCheck() {
 		return
 	if WinExist("Scripts Release " version)
 		WinWaitClose("Scripts Release " version)
-	first := IniRead(A_WorkingDir "\Support Files\ignore.ini", "First", "first", "yes")
-	if first != "yes"
+	if FileExist(A_Temp "\tomshi\first.txt") ;how the function tracks whether this is the first time the user is running the script or not
 		return
 	else
 		{
+			DirCreate(A_Temp "\tomshi")
 			MyGui := Gui("", "Scripts Release " MyRelease)
 			MyGui.SetFont("S11")
 			MyGui.Opt("-Resize AlwaysOnTop")
@@ -280,13 +280,13 @@ firstCheck() {
 			Title := MyGui.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
 			Title.SetFont("S15")
 			;text
-			text := MyGui.Add("Text", "W580 X8 Y50", "Congratulations!`nYou've gotten these scripts to load without any runtime errors! (hopefully).`nYou've taken the first step to really getting the most out of these scripts! (or you've just recently updated and intend on quickly dismissing this box).`nIf this is your first time running these scripts lets go over a few things.`nFirstly, at anytime press;")
-			text2 := MyGui.Add("Text", "W580 X8 Y147", "#{F1} (windows button + F1)") 
+			text := MyGui.Add("Text", "W580 X8 Y50", "Congratulations!`nYou've gotten these scripts to load without any runtime errors! (hopefully).`nYou've taken the first step to really getting the most out of these scripts!, lets go over a few things.`nFirstly, at anytime press;")
+			text2 := MyGui.Add("Text", "W580 X8 Y124", "#{F1} (windows button + F1)") 
 			text2.SetFont("underline bold")
-			text3 := MyGui.Add("Text", "W580 X8 Y167", "To quickly pull up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!`n`nThe purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me. These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.`nAt anytime if you get stuck in a script press:")
-			text4 := MyGui.Add("Text", "W580 X8 Y397", "#+r (windows button + shift + r)") 
+			text3 := MyGui.Add("Text", "W580 X8 Y147", "To quickly pull up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!`n`nThe purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me. These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.`nAt anytime if you get stuck in a script press:")
+			text4 := MyGui.Add("Text", "W580 X8 Y377", "#+r (windows button + shift + r)") 
 			text4.SetFont("underline bold")
-			text5 :=MyGui.Add("Text", "W580 X8 Y417", "To refresh all scripts (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey). Alternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked")
+			text5 :=MyGui.Add("Text", "W580 X8 Y397", "To refresh all scripts (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey). Alternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked")
 			;Mention that you can refresh at anytime using #+r
 
 			button := MyGui.Add("Button", "X525", "Close")
@@ -294,7 +294,7 @@ firstCheck() {
 			MyGui.OnEvent("Escape", close)
 			MyGui.OnEvent("Close", close)
 			close(*) {
-				IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "First", "first")
+				FileAppend("", A_Temp "\tomshi\first.txt")
 				MyGui.Destroy()
 			}
 			MyGui.Show("AutoSize")
@@ -325,6 +325,10 @@ adobeTemp() {
 		WinWaitClose("ahk_class tooltips_class32")
 	if WinExist("Scripts Release " MyRelease)
 		WinWaitClose("Scripts Release " MyRelease)
+	if FileExist(A_Temp "\tomshi\adobe\" A_YDay)
+		return
+	if not DirExist(A_Temp "\tomshi\adobe")
+		DirCreate(A_Temp "\tomshi\adobe")
 	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
 	largestSize := 45
 
@@ -382,6 +386,14 @@ adobeTemp() {
 			}
 			ToolTip("")
 		}
+	if DirExist(A_Temp "\tomshi\adobe")
+		{
+			try {
+				loop files, A_Temp "\tomshi\adobe\*.*"
+					FileDelete(A_LoopFileFullPath)
+			}
+		}
+	FileAppend("", A_Temp "\tomshi\adobe\" A_YDay)
 }
 adobeTemp() ;runs the loop to delete cache files
 ;\\ end of loops to delete adobe cache files
