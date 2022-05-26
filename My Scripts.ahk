@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.2
+;\\v2.11.3
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.8
 
@@ -1061,9 +1061,9 @@ F18::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse b
 ;nudgeupHotkey;
 F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
 ;premslowDownHotkey;
-F14 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
+Xbutton2 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
 ;premspeedUpHotkey;
-F14 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
+XButton2 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
 ;premnudgedownHotkey;
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 ;premmousedrag1Hotkey;
