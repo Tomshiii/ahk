@@ -6,7 +6,8 @@ if not WinExist("ahk_exe obs64.exe")
 	SetWorkingDir A_ScriptDir
 	SetWinDelay 0 ;makes windows move instantly
 	Run('*RunAs ' location "\Stream\Streaming.ahk")
-	Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe")
+	if not WinExist("ahk_exe GoXLR App.exe")
+		Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe")
 	Run("C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe")
 	Run("C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe")
 	/* Result := MsgBox("have you started the goxlr bruh",, "1 4096")

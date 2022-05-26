@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.0
+;\\v2.11.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.8
 
@@ -490,6 +490,10 @@ adobeTemp() ;runs the loop to delete cache files
 	premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y130", A_WorkingDir "\Icons\fullscreen.ico")
 	qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y154", A_WorkingDir "\Icons\keyboard.ico")
 	resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y177", A_WorkingDir "\Icons\resolve.png")
+
+	;close button
+	closeButton := MyGui.Add("Button", "X245", "Close")
+	closeButton.OnEvent("Click", escape)
 
 	;the below code allows for the tooltips on hover
 	;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
