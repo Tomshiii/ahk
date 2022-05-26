@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.1
+;\\v2.11.2
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.8
 
@@ -162,9 +162,6 @@ updateChecker() {
 					;set "don't prompt again" checkbox
 					noprompt := MyGui.Add("Checkbox", "vNoPrompt X300 Y357", "Don't prompt again")
 					noprompt.OnEvent("Click", prompt)
-					;set "beta alerts" checkbox
-					;nobetaprompt := MyGui.Add("Checkbox", "vnobetaprompt X120 Y357", "Get Beta Release alerts")
-					;nobetaprompt.OnEvent("Click", betaprompt)
 					;getting value for changelog
 					ChangeLog.Value := LatestChangeLog
 
@@ -175,14 +172,6 @@ updateChecker() {
 						if noprompt.Value = 0
 							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 					}
-					/*
-					betaprompt(*) {
-						if nobetaprompt.Value = 1
-							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
-						if nobetaprompt.Value = 0
-							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "betaignore")
-					}
-					*/
 					down(*) {
 						MyGui.Opt("Disabled")
 						yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
@@ -268,11 +257,11 @@ firstCheck() {
 		return
 	if WinExist("Scripts Release " version)
 		WinWaitClose("Scripts Release " version)
-	if FileExist(A_Temp "\tomshi\first.txt") ;how the function tracks whether this is the first time the user is running the script or not
+	if FileExist(A_Temp "\tomshi\first") ;how the function tracks whether this is the first time the user is running the script or not
 		return
 	else
 		{
-			DirCreate(A_Temp "\tomshi")
+			DirCreate(A_Temp "\tomshi") ;creates the directory we'll need later
 			MyGui := Gui("", "Scripts Release " MyRelease)
 			MyGui.SetFont("S11")
 			MyGui.Opt("-Resize AlwaysOnTop")
@@ -294,7 +283,7 @@ firstCheck() {
 			MyGui.OnEvent("Escape", close)
 			MyGui.OnEvent("Close", close)
 			close(*) {
-				FileAppend("", A_Temp "\tomshi\first.txt")
+				FileAppend("", A_Temp "\tomshi\first") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
 				MyGui.Destroy()
 			}
 			MyGui.Show("AutoSize")
@@ -323,11 +312,11 @@ adobeTemp() {
 		return
 	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
 		WinWaitClose("ahk_class tooltips_class32")
-	if WinExist("Scripts Release " MyRelease)
+	if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
 		WinWaitClose("Scripts Release " MyRelease)
-	if FileExist(A_Temp "\tomshi\adobe\" A_YDay)
+	if FileExist(A_Temp "\tomshi\adobe\" A_YDay) ;checks to see if the function has already run today
 		return
-	if not DirExist(A_Temp "\tomshi\adobe")
+	if not DirExist(A_Temp "\tomshi\adobe") ;ensures the directory we need already exists
 		DirCreate(A_Temp "\tomshi\adobe")
 	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
 	largestSize := 45
@@ -393,7 +382,7 @@ adobeTemp() {
 					FileDelete(A_LoopFileFullPath)
 			}
 		}
-	FileAppend("", A_Temp "\tomshi\adobe\" A_YDay)
+	FileAppend("", A_Temp "\tomshi\adobe\" A_YDay) ;tracks the day so it will not run again today
 }
 adobeTemp() ;runs the loop to delete cache files
 ;\\ end of loops to delete adobe cache files
@@ -934,7 +923,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 	SendInput(resetWorkspace)
 	sleep 1500
-	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;brings focus to premiere's timeline so the below activation of the project window DEFINITELY happens
+	SendInput(timelineWindow) ;adjust this shortcut in the ini file
+	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	coordw()
 	sleep 100
@@ -958,14 +948,19 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			return
 		}
 	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN) ;debugging
-	blockOn()
+	;blockOn()
+	sanity := WinGetPos(&sanX, &sanY,,, "A") ;if you have this panel on a different monitor ahk won't be able to find it because of premiere weirdness so this value will be used in some fallback code down below
 	if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project.png") ;searches for the project window to grab the track
 		goto move
 	else if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
 		goto move
 	else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
 		goto bin
-	else ;if everything fails, this else will trigger
+	else if ImageSearch(&prx, &pry, %&sanX% - "5", %&sanY% - "20", %&sanX% + "1000", %&sanY% + "100", "*2 " Premiere "project.png") ;This is the fallback code if you have it on a different monitor
+		goto move
+	else if ImageSearch(&prx, &pry, %&sanX% - "5", %&sanY% - "20", %&sanX% + "1000", %&sanY% + "100", "*2 " Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
+		goto move
+	else
 		{
 			blockOff()
 			toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for

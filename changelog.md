@@ -9,6 +9,7 @@ This release is focused around improving the experience of first time users of m
 - Fixed tooltips in the scenario that the user has selected `don't prompt again`
 - Removed code relating to `beta` releases. Outdated and no signs of use
 - Shows a tooltip when run showing the current script version as well as the current release version on github
+- `RAlt & p` can now find the project window even if it's on another display
 
 `adobeTemp()`
 - Now waits for all tooltips to be expired before beginning
