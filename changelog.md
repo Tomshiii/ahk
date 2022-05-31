@@ -24,7 +24,7 @@ This release is focused around improving the experience of first time users of m
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
 - Pressing `XButton2` while holding down `RButton` will begin sped up playback once you've finished moving the playhead
-    - mousedrag() was updated to allow for this change
+    - `mousedrag()` was updated to allow for this change
 
 `premiere_fullscreen_check.ahk`
 - Default fire rate changed from `10s` to `5s`

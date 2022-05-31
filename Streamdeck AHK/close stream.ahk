@@ -8,7 +8,7 @@ if not WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
 	Run("C:\Program Files\ahk\ahk\premiere_fullscreen_check.ahk") */
 if WinExist("Streaming.ahk")
 	WinClose(,,1)
-MsgBox("TURN OFF YOUR CAMERA", "CAMERA", "4096")
+MsgBox("TURN OFF YOUR CAMERA", "CAMERA", "16 4096")
 if WinExist("ahk_exe obs64.exe")
 		{
 			coords()

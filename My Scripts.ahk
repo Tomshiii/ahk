@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.3
+;\\v2.11.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.8
 
@@ -253,6 +253,7 @@ updateChecker() ;runs the update checker
  This function checks to see if it is the first time you're running the script to then give you some general information regarding the script
  */
 firstCheck() {
+	;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
 	if WinExist("Scripts Release " version)
@@ -269,22 +270,61 @@ firstCheck() {
 			Title := MyGui.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
 			Title.SetFont("S15")
 			;text
-			text := MyGui.Add("Text", "W580 X8 Y50", "Congratulations!`nYou've gotten these scripts to load without any runtime errors! (hopefully).`nYou've taken the first step to really getting the most out of these scripts!, lets go over a few things.`nFirstly, at anytime press;")
-			text2 := MyGui.Add("Text", "W580 X8 Y124", "#{F1} (windows button + F1)") 
-			text2.SetFont("underline bold")
-			text3 := MyGui.Add("Text", "W580 X8 Y147", "To quickly pull up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!`n`nThe purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me. These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.`nAt anytime if you get stuck in a script press:")
-			text4 := MyGui.Add("Text", "W580 X8 Y377", "#+r (windows button + shift + r)") 
-			text4.SetFont("underline bold")
-			text5 :=MyGui.Add("Text", "W580 X8 Y397", "To refresh all scripts (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey). Alternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked")
-			;Mention that you can refresh at anytime using #+r
+			text := MyGui.Add("Text", "W580 X8", "Congratulations!`nYou've gotten my main script to load without any runtime errors! (hopefully).`nYou've taken the first step to really getting the most out of these scripts!")
+			text2 := MyGui.Add("Text", "W580 X8", "The purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.`nThese scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.")
 
-			button := MyGui.Add("Button", "X525", "Close")
-			button.OnEvent("Click", close)
+			hotkeysButton := MyGui.Add("Button", "X400 Y300", "Handy Hotkeys")
+			hotkeysButton.OnEvent("Click", hotkeysPage)
+
+			closeButton := MyGui.Add("Button", "X525 Y300", "Close")
+			closeButton.OnEvent("Click", close)
+			
 			MyGui.OnEvent("Escape", close)
 			MyGui.OnEvent("Close", close)
+			
 			close(*) {
 				FileAppend("", A_Temp "\tomshi\first") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
 				MyGui.Destroy()
+			}
+			hotkeysPage(*) {
+				hotkeysButton.Opt("+Disabled")
+				backButton := MyGui.Add("Button", "X8 Y300", "Back")
+				backButton.OnEvent("Click", back)
+
+				text.Text := "#{F1} (windows button + F1)"
+				text.Move(,,, "20")
+				text.SetFont("underline bold")
+				texttwo := MyGui.Add("Text", "W580 X8 Y80", "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!")
+				text2.Text := "#+r (windows button + shift + r)"
+				text2.SetFont("underline bold")
+				text2.Move(, "125",, "20")
+				text3 := MyGui.Add("Text", "W580 X8 Y150", "Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control. (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked")
+
+				textthree := MyGui.Add("Text", "W580 X8 Y250", "#h (windows button + h)")
+				textthree.SetFont("underline bold")
+				text4 := MyGui.Add("Text", "W580 X8 Y280", "Pulls up this window at any time!")
+				
+				back(*) {
+					;hotkeysButton.Opt("-Disabled")
+					backButton.Move(,, "0", "0")
+	
+					text.Text := "You've made your way back here, there's not much left to see!`nPress {#h} at any time to access the 'Handy Hotkeys' page!`nYou can access this GUI again by pressing #r then typing '%temp%\tomshi' into the run box, then deleting the 'first' file!"
+					text.Move(,,, "100")
+					text.SetFont("Norm")
+					text2.Text := ""
+					text2.Move(,,, "0")
+					texttwo.Text := ""
+					texttwo.Move(,,, "0")
+					text3.Text := ""
+					text3.Move(,,, "0")
+					textthree.Text := ""
+					textthree.Move(,,, "0")
+					text4.Text := ""
+					text4.Move(,,, "0")
+					MyGui.Move(,,, "200")
+					hotkeysButton.Move(, "50")
+					closeButton.Move(, "50")
+				}
 			}
 			MyGui.Show("AutoSize")
 		}
