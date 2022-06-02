@@ -1,5 +1,4 @@
 ﻿#Include SD_functions.ahk
-location := "E:\Github\ahk"
 
 if not WinExist("ahk_exe obs64.exe")
 {

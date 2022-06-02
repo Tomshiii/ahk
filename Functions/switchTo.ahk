@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.13
+;\\v2.9.14
 #Include General.ahk
 
 /*
@@ -451,21 +451,21 @@ hotkeysGUI() {
     text(*) {
         if selection.Value = 1
             {
-                selectionText.Move(,,, "100")
+                selectionText.Move(,, "200", "100")
                 selectionText.Text := "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!"
-                hotGUI.Move(,,, "189")
+                hotGUI.Move(,, "410", "189")
             }
         if selection.Value = 2
             {
-                selectionText.Move(,,, "220")
+                selectionText.Move(,, "380", "220")
                 selectionText.Text := "Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control.`n(note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked"
-                hotGUI.Move(,,, "300")
+                hotGUI.Move(,, "590", "220")
             }
         if selection.Value = 3
             {
-                selectionText.Move(,,, "100")
+                selectionText.Move(,, "200", "100")
                 selectionText.Text := "Will call this GUI so you can reference these hotkeys at any time!"
-                hotGUI.Move(,,, "189")
+                hotGUI.Move(,, "410", "189")
             }      
     }
 

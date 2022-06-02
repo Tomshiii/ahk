@@ -3,7 +3,6 @@ goxlr() {
     Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe")
     WinWait("ahk_exe GoXLR App.exe")
     sleep 1000
-    WinMinimize("ahk_exe GoXLR App.exe")
     ProcessClose("GoXLR App.exe") ;for whatever reason the goxlr app doesn't grab the streamdeck software on the first load. idk why, just technology things. So we force close it and try again just for good measure
     sleep 1000
     Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe")

@@ -21,6 +21,7 @@ This release is focused around improving the experience of first time users of m
 
 ## > Other Changes
 - Small changes to `musicGUI()`
+- Fixed a few remaining `Streamdeck AHK` scripts that still contained hard coded dir's
 
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
