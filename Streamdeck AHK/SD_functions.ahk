@@ -7,7 +7,8 @@ global Chatterino := location "\ImageSearch\Chatterino\"
 ;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()
 {
-	WinMove(2553, -936,  974, 1047, "OBS")
+	if WinExist("ahk_exe obs64.exe")
+		WinMove(2553, -936,  974, 1047, "OBS")
 }
 
 chatterinoLocationBotshi()

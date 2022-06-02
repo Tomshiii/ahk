@@ -1,8 +1,9 @@
 # <> Release 2.3.5 - First Run Experience
 This release is focused around improving the experience of first time users of my collection of scripts. While the main readme of my repo does a relatively decent job at explaining things, most users likely won't read it outside of the installation instructions. So with this release comes `firstCheck()` and the `#F1::` hotkey.
 
-- `firstCheck()` will prompt the user with an informational GUI on the first time running `My Scripts.ahk`, this GUI will give a brief rundown of the purpose of my scripts as well as informing the user of the new `#F1::` hotkey to get them started
+- `firstCheck()` will prompt the user with an informational GUI on the first time running `My Scripts.ahk`, this GUI will give a brief rundown of the purpose of my scripts as well as informing the user of useful hotkeys to help them get started
 - `#F1::` will bring up an informational GUI showing all active scripts, as well as giving quick and easy access to enable/disable any of them at the check of a box
+- `#h::` will bring up an informational GUI showing some useful hotkeys available to the user while running these scripts
 
 ## > My Scripts
 - `RAlt & p::` can now find the project window even if it's on another display

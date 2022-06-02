@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.4
+;\\v2.11.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.8
 
@@ -287,44 +287,7 @@ firstCheck() {
 				MyGui.Destroy()
 			}
 			hotkeysPage(*) {
-				hotkeysButton.Opt("+Disabled")
-				backButton := MyGui.Add("Button", "X8 Y300", "Back")
-				backButton.OnEvent("Click", back)
-
-				text.Text := "#{F1} (windows button + F1)"
-				text.Move(,,, "20")
-				text.SetFont("underline bold")
-				texttwo := MyGui.Add("Text", "W580 X8 Y80", "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!")
-				text2.Text := "#+r (windows button + shift + r)"
-				text2.SetFont("underline bold")
-				text2.Move(, "125",, "20")
-				text3 := MyGui.Add("Text", "W580 X8 Y150", "Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control. (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked")
-
-				textthree := MyGui.Add("Text", "W580 X8 Y250", "#h (windows button + h)")
-				textthree.SetFont("underline bold")
-				text4 := MyGui.Add("Text", "W580 X8 Y280", "Pulls up this window at any time!")
-				
-				back(*) {
-					;hotkeysButton.Opt("-Disabled")
-					backButton.Move(,, "0", "0")
-	
-					text.Text := "You've made your way back here, there's not much left to see!`nPress {#h} at any time to access the 'Handy Hotkeys' page!`nYou can access this GUI again by pressing #r then typing '%temp%\tomshi' into the run box, then deleting the 'first' file!"
-					text.Move(,,, "100")
-					text.SetFont("Norm")
-					text2.Text := ""
-					text2.Move(,,, "0")
-					texttwo.Text := ""
-					texttwo.Move(,,, "0")
-					text3.Text := ""
-					text3.Move(,,, "0")
-					textthree.Text := ""
-					textthree.Move(,,, "0")
-					text4.Text := ""
-					text4.Move(,,, "0")
-					MyGui.Move(,,, "200")
-					hotkeysButton.Move(, "50")
-					closeButton.Move(, "50")
-				}
+				hotkeysGUI()
 			}
 			MyGui.Show("AutoSize")
 		}
@@ -623,6 +586,9 @@ adobeTemp() ;runs the loop to delete cache files
 
 	;add images next to checkboxes
 }
+
+;handyhotkeysHotkey;
+#h::hotkeysGUI() ;this hotkey pulls up a GUI showing some useful hotkeys at your disposal while using these scripts
 
 ;suspenderHotkey;
 #+`:: ;this hotkey is to suspent THIS script. This is helpful when playing games as this script will try to fire and do whacky stuff while you're playing games

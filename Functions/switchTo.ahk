@@ -430,3 +430,42 @@ musicGUI()
         MyGui.Destroy()
     }
 }
+
+/* hotkeysGUI()
+ This function calls a GUI to showcase some useful hotkeys available to the user while running my scripts. This function is also called during firstCheck()
+ */
+hotkeysGUI() {
+    if WinExist("Handy Hotkeys - Tomshi Scripts")
+        return
+    hotGUI := Gui("", "Handy Hotkeys - Tomshi Scripts")
+	hotGUI.SetFont("S11")
+	hotGUI.Opt("-Resize AlwaysOnTop")
+	Title := hotGUI.Add("Text", "H30 X8 W475", "Handy Hotkeys!")
+	Title.SetFont("S15")
+    ;all hotkeys
+	winF1 := hotGUI.Add("Text", "W475 X8", "#{F1} (windows button + F1)")
+	winF1.SetFont("underline bold")
+	winF1Desc := hotGUI.Add("Text", "W475 X8 Y70", "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!")
+	winRefresh := hotGUI.Add("Text", "W475 X8 Y120", "#+r (windows button + shift + r)")
+	winRefresh.SetFont("underline bold")
+	winRefreshDesc := hotGUI.Add("Text", "W475 X8 Y140", "Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control. (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked")
+    winH := hotGUI.Add("Text", "W475 X8 Y250", "#h (windows button + h)")
+    winH.SetFont("underline bold")
+    winHDesc := hotGUI.Add("Text", "W475 X8 Y270", "Will call this GUI so you can reference these hotkeys at any time!")
+
+    ;buttons
+    ;remove the default
+	noDefault := hotGUI.Add("Button", "X0 Y0 W0 H0", "")
+    ;close button
+	closeButton := hotGUI.Add("Button", "X420 Y280", "Close")
+	closeButton.OnEvent("Click", close)
+    ;what happens when you close the GUI
+    hotGUI.OnEvent("Escape", close)
+    hotGUI.OnEvent("Close", close)
+    ;onEvent Functions
+	close(*) {
+		hotGUI.Destroy()
+	}
+    ;Show the GUI
+	hotGUI.Show("AutoSize")
+}
