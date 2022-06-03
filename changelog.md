@@ -26,7 +26,7 @@ This release is focused around improving the experience for first time users of 
 
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
-- Pressing `XButton2` while holding down `RButton` will begin sped up playback once you've finished moving the playhead
+- Pressing `XButton2` while holding down `RButton` will begin 2x playback once you've finished moving the playhead
     - `mousedrag()` was updated to allow for this change
 
 `premiere_fullscreen_check.ahk`

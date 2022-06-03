@@ -1,6 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
 global MyRelease := "v2.3.4"
-;global MyReleaseBeta := "v2.3.0.1" ;if I ever choose to do beta release channels
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
@@ -15,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.5
+;\\v2.11.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.8
 
@@ -247,10 +246,9 @@ updateChecker() {
 		}
 }
 updateChecker() ;runs the update checker
-;\\end of update checker
 
 /* firstCheck()
- This function checks to see if it is the first time you're running the script to then give you some general information regarding the script
+ This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
  */
 firstCheck() {
 	;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
@@ -263,36 +261,33 @@ firstCheck() {
 	else
 		{
 			DirCreate(A_Temp "\tomshi") ;creates the directory we'll need later
-			MyGui := Gui("", "Scripts Release " MyRelease)
-			MyGui.SetFont("S11")
-			MyGui.Opt("-Resize AlwaysOnTop")
+			firstCheckGUI := Gui("", "Scripts Release " MyRelease)
+			firstCheckGUI.SetFont("S11")
+			firstCheckGUI.Opt("-Resize AlwaysOnTop")
 			;set title
-			Title := MyGui.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
+			Title := firstCheckGUI.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
 			Title.SetFont("S15")
 			;text
-			text := MyGui.Add("Text", "W580 X8", "Congratulations!`nYou've gotten my main script to load without any runtime errors! (hopefully).`nYou've taken the first step to really getting the most out of these scripts!")
-			text2 := MyGui.Add("Text", "W580 X8", "The purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.`nThese scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.")
-
-			hotkeysButton := MyGui.Add("Button", "X400 Y300", "Handy Hotkeys")
+			bodyText := firstCheckGUI.Add("Text", "W550 X8", "Congratulations!`nYou've gotten my main script to load without any runtime errors! (hopefully).`nYou've taken the first step to really getting the most out of these scripts!`n`nThe purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.`nThese scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.")
+			;buttons
+			hotkeysButton := firstCheckGUI.Add("Button", "X380 Y300", "Handy Hotkeys")
 			hotkeysButton.OnEvent("Click", hotkeysPage)
-
-			closeButton := MyGui.Add("Button", "X525 Y300", "Close")
+			closeButton := firstCheckGUI.Add("Button", "X500 Y300", "Close")
 			closeButton.OnEvent("Click", close)
 			
-			MyGui.OnEvent("Escape", close)
-			MyGui.OnEvent("Close", close)
-			
+			firstCheckGUI.OnEvent("Escape", close)
+			firstCheckGUI.OnEvent("Close", close)
 			close(*) {
 				FileAppend("", A_Temp "\tomshi\first") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
-				MyGui.Destroy()
+				firstCheckGUI.Destroy()
 			}
 			hotkeysPage(*) {
 				hotkeysGUI()
 			}
-			MyGui.Show("AutoSize")
+			firstCheckGUI.Show("AutoSize")
 		}
 }
-firstCheck()
+firstCheck() ;runs the firstCheck() function
 
 /*
  This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
@@ -305,7 +300,6 @@ oldError() {
 		FileDelete(A_LoopFileFullPath)
 }
 oldError() ;runs the loop to delete old log files
-;\\ end of loop to delete old log files
 
 /*
  This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check. It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder tree to the actual default or set it to a similar place
@@ -388,7 +382,6 @@ adobeTemp() {
 	FileAppend("", A_Temp "\tomshi\adobe\" A_YDay) ;tracks the day so it will not run again today
 }
 adobeTemp() ;runs the loop to delete cache files
-;\\ end of loops to delete adobe cache files
 ;=============================================================================================================================================
 ;
 ;		Windows
