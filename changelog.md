@@ -1,5 +1,5 @@
 # <> Release 2.3.5 - First Run Experience
-This release is focused around improving the experience of first time users of my collection of scripts. While the main readme of my repo does a relatively decent job at explaining things, most users likely won't read it outside of the installation instructions. So with this release comes `firstCheck()` and the `#F1::` hotkey.
+This release is focused around improving the experience for first time users of this collection of scripts. While the main readme of the repo does a relatively decent job at explaining things, most users likely won't read it outside of the installation instructions. So with this release comes `firstCheck()` as well as `#F1::` & `#h::` hotkeys.
 
 - `firstCheck()` will prompt the user with an informational GUI on the first time running `My Scripts.ahk`, this GUI will give a brief rundown of the purpose of my scripts as well as informing the user of useful hotkeys to help them get started
 - `#F1::` will bring up an informational GUI showing all active scripts, as well as giving quick and easy access to enable/disable any of them at the check of a box
@@ -22,6 +22,7 @@ This release is focused around improving the experience of first time users of m
 ## > Other Changes
 - Small changes to `musicGUI()`
 - Fixed a few remaining `Streamdeck AHK` scripts that still contained hard coded dir's
+- Added `convert mp42mp3.ahk`
 
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
