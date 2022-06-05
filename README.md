@@ -7,7 +7,7 @@ This repo is a combination of all the scripts I use almost daily to help with ei
 
 [![](https://user-images.githubusercontent.com/53557479/149133968-6c1ff2e0-0140-4eda-95e3-e56164d263a4.png) ![](https://img.shields.io/youtube/channel/subscribers/UCJu2dToEHzuovY6suetkcdQ?style=flat)](https://www.youtube.com/c/tomshiii)
 
-A lot of the code in the earliest versions of my scripts was either inspired by, or taken from [Taran from LTT](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, then transformed into a `ahk v2.0` compliant script and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I have personally gone through them to make them function in `ahk v2.0`).
+A lot of the code in the earliest versions of my scripts was either inspired by, or taken from [Taran from LTT](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, transformed into `ahk v2.0` compliant scripts and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I have personally gone through them to make them function in `ahk v2.0`).
 
 You can watch me use some of these scripts in action whilst I edit away on twitch when I stream on my bot account:
 
@@ -17,7 +17,7 @@ You can watch me use some of these scripts in action whilst I edit away on twitc
 This repo is to maintain work on the `ahk v2.0` versions of my scripts. These scripts **_will not_** work in `ahk v1.1`, the only versions of these scripts that will work with `ahk v1.1` are Releases [1.0](https://github.com/Tomshiii/ahk/releases/tag/v1.0)/[1.1](https://github.com/Tomshiii/ahk/releases/tag/v1.1)/[1.2](https://github.com/Tomshiii/ahk/releases/tag/v1.2) in this repo. They are _severely_ outdated, are practically missing everything found in the current versions of scripts, and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
 
 ## QMK Keyboard:
-My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) OR `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
+My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) **OR** `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
 
 ## What to do:
 1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 Beta](https://www.autohotkey.com/v2/).
@@ -29,8 +29,8 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
     ###### **_It is recommended you use VSCode as a lot of my variables have dynamic comments that can be viewed across the entire program that could help you understand what is going on._**
-4. Save these scripts wherever you wish (I use "`E:\Github\ahk\`" if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, simply change the `location :=` variable in `KSA.ahk` & `SD_functions.ahk` and most scripts should function as intended.
-    ###### **_Although do note; some `Streamdeck AHK` scripts still have hard coded dir's and will error out if you try to run them from a different location._**
+4. Save these scripts wherever you wish (I use "`E:\Github\ahk\`" if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, simply change the `location :=` variable in [`KSA.ahk`](https://github.com/Tomshiii/ahk/tree/main/KSA) and most scripts should function as intended.
+    ###### **_Although do note; some [`Streamdeck AHK`](https://github.com/Tomshiii/ahk/tree/main/Streamdeck%20AHK) scripts still have hard coded dir's and will error out if you try to run them from a different location._**
 5. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs as well as define coordinates for a few remaining imagesearches that cannot use variables for various reason, these `KSA` values are used to allow for easy adjustments instead of needing to dig through scripts!
 6. Edit, then run any of the .ahk files to then use to your liking!
 - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
@@ -94,7 +94,7 @@ A script from [Taran](https://github.com/TaranVH/) to disable the alt menu accel
 A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
 
 #### [right click premiere.ahk](https://github.com/Tomshiii/ahk/blob/main/right%20click%20premiere.ahk)
-A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button.
+A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button. This scripts also has additional functionality added by myself.
 
 #### [\Error Logs](https://github.com/Tomshiii/ahk/tree/main/Error%20Logs)
 Anytime a macro/script encounters an error it will be logged in a txt file in this directory to help you catch anything that isn't working as intended so that in the event that the tooltip disappears too quickly, you can still dig in and see everything going on
