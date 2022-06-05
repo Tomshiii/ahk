@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.7
+;\\v2.11.8
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.9
 
@@ -270,6 +270,8 @@ firstCheck() {
 			;text
 			bodyText := firstCheckGUI.Add("Text", "W550 X8", "Congratulations!`nYou've gotten my main script to load without any runtime errors! (hopefully).`nYou've taken the first step to really getting the most out of these scripts!`n`nThe purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.`nThese scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.")
 			;buttons
+			todoButton := firstCheckGUI.Add("Button", "X285 Y300", "What to Do")
+			todoButton.OnEvent("Click", todoPage)
 			hotkeysButton := firstCheckGUI.Add("Button", "X380 Y300", "Handy Hotkeys")
 			hotkeysButton.OnEvent("Click", hotkeysPage)
 			closeButton := firstCheckGUI.Add("Button", "X500 Y300", "Close")
@@ -280,6 +282,9 @@ firstCheck() {
 			close(*) {
 				FileAppend("", A_Temp "\tomshi\first") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
 				firstCheckGUI.Destroy()
+			}
+			todoPage(*) {
+				todoGUI()	
 			}
 			hotkeysPage(*) {
 				hotkeysGUI()

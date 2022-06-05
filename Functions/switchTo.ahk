@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.14
+;\\v2.9.15
 #Include General.ahk
 
 /*
@@ -359,6 +359,12 @@ switchToMusic()
     ;toolCust(window, "1000") ;debugging
 }
 
+; ===============================================================
+;
+; GUI
+;
+; ===============================================================
+
 /*
  This function creates a GUI for the user to select which media player they wish to open.
  Currently offers AIMP, Foobar, WMP & VLC.
@@ -484,4 +490,43 @@ hotkeysGUI() {
 	}
     ;Show the GUI
 	hotGUI.Show("AutoSize")
+}
+
+/* todoGUI()
+ This function calls a GUI help guide the user on what to do now that they've gotten `My Scripts.ahk` to run. This function is called during firstCheck()
+ */
+todoGUI()
+{
+    if WinExist("What to Do - Tomshi Scripts")
+        return
+    todoGUI := Gui("", "What to Do - Tomshi Scripts")
+	todoGUI.SetFont("S11")
+	todoGUI.Opt("-Resize AlwaysOnTop")
+	Title := todoGUI.Add("Text", "H30 X8 W300", "What to Do")
+	Title.SetFont("S15")
+
+    bodyText := todoGUI.Add("Text","X8 W550", "
+    (
+        1. Once you've saved these scripts wherever you wish (the default value is ``E:\Github\ahk\`` if you want all the directory information to just line up without any editing) if you wish to use a custom directory, simply change the ``location :=`` variable in ``Keyboard Shortcut Adjustments.ahk`` and most scripts should function as intended.
+             // do note; some ``Streamdeck AHK`` scripts still have hard coded dir's and will error out if you try to run them from a different location. //
+
+        2. Take a look at Keyboard Shortcuts.ini to set your own keyboard shortcuts for programs as well as define coordinates for a few remaining imagesearches that cannot use variables for various reason. These ``KSA`` values are used to allow for easy adjustments instead of needing to dig through scripts!
+
+        3. Feel free to edit any of these scripts to your liking, change any of the hotkeys, then run any of the .ahk files and enjoy!
+            - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
+
+        - Scripts that will work with no tinkering include ->
+        - Alt Menu acceleration disabler
+        - autodismiss error
+    )")
+    closeButton := todoGUI.Add("Button", "X500 Y350", "Close")
+    closeButton.OnEvent("Click", close)
+
+    todoGUI.OnEvent("Escape", close)
+    todoGUI.OnEvent("Close", close)
+    close(*) {
+        todoGUI.Destroy()
+    }
+
+    todoGUI.Show()
 }
