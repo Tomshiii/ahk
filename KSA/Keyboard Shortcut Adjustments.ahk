@@ -373,8 +373,13 @@ opacityProp := IniRead(location "\KSA\Keyboard Shortcuts.ini", "After Effects", 
  */
 rotationProp := IniRead(location "\KSA\Keyboard Shortcuts.ini", "After Effects", "Rotation")
 
+;==other==
+/*
+ This value will send the keyboard shortcut you have set to open the composition settings within After Effects
 
-
+ Can be set within KSA.ahk/ini
+ */
+ compSettings := IniRead(location "\KSA\Keyboard Shortcuts.ini", "After Effects", "comp")
 
 
 

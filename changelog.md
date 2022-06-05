@@ -7,6 +7,7 @@ This release is focused around improving the experience for first time users of 
 
 ## > My Scripts
 - `RAlt & p::` can now find the project window even if it's on another display
+- Moved `#f` & `#c` so they can be used on any program
 
 `updateChecker()`
 - Fixed tooltips in the scenario that the user has selected `don't prompt again`
@@ -18,9 +19,13 @@ This release is focused around improving the experience for first time users of 
 - Will wait for `firstCheck()` to be finished before beginning
 - Now tracks the `A_YDay` in `A_Temp \tomshi\adobe\` and will only run once a day
 
+## > Functions
+- Small changes to `musicGUI()`
+
+`After Effects.ahk`
+- Added `motionBlur()` to quickly navigate to the composition settings and increase the `Shutter Angle` to `360°`
 
 ## > Other Changes
-- Small changes to `musicGUI()`
 - Fixed a few remaining `Streamdeck AHK` scripts that still contained hard coded dir's
 - Added `convert mp42mp3.ahk`
 

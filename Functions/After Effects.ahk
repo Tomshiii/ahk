@@ -1,6 +1,8 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.5
+;\\v2.9.6
 #Include General.ahk
+
+;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
 
 /* aevaluehold()
  A function to warp to one of a videos values within After Effects (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
@@ -189,4 +191,97 @@ aeScaleAndPos()
     SendInput("u" "u")
     MouseMove(%&x%, %&y%)
     blockOff()
+}
+
+/* motionBlur()
+ This function will open up the composition settings window within After Effects, navigate its way to the "advanced" tab, find "shuttle angle" and increase it to a value of 360
+ */
+motionBlur()
+{
+    KeyWait(A_ThisHotkey)
+    coords()
+    MouseGetPos(&x, &y) ;gets the coordinates of the mouse to return it at the end/after an error
+    coordw()
+    if WinExist("Composition Settings") ;if the menu is already open, this check will allow us to continue without running into any futher issues
+        goto open
+    blockOn()
+    SendInput(compSettings) ;opens the composition settings
+    WinWait("Composition Settings") ;waits for composition settings to open
+    open:
+    MouseMove(0,0)
+    loop { ;this loop will allow us to make multiple checks for the advanced tab - as adobe products can be quite laggy this loop will give us about 0.6s for AE to react. If your machine is too slow, or AE is just sluggish, consider increasing the amount of times the loop will continue before returning or increasing the sleep between each attempt
+        if ImageSearch(&advX, &advY, 0, 0, 200, 200, "*2 " AE "advanced.png") || ImageSearch(&advX, &advY, 0, 0, 200, 200, "*2 " AE "advanced2.png") ;this imagesearch will check for both the non selected text & the selected text varient
+            {
+                ToolTip("")
+                break
+            }
+        if A_Index > 0
+            ToolTip(A_Index)
+        sleep 50
+        if WinExist("Composition Settings")
+            WinActivate("Composition Settings")
+        if A_Index > 10
+            {
+                ToolTip("")
+                coords()
+                MouseMove(%&x%, %&y%)
+                blockOff()
+                errorLog(A_ThisFunc "()", "Couldn't find the Advanced tab", A_LineNumber)
+                toolFind("the Advanced tab", "1000")
+                return
+            }
+    }
+    MouseMove(%&advX%, %&advY%) ;moves to the advanced tab
+    SendInput("{Click}") ;clicks it
+    loop { ;this loop will allow us to make multiple checks for the shutter angle - as adobe products can be quite laggy this loop will give us about 0.6s for AE to react. If your machine is too slow, or AE is just sluggish, consider increasing the amount of times the loop will continue before returning or increasing the sleep between each attempt
+        if ImageSearch(&shutX, &shutY, 0, 0, 200, 300, "*2 " AE "shutterangle.png")
+            {
+                ToolTip("")
+                break
+            }
+        if A_Index > 0
+            ToolTip(A_Index)
+        sleep 50
+        if WinExist("Composition Settings")
+            WinActivate("Composition Settings")
+        if A_Index > 10
+            {
+                ToolTip("")
+                coords()
+                MouseMove(%&x%, %&y%)
+                blockOff()
+                errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle image", A_LineNumber)
+                toolFind("the Shutter Angle image", "1000")
+                return
+            }
+    }
+    loop { ;this loop will allow us to make multiple checks for the shutter angle value - as adobe products can be quite laggy this loop will give us about 0.6s for AE to react. If your machine is too slow, or AE is just sluggish, consider increasing the amount of times the loop will continue before returning or increasing the sleep between each attempt
+        if PixelSearch(&xcol, &ycol, %&shutX%, %&shutY%, %&shutX% + "150", %&shutY% + "40", 0x234CB4, 2)
+            {
+                ToolTip("")
+                MouseMove(%&xcol%, %&ycol%)
+                SendInput("{Click}")
+                SendInput("360" "{Enter}")
+                coords()
+                MouseMove(%&x%, %&y%)
+                blockOff()
+                break
+            }
+        if A_Index > 0
+            ToolTip(A_Index)
+        sleep 50
+        if WinExist("Composition Settings")
+            WinActivate("Composition Settings")
+        if A_Index > 10
+            {
+                ToolTip("")
+                coords()
+                MouseMove(%&x%, %&y%)
+                blockOff()
+                errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle value", A_LineNumber)
+                toolFind("the Shutter Angle value", "1000")
+                return
+            }
+    }
+    ToolTip("")
 }
