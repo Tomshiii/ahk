@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.9
+;\\v2.11.10
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.4.9
 
@@ -68,11 +68,17 @@ updateChecker() {
 	main:
 	;release version
 	;Get the current release version from github
-	main := ComObject("WinHttp.WinHttpRequest.5.1")
-	main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
-	main.Send()
-	main.WaitForResponse()
-	string := main.ResponseText
+	try {
+		main := ComObject("WinHttp.WinHttpRequest.5.1")
+		main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
+		main.Send()
+		main.WaitForResponse()
+		string := main.ResponseText
+	} catch as e {
+		toolCust("Couldn't get version info`nYou may not be connected to the internet", "1000")
+		errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineNumber)
+		return
+	}
 	foundpos := InStr(string, 'v',,,2)
 	endpos := InStr(string, '"', , foundpos, 1)
 	end := endpos - foundpos
@@ -85,11 +91,17 @@ updateChecker() {
 			if VerCompare(MyRelease, version) < 0
 				{
 					;grabbing changelog info
-					change := ComObject("WinHttp.WinHttpRequest.5.1")
-					change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
-					change.Send()
-					change.WaitForResponse()
-					ChangeLog := change.ResponseText
+					try {
+						change := ComObject("WinHttp.WinHttpRequest.5.1")
+						change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
+						change.Send()
+						change.WaitForResponse()
+						ChangeLog := change.ResponseText
+					} catch as e {
+						toolCust("Couldn't get changelog info`nYou may not be connected to the internet", "1000")
+						errorLog(A_ThisFunc "()", "Couldn't get changelog info, you may not be connected to the internet", A_LineNumber)
+						return
+					}
 					;\\removing the warning about linking to commits
 					beginwarn := InStr(ChangeLog, "###### **_",,, 1)
 					endwarnfind := InStr(ChangeLog, "_**",,, 1)
@@ -254,6 +266,8 @@ firstCheck() {
 	;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
+	if not IsSet(version) ;if the user has no internet, "version" will not have been assigned a value in `updateChecker()` - this checks to see if `version` has been assigned a value
+		version := ""
 	if WinExist("Scripts Release " version)
 		WinWaitClose("Scripts Release " version)
 	if FileExist(A_Temp "\tomshi\first") ;how the function tracks whether this is the first time the user is running the script or not

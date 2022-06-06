@@ -6,6 +6,7 @@ This release is focused around improving the experience for first time users of 
 - `#h::` will bring up an informational GUI showing some useful hotkeys available to the user while running these scripts
 
 ## > My Scripts
+- Script will no longer error if run while not connected to the internet
 - `RAlt & p::` can now find the project window even if it's on another display
 - Moved `#f` & `#c` so they can be used on any program
 
