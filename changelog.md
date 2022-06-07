@@ -36,6 +36,10 @@ This release is focused around improving the experience for first time users of 
 - Added `convert mp42mp3.ahk`
 - Added `\qmk keyboard images` to backup the cutouts I use for my secondary keyboard
 
+`autosave.ahk`
+- Will now properly reactivate an explorer window
+- Will now check to make sure a save is required for both Premiere & After Effects before moving forward
+
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
 - Pressing `XButton2` while holding down `RButton` will begin 2x playback once you've finished moving the playhead

@@ -74,40 +74,67 @@ save()
     ;\\ first we grab information on the active window
     try {
         id := WinGetProcessName("A")
+        if WinActive("ahk_exe explorer.exe")
+            id := "ahk_class CabinetWClass"
     } catch as e {
         toolCust("couldn't grab active window", "1000")
         errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineNumber)
     }
 
-    ;\\ next we activate premiere
+    ;\\ Now we begin
     blockOn()
-    if not WinActive("ahk_exe Adobe Premiere Pro.exe")
-        {
-            try {
-                WinActivate("ahk_exe Adobe Premiere Pro.exe")
-                sleep 500
-                SendInput(timelineWindow)
-                SendInput(timelineWindow)
-            } catch as win {
-                toolCust("", "10")
-            }
-        }
-    sleep 1000
 
-    ;\\ now we check to make sure you're not doing something other than using the timeline
+    ;\\ First we grab the titles of both premiere and after effects so we can make sure to only fire this script if a save is required
     try {
-        premCheck := WinGetTitle("A")
-        titlecheck := InStr(premCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+        if WinExist("ahk_exe Adobe Premiere Pro.exe")
+        {
+            premCheck := WinGetTitle("ahk_class Premiere Pro")
+            titlecheck := InStr(premCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
+        }
+        if WinExist("ahk_exe AfterFX.exe")
+            {
+                afterFXTitle := WinGetTitle("ahk_exe AfterFX.exe")
+                aeSaveCheck := SubStr(afterFXTitle, -1, 1) ;this variable will contain "*" if a save is required
+            }
     } catch as e {
-        toolCust("Premiere wasn't determined to be the active window", "1000")
-        errorLog(A_ThisFunc "()", "Premiere wasn't determined to be the active window", A_LineNumber)
+        toolCust("Couldn't determine the titles of Adobe programs", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineNumber)
     }
     if not titlecheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
         {
             blockOff()
             toolCust("You're currently doing something`nautosave has be cancelled", "2000")
             try {
-                WinActivate("ahk_exe " id)
+                if id = "ahk_class CabinetWClass"
+                    WinActivate("ahk_class CabinetWClass")
+                else
+                    WinActivate("ahk_exe " id)
+            } catch as e {
+                toolCust("couldn't activate original window", "1000")
+                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+            }
+            SetTimer(, -ms)
+            goto end2
+        }
+    if saveCheck != "*" ;will check to see if saving is necessary
+        {
+            if aeSaveCheck = "*" ;this variable will contain "*" if a save is required
+                {
+                    WinActivate("ahk_exe AfterFX.exe")
+                    sleep 500
+                    SendInput("^s")
+                    sleep 250
+                    WinWaitClose("Save Project")
+                    goto end
+                }
+            blockOff()
+            toolCust("No save necessary", "2000")
+            try {
+                if id = "ahk_class CabinetWClass"
+                    WinActivate("ahk_class CabinetWClass")
+                else
+                    WinActivate("ahk_exe " id)
             } catch as e {
                 toolCust("couldn't activate original window", "1000")
                 errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
@@ -116,36 +143,36 @@ save()
             goto end2
         }
 
-    ;\\ Now we check to see if the user is playing back a video
-    if id = "Adobe Premiere Pro.exe"
-       try {
-            SendInput(timelineWindow)
-            SendInput(timelineWindow)
-            SendInput(programMonitor)
-            SendInput(programMonitor)
-            sleep 250
-            toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-            ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-            sleep 250
-            if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "stop.png")
-                {
-                    toolCust("If you were playing back anything, this function should resume it", "1000")
-                    stop := "yes"
-                }
-            else
-                stop := "no"
-        } catch as er {
-            toolCust("failed to find play/stop button", "1000")
-            errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineNumber)
-        }
+    if id != "Adobe Premiere Pro.exe" ;will activate premiere if it wasn't the original window
+        WinActivate("ahk_exe Adobe Premiere Pro.exe")
+    try {
+        SendInput(timelineWindow)
+        SendInput(timelineWindow)
+        SendInput(programMonitor)
+        SendInput(programMonitor)
+        sleep 250
+        toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+        ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+        sleep 250
+        if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "stop.png")
+            {
+                toolCust("If you were playing back anything, this function should resume it", "1000")
+                stop := "yes"
+            }
+        else
+            stop := "no"
+    } catch as er {
+        toolCust("failed to find play/stop button", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineNumber)
+    }
 
     ;\\ before finally saving
     SendInput("^s")
     WinWait("Save Project")
     WinWaitClose("Save Project")
 
-    ;\\ if ae is open we'll save it too
-    if WinExist("ahk_exe AfterFX.exe")
+    ;\\ if ae is open we'll check to see if it needs saving, then save it too if required
+    if aeSaveCheck = "*"
         {
             WinActivate("ahk_exe AfterFX.exe")
             sleep 500
@@ -183,7 +210,10 @@ save()
     
     end:
     try {
-        WinActivate("ahk_exe " id) ;attempt to reactivate the original window
+        if id = "ahk_class CabinetWClass"
+            WinActivate("ahk_class CabinetWClass")
+        else
+            WinActivate("ahk_exe " id) ;attempt to reactivate the original window
     } catch as e {
         toolCust("couldn't activate original window", "1000")
         errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
