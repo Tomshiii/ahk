@@ -26,6 +26,11 @@ This release is focused around improving the experience for first time users of 
 `After Effects.ahk`
 - Added `motionBlur()` to quickly navigate to the composition settings and increase the `Shutter Angle` to `360°`
 
+## > QMK Keyboard
+- Added `x::` to open the project path when using Premiere Pro or After Effects
+    - `s::` will not automatically grab the project path as well
+- Added `v::` to activate/deactivate the margin button in Premiere
+
 ## > Other Changes
 - Fixed a few remaining `Streamdeck AHK` scripts that still contained hard coded dir's
 - Added `convert mp42mp3.ahk`

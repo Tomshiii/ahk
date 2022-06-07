@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.9
+;\\v2.4.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4
@@ -228,7 +228,40 @@ f:: ;this macro is to open the speed menu
 	}
 	SendInput(selectAtPlayhead speedHotkey)
 }
-;v::unassigned()
+v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
+{
+	try {
+		blockOn()
+		MouseGetPos(&origX, &origY)
+		SendInput(timelineWindow)
+		SendInput(timelineWindow)
+		SendInput(programMonitor)
+		SendInput(programMonitor)
+		sleep 250
+		toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+		sleep 250
+		if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "margin.png") || ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "margin2.png")
+			{
+				MouseMove(%&x%, %&y%)
+				SendInput("{Click}")
+				MouseMove(%&origX%, %&origY%)
+				blockOff()
+				return
+			}
+		else
+			{
+				blockOff()
+				toolFind("the margin button", "1000")
+				errorLog(A_ThisFunc "()", "Couldn't find the margin button", A_LineNumber)
+			}
+	} catch as er {
+		blockOff()
+		toolFind("the margin button", "1000")
+		errorLog(A_ThisFunc "()", "Couldn't find the margin button", A_LineNumber)
+		return
+	}
+}
 ;PgDn::unassigned()
 
 e::gain("-2") ;REDUCE GAIN BY -2db
@@ -237,8 +270,62 @@ c::gain("-6") ;REDUCE GAIN BY -6db
 End::gain("6") ;INCREASE GAIN BY 6db
 
 w::unassigned()
-s::unassigned()
-x::unassigned()
+s:: ;open checklist for current edit
+{
+	try {
+		Name := WinGetTitle("A")
+		titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+		dashLocation := InStr(Name, "-")
+		length := StrLen(Name) - dashLocation
+	}
+	if not titlecheck
+		{
+			toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+			return
+		}
+	entirePath := SubStr(name, dashLocation + "2", length)
+	pathlength := StrLen(entirePath)
+	finalSlash := InStr(entirePath, "\",, -1)
+	path := SubStr(entirePath, 1, finalSlash - "1")
+	if FileExist(path "\checklist.ahk")
+		Run(path "\checklist.ahk")
+	else
+		{
+			try {
+				FileCopy("E:\Github\ahk\releases\checklist ahk draft\checklist.ahk", path)
+				Run(path "\checklist.ahk")
+			} catch as e {
+				toolCust("File not found", "1000")
+			}
+		}
+}
+x:: ;opens the directory for the current project
+{
+	try {
+		Name := WinGetTitle("A")
+		titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+		dashLocation := InStr(Name, "-")
+		length := StrLen(Name) - dashLocation
+	}
+	if not titlecheck
+		{
+			toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+			return
+		}
+	entirePath := SubStr(name, dashLocation + "2", length)
+	pathlength := StrLen(entirePath)
+	finalSlash := InStr(entirePath, "\",, -1)
+	path := SubStr(entirePath, 1, finalSlash - "1")
+	SplitPath(path,,,, &pathName)
+	if WinExist(%&pathName%,, "Adobe")
+		{
+			WinActivate(%&pathName%,, "Adobe")
+			return
+		}
+	Run(path)
+	WinWait(%&pathName%,,, "Adobe")
+	WinActivate(%&pathName%,, "Adobe")
+}
 ;F15::unassigned()
 
 q::unassigned()
@@ -294,7 +381,7 @@ b::unassigned()
 
 r::unassigned()
 f::unassigned()
-;v::unassigned()
+v::unassigned()
 ;PgDn::unassigned()
 
 e::unassigned()
@@ -304,7 +391,33 @@ End::unassigned()
 
 w::aePreset("Drop Shadow")
 s::unassigned()
-x::unassigned()
+x:: ;opens the directory for the current project
+{
+	try {
+		Name := WinGetTitle("A")
+		titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+		dashLocation := InStr(Name, "-")
+		length := StrLen(Name) - dashLocation
+	}
+	if not titlecheck
+		{
+			toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+			return
+		}
+	entirePath := SubStr(name, dashLocation + "2", length)
+	pathlength := StrLen(entirePath)
+	finalSlash := InStr(entirePath, "\",, -1)
+	path := SubStr(entirePath, 1, finalSlash - "1")
+	SplitPath(path,,,, &pathName)
+	if WinExist(%&pathName%,, "Adobe")
+		{
+			WinActivate(%&pathName%,, "Adobe")
+			return
+		}
+	Run(path)
+	WinWait(%&pathName%,,, "Adobe")
+	WinActivate(%&pathName%,, "Adobe")
+}
 ;F15::unassigned()
 
 q::unassigned()
@@ -360,7 +473,7 @@ b::unassigned()
 
 r::unassigned()
 f::unassigned()
-;v::unassigned()
+v::unassigned()
 ;PgDn::unassigned()
 
 e::unassigned()
@@ -468,21 +581,7 @@ b::unassigned()
 
 r::unassigned()
 f::unassigned()
-v:: ;open checklist for current edit
-{
-	dir := FileSelect("D2", "E:\comms", "Pick the Edit Directory")
-	if dir = ""
-		return
-	if FileExist(dir "\checklist.ahk")
-		Run(dir "\checklist.ahk")
-	else
-		try {
-			FileCopy("E:\Github\ahk\releases\checklist ahk draft\checklist.ahk", dir)
-			Run(dir "\checklist.ahk")
-		} catch as e {
-			toolCust("File not found", "1000")
-		}
-}
+v::unassigned()
 PgDn::switchToMusic()
 Right & PgDn::musicGUI()
 
@@ -548,7 +647,7 @@ b::unassigned()
 
 r::unassigned()
 f::unassigned()
-;v::unassigned()
+v::unassigned()
 ;PgDn::unassigned()
 
 e::unassigned()
