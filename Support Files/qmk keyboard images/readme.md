@@ -1,0 +1,2 @@
+This folder is to keep a running backup of the images I use on my secondary keyboard.
+I have lost the original `.psd` file for this and all of the occumpanying images to go along with it but the original was based off [this image from Taran](https://github.com/TaranVH/2nd-keyboard/blob/master/KEYCAP_IMAGES/%23new_keyboard_labels_5.png)

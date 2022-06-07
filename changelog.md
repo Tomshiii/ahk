@@ -34,6 +34,7 @@ This release is focused around improving the experience for first time users of 
 ## > Other Changes
 - Fixed a few remaining `Streamdeck AHK` scripts that still contained hard coded dir's
 - Added `convert mp42mp3.ahk`
+- Added `\qmk keyboard images` to backup the cutouts I use for my secondary keyboard
 
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
