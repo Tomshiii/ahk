@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.14
+;\\v2.4.15
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4
@@ -299,7 +299,7 @@ s:: ;open checklist for current edit
 	else
 		{
 			try {
-				FileCopy("E:\Github\ahk\releases\checklist ahk draft\checklist.ahk", path)
+				FileCopy("E:\Github\ahk\checklist.ahk", path)
 				Run(path "\checklist.ahk")
 			} catch as e {
 				toolCust("File not found", "1000")

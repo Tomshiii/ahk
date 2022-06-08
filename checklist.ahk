@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.3
+;\\v2.0.4
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -15,7 +15,7 @@ if not FileExist(A_ScriptDir "\checkbox.ini")
     FileAppend("[Info]`ncheckbox4=0`ncheckbox5=0`ncheckbox1=0`ncheckbox2=0`ncheckbox3=0`ncheckbox6=0`ncheckbox7=0`ncheckbox8=0`ntime=0", A_ScriptDir "\checkbox.ini")
 if not FileExist(A_ScriptDir "\checklist_logs.txt")
     FileAppend("Initial creation time : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n`n", A_ScriptDir "\checklist_logs.txt")
-
+FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
 ;getting dir name for the title
 FullFileName := A_ScriptDir
 SplitPath FullFileName, &name
@@ -156,7 +156,7 @@ plusFive(*) {
     timerMinutes.SetFont("cRed")
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
-    FileAppend("\\ The timer was stopped and 5min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The timer was stopped and 5min added : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
