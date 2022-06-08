@@ -97,6 +97,8 @@ save()
                 afterFXTitle := WinGetTitle("ahk_exe AfterFX.exe")
                 aeSaveCheck := SubStr(afterFXTitle, -1, 1) ;this variable will contain "*" if a save is required
             }
+        if not WinExist("ahk_exe AfterFX.exe")
+            aeSaveCheck := ""
     } catch as e {
         toolCust("Couldn't determine the titles of Adobe programs", "1000")
         errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineNumber)
