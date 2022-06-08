@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.10
+;\\v2.11.11
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.9
+;\\v2.4.10
 
 ; ============================================================================================================================================
 ;
@@ -781,11 +781,11 @@ F14:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("635") ;clicks on the `my scripts` script in vscode
+!a::vscode("655") ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
-!f::vscode("600") ;clicks on my `functions` script in vscode
+!f::vscode("640") ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::vscode("685") ;clicks on my `qmk` script in vscode
+!q::vscode("720") ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
 !c::vscode("550") ;clicks on my `changelog` file in vscode
 
