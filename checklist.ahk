@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.1
+;\\v2.0.2
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -13,6 +13,8 @@ TraySetIcon("E:\Github\ahk\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN 
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checkbox.ini")
     FileAppend("[Info]`ncheckbox4=0`ncheckbox5=0`ncheckbox1=0`ncheckbox2=0`ncheckbox3=0`ncheckbox6=0`ncheckbox7=0`ncheckbox8=0`ntime=0", A_ScriptDir "\checkbox.ini")
+if not FileExist(A_ScriptDir "\checklist_logs.txt")
+    FileAppend("Initial creation time : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n`n", A_ScriptDir "\checklist_logs.txt")
 
 ;getting dir name for the title
 FullFileName := A_ScriptDir
@@ -92,6 +94,7 @@ start(*) {
     stopButton.Move(,, 50, 30) ;showing the stop button
     timerText.SetFont("cGreen") ;changing the colours
     timerMinutes.SetFont("cGreen")
+    FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
     global StartTickCount := A_TickCount ;This allows us to use your computer to determine how much time has past by doing some simple math below
     SetTimer(StopWatch, 10) ;start the timer and loop it as often as possible
 }
@@ -113,6 +116,7 @@ StopWatch() {
 }
 stop(*) {
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
+    FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0) ;then stop the timer
     startButton.Move(,, 50, 30) ;then show the start button
     stopButton.Move(,, 0, 0) ;and hide the stop button
@@ -132,6 +136,7 @@ minusFive(*) {
     timerMinutes.SetFont("cRed")
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
+    FileAppend("\\ The timer was stopped and 5min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
@@ -167,6 +172,7 @@ checkbox8ini(*) {
 MyGui.OnEvent("Close", close) ;what happens when you close the GUI
 close(*) {
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
+    FileAppend("\\ The application was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
     MyGui.Destroy()
     return
 }
