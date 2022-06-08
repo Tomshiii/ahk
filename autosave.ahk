@@ -148,15 +148,15 @@ save()
     if id != "Adobe Premiere Pro.exe" ;will activate premiere if it wasn't the original window
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
     try {
-        SendInput(timelineWindow)
+        /* SendInput(timelineWindow)
         SendInput(timelineWindow)
         SendInput(programMonitor)
         SendInput(programMonitor)
         sleep 250
         toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
         ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-        sleep 250
-        if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "stop.png")
+        sleep 250 */
+        if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
             {
                 toolCust("If you were playing back anything, this function should resume it", "1000")
                 stop := "yes"
