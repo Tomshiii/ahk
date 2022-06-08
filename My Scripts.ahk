@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.12
+;\\v2.11.13
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.14
+;\\v2.4.15
 
 ; ============================================================================================================================================
 ;
@@ -882,6 +882,38 @@ SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering 
 ;discdeleteHotkey;
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(A_WorkingDir "\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
+
+F1:: ;will click any unread servers
+{
+	MouseGetPos(&xPos, &yPos)
+	WinGetPos(,,, &height)
+	if ImageSearch(&x, &y, 0, 0, 50, %&height%, "*2 " Discord "\unread.png")
+		{
+			MouseMove(%&x% + 20, %&y%, 2)
+			SendInput("{Click}")
+			MouseMove(%&xPos%, %&yPos%, 2)
+		}
+	else
+		{
+			toolFind("any unread servers", "1000")
+		}
+}
+
+F2:: ;will click any unread channels
+{
+	MouseGetPos(&xPos, &yPos)
+	WinGetPos(,,, &height)
+	if ImageSearch(&x, &y, 70, 0, 80, %&height%, "*2 " Discord "\unread2.png")
+		{
+			MouseMove(%&x% + 20, %&y%, 2)
+			SendInput("{Click}")
+			MouseMove(%&xPos%, %&yPos%, 2)
+		}
+	else
+		{
+			toolFind("any unread channels", "1000")
+		}
+}
 
 ;=============================================================================================================================================
 ;
