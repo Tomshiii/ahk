@@ -5,8 +5,8 @@ This release is focused around improving the experience for first time users of 
 - `#F1::` will bring up an informational GUI showing all active scripts, as well as giving quick and easy access to enable/disable any of them at the check of a box
 - `#h::` will bring up an informational GUI showing some useful hotkeys available to the user while running these scripts
 
-## > `Checklist.ahk`
-This release also brings along a project I've had sitting in the background for quite sometime - `Checklist.ahk` is a little script designed for me to keep track of what I have left to do on an editing project as well as keeping track of the amount of time I've put into a given project.
+## > `checklist.ahk`
+This release also brings along a project I've had sitting in the background for quite sometime - [`checklist.ahk`](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk) is a little script designed for me to keep track of what I have left to do on an editing project as well as keeping track of the amount of time I've put into a given project.
 
 ## > My Scripts
 - `RAlt & p::` can now find the project window even if it's on another display
@@ -31,7 +31,7 @@ This release also brings along a project I've had sitting in the background for 
 
 ## > QMK Keyboard
 - Added `x::` to open the project path when using Premiere Pro or After Effects
-    - `s::` (opening the checklist) will now automatically grab the project path as well
+    - `s::` (opening the checklist) will now automatically grab the project path as well if Premiere or AE are the current program in focus, else it will fallback to a dir search
 - Added `v::` to activate/deactivate the margin button in Premiere
 
 ## > Other Changes

@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.10
+;\\v2.4.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4
@@ -591,7 +591,21 @@ c::unassigned()
 End::unassigned()
 
 w::unassigned()
-s::unassigned()
+s:: ;search for checklist file
+{
+	dir := FileSelect("D2", "E:\comms", "Pick the Edit Directory")
+	if dir = ""
+		return
+	if FileExist(dir "\checklist.ahk")
+		Run(dir "\checklist.ahk")
+	else
+		try {
+			FileCopy("E:\Github\ahk\checklist.ahk", dir)
+			Run(dir "\checklist.ahk")
+		} catch as e {
+			toolCust("File not found", "1000")
+		}
+}
 x::unassigned()
 F15::switchToPhoto()
 
@@ -656,7 +670,7 @@ c::unassigned()
 End::unassigned()
 
 w::unassigned()
-s::unassigned()
+;s::unassigned()
 x::unassigned()
 F15::unassigned()
 
