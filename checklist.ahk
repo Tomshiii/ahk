@@ -1,12 +1,14 @@
-#SingleInstance Force
+;#SingleInstance Force ;LEAVE THIS LIKE THIS SO YOU DON'T ACCIDENTLY OPEN IT AGAIN
 #Requires AutoHotkey v2.0-beta.3
 TraySetIcon("E:\Github\ahk\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0
+;\\v2.0.1
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
+
+;DO NOT RELOAD THIS SCRIPT WITHOUT FIRST STOPPING THE TIMER - PRESSING THE `X` IS FINE BUT RELOADING FROM THE FILE WILL CAUSE IT TO CLOSE WITHOUT WRITING THE ELAPSED TIME
 
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checkbox.ini")
@@ -17,7 +19,7 @@ FullFileName := A_ScriptDir
 SplitPath FullFileName, &name
 
 ;start defining GUI
-MyGui := Gui("AlwaysOnTop", "Editing Checklist")
+MyGui := Gui("AlwaysOnTop", "Editing Checklist - " %&name% ".proj")
 MyGui.SetFont("S12") ;Sets the size of the font
 MyGui.SetFont("W500") ;Sets the weight of the font (thickness)
 MyGui.Opt("+MinSize300x300")

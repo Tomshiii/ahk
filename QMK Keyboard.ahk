@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.11
+;\\v2.4.13
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4
@@ -287,6 +287,13 @@ s:: ;open checklist for current edit
 	pathlength := StrLen(entirePath)
 	finalSlash := InStr(entirePath, "\",, -1)
 	path := SubStr(entirePath, 1, finalSlash - "1")
+	SplitPath path, &name
+	if WinExist("Checklist - " %&name%)
+		{
+			toolCust("You already have this checklist open", "1000")
+			errorLog(A_ThisFunc "()", "You already have this checklist open", A_LineNumber)
+			return
+		}
 	if FileExist(path "\checklist.ahk")
 		Run(path "\checklist.ahk")
 	else
@@ -317,14 +324,14 @@ x:: ;opens the directory for the current project
 	finalSlash := InStr(entirePath, "\",, -1)
 	path := SubStr(entirePath, 1, finalSlash - "1")
 	SplitPath(path,,,, &pathName)
-	if WinExist(%&pathName%,, "Adobe")
+	if WinExist("ahk_class CabinetWClass", %&pathName%, "Adobe" "Editing Checklist", "Adobe")
 		{
-			WinActivate(%&pathName%,, "Adobe")
+			WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
 			return
 		}
-	Run(path)
-	WinWait(%&pathName%,,, "Adobe")
-	WinActivate(%&pathName%,, "Adobe")
+	RunWait(path)
+	WinWait("ahk_class CabinetWClass", %&pathName%,, "Adobe")
+	WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
 }
 ;F15::unassigned()
 
@@ -409,14 +416,15 @@ x:: ;opens the directory for the current project
 	finalSlash := InStr(entirePath, "\",, -1)
 	path := SubStr(entirePath, 1, finalSlash - "1")
 	SplitPath(path,,,, &pathName)
-	if WinExist(%&pathName%,, "Adobe")
+	SplitPath(path,,,, &pathName)
+	if WinExist("ahk_class CabinetWClass", %&pathName%, "Adobe" "Editing Checklist", "Adobe")
 		{
-			WinActivate(%&pathName%,, "Adobe")
+			WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
 			return
 		}
-	Run(path)
-	WinWait(%&pathName%,,, "Adobe")
-	WinActivate(%&pathName%,, "Adobe")
+	RunWait(path)
+	WinWait("ahk_class CabinetWClass", %&pathName%,, "Adobe")
+	WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
 }
 ;F15::unassigned()
 
@@ -596,6 +604,13 @@ s:: ;search for checklist file
 	dir := FileSelect("D2", "E:\comms", "Pick the Edit Directory")
 	if dir = ""
 		return
+	SplitPath dir, &name
+	if WinExist("Checklist - " %&name%)
+		{
+			toolCust("You already have this checklist open", "1000")
+			errorLog(A_ThisFunc "()", "You already have this checklist open", A_LineNumber)
+			return
+		}
 	if FileExist(dir "\checklist.ahk")
 		Run(dir "\checklist.ahk")
 	else
