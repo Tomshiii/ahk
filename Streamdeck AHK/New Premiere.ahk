@@ -143,7 +143,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 blockOff()
                 Run(SelectedFolder) ;open an explorer window for your selected directory
                 try {
-                    FileCopy("E:\Github\ahk\releases\checklist ahk draft\checklist.ahk", SelectedFolder)
+                    FileCopy(location "\checklist.ahk", SelectedFolder)
                     Run(SelectedFolder "\checklist.ahk")
                 } catch as e {
                     toolCust("File not found", "1000")

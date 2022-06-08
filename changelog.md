@@ -5,12 +5,15 @@ This release is focused around improving the experience for first time users of 
 - `#F1::` will bring up an informational GUI showing all active scripts, as well as giving quick and easy access to enable/disable any of them at the check of a box
 - `#h::` will bring up an informational GUI showing some useful hotkeys available to the user while running these scripts
 
+## > `Checklist.ahk`
+This release also brings along a project I've had sitting in the background for quite sometime - `Checklist.ahk` is a little script designed for me to keep track of what I have left to do on an editing project as well as keeping track of the amount of time I've put into a given project.
+
 ## > My Scripts
-- Script will no longer error if run while not connected to the internet
 - `RAlt & p::` can now find the project window even if it's on another display
 - Moved `#f` & `#c` so they can be used on any program
 
 `updateChecker()`
+- Script will no longer error if run while not connected to the internet
 - Fixed tooltips in the scenario that the user has selected `don't prompt again`
 - Removed code relating to `beta` releases. Outdated and no signs of use
 - Shows a tooltip when run showing the current script version as well as the current release version on github
@@ -28,7 +31,7 @@ This release is focused around improving the experience for first time users of 
 
 ## > QMK Keyboard
 - Added `x::` to open the project path when using Premiere Pro or After Effects
-    - `s::` will not automatically grab the project path as well
+    - `s::` (opening the checklist) will now automatically grab the project path as well
 - Added `v::` to activate/deactivate the margin button in Premiere
 
 ## > Other Changes
@@ -38,7 +41,7 @@ This release is focused around improving the experience for first time users of 
 
 `autosave.ahk`
 - Will now properly reactivate an explorer window
-- Will now check to make sure a save is required for both Premiere & After Effects before moving forward
+- Will now check to make sure a save is required for either Premiere/After Effects or both before moving forward
 
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
