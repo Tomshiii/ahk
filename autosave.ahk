@@ -164,8 +164,11 @@ save()
         else
             stop := "no"
     } catch as er {
+        SendInput("^s") ;attempt a save just in case
+        blockOff() ;then bail
         toolCust("failed to find play/stop button", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineNumber)
+        return
     }
 
     ;\\ before finally saving

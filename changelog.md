@@ -45,6 +45,7 @@ This release also brings along a project I've had sitting in the background for 
 `autosave.ahk`
 - Will now properly reactivate an explorer window
 - Will now check to make sure a save is required for either Premiere/After Effects or both before moving forward
+- Fix small chance script will get stuck and unable to progress
 
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead
