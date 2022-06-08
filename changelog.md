@@ -9,8 +9,11 @@ This release is focused around improving the experience for first time users of 
 This release also brings along a project I've had sitting in the background for quite sometime - [`checklist.ahk`](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk) is a little script designed for me to keep track of what I have left to do on an editing project as well as keeping track of the amount of time I've put into a given project.
 
 ## > My Scripts
-- `RAlt & p::` can now find the project window even if it's on another display
 - Moved `#f` & `#c` so they can be used on any program
+
+`Ralt & p::`
+- Can now find the project window even if it's on another display
+- Will centre the `sfx` explorer window on the main monitor before attempting to drag it onto the project window to ensure it's not in the way
 
 `updateChecker()`
 - Script will no longer error if run while not connected to the internet

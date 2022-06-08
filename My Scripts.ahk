@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.11
+;\\v2.11.12
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.10
+;\\v2.4.14
 
 ; ============================================================================================================================================
 ;
@@ -1062,6 +1062,29 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	WinWait("_Editing stuff")
 	WinActivate("_Editing stuff")
 	sleep 500
+	try {
+		title := WinGetTitle("A")
+	} catch as e {
+		toolCust("Couldn't determine the active window", "1000")
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		return
+	}
+	try {
+		if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
+			WinRestore(title) ;winrestore will unmaximise it
+	} catch as e {
+		toolCust("Couldn't determine the active window", "1000")
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		return
+	}
+	newWidth := 1600
+	newHeight := 900
+	newX := A_ScreenWidth / 2 - newWidth / 2
+	newY := newX / 2
+	; Move any window that's not the desktop
+	try{
+		WinMove(newX, newY, newWidth, newHeight, title)
+	}
 	coordw()
 	MouseMove(0, 0)
 	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Explorer "sfx.png")
