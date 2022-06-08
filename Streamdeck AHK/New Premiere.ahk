@@ -142,12 +142,19 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 1000
                 blockOff()
                 Run(SelectedFolder) ;open an explorer window for your selected directory
+                SplitPath SelectedFolder, &name
+	            if WinExist("Checklist - " %&name%)
+                    {
+                        toolCust("You already have this checklist open", "1000")
+                        goto end
+                    }
                 try {
                     FileCopy(location "\checklist.ahk", SelectedFolder)
                     Run(SelectedFolder "\checklist.ahk")
                 } catch as e {
                     toolCust("File not found", "1000")
                 }
+                end:
                 pauseautosave()
                 pausewindowmax()
                 return

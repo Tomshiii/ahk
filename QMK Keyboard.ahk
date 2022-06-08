@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.13
+;\\v2.4.14
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4
@@ -415,7 +415,6 @@ x:: ;opens the directory for the current project
 	pathlength := StrLen(entirePath)
 	finalSlash := InStr(entirePath, "\",, -1)
 	path := SubStr(entirePath, 1, finalSlash - "1")
-	SplitPath(path,,,, &pathName)
 	SplitPath(path,,,, &pathName)
 	if WinExist("ahk_class CabinetWClass", %&pathName%, "Adobe" "Editing Checklist", "Adobe")
 		{
