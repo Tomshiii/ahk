@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.15
+;\\v2.4.16
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4
@@ -270,69 +270,8 @@ c::gain("-6") ;REDUCE GAIN BY -6db
 End::gain("6") ;INCREASE GAIN BY 6db
 
 w::unassigned()
-s:: ;open checklist for current edit
-{
-	try {
-		Name := WinGetTitle("A")
-		titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-		dashLocation := InStr(Name, "-")
-		length := StrLen(Name) - dashLocation
-	}
-	if not titlecheck
-		{
-			toolCust("You're on a part of Premiere that won't contain the project path", "2000")
-			return
-		}
-	entirePath := SubStr(name, dashLocation + "2", length)
-	pathlength := StrLen(entirePath)
-	finalSlash := InStr(entirePath, "\",, -1)
-	path := SubStr(entirePath, 1, finalSlash - "1")
-	SplitPath path, &name
-	if WinExist("Checklist - " %&name%)
-		{
-			toolCust("You already have this checklist open", "1000")
-			errorLog(A_ThisFunc "()", "You already have this checklist open", A_LineNumber)
-			return
-		}
-	if FileExist(path "\checklist.ahk")
-		Run(path "\checklist.ahk")
-	else
-		{
-			try {
-				FileCopy("E:\Github\ahk\checklist.ahk", path)
-				Run(path "\checklist.ahk")
-			} catch as e {
-				toolCust("File not found", "1000")
-			}
-		}
-}
-x:: ;opens the directory for the current project
-{
-	try {
-		Name := WinGetTitle("A")
-		titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-		dashLocation := InStr(Name, "-")
-		length := StrLen(Name) - dashLocation
-	}
-	if not titlecheck
-		{
-			toolCust("You're on a part of Premiere that won't contain the project path", "2000")
-			return
-		}
-	entirePath := SubStr(name, dashLocation + "2", length)
-	pathlength := StrLen(entirePath)
-	finalSlash := InStr(entirePath, "\",, -1)
-	path := SubStr(entirePath, 1, finalSlash - "1")
-	SplitPath(path,,,, &pathName)
-	if WinExist("ahk_class CabinetWClass", %&pathName%, "Adobe" "Editing Checklist", "Adobe")
-		{
-			WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
-			return
-		}
-	RunWait(path)
-	WinWait("ahk_class CabinetWClass", %&pathName%,, "Adobe")
-	WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
-}
+;s::unassigned()
+;x::unassigned()
 ;F15::unassigned()
 
 q::unassigned()
@@ -397,34 +336,8 @@ c::unassigned()
 End::unassigned()
 
 w::aePreset("Drop Shadow")
-s::unassigned()
-x:: ;opens the directory for the current project
-{
-	try {
-		Name := WinGetTitle("A")
-		titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
-		dashLocation := InStr(Name, "-")
-		length := StrLen(Name) - dashLocation
-	}
-	if not titlecheck
-		{
-			toolCust("You're on a part of Premiere that won't contain the project path", "2000")
-			return
-		}
-	entirePath := SubStr(name, dashLocation + "2", length)
-	pathlength := StrLen(entirePath)
-	finalSlash := InStr(entirePath, "\",, -1)
-	path := SubStr(entirePath, 1, finalSlash - "1")
-	SplitPath(path,,,, &pathName)
-	if WinExist("ahk_class CabinetWClass", %&pathName%, "Adobe" "Editing Checklist", "Adobe")
-		{
-			WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
-			return
-		}
-	RunWait(path)
-	WinWait("ahk_class CabinetWClass", %&pathName%,, "Adobe")
-	WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
-}
+;s::unassigned()
+;x::unassigned()
 ;F15::unassigned()
 
 q::unassigned()
@@ -489,8 +402,8 @@ c::unassigned()
 End::unassigned()
 
 w::unassigned()
-s::unassigned()
-x::unassigned()
+;s::unassigned()
+;x::unassigned()
 ;F15::unassigned()
 
 q::unassigned()
@@ -600,27 +513,117 @@ End::unassigned()
 w::unassigned()
 s:: ;search for checklist file
 {
-	dir := FileSelect("D2", "E:\comms", "Pick the Edit Directory")
-	if dir = ""
-		return
-	SplitPath dir, &name
-	if WinExist("Checklist - " %&name%)
+	if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
 		{
-			toolCust("You already have this checklist open", "1000")
-			errorLog(A_ThisFunc "()", "You already have this checklist open", A_LineNumber)
-			return
+			try {
+				if WinExist("Adobe Premiere Pro")
+					{
+						Name := WinGetTitle("Adobe Premiere Pro")
+						titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+					}
+				else if WinExist("Adobe After Effects")
+					{
+						Name := WinGetTitle("Adobe After Effects")
+						titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+					}
+				dashLocation := InStr(Name, "-")
+				length := StrLen(Name) - dashLocation
+			}
+			if not titlecheck
+				{
+					toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+					return
+				}
+			entirePath := SubStr(name, dashLocation + "2", length)
+			pathlength := StrLen(entirePath)
+			finalSlash := InStr(entirePath, "\",, -1)
+			path := SubStr(entirePath, 1, finalSlash - "1")
+			SplitPath path, &name
+			if WinExist("Checklist - " %&name%)
+				{
+					toolCust("You already have this checklist open", "1000")
+					errorLog(A_ThisFunc "()", "You already have this checklist open", A_LineNumber)
+					return
+				}
+			if FileExist(path "\checklist.ahk")
+				Run(path "\checklist.ahk")
+			else
+				{
+					try {
+						FileCopy("E:\Github\ahk\checklist.ahk", path)
+						Run(path "\checklist.ahk")
+					} catch as e {
+						toolCust("File not found", "1000")
+					}
+				}
 		}
-	if FileExist(dir "\checklist.ahk")
-		Run(dir "\checklist.ahk")
 	else
-		try {
-			FileCopy("E:\Github\ahk\checklist.ahk", dir)
-			Run(dir "\checklist.ahk")
-		} catch as e {
-			toolCust("File not found", "1000")
+		{
+			dir := FileSelect("D2", "E:\comms", "Pick the Edit Directory")
+			if dir = ""
+				return
+			SplitPath dir, &name
+			if WinExist("Checklist - " %&name%)
+				{
+					toolCust("You already have this checklist open", "1000")
+					errorLog(A_ThisFunc "()", "You already have this checklist open", A_LineNumber)
+					return
+				}
+			if FileExist(dir "\checklist.ahk")
+				Run(dir "\checklist.ahk")
+			else
+				try {
+					FileCopy("E:\Github\ahk\checklist.ahk", dir)
+					Run(dir "\checklist.ahk")
+				} catch as e {
+					toolCust("File not found", "1000")
+				}
 		}
 }
-x::unassigned()
+x:: ;opens the directory for the current premiere project
+{
+	if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
+		{
+			try {
+				if WinExist("Adobe Premiere Pro")
+					{
+						Name := WinGetTitle("Adobe Premiere Pro")
+						titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+					}
+				else if WinExist("Adobe After Effects")
+					{
+						Name := WinGetTitle("Adobe After Effects")
+						titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+					}
+				dashLocation := InStr(Name, "-")
+				length := StrLen(Name) - dashLocation
+			}
+			if not titlecheck
+				{
+					toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+					return
+				}
+			entirePath := SubStr(name, dashLocation + "2", length)
+			pathlength := StrLen(entirePath)
+			finalSlash := InStr(entirePath, "\",, -1)
+			path := SubStr(entirePath, 1, finalSlash - "1")
+			SplitPath(path,,,, &pathName)
+			if WinExist("ahk_class CabinetWClass", %&pathName%, "Adobe" "Editing Checklist", "Adobe")
+				{
+					WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
+					return
+				}
+			RunWait(path)
+			WinWait("ahk_class CabinetWClass", %&pathName%,, "Adobe")
+			WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
+		}
+	else
+		{
+			toolCust("A Premiere/AE isn't open", "1000")
+			errorLog(A_ThisFunc "()", "Could not find a Premiere/After Effects window", A_LineNumber)
+			return
+		}
+}
 F15::switchToPhoto()
 
 q::unassigned()
@@ -685,8 +688,8 @@ End::unassigned()
 
 w::unassigned()
 ;s::unassigned()
-x::unassigned()
-F15::unassigned()
+;x::unassigned()
+;F15::unassigned()
 
 q::unassigned()
 a::unassigned()

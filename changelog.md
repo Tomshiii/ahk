@@ -10,6 +10,7 @@ This release also brings along a project I've had sitting in the background for 
 
 ## > My Scripts
 - Moved `#f` & `#c` so they can be used on any program
+- Pressing `F1::` or `F2::` while `discord` is active will click on unread servers/channels respectively
 
 `Ralt & p::`
 - Can now find the project window even if it's on another display
@@ -33,8 +34,8 @@ This release also brings along a project I've had sitting in the background for 
 - Added `motionBlur()` to quickly navigate to the composition settings and increase the `Shutter Angle` to `360°`
 
 ## > QMK Keyboard
-- Added `x::` to open the project path when using Premiere Pro or After Effects
-    - `s::` (opening the checklist) will now automatically grab the project path as well if Premiere or AE are the current program in focus, else it will fallback to a dir search
+- Added `x::` to open the project path when Premiere Pro or After Effects is open
+    - `s::` (opening the checklist) will now automatically open the current projects checklist if Premiere or AE is open, else it will fallback to a dir search
 - Added `v::` to activate/deactivate the margin button in Premiere
 
 ## > Other Changes
