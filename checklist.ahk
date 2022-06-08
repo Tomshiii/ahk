@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.2
+;\\v2.0.3
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -79,12 +79,15 @@ timerMinutesText.SetFont("S14")
 timerMinutes := MyGui.Add("Text", "X100 Y300 w200", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
 
-startButton := MyGui.Add("Button","X12 Y330 w50 h30", "Start") ;defining the start button
+startButton := MyGui.Add("Button","X120 Y235 w50 h30", "Start") ;defining the start button
 startButton.OnEvent("Click", start) ;what happens when you click the start button
-stopButton := MyGui.Add("Button","X12 Y330 w0 h0", "Stop") ;defining the stop button and making it invisible for now
+stopButton := MyGui.Add("Button","X120 Y235 w0 h0", "Stop") ;defining the stop button and making it invisible for now
 stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
-minusFiveButton := MyGui.Add("Button","X70 Y330 w50 h30", "-5min") ;defining the -5min button
+group := MyGui.Add("GroupBox", "w150 h65 X177 Y210", "Time Management")
+minusFiveButton := MyGui.Add("Button","X195 Y235 w50 h30", "-5min") ;defining the -5min button
 minusFiveButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
+plusFiveButton := MyGui.Add("Button","X257 Y235 w50 h30", "+5min") ;defining the -5min button
+plusFiveButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
 
 ;timer
 global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
@@ -127,7 +130,24 @@ stop(*) {
 minusFive(*) {
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
     global initialRead := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
-    newValue := initialRead - 300
+    newValue := initialRead - 301
+    if newValue < 0
+        newValue := 0
+    minus := IniWrite(newValue, A_ScriptDir "\checkbox.ini", "Info", "time")
+    SetTimer(StopWatch, -1000)
+    timerText.SetFont("cRed")
+    timerMinutes.SetFont("cRed")
+    startButton.Move(,, 50, 30)
+    stopButton.Move(,, 0, 0)
+    FileAppend("\\ The timer was stopped and 5min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
+    global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
+    global ElapsedTime := 0 + startValue
+    global StartTickCount := A_TickCount
+}
+plusFive(*) {
+    IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
+    global initialRead := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
+    newValue := initialRead + 299
     if newValue < 0
         newValue := 0
     minus := IniWrite(newValue, A_ScriptDir "\checkbox.ini", "Info", "time")
