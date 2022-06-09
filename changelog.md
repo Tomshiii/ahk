@@ -37,6 +37,7 @@ This release also brings along a project I've had sitting in the background for 
 - Added `x::` to open the project path when Premiere Pro or After Effects is open
     - `s::` (opening the checklist) will now automatically open the current projects checklist if Premiere or AE is open, else it will fallback to a dir search
 - Added `v::` to activate/deactivate the margin button in Premiere
+- Fixed `errorLog()`s containing `A_ThisFunc` instead of `A_ThisHotkey`
 
 ## > Other Changes
 - Fixed a few remaining `Streamdeck AHK` scripts that still contained hard coded dir's
