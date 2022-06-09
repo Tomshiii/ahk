@@ -3,6 +3,7 @@ A_MaxHotkeysPerInterval := 2000
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 TraySetIcon(A_WorkingDir "\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include Functions.ahk
+#WinActivateForce
 
 ;This script will autosave your premire pro project every 7.5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 
@@ -156,6 +157,7 @@ save()
         toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
         ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
         sleep 250 */
+        WinWaitActive("ahk_exe Adobe Premiere Pro.exe")
         if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
             {
                 toolCust("If you were playing back anything, this function should resume it", "1000")
@@ -210,6 +212,7 @@ save()
             blockOff()
             ToolTip("")
             SetTimer(, -ms) ;reset the timer
+            SendInput(timelineWindow)
             goto end2
         }
     

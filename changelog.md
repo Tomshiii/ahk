@@ -42,13 +42,15 @@ This release also brings along a project I've had sitting in the background for 
 ## > Other Changes
 - Fixed a few remaining `Streamdeck AHK` scripts that still contained hard coded dir's
 - Added `convert mp42mp3.ahk`
-- Added `\qmk keyboard images` to backup the cutouts I use for my secondary keyboard
+- Added `\Support Files\qmk keyboard images` to backup the cutouts I use for my secondary keyboard
+- `readme.md` updated with clearer download instructions
 
 `autosave.ahk`
 - Will now properly reactivate an explorer window
 - Will now check to make sure a save is required for either Premiere/After Effects or both before moving forward
 - Fix small chance script will get stuck and unable to progress
 - Will now search the entire right side of the screen for the stop button on the project monitor instead of relying on ClassNN values as they choose to break whenever they feel like it
+- Will now properly rehighlight the timeline when completed
 
 `right click premiere.ahk`
 - Pressing `LButton` while holding down `RButton` will begin playback on the timeline once you've finished moving the playhead

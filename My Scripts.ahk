@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.13
+;\\v2.11.14
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.15
+;\\v2.4.17
 
 ; ============================================================================================================================================
 ;
@@ -453,6 +453,8 @@ adobeTemp() ;runs the loop to delete cache files
 		DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
 		SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
 	}
+	if WinExist("Tomshi Scripts Release " MyRelease)
+		return
 	detect()
 	MyGui := Gui("", "Tomshi Scripts Release " MyRelease)
 	MyGui.SetFont("S11")
