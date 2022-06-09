@@ -65,7 +65,7 @@ checkbox7.OnEvent("Click", checkbox7Ini)
 
 ;timer text
 global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
-startHoursRounded := Round(startValue/"3600", 2) ;getting the hours by dividing the seconds past then rounding to 2dp
+startHoursRounded := Round(startValue/"3600", 3) ;getting the hours by dividing the seconds past then rounding to 2dp
 startMinutesRounded := Round(startValue/"60", 2) ;getting the minutes past by dividing the seconds past then rounding to 2dp
 
 timerHoursText := MyGui.Add("Text", "X14 Y270 W60", "Hours: ") ;defining the hours text
@@ -108,7 +108,7 @@ StopWatch() {
                 {
                     global StartTickCount += 1000
                     global ElapsedTime += 1
-                    displayHours := Round(ElapsedTime/"3600", 2)
+                    displayHours := Round(ElapsedTime/"3600", 3)
                     timerText.Text := displayHours
                     displayMinutes := Round(ElapsedTime/"60", 2)
                     timerMinutes.Text := displayMinutes
