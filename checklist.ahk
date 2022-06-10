@@ -3,12 +3,31 @@
 TraySetIcon("E:\Github\ahk\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.6
+;\\v2.0.7
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
 
 ;DO NOT RELOAD THIS SCRIPT WITHOUT FIRST STOPPING THE TIMER - PRESSING THE `X` IS FINE BUT RELOADING FROM THE FILE WILL CAUSE IT TO CLOSE WITHOUT WRITING THE ELAPSED TIME
+
+/* toolCust()
+  create a tooltip with any message
+  * @param message is what you want the tooltip to say
+  * @param timeout is how many ms you want the tooltip to last
+  */
+  toolCust(message, timeout)
+  {
+      ToolTip(%&message%)
+      SetTimer(timeouttime, - %&timeout%)
+      timeouttime()
+      {
+          ToolTip("")
+      }
+  }
+
+;SET THE AMOUNT OF MINUTES YOU WANT THE REMINDER TIMER TO WAIT HERE
+minutes := 1
+global ms := minutes * 60000
 
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checkbox.ini")
@@ -90,6 +109,7 @@ plusFiveButton := MyGui.Add("Button","X257 Y235 w50 h30", "+5min") ;defining the
 plusFiveButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
 
 FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " startHoursRounded "`n", A_ScriptDir "\checklist_logs.txt")
+SetTimer(reminder, -ms)
 
 ;timer
 global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
@@ -103,6 +123,7 @@ start(*) {
     FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
     global StartTickCount := A_TickCount ;This allows us to use your computer to determine how much time has past by doing some simple math below
     SetTimer(StopWatch, 10) ;start the timer and loop it as often as possible
+    SetTimer(reminder, 0)
 }
 StopWatch() {
     if WinExist("Editing Checklist") ;this check is to stop the timer from running once you close the GUI
@@ -129,6 +150,7 @@ stop(*) {
     stopButton.Move(,, 0, 0) ;and hide the stop button
     timerText.SetFont("cRed") ;and return the colour to red
     timerMinutes.SetFont("cRed")
+    SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
 }
 minusFive(*) {
@@ -145,6 +167,7 @@ minusFive(*) {
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
     FileAppend("\\ The timer was stopped and 5min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
@@ -163,11 +186,20 @@ plusFive(*) {
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
     FileAppend("\\ The timer was stopped and 5min added : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
 }
-
+reminder() {
+    if WinExist("ahk_exe Adobe Premiere Pro.exe")
+        {
+            toolCust("Don't forget you have the timer stopped!", "2000")
+            SetTimer(, -ms)
+        }
+    else
+        SetTimer(, 0)
+}
 
 ;defining what happens when checkboxes are clicked
 checkbox1ini(*) {
@@ -200,6 +232,8 @@ close(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
     FileAppend("\\ The application was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    SetTimer(StopWatch, 0)
+    SetTimer(reminder, 0)
     MyGui.Destroy()
     return
 }
