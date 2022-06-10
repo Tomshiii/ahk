@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.10
+;\\v2.9.11
 #Include General.ahk
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
@@ -216,6 +216,8 @@ motionBlur()
     start := 5
     loop { ;this loop will attempt to search for the blur icon and activate it on the top most track if it isn't already. It's probably possible to do this for any track but that's just not worth me trying to figure out when a large majority of my work is just on the top track as I precomp most things
         ToolTip(A_Index)
+        if ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur3.png") || ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur4.png") ;checks if the blur icon is already activated
+            break
         if ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur.png") || ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur2.png")
             {
                 MouseMove(%&blurx% + 3, %&blury% + 20)
