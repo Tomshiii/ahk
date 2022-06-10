@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.9
+;\\v2.9.10
 #Include General.ahk
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
@@ -172,15 +172,26 @@ aeScaleAndPos()
     ;ToolTip(efx ", " efy) ;debugging
     SendInput(audioAE "s") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
     sleep 200
-    if ImageSearch(&xscale, &yscale, %&x% - 200, %&y% - 40, %&x% + 500, %&y% + 50, "*2 " AE "scale.png")
-        goto next
-    else
-        {
-            blockOff()
-            toolFind("The Scale property", "1000")
-            errorLog(A_ThisFunc, "Couldn't find the Scale property", A_LineNumber)
-            return
-        }
+    xsize := 200
+    ysize := 40
+    loop {
+        ToolTip(A_Index)
+        if ImageSearch(&xscale, &yscale, %&x% - xsize, %&y% - ysize, %&x% + xsize, %&y% + ysize, "*2 " AE "scale.png")
+            {
+                toolCust(A_Index, "1000")
+                break
+            }
+        sleep 10
+        xsize += 200
+        ysize += 5
+        if A_Index > 10
+            {
+                blockOff()
+                toolFind("The Scale property after " A_Index " attempts", "1000")
+                errorLog(A_ThisFunc, "Couldn't find the Scale property", A_LineNumber)
+                return
+            }
+    }
     next:
     MouseMove(%&xscale%, %&yscale%)
     SendInput("{Click}")
@@ -202,8 +213,8 @@ motionBlur()
     coords()
     MouseGetPos(&x, &y) ;gets the coordinates of the mouse to return it at the end/after an error
     coordw()
+    start := 5
     loop { ;this loop will attempt to search for the blur icon and activate it on the top most track if it isn't already. It's probably possible to do this for any track but that's just not worth me trying to figure out when a large majority of my work is just on the top track as I precomp most things
-        start := 5
         ToolTip(A_Index)
         if ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur.png") || ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur2.png")
             {

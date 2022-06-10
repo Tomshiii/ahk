@@ -32,6 +32,7 @@ This release also brings along a project I've had sitting in the background for 
 
 `After Effects.ahk`
 - Added `motionBlur()` to quickly navigate to the composition settings to increase the `Shutter Angle` to `360°` and activate motion blur on the top most track
+- `aeScaleAndPos()` now increases search area on failure in an attempt to grab the requested value if the mouse is too far to the right the first time around
 
 ## > QMK Keyboard
 - Added `x::` to open the project path when Premiere Pro or After Effects is open
