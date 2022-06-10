@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.7
+;\\v2.0.8
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -28,6 +28,9 @@ TraySetIcon("E:\Github\ahk\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN 
 ;SET THE AMOUNT OF MINUTES YOU WANT THE REMINDER TIMER TO WAIT HERE
 minutes := 1
 global ms := minutes * 60000
+;SET THE AMOUNT OF MINUTES YOU WANT INBETWEEN EACH TIME THE SCRIPT LOGS HOW MUCH TIME HAS PASSED (purely for backup purposes)
+minutes2 := 10
+global ms10 := minutes2 * 60000
 
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checkbox.ini")
@@ -123,6 +126,7 @@ start(*) {
     FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
     global StartTickCount := A_TickCount ;This allows us to use your computer to determine how much time has past by doing some simple math below
     SetTimer(StopWatch, 10) ;start the timer and loop it as often as possible
+    SetTimer(logElapse, -ms10)
     SetTimer(reminder, 0)
 }
 StopWatch() {
@@ -150,6 +154,7 @@ stop(*) {
     stopButton.Move(,, 0, 0) ;and hide the stop button
     timerText.SetFont("cRed") ;and return the colour to red
     timerMinutes.SetFont("cRed")
+    SetTimer(logElapse, 0)
     SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
 }
@@ -167,6 +172,7 @@ minusFive(*) {
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
     FileAppend("\\ The timer was stopped and 5min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    SetTimer(logElapse, 0)
     SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
@@ -186,6 +192,7 @@ plusFive(*) {
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
     FileAppend("\\ The timer was stopped and 5min added : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    SetTimer(logElapse, 0)
     SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
@@ -199,6 +206,11 @@ reminder() {
         }
     else
         SetTimer(, 0)
+}
+logElapse() {
+    forFile := Round(ElapsedTime / 3600, 3)
+    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- current hours = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    SetTimer(, -ms10)
 }
 
 ;defining what happens when checkboxes are clicked
