@@ -31,7 +31,7 @@ This release also brings along a project I've had sitting in the background for 
 - Small changes to `musicGUI()`
 
 `After Effects.ahk`
-- Added `motionBlur()` to quickly navigate to the composition settings and increase the `Shutter Angle` to `360°`
+- Added `motionBlur()` to quickly navigate to the composition settings to increase the `Shutter Angle` to `360°` and activate motion blur on the top most track
 
 ## > QMK Keyboard
 - Added `x::` to open the project path when Premiere Pro or After Effects is open

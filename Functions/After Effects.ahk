@@ -202,6 +202,24 @@ motionBlur()
     coords()
     MouseGetPos(&x, &y) ;gets the coordinates of the mouse to return it at the end/after an error
     coordw()
+    loop { ;this loop will attempt to search for the blur icon and activate it on the top most track if it isn't already. It's probably possible to do this for any track but that's just not worth me trying to figure out when a large majority of my work is just on the top track as I precomp most things
+        start := 5
+        ToolTip(A_Index)
+        if ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur.png")
+            {
+                MouseMove(%&blurx% + 3, %&blury% + 20)
+                SendInput("{Click}")
+                ToolTip("")
+                break
+            }
+        start -= 1
+        if A_Index > 4
+            {
+                toolCust("Couldn't find blur button", "1000")
+                errorLog(A_ThisFunc "()", "Couldn't find the blur button", A_LineNumber)
+                break
+            }
+    }
     if WinExist("Composition Settings") ;if the menu is already open, this check will allow us to continue without running into any futher issues
         goto open
     blockOn()
