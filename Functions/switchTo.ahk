@@ -123,7 +123,7 @@ switchToFirefox()
             msgbox "this is a notification"
         }
     if WinActive("ahk_exe firefox.exe")
-        Send "^{tab}"
+        switchToOtherFirefoxWindow()
     else
         {
             if WinExist("ahk_exe firefox.exe")

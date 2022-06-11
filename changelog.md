@@ -29,6 +29,7 @@ This release also brings along a project I've had sitting in the background for 
 
 ## > Functions
 - Small changes to `musicGUI()`
+- `switchToFirefox()` changed so that if activated again once firefox is active it will cycle between firefox windows instead of tabs
 
 `After Effects.ahk`
 - Added `motionBlur()` to quickly navigate to the composition settings to increase the `Shutter Angle` to `360°` and activate motion blur on the top most track
