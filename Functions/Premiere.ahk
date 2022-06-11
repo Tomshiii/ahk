@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.10
+;\\v2.9.11
 #Include General.ahk
 
 /* preset()
@@ -608,7 +608,7 @@ audioDrag(sfxName)
             else
                 {
                     blockOff()
-                    toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+                    toolFind("audio image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineNumber)
                     coords()
                     MouseMove(%&xpos%, %&ypos%)
@@ -617,7 +617,8 @@ audioDrag(sfxName)
             coords()
             MouseMove(%&xpos%, %&ypos%)
             SendInput("{Click Up}")
-            SendInput(projectsWindow)
+            SendInput(timelineWindow)
+            /* SendInput(projectsWindow)
             SendInput(projectsWindow)
             SendInput(findBox)
             CaretGetPos(&find2x)
@@ -638,9 +639,64 @@ audioDrag(sfxName)
                                 }
                         }
                 }
-            SendInput("^a" "+{BackSpace}" "{Enter}")
-            SendInput(timelineWindow)
+            SendInput("^a" "+{BackSpace}" "{Enter}") */
             blockOff()
+            if %&sfxName% = "bleep"
+                {
+                    sleep 100
+                    SendInput(cutPrem)
+                    KeyWait("LButton", "D")
+                    blockOn()
+                    sleep 50
+                    SendInput(selectionPrem)
+                    MouseGetPos(&delx, &dely)
+                    MouseMove(-10, 0,, "R")
+                    sleep 50
+                    if A_Cursor != "Arrow"
+                        loop 4 {
+                            MouseMove(-5, 0, 2, "R")
+                            if A_Cursor = "Arrow"
+                                break
+                            sleep 50
+                        }
+                    SendInput("{Click}")
+                    sleep 50
+                    SendInput(gainAdjust)
+                    SendInput("-20")
+                    SendInput("{Enter}")
+                    WinWaitClose("Audio Gain")
+                    sleep 500
+                    SendInput("{Click Down}")
+                    MouseGetPos(&refx, &refy)
+                    if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track 1_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track 1_2.png")
+                        {
+                            MouseMove(%&refx%, %&trackY%, 2)
+                            SendInput("{Click Up}")
+                            sleep 50
+                            MouseMove(%&delx% + 10, %&dely%, 2)
+                            sleep 200
+                            if A_Cursor != "Arrow"
+                                loop 4 {
+                                    MouseMove(-5, 0, 2, "R")
+                                    if A_Cursor = "Arrow"
+                                        break
+                                    sleep 50
+                                }
+                            SendInput("{Click}")
+                            SendInput("{BackSpace}")
+                            MouseMove(%&xpos%, %&ypos%)
+                            blockOff()
+                            ToolTip("")
+                            return
+                        }
+                    else
+                        {
+                            blockOff()
+                            toolCust("Couldn't determine the Y value of track 1", "1000")
+                            errorLog(A_ThisFunc "()", "Couldn't determine the Y value of track 1", A_LineNumber)
+                            return
+                        }
+                }
         }
     else
         {

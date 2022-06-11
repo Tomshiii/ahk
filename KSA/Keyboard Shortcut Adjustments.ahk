@@ -72,6 +72,12 @@ handPrem := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Hand")
  */
 selectionPrem := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Selection")
 
+/*
+ This value will send the keyboard shortcut you have set to swap to the selection tool within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+ cutPrem := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Cut")
 
 
 ;==other shortcuts==

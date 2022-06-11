@@ -31,6 +31,11 @@ This release also brings along a project I've had sitting in the background for 
 - Small changes to `musicGUI()`
 - `switchToFirefox()` changed so that if activated again once firefox is active it will cycle between firefox windows instead of tabs
 
+`audioDrag()`
+- Now has additional code when using the bleep sound effect to; trim, reduce the db and drag to track 1
+- No longer attempts to empty the search field at the end of the function as it was rather unreliable and is an unnecessary step
+- Removed remaining reference to vlc in a tooltip
+
 `After Effects.ahk`
 - Added `motionBlur()` to quickly navigate to the composition settings to increase the `Shutter Angle` to `360°` and activate motion blur on the top most track
 - `aeScaleAndPos()` now increases search area on failure in an attempt to grab the requested value if the mouse is too far to the right the first time around
