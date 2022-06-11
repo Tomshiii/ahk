@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.15
+;\\v2.9.16
 #Include General.ahk
 
 /*
@@ -57,9 +57,38 @@ switchToAE()
 {
     if not WinExist("ahk_exe AfterFX.exe")
         {
-        Run A_ScriptDir "\shortcuts\AfterFX.exe.lnk"
-        WinWait("ahk_exe AfterFX.exe")
-        WinActivate("ahk_exe AfterFX.exe")
+            if WinExist("ahk_exe Adobe Premiere Pro.exe") ;this function will attempt to open my AE file that's related to the working premiere project before doing anything else. I always name my AE files "effects" so this is a relatively simple check
+                {
+                    Name := WinGetTitle("Adobe Premiere Pro")
+                    titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                    dashLocation := InStr(Name, "-")
+                    length := StrLen(Name) - dashLocation
+				    if not titlecheck
+                        {
+                            toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+                            return
+                        }
+                    entirePath := SubStr(name, dashLocation + "2", length)
+                    pathlength := StrLen(entirePath)
+                    finalSlash := InStr(entirePath, "\",, -1)
+                    path := SubStr(entirePath, 1, finalSlash - "1")
+                    if FileExist(path "\effects.aep")  ;if you don't always name your AE projects the same thing, you could instead do a loop files in your working dir and look for *.aep files instead. 
+                        Run(path "\effects.aep")
+                    else if FileExist(path "\Effects.aep")
+                        Run(path "\Effects.aep")
+                    else ;if all else fails, just open AE normally
+                        {
+                            Run A_ScriptDir "\shortcuts\AfterFX.exe.lnk"
+                            WinWait("ahk_exe AfterFX.exe")
+                            WinActivate("ahk_exe AfterFX.exe")
+                        }
+                }
+            else
+                {
+                    Run A_ScriptDir "\shortcuts\AfterFX.exe.lnk"
+                    WinWait("ahk_exe AfterFX.exe")
+                    WinActivate("ahk_exe AfterFX.exe")
+                }
         }
     else
         if WinExist("ahk_exe AfterFX.exe")
