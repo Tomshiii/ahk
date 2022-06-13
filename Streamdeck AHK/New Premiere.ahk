@@ -19,9 +19,15 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
         DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
         DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
-        IB := InputBox("Enter the name of your project", "Project", "w100 h100")
+
+        SplitPath(SelectedFolder, &default) ;this gets the name of the project folder to use as a default for the below inputbox
+        IB := InputBox("Enter the name of your project", "Project", "w100 h100", %&default%)
             if IB.Result = "Cancel"
-                return
+                {
+                    pauseautosave()
+                    pausewindowmax()
+                    return
+                }
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
         coordw()
         blockOn()

@@ -55,6 +55,10 @@ This release also brings along a project I've had sitting in the background for 
 - Fixed a few remaining `Streamdeck AHK` scripts that still contained hard coded dir's
 - Added `convert mp42mp3.ahk`
 
+`New Premiere.ahk`
+- Now uses the project folder name as the default value for the InputBox
+- Fixed `pauseautosave()` & `pausewindowmax()` not unpausing if you cancel the InputBox
+
 `Move project.ahk`
 - Will now delete any `mkv` files left in the `videos` folder. Premiere can't use mkv's anyway so there's a 0% chance I wouldn't have remuxed a file I needed into an mp4 file
 - Will now check all files in the `videos` folder and if any are larger than `5GB` will be deleted. I don't need to store anything larger than this
