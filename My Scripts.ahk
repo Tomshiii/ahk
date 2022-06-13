@@ -9,14 +9,14 @@ SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still it for
 SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it for macros)
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
-TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script uses in the taskbar
+TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12
+;\\v2.13
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.5
+;\\v2.6
 
 ; ============================================================================================================================================
 ;
@@ -512,13 +512,13 @@ adobeTemp() ;runs the loop to delete cache files
 	resolve.OnEvent("Click", resolveClick)
 
 	;images
-	myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Icons\myscript.png")
-	altImage := MyGui.Add("Picture", "w20 h-1 X275 Y57", A_WorkingDir "\Icons\error.ico")
-	autodisImage := MyGui.Add("Picture", "w20 h-1 X275 Y81", A_WorkingDir "\Icons\dismiss.ico")
-	autosaveImage := MyGui.Add("Picture", "w20 h-1 X275 Y105", A_WorkingDir "\Icons\save.ico")
-	premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y130", A_WorkingDir "\Icons\fullscreen.ico")
-	qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y154", A_WorkingDir "\Icons\keyboard.ico")
-	resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y177", A_WorkingDir "\Icons\resolve.png")
+	myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Support Files\Icons\myscript.png")
+	altImage := MyGui.Add("Picture", "w20 h-1 X275 Y57", A_WorkingDir "\Support Files\Icons\error.ico")
+	autodisImage := MyGui.Add("Picture", "w20 h-1 X275 Y81", A_WorkingDir "\Support Files\Icons\dismiss.ico")
+	autosaveImage := MyGui.Add("Picture", "w20 h-1 X275 Y105", A_WorkingDir "\Support Files\Icons\save.ico")
+	premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y130", A_WorkingDir "\Support Files\Icons\fullscreen.ico")
+	qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y154", A_WorkingDir "\Support Files\Icons\keyboard.ico")
+	resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y177", A_WorkingDir "\Support Files\Icons\resolve.png")
 
 	;close button
 	closeButton := MyGui.Add("Button", "X245", "Close")
@@ -715,7 +715,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	sleep 1000
 	WinGetPos(,, &width, &height, "A")
 	MouseGetPos(&x, &y)
-	if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " A_WorkingDir "\ImageSearch\Foobar\pokemon.png")
+	if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " A_WorkingDir "\Support Files\ImageSearch\Foobar\pokemon.png")
 		{
 			MouseMove(%&xdir%, %&ydir%)
 			SendInput("{Click}")
@@ -786,13 +786,13 @@ F14:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("655") ;clicks on the `my scripts` script in vscode
+!a::vscode("560") ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
-!f::vscode("640") ;clicks on my `functions` script in vscode
+!f::vscode("540") ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::vscode("720") ;clicks on my `qmk` script in vscode
+!q::vscode("610") ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
-!c::vscode("550") ;clicks on my `changelog` file in vscode
+!c::vscode("450") ;clicks on my `changelog` file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
@@ -886,7 +886,7 @@ SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;thi
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
-^+t::Run(A_WorkingDir "\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
+^+t::Run(A_WorkingDir "\Support Files\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 F1:: ;will click any unread servers
 {

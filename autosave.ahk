@@ -1,13 +1,13 @@
 #SingleInstance force ;only one instance of this script may run at a time!
 A_MaxHotkeysPerInterval := 2000
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
-TraySetIcon(A_WorkingDir "\Icons\save.ico") ;changes the icon this script uses in the taskbar
+TraySetIcon(A_WorkingDir "\Support Files\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include Functions.ahk
 #WinActivateForce
 
 ;This script will autosave your premire pro project every 7.5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 
-global Premiere := A_WorkingDir "\ImageSearch\Premiere\"
+global Premiere := A_WorkingDir "\Support Files\ImageSearch\Premiere\"
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT HERE
 minutes := 7.5

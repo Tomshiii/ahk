@@ -1,13 +1,13 @@
-global Discord := A_WorkingDir "\ImageSearch\Discord\"
-global Premiere := A_WorkingDir "\ImageSearch\Premiere\"
-global AE := A_WorkingDir "\ImageSearch\AE\"
-global Photoshop := A_WorkingDir "\ImageSearch\Photoshop\"
-global Resolve := A_WorkingDir "\ImageSearch\Resolve\"
-global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
-global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
-global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
+global Discord := A_WorkingDir "\Support Files\ImageSearch\Discord\"
+global Premiere := A_WorkingDir "\Support Files\ImageSearch\Premiere\"
+global AE := A_WorkingDir "\Support Files\ImageSearch\AE\"
+global Photoshop := A_WorkingDir "\Support Files\ImageSearch\Photoshop\"
+global Resolve := A_WorkingDir "\Support Files\ImageSearch\Resolve\"
+global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
+global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
+global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.11
+;\\v2.12
 
 ; ===========================================================================================================================================
 ;

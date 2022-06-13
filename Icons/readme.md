@@ -1,1 +1,0 @@
-The .ico files in this directory can be found at [iconsdb.com](https://www.iconsdb.com/)

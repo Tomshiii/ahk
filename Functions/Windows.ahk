@@ -93,7 +93,7 @@ moveWin(key)
 ;
 ; ===========================================================================================================================================
 /* disc()
- This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \ahk\ImageSearch\disc[button].png
+ This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \Support Files\ImageSearch\disc[button].png
  @param button in the png name of a screenshot of the button you want the function to press
  */
 disc(button)
@@ -285,7 +285,7 @@ vscode(script)
         }
     SendInput(focusWork) ;vscode hides the buttons now all of a sudden.. thanks vscode
     sleep 50
-    if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "collapse.png") ;this imagesearch finds the collapse folders button, presses it twice, then moves across and presses the refresh button
+    if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "collapse.png") ;this imagesearch finds the collapse folders button, presses it twice, then moves across and presses repo folder
         {
             MouseMove(%&xex%, %&yex%)
             SendInput("{Click 2}")

@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
-TraySetIcon(A_WorkingDir "\Icons\keyboard.ico")
+TraySetIcon(A_WorkingDir "\Support Files\Icons\keyboard.ico")
 ;SetCapsLockState "AlwaysOff" ;having this on broke my main script for whatever reason
 SetNumLockState "AlwaysOn"
 #SingleInstance Force ;only one instance of this script may run at a time!
@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5
+;\\v2.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4

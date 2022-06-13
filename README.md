@@ -52,7 +52,7 @@ This script is the "central" script if you will. A lot of my windows scripts are
 
 #### [QMK Keyboard.ahk](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk)
 A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.3+](https://github.com/Tomshiii/ahk/releases/tag/v2.3) I use a Planck Ez custom keyboard.
-Check out [\Secondary Keyboard Files](https://github.com/Tomshiii/ahk/tree/main/Secondary%20Keyboard%20Files) for more information on how that works.
+Check out [\Secondary Keyboard Files](https://github.com/Tomshiii/ahk/tree/main/Support%20Files/Secondary%20Keyboard%20Files) for more information on how that works.
 
 #### [Functions.ahk](https://github.com/Tomshiii/ahk/blob/main/Functions.ahk)
 A sort of "hub" script that includes all [individual function files](https://github.com/Tomshiii/ahk/tree/main/Functions) into it so that ***it*** can then be [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in other scripts. You don't need to manually run this file.

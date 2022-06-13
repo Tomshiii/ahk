@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.17
+;\\v2.10
 #Include General.ahk
 
 /*
@@ -43,7 +43,7 @@ switchToPremiere()
 {
     if not WinExist("ahk_class Premiere Pro")
         {
-        Run A_ScriptDir "\shortcuts\Adobe Premiere Pro.exe.lnk"
+        Run A_ScriptDir "\Support Files\shortcuts\Adobe Premiere Pro.exe.lnk"
         }
     else
         if WinExist("ahk_class Premiere Pro")
@@ -78,14 +78,14 @@ switchToAE()
                         Run(path "\Effects.aep")
                     else ;if all else fails, just open AE normally
                         {
-                            Run A_ScriptDir "\shortcuts\AfterFX.exe.lnk"
+                            Run A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk"
                             WinWait("ahk_exe AfterFX.exe")
                             WinActivate("ahk_exe AfterFX.exe")
                         }
                 }
             else
                 {
-                    Run A_ScriptDir "\shortcuts\AfterFX.exe.lnk"
+                    Run A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk"
                     WinWait("ahk_exe AfterFX.exe")
                     WinActivate("ahk_exe AfterFX.exe")
                 }
@@ -128,7 +128,7 @@ switchToPhoto()
 {
     if not WinExist("ahk_exe Photoshop.exe")
         {
-        Run A_ScriptDir "\shortcuts\Photoshop.exe.lnk"
+        Run A_ScriptDir "\Support Files\shortcuts\Photoshop.exe.lnk"
         WinWait("ahk_exe Photoshop.exe")
         WinActivate("ahk_exe Photoshop.exe")
         }
@@ -322,7 +322,7 @@ switchToWindowSpy()
 switchToYourPhone()
 {
     if not WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
-        Run A_ProgramFiles "\ahk\ahk\shortcuts\Your Phone.lnk"
+        Run A_ScriptDir "\Support Files\shortcuts\Your Phone.lnk"
     GroupAdd "yourphone", "ahk_class ApplicationFrameWindow"
     if WinActive("Your Phone")
         GroupActivate "yourphone", "r"

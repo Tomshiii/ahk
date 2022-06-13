@@ -1,5 +1,5 @@
 ﻿#SingleInstance force ;only one instance of this script may run at a time!
-TraySetIcon(A_WorkingDir "\Icons\dismiss.ico")
+TraySetIcon(A_WorkingDir "\Support Files\Icons\dismiss.ico")
 A_MaxHotkeysPerInterval := 2000
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
 ;Menu, Tray, Icon, shell32.dll, 303 ; this changes the tray icon to a little check mark!

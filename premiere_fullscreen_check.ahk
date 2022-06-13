@@ -1,6 +1,6 @@
 #SingleInstance force
 SetWorkingDir A_ScriptDir
-TraySetIcon(A_WorkingDir "\Icons\fullscreen.ico") ;changes the icon this script uses in the taskbar
+TraySetIcon(A_WorkingDir "\Support Files\Icons\fullscreen.ico") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk"
 #Requires AutoHotkey v2.0-beta.3
 InstallKeybdHook

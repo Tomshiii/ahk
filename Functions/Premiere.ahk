@@ -1139,18 +1139,18 @@ gainSecondary(key1, key2, keyend)
 /*
 gain() ;old gain code (v2.3.14)to use imagesearch instead of the ClassNN information
 /*
-if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion2.png")
+if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\Support Files\ImageSearch\Premiere\motion2.png")
     goto inputs
 else
     {
-        if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
+        if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\Support Files\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
             {
                 SendInput("^+9") ;selects the timeline
                 goto inputs
             }
         else
             {
-                if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\Support Files\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                     {
                         SendInput("^+9" "d")
                         goto inputs
