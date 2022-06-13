@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.11
+;\\v2.10
 #Include General.ahk
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
@@ -41,7 +41,7 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
                 {
                     blockOff()
                     toolFind("the property you're after", "1000")
-                    errorLog(A_ThisFunc "()", "Couldn't find the property the user was after", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Couldn't find the property the user was after", A_LineFile, A_LineNumber)
                     KeyWait(A_ThisHotkey)
                     return
                 }
@@ -68,7 +68,7 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
     else
         {
             toolCust("you're not hovering a track", "1000")
-            errorLog(A_ThisFunc "()", "User not hovering over a track", A_LineNumber)
+            errorLog(A_ThisFunc "()", "User not hovering over a track", A_LineFile, A_LineNumber)
         }
 }
 
@@ -85,7 +85,7 @@ aePreset(preset)
     if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
         {
             toolCust("you haven't selected a clip`nor aren't hovering the right spot", "1000")
-            errorLog(A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineNumber)
+            errorLog(A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineFile, A_LineNumber)
             blockOff()
             Exit
         }
@@ -96,7 +96,7 @@ aePreset(preset)
         ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
     } catch as e {
         toolCust("Couldn't find the ClassNN value", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
     if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox.png")
         goto move
@@ -106,7 +106,7 @@ aePreset(preset)
         {
             blockOff()
             toolCust("couldn't find the magnifying glass", "1000")
-            errorLog(A_ThisFunc "()", "Couldn't find the magnifying glass", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Couldn't find the magnifying glass", A_LineFile, A_LineNumber)
             return
         }
     move:
@@ -126,7 +126,7 @@ aePreset(preset)
                     {
                         blockOff()
                         toolCust("Couldn't determine the caret", "1000")
-                        errorLog(A_ThisFunc "()","Function couldn't determine the caret position", A_LineNumber)
+                        errorLog(A_ThisFunc "()","Function couldn't determine the caret position", A_LineFile, A_LineNumber)
                         return
                     }
             }
@@ -158,7 +158,7 @@ aeScaleAndPos()
     if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
         {
             toolCust("you haven't selected a clip`nor aren't hovering the right spot", "1000")
-            errorLog(A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineNumber)
+            errorLog(A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineFile, A_LineNumber)
             blockOff()
             Exit
         }
@@ -167,7 +167,7 @@ aeScaleAndPos()
         ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
     } catch as e {
         toolCust("Couldn't find the ClassNN value", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
     ;ToolTip(efx ", " efy) ;debugging
     SendInput(audioAE "s") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
@@ -188,7 +188,7 @@ aeScaleAndPos()
             {
                 blockOff()
                 toolFind("The Scale property after " A_Index " attempts", "1000")
-                errorLog(A_ThisFunc, "Couldn't find the Scale property", A_LineNumber)
+                errorLog(A_ThisFunc, "Couldn't find the Scale property", A_LineFile, A_LineNumber)
                 return
             }
     }
@@ -230,7 +230,7 @@ motionBlur()
         if A_Index > 4
             {
                 toolCust("Couldn't find blur button", "1000")
-                errorLog(A_ThisFunc "()", "Couldn't find the blur button", A_LineNumber)
+                errorLog(A_ThisFunc "()", "Couldn't find the blur button", A_LineFile, A_LineNumber)
                 break
             }
     }
@@ -258,7 +258,7 @@ motionBlur()
                 coords()
                 MouseMove(%&x%, %&y%)
                 blockOff()
-                errorLog(A_ThisFunc "()", "Couldn't find the Advanced tab", A_LineNumber)
+                errorLog(A_ThisFunc "()", "Couldn't find the Advanced tab", A_LineFile, A_LineNumber)
                 toolFind("the Advanced tab", "1000")
                 return
             }
@@ -282,7 +282,7 @@ motionBlur()
                 coords()
                 MouseMove(%&x%, %&y%)
                 blockOff()
-                errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle image", A_LineNumber)
+                errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle image", A_LineFile, A_LineNumber)
                 toolFind("the Shutter Angle image", "1000")
                 return
             }
@@ -310,7 +310,7 @@ motionBlur()
                 coords()
                 MouseMove(%&x%, %&y%)
                 blockOff()
-                errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle value", A_LineNumber)
+                errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle value", A_LineFile, A_LineNumber)
                 toolFind("the Shutter Angle value", "1000")
                 return
             }

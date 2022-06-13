@@ -33,6 +33,8 @@ This release also brings along a project I've had sitting in the background for 
 - Small changes to `musicGUI()`
 - `switchToFirefox()` changed so that if activated again once firefox is active it will cycle between firefox windows instead of tabs
 - `switchToAE()` will attempt to open the AE file relating to my premiere project before falling back to just opening AE normally
+- `errorLog()` now requires a fourth input variable: `A_LineFile` to show which script the error originates from. This allows accurate information anytime it's an error generated from a function or script outside `My Scripts.ahk`
+    - All instances of `errorLog()` updated to accomodate this change
 
 `audioDrag()`
 - Now has additional code when using the bleep sound effect to; trim, reduce the db and drag to track 1

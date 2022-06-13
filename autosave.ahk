@@ -79,7 +79,7 @@ save()
             id := "ahk_class CabinetWClass"
     } catch as e {
         toolCust("couldn't grab active window", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineFile, A_LineNumber)
     }
 
     ;\\ Now we begin
@@ -102,7 +102,7 @@ save()
             aeSaveCheck := ""
     } catch as e {
         toolCust("Couldn't determine the titles of Adobe programs", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
     }
     if not titlecheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
         {
@@ -115,7 +115,7 @@ save()
                     WinActivate("ahk_exe " id)
             } catch as e {
                 toolCust("couldn't activate original window", "1000")
-                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
             }
             SetTimer(, -ms)
             goto end2
@@ -135,7 +135,7 @@ save()
                             WinActivate("ahk_exe " id)
                     } catch as e {
                         toolCust("couldn't activate original window", "1000")
-                        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+                        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
                     }
                     SetTimer(, -ms)
                     goto end2
@@ -161,7 +161,7 @@ save()
                     WinActivate("ahk_exe " id)
             } catch as e {
                 toolCust("couldn't activate original window", "1000")
-                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
             }
             SetTimer(, -ms)
             goto end2
@@ -197,7 +197,7 @@ save()
                         WinActivate("ahk_exe " id)
                 } catch as e {
                     toolCust("couldn't activate original window", "1000")
-                    errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
                 }
                 SetTimer(, -ms)
                 goto end2
@@ -213,7 +213,7 @@ save()
         SendInput("^s") ;attempt a save just in case
         blockOff() ;then bail
         toolCust("failed to find play/stop button", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineFile, A_LineNumber)
         return
     }
 
@@ -242,7 +242,7 @@ save()
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
     } catch as e {
         toolCust("couldn't activate Premiere Pro", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
     }
 
     ;\\ if a video was playing, we now start it up again
@@ -268,7 +268,7 @@ save()
             WinActivate("ahk_exe " id) ;attempt to reactivate the original window
     } catch as e {
         toolCust("couldn't activate original window", "1000")
-        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
     }
     blockOff()
     ToolTip("")

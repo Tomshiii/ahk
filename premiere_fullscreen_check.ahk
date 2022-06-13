@@ -65,7 +65,7 @@ check()
                                     fire2 := fire/1000
                                     fireRound := Round(fire2, 0)
                                     toolCust(A_ScriptName " attempted to reset the fullscreen of Premiere Pro but was reset due to interactions with a keyboard`nIt will attempt again in " fireRound "s", "2000")
-                                    errorLog(A_ScriptName, "attempted to reset the fullscreen of Premiere Pro but was reset due to interactions with a keyboard", A_LineNumber)
+                                    errorLog(A_ScriptName, "attempted to reset the fullscreen of Premiere Pro but was reset due to interactions with a keyboard", A_LineFile, A_LineNumber)
                                 }
                             SetTimer(, -fire) ;adds 10s to the timer and will check again after that time has elapsed
                         }

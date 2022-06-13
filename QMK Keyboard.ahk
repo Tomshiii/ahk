@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.17
+;\\v2.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4
@@ -223,7 +223,7 @@ f:: ;this macro is to open the speed menu
 		}
 	} catch as e {
 		toolCust("something broke", "1000")
-		errorLog(A_ThisHotkey, "Encountered an error attempting to get the ControlClassNN", A_LineNumber)
+		errorLog(A_ThisHotkey, "Encountered an error attempting to get the ControlClassNN", A_LineFile, A_LineNumber)
 		Exit
 	}
 	SendInput(selectAtPlayhead speedHotkey)
@@ -253,12 +253,12 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 			{
 				blockOff()
 				toolFind("the margin button", "1000")
-				errorLog(A_ThisHotkey, "Couldn't find the margin button", A_LineNumber)
+				errorLog(A_ThisHotkey, "Couldn't find the margin button", A_LineFile, A_LineNumber)
 			}
 	} catch as er {
 		blockOff()
 		toolFind("the margin button", "1000")
-		errorLog(A_ThisHotkey, "Couldn't find the margin button", A_LineNumber)
+		errorLog(A_ThisHotkey, "Couldn't find the margin button", A_LineFile, A_LineNumber)
 		return
 	}
 }
@@ -542,7 +542,7 @@ s:: ;search for checklist file
 			if WinExist("Checklist - " %&name%)
 				{
 					toolCust("You already have this checklist open", "1000")
-					errorLog(A_ThisHotkey, "You already have this checklist open", A_LineNumber)
+					errorLog(A_ThisHotkey, "You already have this checklist open", A_LineFile, A_LineNumber)
 					return
 				}
 			if FileExist(path "\checklist.ahk")
@@ -566,7 +566,7 @@ s:: ;search for checklist file
 			if WinExist("Checklist - " %&name%)
 				{
 					toolCust("You already have this checklist open", "1000")
-					errorLog(A_ThisHotkey, "You already have this checklist open", A_LineNumber)
+					errorLog(A_ThisHotkey, "You already have this checklist open", A_LineFile, A_LineNumber)
 					return
 				}
 			if FileExist(dir "\checklist.ahk")
@@ -620,7 +620,7 @@ x:: ;opens the directory for the current premiere project
 	else
 		{
 			toolCust("A Premiere/AE isn't open", "1000")
-			errorLog(A_ThisHotkey, "Could not find a Premiere/After Effects window", A_LineNumber)
+			errorLog(A_ThisHotkey, "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
 			return
 		}
 }

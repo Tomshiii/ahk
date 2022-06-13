@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\ImageSearch\Firefox\"
 
-;\\v2.10.8
+;\\v2.11
 
 ; ===========================================================================================================================================
 ;
@@ -184,16 +184,17 @@ timeline(timeline, x1, x2, y1)
  
 ; ===========================================================================================================================================
 ;
-;		Error Log \\ Last updated: v2.10.7
+;		Error Log \\ Last updated: v2.11
 ;
 ; ===========================================================================================================================================
 /* errorLog()
   A function designed to log errors in scripts if they occur
   @param func just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey` if it's a hotkey
   @param error is what text you want logged to explain the error
-  @param line just type `A_LineNumber`
+  @param lineFile just type `A_LineFile`
+  @param lineNumber just type `A_LineNumber`
   */
-errorLog(func, error, line)
+errorLog(func, error, lineFile, lineNumber)
 {
     start := ""
     text := ""
@@ -226,7 +227,7 @@ errorLog(func, error, line)
                 start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ OS`n" A_Tab "\\ " OSName "`n" A_Tab "\\ " A_OSVersion "`n" A_Tab "\\ " OSArch "`n\\ CPU`n" A_Tab "\\ " CPU "`n" A_Tab "\\ Logical Processors - " Logical "`n\\ RAM`n" A_Tab "\\ Total Physical Memory - " Memory "GB`n" A_Tab "\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
             }
         }
-    if A_ScriptName = "QMK Keyboard.ahk"
-        text := " (might be incorrect if launching macro from secondary keyboard)"
-    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" A_ScriptName "``" text ", Line: " %&line% "`n", A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    scriptPath :=  %&lineFile% ;this is taking the path given from A_LineFile
+    scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
+    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" %&name% "``, Line Number: " %&lineNumber% "`n", A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }

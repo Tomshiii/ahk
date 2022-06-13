@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.4"
+global MyRelease := "v2.3.3"
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Icons\myscript.png") ;changes the icon this script us
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.15
+;\\v2.12
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.4.17
+;\\v2.5
 
 ; ============================================================================================================================================
 ;
@@ -76,7 +76,7 @@ updateChecker() {
 		string := main.ResponseText
 	} catch as e {
 		toolCust("Couldn't get version info`nYou may not be connected to the internet", "1000")
-		errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineNumber)
+		errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineFile, A_LineNumber)
 		return
 	}
 	foundpos := InStr(string, 'v',,,2)
@@ -99,7 +99,7 @@ updateChecker() {
 						ChangeLog := change.ResponseText
 					} catch as e {
 						toolCust("Couldn't get changelog info`nYou may not be connected to the internet", "1000")
-						errorLog(A_ThisFunc "()", "Couldn't get changelog info, you may not be connected to the internet", A_LineNumber)
+						errorLog(A_ThisFunc "()", "Couldn't get changelog info, you may not be connected to the internet", A_LineFile, A_LineNumber)
 						return
 					}
 					;\\removing the warning about linking to commits
@@ -220,7 +220,7 @@ updateChecker() {
 									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", "3000")
 								} catch as e {
 									toolCust("There was an error trying to backup your current scripts", "2000")
-									errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineNumber)
+									errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineFile, A_LineNumber)
 								}
 								return
 							}
@@ -238,13 +238,13 @@ updateChecker() {
 			if VerCompare(MyRelease, version) < 0
 				{
 					toolCust("You're using an outdated version of these scripts", "1000")
-					errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineNumber)
+					errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
 					return
 				}
 			else
 				{
 					toolCust("This script will not prompt you with a download/changelog when a new version is available", "2000")
-					errorLog(A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineNumber)
+					errorLog(A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
 					return
 				}
 		}
@@ -253,7 +253,7 @@ updateChecker() {
 	else
 		{
 			toolCust("You put something else in the ignore.ini file you goose", "1000")
-			errorLog(A_ThisFunc "()", "You put something else in the ignore.ini file you goose", A_LineNumber)
+			errorLog(A_ThisFunc "()", "You put something else in the ignore.ini file you goose", A_LineFile, A_LineNumber)
 			return
 		}
 }
@@ -379,7 +379,7 @@ adobeTemp() {
 	else
 		{
 			toolCust("Total Adobe cache size - " CacheSize "/" largestSize "GB", "1500")
-			return
+			goto end
 		}
 	;then we convert that byte total to GB
 	convert := CacheSize/"1073741824"
@@ -401,6 +401,7 @@ adobeTemp() {
 			}
 			ToolTip("")
 		}
+	end:
 	if DirExist(A_Temp "\tomshi\adobe")
 		{
 			try {
@@ -632,7 +633,7 @@ adobeTemp() ;runs the loop to delete cache files
 		title := WinGetTitle("A")
 	} catch as e {
 		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
 	try {
@@ -640,7 +641,7 @@ adobeTemp() ;runs the loop to delete cache files
 			WinRestore(title) ;winrestore will unmaximise it
 	} catch as e {
 		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
 	newWidth := 1600
@@ -660,7 +661,7 @@ adobeTemp() ;runs the loop to delete cache files
 		title := WinGetTitle("A")
 	} catch as e {
 		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
 	try {
@@ -670,7 +671,7 @@ adobeTemp() ;runs the loop to delete cache files
 			WinRestore(title)
 	} catch as e {
 		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
 }
@@ -837,7 +838,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 					WinActivate(title) ;reactivates the original window
 				} catch as e {
 					toolCust("Failed to get information on last active window", "1000")
-					errorLog(A_ThisHotkey, "Failed to get information on last active window", A_LineNumber)
+					errorLog(A_ThisHotkey, "Failed to get information on last active window", A_LineFile, A_LineNumber)
 				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 				return
@@ -977,7 +978,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
     } catch as e {
         toolCust("Couldn't find the ClassNN value", "1000")
-        errorLog(A_ThisHotkey, "Couldn't find the ClassNN value", A_LineNumber)
+        errorLog(A_ThisHotkey, "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
 	;MouseMove 34, 917 ;location of the selection tool
 	if %&width% = 0 || %&height% = 0
@@ -991,7 +992,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 					{
 						SendInput(selectionPrem)
 						toolCust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", "2000")
-						errorLog(A_ThisHotkey, "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineNumber)
+						errorLog(A_ThisHotkey, "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 						return
 					}
 				sleep 100
@@ -1015,7 +1016,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			{
 				SendInput(selectionPrem)
 				toolFind("selection tool`nUsed the selection hotkey instead", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				errorLog(A_ThisHotkey, "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineNumber)
+				errorLog(A_ThisHotkey, "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 				return
 			}
 	}
@@ -1058,7 +1059,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	} catch as e
 		{
 			toolCust("Function failed to find project window", "1000")
-			errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
+			errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineFile, A_LineNumber)
 			return
 		}
 	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN) ;debugging
@@ -1080,7 +1081,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				{
 					blockOff()
 					toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-					errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineNumber)
+					errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineFile, A_LineNumber)
 					return
 					;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
 				}
@@ -1102,7 +1103,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		title := WinGetTitle("A")
 	} catch as e {
 		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
 	try {
@@ -1110,7 +1111,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			WinRestore(title) ;winrestore will unmaximise it
 	} catch as e {
 		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineNumber)
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
 	newWidth := 1600
@@ -1139,7 +1140,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff
 			toolFind("the sfx folder", "2000")
-			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Windows Explorer", A_LineNumber)
+			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
 			return
 		}
 	added:
@@ -1161,7 +1162,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("the sfx folder in premiere", "2000")
-			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Premiere Pro", A_LineNumber)
+			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
 			return
 		}
 	loop {
@@ -1178,7 +1179,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			{
 				blockOff()
 				toolFind("the bin", "2000")
-				errorLog(A_ThisHotkey, "Couldn't find the bin", A_LineNumber)
+				errorLog(A_ThisHotkey, "Couldn't find the bin", A_LineFile, A_LineNumber)
 				return
 			}
 	}

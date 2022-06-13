@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.3
+;\\v2.10
 #Include General.ahk
 
 /* psProp()
@@ -24,7 +24,7 @@ psProp(image)
                 {
                     blockOff()
                     toolFind("the value you wish`nto adjust_1", "1000")
-                    errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                     return
                 }
         }
@@ -41,7 +41,7 @@ psProp(image)
                     MouseMove(%&xpos%, %&ypos%)
                     blockOff()
                     toolFind("the value you wish`nto adjust_2", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineNumber)
+                    errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                     return
                 }
         }
@@ -110,7 +110,7 @@ psSave()
                         MouseMove(0, 0)
                         blockOff()
                         toolFind("png", "1000")
-                        errorLog(A_ThisFunc "()", "Was unable to find the png option", A_LineNumber)
+                        errorLog(A_ThisFunc "()", "Was unable to find the png option", A_LineFile, A_LineNumber)
                         return
                     }
             }
@@ -187,7 +187,7 @@ psType(filetype)
         {
             blockOff()
             toolFind("png drop down", "1000")
-            errorLog(A_ThisFunc "()", "Was unable to find the filetype option", A_LineNumber)
+            errorLog(A_ThisFunc "()", "Was unable to find the filetype option", A_LineFile, A_LineNumber)
             return
         }
     MouseMove(%&x%, %&y%)
