@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.3"
+global MyRelease := "v2.3.4"
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
@@ -627,7 +627,7 @@ adobeTemp() ;runs the loop to delete cache files
 #SuspendExempt false
 
 ;centreHotkey;
-#c::
+#c:: ;this hotkey will center the active window in the middle of your main monitor
 {
 	try {
 		title := WinGetTitle("A")
@@ -655,7 +655,7 @@ adobeTemp() ;runs the loop to delete cache files
 }
 
 ;fullscreenHotkey;
-#f::
+#f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
 {
 	try {
 		title := WinGetTitle("A")
