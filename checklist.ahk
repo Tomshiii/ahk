@@ -251,4 +251,5 @@ close(*) {
 }
 
 MyGui.Show("AutoSize")
+MyGui.Move(-371, -233,,)
 ;finish defining GUI

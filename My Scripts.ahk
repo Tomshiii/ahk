@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13
+;\\v2.13.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.6
 
@@ -162,6 +162,9 @@ updateChecker() {
 					;set title
 					Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
 					Title.SetFont("S15")
+					;set github button
+					gitButton := MyGui.Add("Button", "X530 Y10", "GitHub")
+					gitButton.OnEvent("Click", githubButton)
 					;set download button
 					downloadbutt := MyGui.Add("Button", "X445 Y350", "Download")
 					downloadbutt.OnEvent("Click", Down)
@@ -182,6 +185,14 @@ updateChecker() {
 							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 						if noprompt.Value = 0
 							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+					}
+					githubButton(*) {
+						if WinExist("Tomshiii/ahk")
+							{
+								WinActivate("Tomshiii/ahk")
+								return
+							}
+						Run("https://github.com/tomshiii/ahk/releases/latest")
 					}
 					down(*) {
 						MyGui.Opt("Disabled")
