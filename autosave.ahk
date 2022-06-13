@@ -178,7 +178,30 @@ save()
         toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
         ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
         sleep 250 */
-        WinWaitActive("ahk_exe Adobe Premiere Pro.exe")
+        premWinCheck := WinGetTitle("A")
+        premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+        if premWinCheck = ""
+            {
+                switchToPremiere()
+                premWinCheck := WinGetTitle("A")
+                premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            }
+        if not premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+            {
+                blockOff()
+                toolCust("You're currently doing something`nautosave has be cancelled", "2000")
+                try {
+                    if id = "ahk_class CabinetWClass"
+                        WinActivate("ahk_class CabinetWClass")
+                    else
+                        WinActivate("ahk_exe " id)
+                } catch as e {
+                    toolCust("couldn't activate original window", "1000")
+                    errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+                }
+                SetTimer(, -ms)
+                goto end2
+            }
         if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
             {
                 toolCust("If you were playing back anything, this function should resume it", "1000")
