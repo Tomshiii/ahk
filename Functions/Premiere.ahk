@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.11
+;\\v2.9.12
 #Include General.ahk
 
 /* preset()
@@ -677,7 +677,7 @@ audioDrag(sfxName)
                             sleep 200
                             if A_Cursor != "Arrow"
                                 loop 4 {
-                                    MouseMove(-5, 0, 2, "R")
+                                    MouseMove(5, 0, 2, "R")
                                     if A_Cursor = "Arrow"
                                         break
                                     sleep 50
