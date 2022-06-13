@@ -43,6 +43,18 @@ FileDelete(SelectedFolder "\audio\*.pek")
 FileDelete(SelectedFolder "\audio\*.pkf")
 FileDelete(SelectedFolder "\*.cfa")
 FileDelete(SelectedFolder "\*.pek")
+;delete any mkv files I might still have lying around in the videos folder (premiere can't use mkv files anyway so there's a 0% changce I haven't remuxed them into mp4's)
+FileDelete(SelectedFolder "\videos\*.mkv")
+
+;the below loop will go through and delete any files that are larger than 5GB (default) as I don't need to store anything larger than that
+maxFileSizeGB := 5 
+loop files SelectedFolder "\videos\*.*", "R"
+    {
+        if A_LoopFileSize/1073741824 > maxFileSizeGB
+            FileDelete(A_LoopFileFullPath)
+        else
+            continue
+    }
 
 ;;this part will delete any cache files buried within premiere's appdata folder because its settings to do so automatically literally never work. this will only happen if the folder is larger than you set below (in GB)
 
