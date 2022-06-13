@@ -1,8 +1,10 @@
 # <> Release 2.3.5 - First Run Experience
-This release is focused around improving the experience for first time users of this collection of scripts. While the main readme of the repo does a relatively decent job at explaining things, most users likely won't read it outside of the installation instructions. So with this release comes `firstCheck()` as well as `#F1::` & `#h::` hotkeys.
+With [over 50 commits](https://github.com/Tomshiii/ahk/compare/v2.3.4...v2.3.5) it's been a big month for these scripts! so many quality of life improvements/fixes have come about in the last month as well as some fun and incredibly useful additions! I'm really excited to get this release out!
+
+This release is centered around improving the experience for first time users of this collection of scripts. Scouring github for other AHK script collections I noticed something, trying to figure out what someones script collection *does* is incredibly difficult and time consuming, half because most don't bother to document anything and half because it's someone elses project and I just don't know where to begin so, while the main readme of this repo does a relatively decent job at explaining things, most users likely won't read it outside of the installation instructions and skimming it for a brief synopsis. So with this release comes `firstCheck()` as well as `#F1::` & `#h::` hotkeys.
 
 - `firstCheck()` will prompt the user with an informational GUI on the first time running `My Scripts.ahk`, this GUI will give a brief rundown of the purpose of my scripts as well as informing the user of useful hotkeys to help them get started
-- `#F1::` will bring up an informational GUI showing all active scripts, as well as giving quick and easy access to enable/disable any of them at the check of a box
+- `#F1::` will bring up an informational GUI showing all active scripts (of this repo), as well as giving quick and easy access to enable/disable any of them at the check of a box
 - `#h::` will bring up an informational GUI showing some useful hotkeys available to the user while running these scripts
 
 ## > `checklist.ahk`

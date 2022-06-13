@@ -120,6 +120,27 @@ save()
             SetTimer(, -ms)
             goto end2
         }
+    if id = "Adobe Premiere Pro.exe" ;this check is a final check to ensure the user doesn't have a menu window (or something similar) open that the first title check didn't grab (because we get the title of premiere in general and not the current active window)
+        {
+            premWinCheck := WinGetTitle("A")
+            premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            if not premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+                {
+                    blockOff()
+                    toolCust("You're currently doing something`nautosave has be cancelled", "2000")
+                    try {
+                        if id = "ahk_class CabinetWClass"
+                            WinActivate("ahk_class CabinetWClass")
+                        else
+                            WinActivate("ahk_exe " id)
+                    } catch as e {
+                        toolCust("couldn't activate original window", "1000")
+                        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineNumber)
+                    }
+                    SetTimer(, -ms)
+                    goto end2
+                }
+        }
     if saveCheck != "*" ;will check to see if saving is necessary
         {
             if aeSaveCheck = "*" ;this variable will contain "*" if a save is required
