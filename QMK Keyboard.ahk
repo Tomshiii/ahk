@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6
+;\\v2.6.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.3.4
@@ -230,37 +230,31 @@ f:: ;this macro is to open the speed menu
 }
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
-	try {
-		blockOn()
-		MouseGetPos(&origX, &origY)
-		SendInput(timelineWindow)
-		SendInput(timelineWindow)
-		SendInput(programMonitor)
-		SendInput(programMonitor)
-		sleep 250
-		toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-		sleep 250
-		if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "margin.png") || ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "margin2.png")
-			{
-				MouseMove(%&x%, %&y%)
-				SendInput("{Click}")
-				MouseMove(%&origX%, %&origY%)
-				blockOff()
-				return
-			}
-		else
-			{
-				blockOff()
-				toolFind("the margin button", "1000")
-				errorLog(A_ThisHotkey, "Couldn't find the margin button", A_LineFile, A_LineNumber)
-			}
-	} catch as er {
-		blockOff()
-		toolFind("the margin button", "1000")
-		errorLog(A_ThisHotkey, "Couldn't find the margin button", A_LineFile, A_LineNumber)
-		return
-	}
+	blockOn()
+	MouseGetPos(&origX, &origY)
+	SendInput(timelineWindow)
+	SendInput(timelineWindow)
+	/* SendInput(programMonitor)
+	SendInput(programMonitor)
+	sleep 250
+	toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+	ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+	sleep 250 
+	if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "margin.png") || ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height%, "*2 " Premiere "margin2.png") ; the above code is if you want to use ClassNN values instead of just searching the right side of the screen. I stopped using that because even though it's more universal, it's just too slow to be useful */
+	if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "margin.png") || ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "margin2.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above instead, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason (and they're slow for the project monitor for whatever reason). My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
+		{
+			MouseMove(%&x%, %&y%)
+			SendInput("{Click}")
+			MouseMove(%&origX%, %&origY%)
+			blockOff()
+			return
+		}
+	else
+		{
+			blockOff()
+			toolFind("the margin button", "1000")
+			errorLog(A_ThisHotkey, "Couldn't find the margin button", A_LineFile, A_LineNumber)
+		}
 }
 ;PgDn::unassigned()
 
@@ -541,6 +535,7 @@ s:: ;search for checklist file
 			SplitPath path, &name
 			if WinExist("Checklist - " %&name%)
 				{
+					WinMove(-371, -233,,, "Checklist - " %&name%) ;move it back into place incase I've moved it
 					toolCust("You already have this checklist open", "1000")
 					errorLog(A_ThisHotkey, "You already have this checklist open", A_LineFile, A_LineNumber)
 					return

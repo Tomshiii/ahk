@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.10.1
 #Include General.ahk
 
 /* preset()
@@ -870,7 +870,7 @@ movepreview()
  */
 reset()
 {
-    KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+    KeyWait(A_ThisHotkey)
     coords()
     blockOn()
     SendInput(effectControls)
@@ -882,7 +882,7 @@ reset()
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -896,18 +896,19 @@ reset()
                 }
         }
     MouseGetPos(&xpos, &ypos)
-    if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion2.png") ;checks if the "motion" value is in view
-        goto inputs
-    else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
-        goto inputs
-    else
-        {
-            blockOff()
-            toolFind("the motion value", "1000")
-            errorLog(A_ThisFunc "()", "Couldn't find the motion image", A_LineFile, A_LineNumber)
-            return
-        }
-    inputs:
+    loop 5 {
+        if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion2.png") ;checks if the "motion" value is in view
+            break
+        else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
+            break
+        else
+            {
+                blockOff()
+                toolFind("the motion value", "1000")
+                errorLog(A_ThisFunc "()", "Couldn't find the motion image", A_LineFile, A_LineNumber)
+                return
+            }
+    }
         SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
         SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
         if ImageSearch(&xcol, &ycol, %&x2%, %&y2% - "20", %&x2% + "700", %&y2% + "20", "*2 " Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
@@ -1036,53 +1037,69 @@ manInput(property, optional, keywaitkey, keyend)
  */
 gain(amount)
 {
-    KeyWait(A_ThisHotkey)
     Critical
+    ToolTip("Adjusting Gain")
+    KeyWait(A_ThisHotkey)
+    BlockInput(1)
     coords()
+    effClassNN := ""
+    start:
     try {
-            loop {
+        loop {
             SendInput(effectControls)
             SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-            sleep 30
-            effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-            if effClassNN = "Edit1" ;checks for the gain window
+            check := WinGetTitle("A")
+            if check = "Audio Gain"
                 {
                     SendInput(%&amount% "{Enter}")
+                    ToolTip("")
+                    blockOff()
                     return
                 }
-            ;toolCust(A_Index, "1000") ;debugging
-        } until effClassNN != "DroverLord - Window Class3" || effClassNN != "DroverLord - Window Class1"
-        } catch as e {
-            toolCust("You're spamming too fast", "1000")
-            Exit
+            effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
+            if effClassNN != "DroverLord - Window Class3" || effClassNN != "DroverLord - Window Class1"
+                break
+            sleep 30
         }
-    try {
-        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height value
-    } catch as e {
-        toolCust("You're spamming too fast", "1000")
-        Exit
     }
+    if effClassNN = ""
+        goto start
+    if effClassNN = "DroverLord - Window Class3"
+        goto start
     SendInput(timelineWindow)
-    if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-        {
-            SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
-            goto inputs
-        }
-    else
-        {
-            classNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-            if classNN = "DroverLord - Window Class3"
+    try {
+        if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+            {
+                SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                 goto inputs
-            else
-                {
-                    toolCust("gain macro couldn't figure`nout what to do", "1000")
-                    errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineFile, A_LineNumber)
-                    return
-                }
-        }
+            }
+        else
+            {
+                classNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                if classNN = "DroverLord - Window Class3"
+                    goto inputs
+                else
+                    {
+                        blockOff()
+                        toolCust("gain macro couldn't figure`nout what to do", "1000")
+                        errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineFile, A_LineNumber)
+                        return
+                    }
+            }
+    } catch as e {
+        blockOff()
+        toolCust("effClassNN wasn't given a value", "1000")
+        errorLog(A_ThisFunc "()", "attempted an ImageSearch without a variable value", A_LineFile, A_LineNumber)
+        return
+    }
     inputs:
-    SendInput("g" "+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
-    Critical("off")
+    SendInput("g")
+    WinWait("Audio Gain")
+    SendInput("+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
+    WinWaitClose("off")
+    blockOff()
+    ToolTip("")
 }
 
 /* gainSecondary()

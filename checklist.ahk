@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.9
+;\\v2.0.10
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -111,7 +111,7 @@ minusFiveButton.OnEvent("Click", minusFive) ;what happens when you click the -5m
 plusFiveButton := MyGui.Add("Button","X257 Y235 w50 h30", "+5min") ;defining the -5min button
 plusFiveButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
 
-FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " startHoursRounded "`n", A_ScriptDir "\checklist_logs.txt")
+FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours at opening = " startHoursRounded "`n", A_ScriptDir "\checklist_logs.txt")
 SetTimer(reminder, -ms)
 
 ;timer
