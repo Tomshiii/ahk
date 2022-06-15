@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.1
+;\\v2.13.2
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.6.1
 
@@ -246,6 +246,8 @@ updateChecker() {
 		}
 	else if ignore = "yes"
 		{
+			if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+				WinWaitClose("ahk_class tooltips_class32")
 			if VerCompare(MyRelease, version) < 0
 				{
 					toolCust("You're using an outdated version of these scripts", "1000")
