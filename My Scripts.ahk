@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.3.4"
+global MyRelease := "v2.4"
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
@@ -16,7 +16,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.13.1
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.6
+;\\v2.6.1
 
 ; ============================================================================================================================================
 ;
