@@ -1,5 +1,5 @@
 # <> Release 2.3.5 - First Run Experience
-With [over 50 commits](https://github.com/Tomshiii/ahk/compare/v2.3.4...v2.3.5) it's been a big month for these scripts! so many quality of life improvements/fixes have come about in the last month as well as some fun and incredibly useful additions! I'm really excited to get this release out!
+With [over 60 commits](https://github.com/Tomshiii/ahk/compare/v2.3.4...v2.3.5) it's been a big month for these scripts! so many quality of life improvements/fixes have come about in the last month as well as some fun and incredibly useful additions! I'm really excited to get this release out!
 
 This release is centered around improving the experience for first time users of this collection of scripts. Scouring github for other AHK script collections I noticed something, trying to figure out what someones script collection *does* is incredibly difficult and time consuming, half because most don't bother to document anything and half because it's someone elses project and I just don't know where to begin so, while the main readme of this repo does a relatively decent job at explaining things, most users likely won't read it outside of the installation instructions and skimming it for a brief synopsis. So with this release comes `firstCheck()` as well as `#F1::` & `#h::` hotkeys. Along with these changes I have also condensed the root directory of this repo to just the necessary folders and moved a bunch of folders to `\Support Files` where they probably should have been for a long time
 
@@ -40,7 +40,7 @@ This release also brings along a project I've had sitting in the background for 
 `reset()`
 - Change `KeyWait` from `A_PriorHotkey` -> `A_ThisHotkey`
 - Remove `ControlFocus` as the timeline in premiere isn't always the only panel using `DroverLord - Window Class3`
-- Add a loop to search for the motion text
+- Add a loop to search for the `Motion` text
 
 `audioDrag()`
 - Now has additional code when using the bleep sound effect to; trim, reduce the db and drag to track 1
@@ -71,7 +71,8 @@ This release also brings along a project I've had sitting in the background for 
 
 ## > Other Changes
 - Added `\Support Files\qmk keyboard images` to backup the cutouts I use for my secondary keyboard
-- `readme.md` updated with clearer download instructions
+- `readme.md` updated to include a video going over how to make sense of my repo
+    - Also updated with clearer download instructions & overall clearer verbage
 - Update `\Backups`
 
 `Cleanup`

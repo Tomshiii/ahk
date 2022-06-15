@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.10
+;\\v2.0.11
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -34,7 +34,7 @@ global ms10 := minutes2 * 60000
 
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checkbox.ini")
-    FileAppend("[Info]`ncheckbox4=0`ncheckbox5=0`ncheckbox1=0`ncheckbox2=0`ncheckbox3=0`ncheckbox6=0`ncheckbox7=0`ncheckbox8=0`ntime=0", A_ScriptDir "\checkbox.ini")
+    FileAppend("[Info]`ncheckbox4=0`ncheckbox5=0`ncheckbox1=0`ncheckbox2=0`ncheckbox3=0`ncheckbox6=0`ncheckbox7=0`ncheckbox8=0`ncheckbox9=0`ntime=0", A_ScriptDir "\checkbox.ini")
 if not FileExist(A_ScriptDir "\checklist_logs.txt")
     FileAppend("Initial creation time : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n`n", A_ScriptDir "\checklist_logs.txt")
 
@@ -84,6 +84,10 @@ checkbox6.OnEvent("Click", checkbox6Ini)
 checkbox7 := MyGui.Add("CheckBox",, "Patreon")
 checkbox7.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox7")
 checkbox7.OnEvent("Click", checkbox7Ini)
+
+checkbox9 := MyGui.Add("CheckBox", "X200 Y38", "Intro")
+checkbox9.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox9")
+checkbox9.OnEvent("Click", checkbox9Ini)
 
 ;timer text
 global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
@@ -237,6 +241,9 @@ checkbox7ini(*) {
 }
 checkbox8ini(*) {
     IniWrite(checkbox8.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox8")
+}
+checkbox9ini(*) {
+    IniWrite(checkbox8.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox9")
 }
 
 MyGui.OnEvent("Close", close) ;what happens when you close the GUI

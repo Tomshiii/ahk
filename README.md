@@ -2,8 +2,8 @@
 
 This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane and random interactions with a computer.
 
+- Video walking through [how to make sense of this repo](https://youtu.be/dSjpv_4bVCA)
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
-- Video walking through an early version of the [Release v2.1 update](https://youtu.be/JF_WISVJsPU) || my [ahk v2.0 scripts](https://youtu.be/3rFDEonACxo) || older [ahk v1.1 scripts](https://youtu.be/QOztbpTe_Es)
 
 [![](https://user-images.githubusercontent.com/53557479/149133968-6c1ff2e0-0140-4eda-95e3-e56164d263a4.png) ![](https://img.shields.io/youtube/channel/subscribers/UCJu2dToEHzuovY6suetkcdQ?style=flat)](https://www.youtube.com/c/tomshiii)
 

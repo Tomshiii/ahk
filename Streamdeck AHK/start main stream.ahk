@@ -17,7 +17,7 @@ if not WinExist("ahk_exe obs64.exe")
 	else
 		return
 	next: */
-	Run(location "\shortcuts\obs64.lnk") ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
+	Run(location "\Support Files\shortcuts\obs64.lnk") ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
 		else
@@ -169,7 +169,7 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 1000
 			WinGetPos(,, &width, &height, "A")
 			MouseGetPos(&x, &y)
-			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " location "\ImageSearch\Foobar\streambeats.png")
+			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " location "\Support Files\ImageSearch\Foobar\streambeats.png")
 				{
 					MouseMove(%&xdir%, %&ydir%)
 					SendInput("{Click}")
