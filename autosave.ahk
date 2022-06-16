@@ -70,7 +70,7 @@ save()
         }
 
     stop := ""
-    ToolTip("Your Premiere Pro project is being saved!`nHold tight!")
+    ToolTip("Your Premiere Pro project is being saved!`nHold tight!`nThis function will timeout after 3s if it gets stuck")
 
     ;\\ first we grab information on the active window
     try {
@@ -149,7 +149,7 @@ save()
                     sleep 500
                     SendInput("^s")
                     sleep 250
-                    WinWaitClose("Save Project")
+                    WinWaitClose("Save Project",, 3)
                     goto end
                 }
             blockOff()
@@ -219,7 +219,7 @@ save()
 
     ;\\ before finally saving
     SendInput("^s")
-    WinWait("Save Project")
+    WinWait("Save Project",, 3)
     WinWaitClose("Save Project")
 
     ;\\ if ae is open we'll check to see if it needs saving, then save it too if required
@@ -229,7 +229,7 @@ save()
             sleep 500
             SendInput("^s")
             sleep 250
-            WinWaitClose("Save Project")
+            WinWaitClose("Save Project",, 3)
         }
 
     ;\\ if the originally active window isn't premiere, we don't want to refocus it so we'll jump straight to the end
