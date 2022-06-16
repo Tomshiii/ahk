@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.1
+;\\v2.10.2
 #Include General.ahk
 
 /* preset()
@@ -645,7 +645,9 @@ audioDrag(sfxName)
                 {
                     sleep 100
                     SendInput(cutPrem)
+                    ToolTip(A_ThisFunc " is waiting for you to cut the bleep sfx")
                     KeyWait("LButton", "D")
+                    ToolTip("")
                     blockOn()
                     sleep 50
                     SendInput(selectionPrem)

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.10.1
 #Include General.ahk
 
 /*
@@ -55,44 +55,61 @@ switchToPremiere()
  */
 switchToAE()
 {
+    runae() { ;cut repeat code
+        Run A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk"
+        WinWait("ahk_exe AfterFX.exe")
+        WinActivate("ahk_exe AfterFX.exe")
+    }
     if not WinExist("ahk_exe AfterFX.exe")
         {
             if WinExist("ahk_exe Adobe Premiere Pro.exe") ;this function will attempt to open my AE file that's related to the working premiere project before doing anything else. I always name my AE files "effects" so this is a relatively simple check
                 {
-                    Name := WinGetTitle("Adobe Premiere Pro")
-                    titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-                    dashLocation := InStr(Name, "-")
-                    length := StrLen(Name) - dashLocation
-				    if not titlecheck
-                        {
-                            toolCust("You're on a part of Premiere that won't contain the project path", "2000")
-                            return
-                        }
-                    entirePath := SubStr(name, dashLocation + "2", length)
-                    pathlength := StrLen(entirePath)
-                    finalSlash := InStr(entirePath, "\",, -1)
-                    path := SubStr(entirePath, 1, finalSlash - "1")
-                    if FileExist(path "\effects.aep")  ;if you don't always name your AE projects the same thing, you could instead do a loop files in your working dir and look for *.aep files instead. 
-                        Run(path "\effects.aep")
-                    else if FileExist(path "\Effects.aep")
-                        Run(path "\Effects.aep")
-                    else ;if all else fails, just open AE normally
-                        {
-                            Run A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk"
-                            WinWait("ahk_exe AfterFX.exe")
-                            WinActivate("ahk_exe AfterFX.exe")
-                        }
+                    try {
+                        Name := WinGetTitle("Adobe Premiere Pro")
+                        titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                        dashLocation := InStr(Name, "-")
+                        length := StrLen(Name) - dashLocation
+                        if not titlecheck
+                            {
+                                toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+                                return
+                            }
+                        entirePath := SubStr(name, dashLocation + "2", length)
+                        pathlength := StrLen(entirePath)
+                        finalSlash := InStr(entirePath, "\",, -1)
+                        path := SubStr(entirePath, 1, finalSlash - "1")
+                        if FileExist(path "\*.aep")
+                            {
+                                loop files path "\*.aep", "F"
+                                    {
+                                        Run(A_LoopFileFullPath)
+                                        toolCust("Running AE file for this project", "1000")
+                                        WinWait("ahk_exe AfterFX.exe")
+                                        WinActivate("ahk_exe AfterFX.exe")
+                                        return
+                                    }
+                            }
+                        else ;if all else fails, just open AE normally
+                            {
+                                runae()
+                                return
+                            }
+                    } catch as e {
+                        toolCust("Couldn't determine proper path from Premiere", "1000")
+                        errorLog(A_ThisFunc "()", "Couldn't determine proper path from Premiere", A_LineFile, A_LineNumber)
+                        runae()
+                        return
+                    }
                 }
             else
                 {
-                    Run A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk"
-                    WinWait("ahk_exe AfterFX.exe")
-                    WinActivate("ahk_exe AfterFX.exe")
+                    runae()
+                    return
                 }
         }
     else
         if WinExist("ahk_exe AfterFX.exe")
-            WinActivate "ahk_exe AfterFX.exe"
+            WinActivate("ahk_exe AfterFX.exe")
 }
 
 /*
