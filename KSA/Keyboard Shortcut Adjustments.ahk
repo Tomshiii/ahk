@@ -7,7 +7,7 @@ location := "E:\Github\ahk"
 ;==activate windows==
 
 /*
- This value will send the keyboard shortcut you have set to activate the Effect Controls Window within Premiere.
+ This value will send the keyboard shortcut you have set to activate the Program Monitor Window within Premiere.
  
  Can be set within KSA.ahk/ini
  */
@@ -73,7 +73,7 @@ handPrem := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Hand")
 selectionPrem := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Selection")
 
 /*
- This value will send the keyboard shortcut you have set to swap to the selection tool within Premiere
+ This value will send the keyboard shortcut you have set to swap to the cut tool within Premiere
 
  Can be set within KSA.ahk/ini
  */
@@ -166,39 +166,39 @@ speedMenu := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Speed"
 playheadtoCursor := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Playhead to Cursor")
 
 /*
- This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+ This value will send the keyboard shortcut you have set to reset the current workspace within Premiere
 
  Can be set within KSA.ahk/ini
  */
 resetWorkspace := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "reset changes to workspace")
 
 /*
- This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+ This value will send the keyboard shortcut you have set to speedup playback within Premiere
 
  Can be set within KSA.ahk/ini
  */
 speedUpPlayback := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "speed up playback")
 
 /*
- This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+ This value will send the keyboard shortcut you have set to slow down playback within Premiere
 
  Can be set within KSA.ahk/ini
  */
 slowDownPlayback := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "slow down playback")
 
 /*
- This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+ This value will send the keyboard shortcut you have set to play/stop playback within Premiere
 
  Can be set within KSA.ahk/ini
  */
 playStop := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "play/stop")
 
 /*
- This value will send the keyboard shortcut you have set to move the playhead to the cursor within Premiere
+ This value will send the keyboard shortcut you have set to open the ingest settings menu within Premiere
 
  Can be set within KSA.ahk/ini
  */
- premIngest := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "ingest")
+premIngest := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "ingest")
 
 ;==Labels==
 labelViolet := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Violet")
@@ -402,7 +402,7 @@ rotationProp := IniRead(location "\KSA\Keyboard Shortcuts.ini", "After Effects",
 resolveSelectPlayhead := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Resolve", "Select at Playhead")
 
 /*
- This value will send the keyboard shortcut you have set to select the clip at playhead within Resolve
+ This value will send the keyboard shortcut you have set to deselect the clip at playhead within Resolve
 
  Can be set within KSA.ahk/ini
  */
@@ -444,7 +444,7 @@ enableOBSPreview := IniRead(location "\KSA\Keyboard Shortcuts.ini", "OBS", "Enab
 disableOBSPreview := IniRead(location "\KSA\Keyboard Shortcuts.ini", "OBS", "Disable Preview")
 
 /*
- This value will send the keyboard shortcut you have set to disable the preview window within OBS Studio
+ This value will send the keyboard shortcut you have set to screenshot the preview window within OBS Studio
 
  Can be set within KSA.ahk/ini
 */

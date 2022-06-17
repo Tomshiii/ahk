@@ -7,7 +7,7 @@ This repo is a combination of all the scripts I use almost daily to help with ei
 
 [![](https://user-images.githubusercontent.com/53557479/149133968-6c1ff2e0-0140-4eda-95e3-e56164d263a4.png) ![](https://img.shields.io/youtube/channel/subscribers/UCJu2dToEHzuovY6suetkcdQ?style=flat)](https://www.youtube.com/c/tomshiii)
 
-A lot of the code in the earliest versions of my scripts was either inspired by, or taken from [Taran from LTT](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, transformed into `ahk v2.0` compliant scripts and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I have personally gone through them to make them function in `ahk v2.0`).
+A lot of the code in the earliest versions of my scripts was either inspired by, or taken from [Taran (previous editor for LTT)](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, transformed into `ahk v2.0` compliant scripts and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I have personally gone through them to make them function in `ahk v2.0`).
 
 You can watch me use some of these scripts in action whilst I edit away on twitch when I stream on my bot account:
 
