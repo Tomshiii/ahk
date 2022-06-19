@@ -10,3 +10,4 @@
 ## > Other Changes
 - `autosave.ahk` will now timeout after 3s if it gets stuck while attempting to save
 - Fixed comments in `Keyboard Shortcut Adjustments.ahk` that had been copy/pasted but never corrected
+- `autodismiss error.ahk` will now ignore the `Clip Mismatch Warning` dialog that can appear in Premiere when you drag a clip to the timeline that doesn't match the sequence settings
