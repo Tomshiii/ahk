@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.2
+;\\v2.10.3
 #Include General.ahk
 
 /* preset()
@@ -643,10 +643,24 @@ audioDrag(sfxName)
             blockOff()
             if %&sfxName% = "bleep"
                 {
+                    track := 0
                     sleep 100
                     SendInput(cutPrem)
-                    ToolTip(A_ThisFunc " is waiting for you to cut the bleep sfx")
-                    KeyWait("LButton", "D")
+                    ToolTip(A_ThisFunc " is waiting for you to cut the bleep sfx`nPress c again if you do not wish for this funtion to drag the cut to Track 1")
+                    loop {
+                        if GetKeyState("c", "P")
+                            track := 1
+                        if GetKeyState("LButton", "D")
+                            break
+                        sleep 50
+                        if A_Index > 160
+                            {
+                                blockOff()
+                                toolCust(A_ThisFunc " timed out due to no user interaction", "2000")
+                                errorLog(A_ThisFunc "()", "timed out due to no user interaction", A_LineFile, A_LineNumber)
+                                return
+                            }
+                    }
                     ToolTip("")
                     blockOn()
                     sleep 50
@@ -672,7 +686,10 @@ audioDrag(sfxName)
                     MouseGetPos(&refx, &refy)
                     if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track 1_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track 1_2.png")
                         {
+                            if track = 1
+                                goto skip
                             MouseMove(%&refx%, %&trackY%, 2)
+                            skip:
                             SendInput("{Click Up}")
                             sleep 50
                             MouseMove(%&delx% + 10, %&dely%, 2)
@@ -1099,7 +1116,7 @@ gain(amount)
     SendInput("g")
     WinWait("Audio Gain")
     SendInput("+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
-    WinWaitClose("off")
+    WinWaitClose("Audio Gain")
     blockOff()
     ToolTip("")
 }

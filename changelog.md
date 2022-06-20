@@ -5,7 +5,11 @@
 
 ## > Functions
 - `switchToAE()` now able to find `.aep` file for the current working project regardless of name
-- `audioDrag()` now shows a tooltip alerting the user it's waiting for an input before continuing
+- Fixed `gain()` waiting for window `off` to close instead of the proper `Audio Gain` window
+
+`audioDrag()`
+- Now shows a tooltip alerting the user it's waiting for an input before continuing
+- Now has added functionality to not move the cut `bleep` sfx to track 1 if the user presses `c` while the function is waiting for the user to cut the sfx
 
 ## > Other Changes
 - `autosave.ahk` will now timeout after 3s if it gets stuck while attempting to save
