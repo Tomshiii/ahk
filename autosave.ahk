@@ -6,12 +6,17 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\save.ico") ;changes the icon this
 #WinActivateForce
 
 ;This script will autosave your premire pro project every 7.5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
+;It will also ensure you have the checklist script for the current project open. If it can find the file, it will open it automatically
 
 global Premiere := A_WorkingDir "\Support Files\ImageSearch\Premiere\"
 
-;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT HERE
+;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING HERE
 minutes := 7.5
 global ms := minutes * 60000
+
+;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE REMINDING YOU TO OPEN THE CHECKLIST HERE
+minutesChecklist := 1
+global msChecklist := minutesChecklist * 60000
 
 ;SET THE AMOUNT OF SECONDS OF PRIOR KEYBOARD ACTIVITY YOU WANT THE SCRIPT TO USE TO STOP ITSELF FROM FIRING
 secondsIdle := 0.5
@@ -23,7 +28,10 @@ global retry := secondsRetry * 1000
 
 start:
 if WinExist("ahk_exe Adobe Premiere Pro.exe")
-    SetTimer(save, -ms)
+    {
+        SetTimer(save, -ms)
+        SetTimer(check, -msChecklist) ;if you do not wish to use the checklist script, simply comment out this timer
+    }
 else
     {
         WinWait("ahk_exe Adobe Premiere Pro.exe")
@@ -57,6 +65,21 @@ else
 			SetTimer(reminder, 0)
 		}		
 }
+
+check() {
+    if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
+        SetTimer(, -ms) ;I don't want this to continue checking every minute if Premiere is closed (and I don't want it to Reload like the `save()` timer as it would end up reloading this script every minute which isn't desirable) so I'm using the larger timer here.
+    if WinExist("Editing Checklist")
+        {
+            SetTimer(, -ms) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
+            goto end3
+        }
+    toolCust("Don't forget to start the checklist for this project!", "2000")
+    openChecklist() ;this function can be found in \Functions\Premiere.ahk
+    SetTimer(, -ms) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
+    end3:
+}
+
 save()
 {
     if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting

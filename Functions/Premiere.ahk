@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.3
+;\\v2.10.4
 #Include General.ahk
 
 /* preset()
@@ -1084,41 +1084,42 @@ gain(amount)
     }
     if effClassNN = ""
         goto start
-    if effClassNN = "DroverLord - Window Class3"
-        goto start
-    SendInput(timelineWindow)
-    try {
-        if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-            {
-                SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
-                goto inputs
-            }
-        else
-            {
-                classNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                if classNN = "DroverLord - Window Class3"
+    /* if effClassNN = "DroverLord - Window Class3"
+        goto start */
+        SendInput(timelineWindow)
+        try {
+            if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                {
+                    SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                     goto inputs
-                else
-                    {
-                        blockOff()
-                        toolCust("gain macro couldn't figure`nout what to do", "1000")
-                        errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineFile, A_LineNumber)
-                        return
-                    }
-            }
-    } catch as e {
+                }
+            /* else
+                {
+                   classNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                    if classNN = "DroverLord - Window Class3"
+                        goto inputs
+                    else
+                        {
+                            blockOff()
+                            toolCust("gain macro couldn't figure`nout what to do", "1000")
+                            errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineFile, A_LineNumber)
+                            return
+                        }
+                }*/
+        } catch as e {
+            ToolTip("")
+            blockOff()
+            toolCust("effClassNN wasn't given a value", "1000")
+            errorLog(A_ThisFunc "()", "attempted an ImageSearch without a variable value", A_LineFile, A_LineNumber)
+            return
+        }
+        inputs:
+        SendInput("g")
+        WinWait("Audio Gain")
+        SendInput("+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
+        WinWaitClose("Audio Gain")
         blockOff()
-        toolCust("effClassNN wasn't given a value", "1000")
-        errorLog(A_ThisFunc "()", "attempted an ImageSearch without a variable value", A_LineFile, A_LineNumber)
-        return
-    }
-    inputs:
-    SendInput("g")
-    WinWait("Audio Gain")
-    SendInput("+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
-    WinWaitClose("Audio Gain")
-    blockOff()
-    ToolTip("")
+        ToolTip("")
 }
 
 /* gainSecondary()
@@ -1166,6 +1167,54 @@ gainSecondary(key1, key2, keyend)
     hotkeyReactivate()
 }
 
+/* openChecklist()
+ This function is here to cut repeat code across a few scripts, its purpose is to find the `checklist.ahk` file for the open Premiere/After Effects project. It's used in QMK.ahk and autosave.ahk
+ */
+openChecklist()
+{
+    try {
+        if WinExist("Adobe Premiere Pro")
+            {
+                Name := WinGetTitle("Adobe Premiere Pro")
+                titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            }
+        else if WinExist("Adobe After Effects")
+            {
+                Name := WinGetTitle("Adobe After Effects")
+                titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+            }
+        dashLocation := InStr(Name, "-")
+        length := StrLen(Name) - dashLocation
+    }
+    if not titlecheck
+        {
+            toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+            return
+        }
+    entirePath := SubStr(name, dashLocation + "2", length)
+    pathlength := StrLen(entirePath)
+    finalSlash := InStr(entirePath, "\",, -1)
+    path := SubStr(entirePath, 1, finalSlash - "1")
+    SplitPath path, &name
+    if WinExist("Checklist - " %&name%)
+        {
+            WinMove(-371, -233,,, "Checklist - " %&name%) ;move it back into place incase I've moved it
+            toolCust("You already have this checklist open", "1000")
+            errorLog(A_ThisHotkey, "You already have this checklist open", A_LineFile, A_LineNumber)
+            return
+        }
+    if FileExist(path "\checklist.ahk")
+        Run(path "\checklist.ahk")
+    else
+        {
+            try {
+                FileCopy("E:\Github\ahk\checklist.ahk", path)
+                Run(path "\checklist.ahk")
+            } catch as e {
+                toolCust("File not found", "1000")
+            }
+        }
+}
 
 
 

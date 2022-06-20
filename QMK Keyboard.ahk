@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.1
+;\\v2.6.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.4
@@ -508,50 +508,7 @@ w::unassigned()
 s:: ;search for checklist file
 {
 	if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
-		{
-			try {
-				if WinExist("Adobe Premiere Pro")
-					{
-						Name := WinGetTitle("Adobe Premiere Pro")
-						titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-					}
-				else if WinExist("Adobe After Effects")
-					{
-						Name := WinGetTitle("Adobe After Effects")
-						titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
-					}
-				dashLocation := InStr(Name, "-")
-				length := StrLen(Name) - dashLocation
-			}
-			if not titlecheck
-				{
-					toolCust("You're on a part of Premiere that won't contain the project path", "2000")
-					return
-				}
-			entirePath := SubStr(name, dashLocation + "2", length)
-			pathlength := StrLen(entirePath)
-			finalSlash := InStr(entirePath, "\",, -1)
-			path := SubStr(entirePath, 1, finalSlash - "1")
-			SplitPath path, &name
-			if WinExist("Checklist - " %&name%)
-				{
-					WinMove(-371, -233,,, "Checklist - " %&name%) ;move it back into place incase I've moved it
-					toolCust("You already have this checklist open", "1000")
-					errorLog(A_ThisHotkey, "You already have this checklist open", A_LineFile, A_LineNumber)
-					return
-				}
-			if FileExist(path "\checklist.ahk")
-				Run(path "\checklist.ahk")
-			else
-				{
-					try {
-						FileCopy("E:\Github\ahk\checklist.ahk", path)
-						Run(path "\checklist.ahk")
-					} catch as e {
-						toolCust("File not found", "1000")
-					}
-				}
-		}
+		openChecklist()
 	else
 		{
 			dir := FileSelect("D2", "E:\comms", "Pick the Edit Directory")
