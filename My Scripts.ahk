@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.2
+;\\v2.13.3
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.6.1
 
@@ -657,10 +657,16 @@ adobeTemp() ;runs the loop to delete cache files
 		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
+	;The resolution of my main monitor is 1440p, if you have a different res monitor you mmay need to change these values
 	newWidth := 1600
 	newHeight := 900
 	newX := A_ScreenWidth / 2 - newWidth / 2
 	newY := newX / 2
+	if InStr(title, "YouTube") ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
+		{
+			newHeight := 1143
+			newY -= 100
+		}
 	; Move any window that's not the desktop
 	try{
 		WinMove(newX, newY, newWidth, newHeight, title)
@@ -1040,12 +1046,18 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
 	coords()
+	shiftval := 0
 	MouseGetPos(&xpos, &ypos)
 	KeyWait("Alt")
 	if GetKeyState("Ctrl", "P")
 		{
 			KeyWait("Ctrl")
 			goto added
+		}
+	if GetKeyState("RShift", "P")
+		{
+			KeyWait("RShift")
+			shiftval := 1
 		}
 	SendInput(resetWorkspace)
 	sleep 1500
@@ -1072,33 +1084,40 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	} catch as e
 		{
 			toolCust("Function failed to find project window", "1000")
-			errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineFile, A_LineNumber)
+			errorLog(A_ThisHotkey, "Function failed to find project window", A_LineFile, A_LineNumber)
 			return
 		}
 	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN) ;debugging
 	blockOn()
-	if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project.png") ;searches for the project window to grab the track
-		goto move
-	else if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
-		goto move
-	else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
-		goto bin
-	else
-		{
-			coords()
-			if ImageSearch(&prx, &pry, %&sanX% - "5", %&sanY% - "20", %&sanX% + "1000", %&sanY% + "100", "*2 " Premiere "project.png") ;This is the fallback code if you have it on a different monitor
-				goto move
-			else if ImageSearch(&prx, &pry, %&sanX% - "5", %&sanY% - "20", %&sanX% + "1000", %&sanY% + "100", "*2 " Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
-				goto move
-			else
-				{
-					blockOff()
-					toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-					errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineFile, A_LineNumber)
-					return
-					;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
-				}
-		}
+	try {
+		if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project.png") ;searches for the project window to grab the track
+			goto move
+		else if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
+			goto move
+		else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
+			goto bin
+		else
+			{
+				coords()
+				if ImageSearch(&prx, &pry, %&sanX% - "5", %&sanY% - "20", %&sanX% + "1000", %&sanY% + "100", "*2 " Premiere "project.png") ;This is the fallback code if you have it on a different monitor
+					goto move
+				else if ImageSearch(&prx, &pry, %&sanX% - "5", %&sanY% - "20", %&sanX% + "1000", %&sanY% + "100", "*2 " Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
+					goto move
+				else
+					{
+						blockOff()
+						toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+						errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineFile, A_LineNumber)
+						return
+						;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
+					}
+			}
+	} catch as e {
+		blockOff()
+		toolCust("Couldn't find the project window", "1000")
+		errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineFile, A_LineNumber)
+		return
+	}
 	move:
 	MouseMove(%&prx% + "5", %&pry% +"3")
 	SendInput("{Click Down}")
@@ -1107,6 +1126,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseMove 3592, 444, 2
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
+	if shiftval = 1
+		{
+			blockOff()
+			return
+		}
 	bin:
 	Run("E:\_Editing stuff")
 	WinWait("_Editing stuff")

@@ -2,6 +2,8 @@
 
 ## > My Scritps
 - `updateChecker()` will now wait for previous tooltips to complete before moving forward in the event that the user has selected "do not prompt"
+- `#c` will now make a slightly larger window if the active window is a youtube window
+- `RAlt & p` now has the ability to *only* move the `Project` window to it's proper position
 
 ## > Functions
 - `switchToAE()` now able to find `.aep` file for the current working project regardless of name
