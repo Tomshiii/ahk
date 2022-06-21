@@ -1172,6 +1172,8 @@ gainSecondary(key1, key2, keyend)
  */
 openChecklist()
 {
+    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+		WinWaitClose("ahk_class tooltips_class32")
     try {
         if WinExist("Adobe Premiere Pro")
             {

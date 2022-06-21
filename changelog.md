@@ -24,3 +24,4 @@
 - Will now timeout after 3s if it gets stuck while attempting to save
 - Will now check to make sure the user has opened the `checklist.ahk` file for the current project. It will also attempt to open it automatically if it can find it
     - The code to automatically open the checklist of the open project moved from `QMK.ahk` to `\Functions\Premiere.ahk` -> `openChecklist()`
+- Will now wait for certain tooltips to complete before replacing them with new ones

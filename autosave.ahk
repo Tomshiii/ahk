@@ -15,7 +15,7 @@ minutes := 7.5
 global ms := minutes * 60000
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE REMINDING YOU TO OPEN THE CHECKLIST HERE
-minutesChecklist := 1
+minutesChecklist := .1
 global msChecklist := minutesChecklist * 60000
 
 ;SET THE AMOUNT OF SECONDS OF PRIOR KEYBOARD ACTIVITY YOU WANT THE SCRIPT TO USE TO STOP ITSELF FROM FIRING
@@ -68,14 +68,20 @@ else
 
 check() {
     if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
-        SetTimer(, -ms) ;I don't want this to continue checking every minute if Premiere is closed (and I don't want it to Reload like the `save()` timer as it would end up reloading this script every minute which isn't desirable) so I'm using the larger timer here.
+        {
+            SetTimer(, -ms) ;I don't want this to continue checking every minute if Premiere is closed (and I don't want it to Reload like the `save()` timer as it would end up reloading this script every minute which isn't desirable) so I'm using the larger timer here.
+            goto end3
+        }
     if WinExist("Editing Checklist")
         {
             SetTimer(, -ms) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
             goto end3
         }
-    toolCust("Don't forget to start the checklist for this project!", "2000")
     openChecklist() ;this function can be found in \Functions\Premiere.ahk
+    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+        WinWaitClose("ahk_class tooltips_class32",, 3)
+    if not WinExist("Editing Checklist")
+        toolCust("Don't forget to start the checklist for this project!", "2000")
     SetTimer(, -ms) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
     end3:
 }
@@ -243,7 +249,7 @@ save()
     ;\\ before finally saving
     SendInput("^s")
     WinWait("Save Project",, 3)
-    WinWaitClose("Save Project")
+    WinWaitClose("Save Project",, 3)
 
     ;\\ if ae is open we'll check to see if it needs saving, then save it too if required
     if aeSaveCheck = "*"
