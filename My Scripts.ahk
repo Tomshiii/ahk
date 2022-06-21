@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.3
+;\\v2.13.4
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.6.1
+;\\v2.6.2
 
 ; ============================================================================================================================================
 ;
@@ -887,6 +887,22 @@ Numpad9::
 		return
 	else
 		SendInput("{" A_ThisHotkey "}")
+}
+
+;pinfirefoxHotkey;
+RAlt & p:: ;This hotkey is to pin the first two tabs
+{
+	KeyWait("Alt")
+	Send("!d") ;opens the alt context menu to begin detatching the firefox tab
+	sleep 100
+	Send("+{TAB 3}")
+	sleep 50
+	Send("+{F10}")
+	sleep 50
+	Send("p")
+	sleep 50
+	Send("{Right}")
+	Send("+{F10}" "p" "{Left}")
 }
 ;=============================================================================================================================================
 ;

@@ -2,6 +2,7 @@
 
 ## > My Scritps
 - `updateChecker()` will now wait for previous tooltips to complete before moving forward in the event that the user has selected "do not prompt"
+- Added `RAlt & p::` when firefox is active to pin the first two tabs
 - `#c` will now make a slightly larger window if the active window is a youtube window
 - `RAlt & p` now has the ability to *only* move the `Project` window to it's proper position
 
@@ -25,3 +26,4 @@
 - Will now check to make sure the user has opened the `checklist.ahk` file for the current project. It will also attempt to open it automatically if it can find it
     - The code to automatically open the checklist of the open project moved from `QMK.ahk` to `\Functions\Premiere.ahk` -> `openChecklist()`
 - Will now wait for certain tooltips to complete before replacing them with new ones
+- `secondsRetry` changed from `5s` -> `2.5s` by default

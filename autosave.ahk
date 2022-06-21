@@ -23,7 +23,7 @@ secondsIdle := 0.5
 global idle := secondsIdle * 1000
 
 ;SET THE AMOUNT OF SECONDS YOU WANT THE SCRIPT TO WAIT BEFORE RETRYING TO SAVE AFTER THE ABOVE IDLE ACTIVITY STOP OCCURS
-secondsRetry := 5
+secondsRetry := 2.5
 global retry := secondsRetry * 1000
 
 start:
