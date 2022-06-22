@@ -1,6 +1,6 @@
 SetWorkingDir A_ScriptDir
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
-#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon(A_WorkingDir "\Support Files\Icons\keyboard.ico")

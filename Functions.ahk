@@ -1,6 +1,6 @@
 ﻿SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
-#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
 #Include "%A_ScriptDir%\Functions\After Effects.ahk"
 #Include "%A_ScriptDir%\Functions\Photoshop.ahk"

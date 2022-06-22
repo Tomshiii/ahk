@@ -1,6 +1,6 @@
 #SingleInstance force ;only one instance of this script may run at a time!
 A_MaxHotkeysPerInterval := 2000
-#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 TraySetIcon(A_WorkingDir "\Support Files\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include Functions.ahk
 #WinActivateForce

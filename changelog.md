@@ -1,5 +1,7 @@
 # <> Release 2.4.x - 
 
+Scripts now require `AutoHotkey v2.0-beta.3`
+
 ## > My Scritps
 - `updateChecker()` will now wait for previous tooltips to complete before moving forward in the event that the user has selected "do not prompt"
 - Added `RAlt & p::` when firefox is active to pin the first two tabs

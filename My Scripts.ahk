@@ -2,7 +2,7 @@
 global MyRelease := "v2.4"
 
 #SingleInstance Force
-#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 SetNumLockState "AlwaysOn" ;sets numlock to always on (you can still it for macros)
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still it for macros)
@@ -1058,6 +1058,9 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	click
 	MouseMove %&xpos%, %&ypos%
 }
+
+F1::MouseMove(200, 200, "25", "R")
+
 ;premprojectHotkey;
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
@@ -1135,11 +1138,12 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		return
 	}
 	move:
-	MouseMove(%&prx% + "5", %&pry% +"3")
+	MouseMove(%&prx% + "5", %&pry% +"3", 4)
 	SendInput("{Click Down}")
 	coords()
 	Sleep 100
-	MouseMove 3592, 444, 2
+	MouseMove 3592, 444, 4
+	sleep 50
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
 	if shiftval = 1

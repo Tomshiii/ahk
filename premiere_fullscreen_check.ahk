@@ -2,7 +2,7 @@
 SetWorkingDir A_ScriptDir
 TraySetIcon(A_WorkingDir "\Support Files\Icons\fullscreen.ico") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk"
-#Requires AutoHotkey v2.0-beta.3
+#Requires AutoHotkey v2.0-beta.5
 InstallKeybdHook
 
 /*

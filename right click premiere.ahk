@@ -4,7 +4,7 @@ InstallKeybdHook */
 ;TraySetIcon(A_WorkingDir "\Support Files\Icons\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
 /* CoordMode "Mouse", "screen"
 CoordMode "Pixel", "screen" */
-;#Requires AutoHotkey v2.0-beta.3 ;this script requires AutoHotkey v2.0
+;#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 
 ; I NO LONGER RUN THIS SCRIPT SEPARATELY. I was running into issues with scripts loading after this one and it then breaking so to compensate I run it WITHIN the `My Scripts.ahk` so it never breaks -Tomshi
 
