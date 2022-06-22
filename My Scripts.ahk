@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.4
+;\\v2.13.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.6.2
 
@@ -1059,8 +1059,6 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	MouseMove %&xpos%, %&ypos%
 }
 
-F1::MouseMove(200, 200, "25", "R")
-
 ;premprojectHotkey;
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
@@ -1138,11 +1136,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		return
 	}
 	move:
-	MouseMove(%&prx% + "5", %&pry% +"3", 4)
+	MouseMove(%&prx% + "5", %&pry% +"3")
 	SendInput("{Click Down}")
 	coords()
 	Sleep 100
-	MouseMove 3592, 444, 4
+	MouseMove 3592, 444, 2
 	sleep 50
 	SendInput("{Click Up}")
 	MouseMove(%&xpos%, %&ypos%)
