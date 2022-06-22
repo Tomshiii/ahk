@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.4
+;\\v2.10.5
 #Include General.ahk
 
 /* preset()
@@ -1179,11 +1179,25 @@ openChecklist()
             {
                 Name := WinGetTitle("Adobe Premiere Pro")
                 titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                if titlecheck = ""
+                    {
+                        blockOff()
+                        toolCust("``titlecheck`` variable wasn't assigned a value", "1000")
+                        errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                        return
+                    }
             }
         else if WinExist("Adobe After Effects")
             {
                 Name := WinGetTitle("Adobe After Effects")
                 titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+                if titlecheck = ""
+                    {
+                        blockOff()
+                        toolCust("``afterFXTitle`` variable wasn't assigned a value", "1000")
+                        errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                        return
+                    }
             }
         dashLocation := InStr(Name, "-")
         length := StrLen(Name) - dashLocation
