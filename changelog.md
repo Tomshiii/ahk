@@ -3,8 +3,8 @@
 ## > My Scritps
 - `updateChecker()` will now wait for previous tooltips to complete before moving forward in the event that the user has selected "do not prompt"
 - Added `RAlt & p::` when firefox is active to pin the first two tabs
-- `#c` will now make a slightly larger window if the active window is a youtube window
-- `RAlt & p` now has the ability to *only* move the `Project` window to it's proper position
+- `#c::` will now make a slightly larger window if the active window is a youtube window
+- `RAlt & p:: (premiere)` now has the ability to *only* move the `Project` window to it's proper position
 
 ## > Functions
 - `switchToAE()` now able to find `.aep` file for the current working project regardless of name
@@ -27,3 +27,4 @@
     - The code to automatically open the checklist of the open project moved from `QMK.ahk` to `\Functions\Premiere.ahk` -> `openChecklist()`
 - Will now wait for certain tooltips to complete before replacing them with new ones
 - `secondsRetry` changed from `5s` -> `2.5s` by default
+- Fixed script error on first startup of `Premiere`

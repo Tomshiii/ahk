@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.1
+;\\v2.10.2
 #Include General.ahk
 
 /*
@@ -71,7 +71,7 @@ switchToAE()
                         length := StrLen(Name) - dashLocation
                         if not titlecheck
                             {
-                                toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+                                runae()
                                 return
                             }
                         entirePath := SubStr(name, dashLocation + "2", length)

@@ -121,17 +121,32 @@ save()
             premCheck := WinGetTitle("ahk_class Premiere Pro")
             titlecheck := InStr(premCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
+            if titlecheck = ""
+                {
+                    blockOff()
+                    toolCust("``titlecheck`` variable wasn't assigned a value", "1000")
+                    errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                    goto end2
+                }
         }
         if WinExist("ahk_exe AfterFX.exe")
             {
                 afterFXTitle := WinGetTitle("ahk_exe AfterFX.exe")
                 aeSaveCheck := SubStr(afterFXTitle, -1, 1) ;this variable will contain "*" if a save is required
+                if afterFXTitle = ""
+                    {
+                        blockOff()
+                        toolCust("``afterFXTitle`` variable wasn't assigned a value", "1000")
+                        errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                        goto end2
+                    }
             }
         if not WinExist("ahk_exe AfterFX.exe")
             aeSaveCheck := ""
     } catch as e {
         toolCust("Couldn't determine the titles of Adobe programs", "1000")
         errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
+        goto end2
     }
     if not titlecheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
         {
@@ -145,6 +160,7 @@ save()
             } catch as e {
                 toolCust("couldn't activate original window", "1000")
                 errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
+                goto end2
             }
             SetTimer(, -ms)
             goto end2
