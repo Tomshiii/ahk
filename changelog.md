@@ -10,6 +10,7 @@ Scripts now require `AutoHotkey v2.0-beta.3`
 
 ## > Functions
 - `switchToAE()` now able to find `.aep` file for the current working project regardless of name
+- Fixed `openChecklist()` error on first startup of `Premiere` 
 
 `gain()`
 - Fixed function waiting for window `off` to close instead of the proper `Audio Gain` window

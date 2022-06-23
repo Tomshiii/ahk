@@ -144,10 +144,18 @@ save()
         if not WinExist("ahk_exe AfterFX.exe")
             aeSaveCheck := ""
     } catch as e {
+        blockOff()
         toolCust("Couldn't determine the titles of Adobe programs", "1000")
         errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
         goto end2
     }
+    if not IsSet(titlecheck) || IsSet(afterFXTitle)
+        {
+            blockOff()
+            toolCust("``titlecheck/afterFXTitle`` variable wasn't assigned a value", "1000")
+            errorLog(A_ThisFunc "()", "``titlecheck/afterFXTitle`` variable wasn't assigned a value", A_LineFile, A_LineNumber)
+            goto end2
+        }
     if not titlecheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
         {
             blockOff()

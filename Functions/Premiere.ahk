@@ -1202,6 +1202,13 @@ openChecklist()
         dashLocation := InStr(Name, "-")
         length := StrLen(Name) - dashLocation
     }
+    if not IsSet(titlecheck) || IsSet(afterFXTitle)
+        {
+            blockOff()
+            toolCust("``titlecheck/afterFXTitle`` variable wasn't assigned a value", "1000")
+            errorLog(A_ThisFunc "()", "``titlecheck/afterFXTitle`` variable wasn't assigned a value", A_LineFile, A_LineNumber)
+            return
+        }
     if not titlecheck
         {
             toolCust("You're on a part of Premiere that won't contain the project path", "2000")
