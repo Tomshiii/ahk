@@ -69,12 +69,12 @@ else
 check() {
     if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
         {
-            SetTimer(, -ms) ;I don't want this to continue checking every minute if Premiere is closed (and I don't want it to Reload like the `save()` timer as it would end up reloading this script every minute which isn't desirable) so I'm using the larger timer here.
+            SetTimer(, -msChecklist)
             goto end3
         }
     if WinExist("Editing Checklist")
         {
-            SetTimer(, -ms) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
+            SetTimer(, -msChecklist)
             goto end3
         }
     openChecklist() ;this function can be found in \Functions\Premiere.ahk
@@ -82,7 +82,7 @@ check() {
         WinWaitClose("ahk_class tooltips_class32",, 3)
     if not WinExist("Editing Checklist")
         toolCust("Don't forget to start the checklist for this project!", "2000")
-    SetTimer(, -ms) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
+    SetTimer(, -msChecklist) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
     end3:
 }
 
@@ -149,11 +149,11 @@ save()
         errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
         goto end2
     }
-    if not IsSet(titlecheck) || IsSet(afterFXTitle)
+    if not IsSet(titlecheck)
         {
             blockOff()
-            toolCust("``titlecheck/afterFXTitle`` variable wasn't assigned a value", "1000")
-            errorLog(A_ThisFunc "()", "``titlecheck/afterFXTitle`` variable wasn't assigned a value", A_LineFile, A_LineNumber)
+            toolCust("``titlecheck`` variable wasn't assigned a value", "1000")
+            errorLog(A_ThisFunc "()", "``titlecheck`` variable wasn't assigned a value", A_LineFile, A_LineNumber)
             goto end2
         }
     if not titlecheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
@@ -196,6 +196,13 @@ save()
         }
     if saveCheck != "*" ;will check to see if saving is necessary
         {
+            if not IsSet(afterFXTitle)
+                {
+                    blockOff()
+                    toolCust("``afterFXTitle`` variable wasn't assigned a value", "1000")
+                    errorLog(A_ThisFunc "()", "``afterFXTitle`` variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                    goto end2
+                }
             if aeSaveCheck = "*" ;this variable will contain "*" if a save is required
                 {
                     WinActivate("ahk_exe AfterFX.exe")
