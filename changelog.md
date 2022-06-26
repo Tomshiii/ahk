@@ -1,19 +1,19 @@
 # <> Release 2.4.x - 
 
-Scripts now require `AutoHotkey v2.0-beta.3`
+Scripts now require `AutoHotkey v2.0-beta.5`
 
 ## > My Scritps
 - `updateChecker()` will now wait for previous tooltips to complete before moving forward in the event that the user has selected "do not prompt"
 - Added `RAlt & p::` when firefox is active to pin the first two tabs
 - `#c::` will now make a slightly larger window if the active window is a youtube window
-- `RAlt & p:: (premiere)` now has the ability to *only* move the `Project` window to it's proper position
+- `RAlt & p:: (premiere)` now has the ability to *only* move the `Project` window to it's proper position if `Shift` is held
 
 ## > Functions
 - `switchToAE()` now able to find `.aep` file for the current working project regardless of name
 - Fixed `openChecklist()` error on first startup of `Premiere` 
 
 `gain()`
-- Fixed function waiting for window `off` to close instead of the proper `Audio Gain` window
+- Fixed function waiting for window `"off"` to close instead of the proper `"Audio Gain"` window
 - Removed code relating to `DroverLord - Window Class3` as the timeline isn't the only panel that can take on this Window Class, rendering the code detrimental on some occasions
 
 `audioDrag()`
