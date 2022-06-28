@@ -3,6 +3,7 @@
 Scripts now require `AutoHotkey v2.0-beta.5`
 
 ## > My Scritps
+- `firstCheck()` & `adobeTemp()` now write their files to `A_MyDocuments` instead of `A_Temp` as the temp folder is periodly cleared by windows
 - `updateChecker()` will now wait for previous tooltips to complete before moving forward in the event that the user has selected "do not prompt"
 - Added `RAlt & p::` when firefox is active to pin the first two tabs
 - `#c::` will now make a slightly larger window if the active window is a youtube window
@@ -19,6 +20,7 @@ Scripts now require `AutoHotkey v2.0-beta.5`
 `audioDrag()`
 - Now shows a tooltip alerting the user it's waiting for an input before continuing
 - Now has added functionality to not move the cut `bleep` sfx to track 1 if the user presses `c` while the function is waiting for the user to cut the sfx
+- Moves the mouse over an extra time once the mouse has become the `Arrow`
 
 ## > Other Changes
 - Fixed comments in `Keyboard Shortcut Adjustments.ahk` that had been copy/pasted but never corrected

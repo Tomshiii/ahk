@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.5
+;\\v2.13.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.6.2
 
@@ -283,11 +283,11 @@ firstCheck() {
 		version := ""
 	if WinExist("Scripts Release " version)
 		WinWaitClose("Scripts Release " version)
-	if FileExist(A_Temp "\tomshi\first") ;how the function tracks whether this is the first time the user is running the script or not
+	if FileExist(A_MyDocuments "\tomshi\first") ;how the function tracks whether this is the first time the user is running the script or not
 		return
 	else
 		{
-			DirCreate(A_Temp "\tomshi") ;creates the directory we'll need later
+			DirCreate(A_MyDocuments "\tomshi") ;creates the directory we'll need later
 			firstCheckGUI := Gui("", "Scripts Release " MyRelease)
 			firstCheckGUI.SetFont("S11")
 			firstCheckGUI.Opt("-Resize AlwaysOnTop")
@@ -317,7 +317,7 @@ firstCheck() {
 			firstCheckGUI.OnEvent("Escape", close)
 			firstCheckGUI.OnEvent("Close", close)
 			close(*) {
-				FileAppend("", A_Temp "\tomshi\first") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
+				FileAppend("", A_MyDocuments "\tomshi\first") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
 				firstCheckGUI.Destroy()
 			}
 			todoPage(*) {
@@ -353,10 +353,10 @@ adobeTemp() {
 		WinWaitClose("ahk_class tooltips_class32")
 	if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
 		WinWaitClose("Scripts Release " MyRelease)
-	if FileExist(A_Temp "\tomshi\adobe\" A_YDay) ;checks to see if the function has already run today
+	if FileExist(A_MyDocuments "\tomshi\adobe\" A_YDay) ;checks to see if the function has already run today
 		return
-	if not DirExist(A_Temp "\tomshi\adobe") ;ensures the directory we need already exists
-		DirCreate(A_Temp "\tomshi\adobe")
+	if not DirExist(A_MyDocuments "\tomshi\adobe") ;ensures the directory we need already exists
+		DirCreate(A_MyDocuments "\tomshi\adobe")
 	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
 	largestSize := 45
 
@@ -415,14 +415,14 @@ adobeTemp() {
 			ToolTip("")
 		}
 	end:
-	if DirExist(A_Temp "\tomshi\adobe")
+	if DirExist(A_MyDocuments "\tomshi\adobe")
 		{
 			try {
-				loop files, A_Temp "\tomshi\adobe\*.*"
+				loop files, A_MyDocuments "\tomshi\adobe\*.*"
 					FileDelete(A_LoopFileFullPath)
 			}
 		}
-	FileAppend("", A_Temp "\tomshi\adobe\" A_YDay) ;tracks the day so it will not run again today
+	FileAppend("", A_MyDocuments "\tomshi\adobe\" A_YDay) ;tracks the day so it will not run again today
 }
 adobeTemp() ;runs the loop to delete cache files
 ;=============================================================================================================================================

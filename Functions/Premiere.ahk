@@ -672,7 +672,11 @@ audioDrag(sfxName)
                         loop 4 {
                             MouseMove(-5, 0, 2, "R")
                             if A_Cursor = "Arrow"
-                                break
+                                {
+                                    MouseMove(-5, 0, 2, "R")
+                                    sleep 25
+                                    break
+                                }
                             sleep 50
                         }
                     SendInput("{Click}")
@@ -698,7 +702,11 @@ audioDrag(sfxName)
                                 loop 4 {
                                     MouseMove(5, 0, 2, "R")
                                     if A_Cursor = "Arrow"
-                                        break
+                                        {
+                                            MouseMove(5, 0, 2, "R")
+                                            sleep 25
+                                            break
+                                        }
                                     sleep 50
                                 }
                             SendInput("{Click}")
