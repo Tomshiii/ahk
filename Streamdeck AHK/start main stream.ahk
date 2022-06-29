@@ -4,7 +4,7 @@ if not WinExist("ahk_exe obs64.exe")
 {
 	SetWorkingDir A_ScriptDir
 	SetWinDelay 0 ;makes windows move instantly
-	Run('*RunAs ' location "\Stream\Streaming.ahk")
+	Run(location "\Stream\Streaming.ahk")
 	/* if not WinExist("ahk_exe GoXLR App.exe") ;I don't use the goxlr anymore
 		Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe") */
 	Run("C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe")

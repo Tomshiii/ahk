@@ -1,4 +1,4 @@
-;This part 2 exists so that I can run and then hide the streamdeck software without it running anything else as Admin (as that can cause elevation issues with other scripts)
+;This part 2 use to exist so that I can run and then hide the streamdeck software without it running anything else as Admin (as that can cause elevation issues with other scripts) but as the newer versions of the streamdeck software refuse to run opened programs as admin (as they're supposed to) I've just given up
 goxlr() { ;this code was used to open the goxlr software after the streamdeck software. I currently no longer use a goxlr so the code below that calls this function has been commented out.
     Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe")
     WinWait("ahk_exe GoXLR App.exe")

@@ -21,6 +21,7 @@ Scripts now require `AutoHotkey v2.0-beta.5`
 - Now shows a tooltip alerting the user it's waiting for an input before continuing
 - Now has added functionality to not move the cut `bleep` sfx to track 1 if the user presses `c` while the function is waiting for the user to cut the sfx
 - Moves the mouse over an extra time once the mouse has become the `Arrow`
+- Can now move the `bleep` sfx to any audio channel between `A1-A9`
 
 ## > Other Changes
 - Fixed comments in `Keyboard Shortcut Adjustments.ahk` that had been copy/pasted but never corrected

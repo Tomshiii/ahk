@@ -3,8 +3,8 @@ SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0
 #Include SD_functions.ahk
 
-;This version of the script (from 5th May, 2022) is designed for Premiere v22.3.1
-;Previous versions compatible with Premiere v22.3 can be found in previous releases of this repo
+;This version of the script (from 5th May, 2022) is designed for Premiere v22.3.1 (and beyond)
+;Previous versions compatible with Premiere v22.3 can be found in previous releases of this repo (v2.3.3 and below)
 
 If WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
@@ -115,7 +115,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         WinActivate("ahk_exe Adobe Premiere Pro.exe")
                         SendInput(premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
                     }
-                proceed2:
+                proceed2: ;this section is to set the proxy
                 sleep 1000
                 WinActivate("Project Settings")
                 sleep 50
@@ -127,7 +127,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 1000
                 SendInput("{Tab}" "{Space}")
                 sleep 300
-                SendInput("{Up 5}" "{Space}")
+                SendInput("{Down 3}" "{Space}")
                 sleep 300
                 SendInput("{Tab 2}" "{Space}")
                 sleep 300

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.5
+;\\v2.10.6
 #Include General.ahk
 
 /* preset()
@@ -551,7 +551,8 @@ keyframe(filepath)
 }
 
 /* audioDrag()
- this function pulls an audio file out of a separate bin from the project window and back to the cursor (premiere pro)
+ This function pulls an audio file out of a separate bin from the project window and back to the cursor (premiere pro)
+ If `sfxName` is "bleep" there is extra code that automatically moves it to your track of choice
  @param sfxName is the name of whatever sound you want the function to pull onto the timeline
  */
 audioDrag(sfxName)
@@ -643,17 +644,37 @@ audioDrag(sfxName)
             blockOff()
             if %&sfxName% = "bleep"
                 {
-                    track := 0
+                    skip := 0
+                    trackNumber:= 1
                     sleep 100
                     SendInput(cutPrem)
                     ToolTip(A_ThisFunc " is waiting for you to cut the bleep sfx`nPress c again if you do not wish for this funtion to drag the cut to Track 1")
                     loop {
                         if GetKeyState("c", "P")
-                            track := 1
-                        if GetKeyState("LButton", "D")
+                            skip := 1
+                        ;check to see if the user wants the bleep on a track between 1-9
+                        if GetKeyState("1", "P")
+                            trackNumber := "1"
+                        if GetKeyState("2", "P")
+                            trackNumber := "2"
+                        if GetKeyState("3", "P")
+                            trackNumber := "3"
+                        if GetKeyState("4", "P")
+                            trackNumber := "4"
+                        if GetKeyState("5", "P")
+                            trackNumber := "5"
+                        if GetKeyState("6", "P")
+                            trackNumber := "6"
+                        if GetKeyState("7", "P")
+                            trackNumber := "7"
+                        if GetKeyState("8", "P")
+                            trackNumber := "8"
+                        if GetKeyState("9", "P")
+                            trackNumber := "9"
+                        if GetKeyState("LButton", "P") ;checking for the user cutting the bleep sfx
                             break
                         sleep 50
-                        if A_Index > 160
+                        if A_Index > 160 ;built in timeout
                             {
                                 blockOff()
                                 toolCust(A_ThisFunc " timed out due to no user interaction", "2000")
@@ -688,41 +709,54 @@ audioDrag(sfxName)
                     sleep 500
                     SendInput("{Click Down}")
                     MouseGetPos(&refx, &refy)
-                    if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track 1_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track 1_2.png")
+                    if skip = 1
+                        goto skip
+                    else if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track " trackNumber "_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track " trackNumber "_2.png")
                         {
-                            if track = 1
-                                goto skip
                             MouseMove(%&refx%, %&trackY%, 2)
-                            skip:
-                            SendInput("{Click Up}")
-                            sleep 50
-                            MouseMove(%&delx% + 10, %&dely%, 2)
-                            sleep 200
-                            if A_Cursor != "Arrow"
-                                loop 4 {
-                                    MouseMove(5, 0, 2, "R")
-                                    if A_Cursor = "Arrow"
-                                        {
-                                            MouseMove(5, 0, 2, "R")
-                                            sleep 25
-                                            break
-                                        }
-                                    sleep 50
-                                }
-                            SendInput("{Click}")
-                            SendInput("{BackSpace}")
-                            MouseMove(%&xpos%, %&ypos%)
-                            blockOff()
-                            ToolTip("")
-                            return
+                            goto skip
                         }
                     else
                         {
                             blockOff()
-                            toolCust("Couldn't determine the Y value of track 1", "1000")
-                            errorLog(A_ThisFunc "()", "Couldn't determine the Y value of track 1", A_LineFile, A_LineNumber)
+                            toolCust("Couldn't determine the Y value of desired track", "1000")
+                            errorLog(A_ThisFunc "()", "Couldn't determine the Y value of desired track", A_LineFile, A_LineNumber)
                             return
                         }
+                    skip:
+                    SendInput("{Click Up}")
+                    sleep 50
+                    MouseMove(%&delx% + 10, %&dely%, 2)
+                    sleep 200
+                    if A_Cursor != "Arrow"
+                        loop 4 {
+                            MouseMove(5, 0, 2, "R")
+                            if A_Cursor = "Arrow"
+                                {
+                                    MouseMove(5, 0, 2, "R")
+                                    sleep 25
+                                    break
+                                }
+                            sleep 50
+                        }
+                    SendInput("{Click}")
+                    SendInput("{BackSpace}")
+                    MouseMove(%&xpos% + 10, %&ypos%)
+                    Sleep(25)
+                    if A_Cursor != "Arrow"
+                        loop 4 {
+                            MouseMove(5, 0, 2, "R")
+                            if A_Cursor = "Arrow"
+                                {
+                                    MouseMove(5, 0, 2, "R")
+                                    sleep 25
+                                    break
+                                }
+                            sleep 50
+                        }
+                    blockOff()
+                    ToolTip("")
+                    return
                 }
         }
     else
