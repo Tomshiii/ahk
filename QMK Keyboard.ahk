@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.2
+;\\v2.6.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.4
@@ -206,8 +206,7 @@ g::
 	;SendInput(selectAtPlayhead)
 	SendInput("^+1")
 }
-b::num("2550", "0", "200") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
-b & Right::num("3828", "-717", "300") ;This script moves the "motion tab" then menus through and change values to zoom into a custom coord and zoom level
+b::zoom()
 
 r::preset("Highpass Me")
 f:: ;this macro is to open the speed menu
@@ -485,7 +484,7 @@ n:: ;this macro is to find the difference between 2 24h timecodes
 	A_Clipboard := value
 	toolCust(diff "`nor " value, "2000")
 }
-Space::switchToEdge()
+Space::switchToDisc()
 Right & Space::newWin("Space", "exe", "msedge.exe", "msedge.exe")
 Enter & Space::closeOtherWindow("ahk_exe msedge.exe")
 
@@ -581,7 +580,7 @@ F15::switchToPhoto()
 q::unassigned()
 a::unassigned()
 z::unassigned()
-F16::unassigned()
+F16::switchToEdge()
 
 ;Tab::unassigned()
 Esc::unassigned()

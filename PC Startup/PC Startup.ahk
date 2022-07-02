@@ -22,7 +22,7 @@ open()
     if WinExist("ahk_exe Creative Cloud.exe")
         WinClose() ;closing these programs just pushes them into the hidden part of the taskbar, which is what I want
     if WinExist("ahk_exe StreamDeck.exe")
-        WinClose() ;closing these programs just pushes them into the hidden part of the taskbar, which is what I want
+        WinClose("ahk_exe StreamDeck.exe") ;closing these programs just pushes them into the hidden part of the taskbar, which is what I want
     else
         {
             WinWait("ahk_exe StreamDeck.exe")

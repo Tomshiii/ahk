@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.6
+;\\v2.10.7
 #Include General.ahk
 
 /* preset()
@@ -293,6 +293,102 @@ num(xval, yval, scale)
     blockOff()
 }
 
+/*
+ This function on first run will ask you to select a clip with the exact zoom you wish to use for the current session. Any subsequent activations of the script will simply zoom the current clip to that zoom amount. You can reset this zoom by refreshing the script
+ */
+zoom()
+{
+    static x := 0
+    static y := 0
+    static scale := 0
+    KeyWait(A_ThisHotkey)
+    coords()
+    MouseGetPos(&xpos, &ypos)
+    if scale = 0
+        {
+            blockOff()
+            setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
+            if setValue = "No"
+                return
+        }
+    blockOn()
+    WinActivate("ahk_exe Adobe Premiere Pro.exe")
+    sleep 50
+    SendInput(effectControls)
+    SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+    sleep 50
+    try {
+        effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+    } catch as e {
+        blockOff()
+        toolCust("Couldn't find the ClassNN value", "1000")
+        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
+        return
+    }
+    SendInput(timelineWindow)
+    if ImageSearch(&clipX, &clipY, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+        {
+            SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+            sleep 50
+            if ImageSearch(&clipX, &clipY, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                {
+                    toolCust("The wrong clips are selected", "1000")
+                    errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
+                    blockOff()
+                    return
+                }
+        }
+    if ImageSearch(&motionX, &motionY, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "motion2.png") || ImageSearch(&motionX, &motionY, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "\motion3.png") ;moves to the "video" section of the effects control window tab
+        goto next
+    else
+        {
+            MouseMove(%&xpos%, %&ypos%)
+            blockOff()
+            toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
+            return
+        }
+    next:
+    MouseMove(%&motionX% + "10", %&motionY% + "10")
+    SendInput("{Click}")
+    MouseMove(%&xpos%, %&ypos%)
+    SendInput("{Tab 2}")
+    if x = 0
+        {
+            previousClipboard := A_Clipboard
+            A_Clipboard := ""
+            SendInput("^c")
+            ClipWait()
+            static x := A_Clipboard
+            SendInput("{Tab}")
+            A_Clipboard := ""
+            SendInput("^c")
+            ClipWait()
+            static y := A_Clipboard
+            SendInput("{Tab}")
+            A_Clipboard := ""
+            SendInput("^c")
+            ClipWait()
+            static scale := A_Clipboard
+            blockOff()
+            SendInput("{Enter}")
+            toolCust("Setting up your zoom has completed", "1000")
+            return
+        }
+    else
+        {
+            SendInput(x)
+            SendInput("{Tab}")
+            SendInput(y)
+            SendInput("{Tab}")
+            SendInput(scale)
+            SendInput("{Enter}")
+            blockOff()
+            return
+        }
+}
+
 /* valuehold()
  a preset to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
  @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
@@ -570,77 +666,75 @@ audioDrag(sfxName)
                     SendInput("{Click}")
                     sleep 100
                 }
-            SendInput(projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
-            SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
-            ;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
-            SendInput(findBox)
-            CaretGetPos(&findx)
-            if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-                {
-                    Loop 40
-                        {
-                            sleep 30
-                            CaretGetPos(&findx)
-                            if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                                break
-                            if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
-                                {
-                                    blockOff()
-                                    toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
-                                    errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
-                                    return
-                                }
-                        }
-                }
-            SendInput("^a" "+{BackSpace}")
-            SendInput(%&sfxName%)
-            sleep 250 ;the project search is pretty slow so you might need to adjust this
-            coordw()
-            if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") ;searches for the audio image next to an audio file
-                {
-                    MouseMove(%&vlx%, %&vly%)
-                    SendInput("{Click Down}")
-                }
-            else if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
-                {
-                    MouseMove(%&vlx%, %&vly%)
-                    SendInput("{Click Down}")
-                }
-            else
-                {
-                    blockOff()
-                    toolFind("audio image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineFile, A_LineNumber)
-                    coords()
-                    MouseMove(%&xpos%, %&ypos%)
-                    return
-                }
-            coords()
-            MouseMove(%&xpos%, %&ypos%)
-            SendInput("{Click Up}")
-            SendInput(timelineWindow)
-            /* SendInput(projectsWindow)
-            SendInput(projectsWindow)
-            SendInput(findBox)
-            CaretGetPos(&find2x)
-            if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-                {
-                    Loop 40
-                        {
-                            sleep 30
-                            CaretGetPos(&find2x)
-                            if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                                break
-                            if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
-                                {
-                                    blockOff()
-                                    toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
-                                    errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineNumber)
-                                    return
-                                }
-                        }
-                }
-            SendInput("^a" "+{BackSpace}" "{Enter}") */
+            loop {
+                SendInput(projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
+                SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
+                ;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
+                SendInput(findBox)
+                CaretGetPos(&findx)
+                if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+                    {
+                        Loop 40
+                            {
+                                sleep 30
+                                CaretGetPos(&findx)
+                                if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+                                    break
+                                if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+                                    {
+                                        blockOff()
+                                        toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                        errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
+                                        return
+                                    }
+                            }
+                    }
+                SendInput("^a" "+{BackSpace}")
+                SendInput(%&sfxName%)
+                sleep 250 ;the project search is pretty slow so you might need to adjust this
+                coordw()
+                if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") ;searches for the audio image next to an audio file
+                    {
+                        MouseMove(%&vlx%, %&vly%)
+                        sleep 50
+                        SendInput("{Click Down}")
+                        sleep 50
+                    }
+                else if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
+                    {
+                        MouseMove(%&vlx%, %&vly%)
+                        sleep 50
+                        SendInput("{Click Down}")
+                        sleep 50
+                    }
+                else
+                    {
+                        blockOff()
+                        toolFind("audio image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+                        errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineFile, A_LineNumber)
+                        coords()
+                        MouseMove(%&xpos%, %&ypos%)
+                        return
+                    }
+                coords()
+                MouseMove(%&xpos%, %&ypos%)
+                SendInput("{Click Up}")
+                SendInput(timelineWindow)
+                MouseMove(30,0,, "R")
+                sleep 50
+                MouseGetPos(&colourX, &colourY)
+                colour := PixelGetColor(%&colourX%, %&colourY%)
+                if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698
+                    break
+                if A_Index > 2
+                    {
+                        blockOff()
+                        toolCust("Couldn't drag the file to the timeline", "1000")
+                        errorLog(A_ThisFunc "()", "Couldn't drag the file to the timeline", A_LineFile, A_LineNumber)
+                        return
+                    }
+            }
+            MouseMove(-30,0,, "R")
             blockOff()
             if %&sfxName% = "bleep"
                 {
@@ -690,7 +784,7 @@ audioDrag(sfxName)
                     MouseMove(-10, 0,, "R")
                     sleep 50
                     if A_Cursor != "Arrow"
-                        loop 4 {
+                        loop 8 {
                             MouseMove(-5, 0, 2, "R")
                             if A_Cursor = "Arrow"
                                 {
@@ -729,7 +823,7 @@ audioDrag(sfxName)
                     MouseMove(%&delx% + 10, %&dely%, 2)
                     sleep 200
                     if A_Cursor != "Arrow"
-                        loop 4 {
+                        loop 8 {
                             MouseMove(5, 0, 2, "R")
                             if A_Cursor = "Arrow"
                                 {
@@ -744,7 +838,7 @@ audioDrag(sfxName)
                     MouseMove(%&xpos% + 10, %&ypos%)
                     Sleep(25)
                     if A_Cursor != "Arrow"
-                        loop 4 {
+                        loop 8 {
                             MouseMove(5, 0, 2, "R")
                             if A_Cursor = "Arrow"
                                 {
