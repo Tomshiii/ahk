@@ -144,7 +144,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 250
                 SendInput("{Enter}")
                 sleep 2000
-                SendInput("{Tab 2}" "{Space}")
+                SendInput("{Tab}" "{Space}") ;if you're on premiere v22.5 or above you'll need 2 tabs here. I've downgraded back to 22.3.1 for stability reasons
                 sleep 1000
                 blockOff()
                 Run(SelectedFolder) ;open an explorer window for your selected directory
