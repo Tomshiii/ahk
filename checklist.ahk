@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.11
+;\\v2.0.12
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -217,33 +217,56 @@ logElapse() {
     SetTimer(, -ms10)
 }
 
+/*
+ This function is here simply to reduce copy pasting of code for the checkboxes below - it keeps track of whether a box is enabled/disabled and also handles writing to the log files when either is done
+ @param value is the name of the checkbox (from up above)
+ @param value2 is simply `checkboxX.Value`
+ @param value3 is simply `checkboxX.Text`
+ */
+checkbox(value, value2, value3) {
+    logState := ""
+    logCheck := ""
+    forFile := Round(ElapsedTime / 3600, 3)
+    IniWrite(%&value2%, A_ScriptDir "\checkbox.ini", "Info", %&value%)
+    if %&value2% = 0
+        {
+            logState := "disabled"
+            logCheck := "disabling"
+        }
+    else
+        {
+            logState := "enabled"
+            logCheck := "enabling"
+        }
+    FileAppend("\\ ``" %&value3% "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+}
 ;defining what happens when checkboxes are clicked
 checkbox1ini(*) {
-    IniWrite(checkbox1.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox1")
+    checkbox("checkbox1", checkbox1.Value, checkbox1.Text)
 }
 checkbox2ini(*) {
-    IniWrite(checkbox2.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox2")
+    checkbox("checkbox2", checkbox2.Value, checkbox2.Text)
 }
 checkbox3ini(*) {
-    IniWrite(checkbox3.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox3")
+    checkbox("checkbox3", checkbox3.Value, checkbox3.Text)
 }
 checkbox4ini(*) {
-    IniWrite(checkbox4.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox4")
+    checkbox("checkbox4", checkbox4.Value, checkbox4.Text)
 }
 checkbox5ini(*) {
-    IniWrite(checkbox5.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox5")
+    checkbox("checkbox5", checkbox5.Value, checkbox5.Text)
 }
 checkbox6ini(*) {
-    IniWrite(checkbox6.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox6")
+    checkbox("checkbox6", checkbox6.Value, checkbox6.Text)
 }
 checkbox7ini(*) {
-    IniWrite(checkbox7.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox7")
+    checkbox("checkbox7", checkbox7.Value, checkbox7.Text)
 }
 checkbox8ini(*) {
-    IniWrite(checkbox8.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox8")
+    checkbox("checkbox8", checkbox8.Value, checkbox8.Text)
 }
 checkbox9ini(*) {
-    IniWrite(checkbox8.Value, A_ScriptDir "\checkbox.ini", "Info", "checkbox9")
+    checkbox("checkbox9", checkbox9.Value, checkbox9.Text)
 }
 
 MyGui.OnEvent("Close", close) ;what happens when you close the GUI

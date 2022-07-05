@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.7
+;\\v2.10.8
 #Include General.ahk
 
 /* preset()
@@ -1367,7 +1367,7 @@ openChecklist()
     else
         {
             try {
-                FileCopy("E:\Github\ahk\checklist.ahk", path)
+                FileCopy(location "\checklist.ahk", path)
                 Run(path "\checklist.ahk")
             } catch as e {
                 toolCust("File not found", "1000")
