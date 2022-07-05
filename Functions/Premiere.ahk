@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.8
+;\\v2.10.9
 #Include General.ahk
 
 /* preset()
@@ -994,6 +994,27 @@ movepreview()
         { ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
             Click
             MouseMove(moveX, moveY) ;move to the preview window
+            loop {
+                MouseGetPos(&colX, &colY)
+                if PixelGetColor(%&colX%, %&colY%) != 0x000000
+                    break
+                if A_Index = 1
+                    MouseMove(moveX + 100, moveY + 200)
+                if A_Index = 2
+                    MouseMove(moveX - 200, moveY + 200)
+                if A_Index = 3
+                    MouseMove(moveX - 200, moveY - 50)
+                if A_Index = 4
+                    MouseMove(moveX + 100, moveY - 50)
+                if A_Index > 4
+                    {
+                        MouseMove(moveX, moveY)
+                        blockOff()
+                        toolCust(A_ThisFunc " couldn't find your video or it kept finding pure black at each coordinate", "2000")
+                        errorLog(A_ThisFunc "()", "Couldn't find your video or it kept finding pure black at each coordinate", A_LineFile, A_LineNumber)
+                        break
+                    }
+            }
             SendInput("{Click Down}")
             blockOff()
             KeyWait A_ThisHotkey

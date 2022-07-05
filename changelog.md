@@ -14,6 +14,7 @@ Scripts now require `AutoHotkey v2.0-beta.5`
 - `switchToAE()` now able to find `.aep` file for the current working project regardless of name
 - Updated `blur` images for `motionBlur()`
 - Added `zoom()` to set and use custom zooms for individual Premiere Pro sessions
+- `movepreview()` will now attempt to find your video in multiple locations
 
 `openChecklist()`
 - Fixed error on first startup of `Premiere`
