@@ -37,34 +37,6 @@ else
         WinWait("ahk_exe Adobe Premiere Pro.exe")
         goto start
     }
-;pauseautosaveHotkey;
-#+1:: ;this is a toggle to pause/unpause the autosave script. Will also remind the user the script is paused
-{
-	static toggle := 0
-	if toggle = 0
-		{
-			toggle := 1
-            SetTimer(save, 0)
-			toolCust("You paused the autosave script", "1000")
-			SetTimer(reminder, -ms)
-			reminder()
-			{
-                if WinExist("ahk_exe Adobe Premiere Pro.exe")
-				    toolCust("Don't forget you have the autosave script paused!", "3000")
-                else
-                    reload
-				SetTimer(, -ms)
-			}
-			return
-		}
-	if toggle = 1
-		{
-			toggle := 0
-            SetTimer(save, -ms)
-			toolCust("You resumed the autosave script", "1000")
-			SetTimer(reminder, 0)
-		}		
-}
 
 check() {
     if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting

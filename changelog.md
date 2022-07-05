@@ -46,3 +46,4 @@ Scripts now require `AutoHotkey v2.0-beta.5`
 - Will now wait for certain tooltips to complete before replacing them with new ones
 - `secondsRetry` changed from `5s` -> `2.5s` by default
 - Fixed script error on first startup of `Premiere`
+- Removed the `#+1::` hotkey to pause the script as it is no longer necessary now that the script checks to see if a save is required before proceeding
