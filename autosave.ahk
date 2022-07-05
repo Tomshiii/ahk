@@ -76,9 +76,6 @@ save()
         errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineFile, A_LineNumber)
     }
 
-    ;\\ Now we begin
-    blockOn()
-
     ;\\ First we grab the titles of both premiere and after effects so we can make sure to only fire this script if a save is required
     try {
         if WinExist("ahk_exe Adobe Premiere Pro.exe")
@@ -176,6 +173,7 @@ save()
                             toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
                             goto end2
                         }
+                    blockOn()
                     WinActivate("ahk_exe AfterFX.exe")
                     sleep 500
                     SendInput("^s")
@@ -254,6 +252,9 @@ save()
             toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
             goto end2
         }
+    
+    ;\\ Now we begin
+    blockOn()
         
     ;\\ before finally saving
     SendInput("^s")
