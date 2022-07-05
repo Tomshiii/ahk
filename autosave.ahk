@@ -63,13 +63,6 @@ save()
     if not WinExist("ahk_exe Adobe Premiere Pro.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
 
-    if A_TimeIdleKeyboard <= idle
-        {
-            SetTimer(, -retry)
-            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
-            goto end2
-        }
-
     stop := ""
     ToolTip("Your Premiere Pro project is being saved!`nHold tight!`nThis function will timeout after 3s if it gets stuck")
 
@@ -177,6 +170,12 @@ save()
                 }
             if aeSaveCheck = "*" ;this variable will contain "*" if a save is required
                 {
+                    if A_TimeIdleKeyboard <= idle
+                        {
+                            SetTimer(, -retry)
+                            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
+                            goto end2
+                        }
                     WinActivate("ahk_exe AfterFX.exe")
                     sleep 500
                     SendInput("^s")
@@ -249,6 +248,13 @@ save()
         return
     }
 
+    if A_TimeIdleKeyboard <= idle
+        {
+            SetTimer(, -retry)
+            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
+            goto end2
+        }
+        
     ;\\ before finally saving
     SendInput("^s")
     WinWait("Save Project",, 3)
