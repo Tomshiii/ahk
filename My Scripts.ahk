@@ -1,5 +1,5 @@
 ﻿;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.4"
+global MyRelease := "v2.4.1"
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0

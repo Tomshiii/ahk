@@ -1,4 +1,4 @@
-# <> Release 2.4.x - 
+# <> Release 2.4.x - Bugfix & QoL Improvements
 
 Scripts now require `AutoHotkey v2.0-beta.5`
 
