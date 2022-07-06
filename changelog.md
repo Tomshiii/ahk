@@ -2,6 +2,7 @@
 
 # > Functions
 - `manInput()` now grabs the activation hotkeys and does string manipulation to get its value instead of needing to pass it into the function.
+    - Added `getSecondHotkey()` for this to function
     - Moved `keyend` to a `KSA` value instead to remove another variable that would otherwise need to be passed to the function
 - Moved the `Keywait()` in `gain()` so that holding the key wasn't queuing up the function
 

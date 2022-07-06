@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.1
+;\\v2.11.2
 #Include General.ahk
 
 /* preset()
@@ -27,7 +27,7 @@ preset(item)
     if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
         {
             sleep 100
-            ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+            SendInput(timelineWindow) ;focuses the timeline
             SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
             sleep 100
             if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
@@ -248,7 +248,7 @@ num(xval, yval, scale)
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
         return
     }
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -548,7 +548,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -598,7 +598,7 @@ keyframe(filepath)
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -641,7 +641,7 @@ keyframe(filepath)
         MouseMove(%&keyx% + "3", %&keyy%)
     Click()
     end:
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow) ;focuses the timeline
     MouseMove(%&xpos%, %&ypos%)
     blockOff()
 }
@@ -922,7 +922,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
  */
 wheelEditPoint(direction)
 {
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow) ;focuses the timeline
     SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
     KeyWait(A_ThisHotkey) ;prevents hotkey spam
 }
@@ -1134,6 +1134,18 @@ hotkeyReactivate()
     Hotkey("NumpadEnter", "NumpadEnter")
 }
 
+/* getSecondHotkey()
+ This function will return the name of the second hotkey pressed when two are required for a macro to fire
+ */
+getSecondHotkey()
+{
+    getHotkey := A_ThisHotkey
+    length := StrLen(getHotkey)
+    andValue := InStr(getHotkey, "&")
+    secondHotkey := SubStr(getHotkey, andValue + 2, length - andValue + 2)
+    return secondHotkey
+}
+
 /* manInput()
  This function will warp to and press any value in premiere to manually input a number
  @param property is the value you want to adjust
@@ -1141,10 +1153,7 @@ hotkeyReactivate()
  */
 manInput(property, optional)
 {
-    getHotkey := A_ThisHotkey
-    length := StrLen(getHotkey)
-    andValue := InStr(getHotkey, "&")
-    waitHotkey := SubStr(getHotkey, andValue + 2, length - andValue + 2)
+    waitHotkey := getSecondHotkey()
     MouseGetPos(&xpos, &ypos)
     coords()
     blockOn()
@@ -1157,7 +1166,7 @@ manInput(property, optional)
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
+    SendInput(timelineWindow)
     if ImageSearch(&x, &y, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -1280,13 +1289,11 @@ gain(amount)
 
 /* gainSecondary()
  This function opens up the gain menu within premiere pro so I can input it with my secondary keyboard. This function will also check to ensure the timeline is in focus and a clip is selected. I don't really use this anymore
- @param key1 is the hotkey you use to activate this function
- @param key2 is the other hotkey you use to activate this function (if you only use 1 button to activate it, remove one of the keywaits and this variable)
  @param keyend is whatever key you want the function to wait for before finishing
  */
-gainSecondary(key1, key2, keyend)
+gainSecondary(keyend)
 {
-    ;KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
+    waitKey := getSecondHotkey()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     try {
@@ -1296,7 +1303,7 @@ gainSecondary(key1, key2, keyend)
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
-    ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
+    SendInput(timelineWindow)
     if ImageSearch(&x3, &y3, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
         {
             SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
@@ -1315,8 +1322,7 @@ gainSecondary(key1, key2, keyend)
                 }
         }
     inputs:
-    KeyWait(%&key1%) ;waits for you to let go of hotkey
-    KeyWait(%&key2%) ;waits for you to let go of hotkey
+    KeyWait(waitKey) ;waits for you to let go of hotkey
     hotkeyDeactivate()
     SendInput(gainAdjust) ;~ check the keyboard shortcut ini file to adjust hotkeys
     KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
