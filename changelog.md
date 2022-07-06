@@ -18,7 +18,7 @@ Scripts now require `AutoHotkey v2.0-beta.5`
 
 `openChecklist()`
 - Fixed error on first startup of `Premiere`
-- Replaced hard coded dir with `location` variable from `KSA.ahk`
+- Replaced hard coded dir with `location :=` variable from `KSA.ahk`
 
 `gain()`
 - Fixed function waiting for window `"off"` to close instead of the proper `"Audio Gain"` window
@@ -49,3 +49,4 @@ Scripts now require `AutoHotkey v2.0-beta.5`
 - Fixed script error on first startup of `Premiere`
 - Removed the `#+1::` hotkey to pause the script as it is no longer necessary now that the script checks to see if a save is required before proceeding
 - Will now only check for `A_TimeIdleKeyboard <= idle` if a save is actually required
+- Added `InstallKeyboardHook` so that `A_TimeIdleKeyboard` works as expected and doesn't default back to `A_TimeIdle`

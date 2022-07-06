@@ -3,6 +3,7 @@ A_MaxHotkeysPerInterval := 2000
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 TraySetIcon(A_WorkingDir "\Support Files\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include Functions.ahk
+InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 #WinActivateForce
 
 ;This script will autosave your premire pro project every 7.5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
