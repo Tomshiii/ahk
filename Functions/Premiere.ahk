@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11
+;\\v2.11.1
 #Include General.ahk
 
 /* preset()
@@ -1212,9 +1212,9 @@ manInput(property, optional)
  */
 gain(amount)
 {
+    KeyWait(A_ThisHotkey)
     Critical
     ToolTip("Adjusting Gain")
-    KeyWait(A_ThisHotkey)
     BlockInput(1)
     coords()
     effClassNN := ""
