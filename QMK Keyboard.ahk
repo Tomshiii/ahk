@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7
+;\\v2.7.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.4.1
@@ -154,36 +154,36 @@ dele() ;this is here so manInput() can work, you can just ignore this
 ;F24::return ;this line is mandatory for proper functionality
 
 
-BackSpace & SC027::keyframe("scale")
-BackSpace & l::keyframe("position")
-BackSpace & .::keyframe("position")
+BackSpace & SC027::keyframe("position")
+BackSpace & /::keyframe("position")
+BackSpace & l::keyframe("scale")
 BackSpace & t::keyframe("level")
 BackSpace & u::keyframe("rotation")
 BackSpace & y::keyframe("opacity")
-SC028 & SC027::manInput("scale", "0") ;manually input a scale value
-SC028 & l::manInput("position", "0") ;manually input an x value
-SC028 & .::manInput("position", "60") ;manually input a y value
+SC028 & SC027::manInput("position", "0") ;manually input an x value
+SC028 & /::manInput("position", "60") ;manually input a y value
+SC028 & l::manInput("scale", "0") ;manually input a scale value
 SC028 & u::manInput("rotation", "0") ;manually input a rotation value
 SC028 & y::manInput("opacity", "0") ;manually input an opacity value
 SC028 & t::manInput("level", "0") ;manually input a level value
 Enter::reset()
-Enter & SC027::keyreset("scale")
-Enter & l::keyreset("position")
-Enter & .::keyreset("position")
+Enter & SC027::keyreset("position")
+Enter & /::keyreset("position")
+Enter & l::keyreset("scale")
 Enter & t::keyreset("level")
 Enter & u::keyreset("rotation")
 Enter & y::keyreset("opacity")
 Right::unassigned()
 
 p::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
-SC027::valuehold("scale", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-/::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values 
+SC027::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+/::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 
 o::preset("parametric")
-l::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+l::valuehold("scale", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
-.::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+.::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Down::unassigned()
 
 i::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
