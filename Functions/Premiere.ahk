@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.10
+;\\v2.11
 #Include General.ahk
 
 /* preset()
@@ -24,7 +24,7 @@ preset(item)
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
         return
     }
-    if A_ThisHotkey = textHotkey ;CHANGE THIS HOTKEY IN THE KEYBOARD SHORTCUTS.INI FILE - this if statement is code specific to text presets
+    if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
         {
             sleep 100
             ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro" ;focuses the timeline
@@ -135,7 +135,7 @@ preset(item)
     sleep 50
     MouseMove 0, 60,, "R" ;move down to the saved preset (must be in an additional folder)
     SendInput("{Click Down}")
-    if A_ThisHotkey = textHotkey ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
+    if item = "loremipsum" ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
         {
             MouseMove(%&eyeX%, %&eyeY% - "5")
             SendInput("{Click Up}")
@@ -428,7 +428,7 @@ valuehold(filepath, optional)
                     return
                 }
         }
-    if A_ThisHotkey = levelsHotkey ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
+    if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, YOUR PNG MUST BE CALLED "levels.png"
         { ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
             if ImageSearch(&vidx, &vidy, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "video.png")
                 {
@@ -511,7 +511,7 @@ valuehold(filepath, optional)
                 }
             else ;if everything fails, this else will trigger
                 {
-                    if A_ThisHotkey = levelsHotkey ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
+                    if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
                         {
                             SendInput("{Click}" "0" "{Enter}")
                             MouseMove(%&xpos%, %&ypos%)
@@ -1138,11 +1138,13 @@ hotkeyReactivate()
  This function will warp to and press any value in premiere to manually input a number
  @param property is the value you want to adjust
  @param optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
- @param keywaitkey is one of the activation hotkeys
- @param keyend is whatever key you want the function to wait for before finishing
  */
-manInput(property, optional, keywaitkey, keyend)
+manInput(property, optional)
 {
+    getHotkey := A_ThisHotkey
+    length := StrLen(getHotkey)
+    andValue := InStr(getHotkey, "&")
+    waitHotkey := SubStr(getHotkey, andValue + 2, length - andValue + 2)
     MouseGetPos(&xpos, &ypos)
     coords()
     blockOn()
@@ -1193,16 +1195,13 @@ manInput(property, optional, keywaitkey, keyend)
             errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
             return
         }
-    ;use to be keywaits here.. I think it was for the below deactivate... maybe..
-    keywait(%&keywaitkey%)
-    ;hotkeyDeactivate()
+    keywait(waitHotkey)
     SendInput("{Click}")
-    ToolTip("manInput() is waiting for the " "'" %&keyend% "'" "`nkey to be pressed")
-    KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
+    ToolTip("manInput() is waiting for the " "'" manInputEnd "'" "`nkey to be pressed")
+    KeyWait(manInputEnd, "D") ;waits until the final hotkey is pressed before continuing
     ToolTip("")
     SendInput("{Enter}")
     MouseMove(%&xpos%, %&ypos%)
-    ;hotkeyReactivate()
     Click("middle")
     blockOff()
 }

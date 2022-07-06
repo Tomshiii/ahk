@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.3
+;\\v2.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.4.1
@@ -153,54 +153,56 @@ dele() ;this is here so manInput() can work, you can just ignore this
 ;===========================================================================
 ;F24::return ;this line is mandatory for proper functionality
 
-BackSpace::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
-SC028 & SC027::manInput("scale", "0", "SC027", "NumpadEnter") ;manually input a scale value
-SC028 & /::manInput("position", "0", "/", "NumpadEnter") ;manually input an x value
-SC028 & .::manInput("position", "60", ".", "NumpadEnter") ;manually input a y value
-SC028 & k::manInput("rotation", "0", "k", "NumpadEnter") ;manually input a rotation value
-SC028 & m::manInput("opacity", "0", "m", "NumpadEnter") ;manually input an opacity value
-SC028 & l::manInput("level", "0", "l", "NumpadEnter") ;manually input a level value
+
+BackSpace & SC027::keyframe("scale")
+BackSpace & l::keyframe("position")
+BackSpace & .::keyframe("position")
+BackSpace & t::keyframe("level")
+BackSpace & u::keyframe("rotation")
+BackSpace & y::keyframe("opacity")
+SC028 & SC027::manInput("scale", "0") ;manually input a scale value
+SC028 & l::manInput("position", "0") ;manually input an x value
+SC028 & .::manInput("position", "60") ;manually input a y value
+SC028 & u::manInput("rotation", "0") ;manually input a rotation value
+SC028 & y::manInput("opacity", "0") ;manually input an opacity value
+SC028 & t::manInput("level", "0") ;manually input a level value
 Enter::reset()
 Enter & SC027::keyreset("scale")
-Enter & /::keyreset("position")
+Enter & l::keyreset("position")
 Enter & .::keyreset("position")
-Enter & l::keyreset("level")
-Enter & k::keyreset("rotation")
-Enter & m::keyreset("opacity")
+Enter & t::keyreset("level")
+Enter & u::keyreset("rotation")
+Enter & y::keyreset("opacity")
 Right::unassigned()
 
 p::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
 SC027::valuehold("scale", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-/::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-;Up::unassigned()
+/::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values 
+
 
 o::preset("parametric")
-l::valuehold("level", "0") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+l::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+;Up::unassigned()
 .::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Down::unassigned()
 
-i::preset("croptom")
-k::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-,::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+i::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+k::gain("-2") ;REDUCE GAIN BY -2db
+,::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 ;Left::unassigned()
 
-u::preset("hflip")
-j & SC027::keyframe("scale")
-j & /::keyframe("position")
-j & .::keyframe("position")
-j & l::keyframe("level")
-j & k::keyframe("rotation")
-j & m::keyframe("opacity")
-m::valuehold("opacity", "0")
+u::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+j::gain("-6") ;REDUCE GAIN BY -6db
+m::gain("6") ;INCREASE GAIN BY 6db
 ;PgUp::unassigned()
 
-y::preset("vflip")
-h::fxSearch()
+y::valuehold("opacity", "0")
+;h::unassigned()
 n::unassigned()
 ;Space::unassigned()
 
-t::preset("tint 100")
-g::
+t::valuehold("level", "0") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+g:: ;this hotkey will fill the frame to fit the window
 {
 	SendInput(timelineWindow)
 	;SendInput(selectAtPlayhead)
@@ -208,7 +210,7 @@ g::
 }
 b::zoom()
 
-r::preset("Highpass Me")
+r::preset("tint 100")
 f:: ;this macro is to open the speed menu
 {
 	SendInput(timelineWindow)
@@ -257,14 +259,14 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 }
 ;PgDn::unassigned()
 
-e::gain("-2") ;REDUCE GAIN BY -2db
-d::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
-c::gain("-6") ;REDUCE GAIN BY -6db
-End::gain("6") ;INCREASE GAIN BY 6db
+e::preset("Highpass Me")
+d::preset("hflip")
+c::preset("vflip")
+;End::
 
 w::unassigned()
-;s::unassigned()
-;x::unassigned()
+s::preset("croptom")
+x::fxSearch()
 ;F15::unassigned()
 
 q::unassigned()
@@ -310,7 +312,7 @@ m::unassigned()
 ;PgUp::unassigned()
 
 y::unassigned()
-h::unassigned()
+;h::unassigned()
 n::unassigned()
 ;Space::unassigned()
 
@@ -329,8 +331,8 @@ c::unassigned()
 End::unassigned()
 
 w::aePreset("Drop Shadow")
-;s::unassigned()
-;x::unassigned()
+s::unassigned()
+x::unassigned()
 ;F15::unassigned()
 
 q::unassigned()
@@ -358,25 +360,25 @@ Enter::unassigned()
 
 p::SendInput("!{t}" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
 SC027::psProp("scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
-/::psProp("x.png")
+/::unassigned()
 ;Up::unassigned()
 o::unassigned()
-l::unassigned()
+l::psProp("x.png")
 .::psProp("y.png")
 ;Down::unassigned()
 
 i::unassigned()
-k::psProp("rotate.png")
+k::unassigned()
 ,::unassigned()
 ;Left::unassigned()
 
-u::unassigned()
+u::psProp("rotate.png")
 j::unassigned()
 m::unassigned()
 ;PgUp::unassigned()
 
 y::unassigned()
-h::unassigned()
+;h::unassigned()
 n::unassigned()
 ;Space::unassigned()
 
@@ -395,8 +397,8 @@ c::unassigned()
 End::unassigned()
 
 w::unassigned()
-;s::unassigned()
-;x::unassigned()
+s::unassigned()
+x::unassigned()
 ;F15::unassigned()
 
 q::unassigned()
@@ -446,7 +448,50 @@ Enter & SC149::closeOtherWindow("ahk_class MozillaWindowClass")
 Right & PgUp::newWin("PgUp", "exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
-h::unassigned()
+h:: ;opens the directory for the current premiere project
+{
+	if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
+		{
+			try {
+				if WinExist("Adobe Premiere Pro")
+					{
+						Name := WinGetTitle("Adobe Premiere Pro")
+						titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+					}
+				else if WinExist("Adobe After Effects")
+					{
+						Name := WinGetTitle("Adobe After Effects")
+						titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+					}
+				dashLocation := InStr(Name, "-")
+				length := StrLen(Name) - dashLocation
+			}
+			if not titlecheck
+				{
+					toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+					return
+				}
+			entirePath := SubStr(name, dashLocation + "2", length)
+			pathlength := StrLen(entirePath)
+			finalSlash := InStr(entirePath, "\",, -1)
+			path := SubStr(entirePath, 1, finalSlash - "1")
+			SplitPath(path,,,, &pathName)
+			if WinExist("ahk_class CabinetWClass", %&pathName%, "Adobe" "Editing Checklist", "Adobe")
+				{
+					WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
+					return
+				}
+			RunWait(path)
+			WinWait("ahk_class CabinetWClass", %&pathName%,, "Adobe")
+			WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
+		}
+	else
+		{
+			toolCust("A Premiere/AE isn't open", "1000")
+			errorLog(A_ThisHotkey, "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
+			return
+		}
+}
 n:: ;this macro is to find the difference between 2 24h timecodes
 {
 	start1:
@@ -501,10 +546,7 @@ Right & PgDn::musicGUI()
 e::unassigned()
 d::unassigned()
 c::unassigned()
-End::unassigned()
-
-w::unassigned()
-s:: ;search for checklist file
+End:: ;search for checklist file
 {
 	if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
 		openChecklist()
@@ -531,50 +573,10 @@ s:: ;search for checklist file
 				}
 		}
 }
-x:: ;opens the directory for the current premiere project
-{
-	if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
-		{
-			try {
-				if WinExist("Adobe Premiere Pro")
-					{
-						Name := WinGetTitle("Adobe Premiere Pro")
-						titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-					}
-				else if WinExist("Adobe After Effects")
-					{
-						Name := WinGetTitle("Adobe After Effects")
-						titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
-					}
-				dashLocation := InStr(Name, "-")
-				length := StrLen(Name) - dashLocation
-			}
-			if not titlecheck
-				{
-					toolCust("You're on a part of Premiere that won't contain the project path", "2000")
-					return
-				}
-			entirePath := SubStr(name, dashLocation + "2", length)
-			pathlength := StrLen(entirePath)
-			finalSlash := InStr(entirePath, "\",, -1)
-			path := SubStr(entirePath, 1, finalSlash - "1")
-			SplitPath(path,,,, &pathName)
-			if WinExist("ahk_class CabinetWClass", %&pathName%, "Adobe" "Editing Checklist", "Adobe")
-				{
-					WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
-					return
-				}
-			RunWait(path)
-			WinWait("ahk_class CabinetWClass", %&pathName%,, "Adobe")
-			WinActivate("ahk_class CabinetWClass", %&pathName%, "Adobe")
-		}
-	else
-		{
-			toolCust("A Premiere/AE isn't open", "1000")
-			errorLog(A_ThisHotkey, "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
-			return
-		}
-}
+
+w::unassigned()
+s::unassigned()
+x::unassigned()
 F15::switchToPhoto()
 
 q::unassigned()

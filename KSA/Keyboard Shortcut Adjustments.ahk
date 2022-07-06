@@ -459,22 +459,12 @@ screenshotOBS := IniRead(location "\KSA\Keyboard Shortcuts.ini", "OBS", "Screens
 /*
  This value is a key or key combination that is being called upon within a function. These values will need to be adjusted within KSA.ini to fit however you choose to activate these functions
  */
-levelsHotkey := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Levels")
-
-/*
- This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
- */
-replyHotkey := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Reply")
+manInputEnd := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "manInputEnd")
 
 /*
   This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
   */
 functionHotkey := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "VSCode Function")
-
-/*
- This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
- */
-textHotkey := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "Text")
 
 /*
  This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
