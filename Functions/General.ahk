@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.12
+;\\v2.12.1
 
 ; ===========================================================================================================================================
 ;
@@ -103,7 +103,7 @@ blockOff()
  
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.10.8
+;		Mouse Drag \\ Last updated: v2.12.1
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
@@ -115,6 +115,26 @@ mousedrag(tool, toolorig)
 {
     if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
         return
+    MouseGetPos(&x, &y) ;from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
+    static xValue := 0
+    if xValue = 0
+        {
+            if ImageSearch(&scrollX, &scrollY, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "scroll.png")
+                {
+                    static xValue := %&scrollX%
+                    toolCust(A_ThisFunc "() found the scroll at the end of the timeline.`nx position := " %&scrollX%, "750")
+                }
+            else
+                {
+                    toolCust(A_ThisFunc "() couldn't determine the scroll position", "2000")
+                    errorLog(A_ThisFunc "()", "Couldn't determine the scroll position", A_LineFile, A_LineNumber)
+                    goto skip ;to avoid getting stuck if the function can't find the scroll
+                }
+            ;MsgBox(%&scrollX%) ;testing
+        }
+    if %&x% > xValue || %&x% < 200 ;the function will not fire beyond the end of the timeline and before about 200 on the x value. Since the left side of the timeline is about 250px~ wide, this part of the function assumes you have your timeline beggining on the left side of your screen 
+        return
+    skip:
     again()
     {
         if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
