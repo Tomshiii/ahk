@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.12.1
+;\\v2.12.2
 
 ; ===========================================================================================================================================
 ;
@@ -103,7 +103,7 @@ blockOff()
  
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.12.1
+;		Mouse Drag \\ Last updated: v2.12.2
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
@@ -119,18 +119,21 @@ mousedrag(tool, toolorig)
     static xValue := 0
     if xValue = 0
         {
-            if ImageSearch(&scrollX, &scrollY, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "scroll.png")
-                {
-                    static xValue := %&scrollX%
-                    toolCust(A_ThisFunc "() found the scroll at the end of the timeline.`nx position := " %&scrollX%, "750")
-                }
-            else
-                {
-                    toolCust(A_ThisFunc "() couldn't determine the scroll position", "2000")
-                    errorLog(A_ThisFunc "()", "Couldn't determine the scroll position", A_LineFile, A_LineNumber)
-                    goto skip ;to avoid getting stuck if the function can't find the scroll
-                }
-            ;MsgBox(%&scrollX%) ;testing
+            try {
+                SendInput(timelineWindow)
+                effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                ControlGetPos(,, &width,, effClassNN) ;gets the x/y value and width/height of the active panel
+                static xValue := %&width%
+                if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+                    WinWaitClose("ahk_class tooltips_class32")
+                toolCust(A_ThisFunc "() found the scroll at the end of the timeline.`nx position := " xValue, "750")
+            } catch as e {
+                if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+                    WinWaitClose("ahk_class tooltips_class32")
+                toolCust("Couldn't find the ClassNN value", "1000")
+                errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
+                goto skip
+            }
         }
     if %&x% > xValue || %&x% < 200 ;the function will not fire beyond the end of the timeline and before about 200 on the x value. Since the left side of the timeline is about 250px~ wide, this part of the function assumes you have your timeline beggining on the left side of your screen 
         return
