@@ -14,3 +14,7 @@
 # > Other Changes
 - Rearranged `QMK Keyboard.ahk`
 - Added a diagram to `readme.md` to visual show what `autosave.ahk` does
+
+`right click premiere.ahk`
+- Fixed a bug that would stop the script from firing if the user had just let go of the `Rbutton`, not moved the mouse at all, then tried to reactivate the script
+- If the cursor is within close proximity to the playhead, it will now warp to it and hold down `Lbutton` to drag around the playhead instead of using the other method. Moving the playhead in this manor is slightly more performant
