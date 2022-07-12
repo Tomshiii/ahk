@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.12.2
+;\\v2.12.3
 
 ; ===========================================================================================================================================
 ;
@@ -103,11 +103,12 @@ blockOff()
  
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.12.2
+;		Mouse Drag \\ Last updated: v2.12.3
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
-  press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). This version is specifically for Premiere Pro, the below function is for any other program
+  Press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensuring the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere. 
+  This version is specifically for Premiere Pro, the function below this one is for any other program
   @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
   @param toolorig is the button you want the script to press to bring you back to your tool of choice
   */
@@ -117,16 +118,22 @@ mousedrag(tool, toolorig)
         return
     MouseGetPos(&x, &y) ;from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
     static xValue := 0
-    if xValue = 0
+    static yValue := 0
+    static xControl := 0
+    static yControl := 0
+    if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
         {
             try {
                 SendInput(timelineWindow)
                 effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                ControlGetPos(,, &width,, effClassNN) ;gets the x/y value and width/height of the active panel
-                static xValue := %&width%
+                ControlGetPos(&xpos, &ypos, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+                static xValue := %&width% - 22 ;accounting for the scroll bars on the right side of the timeline
+                static yValue := %&ypos% + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
+                static xControl := %&xpos% + 238 ;accounting for the column to the left of the timeline
+                static yControl := %&height% + 40 ;accounting for the scroll bars at the bottom of the timeline
                 if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
                     WinWaitClose("ahk_class tooltips_class32")
-                toolCust(A_ThisFunc "() found the scroll at the end of the timeline.`nx position := " xValue, "750")
+                toolCust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh", "1000")
             } catch as e {
                 if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
                     WinWaitClose("ahk_class tooltips_class32")
@@ -135,7 +142,7 @@ mousedrag(tool, toolorig)
                 goto skip
             }
         }
-    if %&x% > xValue || %&x% < 200 ;the function will not fire beyond the end of the timeline and before about 200 on the x value. Since the left side of the timeline is about 250px~ wide, this part of the function assumes you have your timeline beggining on the left side of your screen 
+    if %&x% > xValue || %&x% < xControl || %&y% < yValue || %&y% > yControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
         return
     skip:
     again()

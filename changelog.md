@@ -5,7 +5,7 @@
     - Added `getSecondHotkey()` for this to work
     - Moved `keyend` to a `KSA` value instead to remove another variable that would otherwise need to be passed to the function
 - Moved the `Keywait()` in `gain()` so that holding the key wasn't queuing up the function
-- `mouseDrag()` now checks the users `x` mouse coord and ensures it does not fire when the user is beyond/before the bounds of the timeline
+- `mouseDrag()` now checks the users mouse coords and ensures it does not fire when the user is outside the bounds of the timeline
 - `zoom()` now has preset values for certain clients
 
 # > KSA
