@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.1
+;\\v2.7.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.4.1
@@ -198,7 +198,7 @@ m::gain("6") ;INCREASE GAIN BY 6db
 
 y::valuehold("opacity", "0")
 ;h::unassigned()
-n::unassigned()
+n::zoom()
 ;Space::unassigned()
 
 t::valuehold("level", "0") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
@@ -208,7 +208,7 @@ g:: ;this hotkey will fill the frame to fit the window
 	;SendInput(selectAtPlayhead)
 	SendInput("^+1")
 }
-b::zoom()
+b::unassigned()
 
 r::preset("tint 100")
 f:: ;this macro is to open the speed menu
@@ -292,12 +292,12 @@ Enter::unassigned()
 ;Right::unassigned()
 
 p::motionBlur()
-SC027::aeScaleAndPos()
+SC027::unassigned()
 /::unassigned()
 ;Up::unassigned()
 
 o::unassigned()
-l::unassigned()
+l::aeScaleAndPos()
 .::unassigned()
 ;Down::unassigned()
 
@@ -492,7 +492,14 @@ h:: ;opens the directory for the current premiere project
 			return
 		}
 }
-n:: ;this macro is to find the difference between 2 24h timecodes
+n::unassigned()
+Space::switchToDisc()
+Right & Space::newWin("Space", "exe", "msedge.exe", "msedge.exe")
+Enter & Space::closeOtherWindow("ahk_exe msedge.exe")
+
+t::unassigned()
+g::unassigned()
+b:: ;this macro is to find the difference between 2 24h timecodes
 {
 	start1:
 	time1 := InputBox("Write the Start hhmm time here`nDon't use ':'", "Input Start Time", "w200 h110")
@@ -529,13 +536,6 @@ n:: ;this macro is to find the difference between 2 24h timecodes
 	A_Clipboard := value
 	toolCust(diff "`nor " value, "2000")
 }
-Space::switchToDisc()
-Right & Space::newWin("Space", "exe", "msedge.exe", "msedge.exe")
-Enter & Space::closeOtherWindow("ahk_exe msedge.exe")
-
-t::unassigned()
-g::unassigned()
-b::unassigned()
 
 r::unassigned()
 f::unassigned()

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.2
+;\\v2.11.3
 #Include General.ahk
 
 /* preset()
@@ -304,13 +304,6 @@ zoom()
     KeyWait(A_ThisHotkey)
     coords()
     MouseGetPos(&xpos, &ypos)
-    if scale = 0
-        {
-            blockOff()
-            setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
-            if setValue = "No"
-                return
-        }
     blockOn()
     WinActivate("ahk_exe Adobe Premiere Pro.exe")
     sleep 50
@@ -326,6 +319,36 @@ zoom()
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
         return
     }
+
+    premCheck := WinGetTitle("ahk_class Premiere Pro")
+    d0yle := InStr(premCheck, "d0yle")
+    if d0yle != 0
+        {
+            static x := -57
+            static y := -37
+            static scale := 210
+        }
+    alex := InStr(premCheck, "alex")
+    if alex != 0
+        {
+            static x := 3467
+            static y := 339
+            static scale := 390
+        }
+    /* dangers := InStr(premCheck, "dangers") ;dangers is a video by video basis
+    if dangers != 0
+        {
+            static x := 1
+            static y := 1
+            static scale := 1
+        } */
+    if scale = 0
+        {
+            blockOff()
+            setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
+            if setValue = "No"
+                return
+        }     
     SendInput(timelineWindow)
     if ImageSearch(&clipX, &clipY, %&efx%, %&efy%, %&efx% + (%&width%/ECDivide), %&efy% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
