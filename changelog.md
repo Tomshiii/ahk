@@ -13,3 +13,4 @@
 
 # > Other Changes
 - Rearranged `QMK Keyboard.ahk`
+- Added a diagram to `readme.md` to visual show what `autosave.ahk` does

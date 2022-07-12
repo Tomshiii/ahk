@@ -76,7 +76,28 @@ func(variableX, variableY)
 We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
-A script that will automatically save an Adobe Premiere Pro/After Effects project every 7.5min because Adobe's built in autosave is practically useless and fails to function a lot.
+A script that will automatically save an Adobe Premiere Pro/After Effects project every 7.5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.
+```mermaid
+  graph TD;
+      A[autosave.ahk]-->B[is Adobe Premiere or Adobe After Effects open?];
+      B -- yes --> C[is checklist open?];
+      B -- yes --> D[do they have unsaved changes?];
+
+      D -- yes -->E[get active window];
+      E -->F[save unsaved work];
+      F -->G[reactivate original active window];
+      G -->Y;
+
+      C -- yes -->H[wait 30s];
+      C -- no -->I[open checklist for project];
+      I-->H;
+      H-->C;
+
+      D-- no --> Y[wait 7.5min];
+ 
+      B -- no --> Y[wait 7.5min];
+      Y -->B;
+```
 
 #### [checklist.ahk](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk)
 A script that allows me to keep informed about what I have left to do on a video editing project as well as keeping track of the hours I've put into any individual project. This file doesn't get run from this directory and is instead copied to the project folder and run from there.
