@@ -8,6 +8,10 @@
 - `mouseDrag()` now checks the users mouse coords and ensures it does not fire when the user is outside the bounds of the timeline
 - `zoom()` now has preset values for certain clients
 
+# > checklist
+- Can now add or remove a custom amount of minutes between `1-10min`
+- Will now additionally log the `frame count` at every stage
+
 # > KSA
 - Removed `levelsHotkey`, `replyHotkey` & `textHotkey` and instead have the respective function check if the variable passed into it is the secondary version of the function. (`preset()`, `valuehold()` & `disc()` are affected by this change)
 

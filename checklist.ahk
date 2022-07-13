@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.0.12
+;\\v2.1.0
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -109,13 +109,16 @@ startButton := MyGui.Add("Button","X120 Y235 w50 h30", "Start") ;defining the st
 startButton.OnEvent("Click", start) ;what happens when you click the start button
 stopButton := MyGui.Add("Button","X120 Y235 w0 h0", "Stop") ;defining the stop button and making it invisible for now
 stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
-group := MyGui.Add("GroupBox", "w150 h65 X177 Y210", "Time Management")
-minusFiveButton := MyGui.Add("Button","X195 Y235 w50 h30", "-5min") ;defining the -5min button
-minusFiveButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
-plusFiveButton := MyGui.Add("Button","X257 Y235 w50 h30", "+5min") ;defining the -5min button
-plusFiveButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
+group := MyGui.Add("GroupBox", "w150 h100 X177 Y175", "Time Management")
 
-FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours at opening = " startHoursRounded "`n", A_ScriptDir "\checklist_logs.txt")
+List := MyGui.Add("DropDownList", "r10 Choose5 X190 Y200 w80 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+minusButton := MyGui.Add("Button","X190 Y235 w60 h30", "-minus") ;defining the -5min button
+minusButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
+
+plusButton := MyGui.Add("Button","X257 Y235 w50 h30", "+add") ;defining the -5min button
+plusButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
+
+FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours at opening = " startHoursRounded " -- frames at opening = " startValue "`n", A_ScriptDir "\checklist_logs.txt")
 SetTimer(reminder, -ms)
 
 ;timer
@@ -127,7 +130,7 @@ start(*) {
     timerText.SetFont("cGreen") ;changing the colours
     timerMinutes.SetFont("cGreen")
     forFile := Round(ElapsedTime / 3600, 3)
-    FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile " -- frames at start = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     global StartTickCount := A_TickCount ;This allows us to use your computer to determine how much time has past by doing some simple math below
     SetTimer(StopWatch, 10) ;start the timer and loop it as often as possible
     SetTimer(logElapse, -ms10)
@@ -152,7 +155,7 @@ StopWatch() {
 stop(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
-    FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- frames at stop = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0) ;then stop the timer
     startButton.Move(,, 50, 30) ;then show the start button
     stopButton.Move(,, 0, 0) ;and hide the stop button
@@ -162,45 +165,41 @@ stop(*) {
     SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
 }
-minusFive(*) {
+minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent return functions
+{
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
     global initialRead := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
-    newValue := initialRead - 301
+    if sign = "-"
+        {
+            funcMinutes := ((List.Text * 60) + 1)
+            newValue := initialRead - funcMinutes
+        }
+    else
+        {
+            funcMinutes := ((List.Text * 60) - 1)
+            newValue := initialRead + funcMinutes
+        }
     if newValue < 0
         newValue := 0
-    minus := IniWrite(newValue, A_ScriptDir "\checkbox.ini", "Info", "time")
+    change := IniWrite(newValue, A_ScriptDir "\checkbox.ini", "Info", "time")
     SetTimer(StopWatch, -1000)
     timerText.SetFont("cRed")
     timerMinutes.SetFont("cRed")
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
-    FileAppend("\\ The timer was stopped and 5min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(logElapse, 0)
     SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
+    FileAppend("\\ The timer was stopped and " List.Text "min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- frames after stopping = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+}
+minusFive(*) {
+    minusOrAdd("-")
 }
 plusFive(*) {
-    forFile := Round(ElapsedTime / 3600, 3)
-    IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
-    global initialRead := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
-    newValue := initialRead + 299
-    if newValue < 0
-        newValue := 0
-    minus := IniWrite(newValue, A_ScriptDir "\checkbox.ini", "Info", "time")
-    SetTimer(StopWatch, -1000)
-    timerText.SetFont("cRed")
-    timerMinutes.SetFont("cRed")
-    startButton.Move(,, 50, 30)
-    stopButton.Move(,, 0, 0)
-    FileAppend("\\ The timer was stopped and 5min added : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
-    SetTimer(logElapse, 0)
-    SetTimer(reminder, -ms)
-    global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
-    global ElapsedTime := 0 + startValue
-    global StartTickCount := A_TickCount
+    minusOrAdd("+")
 }
 reminder() {
     if WinExist("ahk_exe Adobe Premiere Pro.exe")
@@ -213,7 +212,7 @@ reminder() {
 }
 logElapse() {
     forFile := Round(ElapsedTime / 3600, 3)
-    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- current hours = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- current hours = " forFile " -- current frames = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(, -ms10)
 }
 
@@ -238,7 +237,7 @@ checkbox(value, value2, value3) {
             logState := "enabled"
             logCheck := "enabling"
         }
-    FileAppend("\\ ``" %&value3% "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ ``" %&value3% "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- frames after " logCheck " = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
 }
 ;defining what happens when checkboxes are clicked
 checkbox1ini(*) {
@@ -273,7 +272,7 @@ MyGui.OnEvent("Close", close) ;what happens when you close the GUI
 close(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
-    FileAppend("\\ The application was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The application was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- frames at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0)
     SetTimer(reminder, 0)
     MyGui.Destroy()
@@ -281,5 +280,5 @@ close(*) {
 }
 
 MyGui.Show("AutoSize")
-MyGui.Move(-371, -233,,)
+MyGui.Move(-371, -233,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;finish defining GUI
