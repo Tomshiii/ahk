@@ -44,8 +44,9 @@ Rbutton::
 {
 	MouseGetPos &xpos, &ypos
 	Color := PixelGetColor(%&xpos%, %&ypos%)
+	color2 := PixelGetColor(%&xpos% + 1, %&ypos%)
 	if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
-		sendinput "{ESC}" ;in Premiere 13.0+, ESCAPE will now deselect clips on the timeline, in addition to its other uses. i think it is good ot use here, now. But you can swap this out with CTRL SHIFT D if you like.
+		sendinput "{ESC}" ;in Premiere 13.0+, ESCAPE will now deselect clips on the timeline, in addition to its other uses. i think it is good ot use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
 		;send ^+d ;in Premiere, set CTRL SHIFT D to "DESELECT ALL"
 	else if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = timeline8 || Color = playhead)
 		{
@@ -53,6 +54,14 @@ Rbutton::
 			if GetKeyState("Rbutton", "P")
 				{
 					click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
+					if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead
+					{
+						if (color2 != timeline1 && color2 != timeline2 && color2 != timeline3 && color2 != timeline8 && color2 != timeline4)
+							{
+								SendInput("{Rbutton}")
+								return
+							}
+					}
 					if PixelSearch(&xcol, &ycol, %&xpos% - 4, %&ypos%, %&xpos% + 6, %&ypos%, playhead)
 						{
 							blockOn()
