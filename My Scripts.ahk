@@ -904,6 +904,11 @@ RAlt & p:: ;This hotkey is to pin the first two tabs
 	Send("{Right}")
 	Send("+{F10}" "p" "{Left}")
 }
+
+;movetabforwardHotkey;
+RButton & XButton2::moveTab("forward")
+;movetabbackHotkey;
+Rbutton & XButton1::moveTab("back")
 ;=============================================================================================================================================
 ;
 ;		Discord

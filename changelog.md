@@ -7,10 +7,8 @@
 - Moved the `Keywait()` in `gain()` so that holding the key wasn't queuing up the function
 - `mouseDrag()` now checks the users mouse coords and ensures it does not fire when the user is outside the bounds of the timeline
 - `zoom()` now has preset values for certain clients
-
-# > checklist
-- Can now add or remove a custom amount of minutes between `1-10min`
-- Will now additionally log the `frame count` at every stage
+- Added `getMouseMonitor()` to get and return the monitor that the cursor is within
+- Added `moveTab()` to grab and move a tab between different preset windows
 
 # > KSA
 - Removed `levelsHotkey`, `replyHotkey` & `textHotkey` and instead have the respective function check if the variable passed into it is the secondary version of the function. (`preset()`, `valuehold()` & `disc()` are affected by this change)
@@ -18,6 +16,10 @@
 # > Other Changes
 - Rearranged `QMK Keyboard.ahk`
 - Added a diagram to `readme.md` to visual show what `autosave.ahk` does
+
+`checklist.ahk`
+- Can now add or remove a custom amount of minutes between `1-10min`
+- Will now additionally log the `frame count` at every stage
 
 `right click premiere.ahk`
 - Fixed a bug that would stop the script from firing if the user had just let go of the `Rbutton`, not moved the mouse at all, then tried to reactivate the script

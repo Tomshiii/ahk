@@ -86,6 +86,75 @@ moveWin(key)
             }
         }
 }
+/*
+ This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 1,4 & 2 (hence the math to circle back to those values). This function requires you to press LButton when you have arrived at the window you wish to drop the tab
+ @param forwardOrback simply type in "forward" if you wish for your desired hotkey combo to cycle the tab forward or type "back" if you wish to do the opposite
+ */
+moveTab(forwardOrback)
+{
+    coords()
+    title := WinGetTitle("A")
+    if title = ""
+        {
+            SendInput("{Escape}")
+            sleep 50
+            SendInput("{RButton Down}")
+        }
+    if not GetKeyState("RButton", "P")
+        {
+            SendInput("{" A_ThisHotkey "}")
+            return
+        }
+    SendInput("{LButton Down}")
+    monitor := getMouseMonitor()
+    if %&forwardOrback% = "forward"
+        {
+            if monitor = 2
+                monitor += 1
+            if monitor = 4
+                monitor -= 4
+            monitor += 1
+        }
+    if %&forwardOrback% = "back"
+        {
+            if monitor = 4
+                monitor -= 1
+            if monitor = 1
+                monitor += 4
+            monitor -= 1
+        }
+    if monitor = 1
+        MouseMove(2378, 25, 3)
+    if monitor = 2
+        MouseMove(4256, -911, 3)
+    if monitor = 4
+        MouseMove(4281, 164, 3)
+}
+
+/* getMouseMonitor()
+ This function will grab the monitor that the mouse is currently within and return it. ie if your mouse is within monitor 1 having code `monitor := getMouseMonitor()` would make monitor = 1
+ */
+getMouseMonitor()
+{
+	coords()
+	MouseGetPos(&x, &y)
+	loop {
+		try {
+			MonitorGet(A_Index, &left, &Top, &Right, &Bottom)
+			if %&x% > %&left% && %&x% < %&Right%
+				{
+					if %&y% < %&Bottom% && %&y% > %&Top%
+                        ;MsgBox(%&x% " " %&y% "`n" %&left% " " %&Right% " " %&Bottom% " " %&Top% "`nwithin monitor " A_Index)
+                        return A_Index
+			    }
+		}
+		catch {
+			toolCust(A_ThisFunc " failed to get the monitor that the mouse is within", "1000")
+            errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
+			break
+		}
+	}
+}
 
 ; ===========================================================================================================================================
 ;
