@@ -16,6 +16,7 @@
 # > Other Changes
 - Rearranged `QMK Keyboard.ahk`
 - Added a diagram to `readme.md` to visual show what `autosave.ahk` does
+- Added `replaceChecklist.ahk` to replace any in use checklists with a newer version
 
 `checklist.ahk`
 - Can now add or remove a custom amount of minutes between `1-10min`

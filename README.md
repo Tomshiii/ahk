@@ -99,7 +99,7 @@ A script that will automatically save an Adobe Premiere Pro/After Effects projec
 ```
 
 #### [checklist.ahk](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk)
-A script that allows me to keep informed about what I have left to do on a video editing project as well as keeping track of the hours I've put into any individual project. This file doesn't get run from this directory and is instead copied to the project folder and run from there.
+A script that allows me to keep informed about what I have left to do on a video editing project as well as keeping track of the hours I've put into any individual project. This file doesn't get run from this directory and is instead copied to the project folder and run from there. This script has an accompanying script in `\Support Files` that allows you to quickly replace any in use checklist files.
 
 #### [premiere_fullscreen_check.ahk](https://github.com/Tomshiii/ahk/blob/main/premiere_fullscreen_check.ahk)
 A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts.
@@ -120,7 +120,7 @@ A script from [Taran](https://github.com/TaranVH/) to disable the alt menu accel
 A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
 
 #### [right click premiere.ahk](https://github.com/Tomshiii/ahk/blob/main/right%20click%20premiere.ahk)
-A script from [Taran](https://github.com/TaranVH/) to move the playhead in premiere with the right mouse button. This scripts also has additional functionality added by myself.
+A script originally from [Taran](https://github.com/TaranVH/) to [move the playhead](https://github.com/TaranVH/2nd-keyboard/blob/master/Taran's_Premiere_Mods/PREMIERE_MOD_Right_click_timeline_to_move_playhead.ahk) in premiere with the right mouse button. This script has been heavily altered and contains a large amount of my own code
 
 #### [\Error Logs](https://github.com/Tomshiii/ahk/tree/main/Error%20Logs)
 Anytime a macro/script encounters an error it will be logged in a txt file in this directory to help you catch anything that isn't working as intended so that in the event that the tooltip disappears too quickly, you can still dig in and see everything going on.
