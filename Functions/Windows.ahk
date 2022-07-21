@@ -93,7 +93,7 @@ moveWin(key)
 moveTab(forwardOrback)
 {
     coords()
-    title := WinGetTitle("A")
+    title := getTitle()
     if title = ""
         {
             SendInput("{Escape}")
@@ -129,6 +129,11 @@ moveTab(forwardOrback)
         MouseMove(4256, -911, 3)
     if monitor = 4
         MouseMove(4281, 164, 3)
+    SetTimer(full, -1500)
+    full() {
+        if isFullscreen() = 0
+            WinMaximize(title)
+    }
 }
 
 /* getMouseMonitor()
@@ -153,6 +158,40 @@ getMouseMonitor()
             errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
 			break
 		}
+	}
+}
+
+/*
+ This function gets and returns the title for the current active window
+ */
+getTitle()
+{
+    try {
+		title := WinGetTitle("A")
+        return title
+	} catch as e {
+		toolCust("Couldn't determine the active window", "1000")
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
+		return
+	}
+}
+
+/*
+ This function is designed to work alongside `getTitle()` and will check what state the active window is in. If the window is maximised it will return 1, else it will return 0
+ @param title is the window title you wish for this function to check, usually used in tandom with `getTitle()`
+ */
+isFullscreen()
+{
+    title := getTitle()
+	try {
+		if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
+			return 1
+		else
+			return 0
+	} catch as e {
+		toolCust("Couldn't determine the active window", "1000")
+		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
+		return
 	}
 }
 

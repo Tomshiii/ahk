@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.7
+;\\v2.14
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.6.3
 
@@ -642,21 +642,9 @@ adobeTemp() ;runs the loop to delete cache files
 ;centreHotkey;
 #c:: ;this hotkey will center the active window in the middle of your main monitor
 {
-	try {
-		title := WinGetTitle("A")
-	} catch as e {
-		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-		return
-	}
-	try {
-		if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
-			WinRestore(title) ;winrestore will unmaximise it
-	} catch as e {
-		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-		return
-	}
+	title := getTitle()
+	if isFullscreen() = 1
+		WinRestore(title) ;winrestore will unmaximise it
 	;The resolution of my main monitor is 1440p, if you have a different res monitor you mmay need to change these values
 	newWidth := 1600
 	newHeight := 900
@@ -676,22 +664,12 @@ adobeTemp() ;runs the loop to delete cache files
 ;fullscreenHotkey;
 #f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
 {
+	title := getTitle()
 	try {
-		title := WinGetTitle("A")
-	} catch as e {
-		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-		return
-	}
-	try {
-		if WinGetMinMax(title) = 0 ;a return value of 1 means it is maximised
+		if isFullscreen() = 0
 			WinMaximize(title) ;winrestore will unmaximise it
 		else
 			WinRestore(title)
-	} catch as e {
-		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-		return
 	}
 }
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -822,9 +800,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 	coordw()
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	try {
-		title := WinGetTitle("A")
-	}
+	title := getTitle()
 	if (InStr(title, needle))
 		{
 			SendInput("{Space}")
@@ -880,9 +856,7 @@ Numpad9::
 {
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	try {
-		title := WinGetTitle("A")
-	}
+	title := getTitle()
 	if (InStr(title, needle))
 		return
 	else
@@ -1155,24 +1129,22 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			return
 		}
 	bin:
-	Run("E:\_Editing stuff")
-	WinWait("_Editing stuff")
-	WinActivate("_Editing stuff")
-	sleep 500
+	if WinExist("_Editing stuff")
+		{
+			WinActivate("_Editing stuff")
+			SendInput("{Up}")
+		}
+	else
+		{
+			Run("E:\_Editing stuff")
+			WinWait("_Editing stuff")
+			WinActivate("_Editing stuff")
+		}
+	sleep 250
+	title := getTitle()
 	try {
-		title := WinGetTitle("A")
-	} catch as e {
-		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-		return
-	}
-	try {
-		if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
+		if isFullscreen() = 1 ;a return value of 1 means it is maximised
 			WinRestore(title) ;winrestore will unmaximise it
-	} catch as e {
-		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-		return
 	}
 	newWidth := 1600
 	newHeight := 900
@@ -1182,6 +1154,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	try{
 		WinMove(newX, newY, newWidth, newHeight, title)
 	}
+	sleep 250
 	coordw()
 	MouseMove(0, 0)
 	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Explorer "sfx.png")

@@ -117,12 +117,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
             blockOff()
             return
         }
-    if ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png")
-        {
-            scrub := %&speakY% + 74
-            goto cont
-        }
-    else if ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
+    if ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png") || ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
         {
             scrub := %&speakY% + 74
             goto cont
