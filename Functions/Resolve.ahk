@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.10.1
 #Include General.ahk
 
 /* Rscale()
@@ -163,7 +163,7 @@ SearchButton:
 final:
     sleep 50
     SendInput(%&effect%)
-    MouseMove(0, 130,, "R")
+    MouseMove(-300, 130,, "R")
     SendInput("{Click Down}")
     MouseMove(%&xpos%, %&ypos%, 2) ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
     SendInput("{Click Up}")

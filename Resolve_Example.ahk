@@ -10,7 +10,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\resolve.png")
 verCheck()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4
+;\\v2.4.1
 ;\\Minimum Version of "Resolve.ahk" Required for this script
 ;\\v2.10
 
@@ -113,13 +113,13 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
     coordw()
     blockOn()
     MouseGetPos &xpos, &ypos
-    if not ImageSearch(&editx, &editY, 0, A_ScreenHeight / 2, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "edit.png")
+    if not ImageSearch(&editx, &editY, A_ScreenWidth / 3, A_ScreenHeight - 150, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "edit.png")
         {
             SendInput("{RButton}")
             blockOff()
             return
         }
-    if ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png") || ImageSearch(&speakX, &speakY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
+    if ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png") || ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
         {
             scrub := %&speakY% + 74
             goto cont
