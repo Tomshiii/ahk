@@ -1,6 +1,7 @@
 #SingleInstance force ;only one instance of this script may run at a time!
 A_MaxHotkeysPerInterval := 2000
-#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
+;checks to make sure the user is using a compatible version of ahk
+verCheck()
 TraySetIcon(A_WorkingDir "\Support Files\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include Functions.ahk
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle

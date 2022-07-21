@@ -7,7 +7,54 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.12.3
+;\\v2.12.4
+
+/*
+ This function checks the users local version of AHK and ensures it is greater than v2.0-beta5. If the user is running a version earlier than that, a prompt will pop up offering the user a convenient download
+ */
+verCheck()
+{
+    if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+		return
+    if VerCompare(A_AhkVersion, "2.0-beta5") > 0
+        {
+            getLatestVer()
+            {
+                    try {
+                        latest := ComObject("WinHttp.WinHttpRequest.5.1")
+                        latest.Open("GET", "https://lexikos.github.io/v2/docs/AutoHotkey.htm")
+                        latest.Send()
+                        latest.WaitForResponse()
+                        Latestpage := latest.ResponseText
+
+                        startVer := InStr(Latestpage, "<!--ver-->", 1,, 1)
+                        endVer := InStr(Latestpage, "<!--/ver-->", 1,, 1)
+                        LatestVersion := SubStr(Latestpage, startVer + 10, endVer - startVer - 10)
+                        return LatestVersion
+                    } catch as e {
+                        toolCust("Couldn't get the latest version of ahk`nYou may not be connected to the internet", "1000")
+                        errorLog(A_ThisFunc "()", "Couldn't get latest version of ahk, you may not be connected to the internet", A_LineFile, A_LineNumber)
+                        return
+                    }
+                }
+            if getLatestVer() != ""
+                LatestVersion := getLatestVer()
+            else
+                return
+            verError := MsgBox("Tomshi's scripts are designed to work on AHK v2.0-beta5 and above. Attempting to run these scripts on versions of AHK below that may result in unexpexted issues.`n`nYour current version is v" A_AhkVersion "`nThe latest version of AHK is v" LatestVersion "`n`nDo you wish to download a newer version of AHK?",, "4 16 4096")
+            if verError = "Yes"
+                {
+                    downloadLoc := FileSelect("D", , "Where do you wish to download the latest version of AHK?")
+                    if downloadLoc = ""
+                        return
+                    ToolTip("AHK v" LatestVersion " is downloading")
+                    Download("https://www.autohotkey.com/download/ahk-v2.zip", downloadLoc "\ahk_v" LatestVersion ".zip")
+                    ToolTip("")
+                }
+            if verError = "No"
+                return
+        }
+}
 
 ; ===========================================================================================================================================
 ;

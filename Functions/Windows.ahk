@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.10.1
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.10
+;		Windows Scripts \\ Last updated: v2.10.1
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -93,7 +93,7 @@ moveWin(key)
 moveTab(forwardOrback)
 {
     coords()
-    title := getTitle()
+    getTitle(&title)
     if title = ""
         {
             SendInput("{Escape}")
@@ -129,9 +129,10 @@ moveTab(forwardOrback)
         MouseMove(4256, -911, 3)
     if monitor = 4
         MouseMove(4281, 164, 3)
-    SetTimer(full, -1500)
-    full() {
-        if isFullscreen() = 0
+    SetTimer(isfull, -1500)
+    isfull() {
+        isFullscreen(&title, &full)
+        if full = 0
             WinMaximize(title)
     }
 }
@@ -162,37 +163,39 @@ getMouseMonitor()
 }
 
 /*
- This function gets and returns the title for the current active window
+ This function gets and returns the title for the current active window, autopopulating the `title` variable
  */
-getTitle()
+getTitle(&title)
 {
     try {
 		title := WinGetTitle("A")
         return title
 	} catch as e {
-		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
+		toolCust(A_ThisFunc "() couldn't determine the active window", "1000")
+		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
 }
 
 /*
- This function is designed to work alongside `getTitle()` and will check what state the active window is in. If the window is maximised it will return 1, else it will return 0
- @param title is the window title you wish for this function to check, usually used in tandom with `getTitle()`
+ This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
+ @param title is the active window, this function will populate the `title` variable with the active window
+ @param full is representing if the active window is fullscreen or not. If it is, it will return 1, else it will return 0
  */
-isFullscreen()
+isFullscreen(&title, &full)
 {
-    title := getTitle()
+    getTitle(&title)
 	try {
 		if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
-			return 1
+			full := 1
 		else
-			return 0
+			full := 0
 	} catch as e {
-		toolCust("Couldn't determine the active window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-		return
+		toolCust(A_ThisFunc "() couldn't determine the active window", "1000")
+		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
+		Exit
 	}
+    return
 }
 
 ; ===========================================================================================================================================

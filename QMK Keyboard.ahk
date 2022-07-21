@@ -1,6 +1,5 @@
 SetWorkingDir A_ScriptDir
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
-#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon(A_WorkingDir "\Support Files\Icons\keyboard.ico")
@@ -11,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.2
+;\\v2.7.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.4.1
@@ -23,6 +22,9 @@ SetNumLockState "AlwaysOn"
 ; This script looked very different when initially committed. Its messiness was too much of a pain for me so I've stripped a bunch of
 ; unnecessary comments
 ; \\\\\\\\///////////
+
+;checks to make sure the user is using a compatible version of ahk
+verCheck()
 
 /*
  This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet

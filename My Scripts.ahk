@@ -2,7 +2,6 @@
 global MyRelease := "v2.4.1"
 
 #SingleInstance Force
-#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 SetNumLockState "AlwaysOn" ;sets numlock to always on (you can still it for macros)
 SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still it for macros)
@@ -14,9 +13,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14
+;\\v2.14.1
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.6.3
+;\\v2.7.3
 
 ; ============================================================================================================================================
 ;
@@ -58,6 +57,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 ;				STARTUP
 ;
 ; =======================================================================================================================================
+;checks to make sure the user is using a compatible version of ahk
+verCheck()
+
 /* updateChecker()
  This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the main branch of the github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog. This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
  */
@@ -642,8 +644,8 @@ adobeTemp() ;runs the loop to delete cache files
 ;centreHotkey;
 #c:: ;this hotkey will center the active window in the middle of your main monitor
 {
-	title := getTitle()
-	if isFullscreen() = 1
+	isFullscreen(&title, &full)
+	if full = 1
 		WinRestore(title) ;winrestore will unmaximise it
 	;The resolution of my main monitor is 1440p, if you have a different res monitor you mmay need to change these values
 	newWidth := 1600
@@ -664,13 +666,11 @@ adobeTemp() ;runs the loop to delete cache files
 ;fullscreenHotkey;
 #f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
 {
-	title := getTitle()
-	try {
-		if isFullscreen() = 0
-			WinMaximize(title) ;winrestore will unmaximise it
-		else
-			WinRestore(title)
-	}
+	isFullscreen(&title, &full)
+	if full = 0
+		WinMaximize(title) ;winrestore will unmaximise it
+	else
+		WinRestore(title)
 }
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
@@ -800,7 +800,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 	coordw()
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	title := getTitle()
+	getTitle(&title)
 	if (InStr(title, needle))
 		{
 			SendInput("{Space}")
@@ -856,7 +856,7 @@ Numpad9::
 {
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	title := getTitle()
+	getTitle(&title)
 	if (InStr(title, needle))
 		return
 	else
@@ -1141,11 +1141,9 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			WinActivate("_Editing stuff")
 		}
 	sleep 250
-	title := getTitle()
-	try {
-		if isFullscreen() = 1 ;a return value of 1 means it is maximised
-			WinRestore(title) ;winrestore will unmaximise it
-	}
+	isFullscreen(&title, &full)
+	if full = 1 ;a return value of 1 means it is maximised
+		WinRestore(title) ;winrestore will unmaximise it
 	newWidth := 1600
 	newHeight := 900
 	newX := A_ScreenWidth / 2 - newWidth / 2

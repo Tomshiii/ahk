@@ -2,8 +2,10 @@
 SetWorkingDir A_ScriptDir
 TraySetIcon(A_WorkingDir "\Support Files\Icons\fullscreen.ico") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk"
-#Requires AutoHotkey v2.0-beta.5
 InstallKeybdHook
+
+;checks to make sure the user is using a compatible version of ahk
+verCheck()
 
 /*
 There are sometimes where Premiere Pro will put itself in an even more "fullscreen" mode when you lose access to the window controls and all your coordinates get messed up.

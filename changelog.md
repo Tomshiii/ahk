@@ -11,6 +11,7 @@
 - Added `moveTab()` to grab and move a tab between different preset windows
 - Added `getTitle()` to get and return the title of the active window
 - Added `isFullscreen()` to check and return whether the active window is fullscreen or not
+- Added `verCheck()` to check the users installed version of AHK and makes sure it is compatible with these scripts
 
 # > KSA
 - Removed `levelsHotkey`, `replyHotkey` & `textHotkey` and instead have the respective function check if the variable passed into it is the secondary version of the function. (`preset()`, `valuehold()` & `disc()` are affected by this change)
@@ -20,6 +21,7 @@
 - Added a diagram to `readme.md` to visual show what `autosave.ahk` does
 - Added `replaceChecklist.ahk` to replace any in use checklists with a newer version
 - `RAlt & p::` will now work even if `sfx` file explorer window is already open
+- Removed `#Requires` from some scripts and replaced with `verCheck()`. This method just offers a more convenient method of updating a users AHK version
 
 `checklist.ahk`
 - Can now add or remove a custom amount of minutes between `1-10min`
