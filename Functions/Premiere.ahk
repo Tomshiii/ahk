@@ -1361,13 +1361,16 @@ openChecklist()
         }
 }
 
+/*
+ This function gets the classNN value and subsequent variables from the active window class.
+ */
 getClassNN(&ClassNN, &classX, &classY, &width, &height)
 {
     try {
         ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
-        blockOff()
+        blockOff() ;just incase
         toolCust("Couldn't get the ClassNN of the desired panel", "1000")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return

@@ -1,4 +1,8 @@
-# <> Release 2.4.1.x
+# <> Release 2.4.2 - Functions & Feature Update
+
+# > My Scripts
+- Moved all code for functions run at startup from `My Scripts.ahk` -> `General.ahk`
+- `RAlt & p::` will now work even if `sfx` file explorer window is already open
 
 # > Functions
 ### - fixes/changes
@@ -23,7 +27,6 @@
 - Rearranged `QMK Keyboard.ahk`
 - Added a diagram to `readme.md` to visual show what `autosave.ahk` does
 - Added `replaceChecklist.ahk` to replace any in use checklists with a newer version
-- `RAlt & p::` will now work even if `sfx` file explorer window is already open
 - Removed `#Requires` from some scripts and replaced with `verCheck()`. This method just offers a more convenient method of updating a users AHK version
 - Small fixes to `Resolve_Example.ahk` for compatibility with `Resolve v18`
 
