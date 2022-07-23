@@ -29,6 +29,7 @@
 - Added `replaceChecklist.ahk` to replace any in use checklists with a newer version
 - Removed `#Requires` from some scripts and replaced with `verCheck()`. This method just offers a more convenient method of updating a users AHK version
 - Small fixes to `Resolve_Example.ahk` for compatibility with `Resolve v18`
+- Updated `DiscEdit.png` for `disc()`
 
 `checklist.ahk`
 - Can now add or remove a custom amount of minutes between `1-10min`
