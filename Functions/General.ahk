@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.13.1
+;\\v2.13.2
 
 ; =======================================================================================================================================
 ;
@@ -387,6 +387,8 @@ verCheck()
 {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
+	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+		WinWaitClose("ahk_class tooltips_class32")
     if VerCompare(A_AhkVersion, "2.0-beta5") > 0
         {
             getLatestVer()
@@ -425,6 +427,32 @@ verCheck()
             if verError = "No"
                 return
         }
+}
+
+/*
+ Within my scripts I have a few hard coded references to the directory location I have these scripts. That however would be useless to another user who places them in another location.
+ To combat this scenario, this function on script startup will check the working directory and change all instances of MY hard coded dir to the users current working directory.
+ */
+locationReplace()
+{
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+		return
+	if A_WorkingDir != "E:\Github\ahk"
+		{
+			toolCust(A_ThisFunc "() is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir, "2000")
+			loop files, A_WorkingDir "\*.ahk", "R"
+				{
+					if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
+						continue
+					read := FileRead(A_LoopFileFullPath)
+					if InStr(read, "E:\Github\ahk", 1)
+						{
+							read2 := StrReplace(read, "E:\Github\ahk", A_WorkingDir)
+							FileDelete(A_LoopFileFullPath)
+							FileAppend(read2, A_LoopFileFullPath)
+						}
+				}
+		}
 }
 
 ; ===========================================================================================================================================

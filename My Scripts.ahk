@@ -13,7 +13,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.2
+;\\v2.15.3
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.7.3
 
@@ -57,6 +57,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 ;				STARTUP
 ;
 ; =======================================================================================================================================
+locationReplace() ;runs the location variable check
 verCheck() ;checks to make sure the user is using a compatible version of ahk
 updateChecker(MyRelease) ;runs the update checker
 firstCheck(MyRelease) ;runs the firstCheck() function

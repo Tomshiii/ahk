@@ -14,6 +14,7 @@
 - `zoom()` now has preset values for certain clients
 - `audioDrag()` now defaults from `track 1` -> `track 2` 
 ### - additions
+- Added `locationReplace()` to replace all hard coded references to my personal installation directory with the users installation directory on run of `My Scripts.ahk`
 - Added `getMouseMonitor()` to get and return the monitor that the cursor is within
 - Added `moveTab()` to grab and move a tab between different preset windows
 - Added `getTitle()` to get and return the title of the active window
