@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.2
+;\\v2.10.3
 #Include General.ahk
 
 /*
@@ -595,8 +595,8 @@ todoGUI()
 
     bodyText := todoGUI.Add("Text","X8 W550", "
     (
-        1. Once you've saved these scripts wherever you wish (the default value is ``E:\Github\ahk\`` if you want all the directory information to just line up without any editing) if you wish to use a custom directory, simply change the ``location :=`` variable in ``Keyboard Shortcut Adjustments.ahk`` and most scripts should function as intended.
-             // do note; some ``Streamdeck AHK`` scripts still have hard coded dir's and will error out if you try to run them from a different location. //
+        1. Once you've saved these scripts wherever you wish (the default value is ``E:\Github\ahk\`` if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, my scripts should automatically adjust these variables when you run ``My Scripts.ahk`` (so if you're reading this, they should already be automatically changed) but if you wish to do a sanity check, check the ``location :=`` variable in ``KSA.ahk`` and if it lines up with your directory everything should work as intended.
+             // do note; some ``Streamdeck AHK`` scripts still have hard coded dir's as they are intended for my workflow and may error out if you try to run them from a different location. //
 
         2. Take a look at ``Keyboard Shortcuts.ini`` to set your own keyboard shortcuts for programs as well as define coordinates for a few remaining ImageSearches that cannot use variables for various reason. These ``KSA`` values are used to allow for easy adjustments instead of needing to dig through scripts!
 
