@@ -1,42 +1,4 @@
-# <> Release 2.4.2 - Functions & Feature Update
-
-# > My Scripts
-- Moved all code for functions run at startup from `My Scripts.ahk` -> `General.ahk`
-- `RAlt & p::` will now work even if `sfx` file explorer window is already open
+# <> Release 2.4.2.x
 
 # > Functions
-### - fixes/changes
-- `manInput()` now grabs the activation hotkeys and does string manipulation to get its parameters instead of needing to manually pass them into the function.
-    - Added `getSecondHotkey()` for this to work
-    - Moved `keyend` to a `KSA` value instead to remove another variable that would otherwise need to be passed to the function
-- Moved the `Keywait()` in `gain()` so that holding the key wasn't queuing up the function
-- `mouseDrag()` now checks the users mouse coords and ensures it does not fire when the user is outside the bounds of the timeline
-- `zoom()` now has preset values for certain clients
-- `audioDrag()` now defaults from `track 1` -> `track 2` 
-### - additions
-- Added `locationReplace()` to replace all hard coded references to my personal installation directory with the users installation directory on run of `My Scripts.ahk`
-- Added `getMouseMonitor()` to get and return the monitor that the cursor is within
-- Added `moveTab()` to grab and move a tab between different preset windows
-- Added `getTitle()` to get and return the title of the active window
-- Added `isFullscreen()` to check and return whether the active window is fullscreen or not
-- Added `verCheck()` to check the users installed version of AHK and makes sure it is compatible with these scripts
-- Added `getClassNN()` to grab the classNN value and subsequent variables
-
-# > KSA
-- Removed `levelsHotkey`, `replyHotkey` & `textHotkey` and instead have the respective function check if the variable passed into it is the secondary version of the function. (`preset()`, `valuehold()` & `disc()` are affected by this change)
-
-# > Other Changes
-- Rearranged `QMK Keyboard.ahk`
-- Added a diagram to `readme.md` to visual show what `autosave.ahk` does
-- Added `replaceChecklist.ahk` to replace any in use checklists with a newer version
-- Removed `#Requires` from some scripts and replaced with `verCheck()`. This method just offers a more convenient method of updating a users AHK version
-- Small fixes to `Resolve_Example.ahk` for compatibility with `Resolve v18`
-- Updated `DiscEdit.png` for `disc()`
-
-`checklist.ahk`
-- Can now add or remove a custom amount of minutes between `1-10min`
-- Will now additionally log the `frame count` at every stage
-
-`right click premiere.ahk`
-- Fixed a bug that would stop the script from firing if the user had just let go of the `Rbutton`, not moved the mouse at all, then tried to reactivate the script
-- If the cursor is within close proximity to the playhead, it will now warp to it and hold down `Lbutton` to drag around the playhead instead of using the other method. Moving the playhead in this manor is slightly more performant
+- `updateChecker()` will now attempt to download `.exe` release first, if not found will attempt a `.zip` and if that fails inform the user and back out. This is to replace the old behaviour of just downloading a dud file

@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.13.2
+;\\v2.13.3
 
 ; =======================================================================================================================================
 ;
@@ -167,7 +167,32 @@ updateChecker(MyRelease) {
 						else
 							{
 								ToolTip("Updated scripts are downloading")
-								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version ".zip", downloadLocation "\" version ".zip")
+								type := ""
+								exeOrzip(filetype, &found)
+								{
+									whr := ComObject("WinHttp.WinHttpRequest.5.1")
+									whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." %&filetype%, true)
+									whr.Send()
+									; Using 'true' above and the call below allows the script to remain responsive.
+									whr.WaitForResponse()
+									found := whr.ResponseText
+								}
+								exeOrzip("exe", &found)
+								if found = "Not found"
+									{
+										exeOrzip("zip", &found)
+										if found = "Not found"
+											{
+												ToolTip("")
+												MsgBox("Couldn't find the latest release to download")
+												return
+											}
+										else
+											type := "zip"
+									}
+								else
+									type := "exe"
+								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
 								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "3000")
 								run(downloadLocation)
 								ToolTip("Your current scripts are being backed up!")
@@ -179,7 +204,10 @@ updateChecker(MyRelease) {
 										if newbackup = "Yes"
 											DirDelete(A_WorkingDir "\Backups\Script Backups\" MyRelease, 1)
 										else
-											return
+											{
+												ToolTip("")
+												return
+											}
 									}
 								try {
 									DirCopy(A_WorkingDir, A_Temp "\" MyRelease)
