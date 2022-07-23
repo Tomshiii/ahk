@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.2
+;\\v2.10.3
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.10.2
+;		Windows Scripts \\ Last updated: v2.10.3
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -106,6 +106,11 @@ moveTab()
         }
     SendInput("{LButton Down}")
     monitor := getMouseMonitor()
+    if monitor != 2 || 4 ;this is to stop it grabbing the tab on a monitor that isn't a part of this function
+        {
+            SendInput("{LButton Up}{RButton}")
+            return
+        }
     ;the below, blocked out code was for when I wanted tabs to cycle between monitors 1, 2 & 4 and passed a variable `forwardOrback` into the function to define a direction.
     ;I have since stopped including monitor 1 as I rarely ever want a browser window moved onto my main display
     /* if %&forwardOrback% = "forward"
