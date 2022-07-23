@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.13.3
+;\\v2.13.4
 
 ; =======================================================================================================================================
 ;
@@ -467,7 +467,24 @@ locationReplace()
 		return
 	if A_WorkingDir != "E:\Github\ahk"
 		{
-			toolCust(A_ThisFunc "() is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir, "2000")
+			funcTray := "'" A_ThisFunc "()" "'" A_Space
+			found := "no"
+			;toolCust(A_ThisFunc "() is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir, "2000")
+			loop files, A_WorkingDir "\*.ahk", "R"
+				{
+					if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
+						continue
+					read := FileRead(A_LoopFileFullPath)
+					if InStr(read, "E:\Github\ahk", 1)
+						{
+							found := "yes"
+							break
+						}
+				}
+			if found = "no"
+				return
+			TrayTip(funcTray "is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir,, 17)
+			SetTimer(end, -2000)
 			loop files, A_WorkingDir "\*.ahk", "R"
 				{
 					if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
@@ -480,6 +497,9 @@ locationReplace()
 							FileAppend(read2, A_LoopFileFullPath)
 						}
 				}
+			end() {
+				TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
+			}
 		}
 }
 
