@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.1
+;\\v2.10.2
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.10.1
+;		Windows Scripts \\ Last updated: v2.10.2
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -87,10 +87,9 @@ moveWin(key)
         }
 }
 /*
- This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 1,4 & 2 (hence the math to circle back to those values). This function requires you to press LButton when you have arrived at the window you wish to drop the tab
- @param forwardOrback simply type in "forward" if you wish for your desired hotkey combo to cycle the tab forward or type "back" if you wish to do the opposite
+ This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4. This function requires you to press LButton when you have arrived at the window you wish to drop the tab
  */
-moveTab(forwardOrback)
+moveTab()
 {
     coords()
     getTitle(&title)
@@ -107,7 +106,9 @@ moveTab(forwardOrback)
         }
     SendInput("{LButton Down}")
     monitor := getMouseMonitor()
-    if %&forwardOrback% = "forward"
+    ;the below, blocked out code was for when I wanted tabs to cycle between monitors 1, 2 & 4 and passed a variable `forwardOrback` into the function to define a direction.
+    ;I have since stopped including monitor 1 as I rarely ever want a browser window moved onto my main display
+    /* if %&forwardOrback% = "forward"
         {
             if monitor = 2
                 monitor += 1
@@ -122,9 +123,18 @@ moveTab(forwardOrback)
             if monitor = 1
                 monitor += 4
             monitor -= 1
+        } */
+    ;as a result, I've simply changed the code to this instead. From here to `end:`
+    if monitor = 2
+        {
+            monitor := 4
+            goto end
         }
-    if monitor = 1
-        MouseMove(2378, 25, 3)
+    if monitor = 4
+        monitor := 2
+    end:
+    /* if monitor = 1
+        MouseMove(2378, 25, 3) */
     if monitor = 2
         MouseMove(4256, -911, 3)
     if monitor = 4
