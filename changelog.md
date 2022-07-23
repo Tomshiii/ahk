@@ -12,6 +12,7 @@
 - Moved the `Keywait()` in `gain()` so that holding the key wasn't queuing up the function
 - `mouseDrag()` now checks the users mouse coords and ensures it does not fire when the user is outside the bounds of the timeline
 - `zoom()` now has preset values for certain clients
+- `audioDrag()` now defaults from `track 1` -> `track 2` 
 ### - additions
 - Added `getMouseMonitor()` to get and return the monitor that the cursor is within
 - Added `moveTab()` to grab and move a tab between different preset windows

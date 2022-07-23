@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12
+;\\v2.12.1
 #Include General.ahk
 
 /* preset()
@@ -718,7 +718,7 @@ audioDrag(sfxName)
             if %&sfxName% = "bleep"
                 {
                     skip := 0
-                    trackNumber:= 1
+                    trackNumber:= 2
                     sleep 100
                     SendInput(cutPrem)
                     ToolTip(A_ThisFunc " is waiting for you to cut the bleep sfx`nPress c again if you do not wish for this funtion to drag the cut to Track 1")
