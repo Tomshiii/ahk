@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.13.4
+;\\v2.13.5
 
 ; =======================================================================================================================================
 ;
@@ -460,47 +460,88 @@ verCheck()
 /*
  Within my scripts I have a few hard coded references to the directory location I have these scripts. That however would be useless to another user who places them in another location.
  To combat this scenario, this function on script startup will check the working directory and change all instances of MY hard coded dir to the users current working directory.
+ This script will take note of the users A_WorkingDir and store it in `A_MyDocuments \tomshi\location` and will check it every launch to ensure location variables are always updated and accurate
  */
 locationReplace()
 {
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
-	if A_WorkingDir != "E:\Github\ahk"
+	if FileExist(A_MyDocuments "\tomshi\location\workingDir")
 		{
-			funcTray := "'" A_ThisFunc "()" "'" A_Space
-			found := "no"
-			;toolCust(A_ThisFunc "() is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir, "2000")
+			checkDir := FileRead(A_MyDocuments "\tomshi\location\workingDir")
+			if checkDir = A_WorkingDir
+				return
+		}
+	if not DirExist(A_MyDocuments "\tomshi\location") ;ensures the directory we need already exists
+		DirCreate(A_MyDocuments "\tomshi\location")
+	if DirExist(A_MyDocuments "\tomshi\location")
+		{
+			try {
+				loop files, A_MyDocuments "\tomshi\location\*.*"
+					if A_LoopFileName = A_WorkingDir
+						return
+			}
+		}
+	funcTray := "'" A_ThisFunc "()" "'" A_Space
+	found := "no"
+	tomshiOrUser := "t"
+	loop files, A_WorkingDir "\*.ahk", "R"
+		{
+			if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
+				continue
+			read := FileRead(A_LoopFileFullPath)
+			if InStr(read, "E:\Github\ahk", 1)
+				{
+					found := "yes"
+					break
+				}
+		}
+	if found = "no"
+		{
 			loop files, A_WorkingDir "\*.ahk", "R"
 				{
 					if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
 						continue
 					read := FileRead(A_LoopFileFullPath)
-					if InStr(read, "E:\Github\ahk", 1)
+					if InStr(read, checkDir, 1)
 						{
 							found := "yes"
+							tomshiOrUser := "u"
 							break
 						}
 				}
-			if found = "no"
-				return
-			TrayTip(funcTray "is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir,, 17)
-			SetTimer(end, -2000)
-			loop files, A_WorkingDir "\*.ahk", "R"
+		}
+	if found = "no"
+		return
+	TrayTip(funcTray "is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir,, 17)
+	SetTimer(end, -2000)
+	if tomshiOrUser = "t"
+		dir := "E:\Github\ahk"
+	else if tomshiOrUser = "u"
+		dir := checkDir
+	loop files, A_WorkingDir "\*.ahk", "R"
+		{
+			if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
+				continue
+			read := FileRead(A_LoopFileFullPath)
+			if InStr(read, dir, 1)
 				{
-					if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
-						continue
-					read := FileRead(A_LoopFileFullPath)
-					if InStr(read, "E:\Github\ahk", 1)
-						{
-							read2 := StrReplace(read, "E:\Github\ahk", A_WorkingDir)
-							FileDelete(A_LoopFileFullPath)
-							FileAppend(read2, A_LoopFileFullPath)
-						}
+					read2 := StrReplace(read, dir, A_WorkingDir)
+					FileDelete(A_LoopFileFullPath)
+					FileAppend(read2, A_LoopFileFullPath)
 				}
-			end() {
-				TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
+		}
+	end() {
+		TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
+	}
+	if DirExist(A_MyDocuments "\tomshi\location")
+		{
+			try {
+				loop files, A_MyDocuments "\tomshi\location\*.*"
+					FileDelete(A_LoopFileFullPath)
 			}
 		}
+	FileAppend(A_WorkingDir, A_MyDocuments "\tomshi\location\workingDir" )
 }
 
 ; ===========================================================================================================================================
