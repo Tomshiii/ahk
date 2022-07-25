@@ -3,8 +3,9 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.1.3"
+version := "v2.1.4"
 
+today := A_YYYY "_" A_MM "_" A_DD
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
 
@@ -36,7 +37,20 @@ global ms10 := minutes2 * 60000
 if not FileExist(A_ScriptDir "\checkbox.ini")
     FileAppend("[Info]`ncheckbox4=0`ncheckbox5=0`ncheckbox1=0`ncheckbox2=0`ncheckbox3=0`ncheckbox6=0`ncheckbox7=0`ncheckbox8=0`ncheckbox9=0`ntime=0", A_ScriptDir "\checkbox.ini")
 if not FileExist(A_ScriptDir "\checklist_logs.txt")
-    FileAppend("Initial creation time : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{`n", A_ScriptDir "\checklist_logs.txt")
+
+getLastDate()
+{
+    read := FileRead(A_ScriptDir "\checklist_logs.txt")
+    foundpos := InStr(read, A_YYYY "_",, -1)
+    endpos := InStr(read, ",",, foundpos)
+    end := endpos - foundpos
+    lastdate := SubStr(read, foundpos, end)
+    return lastdate
+}
+lastdate := getLastDate()
+if today != lastdate
+    FileAppend("}`n`n{ " today "`n",  A_ScriptDir "\checklist_logs.txt")
 
 ;getting dir name for the title
 FullFileName := A_ScriptDir
