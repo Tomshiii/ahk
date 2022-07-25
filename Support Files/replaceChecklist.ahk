@@ -23,7 +23,7 @@ localVer(location)
     verString := FileRead(location)
     foundpos := InStr(verString, 'v2',,,2)
     endpos := InStr(verString, ';', , foundpos, 1)
-    end := endpos - foundpos - 4
+    end := endpos - foundpos - 5
     version := SubStr(verString, foundpos, end)
     return version
 }
