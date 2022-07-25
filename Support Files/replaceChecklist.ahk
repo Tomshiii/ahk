@@ -18,16 +18,17 @@ toolCust(message, timeout)
     }
 }
 
-/* localVer()
+localVer(location)
 {
-    verString := FileRead(parentFolder "\checklist.ahk")
+    verString := FileRead(location)
     foundpos := InStr(verString, 'v2',,,2)
     endpos := InStr(verString, ';', , foundpos, 1)
-    end := endpos - foundpos - 2
+    end := endpos - foundpos - 4
     version := SubStr(verString, foundpos, end)
     return version
-} */
+}
 
+latestVer := localVer(parentFolder "\checklist.ahk")
 
 if FileExist(A_ScriptDir "\replaceChecklist_log.txt")
     FileDelete(A_ScriptDir "\replaceChecklist_log.txt")
@@ -37,8 +38,16 @@ loop files, location "*.ahk", "R"
     {  
         if A_LoopFileName = "checklist.ahk"
             {
+                inUseVer := localVer(A_LoopFileFullPath)
+                if VerCompare(latestVer, inUseVer) <= 0
+                    {
+                        try {
+                            FileAppend(A_Mon "-" A_DD "_" A_LoopFileFullPath " -- was the same or newer than the local version of checklist.ahk and was not replaced`n", A_ScriptDir "\replaceChecklist_log.txt")
+                        }
+                        continue
+                    }
                 try {
-                    FileAppend(A_Mon "-" A_DD "_" A_LoopFileFullPath "`n", A_ScriptDir "\replaceChecklist_log.txt")
+                    FileAppend(A_Mon "-" A_DD "_" A_LoopFileFullPath " -- replaced " inUseVer " with // " latestVer "`n", A_ScriptDir "\replaceChecklist_log.txt")
                     FileDelete(A_LoopFileFullPath)
                     FileCopy(parentFolder "\checklist.ahk", A_LoopFilePath, 1)
                 } catch as e {

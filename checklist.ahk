@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.0
+;\\v2.1.1
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -111,7 +111,7 @@ stopButton := MyGui.Add("Button","X120 Y235 w0 h0", "Stop") ;defining the stop b
 stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
 group := MyGui.Add("GroupBox", "w150 h100 X177 Y175", "Time Management")
 
-List := MyGui.Add("DropDownList", "r10 Choose5 X190 Y200 w80 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+List := MyGui.Add("ComboBox", "r10 Choose5 X190 Y200 w80 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
 minusButton := MyGui.Add("Button","X190 Y235 w60 h30", "-minus") ;defining the -5min button
 minusButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
 
