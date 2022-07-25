@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.1.1
+version := "v2.1.2"
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -49,7 +49,7 @@ MyGui.SetFont("W500") ;Sets the weight of the font (thickness)
 MyGui.Opt("+MinSize300x300")
 
 ;defining title
-title := MyGui.Add("Text", "w300", "Checklist - " %&name%)
+title := MyGui.Add("Text", "w215", "Checklist - " %&name%)
 title.SetFont("bold")
 
 ;defining checkboxes
@@ -85,9 +85,12 @@ checkbox7 := MyGui.Add("CheckBox",, "Patreon")
 checkbox7.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox7")
 checkbox7.OnEvent("Click", checkbox7Ini)
 
-checkbox9 := MyGui.Add("CheckBox", "X200 Y38", "Intro")
+checkbox9 := MyGui.Add("CheckBox", "X+85 Y38", "Intro")
 checkbox9.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox9")
 checkbox9.OnEvent("Click", checkbox9Ini)
+
+;show version
+ver := MyGui.Add("Text", "Y9 H25", "⚙ " version)
 
 ;timer text
 global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
@@ -105,17 +108,18 @@ timerMinutesText.SetFont("S14")
 timerMinutes := MyGui.Add("Text", "X100 Y300 w200", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
 
+;buttons
 startButton := MyGui.Add("Button","X120 Y235 w50 h30", "Start") ;defining the start button
 startButton.OnEvent("Click", start) ;what happens when you click the start button
 stopButton := MyGui.Add("Button","X120 Y235 w0 h0", "Stop") ;defining the stop button and making it invisible for now
 stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
-group := MyGui.Add("GroupBox", "w150 h100 X177 Y175", "Time Management")
+group := MyGui.Add("GroupBox", "w137 h100 X177 Y175", "Time Adjust (min)")
 
-List := MyGui.Add("ComboBox", "r10 Choose5 X190 Y200 w80 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
-minusButton := MyGui.Add("Button","X190 Y235 w60 h30", "-minus") ;defining the -5min button
+List := MyGui.Add("ComboBox", "r10 Choose5 X190 Y200 w112 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+minusButton := MyGui.Add("Button","X188 Y235 w50 h30", "-sub") ;defining the -5min button
 minusButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
 
-plusButton := MyGui.Add("Button","X257 Y235 w50 h30", "+add") ;defining the -5min button
+plusButton := MyGui.Add("Button","X255 Y235 w50 h30", "+add") ;defining the -5min button
 plusButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
 
 FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours at opening = " startHoursRounded " -- frames at opening = " startValue "`n", A_ScriptDir "\checklist_logs.txt")
