@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.1
+;\\v2.12.2
 #Include General.ahk
 
 /* preset()
@@ -258,10 +258,8 @@ num(xval, yval, scale)
             return
         }
     next:
-    if ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion2.png") ;moves to the motion tab
+    if ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion2.png") || (&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion3.png") ;moves to the motion tab
         MouseMove(%&x2% + "10", %&y2% + "10")
-    else if ImageSearch(&x3, &y3, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "\motion3.png") ;this is a second check incase "motion" is already highlighted
-                MouseMove(%&x3% + "10", %&y3% + "10")
     else ;if everything fails, this else will trigger
         {
             MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
@@ -449,14 +447,13 @@ valuehold(filepath, optional)
                     return
                 }
             }
-        if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% ".png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
+        if ( ;finds the value you want to adjust, then finds the value adjustment to the right of it
+                ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% ".png") ||
+                ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png") ||
+                ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "3.png") ||
+                ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png")
+        ) 
             break
-        else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-            break ;this is for when you have the "toggle animation" keyframe button pressed
-        else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-            break ;this is for if the property you want to adjust is "selected"
-        else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-            break ;this is for if the property you want to adjust is "selected" and you're keyframing
         if A_Index > 3
             {
                 blockOff()
@@ -546,9 +543,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
                     return
                 }
         }
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png")
-        goto click
-    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png")
+    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png") || ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png")
         goto click
     else
         {
@@ -590,17 +585,9 @@ keyframe(filepath)
                     return
                 }
         }
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png")
-        goto next
-    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png")
-        goto next
-    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% ".png")
-        {
-            MouseMove(%&x% + "5", %&y% + "5")
-            Click()
-            goto end
-        }
-    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "3.png")
+    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png") || ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png")
+            goto next
+    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% ".png") || ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "3.png")
         {
             MouseMove(%&x% + "5", %&y% + "5")
             Click()
@@ -614,9 +601,7 @@ keyframe(filepath)
             return
         }
     next:
-    if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " Premiere "keyframeButton.png")
-        MouseMove(%&keyx% + "3", %&keyy%)
-    else if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " Premiere "keyframeButton2.png")
+    if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " Premiere "keyframeButton2.png")
         MouseMove(%&keyx% + "3", %&keyy%)
     Click()
     end:
@@ -672,14 +657,7 @@ audioDrag(sfxName)
                 SendInput(%&sfxName%)
                 sleep 250 ;the project search is pretty slow so you might need to adjust this
                 coordw()
-                if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") ;searches for the audio image next to an audio file
-                    {
-                        MouseMove(%&vlx%, %&vly%)
-                        sleep 50
-                        SendInput("{Click Down}")
-                        sleep 50
-                    }
-                else if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
+                if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") || ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
                     {
                         MouseMove(%&vlx%, %&vly%)
                         sleep 50
@@ -1046,9 +1024,7 @@ reset()
         }
     MouseGetPos(&xpos, &ypos)
     loop 5 {
-        if ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion2.png") ;checks if the "motion" value is in view
-            break
-        else if ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
+        if ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion2.png") || ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
             break
         else
             {
@@ -1146,14 +1122,13 @@ manInput(property, optional)
                     return
                 }
         }
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% ".png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+    if ( ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+        ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% ".png") ||
+        ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "2.png") ||
+        ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "3.png") ||
+        ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "4.png")
+    )
         goto colour
-    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for when you have the "toggle animation" keyframe button pressed
-    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "3.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for if the property you want to adjust is "selected"
-    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "4.png") ;finds the value you want to adjust, then finds the value adjustment to the right of it
-        goto colour ;this is for if the property you want to adjust is "selected" and you're keyframing
     else ;if everything fails, this else will trigger
         {
             blockOff()

@@ -35,11 +35,11 @@ try {
         if active != "Settings"
             WinActivate("Settings")
         ToolTip("This function searched " A_Index " time(s) to find firefox`nActive window: " active)
-        if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox3.png")
-            break
-        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox.png")
-           break
-        else if ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox2.png")
+        if (
+            ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox3.png") ||
+            ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox.png") ||
+            ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox2.png")
+        )
             break
         ToolTip("")
         if A_Index > 5

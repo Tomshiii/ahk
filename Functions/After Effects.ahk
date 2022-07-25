@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.10.1
 #Include General.ahk
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
@@ -29,13 +29,12 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
             sleep 150
             SendInput(%&button%) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
             sleep 300 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
-            if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% ".png")
-                goto colour
-            else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "2.png")
-                goto colour
-            else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "Key.png")
-                goto colour
-            else if ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "Key2.png")
+            if (
+                ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% ".png") ||
+                ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "2.png") ||
+                ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "Key.png") ||
+                ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "Key2.png")
+            )
                 goto colour
             else
                 {
@@ -98,9 +97,7 @@ aePreset(preset)
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
-    if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox.png")
-        goto move
-    else if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox2.png")
+    if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox.png") || ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox2.png")
         goto move
     else
         {

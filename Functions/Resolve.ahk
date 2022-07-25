@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.1
+;\\v2.10.2
 #Include General.ahk
 
 /* Rscale()
@@ -40,10 +40,8 @@ Rscale(value, property, plus)
             return
         }
     rest:
-    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% ".png") ;searches for the property of choice
+    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% ".png") || ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% "2.png") ;searches for the property of choice
         MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
-    else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
-        MouseMove(%&xz% + %&plus%, %&yz% + "5")
     else
         {
             blockOff()
@@ -209,10 +207,8 @@ rvalhold(property, plus, rfelseval)
         }
     rest:
     ;MouseMove 2329, 215 ;moves to the scale value.
-    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% ".png") ;searches for the property of choice
+    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% ".png") || ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% "2.png") ;searches for the property of choice
         MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
-    else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% "2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
-        MouseMove(%&xz% + %&plus%, %&yz% + "5")
     else
         {
             blockOff()
@@ -258,17 +254,9 @@ rflip(button)
             MouseMove(%&xi%, %&yi%)
             click
         }
-    if ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% ".png") ;searches for the button when it isn't activated already
+    if ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% ".png") || ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% "2.png") ;searches for the button when it isn't activated already
         {
             MouseMove(%&xh%, %&yh%)
-            click
-            MouseMove(%&xpos%, %&ypos%)
-            blockOff()
-            return
-        }
-    else if ImageSearch(&xho, &yho, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% "2.png") ;searches for the button when it is activated already
-        {
-            MouseMove(%&xho%, %&yho%)
             click
             MouseMove(%&xpos%, %&ypos%)
             blockOff()
@@ -318,10 +306,8 @@ rgain(value)
             return
         }
     rest:
-    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume.png") ;searches for the volume property
+    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume.png") || ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume2.png") ;searches for the volume property
         MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
-    else if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume2.png") ;if you've already adjusted values in resolve, their text slightly changes colour, this pass is just checking for that instead
-        MouseMove(%&xz% + "215", %&yz% + "5")
     else
         {
             blockOff()
