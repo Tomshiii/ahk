@@ -1,5 +1,5 @@
 ;this script is to replace all checklists in use after an update. If you have run `My Scripts.ahk` and it has successfully changed the working directory of my scripts, then this script should step you through the process of it changing the path variables down below. If I at any point make changes to the amount of data entered into the log files, and you replace an old checklist.ahk file with that newer version, you may encounter runtime errors as that log data will not exist unless you input it manually
-location := "E:\comms"
+location := "E:\comms\"
 parentFolder := "E:\Github\ahk"
 
 if not DirExist(location)
@@ -12,7 +12,7 @@ if not DirExist(location)
         endpos := InStr(read, '"',, foundpos, 2)
         end := endpos - foundpos - 2
         dir := SubStr(read, foundpos + 4, end - 2)
-        newRead := StrReplace(read, dir, dirReplace,,, 1)
+        newRead := StrReplace(read, dir, dirReplace "\",,, 1)
         if not DirExist(A_Temp "\tomshi")
             DirCreate(A_Temp "\tomshi")
         FileAppend(newRead, A_Temp "\tomshi\" A_ScriptName)
@@ -50,8 +50,6 @@ latestVer := localVer(parentFolder "\checklist.ahk")
 
 if FileExist(A_ScriptDir "\replaceChecklist_log.txt")
     FileDelete(A_ScriptDir "\replaceChecklist_log.txt")
-if FileExist(A_ScriptDir "\logUpdatesNeeded.txt")
-    FileDelete(A_ScriptDir "\logUpdatesNeeded.txt")
 loop files, location "*.ahk", "R"
     {  
         if A_LoopFileName = "checklist.ahk"
