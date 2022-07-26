@@ -13,7 +13,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.4
+;\\v2.15.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.7.3
 
@@ -947,6 +947,9 @@ SC03A & v:: ;lowercases highlighted text
 	SendInput(StringtoLower)
 	A_Clipboard := previous
 }
+
+;timeHotkey;
+^+t::SendInput(A_YYYY "_" A_MM "_" A_DD)
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

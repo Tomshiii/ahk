@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.1.6"
+version := "v2.1.7"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -136,7 +136,7 @@ minusButton.OnEvent("Click", minusFive) ;what happens when you click the -5min b
 plusButton := MyGui.Add("Button","X+15 w50 h30", "+add") ;defining the -5min button
 plusButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
 
-FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", A_ScriptDir "\checklist_logs.txt")
+FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", A_ScriptDir "\checklist_logs.txt")
 SetTimer(reminder, -ms)
 
 ;timer
@@ -290,7 +290,7 @@ MyGui.OnEvent("Close", close) ;what happens when you close the GUI
 close(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
-    FileAppend("\\ The application was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0)
     SetTimer(reminder, 0)
     MyGui.Destroy()
