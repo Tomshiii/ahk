@@ -14,6 +14,7 @@
 - Minor UI adjustments
 - `Logs`
     - Will now group by day to increase readability
+        - Will show the hours you started at for each day at the top of the group
     - Replaced all wording of `frames` and replaced with `seconds`. Video editor brain let that one slip through the cracks for a bit too long
     - Replaced wording `application` with `checklist`
 

@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.1.7"
+version := "v2.1.8"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -37,9 +37,16 @@ global ms10 := minutes2 * 60000
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checkbox.ini")
     FileAppend("[Info]`ncheckbox4=0`ncheckbox5=0`ncheckbox1=0`ncheckbox2=0`ncheckbox3=0`ncheckbox6=0`ncheckbox7=0`ncheckbox8=0`ncheckbox9=0`ntime=0", A_ScriptDir "\checkbox.ini")
+;grabbing hour information from ini file
+getTime := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
+timeForLog := Round(getTime / 3600, 2)
+if getTime = 0
+    timeForLog := "0.00"
+;checking for log file
 if not FileExist(A_ScriptDir "\checklist_logs.txt")
-    FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{ " today " - " timeForLog "`n", A_ScriptDir "\checklist_logs.txt")
 
+;getting the last date present in the log file
 getLastDate()
 {
     read := FileRead(A_ScriptDir "\checklist_logs.txt")
@@ -50,8 +57,8 @@ getLastDate()
     return lastdate
 }
 lastdate := getLastDate()
-if today != lastdate
-    FileAppend("}`n`n{ " today "`n",  A_ScriptDir "\checklist_logs.txt")
+if today != lastdate && lastdate != ""
+    FileAppend("}`n`n{ " today " - " timeForLog "`n",  A_ScriptDir "\checklist_logs.txt")
 
 ;getting dir name for the title
 FullFileName := A_ScriptDir
