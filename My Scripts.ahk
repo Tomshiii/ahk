@@ -13,7 +13,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.5
+;\\v2.15.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.7.3
 
@@ -336,7 +336,12 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
-	ClipWait ;waits for the clipboard to contain data
+	if !ClipWait(1) ;waits for the clipboard to contain data
+		{
+			toolCust("Couldn't copy data to clipboard", "1000")
+			errorLog(A_ThisHotkey, "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			return
+		}
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
 	A_Clipboard := previous
 }
@@ -915,7 +920,12 @@ RButton::moveWin("") ;minimise
 	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
 	Send "^c"
-	ClipWait ;waits for the clipboard to contain data
+	if !ClipWait(1) ;waits for the clipboard to contain data
+		{
+			toolCust("Couldn't copy data to clipboard", "1000")
+			errorLog(A_ThisHotkey, "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			return
+		}
 	Run "https://www.google.com/search?d&q=" A_Clipboard
 	A_Clipboard := previous
 }
@@ -926,7 +936,12 @@ SC03A & c:: ;capitilises highlighted text
 	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
-	ClipWait ;waits for the clipboard to contain data
+	if !ClipWait(1) ;waits for the clipboard to contain data
+		{
+			toolCust("Couldn't copy data to clipboard", "1000")
+			errorLog(A_ThisHotkey, "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			return
+		}
 	SendInput("{BackSpace}")
 	StringtoCapital := A_Clipboard
 	StringtoCapital := StrUpper(StringtoCapital)
@@ -940,7 +955,12 @@ SC03A & v:: ;lowercases highlighted text
 	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
-	ClipWait ;waits for the clipboard to contain data
+	if !ClipWait(1) ;waits for the clipboard to contain data
+		{
+			toolCust("Couldn't copy data to clipboard", "1000")
+			errorLog(A_ThisHotkey, "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			return
+		}
 	SendInput("{BackSpace}")
 	StringtoLower := A_Clipboard
 	StringtoLower := StrLower(StringtoLower)
