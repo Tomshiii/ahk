@@ -3,8 +3,9 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.1.4"
+version := "v2.1.5"
 
+;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -63,11 +64,13 @@ MyGui.SetFont("W500") ;Sets the weight of the font (thickness)
 MyGui.Opt("+MinSize300x300")
 
 ;defining title
-title := MyGui.Add("Text", "w215", "Checklist - " %&name%)
+title := MyGui.Add("Text", "X8 w215", "Checklist - " %&name%)
 title.SetFont("bold")
+;show version
+ver := MyGui.Add("Text", "Right X+10", "⚙ " version)
 
 ;defining checkboxes
-checkbox4 := MyGui.Add("CheckBox",, "First Pass")
+checkbox4 := MyGui.Add("CheckBox", "X8", "First Pass")
 checkbox4.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox4")
 checkbox4.OnEvent("Click", checkbox4Ini)
 
@@ -103,40 +106,37 @@ checkbox9 := MyGui.Add("CheckBox", "X+85 Y38", "Intro")
 checkbox9.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox9")
 checkbox9.OnEvent("Click", checkbox9Ini)
 
-;show version
-ver := MyGui.Add("Text", "Y9 H25", "⚙ " version)
-
 ;timer text
 global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
 startHoursRounded := Round(startValue/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
 startMinutesRounded := Round(startValue/60, 2) ;getting the minutes past by dividing the seconds past then rounding to 2dp
 
-timerHoursText := MyGui.Add("Text", "X14 Y270 W60", "Hours: ") ;defining the hours text
+timerHoursText := MyGui.Add("Text", "X8 Y270 W60", "Hours: ") ;defining the hours text
 timerHoursText.SetFont("S14")
-timerText := MyGui.Add("Text", "X80 Y270 w200", startHoursRounded) ;setting the text that will contain the numbers
+timerText := MyGui.Add("Text", "X+5 w200", startHoursRounded) ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
 
-timerMinutesText := MyGui.Add("Text", "X14 Y300 W80", "Minutes: ") ;defining the minutes text
+timerMinutesText := MyGui.Add("Text", "X8 Y+5 W80", "Minutes: ") ;defining the minutes text
 timerMinutesText.SetFont("S14")
 
-timerMinutes := MyGui.Add("Text", "X100 Y300 w200", startMinutesRounded) ;setting the text that will contain the numbers
+timerMinutes := MyGui.Add("Text", "X+1 w200", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
 
 ;buttons
-startButton := MyGui.Add("Button","X120 Y230 w50 h30", "Start") ;defining the start button
+startButton := MyGui.Add("Button","X110 Y230 w50 h30", "Start") ;defining the start button
 startButton.OnEvent("Click", start) ;what happens when you click the start button
-stopButton := MyGui.Add("Button","X120 Y230 w0 h0", "Stop") ;defining the stop button and making it invisible for now
+stopButton := MyGui.Add("Button","X110 Y230 w0 h0", "Stop") ;defining the stop button and making it invisible for now
 stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
-group := MyGui.Add("GroupBox", "w137 h100 X177 Y170", "Time Adjust (min)")
+group := MyGui.Add("GroupBox", "w137 h100 X167 Y170", "Time Adjust (min)")
 
-List := MyGui.Add("ComboBox", "r10 Choose5 X190 Y195 w112 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
-minusButton := MyGui.Add("Button","X188 Y230 w50 h30", "-sub") ;defining the -5min button
+List := MyGui.Add("ComboBox", "r10 Choose5 X180 Y195 w112 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+minusButton := MyGui.Add("Button","X178 Y230 w50 h30", "-sub") ;defining the -5min button
 minusButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
 
-plusButton := MyGui.Add("Button","X255 Y230 w50 h30", "+add") ;defining the -5min button
+plusButton := MyGui.Add("Button","X+15 w50 h30", "+add") ;defining the -5min button
 plusButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
 
-FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours at opening = " startHoursRounded " -- frames at opening = " startValue "`n", A_ScriptDir "\checklist_logs.txt")
+FileAppend("\\ The application was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours at opening = " startHoursRounded " -- seconds at opening = " startValue "`n", A_ScriptDir "\checklist_logs.txt")
 SetTimer(reminder, -ms)
 
 ;timer
@@ -148,7 +148,7 @@ start(*) {
     timerText.SetFont("cGreen") ;changing the colours
     timerMinutes.SetFont("cGreen")
     forFile := Round(ElapsedTime / 3600, 3)
-    FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile " -- frames at start = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile " -- seconds at start = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     global StartTickCount := A_TickCount ;This allows us to use your computer to determine how much time has past by doing some simple math below
     SetTimer(StopWatch, 10) ;start the timer and loop it as often as possible
     SetTimer(logElapse, -ms10)
@@ -173,7 +173,7 @@ StopWatch() {
 stop(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
-    FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- frames at stop = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- seconds at stop = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0) ;then stop the timer
     startButton.Move(,, 50, 30) ;then show the start button
     stopButton.Move(,, 0, 0) ;and hide the stop button
@@ -211,7 +211,7 @@ minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent re
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
-    FileAppend("\\ The timer was stopped and " List.Text "min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- frames after stopping = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The timer was stopped and " List.Text "min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- seconds after stopping = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
 }
 minusFive(*) {
     minusOrAdd("-")
@@ -230,7 +230,7 @@ reminder() {
 }
 logElapse() {
     forFile := Round(ElapsedTime / 3600, 3)
-    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- current hours = " forFile " -- current frames = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- current hours = " forFile " -- current seconds = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(, -ms10)
 }
 
@@ -255,7 +255,7 @@ checkbox(value, value2, value3) {
             logState := "enabled"
             logCheck := "enabling"
         }
-    FileAppend("\\ ``" %&value3% "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- frames after " logCheck " = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ ``" %&value3% "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
 }
 ;defining what happens when checkboxes are clicked
 checkbox1ini(*) {
@@ -290,7 +290,7 @@ MyGui.OnEvent("Close", close) ;what happens when you close the GUI
 close(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
-    FileAppend("\\ The application was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- frames at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The application was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0)
     SetTimer(reminder, 0)
     MyGui.Destroy()
