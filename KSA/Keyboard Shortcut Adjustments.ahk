@@ -200,6 +200,13 @@ playStop := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "play/st
  */
 premIngest := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "ingest")
 
+/*
+ This value will send the keyboard shortcut you have set to open the ingest settings menu within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+shuttleStop := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "shuttle stop")
+
 ;==Labels==
 labelViolet := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Violet")
 labelIris := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Iris")

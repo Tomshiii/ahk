@@ -61,6 +61,7 @@ Rbutton::
 								return
 							}
 					}
+					SendInput(shuttleStop)
 					if PixelSearch(&xcol, &ycol, xpos - 4, ypos, xpos + 6, ypos, playhead)
 						{
 							blockOn()

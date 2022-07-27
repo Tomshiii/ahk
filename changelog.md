@@ -31,3 +31,6 @@ This release is centered around fixing old sloppy practices that have just been 
 `replaceChecklist.ahk`
 - Now checks the user's in use version of `checklist.ahk`, compares it to the version in the main script directory and only replaces it if the main version is newer
 - Will now prompt the user to select their desired search folder if it doesn't exist and will then permanently overwrite its value
+
+# > Other Changes
+- `right click premiere.ahk` will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the event that the mouse will miss it while trying to warp to it while playback is occuring 
