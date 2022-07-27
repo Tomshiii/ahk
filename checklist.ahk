@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.2.0"
+version := "v2.2.1"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -71,7 +71,7 @@ MyGui.SetFont("W500") ;Sets the weight of the font (thickness)
 MyGui.Opt("+MinSize300x300")
 
 ;defining title
-title := MyGui.Add("Text", "X8 w215", "Checklist - " name)
+title := MyGui.Add("Text", "X8 w215 H23", "Checklist - " name)
 title.SetFont("bold")
 ;show version
 ver := MyGui.Add("Text", "Right X+10", "⚙ " version)
@@ -130,9 +130,9 @@ timerMinutes := MyGui.Add("Text", "X+1 w200", startMinutesRounded) ;setting the 
 timerMinutes.SetFont("S16 cRed")
 
 ;buttons
-startButton := MyGui.Add("Button","X110 Y230 w50 h30", "Start") ;defining the start button
+startButton := MyGui.Add("Button","X110 Y230 w50 h30", "start") ;defining the start button
 startButton.OnEvent("Click", start) ;what happens when you click the start button
-stopButton := MyGui.Add("Button","X110 Y230 w0 h0", "Stop") ;defining the stop button and making it invisible for now
+stopButton := MyGui.Add("Button","X110 Y230 w0 h0", "stop") ;defining the stop button and making it invisible for now
 stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
 group := MyGui.Add("GroupBox", "w137 h100 X167 Y170", "Time Adjust (min)")
 

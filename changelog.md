@@ -21,11 +21,12 @@ This release is centered around fixing old sloppy practices that have just been 
 # > checklist.ahk
 - Can now manually input minutes to +/- in addition to the preset 10
 - `Hours:` number will no longer visually cut off the bottom of the `Time Adjust` group box
-    - Replaced wording of opposite logs to be more similar and reduce visual confusion
 - Script version can now be seen in the top right corner
 - Less elements have baked in `x/y` values and instead sit relative to their previous elements
+- `Title` will no longer create a new line if it's too long
 - Minor UI adjustments
 - `Logs`
+    - Replaced wording of opposite logs to be more similar and reduce visual confusion
     - Will now group by day to increase readability
         - Will show the hours you started at for each day at the top of the group
     - Replaced all wording of `frames` and replaced with `seconds`. Video editor brain let that one slip through the cracks for a bit too long
@@ -36,4 +37,4 @@ This release is centered around fixing old sloppy practices that have just been 
 - Will now prompt the user to select their desired search folder if it doesn't exist and will then permanently overwrite its value
 
 # > Other Changes
-- `right click premiere.ahk` will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the event that the mouse will miss it while trying to warp to it while playback is occuring 
+- `right click premiere.ahk` will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring 
