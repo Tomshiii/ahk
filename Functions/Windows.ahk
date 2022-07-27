@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.4
+;\\v2.10.5
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.10.4
+;		Windows Scripts \\ Last updated: v2.10.5
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -91,28 +91,28 @@ moveWin(key)
  */
 moveTab()
 {
-    coords()
-    getTitle(&title)
-    toolCust(title, "1000")
-    if title = ""
-        {
-            MsgBox()
-            SendInput("{Escape 2}")
-            MouseMove(-5 , 0,, "R")
-            SendInput("{LButton}")
-            sleep 50
-            SendInput("{RButton}")
-        }
     if not GetKeyState("RButton", "P")
         {
             SendInput("{" A_ThisHotkey "}")
             return
+        }
+    blockOff()
+    coords()
+    MouseGetPos(&x, &y)
+    getTitle(&title)
+    MouseMove(-10, 0,, "R")
+    if ImageSearch(&contX, &contY, x, y, x + 50, y + 50, "*2 " Firefox "contextMenu.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
+        {
+            SendInput("{Escape}")
+            sleep 50
+            MouseMove(x , y)
         }
     SendInput("{LButton Down}")
     monitor := getMouseMonitor()
     if monitor != 2 && monitor != 4
         {
             SendInput("{LButton Up}{RButton}")
+            blockOff()
             return
         }
     ;the below, blocked out code was for when I wanted tabs to cycle between monitors 1, 2 & 4 and passed a variable `forwardOrback` into the function to define a direction.
@@ -148,6 +148,7 @@ moveTab()
         MouseMove(4256, -911, 3)
     if monitor = 4
         MouseMove(4281, 164, 3)
+    blockOff()
     SetTimer(isfull, -1500)
     isfull() {
         try {

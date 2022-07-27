@@ -1,4 +1,5 @@
 # <> Release 2.4.2.x -
+This release is centered around fixing old sloppy practices that have just been left in the code because `if it aint broke, don't fix it`
 - Changed all leftover uses of redundant `else if`'s to proper uses of `||` (Mostly a lot of `ImageSearch`'s that were stacked below each other)
 
 # > My Scripts
@@ -7,7 +8,10 @@
 
 # > Functions
 - Fixed bug with `isFullscreen()` that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
-- Fixed `moveTab()` not working on `monitor 4`
+
+`moveTab()`
+- Fixed function not working on `monitor 4`
+- Will now work even if firefox wasn't already the active window
 
 # > checklist.ahk
 - Can now manually input minutes to +/- in addition to the preset 10

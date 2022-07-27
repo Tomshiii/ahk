@@ -13,7 +13,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.6
+;\\v2.15.7
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.7.3
 
@@ -515,8 +515,8 @@ RAlt & p:: ;This hotkey is to pin the first two tabs
 }
 
 ;movetabHotkey;
-RButton & XButton2::
-Rbutton & XButton1::moveTab()
+XButton2::
+XButton1::moveTab()
 
 ;=============================================================================================================================================
 ;
