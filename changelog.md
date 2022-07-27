@@ -6,6 +6,7 @@ This release is centered around fixing old sloppy practices that have just been 
 # > My Scripts
 - Added `^+t::` to type out `YYYY_MM_DD`
 - All instances of `ClipWait` now have code to fallback on if no data is ever fed to the clipboard
+- Moved discord `F1:: & F2::` code to `discUnread()` to cut repeat code
 
 # > Functions
 - Fixed bug with `isFullscreen()` that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)

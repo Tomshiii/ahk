@@ -394,6 +394,33 @@ discLocation()
     }
 }
 
+/*
+ This function will search for and automatically click on either unread servers or unread channels depending on which image you feed into the function
+ @param which is simply which image you want to feed into the function. I have it left blank for servers and `"2"` for channels
+ */
+discUnread(which)
+{
+    x2 := 0
+    y2 := 0
+    if which = 2
+        {
+            x2 := 70
+            y2 := 30
+        }
+	MouseGetPos(&xPos, &yPos)
+	WinGetPos(,,, &height)
+	if ImageSearch(&x, &y, 0 + x2, 0, 50 + y2, height, "*2 " Discord "\unread" which ".png")
+		{
+			MouseMove(x + 20, y, 2)
+			SendInput("{Click}")
+			MouseMove(xPos, yPos, 2)
+		}
+	else
+		{
+			toolFind("any unread servers", "1000")
+		}
+}
+
 ; ===========================================================================================================================================
 ;
 ;		VSCode \\ Last updated: v2.10
