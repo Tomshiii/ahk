@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.3
+;\\v2.10.4
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.10.3
+;		Windows Scripts \\ Last updated: v2.10.4
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -93,11 +93,15 @@ moveTab()
 {
     coords()
     getTitle(&title)
+    toolCust(title, "1000")
     if title = ""
         {
-            SendInput("{Escape}")
+            MsgBox()
+            SendInput("{Escape 2}")
+            MouseMove(-5 , 0,, "R")
+            SendInput("{LButton}")
             sleep 50
-            SendInput("{RButton Down}")
+            SendInput("{RButton}")
         }
     if not GetKeyState("RButton", "P")
         {
@@ -106,7 +110,7 @@ moveTab()
         }
     SendInput("{LButton Down}")
     monitor := getMouseMonitor()
-    if monitor != 2 || 4 ;this is to stop it grabbing the tab on a monitor that isn't a part of this function
+    if monitor != 2 && monitor != 4
         {
             SendInput("{LButton Up}{RButton}")
             return
@@ -146,9 +150,12 @@ moveTab()
         MouseMove(4281, 164, 3)
     SetTimer(isfull, -1500)
     isfull() {
-        isFullscreen(&title, &full)
-        if full = 0
-            WinMaximize(title)
+        try {
+            isFullscreen(&title, &full)
+            if full = 0
+                WinMaximize(title)
+        }
+        SetTimer(, 0)
     }
 }
 
@@ -200,6 +207,8 @@ getTitle(&title)
 isFullscreen(&title, &full)
 {
     getTitle(&title)
+    if title = "Program Manager" ;this is the desktop. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
+        return
 	try {
 		if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
 			full := 1

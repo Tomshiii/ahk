@@ -5,6 +5,10 @@
 - Added `^+t::` to type out `YYYY_MM_DD`
 - All instances of `ClipWait` now have code to fallback on if no data is ever fed to the clipboard
 
+# > Functions
+- Fixed bug with `isFullscreen()` that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
+- Fixed `moveTab()` not working on `monitor 4`
+
 # > checklist.ahk
 - Can now manually input minutes to +/- in addition to the preset 10
 - `Hours:` number will no longer visually cut off the bottom of the `Time Adjust` group box
@@ -21,5 +25,3 @@
 `replaceChecklist.ahk`
 - Now checks the user's in use version of `checklist.ahk`, compares it to the version in the main script directory and only replaces it if the main version is newer
 - Will now prompt the user to select their desired search folder if it doesn't exist and will then permanently overwrite its value
-
-# > Other Changes
