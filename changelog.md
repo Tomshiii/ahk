@@ -9,6 +9,8 @@ This release is centered around fixing old sloppy practices that have just been 
 - Moved discord `F1:: & F2::` code to `discUnread()` to cut repeat code
 
 # > Functions
+- `updateChecker()` now shows `TrayTip`'s to alert the user that it's downloading the latest release & backing up their scripts
+
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
 - Can now have the window you wish to check passed into the function instead of relying on `getTitle()` to grab the active window

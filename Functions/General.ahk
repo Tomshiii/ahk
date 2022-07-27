@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.14
+;\\v2.14.1
 
 ; =======================================================================================================================================
 ;
@@ -166,7 +166,12 @@ updateChecker(MyRelease) {
 							return
 						else
 							{
-								ToolTip("Updated scripts are downloading")
+								;ToolTip("Updated scripts are downloading")
+								TrayTip("Updated scripts are downloading", "Downloading...", 17)
+								SetTimer(HideTrayTip, -5000)
+								HideTrayTip() {
+									TrayTip
+								}
 								type := ""
 								exeOrzip(filetype, &found)
 								{
@@ -195,7 +200,8 @@ updateChecker(MyRelease) {
 								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
 								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "3000")
 								run(downloadLocation)
-								ToolTip("Your current scripts are being backed up!")
+								TrayTip("Your current scripts are being backed up!", "Backig Up...", 17)
+								SetTimer(HideTrayTip, -5000)
 								if DirExist(A_Temp "\" MyRelease)
 									DirDelete(A_Temp "\" MyRelease, 1)
 								if DirExist(A_WorkingDir "\Backups\Script Backups\" MyRelease)
