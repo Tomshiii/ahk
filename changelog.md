@@ -37,4 +37,6 @@ This release is centered around fixing old sloppy practices that have just been 
 - Will now prompt the user to select their desired search folder if it doesn't exist and will then permanently overwrite its value
 
 # > Other Changes
-- `right click premiere.ahk` will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring 
+`right click premiere.ahk`
+- Will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring
+    - Will also swap back to the selection tool

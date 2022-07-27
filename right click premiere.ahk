@@ -65,6 +65,7 @@ Rbutton::
 					if PixelSearch(&xcol, &ycol, xpos - 4, ypos, xpos + 6, ypos, playhead)
 						{
 							blockOn()
+							SendInput(selectionPrem)
 							MouseMove(xcol, ycol)
 							SendInput("{LButton Down}")
 							blockOff()
