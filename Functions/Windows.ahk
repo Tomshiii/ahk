@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.1
+;\\v2.11.2
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -86,7 +86,7 @@ moveWin(key)
             }
         }
 }
-/*
+/* moveTab()
  This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4. This function requires you to press LButton when you have arrived at the window you wish to drop the tab
  */
 moveTab()
@@ -185,7 +185,7 @@ getMouseMonitor()
 	}
 }
 
-/*
+/* getTitle()
  This function gets and returns the title for the current active window, autopopulating the `title` variable
  */
 getTitle(&title)
@@ -200,7 +200,7 @@ getTitle(&title)
 	}
 }
 
-/*
+/* isFullscreen()
  This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
  @param title is the active window, this function will populate the `title` variable with the active window
  @param full is representing if the active window is fullscreen or not. If it is, it will return 1, else it will return 0
@@ -230,6 +230,47 @@ isFullscreen(&title, &full, window := false)
     return
 }
 
+/* moveXorY()
+ A quick and dirty way to limit the axis your mouse can move
+ This function has specific code for XButton1/2 and must be activated with 2 hotkeys
+ */
+moveXorY() {
+    fr := getFirstHotkey()
+	sc := getSecondHotkey()
+	MouseGetPos(&x, &y)
+	start:
+	if sc = "XButton2"
+		{
+			if GetKeyState("XButton2", "P") ;move on X axis
+				{
+					MouseMove(x,y)
+					loop {
+						MouseGetPos(&newX, &newY)
+						MouseMove(newX, y)
+						if not GetKeyState("XButton2", "P")
+							return
+					}
+				}
+		}
+	if sc = "XButton1"
+		{
+			if GetKeyState("XButton1", "P") ;move on Y axis
+				{
+					loop {
+						MouseGetPos(&newX, &newY)
+						MouseMove(x, newY)
+						if not GetKeyState("XButton1", "P")
+							return
+					}
+				}
+		}
+    if sc != "XButton1" || sc != "XButton2"
+        return
+	if GetKeyState(fr, "P") ;move on X axis
+		goto start
+	else
+		return
+}
 ; ===========================================================================================================================================
 ;
 ;		discord \\ Last updated: v2.10

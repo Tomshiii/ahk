@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13
+;\\v2.13.1
 #Include General.ahk
 
 /* preset()
@@ -1081,18 +1081,6 @@ hotkeyReactivate()
     Hotkey("Numpad9", "Numpad9")
     Hotkey("NumpadDot", "NumpadDot")
     Hotkey("NumpadEnter", "NumpadEnter")
-}
-
-/* getSecondHotkey()
- This function will return the name of the second hotkey pressed when two are required for a macro to fire
- */
-getSecondHotkey()
-{
-    getHotkey := A_ThisHotkey
-    length := StrLen(getHotkey)
-    andValue := InStr(getHotkey, "&")
-    secondHotkey := SubStr(getHotkey, andValue + 2, length - andValue + 2)
-    return secondHotkey
 }
 
 /* manInput()

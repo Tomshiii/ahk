@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.14.1
+;\\v2.14.2
 
 ; =======================================================================================================================================
 ;
@@ -801,4 +801,33 @@ errorLog(func, error, lineFile, lineNumber)
     scriptPath :=  lineFile ;this is taking the path given from A_LineFile
     scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
     FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " '"' error '"' " // Script: ``" name "``, Line Number: " lineNumber "`n", A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+}
+
+; ===========================================================================================================================================
+;
+;		Other \\ Last updated: v2.14.2
+;
+; ===========================================================================================================================================
+/* getFirstHotkey()
+This function will return the name of the first hotkey pressed when two are required for a macro to fire
+*/
+getFirstHotkey()
+{
+   getHotkey := A_ThisHotkey
+   length := StrLen(getHotkey)
+   andValue := InStr(getHotkey, "&")
+   firstHotkey := SubStr(getHotkey, 1, length - (length - andValue) - 2)
+   return firstHotkey
+}
+
+/* getSecondHotkey()
+This function will return the name of the second hotkey pressed when two are required for a macro to fire
+*/
+getSecondHotkey()
+{
+   getHotkey := A_ThisHotkey
+   length := StrLen(getHotkey)
+   andValue := InStr(getHotkey, "&")
+   secondHotkey := SubStr(getHotkey, andValue + 2, length - andValue + 2)
+   return secondHotkey
 }

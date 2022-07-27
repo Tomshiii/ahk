@@ -13,7 +13,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.1
+;\\v2.16.2
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8
 
@@ -363,6 +363,10 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	SendInput("!p" "a")
 	MouseMove(x, y)
 }
+
+;move mouse along one axis
+SC03A & XButton2::moveXorY()
+SC03A & XButton1::moveXorY()
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
