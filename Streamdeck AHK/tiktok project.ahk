@@ -10,9 +10,9 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         MouseMove(0, 0)
         if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " Premiere "seq1920.png")
             {
-                If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
+                If PixelSearch(&xcol, &ycol, x, y, x + "150", y + "4", 0x161616, 3)
                     {
-                        MouseMove(%&xcol% + "3", %&ycol% + "3")
+                        MouseMove(xcol + "3", ycol + "3")
                         Click()
                         SendInput("^a{Del}" "1080{Tab}1920{Enter}")
                         sleep 100
@@ -27,9 +27,9 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
             }
         if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " Premiere "seq1280.png")
             {
-                If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
+                If PixelSearch(&xcol, &ycol, x, y, x + "150", y + "4", 0x161616, 3)
                     {
-                        MouseMove(%&xcol% + "3", %&ycol% + "3")
+                        MouseMove(xcol + "3", ycol + "3")
                         Click()
                         SendInput("^a{Del}" "1080{Tab}1920{Enter}")
                         sleep 100
@@ -44,9 +44,9 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
             }
         if ImageSearch(&x, &y, 7, -1, 664, 188, "*2 " Premiere "seq720.png")
             {
-                If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "150", %&y% + "4", 0x161616, 3)
+                If PixelSearch(&xcol, &ycol, x, y, x + "150", y + "4", 0x161616, 3)
                     {
-                        MouseMove(%&xcol% + "3", %&ycol% + "3")
+                        MouseMove(xcol + "3", ycol + "3")
                         Click()
                         SendInput("^a{Del}" "1080{Tab}1920{Enter}")
                         sleep 100

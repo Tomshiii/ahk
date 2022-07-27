@@ -46,7 +46,7 @@ check()
                     if A_TimeIdleKeyboard > 1250 ;ensures this script doesn't try to fire while a hotkey is being used
                         {
                             WinGetPos(,, &width, &height)
-                            reference := %&width% ", " %&height%
+                            reference := width ", " height
                             ;MsgBox(reference "`n" normal) ;debugging
                             if reference != normal
                                 {
@@ -61,7 +61,7 @@ check()
                     else
                         {
                             WinGetPos(,, &width, &height)
-                            reference := %&width% ", " %&height%
+                            reference := width ", " height
                             if reference != normal
                                 {
                                     fire2 := fire/1000

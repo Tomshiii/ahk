@@ -76,8 +76,8 @@ blockOff()
  */
 toolFind(message, timeout)
 {
-	ToolTip("couldn't find " %&message%)
-	SetTimer(timeouttime, - %&timeout%)
+	ToolTip("couldn't find " message)
+	SetTimer(timeouttime, - timeout)
 	timeouttime()
 	{
 		ToolTip("")
@@ -91,8 +91,8 @@ toolFind(message, timeout)
   */
 toolCust(message, timeout)
 {
-	ToolTip(%&message%)
-	SetTimer(timeouttime, - %&timeout%)
+	ToolTip(message)
+	SetTimer(timeouttime, - timeout)
 	timeouttime()
 	{
 		ToolTip("")
@@ -123,7 +123,7 @@ speed(amount)
 				}
 		}
 	inputs:
-	SendInput(speedMenu %&amount% "{ENTER}")
+	SendInput(speedMenu amount "{ENTER}")
 }
 
 /*
@@ -137,8 +137,8 @@ scale(amount)
 	MouseGetPos &xpos, &ypos
 	If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " Premiere "scale.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		{
-			If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
-				MouseMove(%&xcol%, %&ycol%)
+			If PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+				MouseMove(xcol, ycol)
 			else
 				{
 					blockOff()
@@ -150,8 +150,8 @@ scale(amount)
 		{
 			If ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " Premiere "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 				{
-					If PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
-						MouseMove(%&xcol%, %&ycol%)
+					If PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+						MouseMove(xcol, ycol)
 					else
 						{
 							blockOff()
@@ -167,9 +167,9 @@ scale(amount)
 				}		
 		}
 	SendInput "{Click}"
-	SendInput(%&amount%)
+	SendInput(amount)
 	SendInput("{Enter}")
-	MouseMove %&xpos%, %&ypos%
+	MouseMove xpos, ypos
 	Click("middle")
 	blockOff()
 }

@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.1.8"
+version := "v2.2.0"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -19,8 +19,8 @@ today := A_YYYY "_" A_MM "_" A_DD
   */
   toolCust(message, timeout)
   {
-      ToolTip(%&message%)
-      SetTimer(timeouttime, - %&timeout%)
+      ToolTip(message)
+      SetTimer(timeouttime, - timeout)
       timeouttime()
       {
           ToolTip("")
@@ -65,13 +65,13 @@ FullFileName := A_ScriptDir
 SplitPath FullFileName, &name
 
 ;start defining GUI
-MyGui := Gui("AlwaysOnTop", "Editing Checklist - " %&name% ".proj")
+MyGui := Gui("AlwaysOnTop", "Editing Checklist - " name ".proj")
 MyGui.SetFont("S12") ;Sets the size of the font
 MyGui.SetFont("W500") ;Sets the weight of the font (thickness)
 MyGui.Opt("+MinSize300x300")
 
 ;defining title
-title := MyGui.Add("Text", "X8 w215", "Checklist - " %&name%)
+title := MyGui.Add("Text", "X8 w215", "Checklist - " name)
 title.SetFont("bold")
 ;show version
 ver := MyGui.Add("Text", "Right X+10", "⚙ " version)
@@ -251,8 +251,8 @@ checkbox(value, value2, value3) {
     logState := ""
     logCheck := ""
     forFile := Round(ElapsedTime / 3600, 3)
-    IniWrite(%&value2%, A_ScriptDir "\checkbox.ini", "Info", %&value%)
-    if %&value2% = 0
+    IniWrite(value2, A_ScriptDir "\checkbox.ini", "Info", value)
+    if value2 = 0
         {
             logState := "disabled"
             logCheck := "disabling"
@@ -262,7 +262,7 @@ checkbox(value, value2, value3) {
             logState := "enabled"
             logCheck := "enabling"
         }
-    FileAppend("\\ ``" %&value3% "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ ``" value3 "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
 }
 ;defining what happens when checkboxes are clicked
 checkbox1ini(*) {

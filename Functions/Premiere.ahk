@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.2
+;\\v2.13
 #Include General.ahk
 
 /* preset()
@@ -22,11 +22,11 @@ preset(item)
             SendInput(timelineWindow) ;focuses the timeline
             SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
             sleep 100
-            if ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
+            if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
                 {
-                    if ImageSearch(&xeye, &yeye, %&x2%, %&y2%, %&x2% + "200", %&y2% + "100", "*2 " Premiere "eye.png") ;searches for the eye icon for the original text
+                    if ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " Premiere "eye.png") ;searches for the eye icon for the original text
                         {
-                            MouseMove(%&xeye%, %&yeye%)
+                            MouseMove(xeye, yeye)
                             SendInput("{Click}")
                             MouseGetPos(&eyeX, &eyeY)
                             sleep 50
@@ -53,7 +53,7 @@ preset(item)
         SendInput(findBox) ;adjust this in the ini file
         toolCust("if you hear windows, blame premiere", "1000")
         CaretGetPos(&findx)
-        if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+        if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
             {
                 Loop {
                         if A_Index > 5
@@ -64,7 +64,7 @@ preset(item)
                             }
                         sleep 30
                         CaretGetPos(&findx)
-                        if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+                        if findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                             break
                         if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                             {
@@ -88,14 +88,14 @@ preset(item)
                     SendInput(findBox)
                     toolCust("if you hear windows, blame premiere", "2000")
                     CaretGetPos(&find2x)
-                    if %&find2x% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+                    if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                         {
                             Loop {
                                     sleep 30
                                     SendInput(findBox)
                                     toolCust("if you hear windows, blame premiere", "2000")
                                     CaretGetPos(&find2x)
-                                    if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+                                    if find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                                         break
                                     if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                         {
@@ -122,22 +122,22 @@ preset(item)
     effectbox()
     coordc() ;change caret coord mode to window
     CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
-    MouseMove %&carx%, %&cary% ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
-    SendInput %&item% ;create a preset of any effect, must be in a folder as well
+    MouseMove carx, cary ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
+    SendInput item ;create a preset of any effect, must be in a folder as well
     sleep 50
     MouseMove 0, 60,, "R" ;move down to the saved preset (must be in an additional folder)
     SendInput("{Click Down}")
     if item = "loremipsum" ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
         {
-            MouseMove(%&eyeX%, %&eyeY% - "5")
+            MouseMove(eyeX, eyeY - "5")
             SendInput("{Click Up}")
             effectbox()
             SendInput(timelineWindow)
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             blockOff()
             return
         }
-    MouseMove(%&xpos%, %&ypos%) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
+    MouseMove(xpos, ypos) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
     SendInput("{Click Up}")
     effectbox() ;this will delete whatever preset it had typed into the find box
     SendInput(timelineWindow) ;this will rehighlight the timeline after deleting the text from the find box
@@ -156,13 +156,13 @@ fxSearch()
     SendInput(effectsWindow) ;adjust this in the ini file
     SendInput(findBox) ;adjust this in the ini file
     CaretGetPos(&findx)
-    if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+    if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
         {
             Loop 40
                 {
                     sleep 30
                     CaretGetPos(&findx)
-                    if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+                    if findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                         break
                     if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                         {
@@ -185,13 +185,13 @@ fxSearch()
                 SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
                 SendInput(findBox)
                 CaretGetPos(&find2x)
-                if %&find2x% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+                if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                     {
                         Loop 40
                             {
                                 sleep 30
                                 CaretGetPos(&find2x)
-                                if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+                                if find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                                     break
                                 if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                     {
@@ -233,11 +233,11 @@ num(xval, yval, scale)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     getClassNN(&ClassNN, &classX, &classY, &width, &height)
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -247,31 +247,31 @@ num(xval, yval, scale)
         }
     SendInput(timelineWindow) ;adjust this in the ini file
     SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "video.png") ;moves to the "video" section of the effects control window tab
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "video.png") ;moves to the "video" section of the effects control window tab
         goto next
     else
         {
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             blockOff()
             toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
             return
         }
     next:
-    if ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion2.png") || (&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion3.png") ;moves to the motion tab
-        MouseMove(%&x2% + "10", %&y2% + "10")
+    if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") || (&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion3.png") ;moves to the motion tab
+        MouseMove(x2 + "10", y2 + "10")
     else ;if everything fails, this else will trigger
         {
-            MouseMove(%&xpos%, %&ypos%) ;moves back to the original coords
+            MouseMove(xpos, ypos) ;moves back to the original coords
             blockOff()
             toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the motion tab", A_LineFile, A_LineNumber)
             return
         }
     SendInput("{Click}")
-    SendInput("{Tab 2}" %&xval% "{Tab}" %&yval% "{Tab}" %&scale% "{ENTER}")
+    SendInput("{Tab 2}" xval "{Tab}" yval "{Tab}" scale "{ENTER}")
     SendInput("{Enter}")
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
     blockOff()
 }
 
@@ -324,11 +324,11 @@ zoom()
                 return
         }     
     SendInput(timelineWindow)
-    if ImageSearch(&clipX, &clipY, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&clipX, &clipY, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -336,20 +336,20 @@ zoom()
                     return
                 }
         }
-    if ImageSearch(&motionX, &motionY, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion2.png") || ImageSearch(&motionX, &motionY, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "\motion3.png") ;moves to the "video" section of the effects control window tab
+    if ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") || ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "\motion3.png") ;moves to the "video" section of the effects control window tab
         goto next
     else
         {
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             blockOff()
             toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
             return
         }
     next:
-    MouseMove(%&motionX% + "10", %&motionY% + "10")
+    MouseMove(motionX + "10", motionY + "10")
     SendInput("{Click}")
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
     SendInput("{Tab 2}")
     if x = 0
         {
@@ -399,17 +399,17 @@ valuehold(filepath, optional)
     xdist := 210
     coords()
     MouseGetPos(&xpos, &ypos)
-    ;toolCust("x " %&xpos% "`ny " %&ypos%, "1000") ;testing stuff
+    ;toolCust("x " xpos "`ny " ypos, "1000") ;testing stuff
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     getClassNN(&ClassNN, &classX, &classY, &width, &height)
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
                     errorLog(A_ThisFunc "()", "The wrong clips are selected", A_LineFile, A_LineNumber)
@@ -419,7 +419,7 @@ valuehold(filepath, optional)
         }
     if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, YOUR PNG MUST BE CALLED "levels.png"
         { ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
-            if ImageSearch(&vidx, &vidy, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "video.png")
+            if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "video.png")
                 {
                     toolCust("you aren't scrolled down", "1000")
                     errorLog(A_ThisFunc "()", "The user wasn't scrolled down", A_LineFile, A_LineNumber)
@@ -443,38 +443,38 @@ valuehold(filepath, optional)
                 } catch as e {
                     toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
                     errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineFile, A_LineNumber)
-                    MouseMove(%&xpos%, %&ypos%)
+                    MouseMove(xpos, ypos)
                     return
                 }
             }
         if ( ;finds the value you want to adjust, then finds the value adjustment to the right of it
-                ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% ".png") ||
-                ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png") ||
-                ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "3.png") ||
-                ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png")
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath ".png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "3.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
         ) 
             break
         if A_Index > 3
             {
                 blockOff()
-                toolFind("the image after " A_Index " attempts`nx " %&classX% "`ny " %&classY% "`nwidth " %&width% "`nheight " %&height%, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " %&classX% " ~~ y " %&classY% " ~~ width " %&width% " ~~ height " %&height%, A_LineFile, A_LineNumber)
+                toolFind("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-                MouseMove(%&xpos%, %&ypos%)
+                MouseMove(xpos, ypos)
                 return
             }
         sleep 50
     }
     colour:
-    if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + xdist, %&y% + "40", 0x205cce, 2)
-        MouseMove(%&xcol% + %&optional%, %&ycol%)
+    if PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
+        MouseMove(xcol + optional, ycol)
     else
         {
             blockOff()
             toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
             KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             return
         }
     sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
@@ -486,15 +486,15 @@ valuehold(filepath, optional)
             KeyWait(A_ThisHotkey)
             SendInput("{Click Up}" "{Enter}")
             sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             /* MouseGetPos(&testx, &testy) ;testing stuff
-            MsgBox("og x " %&xpos% "`nog y " %&ypos% "`ncurrent x " %&testx% "`ncurrent y " %&testy%) */
+            MsgBox("og x " xpos "`nog y " ypos "`ncurrent x " testx "`ncurrent y " testy) */
         }
     else
         {
-            if ImageSearch(&x2, &y2, %&x%, %&y% - "10", %&x% + "1500", %&y% + "20", "*2 " Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust
+            if ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust
                 {
-                    MouseMove(%&x2%, %&y2%)
+                    MouseMove(x2, y2)
                     SendInput("{Click}")
                 }
             else ;if everything fails, this else will trigger
@@ -502,17 +502,17 @@ valuehold(filepath, optional)
                     if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
                         {
                             SendInput("{Click}" "0" "{Enter}")
-                            MouseMove(%&xpos%, %&ypos%)
+                            MouseMove(xpos, ypos)
                             blockOff()
                             return
                         }
-                    MouseMove(%&xpos%, %&ypos%)
+                    MouseMove(xpos, ypos)
                     blockOff()
                     toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Failed to find reset button", A_LineFile, A_LineNumber)
                     return
                 }
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             blockOff()
         }
     ToolTip("")
@@ -531,11 +531,11 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     getClassNN(&ClassNN, &classX, &classY, &width, &height)
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -543,7 +543,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
                     return
                 }
         }
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png") || ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png")
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
         goto click
     else
         {
@@ -554,10 +554,10 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
             return
         }
     click:
-    MouseMove(%&x% + "7", %&y% + "4")
+    MouseMove(x + "7", y + "4")
     click
     blockOff()
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
 }
 
 /* keyframe()
@@ -573,11 +573,11 @@ keyframe(filepath)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     getClassNN(&ClassNN, &classX, &classY, &width, &height)
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -585,11 +585,11 @@ keyframe(filepath)
                     return
                 }
         }
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "2.png") || ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "4.png")
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
             goto next
-    else if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% ".png") || ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&filepath% "3.png")
+    else if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath ".png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "3.png")
         {
-            MouseMove(%&x% + "5", %&y% + "5")
+            MouseMove(x + "5", y + "5")
             Click()
             goto end
         }
@@ -601,12 +601,12 @@ keyframe(filepath)
             return
         }
     next:
-    if ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, %&x%, %&y%, %&x% + "500", %&y% + "20", "*2 " Premiere "keyframeButton2.png")
-        MouseMove(%&keyx% + "3", %&keyy%)
+    if ImageSearch(&keyx, &keyy, x, y, x + "500", y + "20", "*2 " Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, x, y, x + "500", y + "20", "*2 " Premiere "keyframeButton2.png")
+        MouseMove(keyx + "3", keyy)
     Click()
     end:
     SendInput(timelineWindow) ;focuses the timeline
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
     blockOff()
 }
 
@@ -626,7 +626,7 @@ audioDrag(sfxName)
             MouseGetPos(&xpos, &ypos)
             if ImageSearch(&listx, &listy, 3082, 664, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
                 {
-                    MouseMove(%&listx%, %&listy%)
+                    MouseMove(listx, listy)
                     SendInput("{Click}")
                     sleep 100
                 }
@@ -636,13 +636,13 @@ audioDrag(sfxName)
                 ;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
                 SendInput(findBox)
                 CaretGetPos(&findx)
-                if %&findx% = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+                if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                     {
                         Loop 40
                             {
                                 sleep 30
                                 CaretGetPos(&findx)
-                                if %&findx% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+                                if findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                                     break
                                 if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                     {
@@ -654,12 +654,12 @@ audioDrag(sfxName)
                             }
                     }
                 SendInput("^a" "+{BackSpace}")
-                SendInput(%&sfxName%)
+                SendInput(sfxName)
                 sleep 250 ;the project search is pretty slow so you might need to adjust this
                 coordw()
                 if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") || ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
                     {
-                        MouseMove(%&vlx%, %&vly%)
+                        MouseMove(vlx, vly)
                         sleep 50
                         SendInput("{Click Down}")
                         sleep 50
@@ -670,17 +670,17 @@ audioDrag(sfxName)
                         toolFind("audio image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
                         errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineFile, A_LineNumber)
                         coords()
-                        MouseMove(%&xpos%, %&ypos%)
+                        MouseMove(xpos, ypos)
                         return
                     }
                 coords()
-                MouseMove(%&xpos%, %&ypos%)
+                MouseMove(xpos, ypos)
                 SendInput("{Click Up}")
                 SendInput(timelineWindow)
                 MouseMove(30,0,, "R")
                 sleep 50
                 MouseGetPos(&colourX, &colourY)
-                colour := PixelGetColor(%&colourX%, %&colourY%)
+                colour := PixelGetColor(colourX, colourY)
                 if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698
                     break
                 if A_Index > 2
@@ -693,7 +693,7 @@ audioDrag(sfxName)
             }
             MouseMove(-30,0,, "R")
             blockOff()
-            if %&sfxName% = "bleep"
+            if sfxName = "bleep"
                 {
                     skip := 0
                     trackNumber:= 2
@@ -764,7 +764,7 @@ audioDrag(sfxName)
                         goto skip
                     else if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track " trackNumber "_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track " trackNumber "_2.png")
                         {
-                            MouseMove(%&refx%, %&trackY%, 2)
+                            MouseMove(refx, trackY, 2)
                             goto skip
                         }
                     else
@@ -777,7 +777,7 @@ audioDrag(sfxName)
                     skip:
                     SendInput("{Click Up}")
                     sleep 50
-                    MouseMove(%&delx% + 10, %&dely%, 2)
+                    MouseMove(delx + 10, dely, 2)
                     sleep 200
                     if A_Cursor != "Arrow"
                         loop 12 {
@@ -792,7 +792,7 @@ audioDrag(sfxName)
                         }
                     SendInput("{Click}")
                     SendInput("{BackSpace}")
-                    MouseMove(%&xpos% + 10, %&ypos%)
+                    MouseMove(xpos + 10, ypos)
                     Sleep(25)
                     if A_Cursor != "Arrow"
                         loop 12 {
@@ -827,42 +827,42 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
     MouseGetPos(&xpos, &ypos)
     SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
     sleep 10
-    if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere %&folder% ".png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+    if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere folder ".png") ;searches for my sfx folder in the media browser to see if it's already selected or not
         {
-            MouseMove(%&sfx%, %&sfy%) ;if it isn't selected, this will move to it then click it
+            MouseMove(sfx, sfy) ;if it isn't selected, this will move to it then click it
             SendInput("{Click}")
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             sleep 100
             goto next
         }
-    else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere %&folder% "2.png") ;if it is selected, this will see it, then move on
+    else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere folder "2.png") ;if it is selected, this will see it, then move on
         goto next
     else ;if everything fails, this else will trigger
         {
             blockOff()
             toolFind("sfx folder", "1000")
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             return
         }
     next:
     SendInput(findBox) ;adjust this in the keyboard shortcuts ini file
     coordc()
     SendInput("^a" "+{BackSpace}") ;deletes anything that might be in the search box
-    SendInput(%&sfxName%)
+    SendInput(sfxName)
     sleep 150
     if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere "vlc.png") ;searches for the vlc icon to grab the track
         {
-            MouseMove(%&vlx%, %&vly%)
+            MouseMove(vlx, vly)
             SendInput("{Click Down}")
         }
     else
         {
             blockOff()
             toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             return
         }
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
     SendInput("{Click Up}")
     SendInput(mediaBrowser)
     SendInput(findBox)
@@ -880,7 +880,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 wheelEditPoint(direction)
 {
     SendInput(timelineWindow) ;focuses the timeline
-    SendInput(%&direction%) ;Set these shortcuts in the keyboards shortcut ini file
+    SendInput(direction) ;Set these shortcuts in the keyboards shortcut ini file
     KeyWait(A_ThisHotkey) ;prevents hotkey spam
 }
 
@@ -902,11 +902,11 @@ movepreview()
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -926,22 +926,22 @@ movepreview()
                 } catch as e {
                     toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
                     errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineFile, A_LineNumber)
-                    MouseMove(%&xpos%, %&ypos%)
+                    MouseMove(xpos, ypos)
                     return
                 }
             }
-        if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion.png") ;moves to the motion tab
+        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion.png") ;moves to the motion tab
                 {
-                    MouseMove(%&x% + "25", %&y%)
+                    MouseMove(x + "25", y)
                     break
                 }
         if A_Index > 3
             {
                 blockOff()
-                toolFind("the image after " A_Index " attempts`nx " %&classX% "`ny " %&classY% "`nwidth " %&width% "`nheight " %&height%, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " %&classX% " ~~ y " %&classY% " ~~ width " %&width% " ~~ height " %&height%, A_LineFile, A_LineNumber)
+                toolFind("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-                MouseMove(%&xpos%, %&ypos%)
+                MouseMove(xpos, ypos)
                 return
             }
         sleep 50
@@ -953,7 +953,7 @@ movepreview()
             MouseMove(moveX, moveY) ;move to the preview window
             loop {
                 MouseGetPos(&colX, &colY)
-                if PixelGetColor(%&colX%, %&colY%) != 0x000000
+                if PixelGetColor(colX, colY) != 0x000000
                     break
                 if A_Index = 1
                     MouseMove(moveX + 100, moveY + 200)
@@ -976,23 +976,23 @@ movepreview()
             blockOff()
             KeyWait A_ThisHotkey
             SendInput("{Click Up}")
-            ;MouseMove(%&xpos%, %&ypos%) ; // moving the mouse position back to origin after doing this is incredibly disorienting
+            ;MouseMove(xpos, ypos) ; // moving the mouse position back to origin after doing this is incredibly disorienting
         }
     else
         {
-            if ImageSearch(&xcol, &ycol, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
-                    MouseMove(%&xcol%, %&ycol%)
+            if ImageSearch(&xcol, &ycol, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
+                    MouseMove(xcol, ycol)
             else ;if everything fails, this else will trigger
                 {
                     blockOff()
-                    MouseMove(%&xpos%, %&ypos%)
+                    MouseMove(xpos, ypos)
                     toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Couldn't find the reset button", A_LineFile, A_LineNumber)
                     return
                 }
             Click
             sleep 50
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             blockOff()
         }
     ToolTip("")
@@ -1010,11 +1010,11 @@ reset()
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     getClassNN(&ClassNN, &classX, &classY, &width, &height)
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -1024,7 +1024,7 @@ reset()
         }
     MouseGetPos(&xpos, &ypos)
     loop 5 {
-        if ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion2.png") || ImageSearch(&x2, &y2, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
+        if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") || ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
             break
         else
             {
@@ -1036,11 +1036,11 @@ reset()
     }
         SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
         SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-        if ImageSearch(&xcol, &ycol, %&x2%, %&y2% - "20", %&x2% + "700", %&y2% + "20", "*2 " Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
-            MouseMove(%&xcol%, %&ycol%)
+        if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
+            MouseMove(xcol, ycol)
         ;SendInput, {WheelUp 10} ;not necessary as we use imagesearch to check for the motion value
         click
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
     blockOff()
 }
 
@@ -1110,11 +1110,11 @@ manInput(property, optional)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     getClassNN(&ClassNN, &classX, &classY, &width, &height)
     SendInput(timelineWindow)
-    if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     toolCust("The wrong clips are selected", "1000")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -1123,10 +1123,10 @@ manInput(property, optional)
                 }
         }
     if ( ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% ".png") ||
-        ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "2.png") ||
-        ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "3.png") ||
-        ImageSearch(&x, &y, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere %&property% "4.png")
+        ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property ".png") ||
+        ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "2.png") ||
+        ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "3.png") ||
+        ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "4.png")
     )
         goto colour
     else ;if everything fails, this else will trigger
@@ -1137,8 +1137,8 @@ manInput(property, optional)
             return
         }
     colour:
-    if PixelSearch(&xcol, &ycol, %&x%, %&y%, %&x% + "740", %&y% + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
-        MouseMove(%&xcol% + %&optional%, %&ycol%)
+    if PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+        MouseMove(xcol + optional, ycol)
     else
         {
             blockOff()
@@ -1152,7 +1152,7 @@ manInput(property, optional)
     KeyWait(manInputEnd, "D") ;waits until the final hotkey is pressed before continuing
     ToolTip("")
     SendInput("{Enter}")
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
     Click("middle")
     blockOff()
 }
@@ -1177,7 +1177,7 @@ gain(amount)
             getTitle(&check)
             if check = "Audio Gain"
                 {
-                    SendInput(%&amount% "{Enter}")
+                    SendInput(amount "{Enter}")
                     ToolTip("")
                     blockOff()
                     return
@@ -1194,7 +1194,7 @@ gain(amount)
         goto start */
         SendInput(timelineWindow)
         try {
-            if ImageSearch(&x3, &y3, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+            if ImageSearch(&x3, &y3, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                 {
                     SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                     goto inputs
@@ -1222,7 +1222,7 @@ gain(amount)
         inputs:
         SendInput("g")
         WinWait("Audio Gain")
-        SendInput("+{Tab}{UP 3}{DOWN}{TAB}" %&amount% "{ENTER}")
+        SendInput("+{Tab}{UP 3}{DOWN}{TAB}" amount "{ENTER}")
         WinWaitClose("Audio Gain")
         blockOff()
         ToolTip("")
@@ -1239,7 +1239,7 @@ gainSecondary(keyend)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     getClassNN(&ClassNN, &classX, &classY, &width, &height)
     SendInput(timelineWindow)
-    if ImageSearch(&x3, &y3, %&classX%, %&classY%, %&classX% + (%&width%/ECDivide), %&classY% + %&height%, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+    if ImageSearch(&x3, &y3, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
         {
             SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
             goto inputs
@@ -1260,7 +1260,7 @@ gainSecondary(keyend)
     KeyWait(waitKey) ;waits for you to let go of hotkey
     hotkeyDeactivate()
     SendInput(gainAdjust) ;~ check the keyboard shortcut ini file to adjust hotkeys
-    KeyWait(%&keyend%, "D") ;waits until the final hotkey is pressed before continuing
+    KeyWait(keyend, "D") ;waits until the final hotkey is pressed before continuing
     hotkeyReactivate()
 }
 
@@ -1316,9 +1316,9 @@ openChecklist()
     finalSlash := InStr(entirePath, "\",, -1)
     path := SubStr(entirePath, 1, finalSlash - "1")
     SplitPath path, &name
-    if WinExist("Checklist - " %&name%)
+    if WinExist("Checklist - " name)
         {
-            WinMove(-371, -233,,, "Checklist - " %&name%) ;move it back into place incase I've moved it
+            WinMove(-371, -233,,, "Checklist - " name) ;move it back into place incase I've moved it
             toolCust("You already have this checklist open", "1000")
             errorLog(A_ThisHotkey, "You already have this checklist open", A_LineFile, A_LineNumber)
             return

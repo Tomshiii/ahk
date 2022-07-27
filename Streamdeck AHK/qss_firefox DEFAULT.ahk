@@ -50,10 +50,10 @@ try {
                 return
             }
     }
-    MouseMove(%&ffx%, %&ffy%)
+    MouseMove(ffx, ffy)
     Click()
     sleep 500
-    if ImageSearch(&devX, &devY, %&ffX%, %&ffY% - "30", %&ffX% + 2500, %&ffY% + "30", "*2 " Windows "default.png")
+    if ImageSearch(&devX, &devY, ffX, ffY - "30", ffX + 2500, ffY + "30", "*2 " Windows "default.png")
         goto end
     else
         {
@@ -73,7 +73,7 @@ end:
 sleep 200
 WinClose("Settings")
 coords()
-MouseMove(%&sx%, %&sy%, 2)
+MouseMove(sx, sy, 2)
 pauseautosave()
 pausewindowmax()
 ExitApp()

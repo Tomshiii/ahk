@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.11
 #Include General.ahk
 
 /* psProp()
@@ -18,8 +18,8 @@ psProp(image)
         SendInput("v") ;if you are, it'll press v to go to the selection tool
     if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "InTransform.png") ;checks to see if you're already in the free transform window
         {
-            if ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " Photoshop %&image%) ;if you are, it'll then search for your button of choice and move to it
-                MouseMove(%&x%, %&y%)
+            if ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " Photoshop image) ;if you are, it'll then search for your button of choice and move to it
+                MouseMove(x, y)
             else ;if everything fails, this else will trigger
                 {
                     blockOff()
@@ -34,11 +34,11 @@ psProp(image)
             ToolTip("we must wait for photoshop`nbecause it's slow as hell")
             sleep 300 ;photoshop is slow
             ToolTip("")
-            if ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " Photoshop %&image%) ;moves to the position variable
-                MouseMove(%&x%, %&y%)
+            if ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " Photoshop image) ;moves to the position variable
+                MouseMove(x, y)
             else ;if everything fails, this else will trigger
                 {
-                    MouseMove(%&xpos%, %&ypos%)
+                    MouseMove(xpos, ypos)
                     blockOff()
                     toolFind("the value you wish`nto adjust_2", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
@@ -52,13 +52,13 @@ psProp(image)
             blockOff()
             KeyWait(A_ThisHotkey)
             SendInput("{Click Up}")
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
         }
     else ;since we're in photoshop here, we'll simply make the "tap" functionality have ahk hit enter twice so it exits out of the free transform
         {
             Click("{Click Up}")
-            ;fElse(%&data%) ;check the various Functions scripts for the code to this preset
-            MouseMove(%&xpos%, %&ypos%)
+            ;fElse(data) ;check the various Functions scripts for the code to this preset
+            MouseMove(xpos, ypos)
             SendInput("{Enter 2}")
             blockOff()
             return
@@ -79,7 +79,7 @@ psSave()
         blockOn()
         SendInput(imageSize) ;check the keyboard shortcut ini file
         WinWait("Image Size")
-        SendInput(%&size% "{tab 2}" %&size% "{Enter}")
+        SendInput(size "{tab 2}" size "{Enter}")
         sleep 1000
         SendInput(saveasCopy) ;check the keyboard shortcut ini file
         WinWait("Save a Copy")
@@ -99,7 +99,7 @@ psSave()
             {
                 if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop "png2.png")
                     {
-                        MouseMove(%&xpng%, %&ypng%)
+                        MouseMove(xpng, ypng)
                         SendInput("{Click}")
                         sleep 50
                         MouseMove(0, 0)
@@ -171,15 +171,15 @@ psType(filetype)
     Send("{TAB}{RIGHT}") ;make sure you don't click anywhere before using this function OR put the caret back in the filename box
     coordw()
     sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
-    if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop %&filetype% ".png")
+    if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop filetype ".png")
         {
             SendInput("{Enter}")
             SendInput("+{Tab}")
         }
 
-    else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop %&filetype% "2.png")
+    else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop filetype "2.png")
         {
-            MouseMove(%&xpng%, %&ypng%)
+            MouseMove(xpng, ypng)
             SendInput("{Click}")
             SendInput("+{Tab}")
         }
@@ -190,6 +190,6 @@ psType(filetype)
             errorLog(A_ThisFunc "()", "Was unable to find the filetype option", A_LineFile, A_LineNumber)
             return
         }
-    MouseMove(%&x%, %&y%)
+    MouseMove(x, y)
 }
  

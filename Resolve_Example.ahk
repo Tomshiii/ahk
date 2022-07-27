@@ -10,9 +10,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\resolve.png")
 verCheck()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.4.1
+;\\v2.5
 ;\\Minimum Version of "Resolve.ahk" Required for this script
-;\\v2.10
+;\\v2.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.4.2.1
@@ -121,7 +121,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
         }
     if ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png") || ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
         {
-            scrub := %&speakY% + 74
+            scrub := speakY + 74
             goto cont
         }
     else
@@ -132,13 +132,13 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
             return
         }
     cont:
-    if %&ypos% < scrub
+    if ypos < scrub
         {
             SendInput("{Rbutton}")
             blockOff
             return
         }
-    Color := PixelGetColor(%&xpos%, %&ypos%)
+    Color := PixelGetColor(xpos, ypos)
     /* if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
         SendInput(resolveDeselect)
         */
@@ -147,9 +147,9 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
         {
             if GetKeyState("Rbutton", "P")
                 {
-                    MouseMove(%&xpos%, scrub) ;this will warp the mouse to the top part of your timeline defined by &timeline
+                    MouseMove(xpos, scrub) ;this will warp the mouse to the top part of your timeline defined by &timeline
                     SendInput("{Click Down}")
-                    MouseMove(%&xpos%, %&ypos%)
+                    MouseMove(xpos, ypos)
                     blockOff()
                     KeyWait(A_ThisHotkey)
                     SendInput("{Click Up}")

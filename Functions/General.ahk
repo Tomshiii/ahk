@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.13.5
+;\\v2.14
 
 ; =======================================================================================================================================
 ;
@@ -171,7 +171,7 @@ updateChecker(MyRelease) {
 								exeOrzip(filetype, &found)
 								{
 									whr := ComObject("WinHttp.WinHttpRequest.5.1")
-									whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." %&filetype%, true)
+									whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." filetype, true)
 									whr.Send()
 									; Using 'true' above and the call below allows the script to remain responsive.
 									whr.WaitForResponse()
@@ -588,8 +588,8 @@ coordc()
   */
 toolFind(message, timeout)
 {
-    ToolTip("Couldn't find " %&message%)
-    SetTimer(timeouttime, - %&timeout%)
+    ToolTip("Couldn't find " message)
+    SetTimer(timeouttime, - timeout)
     timeouttime()
     {
         ToolTip("")
@@ -603,8 +603,8 @@ toolFind(message, timeout)
   */
 toolCust(message, timeout)
 {
-    ToolTip(%&message%)
-    SetTimer(timeouttime, - %&timeout%)
+    ToolTip(message)
+    SetTimer(timeouttime, - timeout)
     timeouttime()
     {
         ToolTip("")
@@ -662,10 +662,10 @@ mousedrag(tool, toolorig)
                 SendInput(timelineWindow)
                 effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
                 ControlGetPos(&xpos, &ypos, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
-                static xValue := %&width% - 22 ;accounting for the scroll bars on the right side of the timeline
-                static yValue := %&ypos% + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
-                static xControl := %&xpos% + 238 ;accounting for the column to the left of the timeline
-                static yControl := %&height% + 40 ;accounting for the scroll bars at the bottom of the timeline
+                static xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
+                static yValue := ypos + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
+                static xControl := xpos + 238 ;accounting for the column to the left of the timeline
+                static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
                 if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
                     WinWaitClose("ahk_class tooltips_class32")
                 toolCust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh", "1000")
@@ -677,7 +677,7 @@ mousedrag(tool, toolorig)
                 goto skip
             }
         }
-    if %&x% > xValue || %&x% < xControl || %&y% < yValue || %&y% > yControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
+    if x > xValue || x < xControl || y < yValue || y > yControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
         return
     skip:
     again()
@@ -690,13 +690,13 @@ mousedrag(tool, toolorig)
         else if not GetKeyState(DragKeywait, "P")
             return
         click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-        SendInput %&tool% "{LButton Down}"
+        SendInput tool "{LButton Down}"
         if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             KeyWait(A_ThisHotkey)
         else
             KeyWait(DragKeywait) ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
         SendInput("{LButton Up}")
-        SendInput %&toolorig%
+        SendInput toolorig
     }
     SetTimer(again, -400)
     again()
@@ -710,10 +710,10 @@ mousedrag(tool, toolorig)
 mousedragNotPrem(tool, toolorig)
 {
     click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-    SendInput %&tool% "{LButton Down}"
+    SendInput tool "{LButton Down}"
     KeyWait(A_ThisHotkey)
     SendInput("{LButton Up}")
-    SendInput %&toolorig%
+    SendInput toolorig
 }
  
 ; ===========================================================================================================================================
@@ -732,12 +732,12 @@ timeline(timeline, x1, x2, y1)
 {
     coordw()
     MouseGetPos(&xpos, &ypos)
-    if(%&xpos% > %&x1% and %&xpos% < %&x2%) and (%&ypos% > %&y1%) ;this function will only trigger if your cursor is within the timeline. This ofcourse can break if you accidently move around your workspace
+    if(xpos > x1 and xpos < x2) and (ypos > y1) ;this function will only trigger if your cursor is within the timeline. This ofcourse can break if you accidently move around your workspace
         {
             blockOn()
-            MouseMove(%&xpos%, %&timeline%) ;this will warp the mouse to the top part of your timeline defined by &timeline
+            MouseMove(xpos, timeline) ;this will warp the mouse to the top part of your timeline defined by &timeline
             SendInput("{Click Down}")
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             blockOff()
             KeyWait(A_ThisHotkey)
             SendInput("{Click Up}")
@@ -792,7 +792,7 @@ errorLog(func, error, lineFile, lineNumber)
                 start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ OS`n" A_Tab "\\ " OSName "`n" A_Tab "\\ " A_OSVersion "`n" A_Tab "\\ " OSArch "`n\\ CPU`n" A_Tab "\\ " CPU "`n" A_Tab "\\ Logical Processors - " Logical "`n\\ RAM`n" A_Tab "\\ Total Physical Memory - " Memory "GB`n" A_Tab "\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
             }
         }
-    scriptPath :=  %&lineFile% ;this is taking the path given from A_LineFile
+    scriptPath :=  lineFile ;this is taking the path given from A_LineFile
     scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
-    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" %&func% "`` encountered the following error: " '"' %&error% '"' " // Script: ``" %&name% "``, Line Number: " %&lineNumber% "`n", A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " '"' error '"' " // Script: ``" name "``, Line Number: " lineNumber "`n", A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }

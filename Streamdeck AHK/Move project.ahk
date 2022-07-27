@@ -70,7 +70,7 @@ if convert >= largestSize
     FileDelete(A_AppData "\Adobe\Common\Media Cache Files\*.ims") */
 
 ;;this part then moves your selected folder to the selected destination folder
-DirMove(SelectedFolder, Move "\" %&name%)
+DirMove(SelectedFolder, Move "\" name)
 
 ;;this part just opens the final directory
-Run(Move "\" %&name%)
+Run(Move "\" name)

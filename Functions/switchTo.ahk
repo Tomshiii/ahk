@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.3
+;\\v2.11
 #Include General.ahk
 
 /*
@@ -27,7 +27,7 @@ switchToExplorer()
  */
 closeOtherWindow(program)
 {
-    value := WinGetList(%&program%) ;gets a list of all open windows
+    value := WinGetList(program) ;gets a list of all open windows
     toolCust(value.length - 1 " other window(s) closed", "1000") ;tooltip to display how many explorer windows are being closed
     for this_value in value
         {

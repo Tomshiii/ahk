@@ -18,7 +18,7 @@ if WinExist("ahk_exe obs64.exe")
 			obsLocation()
 			MouseMove(3440, 20, 2)
 			click
-			MouseMove(%&x%, %&y%, 2)
+			MouseMove(x, y, 2)
 		}
 if WinExist("ahk_exe foobar2000.exe")
 	{

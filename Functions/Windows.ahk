@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.5
+;\\v2.11
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -24,9 +24,9 @@ youMouse(tenS, fiveS)
         WinActivate() ;activates Youtube if there is a window of it open
         sleep 25 ;sometimes the window won't activate fast enough
         if GetKeyState(longSkip, "P") ;checks to see if you have a second key held down to see whether you want the function to skip 10s or 5s. If you hold down this second button, it will skip 10s
-            SendInput(%&tenS%)
+            SendInput(tenS)
         else
-            SendInput(%&fiveS%) ;otherwise it will send 5s
+            SendInput(fiveS) ;otherwise it will send 5s
         try {
             WinActivate(lastactive) ;will reactivate the original window
         } catch as e {
@@ -43,7 +43,7 @@ youMouse(tenS, fiveS)
 monitorWarp(x, y)
 {
     coords()
-    MouseMove(%&x%, %&y%, 2) ;I need the 2 here as I have multiple monitors and things can be funky moving that far that fast. random ahk problems. Change this if you only have 1/2 monitors and see if it works fine for you
+    MouseMove(x, y, 2) ;I need the 2 here as I have multiple monitors and things can be funky moving that far that fast. random ahk problems. Change this if you only have 1/2 monitors and see if it works fine for you
 }
 
 /* moveWin()
@@ -79,7 +79,7 @@ moveWin(key)
                     WinMinimize(window)
                 if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
                     WinMaximize(window)
-                SendInput(%&key%)
+                SendInput(key)
             } catch as e {
                 toolCust("Failed to get information on current active window", "1000")
                 errorLog(A_ThisFunc "()", "Failed to get information on current active window", A_LineFile, A_LineNumber)
@@ -117,7 +117,7 @@ moveTab()
         }
     ;the below, blocked out code was for when I wanted tabs to cycle between monitors 1, 2 & 4 and passed a variable `forwardOrback` into the function to define a direction.
     ;I have since stopped including monitor 1 as I rarely ever want a browser window moved onto my main display
-    /* if %&forwardOrback% = "forward"
+    /* if forwardOrback = "forward"
         {
             if monitor = 2
                 monitor += 1
@@ -125,7 +125,7 @@ moveTab()
                 monitor -= 4
             monitor += 1
         }
-    if %&forwardOrback% = "back"
+    if forwardOrback = "back"
         {
             if monitor = 4
                 monitor -= 1
@@ -170,10 +170,10 @@ getMouseMonitor()
 	loop {
 		try {
 			MonitorGet(A_Index, &left, &Top, &Right, &Bottom)
-			if %&x% > %&left% && %&x% < %&Right%
+			if x > left && x < Right
 				{
-					if %&y% < %&Bottom% && %&y% > %&Top%
-                        ;MsgBox(%&x% " " %&y% "`n" %&left% " " %&Right% " " %&Bottom% " " %&Top% "`nwithin monitor " A_Index)
+					if y < Bottom && y > Top
+                        ;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index)
                         return A_Index
 			    }
 		}
@@ -246,14 +246,14 @@ disc(button)
     coordw()
     MouseGetPos(&x, &y)
     WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
-    ;MsgBox("x " %&nx% "`ny " %&ny% "`nwidth " %&width% "`nheight " %&height%) ;testing
+    ;MsgBox("x " nx "`ny " ny "`nwidth " width "`nheight " height) ;testing
     blockOn()
     click("right") ;this opens the right click context menu on the message you're hovering over
     sleep 50 ;sleep required so the right click context menu has time to open
     loop {
-        if ImageSearch(&xpos, &ypos, %&x% - "200", %&y% -"400",  %&x% + "200", %&y% + yheight, "*2 " Discord %&button%) ;searches for the button you've requested
+        if ImageSearch(&xpos, &ypos, x - "200", y -"400",  x + "200", y + yheight, "*2 " Discord button) ;searches for the button you've requested
             {
-                MouseMove(%&xpos%, %&ypos%)
+                MouseMove(xpos, ypos)
                 break
             }
         sleep 50
@@ -263,7 +263,7 @@ disc(button)
         if A_Index > 10 ;after waiting over 0.5s the function will excecute the below
             {
                 ToolTip("")
-                MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+                MouseMove(x, y) ;moves the mouse back to the original coords
                 blockOff()
                 toolFind("the requested button after " A_Index " attempts", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(A_ThisFunc "()", "Was unable to find the requested button", A_LineFile, A_LineNumber)
@@ -274,15 +274,15 @@ disc(button)
     sleep 100
     if button = "DiscReply.png" ;YOU MUST CALL YOUR REPLY IMAGESEARCH FILE "DiscReply.png" FOR THIS PART OF THE CODE TO WORK - ELSE CHANGE THIS VALUE TOO
         {
-            if ImageSearch(&x2, &y2, %&nx%, %&ny%/"3", %&width%, %&height%, "*2 " Discord "dm1.png")
+            if ImageSearch(&x2, &y2, nx, ny/"3", width, height, "*2 " Discord "dm1.png")
                 {
                     loop {
-                            if ImageSearch(&xdir, &ydir, 0, %&height%/"2", %&width%, %&height%, "*2 " Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+                            if ImageSearch(&xdir, &ydir, 0, height/"2", width, height, "*2 " Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
                                 {
                                     ;ToolTip("")
-                                    MouseMove(%&xdir%, %&ydir%) ;moves to the @ location
+                                    MouseMove(xdir, ydir) ;moves to the @ location
                                     Click
-                                    MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+                                    MouseMove(x, y) ;moves the mouse back to the original coords
                                     blockOff()
                                     return
                                 }
@@ -294,19 +294,19 @@ disc(button)
                                     break
                                 }
                         }
-                    MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+                    MouseMove(x, y) ;moves the mouse back to the original coords
                     blockOff()
                 }
             else
                 {
-                    MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+                    MouseMove(x, y) ;moves the mouse back to the original coords
                     blockOff()
                     return
                 }
         }
     else
         {
-            MouseMove(%&x%, %&y%) ;moves the mouse back to the original coords
+            MouseMove(x, y) ;moves the mouse back to the original coords
             blockOff()
         }
 }
@@ -414,16 +414,16 @@ vscode(script)
     MouseGetPos(&x, &y)
     if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png") || ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer2.png") ;this imagesearch is checking to ensure you're in the explorer tab
         {
-            MouseMove(%&xex%, %&yex%)
+            MouseMove(xex, yex)
             SendInput("{Click}")
-            MouseMove(%&x%, %&y%)
+            MouseMove(x, y)
             sleep 50
         }
     SendInput(focusWork) ;vscode hides the buttons now all of a sudden.. thanks vscode
     sleep 50
     if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "collapse.png") ;this imagesearch finds the collapse folders button, presses it twice, then moves across and presses repo folder
         {
-            MouseMove(%&xex%, %&yex%)
+            MouseMove(xex, yex)
             SendInput("{Click 2}")
             MouseMove(-271, 40,, "R")
             SendInput("{Click}")
@@ -440,11 +440,11 @@ vscode(script)
             MouseGetPos(&origx, &origy)
             MouseMove(0, 105,, "R")
             SendInput("{Click}")
-            MouseMove(%&origx%, %&origy% + 180)
+            MouseMove(origx, origy + 180)
         }
-    MouseMove(0, %&script%,, "R")
+    MouseMove(0, script,, "R")
     SendInput("{Click}")
-    MouseMove(%&x%, %&y%)
+    MouseMove(x, y)
     SendInput(focusCode)
     blockOff()
 }

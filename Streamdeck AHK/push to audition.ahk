@@ -34,7 +34,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
 		MouseMove 1192, 632 ;moves back to the middle of the screen and clicks
 		SendInput "{click}"
 		SendInput "^s" ;saves so the changes translate over to premiere
-		MouseMove %&xposP%, %&yposP%
+		MouseMove xposP, yposP
 		sleep 1000
 		blockOff()
 		WinMinimize "ahk_exe Adobe Audition.exe" ;minimises audition and reactivates premiere

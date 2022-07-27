@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.1
+;\\v2.11
 #Include General.ahk
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
@@ -14,26 +14,26 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
 {
     coordw()
     MouseGetPos(&x, &y)
-    if(%&x% > 550 and %&x% < 2542) and (%&y% > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
+    if(x > 550 and x < 2542) and (y > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
         {
             blockOn()
             MouseGetPos(&X, &Y)
             if ImageSearch(&selectX, &selectY, 8, 8, 299, 100, "*2 " AE "selection.png")
                 {
-                    MouseMove(%&selectX%, %&selectY%)
+                    MouseMove(selectX, selectY)
                     Click
-                    MouseMove(%&X%, %&Y%)
+                    MouseMove(X, Y)
                 }
             Click()
             SendInput(anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) ~ check the keyboard shortcut ini file to adjust hotkeys
             sleep 150
-            SendInput(%&button%) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
+            SendInput(button) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
             sleep 300 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
             if (
-                ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% ".png") ||
-                ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "2.png") ||
-                ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "Key.png") ||
-                ImageSearch(&propX, &propY, 0, %&y% - "23", 550, %&y% + "23", "*2 " AE %&property% "Key2.png")
+                ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property ".png") ||
+                ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "2.png") ||
+                ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "Key.png") ||
+                ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "Key2.png")
             )
                 goto colour
             else
@@ -45,8 +45,8 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
                     return
                 }
             colour:
-            if PixelSearch(&xcol, &ycol, %&propX%, %&propY% + "8", %&propX% + "740", %&propY% + "40", 0x288ccf, 3)
-                MouseMove(%&xcol% + %&optional%, %&ycol%)
+            if PixelSearch(&xcol, &ycol, propX, propY + "8", propX + "740", propY + "40", 0x288ccf, 3)
+                MouseMove(xcol + optional, ycol)
             ;sleep 50
             if GetKeyState(A_ThisHotkey, "P")
                 {
@@ -54,13 +54,13 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
                     blockOff()
                     KeyWait(A_ThisHotkey)
                     SendInput("{Click Up}")
-                    MouseMove(%&x%, %&y%)
+                    MouseMove(x, y)
                 }
             else ;if you tap, this function will then right click and menu to the "reset" option in the right click context menu
                 {
                     Click("Right")
                     SendInput("{Up 6}" "{Enter}")
-                    MouseMove(%&x%, %&y%)
+                    MouseMove(x, y)
                     blockOff()
                 }
         }
@@ -80,7 +80,7 @@ aePreset(preset)
     blockOn()
     coords()
     MouseGetPos(&x, &y)
-    colour := PixelGetColor(%&x%, %&y%) ;assigned the pixel colour at the mouse coords to the variable "colour"
+    colour := PixelGetColor(x, y) ;assigned the pixel colour at the mouse coords to the variable "colour"
     if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
         {
             toolCust("you haven't selected a clip`nor aren't hovering the right spot", "1000")
@@ -97,7 +97,7 @@ aePreset(preset)
         toolCust("Couldn't find the ClassNN value", "1000")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
-    if ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox.png") || ImageSearch(&x2, &y2, %&efx%, %&efy%, %&efx% + %&width%, %&efy% + %&height%, "*2 " AE "findbox2.png")
+    if ImageSearch(&x2, &y2, efx, efy, efx + width, efy + height, "*2 " AE "findbox.png") || ImageSearch(&x2, &y2, efx, efy, efx + width, efy + height, "*2 " AE "findbox2.png")
         goto move
     else
         {
@@ -107,16 +107,16 @@ aePreset(preset)
             return
         }
     move:
-    MouseMove(%&x2%, %&y2%)
+    MouseMove(x2, y2)
     SendInput("{Click}")
     SendInput("^a" "+{BackSpace}")
     CaretGetPos(&find)
-    if %&find% = "" ;this loop is to make sure after effects finds the text field
+    if find = "" ;this loop is to make sure after effects finds the text field
         {
             loop 10 {
                 sleep 30
                 CaretGetPos(&find2x)
-                if %&find2x% != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+                if find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                     break
                 toolCust("The function attempted " A_Index " times`n for a total of " A_Index * 30 "ms", "2000")
                 if A_Index > 10
@@ -128,17 +128,17 @@ aePreset(preset)
                     }
             }
         }
-    SendInput(%&preset%)
+    SendInput(preset)
     sleep 100
     MouseMove(59, 43, 2, "R") ;moves the mouse relative to the start position to ensure it always grabs the preset you want at mouse speed 2, this helps as after effects can be quite slow
     SendInput("{Click Down}")
-    MouseMove(%&x%, %&y%, "2") ;drags the preset back to the starting position (your layer) at mouse speed 2, it's important to slow down the mouse here or after effects won't register you're dragging the preset
+    MouseMove(x, y, "2") ;drags the preset back to the starting position (your layer) at mouse speed 2, it's important to slow down the mouse here or after effects won't register you're dragging the preset
     sleep 100
     SendInput("{Click Up}")
-    MouseMove(%&x2%, %&y2%)
+    MouseMove(x2, y2)
     SendInput("{Click}")
     SendInput("^a" "+{BackSpace}" "{Enter}") ;deletes whatever was typed into the effects panel
-    MouseMove(%&x%, %&y%)
+    MouseMove(x, y)
     blockOff()
 }
 
@@ -151,7 +151,7 @@ aeScaleAndPos()
     ;blockOn()
     coords()
     MouseGetPos(&x, &y)
-    colour := PixelGetColor(%&x%, %&y%) ;assigned the pixel colour at the mouse coords to the variable "colour"
+    colour := PixelGetColor(x, y) ;assigned the pixel colour at the mouse coords to the variable "colour"
     if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
         {
             toolCust("you haven't selected a clip`nor aren't hovering the right spot", "1000")
@@ -173,7 +173,7 @@ aeScaleAndPos()
     ysize := 40
     loop {
         ToolTip(A_Index)
-        if ImageSearch(&xscale, &yscale, %&x% - xsize, %&y% - ysize, %&x% + xsize, %&y% + ysize, "*2 " AE "scale.png")
+        if ImageSearch(&xscale, &yscale, x - xsize, y - ysize, x + xsize, y + ysize, "*2 " AE "scale.png")
             {
                 toolCust(A_Index, "1000")
                 break
@@ -190,14 +190,14 @@ aeScaleAndPos()
             }
     }
     next:
-    MouseMove(%&xscale%, %&yscale%)
+    MouseMove(xscale, yscale)
     SendInput("{Click}")
     SendInput("p")
     Sleep 50
     SendInput("{Click}")
     Sleep 50
     SendInput("u" "u")
-    MouseMove(%&x%, %&y%)
+    MouseMove(x, y)
     blockOff()
 }
 
@@ -217,7 +217,7 @@ motionBlur()
             break
         if ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur.png") || ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " AE "blur2.png")
             {
-                MouseMove(%&blurx% + 3, %&blury% + 20)
+                MouseMove(blurx + 3, blury + 20)
                 SendInput("{Click}")
                 ToolTip("")
                 break
@@ -253,14 +253,14 @@ motionBlur()
             {
                 ToolTip("")
                 coords()
-                MouseMove(%&x%, %&y%)
+                MouseMove(x, y)
                 blockOff()
                 errorLog(A_ThisFunc "()", "Couldn't find the Advanced tab", A_LineFile, A_LineNumber)
                 toolFind("the Advanced tab", "1000")
                 return
             }
     }
-    MouseMove(%&advX%, %&advY%) ;moves to the advanced tab
+    MouseMove(advX, advY) ;moves to the advanced tab
     SendInput("{Click}") ;clicks it
     loop { ;this loop will allow us to make multiple checks for the shutter angle - as adobe products can be quite laggy this loop will give us about 0.6s for AE to react. If your machine is too slow, or AE is just sluggish, consider increasing the amount of times the loop will continue before returning or increasing the sleep between each attempt
         if ImageSearch(&shutX, &shutY, 0, 0, 200, 300, "*2 " AE "shutterangle.png")
@@ -277,7 +277,7 @@ motionBlur()
             {
                 ToolTip("")
                 coords()
-                MouseMove(%&x%, %&y%)
+                MouseMove(x, y)
                 blockOff()
                 errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle image", A_LineFile, A_LineNumber)
                 toolFind("the Shutter Angle image", "1000")
@@ -285,14 +285,14 @@ motionBlur()
             }
     }
     loop { ;this loop will allow us to make multiple checks for the shutter angle value - as adobe products can be quite laggy this loop will give us about 0.6s for AE to react. If your machine is too slow, or AE is just sluggish, consider increasing the amount of times the loop will continue before returning or increasing the sleep between each attempt
-        if PixelSearch(&xcol, &ycol, %&shutX%, %&shutY%, %&shutX% + "150", %&shutY% + "40", 0x234CB4, 2)
+        if PixelSearch(&xcol, &ycol, shutX, shutY, shutX + "150", shutY + "40", 0x234CB4, 2)
             {
                 ToolTip("")
-                MouseMove(%&xcol%, %&ycol%)
+                MouseMove(xcol, ycol)
                 SendInput("{Click}")
                 SendInput("360" "{Enter}")
                 coords()
-                MouseMove(%&x%, %&y%)
+                MouseMove(x, y)
                 blockOff()
                 break
             }
@@ -305,7 +305,7 @@ motionBlur()
             {
                 ToolTip("")
                 coords()
-                MouseMove(%&x%, %&y%)
+                MouseMove(x, y)
                 blockOff()
                 errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle value", A_LineFile, A_LineNumber)
                 toolFind("the Shutter Angle value", "1000")

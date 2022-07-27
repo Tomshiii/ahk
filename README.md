@@ -68,8 +68,8 @@ but also serve as general comments for anyone else
  */
 func(variableX, variableY)
 {
-  code(%&variableX%)
-  code(%&variableY%)
+  code(variableX)
+  code(variableY)
 }
 ```
 We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can simply add `func("variableX", "variableY")` to scripts.

@@ -13,9 +13,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.7
+;\\v2.16
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.7.3
+;\\v2.8
 
 ; ============================================================================================================================================
 ;
@@ -355,13 +355,13 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	sleep 1000
 	WinGetPos(,, &width, &height, "A")
 	MouseGetPos(&x, &y)
-	if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " A_WorkingDir "\Support Files\ImageSearch\Foobar\pokemon.png")
+	if ImageSearch(&xdir, &ydir, 0, 0, width, height, "*2 " A_WorkingDir "\Support Files\ImageSearch\Foobar\pokemon.png")
 		{
-			MouseMove(%&xdir%, %&ydir%)
+			MouseMove(xdir, ydir)
 			SendInput("{Click}")
 		}
 	SendInput("!p" "a")
-	MouseMove(%&x%, %&y%)
+	MouseMove(x, y)
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -382,14 +382,14 @@ F14:: ;open the "show more options" menu in win11
 	colour2 := 0xFFDA70
 	colour3 := 0x353535 ;when already clicked on
 	colour4 := 0x777777 ;when already clicked on
-	colour := PixelGetColor(%&mx%, %&my%)
+	colour := PixelGetColor(mx, my)
 	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer. It is only necessary because I use the same button for both scripts.
 		{
 			SendInput("{LButton Up}")
 			WinMaximize
 			return
 		}
-	else if ImageSearch(&x, &y, 0, 0, %&width%, %&height%, "*5 " Explorer "showmore.png")
+	else if ImageSearch(&x, &y, 0, 0, width, height, "*5 " Explorer "showmore.png")
 		{
 			;toolCust(colour "`n imagesearch fired", "1000") ;for debugging
 			;SendInput("{Esc}")
@@ -451,12 +451,12 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 		}
 	else loop {
 		WinGetPos(,, &width,, "A")
-		if ImageSearch(&xpos, &ypos, 0, 0, %&width%, "60", "*2 " firefox "youtube1.png") || ImageSearch(&xpos, &ypos, 0, 0, %&width%, "60", "*2 " firefox "youtube2.png")
+		if ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " firefox "youtube1.png") || ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " firefox "youtube2.png")
 			{
-				MouseMove(%&xpos%, %&ypos%, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
+				MouseMove(xpos, ypos, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
 				SendInput("{Click}")
 				coords()
-				MouseMove(%&x%, %&y%, 2)
+				MouseMove(x, y, 2)
 				break
 			}
 		else
@@ -541,11 +541,11 @@ F1:: ;will click any unread servers
 {
 	MouseGetPos(&xPos, &yPos)
 	WinGetPos(,,, &height)
-	if ImageSearch(&x, &y, 0, 0, 50, %&height%, "*2 " Discord "\unread.png")
+	if ImageSearch(&x, &y, 0, 0, 50, height, "*2 " Discord "\unread.png")
 		{
-			MouseMove(%&x% + 20, %&y%, 2)
+			MouseMove(x + 20, y, 2)
 			SendInput("{Click}")
-			MouseMove(%&xPos%, %&yPos%, 2)
+			MouseMove(xPos, yPos, 2)
 		}
 	else
 		{
@@ -557,11 +557,11 @@ F2:: ;will click any unread channels
 {
 	MouseGetPos(&xPos, &yPos)
 	WinGetPos(,,, &height)
-	if ImageSearch(&x, &y, 70, 0, 80, %&height%, "*2 " Discord "\unread2.png")
+	if ImageSearch(&x, &y, 70, 0, 80, height, "*2 " Discord "\unread2.png")
 		{
-			MouseMove(%&x% + 20, %&y%, 2)
+			MouseMove(x + 20, y, 2)
 			SendInput("{Click}")
-			MouseMove(%&xPos%, %&yPos%, 2)
+			MouseMove(xPos, yPos, 2)
 		}
 	else
 		{
@@ -630,12 +630,12 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
         errorLog(A_ThisHotkey, "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
 	;MouseMove 34, 917 ;location of the selection tool
-	if %&width% = 0 || %&height% = 0
+	if width = 0 || height = 0
 		{
 			loop {
 				;for whatever reason, if you're clicked on another panel, then try to hit this hotkey, `ControlGetPos` refuses to actually get any value, I have no idea why. This loop will attempt to get that information anyway, but if it fails will fallback to the hotkey you have set within premiere
-				;toolCust(A_Index "`n" %&width% "`n" %&height%, "100")
-				if %&width% != 0 || %&height% != 0
+				;toolCust(A_Index "`n" width "`n" height, "100")
+				if width != 0 || height != 0
 					break
 				if A_Index > 3
 					{
@@ -650,14 +650,14 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 				ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
 			}
 		}
-	if %&height% < 80 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
+	if height < 80 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
 		multiply := "3"
 	else
 		multiply := "1"
 	loop {
-		if ImageSearch(&x, &y, %&toolx%, %&tooly%, %&toolx% + %&width%, %&tooly% + %&height% * multiply, "*2 " Premiere "selection.png") ;moves to the selection tool
+		if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height * multiply, "*2 " Premiere "selection.png") ;moves to the selection tool
 			{
-				MouseMove(%&x%, %&y%)
+				MouseMove(x, y)
 				break
 			}
 		sleep 100
@@ -670,7 +670,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			}
 	}
 	click
-	MouseMove %&xpos%, %&ypos%
+	MouseMove xpos, ypos
 }
 
 ;premprojectHotkey;
@@ -718,17 +718,17 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			errorLog(A_ThisHotkey, "Function failed to find project window", A_LineFile, A_LineNumber)
 			return
 		}
-	;MsgBox("x " %&toolx% "`ny " %&tooly% "`nwidth " %&width% "`nheight " %&height% "`nclass " ClassNN) ;debugging
+	;MsgBox("x " toolx "`ny " tooly "`nwidth " width "`nheight " height "`nclass " ClassNN) ;debugging
 	blockOn()
 	try {
-		if ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project.png") || ImageSearch(&prx, &pry, %&toolx% - "5", %&tooly% - "20", %&toolx% + "1000", %&tooly% + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
+		if ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " Premiere "project.png") || ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
 			goto move
-		else if ImageSearch(&prx, &pry, %&toolx%, %&tooly%, %&width%, %&height%, "*2 " Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
+		else if ImageSearch(&prx, &pry, toolx, tooly, width, height, "*2 " Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
 			goto bin
 		else
 			{
 				coords()
-				if ImageSearch(&prx, &pry, %&sanX% - "5", %&sanY% - "20", %&sanX% + "1000", %&sanY% + "100", "*2 " Premiere "project.png") || ImageSearch(&prx, &pry, %&sanX% - "5", %&sanY% - "20", %&sanX% + "1000", %&sanY% + "100", "*2 " Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
+				if ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " Premiere "project.png") || ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
 					goto move
 				else
 					{
@@ -746,14 +746,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		return
 	}
 	move:
-	MouseMove(%&prx% + "5", %&pry% +"3")
+	MouseMove(prx + "5", pry +"3")
 	SendInput("{Click Down}")
 	coords()
 	Sleep 100
 	MouseMove 3592, 444, 2
 	sleep 50
 	SendInput("{Click Up}")
-	MouseMove(%&xpos%, %&ypos%)
+	MouseMove(xpos, ypos)
 	if shiftval = 1
 		{
 			blockOff()
@@ -788,7 +788,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseMove(0, 0)
 	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Explorer "sfx.png")
 		{
-			MouseMove(%&foldx% + "9", %&foldy% + "5", 2)
+			MouseMove(foldx + "9", foldy + "5", 2)
 			SendInput("{Click Down}")
 			;sleep 2000
 			coords()
@@ -810,13 +810,13 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	WinActivate("ahk_exe Adobe Premiere Pro.exe")
 	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " Premiere "list view.png")
 		{
-			MouseMove(%&listx%, %&listy%)
+			MouseMove(listx, listy)
 			SendInput("{Click}")
 			sleep 100
 		}
 	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj.png") || ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj2.png")
 		{
-			MouseMove(%&fold2x% + "5", %&fold2y% + "2")
+			MouseMove(fold2x + "5", fold2y + "2")
 			SendInput("{Click 2}")
 			sleep 100
 		}
@@ -830,7 +830,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	loop {
 		if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " Premiere "binsfx.png")
 			{
-				MouseMove(%&fold3x% + "20", %&fold3y% + "4", 2)
+				MouseMove(fold3x + "20", fold3y + "4", 2)
 				SendInput("{Click Down}")
 				MouseMove(772, 993, 2)
 				sleep 250
@@ -846,7 +846,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			}
 	}
 	coords()
-	MouseMove(%&xpos%, %&ypos%)
+	MouseMove(xpos, ypos)
 	blockOff()
 }
 
@@ -897,7 +897,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 			MouseGetPos(&origx, &origy)
 			MouseMove(34, 52, 2)
 			SendInput("{Click}")
-			MouseMove(%&origx%, %&origy%, 2)
+			MouseMove(origx, origy, 2)
 			blockOff()
 		}
 }

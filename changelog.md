@@ -1,6 +1,7 @@
 # <> Release 2.4.2.x -
 This release is centered around fixing old sloppy practices that have just been left in the code because `if it aint broke, don't fix it`
 - Changed all leftover uses of redundant `else if`'s to proper uses of `||` (Mostly a lot of `ImageSearch`'s that were stacked below each other)
+- Removed all instances of `%&variableX%` and replaced with `variableX` as the additional syntaxing isn't neccesary
 
 # > My Scripts
 - Added `^+t::` to type out `YYYY_MM_DD`

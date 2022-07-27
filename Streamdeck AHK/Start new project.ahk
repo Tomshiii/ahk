@@ -13,7 +13,7 @@ DirCreate(SelectedFolder "\audio")
 DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
 DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
 SplitPath SelectedFolder, &name
-if WinExist("Checklist - " %&name%)
+if WinExist("Checklist - " name)
     {
         toolCust("You already have this checklist open", "1000")
         goto end

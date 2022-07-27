@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.2
+;\\v2.11
 #Include General.ahk
 
 /* Rscale()
@@ -19,7 +19,7 @@ Rscale(value, property, plus)
         goto video
     else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
         {
-            MouseMove(%&xi%, %&yi%)
+            MouseMove(xi, yi)
             click ;this opens the inspector tab
             goto video
         }
@@ -28,20 +28,20 @@ Rscale(value, property, plus)
         goto rest
     else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") ;if you aren't already in the video tab, this line will search for it
         {
-            MouseMove(%&xn%, %&yn%)
+            MouseMove(xn, yn)
             click ;"2196 139" ;this highlights the video tab
         }
     else
         {
             blockOff()
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
     rest:
-    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% ".png") || ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% "2.png") ;searches for the property of choice
-        MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
+    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property ".png") || ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property "2.png") ;searches for the property of choice
+        MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
     else
         {
             blockOff()
@@ -50,9 +50,9 @@ Rscale(value, property, plus)
             return
         }
     click
-    SendInput(%&value%)
+    SendInput(value)
     SendInput("{ENTER}")
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
     SendInput("{MButton}")
     blockOff()
 }
@@ -66,7 +66,7 @@ rfElse(data)
 {
     SendInput("{Click Up}")
     sleep 10
-    Send(%&data%)
+    Send(data)
     ;MouseMove, x, y ;if you want to press the reset arrow, input the windowspy SCREEN coords here then comment out the above Send^
     ;click ;if you want to press the reset arrow, uncomment this, remove the two lines below
     ;alternatively you could also run imagesearches like in the other resolve functions to ensure you always end up in the right place
@@ -93,7 +93,7 @@ REffect(folder, effect)
     MouseGetPos(&xpos, &ypos)
     if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects.png") ;checks to see if the effects button is deactivated
         {
-            MouseMove(%&xe%, %&ye%)
+            MouseMove(xe, ye)
             SendInput("{Click}")
             goto closeORopen
         }
@@ -111,7 +111,7 @@ closeORopen:
         goto EffectFolder
     else if ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "closed.png") ;checks to see if the effects window sidebar is closed
         {
-            MouseMove(%&xclosed%, %&yclosed%)
+            MouseMove(xclosed, yclosed)
             SendInput("{Click}")
             goto EffectFolder
         }
@@ -123,11 +123,11 @@ closeORopen:
             return
         }
 EffectFolder:
-    if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve %&folder% ".png") ;checks to see if the drop down option you want is activated
+    if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder ".png") ;checks to see if the drop down option you want is activated
         goto SearchButton
-    else if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve %&folder% "2.png") ;checks to see if the drop down option you want is deactivated
+    else if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder "2.png") ;checks to see if the drop down option you want is deactivated
         {
-            MouseMove(%&xfx%, %&yfx%)
+            MouseMove(xfx, yfx)
             SendInput("{Click}")
             goto SearchButton
         }
@@ -141,13 +141,13 @@ EffectFolder:
 SearchButton:
     if ImageSearch(&xs, &ys, effectx1, effecty1 + "300", effectx2, effecty2, "*2 " Resolve "search2.png") ;checks to see if the search icon is deactivated
         {
-            MouseMove(%&xs%, %&ys%)
+            MouseMove(xs, ys)
             SendInput("{Click}")
             goto final
         }
     else if ImageSearch(&xs, &ys, 8, 8 + "300", effectx2, effecty2, "*2 " Resolve "search3.png") ;checks to see if the search icon is activated
         {
-            MouseMove(%&xs%, %&ys%)
+            MouseMove(xs, ys)
             SendInput("{Click 2}")
             goto final
         }
@@ -160,10 +160,10 @@ SearchButton:
         }
 final:
     sleep 50
-    SendInput(%&effect%)
+    SendInput(effect)
     MouseMove(-300, 130,, "R")
     SendInput("{Click Down}")
-    MouseMove(%&xpos%, %&ypos%, 2) ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
+    MouseMove(xpos, ypos, 2) ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
     SendInput("{Click Up}")
     blockOff()
     return
@@ -185,7 +185,7 @@ rvalhold(property, plus, rfelseval)
         goto video
     else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
         {
-            MouseMove(%&xi%, %&yi%)
+            MouseMove(xi, yi)
             click ;this opens the inspector tab
             goto video
         }
@@ -194,21 +194,21 @@ rvalhold(property, plus, rfelseval)
         goto rest
     else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") ;if you aren't already in the video tab, this line will search for it
         {
-            MouseMove(%&xn%, %&yn%)
+            MouseMove(xn, yn)
             click ;"2196 139" ;this highlights the video tab
         }
     else
         {
             blockOff()
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             toolFind("video tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
     rest:
     ;MouseMove 2329, 215 ;moves to the scale value.
-    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% ".png") || ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve %&property% "2.png") ;searches for the property of choice
-        MouseMove(%&xz% + %&plus%, %&yz% + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
+    if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property ".png") || ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property "2.png") ;searches for the property of choice
+        MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
     else
         {
             blockOff()
@@ -223,12 +223,12 @@ rvalhold(property, plus, rfelseval)
             blockOff()
             KeyWait(A_ThisHotkey)
             SendInput("{Click Up}")
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
         }
     else
         {
-            rfElse(%&rfelseval%) ;do note rfelse doesn't use any imagesearch information and just uses raw pixel values (not a great idea), so if you have any issues, do look into changing that
-            MouseMove(%&xpos%, %&ypos%)
+            rfElse(rfelseval) ;do note rfelse doesn't use any imagesearch information and just uses raw pixel values (not a great idea), so if you have any issues, do look into changing that
+            MouseMove(xpos, ypos)
             SendInput("{MButton}")
             blockOff()
             return
@@ -246,26 +246,26 @@ rflip(button)
     MouseGetPos(&xpos, &ypos)
     if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") ;makes sure the video tab is selected
         {
-            MouseMove(%&xn%, %&yn%)
+            MouseMove(xn, yn)
             click
         }
     if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*5 " Resolve "inspector2.png")
         {
-            MouseMove(%&xi%, %&yi%)
+            MouseMove(xi, yi)
             click
         }
-    if ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% ".png") || ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve %&button% "2.png") ;searches for the button when it isn't activated already
+    if ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve button ".png") || ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve button "2.png") ;searches for the button when it isn't activated already
         {
-            MouseMove(%&xh%, %&yh%)
+            MouseMove(xh, yh)
             click
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             blockOff()
             return
         }
     else
         {
             blockOff()
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             toolFind("desired button", "1000")
             errorLog(A_ThisFunc "()", "Was unable to find the desired button", A_LineFile, A_LineNumber)
         }
@@ -285,7 +285,7 @@ rgain(value)
         goto audio
     else if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
         {
-            MouseMove(%&xi%, %&yi%)
+            MouseMove(xi, yi)
             click ;this opens the inspector tab
             goto audio
         }
@@ -294,20 +294,20 @@ rgain(value)
         goto rest
     else if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio.png") ;if you aren't already in the audio tab, this line will search for it
         {
-            MouseMove(%&xn%, %&yn%)
+            MouseMove(xn, yn)
             click ;"2196 139" ;this highlights the video tab
         }
     else
         {
             blockOff()
-            MouseMove(%&xpos%, %&ypos%)
+            MouseMove(xpos, ypos)
             toolFind("audio tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the audio tab", A_LineFile, A_LineNumber)
             return
         }
     rest:
     if ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume.png") || ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume2.png") ;searches for the volume property
-        MouseMove(%&xz% + "215", %&yz% + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
+        MouseMove(xz + "215", yz + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
     else
         {
             blockOff()
@@ -320,10 +320,10 @@ rgain(value)
     ;sleep 50
     SendInput("^c")
     ClipWait()
-    gain := A_Clipboard + %&value%
+    gain := A_Clipboard + value
     SendInput(gain)
     SendInput("{Enter}")
-    MouseMove(%&xpos%, %&ypos%)
+    MouseMove(xpos, ypos)
     SendInput("{MButton}")
     blockOff()
 }

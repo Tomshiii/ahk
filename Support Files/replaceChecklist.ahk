@@ -28,8 +28,8 @@ if not DirExist(location)
   */
 toolCust(message, timeout)
 {
-    ToolTip(%&message%)
-    SetTimer(timeouttime, - %&timeout%)
+    ToolTip(message)
+    SetTimer(timeouttime, - timeout)
     timeouttime()
     {
         ToolTip("")

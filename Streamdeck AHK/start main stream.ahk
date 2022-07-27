@@ -169,13 +169,13 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 1000
 			WinGetPos(,, &width, &height, "A")
 			MouseGetPos(&x, &y)
-			if ImageSearch(&xdir, &ydir, 0, 0, %&width%, %&height%, "*2 " location "\Support Files\ImageSearch\Foobar\streambeats.png")
+			if ImageSearch(&xdir, &ydir, 0, 0, width, height, "*2 " location "\Support Files\ImageSearch\Foobar\streambeats.png")
 				{
-					MouseMove(%&xdir%, %&ydir%)
+					MouseMove(xdir, ydir)
 					SendInput("{Click}")
 				}
 			SendInput("!p" "a")
-			MouseMove(%&x%, %&y%)
+			MouseMove(x, y)
 		}
 	blockOff()
 	if WinExist("ahk_exe LioranBoard Receiver.exe")

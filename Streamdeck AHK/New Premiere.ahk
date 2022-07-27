@@ -21,7 +21,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
 
         SplitPath(SelectedFolder, &default) ;this gets the name of the project folder to use as a default for the below inputbox
-        IB := InputBox("Enter the name of your project", "Project", "w100 h100", %&default%)
+        IB := InputBox("Enter the name of your project", "Project", "w100 h100", default)
             if IB.Result = "Cancel"
                 {
                     pauseautosave()
@@ -34,7 +34,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
         sleep 200
         if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " Premiere "newProj.png")
             {
-                MouseMove(%&x%, %&y%)
+                MouseMove(x, y)
                 SendInput("{Click}")
                 sleep 1000
                 loop {
@@ -78,7 +78,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 loop {
                     if ImageSearch(&crex, &crey, 2290, 1274, 2559, 1349, "*2 " Premiere "create.png")
                     {
-                        MouseMove(%&crex%, %&crey%)
+                        MouseMove(crex, crey)
                         SendInput("{Click}")
                         WinWaitClose("Save Project")
                         sleep 1500
@@ -149,7 +149,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 blockOff()
                 Run(SelectedFolder) ;open an explorer window for your selected directory
                 SplitPath SelectedFolder, &name
-	            if WinExist("Checklist - " %&name%)
+	            if WinExist("Checklist - " name)
                     {
                         toolCust("You already have this checklist open", "1000")
                         goto end
