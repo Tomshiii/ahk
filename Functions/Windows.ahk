@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11
+;\\v2.11.1
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -152,7 +152,7 @@ moveTab()
     SetTimer(isfull, -1500)
     isfull() {
         try {
-            isFullscreen(&title, &full)
+            isFullscreen(&title, &full, title)
             if full = 0
                 WinMaximize(title)
         }
@@ -204,12 +204,19 @@ getTitle(&title)
  This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
  @param title is the active window, this function will populate the `title` variable with the active window
  @param full is representing if the active window is fullscreen or not. If it is, it will return 1, else it will return 0
+ @param window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
  */
-isFullscreen(&title, &full)
+isFullscreen(&title, &full, window := false)
 {
+    if window != false
+        {
+            title := window
+            goto skip
+        }
     getTitle(&title)
+    skip:
     if title = "Program Manager" ;this is the desktop. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
-        return
+        title := ""
 	try {
 		if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
 			full := 1

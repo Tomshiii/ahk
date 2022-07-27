@@ -9,11 +9,14 @@ This release is centered around fixing old sloppy practices that have just been 
 - Moved discord `F1:: & F2::` code to `discUnread()` to cut repeat code
 
 # > Functions
-- Fixed bug with `isFullscreen()` that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
+`isFullscreen()`
+- Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
+- Can now have the window you wish to check passed into the function instead of relying on `getTitle()` to grab the active window
 
 `moveTab()`
 - Fixed function not working on `monitor 4`
 - Will now work even if firefox wasn't already the active window
+- Will now check the tab for fullscreen instead of the active window
 
 # > checklist.ahk
 - Can now manually input minutes to +/- in addition to the preset 10
