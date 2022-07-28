@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.2
+;\\v2.11.3
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -96,18 +96,79 @@ moveTab()
             SendInput("{" A_ThisHotkey "}")
             return
         }
-    blockOff()
     coords()
     MouseGetPos(&x, &y)
+    if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
+        goto move
     getTitle(&title)
+    WinGetPos(&winX, &winY, &width,, title)
+    x2 := Round(winX + (width / 2), 0)
+    ;MsgBox(winx A_Space winY A_Space width A_Space title A_Space x2)
     MouseMove(-10, 0,, "R")
-    if ImageSearch(&contX, &contY, x, y, x + 50, y + 50, "*2 " Firefox "contextMenu.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
+    if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
         {
             SendInput("{Escape}")
             sleep 50
-            MouseMove(x , y)
+            if ImageSearch(&urlX, &urlY, winX, winY, x2, (winY + 200), "*2 " Firefox "url.png") ;this checks to make sure the url bar isn't higlighted as it's the same colour as an active tab in firefox
+                {
+                    SendInput("{F6}")
+                    sleep 50
+                }
+            blockOn()
+            ;The below block of text will go through a process of trying to find the tab you wish to move.
+            ;0x42414D is the colour of the active tab
+            ;0x35343A is the colour of a non active tab when you hover over it
+            ;I use firefox in dark mode
+            if PixelSearch(&colx, &coly, contX - 30, contY - 30, contX + 30, contY + 30, 0x42414D)
+                MouseMove(colx, coly)
+            else
+                {
+                    MouseGetPos(&startX, &startY)
+                    loop {
+                        MouseMove(-5, 0,, "R")
+                        MouseGetPos(&searchX, &searchY)
+                        if PixelGetColor(searchX, searchY) = 0x35343A
+                            {
+                                SendInput("{LButton}")
+                                break
+                            }
+                        if A_Index > 4
+                            {
+                                MouseMove(startX - 20, startY - 10)
+                                if PixelGetColor(searchX, searchY) = 0x35343A
+                                    {
+                                        SendInput("{LButton}")
+                                        break
+                                    }
+                            }
+                        if A_Index > 5
+                            {
+                                MouseMove(startX - 20, startY + 10)
+                                if PixelGetColor(searchX, searchY) = 0x35343A
+                                    {
+                                        SendInput("{LButton}")
+                                        break
+                                    }
+                            }
+                        if A_Index > 6
+                            {
+                                toolCust("Couldn't find the active tab colour", "1500")
+                                errorLog(A_ThisFunc "()", "couldn't find the active tab colour", A_LineFile, A_LineNumber)
+                                blockOff()
+                                return
+                            }
+                    }
+                }
+        }
+    else
+        {
+            toolCust("You moved too far away from the right click context menu", "1500")
+            errorLog(A_ThisFunc "()", "moved too far away from the right click context menu", A_LineFile, A_LineNumber)
+            blockOff()
+            return
         }
     SendInput("{LButton Down}")
+    move:
     monitor := getMouseMonitor()
     if monitor != 2 && monitor != 4
         {
@@ -145,9 +206,9 @@ moveTab()
     /* if monitor = 1
         MouseMove(2378, 25, 3) */
     if monitor = 2
-        MouseMove(4256, -911, 3)
+        MouseMove(4288, -911, 3)
     if monitor = 4
-        MouseMove(4281, 164, 3)
+        MouseMove(4288, 164, 3)
     blockOff()
     SetTimer(isfull, -1500)
     isfull() {

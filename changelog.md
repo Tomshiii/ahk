@@ -24,6 +24,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - Fixed function not working on `monitor 4`
 - Will now work even if firefox wasn't already the active window
 - Will now check the tab for fullscreen instead of the active window
+- Now has more sophisticated code to try and ensure it only grabs a tab
 
 # > checklist.ahk
 - Can now manually input minutes to +/- in addition to the preset 10
