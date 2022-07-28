@@ -8,12 +8,13 @@ SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still it for
 SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it for macros)
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
+A_MaxHotkeysPerInterval := 400 ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
 TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.3
+;\\v2.16.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.1
 
