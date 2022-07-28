@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.2.1"
+version := "v2.2.2"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -193,15 +193,18 @@ stop(*) {
 minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent return functions
 {
     forFile := Round(ElapsedTime / 3600, 3)
+    word := ""
     IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
     global initialRead := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     if sign = "-"
         {
+            word := "removed"
             funcMinutes := ((List.Text * 60) + 1)
             newValue := initialRead - funcMinutes
         }
     else
         {
+            word := "added"
             funcMinutes := ((List.Text * 60) - 1)
             newValue := initialRead + funcMinutes
         }
@@ -218,7 +221,7 @@ minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent re
     global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
-    FileAppend("\\ The timer was stopped and " List.Text "min removed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- seconds after stopping = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    FileAppend("\\ The timer was stopped and " List.Text "min " word " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- seconds after stopping = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
 }
 minusFive(*) {
     minusOrAdd("-")

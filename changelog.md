@@ -38,6 +38,7 @@ This release is centered around fixing old sloppy practices that have just been 
         - Will show the hours you started at for each day at the top of the group
     - Replaced all wording of `frames` and replaced with `seconds`. Video editor brain let that one slip through the cracks for a bit too long
     - Replaced wording `application` with `checklist`
+    - Fixed the `-sub` & `+add` buttons both using the word `removed` in the logs
 
 `replaceChecklist.ahk`
 - Now checks the user's in use version of `checklist.ahk`, compares it to the version in the main script directory and only replaces it if the main version is newer
