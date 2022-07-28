@@ -13,9 +13,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.2
+;\\v2.16.3
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.8
+;\\v2.8.1
 
 ; ============================================================================================================================================
 ;
@@ -339,7 +339,7 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			toolCust("Couldn't copy data to clipboard", "1000")
-			errorLog(A_ThisHotkey, "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
 	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
@@ -472,7 +472,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 					WinActivate(title) ;reactivates the original window
 				} catch as e {
 					toolCust("Failed to get information on last active window", "1000")
-					errorLog(A_ThisHotkey, "Failed to get information on last active window", A_LineFile, A_LineNumber)
+					errorLog(A_ThisHotkey "::", "Failed to get information on last active window", A_LineFile, A_LineNumber)
 				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 				return
@@ -602,7 +602,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
     } catch as e {
         toolCust("Couldn't find the ClassNN value", "1000")
-        errorLog(A_ThisHotkey, "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
+        errorLog(A_ThisHotkey "::", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
 	;MouseMove 34, 917 ;location of the selection tool
 	if width = 0 || height = 0
@@ -616,7 +616,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 					{
 						SendInput(selectionPrem)
 						toolCust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", "2000")
-						errorLog(A_ThisHotkey, "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
+						errorLog(A_ThisHotkey "::", "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 						return
 					}
 				sleep 100
@@ -640,7 +640,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			{
 				SendInput(selectionPrem)
 				toolFind("selection tool`nUsed the selection hotkey instead", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-				errorLog(A_ThisHotkey, "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
+				errorLog(A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 				return
 			}
 	}
@@ -683,14 +683,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			if A_Index > 5
 				{
 					;toolCust("Function failed to find project window", "1000")
-					;errorLog(A_ThisHotkey, "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
+					;errorLog(A_ThisHotkey "::", "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 					break
 				}
 		}
 	} catch as e
 		{
 			toolCust("Function failed to find project window", "1000")
-			errorLog(A_ThisHotkey, "Function failed to find project window", A_LineFile, A_LineNumber)
+			errorLog(A_ThisHotkey "::", "Function failed to find project window", A_LineFile, A_LineNumber)
 			return
 		}
 	;MsgBox("x " toolx "`ny " tooly "`nwidth " width "`nheight " height "`nclass " ClassNN) ;debugging
@@ -709,7 +709,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 					{
 						blockOff()
 						toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
-						errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineFile, A_LineNumber)
+						errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
 						return
 						;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
 					}
@@ -717,7 +717,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	} catch as e {
 		blockOff()
 		toolCust("Couldn't find the project window", "1000")
-		errorLog(A_ThisHotkey, "Couldn't find the project window", A_LineFile, A_LineNumber)
+		errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
 		return
 	}
 	move:
@@ -777,7 +777,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff
 			toolFind("the sfx folder", "2000")
-			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
+			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
 			return
 		}
 	added:
@@ -799,7 +799,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			blockOff()
 			toolFind("the sfx folder in premiere", "2000")
-			errorLog(A_ThisHotkey, "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
+			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
 			return
 		}
 	loop {
@@ -816,7 +816,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			{
 				blockOff()
 				toolFind("the bin", "2000")
-				errorLog(A_ThisHotkey, "Couldn't find the bin", A_LineFile, A_LineNumber)
+				errorLog(A_ThisHotkey "::", "Couldn't find the bin", A_LineFile, A_LineNumber)
 				return
 			}
 	}
@@ -898,7 +898,7 @@ RButton::moveWin("") ;minimise
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			toolCust("Couldn't copy data to clipboard", "1000")
-			errorLog(A_ThisHotkey, "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
 	Run "https://www.google.com/search?d&q=" A_Clipboard
@@ -914,7 +914,7 @@ SC03A & c:: ;capitilises highlighted text
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			toolCust("Couldn't copy data to clipboard", "1000")
-			errorLog(A_ThisHotkey, "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
 	SendInput("{BackSpace}")
@@ -933,7 +933,7 @@ SC03A & v:: ;lowercases highlighted text
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			toolCust("Couldn't copy data to clipboard", "1000")
-			errorLog(A_ThisHotkey, "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
 	SendInput("{BackSpace}")

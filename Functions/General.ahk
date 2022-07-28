@@ -760,7 +760,7 @@ timeline(timeline, x1, x2, y1)
 ; ===========================================================================================================================================
 /* errorLog()
   A function designed to log errors in scripts if they occur
-  @param func just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey` if it's a hotkey
+  @param func just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey "::"` if it's a hotkey
   @param error is what text you want logged to explain the error
   @param lineFile just type `A_LineFile`
   @param lineNumber just type `A_LineNumber`
