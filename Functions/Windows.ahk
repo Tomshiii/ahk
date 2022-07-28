@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.3
+;\\v2.11.4
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -100,16 +100,20 @@ moveTab()
     MouseGetPos(&x, &y)
     if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
         goto move
-    getTitle(&title)
-    WinGetPos(&winX, &winY, &width,, title)
-    x2 := Round(winX + (width / 2), 0)
-    ;MsgBox(winx A_Space winY A_Space width A_Space title A_Space x2)
-    MouseMove(-10, 0,, "R")
-    if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
+    getTitle(&title) ;getting the window title
+    WinGetPos(&winX, &winY, &width,, title) ; getting the coords for the firefox window
+    monitor := getMouseMonitor() ;checking which monitor the mouse is within
+    if monitor != 2 && monitor != 4 ;I only want this function to fire on monitors 2 & 4
+        {
+            SendInput("{LButton Up}{RButton}")
+            blockOff()
+            return
+        }
+    if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu.png") || ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
         {
             SendInput("{Escape}")
             sleep 50
-            if ImageSearch(&urlX, &urlY, winX, winY, x2, (winY + 200), "*2 " Firefox "url.png") ;this checks to make sure the url bar isn't higlighted as it's the same colour as an active tab in firefox
+            if ImageSearch(&urlX, &urlY, winX, winY, winX + (width / 2), (winY + 200), "*2 " Firefox "url.png") ;this checks to make sure the url bar isn't higlighted as it's the same colour as an active tab in firefox
                 {
                     SendInput("{F6}")
                     sleep 50
@@ -119,36 +123,27 @@ moveTab()
             ;0x42414D is the colour of the active tab
             ;0x35343A is the colour of a non active tab when you hover over it
             ;I use firefox in dark mode
-            if PixelSearch(&colx, &coly, contX - 30, contY - 30, contX + 30, contY + 30, 0x42414D)
+            if PixelSearch(&colx, &coly, contX - 30, contY - 30, contX + 5, contY + 30, 0x42414D) ;this is checking to see if the tab you're clicked on is selected
                 MouseMove(colx, coly)
-            else
+            else ;if the tab isn't selected we will enter this else block
                 {
                     MouseGetPos(&startX, &startY)
                     loop {
-                        MouseMove(-5, 0,, "R")
+                        MouseMove(-5, 0,, "R") ;next we attempt to move the mouse over the tab to hover it and change it's colour
                         MouseGetPos(&searchX, &searchY)
-                        if PixelGetColor(searchX, searchY) = 0x35343A
-                            {
-                                SendInput("{LButton}")
-                                break
-                            }
-                        if A_Index > 4
+                        if PixelGetColor(searchX, searchY) = 0x35343A ;then we check for the hover colour
+                            break
+                        if A_Index > 4 ;then we simply run through some different possible locations for the tab
                             {
                                 MouseMove(startX - 20, startY - 10)
                                 if PixelGetColor(searchX, searchY) = 0x35343A
-                                    {
-                                        SendInput("{LButton}")
-                                        break
-                                    }
+                                    break
                             }
                         if A_Index > 5
                             {
                                 MouseMove(startX - 20, startY + 10)
                                 if PixelGetColor(searchX, searchY) = 0x35343A
-                                    {
-                                        SendInput("{LButton}")
-                                        break
-                                    }
+                                    break
                             }
                         if A_Index > 6
                             {
@@ -169,13 +164,6 @@ moveTab()
         }
     SendInput("{LButton Down}")
     move:
-    monitor := getMouseMonitor()
-    if monitor != 2 && monitor != 4
-        {
-            SendInput("{LButton Up}{RButton}")
-            blockOff()
-            return
-        }
     ;the below, blocked out code was for when I wanted tabs to cycle between monitors 1, 2 & 4 and passed a variable `forwardOrback` into the function to define a direction.
     ;I have since stopped including monitor 1 as I rarely ever want a browser window moved onto my main display
     /* if forwardOrback = "forward"
