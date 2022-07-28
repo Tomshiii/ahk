@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.3
+;\\v2.13.4
 #Include General.ahk
 
 /* preset()
@@ -294,7 +294,13 @@ zoom()
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     sleep 50
     getClassNN(&ClassNN, &classX, &classY, &width, &height)
-
+    if !IsSet(classX)
+        {
+            blockOff()
+            toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+            errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+            return
+        }
     premCheck := WinGetTitle("ahk_class Premiere Pro")
     d0yle := InStr(premCheck, "d0yle")
     if d0yle != 0
