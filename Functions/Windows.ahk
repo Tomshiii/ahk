@@ -216,7 +216,8 @@ getMouseMonitor()
 {
 	coords()
 	MouseGetPos(&x, &y)
-	loop {
+    numberofMonitors := SysGet(80)
+	loop numberofMonitors {
 		try {
 			MonitorGet(A_Index, &left, &Top, &Right, &Bottom)
 			if x > left && x < Right
