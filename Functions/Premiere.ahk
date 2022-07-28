@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.2
+;\\v2.13.3
 #Include General.ahk
 
 /* preset()
@@ -1049,12 +1049,12 @@ reset()
                 return
             }
     }
-        SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
-        SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
-        if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
-            MouseMove(xcol, ycol)
-        ;SendInput, {WheelUp 10} ;not necessary as we use imagesearch to check for the motion value
-        click
+    SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
+    ;SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
+    if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
+        MouseMove(xcol, ycol)
+    ;SendInput, {WheelUp 10} ;not necessary as we use imagesearch to check for the motion value
+    click
     MouseMove(xpos, ypos)
     blockOff()
 }
