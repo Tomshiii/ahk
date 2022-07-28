@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.1
+;\\v2.13.2
 #Include General.ahk
 
 /* preset()
@@ -283,6 +283,7 @@ zoom()
     static x := 0
     static y := 0
     static scale := 0
+    static alexTog := 0
     KeyWait(A_ThisHotkey)
     coords()
     MouseGetPos(&xpos, &ypos)
@@ -298,24 +299,38 @@ zoom()
     d0yle := InStr(premCheck, "d0yle")
     if d0yle != 0
         {
-            static x := -57
-            static y := -37
-            static scale := 210
+            x := -57
+            y := -37
+            scale := 210
         }
     alex := InStr(premCheck, "alex")
     if alex != 0
         {
-            static x := 3467
-            static y := 339
-            static scale := 390
+            if alexTog = 0
+                {
+                    x := 3467
+                    y := 339
+                    scale := 390
+                    alexTog += 1
+                    goto endPeople
+                }
+            if alexTog = 1
+                {
+                    x := 2037
+                    y := 430
+                    scale := 215
+                    alexTog -= 1
+                    goto endPeople
+                }
         }
     /* dangers := InStr(premCheck, "dangers") ;dangers is a video by video basis
     if dangers != 0
         {
-            static x := 1
-            static y := 1
-            static scale := 1
+            x := 1
+            y := 1
+            scale := 1
         } */
+    endPeople:
     if scale = 0
         {
             blockOff()
@@ -357,17 +372,17 @@ zoom()
             A_Clipboard := ""
             SendInput("^c")
             ClipWait()
-            static x := A_Clipboard
+            x := A_Clipboard
             SendInput("{Tab}")
             A_Clipboard := ""
             SendInput("^c")
             ClipWait()
-            static y := A_Clipboard
+            y := A_Clipboard
             SendInput("{Tab}")
             A_Clipboard := ""
             SendInput("^c")
             ClipWait()
-            static scale := A_Clipboard
+            scale := A_Clipboard
             blockOff()
             SendInput("{Enter}")
             toolCust("Setting up your zoom has completed", "1000")

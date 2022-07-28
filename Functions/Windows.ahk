@@ -4,7 +4,7 @@
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.10.5
+;		Windows Scripts \\ Last updated: v2.11.2
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -245,10 +245,21 @@ moveXorY() {
 				{
 					MouseMove(x,y)
 					loop {
+                        if A_TimeIdleMouse < 500
+                            ToolTip("Your mouse will now only move along the x axis")
 						MouseGetPos(&newX, &newY)
 						MouseMove(newX, y)
 						if not GetKeyState("XButton2", "P")
-							return
+							{
+                                ToolTip("")
+                                return
+                            }
+                        if A_TimeIdleMouse > 500
+                            {
+                                MouseGetPos(&newX, &newY)
+                                if newY = y
+                                    ToolTip("Your mouse will now only move along the x axis`nYou are currently level on y axis")
+                            }
 					}
 				}
 		}
@@ -256,11 +267,23 @@ moveXorY() {
 		{
 			if GetKeyState("XButton1", "P") ;move on Y axis
 				{
+                    MouseMove(x,y)
 					loop {
+                        if A_TimeIdleMouse < 500
+                            ToolTip("Your mouse will now only move along the y axis")
 						MouseGetPos(&newX, &newY)
 						MouseMove(x, newY)
 						if not GetKeyState("XButton1", "P")
-							return
+							{
+                                ToolTip("")
+                                return
+                            }
+                        if A_TimeIdleMouse > 500
+                            {
+                                MouseGetPos(&newX, &newY)
+                                if newX = x
+                                    ToolTip("Your mouse will now only move along the y axis`nYou are currently level on x axis")
+                            }
 					}
 				}
 		}

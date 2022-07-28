@@ -12,6 +12,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - `updateChecker()` now shows `TrayTip`'s to alert the user that it's downloading the latest release & backing up their scripts
 - Added `getFirstHotkey()` to grab the first hotkey when two are required
 - Added `moveXorY()` to easily move the mouse along one axis. This method isn't anything special but useful when you need a quick and dirty way to move along one axis
+- `zoom()` will toggle between two options when working on an `Alex` project
 
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
