@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.4
+;\\v2.13.5
 #Include General.ahk
 
 /* preset()
@@ -15,7 +15,15 @@ preset(item)
     MouseGetPos(&xpos, &ypos)
     SendInput(effectControls) ;highlights the effect controls panel
     SendInput(effectControls) ;premiere is dumb, focus things twice
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
         {
             sleep 100
@@ -231,7 +239,15 @@ num(xval, yval, scale)
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -293,14 +309,15 @@ zoom()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     sleep 50
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
-    if !IsSet(classX)
-        {
-            blockOff()
-            toolCust("Couldn't get the ClassNN of the desired panel", "1000")
-            errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
-            return
-        }
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     premCheck := WinGetTitle("ahk_class Premiere Pro")
     d0yle := InStr(premCheck, "d0yle")
     if d0yle != 0
@@ -424,7 +441,15 @@ valuehold(filepath, optional)
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
@@ -550,7 +575,15 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -592,7 +625,15 @@ keyframe(filepath)
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -1029,7 +1070,15 @@ reset()
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     SendInput(timelineWindow) ;focuses the timeline
     if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -1117,7 +1166,15 @@ manInput(property, optional)
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     SendInput(timelineWindow)
     if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -1191,7 +1248,15 @@ gain(amount)
                     blockOff()
                     return
                 }
-            getClassNN(&ClassNN, &classX, &classY, &width, &height)
+            try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
             if ClassNN != "DroverLord - Window Class3" || ClassNN != "DroverLord - Window Class1"
                 break
             sleep 30
@@ -1246,7 +1311,15 @@ gainSecondary(keyend)
     waitKey := getSecondHotkey()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-    getClassNN(&ClassNN, &classX, &classY, &width, &height)
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        blockOff() ;just incase
+        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+        return
+    }
     SendInput(timelineWindow)
     if ImageSearch(&x3, &y3, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
         {
@@ -1348,7 +1421,7 @@ openChecklist()
 /*
  This function gets the classNN value and subsequent variables from the active window class.
  */
-getClassNN(&ClassNN, &classX, &classY, &width, &height)
+/* getClassNN(&ClassNN, &classX, &classY, &width, &height) ;removed use of this function as if it fails to grab classNN values and errors out, the function that calls this one won't know and will continue on as if it's values got passed back
 {
     try {
         ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
@@ -1359,7 +1432,7 @@ getClassNN(&ClassNN, &classX, &classY, &width, &height)
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
-}
+} */
 ; ===========================================================================================================================================
 ; Old
 ; ===========================================================================================================================================

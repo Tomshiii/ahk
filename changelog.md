@@ -14,6 +14,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - Added `moveXorY()` to easily move the mouse along one axis. This method isn't anything special but useful when you need a quick and dirty way to move along one axis
 - `zoom()` will toggle between two options when working on an `Alex` project
 `reset()` will no longer reset the track colour
+- Removed use of `getClassNN()`. If it failed to grab `classNN` values it would simply pass back unset variables and cause errors
 
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
