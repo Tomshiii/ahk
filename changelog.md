@@ -17,6 +17,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - `reset()` will no longer reset the track colour
 - Removed use of `getClassNN()`. If it failed to grab `classNN` values it would simply pass back unset variables and cause errors
 - `getMouseMonitor()` will now only loop as many times as you have monitors
+- `audioDrag()` will now check `A_PriorKey` and if it's a digit, assign that to the track number you wish to move the `bleep` sfx to, instead of checking the state of each individual digit
 
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.6
+;\\v2.13.7
 #Include General.ahk
 
 /* preset()
@@ -758,7 +758,7 @@ audioDrag(sfxName)
             if sfxName = "bleep"
                 {
                     skip := 0
-                    trackNumber:= 2
+                    trackNumber := 2
                     sleep 100
                     SendInput(cutPrem)
                     ToolTip(A_ThisFunc " is waiting for you to cut the bleep sfx`nPress c again if you do not wish for this funtion to drag the cut to Track 1")
@@ -766,24 +766,9 @@ audioDrag(sfxName)
                         if GetKeyState("c", "P")
                             skip := 1
                         ;check to see if the user wants the bleep on a track between 1-9
-                        if GetKeyState("1", "P")
-                            trackNumber := "1"
-                        if GetKeyState("2", "P")
-                            trackNumber := "2"
-                        if GetKeyState("3", "P")
-                            trackNumber := "3"
-                        if GetKeyState("4", "P")
-                            trackNumber := "4"
-                        if GetKeyState("5", "P")
-                            trackNumber := "5"
-                        if GetKeyState("6", "P")
-                            trackNumber := "6"
-                        if GetKeyState("7", "P")
-                            trackNumber := "7"
-                        if GetKeyState("8", "P")
-                            trackNumber := "8"
-                        if GetKeyState("9", "P")
-                            trackNumber := "9"
+                        getlastHotkey := A_PriorKey
+                        if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
+                            trackNumber := getlastHotkey
                         if GetKeyState("LButton", "P") ;checking for the user cutting the bleep sfx
                             break
                         sleep 50
