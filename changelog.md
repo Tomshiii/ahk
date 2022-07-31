@@ -1,17 +1,17 @@
-# <> Release 2.4.2.x -
-This release is centered around fixing old sloppy practices that have just been left in the code because `if it aint broke, don't fix it`
-- Changed all leftover uses of redundant `else if`'s to proper uses of `||` (Mostly a lot of `ImageSearch`'s that were stacked below each other)
-- Removed all instances of `%&variableX%` and replaced with `variableX` as the additional syntaxing isn't neccesary
+# <> Release 2.4.3 -
+This release is centered around fixing old sloppy practices that have just been left in the code because, *"if it aint broke, don't fix it"*
+- Changed all leftover uses of redundant `else if`'s to proper uses of `||` (Mostly a lot of `ImageSearch`'s that were stacked below each other). This helps cleanup repeated code blocks as well as making instances with more than 2 `||`'s more easily readable
+- Removed all instances of `%&variableX%` and replaced with `variableX` as the additional syntaxing isn't neccesary for what my scripts do
 
 # > My Scripts
-- Added `^+t::` to type out `YYYY_MM_DD`
-- All instances of `ClipWait` now have code to fallback on if no data is ever fed to the clipboard
+- Added `^+t::` to type out `YYYY-MM-DD`
+- All instances of `ClipWait` now have code to fallback on if no data is ever fed to the clipboard.
 - Moved discord `F1:: & F2::` code to `discUnread()` to cut repeat code
 - Added `A_MaxHotkeysPerInterval := 400` so spamming my unclicked scroll wheel stops creating an error
 
 # > Functions
 - `updateChecker()` now shows `TrayTip`'s to alert the user that it's downloading the latest release & backing up their scripts
-- Added `getFirstHotkey()` to grab the first hotkey when two are required
+- Replaced `getSecondHotkey()` with `getHotkeys()` to grab both the first and second hotkeys when two are required for activation
 - Added `moveXorY()` to easily move the mouse along one axis. This method isn't anything special but useful when you need a quick and dirty way to move along one axis
 - `zoom()` will toggle between two options when working on an `Alex` project
 - `reset()` will no longer reset the track colour
@@ -48,8 +48,8 @@ This release is centered around fixing old sloppy practices that have just been 
 - Will now prompt the user to select their desired search folder if it doesn't exist and will then permanently overwrite its value
 
 # > Other Changes
-- Changed all instances of `errorLog()` initiated via a hotkey to output : `A_Hotkey "::"` instead of just the hotkey
+- Changed all instances of `errorLog()` initiated via a hotkey to output : `A_Hotkey "::"` instead of just `A_Hotkey`
 
 `right click premiere.ahk`
 - Will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring
-    - Will also swap back to the selection tool
+- Will now always attempt to swap back to the selection tool incase the user has another tool selected

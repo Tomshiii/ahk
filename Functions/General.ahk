@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.14.2
+;\\v2.14.3
 
 ; =======================================================================================================================================
 ;
@@ -805,29 +805,18 @@ errorLog(func, error, lineFile, lineNumber)
 
 ; ===========================================================================================================================================
 ;
-;		Other \\ Last updated: v2.14.2
+;		Other \\ Last updated: v2.14.3
 ;
 ; ===========================================================================================================================================
-/* getFirstHotkey()
-This function will return the name of the first hotkey pressed when two are required for a macro to fire
+/* getHotkeys()
+This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire.
 */
-getFirstHotkey()
+getHotkeys(&first, &second)
 {
    getHotkey := A_ThisHotkey
    length := StrLen(getHotkey)
-   andValue := InStr(getHotkey, "&")
-   firstHotkey := SubStr(getHotkey, 1, length - (length - andValue) - 2)
-   return firstHotkey
-}
-
-/* getSecondHotkey()
-This function will return the name of the second hotkey pressed when two are required for a macro to fire
-*/
-getSecondHotkey()
-{
-   getHotkey := A_ThisHotkey
-   length := StrLen(getHotkey)
-   andValue := InStr(getHotkey, "&")
-   secondHotkey := SubStr(getHotkey, andValue + 2, length - andValue + 2)
-   return secondHotkey
+   andValue := InStr(getHotkey, "&",, 1, 1)
+   first := SubStr(getHotkey, 1, length - (length - andValue) - 2)
+   second := SubStr(getHotkey, andValue + 2, length - andValue + 2)
+   return
 }

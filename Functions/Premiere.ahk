@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.5
+;\\v2.13.6
 #Include General.ahk
 
 /* preset()
@@ -1160,7 +1160,7 @@ hotkeyReactivate()
  */
 manInput(property, optional)
 {
-    waitHotkey := getSecondHotkey()
+    getHotkeys(&first, &waitHotkey)
     MouseGetPos(&xpos, &ypos)
     coords()
     blockOn()
@@ -1308,7 +1308,7 @@ gain(amount)
  */
 gainSecondary(keyend)
 {
-    waitKey := getSecondHotkey()
+    getHotkeys(&first, &waitKey)
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     try {

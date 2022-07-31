@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.4
+;\\v2.11.5
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.11.2
+;		Windows Scripts \\ Last updated: v2.11.5
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -98,8 +98,6 @@ moveTab()
         }
     coords()
     MouseGetPos(&x, &y)
-    if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
-        goto move
     getTitle(&title) ;getting the window title
     WinGetPos(&winX, &winY, &width,, title) ; getting the coords for the firefox window
     monitor := getMouseMonitor() ;checking which monitor the mouse is within
@@ -109,6 +107,8 @@ moveTab()
             blockOff()
             return
         }
+    if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
+        goto move
     if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu.png") || ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
         {
             SendInput("{Escape}")
@@ -285,8 +285,7 @@ isFullscreen(&title, &full, window := false)
  This function has specific code for XButton1/2 and must be activated with 2 hotkeys
  */
 moveXorY() {
-    fr := getFirstHotkey()
-	sc := getSecondHotkey()
+    getHotkeys(&fr, &sc)
 	MouseGetPos(&x, &y)
 	start:
 	if sc = "XButton2"
@@ -308,7 +307,7 @@ moveXorY() {
                             {
                                 MouseGetPos(&newX, &newY)
                                 if newY = y
-                                    ToolTip("Your mouse will now only move along the x axis`nYou are currently level on y axis")
+                                    ToolTip("Your mouse will now only move along the x axis`nYou are currently level on the y axis")
                             }
 					}
 				}
@@ -332,7 +331,7 @@ moveXorY() {
                             {
                                 MouseGetPos(&newX, &newY)
                                 if newX = x
-                                    ToolTip("Your mouse will now only move along the y axis`nYou are currently level on x axis")
+                                    ToolTip("Your mouse will now only move along the y axis`nYou are currently level on the x axis")
                             }
 					}
 				}
