@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.5
+;\\v2.11.6
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.11.5
+;		Windows Scripts \\ Last updated: v2.11.6
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -181,21 +181,12 @@ moveTab()
             if monitor = 1
                 monitor += 4
             monitor -= 1
-        } */
-    ;as a result, I've simply changed the code to this instead. From here to `end:`
-    if monitor = 2
-        {
-            monitor := 4
-            goto end
         }
-    if monitor = 4
-        monitor := 2
-    end:
-    /* if monitor = 1
+    if monitor = 1
         MouseMove(2378, 25, 3) */
-    if monitor = 2
-        MouseMove(4288, -911, 3)
     if monitor = 4
+        MouseMove(4288, -911, 3) ;if the mouse is within monitor 4, it will move it to monitor 2
+    if monitor = 2 ;if the mouse is within monitor 2, it will move it to monitor 4
         MouseMove(4288, 164, 3)
     blockOff()
     SetTimer(isfull, -1500)
