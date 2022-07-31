@@ -1,4 +1,4 @@
-# <> Release 2.4.3 -
+# <> Release 2.4.3 - Cleanup & Stability
 This release is centered around fixing old sloppy practices that have just been left in the code because, *"if it aint broke, don't fix it"*
 - Changed all leftover uses of redundant `else if`'s to proper uses of `||` (Mostly a lot of `ImageSearch`'s that were stacked below each other). This helps cleanup repeated code blocks as well as making instances with more than 2 `||`'s more easily readable
 - Removed all instances of `%&variableX%` and replaced with `variableX` as the additional syntaxing isn't neccesary for what my scripts do
@@ -18,6 +18,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - Removed use of `getClassNN()`. If it failed to grab `classNN` values it would simply pass back unset variables and cause errors
 - `getMouseMonitor()` will now only loop as many times as you have monitors
 - `audioDrag()` will now check `A_PriorKey` and if it's a digit, assign that to the track number you wish to move the `bleep` sfx to, instead of checking the state of each individual digit
+- Removed `toolFind()` and simply added a varibale to `toolCust()` to determine if you want that message at the beginning of the tooltip
 
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)

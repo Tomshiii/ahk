@@ -7,7 +7,7 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
-;\\v2.14.3
+;\\v2.15
 
 ; =======================================================================================================================================
 ;
@@ -583,32 +583,21 @@ coordc()
  
 ; ===========================================================================================================================================
 ;
-;		Tooltip \\ Last updated: v2.10.5
+;		Tooltip \\ Last updated: v2.15
 ;
 ; ===========================================================================================================================================
- 
-/* toolFind()
-  create a tooltip for errors trying when to find things
-  * @param message is what you want the tooltip to say after "couldn't find"
-  * @param timeout is how many ms you want the tooltip to last
-  */
-toolFind(message, timeout)
-{
-    ToolTip("Couldn't find " message)
-    SetTimer(timeouttime, - timeout)
-    timeouttime()
-    {
-        ToolTip("")
-    }
-}
- 
 /* toolCust()
   create a tooltip with any message
-  * @param message is what you want the tooltip to say
-  * @param timeout is how many ms you want the tooltip to last
+  @param message is what you want the tooltip to say
+  @param timeout is how many ms you want the tooltip to last
+  @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
   */
-toolCust(message, timeout)
+toolCust(message, timeout, find := "")
 {
+	if find != 1
+		messageFind := ""
+	else
+		messageFind := "Couldn't find " 
     ToolTip(message)
     SetTimer(timeouttime, - timeout)
     timeouttime()
@@ -810,6 +799,8 @@ errorLog(func, error, lineFile, lineNumber)
 ; ===========================================================================================================================================
 /* getHotkeys()
 This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire.
+@param first is the variable that will be filled with the first activation hotkey. Must be written as `&var`
+@param second is the variable that will be filled with the second activation hotkey. Must be written as `&var`
 */
 getHotkeys(&first, &second)
 {

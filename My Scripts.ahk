@@ -640,7 +640,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		if A_Index > 3
 			{
 				SendInput(selectionPrem)
-				toolFind("selection tool`nUsed the selection hotkey instead", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+				toolCust("selection tool`nUsed the selection hotkey instead", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
 				errorLog(A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 				return
 			}
@@ -709,7 +709,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				else
 					{
 						blockOff()
-						toolFind("project window", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+						toolCust("project window", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
 						errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
 						return
 						;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
@@ -777,7 +777,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	else
 		{
 			blockOff
-			toolFind("the sfx folder", "2000")
+			toolCust("the sfx folder", "2000", 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
 			return
 		}
@@ -799,7 +799,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	else
 		{
 			blockOff()
-			toolFind("the sfx folder in premiere", "2000")
+			toolCust("the sfx folder in premiere", "2000", 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
 			return
 		}
@@ -816,7 +816,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		if A_Index > 5
 			{
 				blockOff()
-				toolFind("the bin", "2000")
+				toolCust("the bin", "2000", 1)
 				errorLog(A_ThisHotkey "::", "Couldn't find the bin", A_LineFile, A_LineNumber)
 				return
 			}

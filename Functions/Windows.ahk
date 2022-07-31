@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.7
+;\\v2.12
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -394,7 +394,7 @@ disc(button)
                 ToolTip("")
                 MouseMove(x, y) ;moves the mouse back to the original coords
                 blockOff()
-                toolFind("the requested button after " A_Index " attempts", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+                toolCust("the requested button after " A_Index " attempts", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(A_ThisFunc "()", "Was unable to find the requested button", A_LineFile, A_LineNumber)
                 return
             }
@@ -418,7 +418,7 @@ disc(button)
                             ;ToolTip(A_Index)
                             if A_Index > 10
                                 {
-                                    toolFind("the @ ping button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                                    toolCust("the @ ping button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
                                     errorLog(A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineFile, A_LineNumber)
                                     break
                                 }
@@ -546,7 +546,7 @@ discUnread(which)
 		}
 	else
 		{
-			toolFind("any unread servers", "1000")
+			toolCust("any unread servers", "1000", 1)
 		}
 }
 
@@ -586,7 +586,7 @@ vscode(script)
         }
     else
         {
-            toolFind("the collapse folders button", "1000")
+            toolCust("the collapse folders button", "1000", 1)
             errorLog(A_ThisFunc "()", "Couldn't find the `collapse folders` button", A_LineFile, A_LineNumber)
             blockOff()
             return

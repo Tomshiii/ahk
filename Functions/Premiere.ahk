@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.7
+;\\v2.14
 #Include General.ahk
 
 /* preset()
@@ -42,7 +42,7 @@ preset(item)
                     else
                         {
                             blockOff()
-                            toolFind("the eye icon", "1000")
+                            toolCust("the eye icon", "1000", 1)
                             errorLog(A_ThisFunc "()", "Couldn't find the eye icon", A_LineFile, A_LineNumber)
                             return
                         }
@@ -50,7 +50,7 @@ preset(item)
             else
                 {
                     blockOff()
-                    toolFind("the graphics tab", "1000")
+                    toolCust("the graphics tab", "1000", 1)
                     errorLog(A_ThisFunc "()", "Couldn't find the graphics tab", A_LineFile, A_LineNumber)
                     return
                 }
@@ -269,7 +269,7 @@ num(xval, yval, scale)
         {
             MouseMove(xpos, ypos)
             blockOff()
-            toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the video section", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
             return
         }
@@ -280,7 +280,7 @@ num(xval, yval, scale)
         {
             MouseMove(xpos, ypos) ;moves back to the original coords
             blockOff()
-            toolFind("the motion tab", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the motion tab", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the motion tab", A_LineFile, A_LineNumber)
             return
         }
@@ -380,7 +380,7 @@ zoom()
         {
             MouseMove(xpos, ypos)
             blockOff()
-            toolFind("the video section", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the video section", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
             return
         }
@@ -503,7 +503,7 @@ valuehold(filepath, optional)
         if A_Index > 3
             {
                 blockOff()
-                toolFind("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
+                toolCust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, "5000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
@@ -517,7 +517,7 @@ valuehold(filepath, optional)
     else
         {
             blockOff()
-            toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
             KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
             MouseMove(xpos, ypos)
@@ -554,7 +554,7 @@ valuehold(filepath, optional)
                         }
                     MouseMove(xpos, ypos)
                     blockOff()
-                    toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                    toolCust("the reset button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Failed to find reset button", A_LineFile, A_LineNumber)
                     return
                 }
@@ -729,7 +729,7 @@ audioDrag(sfxName)
                 else
                     {
                         blockOff()
-                        toolFind("audio image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+                        toolCust("audio image", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
                         errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineFile, A_LineNumber)
                         coords()
                         MouseMove(xpos, ypos)
@@ -887,7 +887,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
     else ;if everything fails, this else will trigger
         {
             blockOff()
-            toolFind("sfx folder", "1000")
+            toolCust("sfx folder", "1000", 1)
             MouseMove(xpos, ypos)
             return
         }
@@ -905,7 +905,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
     else
         {
             blockOff()
-            toolFind("vlc image", "2000") ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("vlc image", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
             MouseMove(xpos, ypos)
             return
         }
@@ -985,7 +985,7 @@ movepreview()
         if A_Index > 3
             {
                 blockOff()
-                toolFind("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, "5000") ;useful tooltip to help you debug when it can't find what it's looking for
+                toolCust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, "5000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
@@ -1033,7 +1033,7 @@ movepreview()
                 {
                     blockOff()
                     MouseMove(xpos, ypos)
-                    toolFind("the reset button", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+                    toolCust("the reset button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Couldn't find the reset button", A_LineFile, A_LineNumber)
                     return
                 }
@@ -1084,7 +1084,7 @@ reset()
         else
             {
                 blockOff()
-                toolFind("the motion value", "1000")
+                toolCust("the motion value", "1000", 1)
                 errorLog(A_ThisFunc "()", "Couldn't find the motion image", A_LineFile, A_LineNumber)
                 return
             }
@@ -1183,7 +1183,7 @@ manInput(property, optional)
     else ;if everything fails, this else will trigger
         {
             blockOff()
-            toolFind("the property you wish to adjust", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the property you wish to adjust", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the users requested property", A_LineFile, A_LineNumber)
             return
         }
@@ -1193,7 +1193,7 @@ manInput(property, optional)
     else
         {
             blockOff()
-            toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
             return
         }

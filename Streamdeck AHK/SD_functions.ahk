@@ -69,35 +69,25 @@ blockOff()
 	BlockInput "off"
 }
 
-/* toolFind()
- create a tooltip for errors finding things
- * @param message is what you want the tooltip to say after "couldn't find"
- * @param timeout is how many ms you want the tooltip to last
- */
-toolFind(message, timeout)
-{
-	ToolTip("couldn't find " message)
-	SetTimer(timeouttime, - timeout)
-	timeouttime()
-	{
-		ToolTip("")
-	}
-}
- 
 /* toolCust()
   create a tooltip with any message
-  * @param message is what you want the tooltip to say
-  * @param timeout is how many ms you want the tooltip to last
+  @param message is what you want the tooltip to say
+  @param timeout is how many ms you want the tooltip to last
+  @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
   */
-toolCust(message, timeout)
-{
-	ToolTip(message)
-	SetTimer(timeouttime, - timeout)
-	timeouttime()
-	{
-		ToolTip("")
-	}
-}
+  toolCust(message, timeout, find := "")
+  {
+	  if find != 1
+		  messageFind := ""
+	  else
+		  messageFind := "Couldn't find " 
+	  ToolTip(message)
+	  SetTimer(timeouttime, - timeout)
+	  timeouttime()
+	  {
+		  ToolTip("")
+	  }
+  }
 
 /*
  This function opens up the speed menu and sets the clips speed to whatever is set
@@ -142,7 +132,7 @@ scale(amount)
 			else
 				{
 					blockOff()
-					toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}			
 		}
@@ -155,14 +145,14 @@ scale(amount)
 					else
 						{
 							blockOff()
-							toolFind("the blue text", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+							toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
 							return
 						}			
 				}
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
-					toolFind("scale", "1000") ;useful tooltip to help you debug when it can't find what it's looking for
+					toolCust("scale", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}		
 		}

@@ -170,7 +170,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 pauseautosave()
                 pausewindowmax()
                 blockOff()
-                toolFind("the new project button", "1000")
+                toolCust("the new project button", "1000", 1)
                 return
             }
     }

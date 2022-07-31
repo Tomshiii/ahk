@@ -255,7 +255,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 	else
 		{
 			blockOff()
-			toolFind("the margin button", "1000")
+			toolCust("the margin button", "1000", 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the margin button", A_LineFile, A_LineNumber)
 		}
 }
