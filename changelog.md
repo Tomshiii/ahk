@@ -27,6 +27,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - Will now work even if firefox wasn't already the active window
 - Will now check the tab for fullscreen instead of the active window
 - Now has more sophisticated code to try and ensure it only grabs a tab
+- No longer requires the user to `LButton` to finish the function as it will check for 2s if the user has released the `RButton`
 
 # > checklist.ahk
 - Can now manually input minutes to +/- in addition to the preset 10

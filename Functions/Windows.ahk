@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.6
+;\\v2.11.7
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -87,7 +87,7 @@ moveWin(key)
         }
 }
 /* moveTab()
- This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4. This function requires you to press LButton when you have arrived at the window you wish to drop the tab
+ This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4. This function will check for 2s if you have released the RButton, if you have, it will drop the tab and finish, if you haven't it will be up to the user to press the LButton when you're done moving the tab. This function has hardcoded checks for `XButton1` & `XButton2` and is activated by having the activation hotkey as just one of those two, but then right clicking on a tab and pressing one of those two
  */
 moveTab()
 {
@@ -96,6 +96,7 @@ moveTab()
             SendInput("{" A_ThisHotkey "}")
             return
         }
+    start:
     coords()
     MouseGetPos(&x, &y)
     getTitle(&title) ;getting the window title
@@ -189,6 +190,23 @@ moveTab()
     if monitor = 2 ;if the mouse is within monitor 2, it will move it to monitor 4
         MouseMove(4288, 164, 3)
     blockOff()
+    thisHotkey := A_ThisHotkey ;determining which XButton the user is currently using to activate the function
+    if thisHotkey = "XButton1"
+        otherHotkey := "XButton2" ;so that we can then assign the other XButton to a variable
+    else
+        otherHotkey := "XButton1"
+    loop 40 { ;this loop will check for 2s if the user has released the RButton, if they have, it will drop the tab and finish the function
+        if not GetKeyState("RButton", "P")
+            {
+                SendInput("{LButton Up}")
+                break
+            }
+        if GetKeyState(A_ThisHotkey, "P") ;these two getkeystates are to allow the user to reactivate the function without waiting the 2s
+            goto start
+        if GetKeyState(otherHotkey, "P")
+            goto start
+        sleep 50
+    }
     SetTimer(isfull, -1500)
     isfull() {
         try {
