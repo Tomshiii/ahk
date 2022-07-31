@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.1
+;\\v2.8.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.4.2.1
@@ -133,7 +133,7 @@ dele() ;this is here so manInput() can work, you can just ignore this
 
 ;; You should DEFINITELY not be trying to add a 2nd keyboard unless you're already
 ;; familiar with how AutoHotkey works. I recommend that you at least take this tutorial:
-;; https://autohotkey.com/docs/Tutorial.htm
+;; https://lexikos.github.io/v2/docs/Tutorial.htm
 
 ;; The point of these is that THE TOOLTIPS ARE MERELY PLACEHOLDERS. When you add a function of your own, you should delete or comment out the tooltip.
 
@@ -503,40 +503,31 @@ t::unassigned()
 g::unassigned()
 b:: ;this macro is to find the difference between 2 24h timecodes
 {
-	start1:
-	time1 := InputBox("Write the Start hhmm time here`nDon't use ':'", "Input Start Time", "w200 h110")
-	if time1.Result = "Cancel"
-		return
-	Length1 := StrLen(time1.Value)
-	if Length1 != "4"
-		{
-			MsgBox("You didn't write in hhmm format`nTry again", "Start Time", "16")
-			goto start1
-		}
-	if time1.Value > 2359
-		{
-			MsgBox("You didn't write in hhmm format`nTry again", "Start Time", "16")
-			goto start1
-		}
-	start2:
-	time2 := InputBox("Write the End hhmm time here`nDon't use ':'", "Input End Time", "w200 h110")
-	if time2.Result = "Cancel"
-		return
-	Length2 := StrLen(time2.Value)
-	if Length2 != "4"
-		{
-			MsgBox("You didn't write in hhmm format`nTry again", "End Time", "16")
-			goto start2
-		}
-	if time2.Value > 2359
-		{
-			MsgBox("You didn't write in hhmm format`nTry again", "End Time", "16")
-			goto start2
-		}
-	diff := DateDiff("20220101" time2.Value, "20220101" time1.Value, "seconds")/"3600"
-	value := Round(diff, 2)
-	A_Clipboard := value
-	toolCust(diff "`nor " value, "2000")
+	calculateTime(number) ;first we create a function that will return the results the user inputs
+	{
+		if number = 1
+			startorend := "Start"
+		else
+			startorend := "End"
+		start1:
+		time := InputBox("Write the " startorend " hhmm time here`nDon't use ':'", "Input " startorend " Time", "w200 h110")
+		if time.Result = "Cancel"
+			return
+		Length1 := StrLen(time.Value)
+		if Length1 != "4" || time.Value > 2359
+			{
+				MsgBox("You didn't write in hhmm format`nTry again", startorend " Time", "16")
+				goto start1
+			}
+		else
+			return time.Value
+	}
+	time1 := calculateTime("1") ;then we call it twice
+	time2 := calculateTime("2")
+	diff := DateDiff("20220101" time2, "20220101" time1, "seconds")/"3600" ;do the math to determine the time difference
+	value := Round(diff, 2) ;round the result to 2dp
+	A_Clipboard := value ;copy it to the clipboard
+	toolCust(diff "`nor " value, "2000") ;and create a tooltip to show the user both the complete answer and the rounded answer
 }
 
 r::unassigned()

@@ -51,6 +51,7 @@ This release is centered around fixing old sloppy practices that have just been 
 
 # > Other Changes
 - Changed all instances of `errorLog()` initiated via a hotkey to output : `A_Hotkey "::"` instead of just `A_Hotkey`
+- Reduced repeat code in `b::` (`QMK Keyboard`)
 
 `right click premiere.ahk`
 - Will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring
