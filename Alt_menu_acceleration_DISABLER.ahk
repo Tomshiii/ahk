@@ -148,16 +148,16 @@ A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
 
 ~LAlt::
 {
-Sendinput "{Blind}{sc0E9}"
-KeyWait "LAlt" ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
-Sendinput "{Blind}{sc0EA}"
+	Sendinput("{Blind}{sc0E9}")
+	KeyWait("LAlt") ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
+	Sendinput("{Blind}{sc0EA}")
 }
 
 ~RAlt::
 {
-Sendinput "{Blind}{sc0E9}"
-KeyWait "RAlt" ; so that it doesn't keep spamming SC0E9
-Sendinput "{Blind}{sc0EA}"
+	Sendinput("{Blind}{sc0E9}")
+	KeyWait("RAlt") ; so that it doesn't keep spamming SC0E9
+	Sendinput("{Blind}{sc0EA}")
 }
 ;this was VK07, but i want to be able to distinguish between this, and menu masking, seperately, in my debugging.
 
@@ -166,9 +166,9 @@ Sendinput "{Blind}{sc0EA}"
 #HotIf WinActive("ahk_exe firefox.exe") 
 F10::
 {
-Sendinput "{Blind}{sc0E9}"
-KeyWait "F10" ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
-Sendinput "{Blind}{sc0EA}"
+	Sendinput("{Blind}{sc0E9}")
+	KeyWait("F10") ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
+	Sendinput("{Blind}{sc0EA}")
 }
 
 ;below here is taran again

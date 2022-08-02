@@ -13,11 +13,11 @@ InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default bac
 global Premiere := A_WorkingDir "\Support Files\ImageSearch\Premiere\"
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING HERE
-minutes := 7.5
+minutes := 5
 global ms := minutes * 60000
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE REMINDING YOU TO OPEN THE CHECKLIST HERE
-minutesChecklist := .5
+minutesChecklist := 0.5
 global msChecklist := minutesChecklist * 60000
 
 ;SET THE AMOUNT OF SECONDS OF PRIOR KEYBOARD ACTIVITY YOU WANT THE SCRIPT TO USE TO STOP ITSELF FROM FIRING

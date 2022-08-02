@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11
+;\\v2.11.1
 #Include General.ahk
 
 /*
@@ -7,18 +7,18 @@
  */
 switchToExplorer()
 {
-    if not WinExist("ahk_class CabinetWClass")
+    if not WinExist("ahk_class CabinetWClass") && !WinExist("ahk_class #32770")
         {
-            Run "explorer.exe"
+            Run("explorer.exe")
             WinWait("ahk_class CabinetWClass")
-            WinActivate "ahk_class CabinetWClass" ;in win11 running explorer won't always activate it, so it'll open in the backround
+            WinActivate("ahk_class CabinetWClass") ;in win11 running explorer won't always activate it, so it'll open in the backround
         }
-    GroupAdd "explorers", "ahk_class CabinetWClass"
+    GroupAdd("explorers", "ahk_class CabinetWClass")
+    GroupAdd("explorers", "ahk_class #32770") ;these are save dialoge windows from any program
     if WinActive("ahk_exe explorer.exe")
-        GroupActivate "explorers", "r"
-    else
-        if WinExist("ahk_class CabinetWClass")
-            WinActivate "ahk_class CabinetWClass" ;you have to use WinActivatebottom if you didn't create a window group.
+        GroupActivate("explorers", "r")
+    else if WinExist("ahk_class CabinetWClass") || WinExist("ahk_class #32770")
+        WinActivate ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /*
@@ -42,12 +42,9 @@ closeOtherWindow(program)
 switchToPremiere()
 {
     if not WinExist("ahk_class Premiere Pro")
-        {
-        Run A_ScriptDir "\Support Files\shortcuts\Adobe Premiere Pro.exe.lnk"
-        }
-    else
-        if WinExist("ahk_class Premiere Pro")
-            WinActivate "ahk_class Premiere Pro"
+        Run(A_ScriptDir "\Support Files\shortcuts\Adobe Premiere Pro.exe.lnk")
+    else if WinExist("ahk_class Premiere Pro")
+        WinActivate("ahk_class Premiere Pro")
 }
 
 /*
@@ -56,7 +53,7 @@ switchToPremiere()
 switchToAE()
 {
     runae() { ;cut repeat code
-        Run A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk"
+        Run(A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk")
         WinWait("ahk_exe AfterFX.exe")
         WinActivate("ahk_exe AfterFX.exe")
     }
@@ -107,9 +104,8 @@ switchToAE()
                     return
                 }
         }
-    else
-        if WinExist("ahk_exe AfterFX.exe")
-            WinActivate("ahk_exe AfterFX.exe")
+    else if WinExist("ahk_exe AfterFX.exe")
+        WinActivate("ahk_exe AfterFX.exe")
 }
 
 /*
@@ -145,13 +141,12 @@ switchToPhoto()
 {
     if not WinExist("ahk_exe Photoshop.exe")
         {
-        Run A_ScriptDir "\Support Files\shortcuts\Photoshop.exe.lnk"
-        WinWait("ahk_exe Photoshop.exe")
-        WinActivate("ahk_exe Photoshop.exe")
+            Run A_ScriptDir "\Support Files\shortcuts\Photoshop.exe.lnk"
+            WinWait("ahk_exe Photoshop.exe")
+            WinActivate("ahk_exe Photoshop.exe")
         }
-    else
-        if WinExist("ahk_exe Photoshop.exe")
-            WinActivate "ahk_exe Photoshop.exe"
+    else if WinExist("ahk_exe Photoshop.exe")
+        WinActivate("ahk_exe Photoshop.exe")
 }
 
 /*
@@ -160,22 +155,12 @@ switchToPhoto()
 switchToFirefox()
 {
     if not WinExist("ahk_class MozillaWindowClass")
-        Run "firefox.exe"
-    if WinActive("ahk_exe firefox.exe")
-        {
-        Class := WinGetClass("A")
-        ;WinGetClass class, A
-        if (class = "Mozillawindowclass1")
-            msgbox "this is a notification"
-        }
+        Run("firefox.exe")
     if WinActive("ahk_exe firefox.exe")
         switchToOtherFirefoxWindow()
-    else
-        {
-            if WinExist("ahk_exe firefox.exe")
-                ;WinRestore ahk_exe firefox.exe
-                    WinActivate "ahk_exe firefox.exe"
-        }
+    else if WinExist("ahk_exe firefox.exe")
+        ;WinRestore ahk_exe firefox.exe
+        WinActivate("ahk_exe firefox.exe")
 }
 
 /*
@@ -187,14 +172,14 @@ switchToOtherFirefoxWindow() ;I use this as a nested function below in firefoxTa
         {
             if WinActive("ahk_class MozillaWindowClass")
                 {
-                    GroupAdd "firefoxes", "ahk_class MozillaWindowClass"
-                    GroupActivate "firefoxes", "r"
+                    GroupAdd("firefoxes", "ahk_class MozillaWindowClass")
+                    GroupActivate("firefoxes", "r")
                 }
             else
-                WinActivate "ahk_class MozillaWindowClass"
+                WinActivate("ahk_class MozillaWindowClass")
         }
     else
-        Run "firefox.exe"
+        Run("firefox.exe")
 }
 
 /*
@@ -241,13 +226,12 @@ firefoxTap()
 switchToVSC()
 {
     if not WinExist("ahk_exe Code.exe")
-        Run "C:\Program Files\Microsoft VS Code\Code.exe"
-        GroupAdd "Code", "ahk_class Chrome_WidgetWin_1"
+        Run("C:\Program Files\Microsoft VS Code\Code.exe")
+        GroupAdd("Code", "ahk_class Chrome_WidgetWin_1")
     if WinActive("ahk_exe Code.exe")
-        GroupActivate "Code", "r"
-    else
-        if WinExist("ahk_exe Code.exe")
-            WinActivate "ahk_exe Code.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+        GroupActivate("Code", "r")
+    else if WinExist("ahk_exe Code.exe")
+        WinActivate("ahk_exe Code.exe") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /*
@@ -256,13 +240,12 @@ switchToVSC()
 switchToGithub()
 {
     if not WinExist("ahk_exe GitHubDesktop.exe")
-        Run "C:\Users\" A_UserName "\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
-        GroupAdd "git", "ahk_class Chrome_WidgetWin_1"
+        Run("C:\Users\" A_UserName "\AppData\Local\GitHubDesktop\GitHubDesktop.exe")
+        GroupAdd("git", "ahk_class Chrome_WidgetWin_1")
     if WinActive("ahk_exe GitHubDesktop.exe")
-        GroupActivate "git", "r"
-    else
-        if WinExist("ahk_exe GitHubDesktop.exe")
-            WinActivate "ahk_exe GitHubDesktop.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+        GroupActivate("git", "r")
+    else if WinExist("ahk_exe GitHubDesktop.exe")
+        WinActivate("ahk_exe GitHubDesktop.exe") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /*
@@ -271,13 +254,12 @@ switchToGithub()
 switchToStreamdeck()
 {
     if not WinExist("ahk_exe StreamDeck.exe")
-        Run A_ProgramFiles "\Elgato\StreamDeck\StreamDeck.exe"
-        GroupAdd "stream", "ahk_class Qt5152QWindowIcon"
+        Run(A_ProgramFiles "\Elgato\StreamDeck\StreamDeck.exe")
+        GroupAdd("stream", "ahk_class Qt5152QWindowIcon")
     if WinActive("ahk_exe StreamDeck.exe")
-        GroupActivate "stream", "r"
-    else
-        if WinExist("ahk_exe Streamdeck.exe")
-            WinActivate "ahk_exe StreamDeck.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+        GroupActivate("stream", "r")
+    else if WinExist("ahk_exe Streamdeck.exe")
+        WinActivate("ahk_exe StreamDeck.exe") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /*
@@ -287,16 +269,15 @@ switchToExcel()
 {
     if not WinExist("ahk_exe EXCEL.EXE")
         {
-            Run A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE"
+            Run(A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE")
             WinWait("ahk_exe EXCEL.EXE")
             WinActivate("ahk_exe EXCEL.EXE")
         }
-    GroupAdd "xlmain", "ahk_class XLMAIN"
+    GroupAdd("xlmain", "ahk_class XLMAIN")
     if WinActive("ahk_exe EXCEL.EXE")
-        GroupActivate "xlmain", "r"
-    else
-        if WinExist("ahk_exe EXCEL.EXE")
-            WinActivate "ahk_exe EXCEL.EXE"
+        GroupActivate("xlmain", "r")
+    else if WinExist("ahk_exe EXCEL.EXE")
+        WinActivate("ahk_exe EXCEL.EXE")
 }
 
 /*
@@ -306,16 +287,15 @@ switchToWord()
 {
     if not WinExist("ahk_exe WINWORD.EXE")
         {
-            Run A_ProgramFiles "\Microsoft Office\root\Office16\WINWORD.EXE"
+            Run(A_ProgramFiles "\Microsoft Office\root\Office16\WINWORD.EXE")
             WinWait("ahk_exe WINWORD.EXE")
             WinActivate("ahk_exe WINWORD.EXE")
         }
-    GroupAdd "wordgroup", "ahk_class wordgroup"
+    GroupAdd("wordgroup", "ahk_class wordgroup")
     if WinActive("ahk_exe WINWORD.EXE")
-        GroupActivate "wordgroup", "r"
-    else
-        if WinExist("ahk_exe WINWORD.EXE")
-            WinActivate "ahk_exe WINWORD.EXE"
+        GroupActivate("wordgroup", "r")
+    else if WinExist("ahk_exe WINWORD.EXE")
+        WinActivate("ahk_exe WINWORD.EXE")
 }
 
 /*
@@ -324,13 +304,12 @@ switchToWord()
 switchToWindowSpy()
 {
     if not WinExist("WindowSpy.ahk")
-        Run A_ProgramFiles "\AutoHotkey\WindowSpy.ahk"
-    GroupAdd "winspy", "ahk_class AutoHotkeyGUI"
+        Run(A_ProgramFiles "\AutoHotkey\WindowSpy.ahk")
+    GroupAdd("winspy", "ahk_class AutoHotkeyGUI")
     if WinActive("WindowSpy.ahk")
-        GroupActivate "winspy", "r"
-    else
-        if WinExist("WindowSpy.ahk")
-            WinActivate "WindowSpy.ahk" ;you have to use WinActivatebottom if you didn't create a window group.
+        GroupActivate("winspy", "r")
+    else if WinExist("WindowSpy.ahk")
+        WinActivate("WindowSpy.ahk") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /*
@@ -339,13 +318,12 @@ switchToWindowSpy()
 switchToYourPhone()
 {
     if not WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
-        Run A_ScriptDir "\Support Files\shortcuts\Your Phone.lnk"
-    GroupAdd "yourphone", "ahk_class ApplicationFrameWindow"
+        Run(A_ScriptDir "\Support Files\shortcuts\Your Phone.lnk")
+    GroupAdd("yourphone", "ahk_class ApplicationFrameWindow")
     if WinActive("Your Phone")
-        GroupActivate "yourphone", "r"
-    else
-        if WinExist("Your Phone")
-            WinActivate "Your Phone" ;you have to use WinActivatebottom if you didn't create a window group.
+        GroupActivate("yourphone", "r")
+    else if WinExist("Your Phone")
+        WinActivate("Your Phone") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /*
@@ -355,16 +333,15 @@ switchToEdge()
 {
     if not WinExist("ahk_exe msedge.exe")
         {
-            Run "msedge.exe"
+            Run("msedge.exe")
             WinWait("ahk_exe msedge.exe")
             WinActivate("ahk_exe msedge.exe")
         }
-    GroupAdd "git", "ahk_exe msedge.exe"
+    GroupAdd("git", "ahk_exe msedge.exe")
     if WinActive("ahk_exe msedge.exe")
-        GroupActivate "git", "r"
-    else
-        if WinExist("ahk_exe msedge.exe")
-            WinActivate "ahk_exe msedge.exe" ;you have to use WinActivatebottom if you didn't create a window group.
+        GroupActivate("git", "r")
+    else if WinExist("ahk_exe msedge.exe")
+        WinActivate("ahk_exe msedge.exe") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /*
@@ -389,18 +366,17 @@ switchToMusic()
                     break
             }
         }
-    else
-        if WinExist("ahk_group MusicPlayers")
-            {
-                WinActivate
-                loop {
-                    IME := WinGetTitle("A")
-                    if IME = "Default IME"
-                        WinActivate("ahk_group MusicPlayers")
-                    if IME != "Default IME"
-                        break
-                }
+    else if WinExist("ahk_group MusicPlayers")
+        {
+            WinActivate
+            loop {
+                IME := WinGetTitle("A")
+                if IME = "Default IME"
+                    WinActivate("ahk_group MusicPlayers")
+                if IME != "Default IME"
+                    break
             }
+        }
     ;window := WinGetTitle("A") ;debugging
     ;toolCust(window, "1000") ;debugging
 }

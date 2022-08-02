@@ -19,6 +19,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - `getMouseMonitor()` will now only loop as many times as you have monitors
 - `audioDrag()` will now check `A_PriorKey` and if it's a digit, assign that to the track number you wish to move the `bleep` sfx to, instead of checking the state of each individual digit
 - Removed `toolFind()` and simply added a varibale to `toolCust()` to determine if you want that message at the beginning of the tooltip
+- `switchToExplorer()` will now include `Save As` type windows
 
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
@@ -42,13 +43,14 @@ This release is centered around fixing old sloppy practices that have just been 
     - When using `replaceChecklist.ahk` for this version, it will alert the user of the need to replace the `.ini` files
     - Checkboxes are now named in the `.ini` file/code instead of just being `checkbox1-9`
 - All checkboxes now call the same function when ticked/unticked
-- `Logs`
-    - Replaced wording of opposite logs to be more similar and reduce visual confusion
-    - Will now group by day to increase readability
-        - Will show the hours you started at for each day at the top of the group
-    - Replaced all wording of `frames` and replaced with `seconds`. Video editor brain let that one slip through the cracks for a bit too long
-    - Replaced wording `application` with `checklist`
-    - Fixed the `-sub` & `+add` buttons both using the word `removed` in the logs
+
+`Logs`
+- Replaced wording of opposite logs to be more similar and reduce visual confusion
+- Will now group by day to increase readability
+    - Will show the hours you started at for each day at the top of the group
+- Replaced all wording of `frames` and replaced with `seconds`. Video editor brain let that one slip through the cracks for a bit too long
+- Replaced wording `application` with `checklist`
+- Fixed the `-sub` & `+add` buttons both using the word `removed` in the logs
 
 `replaceChecklist.ahk`
 - Now checks the user's in use version of `checklist.ahk`, compares it to the version in the main script directory and only replaces it if the main version is newer
@@ -57,6 +59,7 @@ This release is centered around fixing old sloppy practices that have just been 
 # > Other Changes
 - Changed all instances of `errorLog()` initiated via a hotkey to output : `A_Hotkey "::"` instead of just `A_Hotkey`
 - Reduced repeat code in `b::` (`QMK Keyboard`)
+- `autosave.ahk` check frequency changed from `7.5min` to `5min`
 
 `right click premiere.ahk`
 - Will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring

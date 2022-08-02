@@ -75,7 +75,7 @@ func(variableX, variableY)
 We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
-A script that will automatically save an Adobe Premiere Pro/After Effects project every 7.5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.
+A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.
 ```mermaid
   graph TD;
       A[autosave.ahk]-->B[is Adobe Premiere or Adobe After Effects open?];
@@ -92,9 +92,9 @@ A script that will automatically save an Adobe Premiere Pro/After Effects projec
       I-->H;
       H-->C;
 
-      D-- no --> Y[wait 7.5min];
+      D-- no --> Y[wait 5min];
  
-      B -- no --> Y[wait 7.5min];
+      B -- no --> Y[wait 5min];
       Y -->B;
 ```
 
