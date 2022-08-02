@@ -47,6 +47,7 @@ localVer(location)
 }
 
 latestVer := localVer(parentFolder "\checklist.ahk")
+replace := ""
 
 if FileExist(A_ScriptDir "\replaceChecklist_log.txt")
     FileDelete(A_ScriptDir "\replaceChecklist_log.txt")
@@ -55,6 +56,18 @@ loop files, location "*.ahk", "R"
         if A_LoopFileName = "checklist.ahk"
             {
                 inUseVer := localVer(A_LoopFileFullPath)
+                ;now we check for problem versions
+                if replace = ""
+                    {
+                        if VerCompare(latestVer, "v2.3") >= 0 && VerCompare(inUseVer, "v2.3") < 0 ;this is to alert the user of a change I made to the accompanying .ini file
+                            {
+                                warning := MsgBox("WARNING`nLater versions of ``checklist.ahk`` use incompatible .ini files. If you wish, this script can remove all old versions of the .ini files and the checklist script will automatically create a new .ini file when it is next run.`nDoing so however will remove all saved checkboxes as well as the saved time passed.`n`nIf you're okay with losing this data: Select Yes`nIf you wish for these .ini files to be left alone and manually replaced by you: Select No", "WARNING", "4 48 256 4096")
+                                if warning = "Yes"
+                                    replace := "Yes"
+                                if warning = "No"
+                                    replace := "No"
+                            }
+                    }
                 if VerCompare(latestVer, inUseVer) <= 0
                     {
                         try {
@@ -70,7 +83,20 @@ loop files, location "*.ahk", "R"
                     toolCust("Encountered an error with " A_LoopFileFullPath, "1000")
                     FileAppend("Encountered an error with " A_LoopFileFullPath "`n", A_ScriptDir "\replaceChecklist_log.txt")
                 }
-            }
+                if replace = "Yes"
+                    {
+                        if FileExist(A_LoopFileDir "\checkbox.ini")
+                            {
+                                FileDelete(A_LoopFileDir "\checkbox.ini")
+                                FileAppend(A_Mon "-" A_DD "_" A_LoopFileDir "\checkbox.ini -- removed`n", A_ScriptDir "\replaceChecklist_log.txt")
+                            }
+                        if FileExist(A_LoopFileDir "\checklist.ini")
+                            {
+                                FileDelete(A_LoopFileDir "\checklist.ini")
+                                FileAppend(A_Mon "-" A_DD "_" A_LoopFileDir "\checklist.ini -- removed`n", A_ScriptDir "\replaceChecklist_log.txt")
+                            }
+                    }
+                }
         else
             continue
         ToolTip("")

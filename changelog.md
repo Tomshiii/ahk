@@ -38,6 +38,10 @@ This release is centered around fixing old sloppy practices that have just been 
 - Less elements have baked in `x/y` values and instead sit relative to their previous elements
 - `Title` will no longer create a new line if it's too long
 - Minor UI adjustments
+- Fixed accompanying `.ini` file being called `checkbox.ini` instead of `checklist.ini`
+    - When using `replaceChecklist.ahk` for this version, it will alert the user of the need to replace the `.ini` files
+    - Checkboxes are now named in the `.ini` file/code instead of just being `checkbox1-9`
+- All checkboxes now call the same function when ticked/unticked
 - `Logs`
     - Replaced wording of opposite logs to be more similar and reduce visual confusion
     - Will now group by day to increase readability

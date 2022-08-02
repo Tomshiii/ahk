@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.2.2"
+version := "v2.3"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -35,10 +35,10 @@ minutes2 := 10
 global ms10 := minutes2 * 60000
 
 ;checking for ini file
-if not FileExist(A_ScriptDir "\checkbox.ini")
-    FileAppend("[Info]`ncheckbox4=0`ncheckbox5=0`ncheckbox1=0`ncheckbox2=0`ncheckbox3=0`ncheckbox6=0`ncheckbox7=0`ncheckbox8=0`ncheckbox9=0`ntime=0", A_ScriptDir "\checkbox.ini")
+if not FileExist(A_ScriptDir "\checklist.ini")
+    FileAppend("[Info]`nFirstPass=0`nSecondPass=0`nTwitchOverlay=0`nYoutubeOverlay=0`nTransitions=0`nSFX=0`nMusic=0`nPatreon=0`nIntro=0`ntime=0", A_ScriptDir "\checklist.ini")
 ;grabbing hour information from ini file
-getTime := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
+getTime := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
 timeForLog := Round(getTime / 3600, 2)
 if getTime = 0
     timeForLog := "0.00"
@@ -77,44 +77,44 @@ title.SetFont("bold")
 ver := MyGui.Add("Text", "Right X+10", "⚙ " version)
 
 ;defining checkboxes
-checkbox4 := MyGui.Add("CheckBox", "X8", "First Pass")
-checkbox4.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox4")
-checkbox4.OnEvent("Click", checkbox4Ini)
+FirstPass := MyGui.Add("CheckBox", "vFirstPass X8", "First Pass")
+FirstPass.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "FirstPass")
+FirstPass.OnEvent("Click", logCheckbox)
 
-checkbox5 := MyGui.Add("CheckBox",, "Second Pass")
-checkbox5.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox5")
-checkbox5.OnEvent("Click", checkbox5Ini)
+SecondPass := MyGui.Add("CheckBox", "vSecondPass", "Second Pass")
+SecondPass.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "SecondPass")
+SecondPass.OnEvent("Click", logCheckbox)
 
-checkbox1 := MyGui.Add("CheckBox",, "Twitch overlay")
-checkbox1.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox1")
-checkbox1.OnEvent("Click", checkbox1Ini)
+TwitchOverlay := MyGui.Add("CheckBox", "vTwitchOverlay", "Twitch overlay")
+TwitchOverlay.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "TwitchOverlay")
+TwitchOverlay.OnEvent("Click", logCheckbox)
 
-checkbox2 := MyGui.Add("CheckBox",, "Youtube overlay")
-checkbox2.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox2")
-checkbox2.OnEvent("Click", checkbox2Ini)
+YoutubeOverlay := MyGui.Add("CheckBox", "vYoutubeOverlay", "Youtube overlay")
+YoutubeOverlay.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "YoutubeOverlay")
+YoutubeOverlay.OnEvent("Click", logCheckbox)
 
-checkbox3 := MyGui.Add("CheckBox",, "Transitions")
-checkbox3.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox3")
-checkbox3.OnEvent("Click", checkbox3Ini)
+Transitions := MyGui.Add("CheckBox", "vTransitions", "Transitions")
+Transitions.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Transitions")
+Transitions.OnEvent("Click", logCheckbox)
 
-checkbox8 := MyGui.Add("CheckBox",, "SFX")
-checkbox8.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox8")
-checkbox8.OnEvent("Click", checkbox8Ini)
+SFX := MyGui.Add("CheckBox",  "vSFX", "SFX")
+SFX.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "SFX")
+SFX.OnEvent("Click", logCheckbox)
 
-checkbox6 := MyGui.Add("CheckBox",, "Music")
-checkbox6.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox6")
-checkbox6.OnEvent("Click", checkbox6Ini)
+Music := MyGui.Add("CheckBox", "vMusic", "Music")
+Music.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Music")
+Music.OnEvent("Click", logCheckbox)
 
-checkbox7 := MyGui.Add("CheckBox",, "Patreon")
-checkbox7.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox7")
-checkbox7.OnEvent("Click", checkbox7Ini)
+Patreon := MyGui.Add("CheckBox", "vPatreon", "Patreon")
+Patreon.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Patreon")
+Patreon.OnEvent("Click", logCheckbox)
 
-checkbox9 := MyGui.Add("CheckBox", "X+85 Y38", "Intro")
-checkbox9.Value := IniRead(A_ScriptDir "\checkbox.ini", "Info", "checkbox9")
-checkbox9.OnEvent("Click", checkbox9Ini)
+Intro := MyGui.Add("CheckBox", "vIntro X+85 Y38", "Intro")
+Intro.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Intro")
+Intro.OnEvent("Click", logCheckbox)
 
 ;timer text
-global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
+global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
 startHoursRounded := Round(startValue/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
 startMinutesRounded := Round(startValue/60, 2) ;getting the minutes past by dividing the seconds past then rounding to 2dp
 
@@ -179,7 +179,7 @@ StopWatch() {
 }
 stop(*) {
     forFile := Round(ElapsedTime / 3600, 3)
-    IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
+    IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
     FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Stopping Hours = " forFile " -- seconds at stop = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0) ;then stop the timer
     startButton.Move(,, 50, 30) ;then show the start button
@@ -188,14 +188,14 @@ stop(*) {
     timerMinutes.SetFont("cRed")
     SetTimer(logElapse, 0)
     SetTimer(reminder, -ms)
-    global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
+    global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
 }
 minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent return functions
 {
     forFile := Round(ElapsedTime / 3600, 3)
     word := ""
-    IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
-    global initialRead := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
+    IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
+    global initialRead := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
     if sign = "-"
         {
             word := "removed"
@@ -210,7 +210,7 @@ minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent re
         }
     if newValue < 0
         newValue := 0
-    change := IniWrite(newValue, A_ScriptDir "\checkbox.ini", "Info", "time")
+    change := IniWrite(newValue, A_ScriptDir "\checklist.ini", "Info", "time")
     SetTimer(StopWatch, -1000)
     timerText.SetFont("cRed")
     timerMinutes.SetFont("cRed")
@@ -218,7 +218,7 @@ minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent re
     stopButton.Move(,, 0, 0)
     SetTimer(logElapse, 0)
     SetTimer(reminder, -ms)
-    global startValue := IniRead(A_ScriptDir "\checkbox.ini", "Info", "time")
+    global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
     FileAppend("\\ The timer was stopped and " List.Text "min " word " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- seconds after stopping = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
@@ -244,62 +244,34 @@ logElapse() {
     SetTimer(, -ms10)
 }
 
-/*
- This function is here simply to reduce copy pasting of code for the checkboxes below - it keeps track of whether a box is enabled/disabled and also handles writing to the log files when either is done
- @param value is the name of the checkbox (from up above)
- @param value2 is simply `checkboxX.Value`
- @param value3 is simply `checkboxX.Text`
- */
-checkbox(value, value2, value3) {
+;defining what happens when checkboxes are clicked
+logCheckbox(*) {
+    forFile := Round(ElapsedTime / 3600, 3)
     logState := ""
     logCheck := ""
-    forFile := Round(ElapsedTime / 3600, 3)
-    IniWrite(value2, A_ScriptDir "\checkbox.ini", "Info", value)
-    if value2 = 0
+    logState := "enabled"
+    logCheck := "enabling"
+    Saved := MyGui.Submit(0)  ; Save the contents of named controls into an object.
+    for name, value in Saved.OwnProps()
         {
-            logState := "disabled"
-            logCheck := "disabling"
+            startVal := IniRead(A_ScriptDir "\checklist.ini", "Info", name)
+            if startVal != value
+                {
+                    IniWrite(value, A_ScriptDir "\checklist.ini", "Info", name)
+                    if value = 0
+                        {
+                            logState := "disabled"
+                            logCheck := "disabling"
+                        }
+                    FileAppend("\\ ``" name "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+                }
         }
-    else
-        {
-            logState := "enabled"
-            logCheck := "enabling"
-        }
-    FileAppend("\\ ``" value3 "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
-}
-;defining what happens when checkboxes are clicked
-checkbox1ini(*) {
-    checkbox("checkbox1", checkbox1.Value, checkbox1.Text)
-}
-checkbox2ini(*) {
-    checkbox("checkbox2", checkbox2.Value, checkbox2.Text)
-}
-checkbox3ini(*) {
-    checkbox("checkbox3", checkbox3.Value, checkbox3.Text)
-}
-checkbox4ini(*) {
-    checkbox("checkbox4", checkbox4.Value, checkbox4.Text)
-}
-checkbox5ini(*) {
-    checkbox("checkbox5", checkbox5.Value, checkbox5.Text)
-}
-checkbox6ini(*) {
-    checkbox("checkbox6", checkbox6.Value, checkbox6.Text)
-}
-checkbox7ini(*) {
-    checkbox("checkbox7", checkbox7.Value, checkbox7.Text)
-}
-checkbox8ini(*) {
-    checkbox("checkbox8", checkbox8.Value, checkbox8.Text)
-}
-checkbox9ini(*) {
-    checkbox("checkbox9", checkbox9.Value, checkbox9.Text)
 }
 
 MyGui.OnEvent("Close", close) ;what happens when you close the GUI
 close(*) {
     forFile := Round(ElapsedTime / 3600, 3)
-    IniWrite(ElapsedTime, A_ScriptDir "\checkbox.ini", "Info", "time")
+    IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
     FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0)
     SetTimer(reminder, 0)
