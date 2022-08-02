@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.6
+;\\v2.16.7
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.8.1
+;\\v2.8.2
 
 ; ============================================================================================================================================
 ;
@@ -91,7 +91,6 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 		PostMessage 0x0111, 65303,,, "premiere_fullscreen_check.ahk - AutoHotkey"
 	Reload
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-	;MsgBox "The script could not be reloaded. Would you like to open it for editing?",, 4
 	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
 		if Result = "Yes"
 			{
@@ -103,167 +102,7 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 }
 
 ;activescriptsHotkey;
-#F1:: ;This hotkey pulls up a GUI that gives information regarding all current active scripts, as well as offering the ability to close/open any of them by simply unchecking/checking the corresponding box
-{
-	detect() {
-		DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
-		SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-	}
-	if WinExist("Tomshi Scripts Release " MyRelease)
-		return
-	detect()
-	MyGui := Gui("", "Tomshi Scripts Release " MyRelease)
-	MyGui.SetFont("S11")
-	MyGui.Opt("-Resize AlwaysOnTop")
-	;nofocus
-	;add an invisible button since removing the default off all the others did nothing
-    removedefault := MyGui.Add("Button", "Default X0 Y0 w0 h0", "_")
-	;active scripts
-	text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
-	text.SetFont("S13")
-	if A_IsSuspended = 0
-		my := MyGui.Add("CheckBox", "Checked1", "My Scripts.ahk")
-	else
-		my := MyGui.Add("CheckBox", "Checked0", "My Scripts.ahk")
-	my.ToolTip := "Clicking this checkbox will toggle suspend the script"
-	my.OnEvent("Click", myClick)
-	if WinExist("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
-		alt := MyGui.Add("CheckBox", "Checked1", "Alt_menu_acceleration_DISABLER.ahk")
-	else
-		alt := MyGui.Add("CheckBox", "Checked0", "Alt_menu_acceleration_DISABLER.ahk")
-	alt.ToolTip := "Clicking this checkbox will open/close the script"
-	alt.OnEvent("Click", altClick)
-	if WinExist("autodismiss error.ahk - AutoHotkey")
-		autodis := MyGui.Add("CheckBox", "Checked1", "autodismiss error.ahk")
-	else
-		autodis := MyGui.Add("CheckBox", "Checked0", "autodismiss error.ahk")
-	autodis.ToolTip := "Clicking this checkbox will open/close the script"
-	autodis.OnEvent("Click", autodisClick)
-	if WinExist("autosave.ahk - AutoHotkey")
-		autosave := MyGui.Add("CheckBox", "Checked1", "autosave.ahk")
-	else
-		autosave := MyGui.Add("CheckBox", "Checked0", "autosave.ahk")
-	autosave.ToolTip := "Clicking this checkbox will open/close the script. Reopening it will restart the autosave timer"
-	autosave.OnEvent("Click", autosaveClick)
-	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
-		premFull := MyGui.Add("CheckBox", "Checked1", "premiere_fullscreen_check.ahk")
-	else
-		premFull := MyGui.Add("CheckBox", "Checked0", "premiere_fullscreen_check.ahk")
-	premFull.ToolTip := "Clicking this checkbox will open/close the script"
-	premFull.OnEvent("Click", premFullClick)
-	if WinExist("QMK Keyboard.ahk - AutoHotkey")
-		qmk := MyGui.Add("CheckBox", "Checked1", "QMK Keyboard.ahk")
-	else
-		qmk := MyGui.Add("CheckBox", "Checked0", "QMK Keyboard.ahk")
-	qmk.ToolTip := "Clicking this checkbox will open/close the script"
-	qmk.OnEvent("Click", qmkClick)
-	if WinExist("Resolve_Example.ahk - AutoHotkey")
-		resolve := MyGui.Add("CheckBox", "Checked1", "Resolve_Example.ahk")
-	else
-		resolve := MyGui.Add("CheckBox", "Checked0", "Resolve_Example.ahk")
-	resolve.ToolTip := "Clicking this checkbox will open/close the script"
-	resolve.OnEvent("Click", resolveClick)
-
-	;images
-	myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Support Files\Icons\myscript.png")
-	altImage := MyGui.Add("Picture", "w20 h-1 X275 Y57", A_WorkingDir "\Support Files\Icons\error.ico")
-	autodisImage := MyGui.Add("Picture", "w20 h-1 X275 Y81", A_WorkingDir "\Support Files\Icons\dismiss.ico")
-	autosaveImage := MyGui.Add("Picture", "w20 h-1 X275 Y105", A_WorkingDir "\Support Files\Icons\save.ico")
-	premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y130", A_WorkingDir "\Support Files\Icons\fullscreen.ico")
-	qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y154", A_WorkingDir "\Support Files\Icons\keyboard.ico")
-	resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y177", A_WorkingDir "\Support Files\Icons\resolve.png")
-
-	;close button
-	closeButton := MyGui.Add("Button", "X245", "Close")
-	closeButton.OnEvent("Click", escape)
-
-	;the below code allows for the tooltips on hover
-	;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
-	OnMessage(0x0200, On_WM_MOUSEMOVE)
-	On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
-	{
-		static PrevHwnd := 0
-		if (Hwnd != PrevHwnd)
-		{
-			Text := "", ToolTip() ; Turn off any previous tooltip.
-			CurrControl := GuiCtrlFromHwnd(Hwnd)
-			if CurrControl
-			{
-				if !CurrControl.HasProp("ToolTip")
-					return ; No tooltip for this control.
-				Text := CurrControl.ToolTip
-				SetTimer () => ToolTip(Text), -1000
-				SetTimer () => ToolTip(), -4000 ; Remove the tooltip.
-			}
-			PrevHwnd := Hwnd
-		}
-	}
-	;below is all of the callback functions
-	myClick(*){
-		myVal := my.Value
-		if myVal = 1
-			Suspend(-1)
-		else
-			Suspend(-1)
-	}
-	qmkClick(*){
-		detect()
-		qmkVal := qmk.Value
-		if qmkVal = 1
-			Run(A_WorkingDir "\QMK Keyboard.ahk") ;this line can technically never happen but oh well
-		else
-			WinClose("QMK Keyboard.ahk - AutoHotkey")
-	}
-	resolveClick(*){
-		detect()
-		resolveVal := resolve.Value
-		if resolveVal = 1
-			Run(A_WorkingDir "\Resolve_Example.ahk") ;this line can technically never happen but oh well
-		else
-			WinClose("Resolve_Example.ahk - AutoHotkey")
-	}
-	autosaveClick(*){
-		detect()
-		autosaveVal := autosave.Value
-		if autosaveVal = 1
-			Run(A_WorkingDir "\autosave.ahk") ;this line can technically never happen but oh well
-		else
-			WinClose("autosave.ahk - AutoHotkey")
-	}
-	premFullClick(*){
-		detect()
-		premFullVal := premFull.Value
-		if premFullVal = 1
-			Run(A_WorkingDir "\premiere_fullscreen_check.ahk") ;this line can technically never happen but oh well
-		else
-			WinClose("premiere_fullscreen_check.ahk - AutoHotkey")
-	}
-	altClick(*){
-		detect()
-		altVal := alt.Value
-		if altVal = 1
-			Run(A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk") ;this line can technically never happen but oh well
-		else
-			WinClose("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
-	}
-	autodisClick(*){
-		detect()
-		autodisVal := autodis.Value
-		if autodisVal = 1
-			Run(A_WorkingDir "\autodismiss error.ahk") ;this line can technically never happen but oh well
-		else
-			WinClose("autodismiss error.ahk - AutoHotkey")
-	}
-	
-	MyGui.OnEvent("Escape", escape)
-	escape(*) {
-		MyGui.Destroy()
-	}
-
-	MyGui.Show("Center AutoSize")
-
-	;add images next to checkboxes
-}
+#F1::activeScripts(MyRelease) ;This hotkey pulls up a GUI that gives information regarding all current active scripts, as well as offering the ability to close/open any of them by simply unchecking/checking the corresponding box
 
 ;handyhotkeysHotkey;
 #h::hotkeysGUI() ;this hotkey pulls up a GUI showing some useful hotkeys at your disposal while using these scripts
@@ -334,7 +173,7 @@ PgUp::switchToExcel() ;run/swap to excel
 
 ;These two scripts are to open highlighted text in the ahk documentation
 ;akhdocuHotkey;
-AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk documentation
+AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk documentation
 ;ahksearchHotkey;
 ^AppsKey:: ;opens highlighted ahk command in the documentation
 {
@@ -347,13 +186,13 @@ AppsKey:: run "https://lexikos.github.io/v2/docs/AutoHotkey.htm" ;opens ahk docu
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
-	Run "https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm"
+	Run("https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm")
 	A_Clipboard := previous
 }
 ;streamfoobarHotkey;
 ^F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random. This is for my stream.
 {
-	run "C:\Program Files (x86)\foobar2000\foobar2000.exe" ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
+	Run("C:\Program Files (x86)\foobar2000\foobar2000.exe") ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
 	WinWait("ahk_exe foobar2000.exe")
 	if WinExist("ahk_exe foobar2000.exe")
 		WinActivate
@@ -546,8 +385,8 @@ SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering 
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(A_WorkingDir "\Support Files\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
-F1::discUnread("") ;will click any unread servers
-F2::discUnread("2") ;will click any unread channels
+F1::discUnread() ;will click any unread servers
+F2::discUnread(2) ;will click any unread channels
 
 ;=============================================================================================================================================
 ;
@@ -650,7 +489,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			}
 	}
 	click
-	MouseMove xpos, ypos
+	MouseMove(xpos, ypos)
 }
 
 ;premprojectHotkey;
@@ -899,14 +738,14 @@ RButton::moveWin("") ;minimise
 {
 	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
-	Send "^c"
+	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			toolCust("Couldn't copy data to clipboard", "1000")
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
-	Run "https://www.google.com/search?d&q=" A_Clipboard
+	Run("https://www.google.com/search?d&q=" A_Clipboard)
 	A_Clipboard := previous
 }
 

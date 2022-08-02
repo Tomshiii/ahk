@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.1
+;\\v2.12
 #Include General.ahk
 
 /*
@@ -593,4 +593,167 @@ todoGUI()
     }
 
     todoGUI.Show()
+}
+
+/*
+ This functions pulls up a GUI that shows which of my scripts are active and allows the user to suspend/close them or unsuspend/open them
+ */
+activeScripts(MyRelease)
+{
+    detect() {
+        DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
+        SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+    }
+    if WinExist("Tomshi Scripts Release " MyRelease)
+        return
+    detect()
+    MyGui := Gui("", "Tomshi Scripts Release " MyRelease)
+    MyGui.SetFont("S11")
+    MyGui.Opt("-Resize AlwaysOnTop")
+    ;nofocus
+    ;add an invisible button since removing the default off all the others did nothing
+    removedefault := MyGui.Add("Button", "Default X0 Y0 w0 h0", "_")
+    ;active scripts
+    text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
+    text.SetFont("S13")
+    if A_IsSuspended = 0
+        my := MyGui.Add("CheckBox", "Checked1", "My Scripts.ahk")
+    else
+        my := MyGui.Add("CheckBox", "Checked0", "My Scripts.ahk")
+    my.ToolTip := "Clicking this checkbox will toggle suspend the script"
+    my.OnEvent("Click", myClick)
+    if WinExist("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
+        alt := MyGui.Add("CheckBox", "Checked1", "Alt_menu_acceleration_DISABLER.ahk")
+    else
+        alt := MyGui.Add("CheckBox", "Checked0", "Alt_menu_acceleration_DISABLER.ahk")
+    alt.ToolTip := "Clicking this checkbox will open/close the script"
+    alt.OnEvent("Click", altClick)
+    if WinExist("autodismiss error.ahk - AutoHotkey")
+        autodis := MyGui.Add("CheckBox", "Checked1", "autodismiss error.ahk")
+    else
+        autodis := MyGui.Add("CheckBox", "Checked0", "autodismiss error.ahk")
+    autodis.ToolTip := "Clicking this checkbox will open/close the script"
+    autodis.OnEvent("Click", autodisClick)
+    if WinExist("autosave.ahk - AutoHotkey")
+        autosave := MyGui.Add("CheckBox", "Checked1", "autosave.ahk")
+    else
+        autosave := MyGui.Add("CheckBox", "Checked0", "autosave.ahk")
+    autosave.ToolTip := "Clicking this checkbox will open/close the script. Reopening it will restart the autosave timer"
+    autosave.OnEvent("Click", autosaveClick)
+    if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+        premFull := MyGui.Add("CheckBox", "Checked1", "premiere_fullscreen_check.ahk")
+    else
+        premFull := MyGui.Add("CheckBox", "Checked0", "premiere_fullscreen_check.ahk")
+    premFull.ToolTip := "Clicking this checkbox will open/close the script"
+    premFull.OnEvent("Click", premFullClick)
+    if WinExist("QMK Keyboard.ahk - AutoHotkey")
+        qmk := MyGui.Add("CheckBox", "Checked1", "QMK Keyboard.ahk")
+    else
+        qmk := MyGui.Add("CheckBox", "Checked0", "QMK Keyboard.ahk")
+    qmk.ToolTip := "Clicking this checkbox will open/close the script"
+    qmk.OnEvent("Click", qmkClick)
+    if WinExist("Resolve_Example.ahk - AutoHotkey")
+        resolve := MyGui.Add("CheckBox", "Checked1", "Resolve_Example.ahk")
+    else
+        resolve := MyGui.Add("CheckBox", "Checked0", "Resolve_Example.ahk")
+    resolve.ToolTip := "Clicking this checkbox will open/close the script"
+    resolve.OnEvent("Click", resolveClick)
+
+    ;images
+    myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Support Files\Icons\myscript.png")
+    altImage := MyGui.Add("Picture", "w20 h-1 X275 Y57", A_WorkingDir "\Support Files\Icons\error.ico")
+    autodisImage := MyGui.Add("Picture", "w20 h-1 X275 Y81", A_WorkingDir "\Support Files\Icons\dismiss.ico")
+    autosaveImage := MyGui.Add("Picture", "w20 h-1 X275 Y105", A_WorkingDir "\Support Files\Icons\save.ico")
+    premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y130", A_WorkingDir "\Support Files\Icons\fullscreen.ico")
+    qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y154", A_WorkingDir "\Support Files\Icons\keyboard.ico")
+    resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y177", A_WorkingDir "\Support Files\Icons\resolve.png")
+
+    ;close button
+    closeButton := MyGui.Add("Button", "X245", "Close")
+    closeButton.OnEvent("Click", escape)
+
+    ;the below code allows for the tooltips on hover
+    ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
+    OnMessage(0x0200, On_WM_MOUSEMOVE)
+    On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
+    {
+        static PrevHwnd := 0
+        if (Hwnd != PrevHwnd)
+        {
+            Text := "", ToolTip() ; Turn off any previous tooltip.
+            CurrControl := GuiCtrlFromHwnd(Hwnd)
+            if CurrControl
+            {
+                if !CurrControl.HasProp("ToolTip")
+                    return ; No tooltip for this control.
+                Text := CurrControl.ToolTip
+                SetTimer () => ToolTip(Text), -1000
+                SetTimer () => ToolTip(), -4000 ; Remove the tooltip.
+            }
+            PrevHwnd := Hwnd
+        }
+    }
+    ;below is all of the callback functions
+    myClick(*){
+        myVal := my.Value
+        if myVal = 1
+            Suspend(-1)
+        else
+            Suspend(-1)
+    }
+    qmkClick(*){
+        detect()
+        qmkVal := qmk.Value
+        if qmkVal = 1
+            Run(A_WorkingDir "\QMK Keyboard.ahk") ;this line can technically never happen but oh well
+        else
+            WinClose("QMK Keyboard.ahk - AutoHotkey")
+    }
+    resolveClick(*){
+        detect()
+        resolveVal := resolve.Value
+        if resolveVal = 1
+            Run(A_WorkingDir "\Resolve_Example.ahk") ;this line can technically never happen but oh well
+        else
+            WinClose("Resolve_Example.ahk - AutoHotkey")
+    }
+    autosaveClick(*){
+        detect()
+        autosaveVal := autosave.Value
+        if autosaveVal = 1
+            Run(A_WorkingDir "\autosave.ahk") ;this line can technically never happen but oh well
+        else
+            WinClose("autosave.ahk - AutoHotkey")
+    }
+    premFullClick(*){
+        detect()
+        premFullVal := premFull.Value
+        if premFullVal = 1
+            Run(A_WorkingDir "\premiere_fullscreen_check.ahk") ;this line can technically never happen but oh well
+        else
+            WinClose("premiere_fullscreen_check.ahk - AutoHotkey")
+    }
+    altClick(*){
+        detect()
+        altVal := alt.Value
+        if altVal = 1
+            Run(A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk") ;this line can technically never happen but oh well
+        else
+            WinClose("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
+    }
+    autodisClick(*){
+        detect()
+        autodisVal := autodis.Value
+        if autodisVal = 1
+            Run(A_WorkingDir "\autodismiss error.ahk") ;this line can technically never happen but oh well
+        else
+            WinClose("autodismiss error.ahk - AutoHotkey")
+    }
+
+    MyGui.OnEvent("Escape", escape)
+    escape(*) {
+        MyGui.Destroy()
+    }
+
+    MyGui.Show("Center AutoSize")
 }

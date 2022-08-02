@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.1
+;\\v2.12.2
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -544,7 +544,7 @@ discLocation()
  This function will search for and automatically click on either unread servers or unread channels depending on which image you feed into the function
  @param which is simply which image you want to feed into the function. I have it left blank for servers and `"2"` for channels
  */
-discUnread(which)
+discUnread(which := "")
 {
     x2 := 0
     y2 := 0
