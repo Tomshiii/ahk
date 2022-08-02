@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12
+;\\v2.12.1
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.11.6
+;		Windows Scripts \\ Last updated: v2.12.1
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -352,6 +352,23 @@ moveXorY() {
 	else
 		return
 }
+
+/*
+ This function is to allow the user to simply jump 10 characters in either direction. Useful when ^Left/Right isn't getting you to where you want the cursor to be
+ @param leftorright is which direction you want to assign
+ @param amount is the amount of characters you want this function to jump, by default it is set to 10 and isn't required if you do not wish to override this value
+ */
+jumpChar(leftorright, amount := 10)
+{
+    side := "{" leftorright " " amount "}"
+    if GetKeyState("Shift", "P")
+        {
+            SendInput("{Shift Down}" side "{Shift Up}")
+            return
+        }
+    SendInput(side)
+}
+
 ; ===========================================================================================================================================
 ;
 ;		discord \\ Last updated: v2.10
