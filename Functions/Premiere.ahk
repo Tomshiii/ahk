@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.2
+;\\v2.14.3
 #Include General.ahk
 
 /* preset()
@@ -777,6 +777,8 @@ audioDrag(sfxName)
                     trackNumber := 2
                     sleep 100
                     SendInput(cutPrem)
+                    start := A_TickCount
+                    sec := 0
                     loop {
                         ;check to see if the user wants the bleep on a track between 1-9
                         getlastHotkey := A_PriorKey
@@ -795,7 +797,13 @@ audioDrag(sfxName)
                                 errorLog(A_ThisFunc "()", "timed out due to no user interaction", A_LineFile, A_LineNumber)
                                 return
                             }
-                        ToolTip("This function will attempt to drag your bleep to track " trackNumber "`nPress another number key to move to a different track`n`nThe function will continue once you've cut the track")
+                        if ((A_TickCount - start) >= 1000)
+                            {
+                                start += 1000
+                                sec += 1
+                            }
+                        secRemain := 8 - sec
+                        ToolTip("This function will attempt to drag your bleep to track " trackNumber "`nPress another number key to move to a different track`n`nThe function will continue once you've cut the track`n" secRemain "s remaining")
                     }
                     ToolTip("")
                     blockOn()

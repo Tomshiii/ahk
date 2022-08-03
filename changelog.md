@@ -29,6 +29,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - Will now check `A_PriorKey` and if it's a digit, assign that to the track number you wish to move the `bleep` sfx to, instead of checking the state of each individual digit
 - Will now present a tooltip showing the user which track it's about to drag to
 - Added more colours to reduce the amount of times it will fail
+- Shows a count down in the tooltip of how many second remain until the function times out
 
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
