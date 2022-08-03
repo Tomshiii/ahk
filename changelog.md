@@ -10,6 +10,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - Added `A_MaxHotkeysPerInterval := 400` so spamming my unclicked scroll wheel stops creating an error
 - Added `SC03A & Left\Right::` alongside `jumpChar()` to jump 10 characters in either direction
 - Moved `#F1::` -> `activeScripts()`
+- Moved `^+w::` -> `F3::` and with the other discord hotkeys
 
 # > Functions
 - `updateChecker()` now shows `TrayTip`'s to alert the user that it's downloading the latest release & backing up their scripts

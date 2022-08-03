@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.8
+;\\v2.16.9
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.2
 
@@ -385,8 +385,21 @@ SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering 
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(A_WorkingDir "\Support Files\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
+;discServHotkey;
 F1::discUnread() ;will click any unread servers
+;discMsgHotkey;
 F2::discUnread(2) ;will click any unread channels
+;discDMHotkey;
+F3:: ;this hotkey is to click the "discord" button in discord to access your dm's
+{
+	WinActivate("ahk_exe Discord.exe")
+	blockOn()
+	MouseGetPos(&origx, &origy)
+	MouseMove(34, 52, 2)
+	SendInput("{Click}")
+	MouseMove(origx, origy, 2)
+	blockOff()
+}
 
 ;=============================================================================================================================================
 ;
@@ -704,20 +717,6 @@ F20::audioDrag("bleep")
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
-;discordHotkey;
-^+w:: ;this hotkey is to click the "discord" button in discord to access your dm's
-{
-	if WinExist("ahk_exe Discord.exe")
-		{
-			WinActivate("ahk_exe Discord.exe")
-			blockOn()
-			MouseGetPos(&origx, &origy)
-			MouseMove(34, 52, 2)
-			SendInput("{Click}")
-			MouseMove(origx, origy, 2)
-			blockOff()
-		}
-}
 
 ;winmaxHotkey;
 F14::moveWin("") ;maximise
