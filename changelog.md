@@ -23,6 +23,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - `audioDrag()` will now check `A_PriorKey` and if it's a digit, assign that to the track number you wish to move the `bleep` sfx to, instead of checking the state of each individual digit
 - Removed `toolFind()` and simply added a varibale to `toolCust()` to determine if you want that message at the beginning of the tooltip
 - `switchToExplorer()` will now include `Save As` type windows
+- Now define `browser & editor` groups in `General.ahk`
 
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)

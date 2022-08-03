@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.7
+;\\v2.16.8
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.2
 
@@ -703,8 +703,6 @@ F20::audioDrag("bleep")
 ;		other - NOT an editor
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
-GroupAdd("Editors", "ahk_exe AfterFX.exe")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 ;discordHotkey;
 ^+w:: ;this hotkey is to click the "discord" button in discord to access your dm's
@@ -788,7 +786,15 @@ SC03A & v:: ;lowercases highlighted text
 }
 
 ;timeHotkey;
-^+t::SendInput(A_YYYY "-" A_MM "-" A_DD)
+^+t::
+{
+	if WinActive("ahk_group Browsers")
+		{
+			SendInput(A_ThisHotkey)
+			return
+		}
+	SendInput(A_YYYY "-" A_MM "-" A_DD)
+}
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

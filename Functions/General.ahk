@@ -7,6 +7,17 @@ global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
 global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
 global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
 
+;define browsers
+GroupAdd("Browsers", "ahk_exe firefox.exe")
+GroupAdd("Browsers", "ahk_exe chrome.exe")
+GroupAdd("Browsers", "ahk_exe Code.exe")
+
+;define editors
+GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
+GroupAdd("Editors", "ahk_exe AfterFX.exe")
+GroupAdd("Editors", "ahk_exe Resolve.exe")
+GroupAdd("Editors", "ahk_exe Photoshop.exe")
+
 ;\\v2.15.1
 
 ; =======================================================================================================================================
