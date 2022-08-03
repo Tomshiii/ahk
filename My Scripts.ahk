@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.9
+;\\v2.16.10
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.2
 
@@ -151,8 +151,8 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 }
 
 ;jump10charHotkey;
-SC03A & Left::jumpChar("left")
-SC03A & Right::jumpChar("right")
+SC03A & Left::jumpChar()
+SC03A & Right::jumpChar()
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

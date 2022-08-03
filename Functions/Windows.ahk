@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.2
+;\\v2.12.3
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.1
+;		Windows Scripts \\ Last updated: v2.12.3
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -358,9 +358,10 @@ moveXorY() {
  @param leftorright is which direction you want to assign
  @param amount is the amount of characters you want this function to jump, by default it is set to 10 and isn't required if you do not wish to override this value
  */
-jumpChar(leftorright, amount := 10)
+jumpChar(amount := 10)
 {
-    side := "{" leftorright " " amount "}"
+    getHotkeys(&first, &second)
+    side := "{" second " " amount "}"
     if GetKeyState("Shift", "P")
         {
             SendInput("{Shift Down}" side "{Shift Up}")
