@@ -16,6 +16,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - Replaced `getSecondHotkey()` with `getHotkeys()` to grab both the first and second hotkeys when two are required for activation
 - Added `moveXorY()` to easily move the mouse along one axis. This method isn't anything special but useful when you need a quick and dirty way to move along one axis
 - `zoom()` will toggle between two options when working on an `Alex` project
+    - All variables are assigned their values at the top of the script for easy adjustment
 - `reset()` will no longer reset the track colour
 - Removed use of `getClassNN()`. If it failed to grab `classNN` values it would simply pass back unset variables and cause errors
 - `getMouseMonitor()` will now only loop as many times as you have monitors

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14
+;\\v2.14.1
 #Include General.ahk
 
 /* preset()
@@ -296,10 +296,27 @@ num(xval, yval, scale)
  */
 zoom()
 {
+    ;we'll put all our values at the top so they can be easily changed
+    ;alex
+    alexX := 2064
+    alexY := -26
+    alexZ := 215
+
+    alexZoomX := 3467
+    alexZoomY := 339
+    alexZoomZ := 390
+
+    ;d0yle
+    d0yleX := -57
+    d0yleY := -37
+    d0yleZ := 210
+
+    ;then we'll define the values that will allow us to change things depending on the project
     static x := 0
     static y := 0
     static scale := 0
     static alexTog := 0
+
     KeyWait(A_ThisHotkey)
     coords()
     MouseGetPos(&xpos, &ypos)
@@ -322,26 +339,26 @@ zoom()
     d0yle := InStr(premCheck, "d0yle")
     if d0yle != 0
         {
-            x := -57
-            y := -37
-            scale := 210
+            x := d0yleX
+            y := d0yleY
+            scale := d0yleZ
         }
     alex := InStr(premCheck, "alex")
     if alex != 0
         {
             if alexTog = 0
                 {
-                    x := 3467
-                    y := 339
-                    scale := 390
+                    x := alexX
+                    y := alexY
+                    scale := alexZ
                     alexTog += 1
                     goto endPeople
                 }
             if alexTog = 1
                 {
-                    x := 2037
-                    y := 430
-                    scale := 215
+                    x := alexZoomX
+                    y := alexZoomY
+                    scale := alexZoomZ
                     alexTog -= 1
                     goto endPeople
                 }
