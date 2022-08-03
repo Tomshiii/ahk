@@ -16,16 +16,18 @@ This release is centered around fixing old sloppy practices that have just been 
 - Replaced `getSecondHotkey()` with `getHotkeys()` to grab both the first and second hotkeys when two are required for activation
 - Added `moveXorY()` to easily move the mouse along one axis. This method isn't anything special but useful when you need a quick and dirty way to move along one axis
 - `zoom()` will toggle between two options when working on an `Alex` project
-    - All variables are assigned their values at the top of the script for easy adjustment
+    - All variables are now assigned their values at the top of the script for easy adjustment
 - `reset()` will no longer reset the track colour
 - Removed use of `getClassNN()`. If it failed to grab `classNN` values it would simply pass back unset variables and cause errors
 - `getMouseMonitor()` will now only loop as many times as you have monitors
-- `audioDrag()` will now check `A_PriorKey` and if it's a digit, assign that to the track number you wish to move the `bleep` sfx to, instead of checking the state of each individual digit
-    - Will now present a tooltip showing the user which track it's about to drag to
-    - Added more colours to reduce the amount of times it will fail
 - Removed `toolFind()` and simply added a varibale to `toolCust()` to determine if you want that message at the beginning of the tooltip
 - `switchToExplorer()` will now include `Save As` type windows
 - Now define `browser & editor` groups in `General.ahk`
+
+`audioDrag()`
+- Will now check `A_PriorKey` and if it's a digit, assign that to the track number you wish to move the `bleep` sfx to, instead of checking the state of each individual digit
+- Will now present a tooltip showing the user which track it's about to drag to
+- Added more colours to reduce the amount of times it will fail
 
 `isFullscreen()`
 - Fixed bug that could cause windows to go full [windows xp lagscreen](https://tinyurl.com/23vobypv)
@@ -65,7 +67,11 @@ This release is centered around fixing old sloppy practices that have just been 
 # > Other Changes
 - Changed all instances of `errorLog()` initiated via a hotkey to output : `A_Hotkey "::"` instead of just `A_Hotkey`
 - Reduced repeat code in `b::` (`QMK Keyboard`)
-- `autosave.ahk` check frequency changed from `7.5min` to `5min`
+
+`autosave.ahk`
+- Check frequency changed from `7.5min` to `5min`
+- Add a check to make sure `id` variable has been set
+- Fixed a bug where timer would not restart if it encountered an error at some stage
 
 `right click premiere.ahk`
 - Will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring

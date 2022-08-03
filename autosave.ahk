@@ -137,6 +137,13 @@ save()
             SetTimer(, -ms)
             goto end2
         }
+    if not IsSet(id)
+        {
+            blockOff()
+            toolCust("``id`` variable wasn't assigned a value", "1000")
+            errorLog(A_ThisFunc "()", "``id`` variable wasn't assigned a value", A_LineFile, A_LineNumber)
+            goto end2
+        }
     if id = "Adobe Premiere Pro.exe" ;this check is a final check to ensure the user doesn't have a menu window (or something similar) open that the first title check didn't grab (because we get the title of premiere in general and not the current active window)
         {
             premWinCheck := WinGetTitle("A")
@@ -311,9 +318,11 @@ save()
         toolCust("couldn't activate original window", "1000")
         errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
     }
-    blockOff()
-    ToolTip("")
-    SetTimer(, -ms) ;reset the timer
     end2:
+    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+		WinWaitClose("ahk_class tooltips_class32",, 2)
+    ToolTip("")
+    blockOff()
+    SetTimer(, -ms) ;reset the timer
 }
 
