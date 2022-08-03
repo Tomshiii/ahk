@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.1
+;\\v2.14.2
 #Include General.ahk
 
 /* preset()
@@ -760,13 +760,13 @@ audioDrag(sfxName)
                 sleep 50
                 MouseGetPos(&colourX, &colourY)
                 colour := PixelGetColor(colourX, colourY)
-                if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698
+                if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC
                     break
                 if A_Index > 2
                     {
                         blockOff()
-                        toolCust("Couldn't drag the file to the timeline", "1000")
-                        errorLog(A_ThisFunc "()", "Couldn't drag the file to the timeline", A_LineFile, A_LineNumber)
+                        toolCust("Couldn't drag the file to the timeline`ncolour was " colour, "1000")
+                        errorLog(A_ThisFunc "()", "Couldn't drag the file to the timeline because colour was " colour, A_LineFile, A_LineNumber)
                         return
                     }
             }
@@ -774,18 +774,17 @@ audioDrag(sfxName)
             blockOff()
             if sfxName = "bleep"
                 {
-                    skip := 0
                     trackNumber := 2
                     sleep 100
                     SendInput(cutPrem)
-                    ToolTip(A_ThisFunc " is waiting for you to cut the bleep sfx`nPress c again if you do not wish for this funtion to drag the cut to Track 1")
                     loop {
-                        if GetKeyState("c", "P")
-                            skip := 1
                         ;check to see if the user wants the bleep on a track between 1-9
                         getlastHotkey := A_PriorKey
+                        if getlastHotkey = ""
+                            goto skip
                         if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
                             trackNumber := getlastHotkey
+                        skip:
                         if GetKeyState("LButton", "P") ;checking for the user cutting the bleep sfx
                             break
                         sleep 50
@@ -796,6 +795,7 @@ audioDrag(sfxName)
                                 errorLog(A_ThisFunc "()", "timed out due to no user interaction", A_LineFile, A_LineNumber)
                                 return
                             }
+                        ToolTip("This function will attempt to drag your bleep to track " trackNumber "`nPress another number key to move to a different track`n`nThe function will continue once you've cut the track")
                     }
                     ToolTip("")
                     blockOn()
@@ -824,13 +824,8 @@ audioDrag(sfxName)
                     sleep 500
                     SendInput("{Click Down}")
                     MouseGetPos(&refx, &refy)
-                    if skip = 1
-                        goto skip
-                    else if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track " trackNumber "_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "\track " trackNumber "_2.png")
-                        {
-                            MouseMove(refx, trackY, 2)
-                            goto skip
-                        }
+                    if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_2.png")
+                        MouseMove(refx, trackY, 2)
                     else
                         {
                             blockOff()
@@ -838,7 +833,6 @@ audioDrag(sfxName)
                             errorLog(A_ThisFunc "()", "Couldn't determine the Y value of desired track", A_LineFile, A_LineNumber)
                             return
                         }
-                    skip:
                     SendInput("{Click Up}")
                     sleep 50
                     MouseMove(delx + 10, dely, 2)

@@ -21,6 +21,8 @@ This release is centered around fixing old sloppy practices that have just been 
 - Removed use of `getClassNN()`. If it failed to grab `classNN` values it would simply pass back unset variables and cause errors
 - `getMouseMonitor()` will now only loop as many times as you have monitors
 - `audioDrag()` will now check `A_PriorKey` and if it's a digit, assign that to the track number you wish to move the `bleep` sfx to, instead of checking the state of each individual digit
+    - Will now present a tooltip showing the user which track it's about to drag to
+    - Added more colours to reduce the amount of times it will fail
 - Removed `toolFind()` and simply added a varibale to `toolCust()` to determine if you want that message at the beginning of the tooltip
 - `switchToExplorer()` will now include `Save As` type windows
 - Now define `browser & editor` groups in `General.ahk`
