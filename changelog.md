@@ -72,7 +72,9 @@ This release is centered around fixing old sloppy practices that have just been 
 `autosave.ahk`
 - Check frequency changed from `7.5min` to `5min`
 - Add a check to make sure `id` variable has been set
-- Fixed a bug where timer would not restart if it encountered an error at some stage
+- Fixed a bug where timer would not restart if it encountered an error while assigning some variables
+- Now uses functions to grab `id & title` information
+- Now checks for `ahk_class #32770` which is a secondary window that would stop the user from being able to save
 
 `right click premiere.ahk`
 - Will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring
