@@ -85,7 +85,8 @@ I decided to change the name away from the original concept to `HotkeyReplacer.a
 - Now uses functions to grab `id & title` information
 - Now checks for `ahk_class #32770` which is a secondary window that would stop the user from being able to save
 - Added a custom tray menu that when click will show the `min` remaining until a save attempt
-- The script will now show a tooltip every minute leading up to the save attempt - can be disabled by adjusting a variable
+- The script will now show a tooltip every minute leading up to the save attempt
+    - This can be disabled/re-enable by adjusting a variable in the script or by right clicking it's tray icon and toggling it
 
 `right click premiere.ahk`
 - Will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring

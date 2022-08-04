@@ -38,9 +38,42 @@ secondsRetry := 2.5
 global retry := secondsRetry * 1000
 
 ;SET WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
-tooltips := true ;set "false" if you want them off
+tooltips := true ;set "false" if you want them off. This value can be adjusted at any time by right clicking the tray icon for this script
 ;is the timer running?
 timer := false
+
+A_TrayMenu.Add("Tooltip Countdown", tooltipCount)
+if tooltips = true
+    A_TrayMenu.Check("Tooltip Countdown")
+if tooltips = false
+    A_TrayMenu.Uncheck("Tooltip Countdown")
+tooltipCount(*)
+{
+    replaceVal(newVal)
+    {
+        temp := FileRead(A_ScriptFullPath)
+        getpos := InStr(temp, "tooltips :=", 1,, 1)
+        endpos := InStr(temp, ";", 1, getpos, 1)
+        replace := SubStr(temp, getpos + 9, endpos - getpos - 10)
+        newver := StrReplace(temp, replace, newVal, 1,, 1)
+        if not DirExist(A_Temp "\tomshi")
+            DirCreate(A_Temp "\tomshi")
+        FileAppend(newver, A_Temp "\tomshi\autosave.ahk")
+        FileMove(A_Temp "\tomshi\autosave.ahk", A_ScriptFullPath, 1)
+    }
+    if tooltips = true
+        {
+            replaceVal(":= false")
+            A_TrayMenu.Uncheck("Tooltip Countdown")
+            reload
+        }
+    if tooltips = false
+        {
+            replaceVal(":= true")
+            A_TrayMenu.Check("Tooltip Countdown")
+            reload
+        }
+}
 
 
 ;timer for tray function
