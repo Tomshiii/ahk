@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.3
+;\\v2.12.4
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.3
+;		Windows Scripts \\ Last updated: v2.12.4
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -91,6 +91,14 @@ moveWin(key)
  */
 moveTab()
 {
+    if GetKeyState("LButton", "P") && !GetKeyState("RButton", "P")
+        {
+            if A_ThisHotkey = "XButton2"
+                moveWin("#{Left}")
+            else
+                moveWin("#{Right}")
+            return
+        }
     if not GetKeyState("RButton", "P")
         {
             SendInput("{" A_ThisHotkey "}")
