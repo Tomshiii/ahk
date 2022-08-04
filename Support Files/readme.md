@@ -9,6 +9,7 @@ This directory is here simply to *assist* other scripts.
 - `\shortcuts` contains all shortcut files I use within scripts
 - `Fkeys used.xlsx` is an excel file keeping track of where `Fkeys` beyond `F12` are being used
 - `ignore.ini` is for the update checker to know if you want to be prompted or not
+- `Installer.ahk` is a script designed to replace hotkeys in a new release of `My Scripts.ahk` with the users adjusted copies
 - `mouse settings.png` is just a backup of my mouse settings
 - `replaceChecklist.ahk` is a script designed to replace all `checklist.ahk` files that have been copied to their project directories, with a newer version
 

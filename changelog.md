@@ -1,7 +1,12 @@
-# <> Release 2.4.3 - Cleanup & Stability
+# <> Release 2.4.3 - Cleanup, Stability & Installer
 This release is centered around fixing old sloppy practices that have just been left in the code because, *"if it aint broke, don't fix it"*
 - Changed all leftover uses of redundant `else if`'s to proper uses of `||` (Mostly a lot of `ImageSearch`'s that were stacked below each other). This helps cleanup repeated code blocks as well as making instances with more than 2 `||`'s more easily readable
 - Removed all instances of `%&variableX%` and replaced with `variableX` as the additional syntaxing isn't neccesary for what my scripts do
+
+## Installer.ahk
+Alongside the above changes finally comes `Installer.ahk`. The concept of this script was concieved way back in [`v2.3.1`](https://github.com/Tomshiii/ahk/releases/tag/v2.3.1). It's designed to read a users local copy of `My Scripts.ahk`, take note of all their custom hotkeys by reading the `;xHotkey;` tags above each one and replacing the hotkeys in the release version. This allows quick transitioning of hotkeys between new versions.
+- This script ***can't*** transfer over new code the user has added. Hotkey tags that aren't in the release version will simply be ignored - some user adjustment will be required in those cases
+- To stop it attempting to fire on a random script the user ***must*** still have their script named `My Scripts.ahk`
 
 # > My Scripts
 - Added `^+t::` to type out `YYYY-MM-DD`
