@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.10
+;\\v2.16.11
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.2
 
@@ -217,7 +217,7 @@ SC03A & XButton1::moveXorY()
 ;		other
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-#HotIf WinActive("ahk_class CabinetWClass") ;windows explorer
+#HotIf WinActive("ahk_class CabinetWClass") || WinActive("ahk_class #32770") ;windows explorer
 ;explorerbackHotkey;
 F21::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 ;showmoreHotkey;
@@ -787,7 +787,7 @@ SC03A & v:: ;lowercases highlighted text
 ;timeHotkey;
 ^+t::
 {
-	if WinActive("ahk_group Browsers")
+	if WinActive("ahk_group Browsers") && !WinActive("ahk_class #32770")
 		{
 			SendInput(A_ThisHotkey)
 			return
