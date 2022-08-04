@@ -457,7 +457,7 @@ disc(button)
             blockOff()
         }
 }
- 
+
 /*
  This function will toggle the location of discord's window position
  */

@@ -14,7 +14,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
 		else
 			WinWaitActive "ahk_exe Adobe Audition.exe"
 		sleep 4000 ;audition is slow asf to load
-		if WinExist("ahk_exe Adobe Audition.exe")		
+		if WinExist("ahk_exe Adobe Audition.exe")
 			WinMaximize "ahk_exe Adobe Audition.exe" ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
 		sleep 4000 ;audition is slow asf to load
 		coords()

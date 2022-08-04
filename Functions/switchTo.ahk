@@ -351,7 +351,7 @@ switchToMusic()
 {
     GroupAdd("MusicPlayers", "ahk_exe wmplayer.exe")
     GroupAdd("MusicPlayers", "ahk_exe vlc.exe")
-    GroupAdd("MusicPlayers", "ahk_exe AIMP.exe") 
+    GroupAdd("MusicPlayers", "ahk_exe AIMP.exe")
     GroupAdd("MusicPlayers", "ahk_exe foobar2000.exe")
     if not WinExist("ahk_group MusicPlayers")
         musicGUI()
@@ -499,43 +499,43 @@ hotkeysGUI() {
             {
                 selectionText.Move(,, "240", "100")
                 selectionText.Text := "Will center the current active window in the middle of your main display!"
-                hotGUI.Move(,, "450", "297") 
+                hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 5
             {
                 selectionText.Move(,, "240", "100")
                 selectionText.Text := "Will put the active window in fullscreen if it isn't already, or pull it out of fullscreen if it already is!"
-                hotGUI.Move(,, "450", "297") 
+                hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 6
             {
                 selectionText.Move(,, "240", "100")
                 selectionText.Text := "(That's : win > SHIFT > 1, not the actual + key)`nWill pause the ``autosave.ahk`` script!"
-                hotGUI.Move(,, "450", "297") 
+                hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 7
             {
                 selectionText.Move(,, "240", "100")
                 selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F1`` hotkey and unticking the same script!"
-                hotGUI.Move(,, "450", "297") 
+                hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 8
             {
                 selectionText.Move(,, "240", "100")
                 selectionText.Text := "Will search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
-                hotGUI.Move(,, "450", "297") 
+                hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 9
             {
                 selectionText.Move(,, "240", "100")
                 selectionText.Text := "Will remove and then capitilise the highlighted text!"
-                hotGUI.Move(,, "450", "297") 
+                hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 10
             {
                 selectionText.Move(,, "240", "100")
                 selectionText.Text := "Will remove and then lowercase the highlighted text!"
-                hotGUI.Move(,, "450", "297") 
+                hotGUI.Move(,, "450", "297")
             }
     }
 

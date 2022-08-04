@@ -58,7 +58,7 @@ if not WinExist("ahk_exe obs64.exe")
 	Run("firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager")
 	sleep 1000
 	Run("firefox.exe https://yoink.streamelements.com/activity-feed?activitiesToolbar=false&popout=true&theme=dark&withSetupWizard=false")
-	sleep 9000 
+	sleep 9000
 	if WinExist("ahk_exe firefox.exe")
 		{
 			WinActivate

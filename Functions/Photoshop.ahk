@@ -64,7 +64,7 @@ psProp(image)
             return
         }
 }
- 
+
 /* psSave()
  This function is to speed through the twitch emote saving process within photoshop. Doing this manually is incredibly tedious and annoying, so why do it manually?
  */
@@ -160,7 +160,7 @@ psSave()
     SendInput("{Enter}")
     blockOff()
 }
- 
+
 /* psType()
  When you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want
  @param filetype is the name of the image you save to pick which filetype you want this function to click on
@@ -192,4 +192,3 @@ psType(filetype)
         }
     MouseMove(x, y)
 }
- 

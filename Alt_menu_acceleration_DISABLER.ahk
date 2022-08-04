@@ -7,7 +7,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\error.ico") ;changes the icon thi
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 
 ;These next two lines are very important. You have to change the "menu mask key" away from being CTRL, to something that won't result in cross-talk. Read this thread to learn the details: https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
-A_MenuMaskKey := "vk07"  ; vk07 is unassigned. 
+A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
 #UseHook
 
 ;; take this tutorial if you don't know how AHK works. https://www.autohotkey.com/docs/Tutorial.htm
@@ -101,7 +101,7 @@ A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
 
 ; THE SITUATION:
 ; In just about any Windows application, pressing (and releasing!) the ALT key will highlight the menu bar in a special way, where pressing a letter key immediately after, (Like F) will result in the menu being opened. Further keystrokes will bring you even deeper into the menu. This is called "menu acceleration."
-; So, ALT I R will make a new row in excel, and ALT R C will make a new comment in Word... stuff like that. You only have to press one key at a time, and the key combo still works. 
+; So, ALT I R will make a new row in excel, and ALT R C will make a new comment in Word... stuff like that. You only have to press one key at a time, and the key combo still works.
 
 ; THE PROBLEM:
 ; Because this system allows you to completely release the ALT key before pressing the next keystrokes, it means that ALT is not really a modifier key... it's an obligatory STICKY KEY. https://en.wikipedia.org/wiki/Sticky_keys
@@ -163,7 +163,7 @@ A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
 
 
 ;the below firefox snippet is by tomshi to disable firefox's annoying alt menu that is bound to f10 for whatever
-#HotIf WinActive("ahk_exe firefox.exe") 
+#HotIf WinActive("ahk_exe firefox.exe")
 F10::
 {
 	Sendinput("{Blind}{sc0E9}")
@@ -200,7 +200,7 @@ return
 ~RAlt up::
 ;sendinput, {RAlt up}
 sendinput, {SC0E9 up}
-;;tooltip, 
+;;tooltip,
 return
 
 */
@@ -246,62 +246,62 @@ Lalt & Ralt::suspend ;hit both ALT keys simultaneously to toggle the functonalit
 ;uh ignore this.
 ;this resulted in the error noise...
 
-; 7B  058	#	d	0.64	F12            	
-; 7B  058	 	u	0.08	F12            	
-; 7B  058	#	d	0.41	F12            	
-; 7B  058	 	u	0.08	F12            	
-; A4  038	 	d	0.77	LAlt           	
-; 07  000	i	d	0.00	not found      	
-; 07  000	i	u	0.00	not found      	
-; A4  038	i	u	0.00	LAlt           	
-; 00  0E9	i	d	0.00	not found      	
-; 07  000	i	d	0.00	not found      	
-; A4  038	i	d	0.00	LAlt           	
-; 07  000	i	u	0.00	not found      	
-; A4  038	 	d	0.50	LAlt           	
-; A4  038	 	d	0.03	LAlt           	
-; A4  038	 	d	0.03	LAlt           	
-; A4  038	 	d	0.03	LAlt           	
-; A4  038	 	d	0.03	LAlt           	
-; A4  038	 	u	0.03	LAlt           	
-; 00  0E9	i	u	0.00	not found      	
-; 35  006	#	d	2.48	5              	
-; 35  006	 	u	0.06	5              	
-; 13  045	h	d	1.72	Pause          	
-; 13  045	s	u	0.06	Pause        
+; 7B  058	#	d	0.64	F12
+; 7B  058	 	u	0.08	F12
+; 7B  058	#	d	0.41	F12
+; 7B  058	 	u	0.08	F12
+; A4  038	 	d	0.77	LAlt
+; 07  000	i	d	0.00	not found
+; 07  000	i	u	0.00	not found
+; A4  038	i	u	0.00	LAlt
+; 00  0E9	i	d	0.00	not found
+; 07  000	i	d	0.00	not found
+; A4  038	i	d	0.00	LAlt
+; 07  000	i	u	0.00	not found
+; A4  038	 	d	0.50	LAlt
+; A4  038	 	d	0.03	LAlt
+; A4  038	 	d	0.03	LAlt
+; A4  038	 	d	0.03	LAlt
+; A4  038	 	d	0.03	LAlt
+; A4  038	 	u	0.03	LAlt
+; 00  0E9	i	u	0.00	not found
+; 35  006	#	d	2.48	5
+; 35  006	 	u	0.06	5
+; 13  045	h	d	1.72	Pause
+; 13  045	s	u	0.06	Pause
 
 ; with the new alt killer code that is only 2 lines... it doens't even show up in here...
    	; ;no noise:
-; 81  069	h	d	0.08	F18            	
-; A4  038	i	d	0.00	LAlt           	
-; A0  02A	i	d	0.00	LShift         	
-; 35  006	i	d	0.00	5              	
-; 35  006	i	u	0.00	5              	
-; A4  038	i	u	0.00	LAlt           	
-; A0  02A	i	u	0.00	LShift         	
-; 1B  001	#	d	0.09	Escape         	
-; 81  069	s	u	0.01	F18            	
-; 1B  001	 	u	0.06	Escape         	
-; 1B  001	#	d	0.06	Escape         	
-; 1B  001	 	u	0.08	Escape         	
-; 1B  001	#	d	0.06	Escape         
+; 81  069	h	d	0.08	F18
+; A4  038	i	d	0.00	LAlt
+; A0  02A	i	d	0.00	LShift
+; 35  006	i	d	0.00	5
+; 35  006	i	u	0.00	5
+; A4  038	i	u	0.00	LAlt
+; A0  02A	i	u	0.00	LShift
+; 1B  001	#	d	0.09	Escape
+; 81  069	s	u	0.01	F18
+; 1B  001	 	u	0.06	Escape
+; 1B  001	#	d	0.06	Escape
+; 1B  001	 	u	0.08	Escape
+; 1B  001	#	d	0.06	Escape
 
-; ;;;and YES a noise:	
-; 1B  001	 	u	0.09	Escape         	
-; 1B  001	#	d	0.06	Escape         	
-; 1B  001	 	u	0.06	Escape         	
-; 1B  001	#	d	0.05	Escape         	
-; 1B  001	 	u	0.08	Escape         	
-; 81  069	h	d	0.09	F18            	
-; A4  038	i	d	0.00	LAlt           	
-; A0  02A	i	d	0.00	LShift         	
-; 35  006	i	d	0.00	5              	
-; 35  006	i	u	0.00	5              	
-; A4  038	i	u	0.00	LAlt           	
-; A0  02A	i	u	0.00	LShift         	
-; 81  069	s	u	0.09	F18            	
-; 13  045	h	d	1.64	Pause          	
-; 13  045	s	u	0.08	Pause          	
+; ;;;and YES a noise:
+; 1B  001	 	u	0.09	Escape
+; 1B  001	#	d	0.06	Escape
+; 1B  001	 	u	0.06	Escape
+; 1B  001	#	d	0.05	Escape
+; 1B  001	 	u	0.08	Escape
+; 81  069	h	d	0.09	F18
+; A4  038	i	d	0.00	LAlt
+; A0  02A	i	d	0.00	LShift
+; 35  006	i	d	0.00	5
+; 35  006	i	u	0.00	5
+; A4  038	i	u	0.00	LAlt
+; A0  02A	i	u	0.00	LShift
+; 81  069	s	u	0.09	F18
+; 13  045	h	d	1.64	Pause
+; 13  045	s	u	0.08	Pause
 ; Press [F5] to refresh.
 
 ;;biggest differeence is that the firs tone has an escape down event still inside the F18 events. idk why.

@@ -223,7 +223,7 @@ motionBlur()
                 break
             }
         start -= 1
-        MouseMove(-30, 0,, "R") ;move the mouse incase it's in the way 
+        MouseMove(-30, 0,, "R") ;move the mouse incase it's in the way
         if A_Index > 4
             {
                 toolCust("Couldn't find blur button", "1000")

@@ -21,7 +21,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 
 ## What to do:
 1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 Beta.6](https://www.autohotkey.com/v2/).
-2. Extract AHK v2.0 beta, run `install.cmd` and then select `install for all users` 
+2. Extract AHK v2.0 beta, run `install.cmd` and then select `install for all users`
 3. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
    - [Notepad++](https://notepad-plus-plus.org/downloads/)
      - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
@@ -93,7 +93,7 @@ A script that will automatically save an Adobe Premiere Pro/After Effects projec
       H-->C;
 
       D-- no --> Y[wait 5min];
- 
+
       B -- no --> Y[wait 5min];
       Y -->B;
 ```

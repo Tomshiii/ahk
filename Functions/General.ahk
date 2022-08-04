@@ -302,7 +302,7 @@ firstCheck(MyRelease) {
 				Congratulations!
 				You've gotten my main script to load without any runtime errors! (hopefully).
 				You've taken the first step to really getting the most out of these scripts!
-				
+
 				The purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.
 				These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.
 
@@ -315,7 +315,7 @@ firstCheck(MyRelease) {
 			hotkeysButton.OnEvent("Click", hotkeysPage)
 			closeButton := firstCheckGUI.Add("Button", "X500 Y380", "Close")
 			closeButton.OnEvent("Click", close)
-			
+
 			firstCheckGUI.OnEvent("Escape", close)
 			firstCheckGUI.OnEvent("Close", close)
 			close(*) {
@@ -323,7 +323,7 @@ firstCheck(MyRelease) {
 				firstCheckGUI.Destroy()
 			}
 			todoPage(*) {
-				todoGUI()	
+				todoGUI()
 			}
 			hotkeysPage(*) {
 				hotkeysGUI()
@@ -574,7 +574,7 @@ coords()
     coordmode "pixel", "screen"
     coordmode "mouse", "screen"
 }
- 
+
 /* coordw()
   sets coordmode to "window"
   */
@@ -583,7 +583,7 @@ coordw()
     coordmode "pixel", "window"
     coordmode "mouse", "window"
 }
- 
+
 /* coordc()
   * sets coordmode to "caret"
   */
@@ -591,7 +591,7 @@ coordc()
 {
     coordmode "caret", "window"
 }
- 
+
 ; ===========================================================================================================================================
 ;
 ;		Tooltip \\ Last updated: v2.15.1
@@ -608,7 +608,7 @@ toolCust(message, timeout, find := "")
 	if find != 1
 		messageFind := ""
 	else
-		messageFind := "Couldn't find " 
+		messageFind := "Couldn't find "
     ToolTip(messageFind message)
     SetTimer(timeouttime, - timeout)
     timeouttime()
@@ -616,7 +616,7 @@ toolCust(message, timeout, find := "")
         ToolTip("")
     }
 }
- 
+
 ; ===========================================================================================================================================
 ;
 ;		Blockinput \\ Last updated: v2.0.1
@@ -632,7 +632,7 @@ blockOn()
     BlockInput "On"
     ;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
 }
- 
+
 /* blockOff()
   turns off the blocks on user input
   */
@@ -641,14 +641,14 @@ blockOff()
     blockinput "MouseMoveOff"
     BlockInput "off"
 }
- 
+
 ; ===========================================================================================================================================
 ;
 ;		Mouse Drag \\ Last updated: v2.12.3
 ;
 ; ===========================================================================================================================================
 /* mousedrag()
-  Press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensuring the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere. 
+  Press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensuring the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
   This version is specifically for Premiere Pro, the function below this one is for any other program
   @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
   @param toolorig is the button you want the script to press to bring you back to your tool of choice
@@ -721,7 +721,7 @@ mousedragNotPrem(tool, toolorig)
     SendInput("{LButton Up}")
     SendInput toolorig
 }
- 
+
 ; ===========================================================================================================================================
 ;
 ;		better timeline movement \\ Last updated: v2.3.11
@@ -751,8 +751,8 @@ timeline(timeline, x1, x2, y1)
     else
         return
 }
- 
- 
+
+
 ; ===========================================================================================================================================
 ;
 ;		Error Log \\ Last updated: v2.11

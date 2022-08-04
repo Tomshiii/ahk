@@ -298,10 +298,10 @@ save()
             toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
             goto end2
         }
-    
+
     ;\\ Now we begin
     blockOn()
-        
+
     ;\\ before finally saving
     SendInput("^s")
     WinWait("Save Project",, 3)
@@ -320,7 +320,7 @@ save()
     ;\\ if the originally active window isn't premiere, we don't want to refocus it so we'll jump straight to the end
     if id != "Adobe Premiere Pro.exe"
         goto end
-        
+
     ;\\ if the orginally active window IS premiere, we now refocus premiere
     try {
         sleep 250
@@ -344,7 +344,7 @@ save()
             SendInput(timelineWindow)
             goto end2
         }
-    
+
     end:
     try { ;this is to restore the original active window
         if id = "ahk_class CabinetWClass"

@@ -47,7 +47,7 @@ FileDelete(SelectedFolder "\*.pek")
 FileDelete(SelectedFolder "\videos\*.mkv")
 
 ;the below loop will go through and delete any files that are larger than 5GB (default) as I don't need to store anything larger than that
-maxFileSizeGB := 5 
+maxFileSizeGB := 5
 loop files SelectedFolder "\videos\*.*", "R"
     {
         if A_LoopFileSize/1073741824 > maxFileSizeGB
@@ -62,7 +62,7 @@ loop files SelectedFolder "\videos\*.*", "R"
 largestSize := 15
 ;then below checks the size and deletes if too large
 FolderSize := 0
-WhichFolder := A_AppData "\Adobe\Common\Media Cache Files\" 
+WhichFolder := A_AppData "\Adobe\Common\Media Cache Files\"
 Loop Files, WhichFolder "\*.*", "R"
     FolderSize += A_LoopFileSize
 convert := FolderSize/"1073741824"

@@ -80,7 +80,7 @@ blockOff()
 	  if find != 1
 		  messageFind := ""
 	  else
-		  messageFind := "Couldn't find " 
+		  messageFind := "Couldn't find "
 	  ToolTip(message)
 	  SetTimer(timeouttime, - timeout)
 	  timeouttime()
@@ -134,7 +134,7 @@ scale(amount)
 					blockOff()
 					toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
 					return
-				}			
+				}
 		}
 	else ;this is for when you have the "toggle animation" keyframe button pressed
 		{
@@ -147,14 +147,14 @@ scale(amount)
 							blockOff()
 							toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
 							return
-						}			
+						}
 				}
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
 					toolCust("scale", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
 					return
-				}		
+				}
 		}
 	SendInput "{Click}"
 	SendInput(amount)
@@ -181,7 +181,7 @@ pauseautosave()
 			toolCust("autosave ahk script isn't open", "1000")
 			ExitApp()
 		}
-		
+
 }
 
 /*

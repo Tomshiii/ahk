@@ -59,7 +59,7 @@ F22::  ;temporary way to play full mii wii song using lioranboard
 ^+r:: ;this script is to trigger the replay buffer in obs, as well as the source record plugin, I use this to save clips of stream
 {
 	if WinExist("ahk_exe obs64.exe")
-		WinActivate 
+		WinActivate
 	sleep 1000
 	SendInput(replayBuffer) ;Main replay buffer hotkey must be set to this
 	SendInput(sourceRecord1) ;Source Record OBS Plugin replay buffer must be set to this

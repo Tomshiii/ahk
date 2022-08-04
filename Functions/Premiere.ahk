@@ -377,7 +377,7 @@ zoom()
             setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
             if setValue = "No"
                 return
-        }     
+        }
     SendInput(timelineWindow)
     if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
         {
@@ -515,7 +515,7 @@ valuehold(filepath, optional)
                 ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") ||
                 ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "3.png") ||
                 ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
-        ) 
+        )
             break
         if A_Index > 3
             {

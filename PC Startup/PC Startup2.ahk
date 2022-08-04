@@ -35,4 +35,3 @@ else
         WinWait("ahk_exe StreamDeck.exe")
         WinClose("ahk_exe StreamDeck.exe") ;closing these programs just pushes them into the hidden part of the taskbar, which is what I want
     }
-    

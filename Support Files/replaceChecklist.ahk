@@ -52,7 +52,7 @@ replace := ""
 if FileExist(A_ScriptDir "\replaceChecklist_log.txt")
     FileDelete(A_ScriptDir "\replaceChecklist_log.txt")
 loop files, location "*.ahk", "R"
-    {  
+    {
         if A_LoopFileName = "checklist.ahk"
             {
                 inUseVer := localVer(A_LoopFileFullPath)
