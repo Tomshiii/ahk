@@ -3,10 +3,8 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.3"
+version := "v2.3.1"
 
-;todays date
-today := A_YYYY "_" A_MM "_" A_DD
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
 
@@ -17,15 +15,36 @@ today := A_YYYY "_" A_MM "_" A_DD
   * @param message is what you want the tooltip to say
   * @param timeout is how many ms you want the tooltip to last
   */
-  toolCust(message, timeout)
-  {
-      ToolTip(message)
-      SetTimer(timeouttime, - timeout)
-      timeouttime()
-      {
-          ToolTip("")
-      }
-  }
+toolCust(message, timeout)
+{
+    ToolTip(message)
+    SetTimer(timeouttime, - timeout)
+    timeouttime()
+    {
+        ToolTip("")
+    }
+}
+
+;a function to cut repeat code - will check the last date in the logs and then break up the group if the last date is different from today
+newDate(&today)
+{
+    ;getting the last date present in the log file
+    getLastDate(&today)
+    {
+        ;todays date
+        today := A_YYYY "_" A_MM "_" A_DD
+        read := FileRead(A_ScriptDir "\checklist_logs.txt")
+        foundpos := InStr(read, A_YYYY "_",, -1)
+        endpos := InStr(read, ",",, foundpos)
+        end := endpos - foundpos
+        lastdate := SubStr(read, foundpos, end)
+        return lastdate
+    }
+    lastdate := getLastDate(&today)
+    if today != lastdate && lastdate != ""
+        FileAppend("}`n`n{ " today " - " timeForLog "`n",  A_ScriptDir "\checklist_logs.txt")
+}
+newDate(&today)
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THE REMINDER TIMER TO WAIT HERE
 minutes := 1
@@ -45,20 +64,6 @@ if getTime = 0
 ;checking for log file
 if not FileExist(A_ScriptDir "\checklist_logs.txt")
     FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{ " today " - " timeForLog "`n", A_ScriptDir "\checklist_logs.txt")
-
-;getting the last date present in the log file
-getLastDate()
-{
-    read := FileRead(A_ScriptDir "\checklist_logs.txt")
-    foundpos := InStr(read, A_YYYY "_",, -1)
-    endpos := InStr(read, ",",, foundpos)
-    end := endpos - foundpos
-    lastdate := SubStr(read, foundpos, end)
-    return lastdate
-}
-lastdate := getLastDate()
-if today != lastdate && lastdate != ""
-    FileAppend("}`n`n{ " today " - " timeForLog "`n",  A_ScriptDir "\checklist_logs.txt")
 
 ;getting dir name for the title
 FullFileName := A_ScriptDir
@@ -155,6 +160,7 @@ start(*) {
     timerText.SetFont("cGreen") ;changing the colours
     timerMinutes.SetFont("cGreen")
     forFile := Round(ElapsedTime / 3600, 3)
+    newDate(&today)
     FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile " -- seconds at start = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     global StartTickCount := A_TickCount ;This allows us to use your computer to determine how much time has past by doing some simple math below
     SetTimer(StopWatch, 10) ;start the timer and loop it as often as possible
@@ -180,6 +186,7 @@ StopWatch() {
 stop(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
+    newDate(&today)
     FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Stopping Hours = " forFile " -- seconds at stop = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0) ;then stop the timer
     startButton.Move(,, 50, 30) ;then show the start button
@@ -221,6 +228,7 @@ minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent re
     global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
+    newDate(&today)
     FileAppend("\\ The timer was stopped and " List.Text "min " word " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- seconds after stopping = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
 }
 minusFive(*) {
@@ -240,6 +248,7 @@ reminder() {
 }
 logElapse() {
     forFile := Round(ElapsedTime / 3600, 3)
+    newDate(&today)
     FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- current hours = " forFile " -- current seconds = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(, -ms10)
 }
@@ -263,6 +272,7 @@ logCheckbox(*) {
                             logState := "disabled"
                             logCheck := "disabling"
                         }
+                    newDate(&today)
                     FileAppend("\\ ``" name "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
                 }
         }
@@ -272,6 +282,7 @@ MyGui.OnEvent("Close", close) ;what happens when you close the GUI
 close(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
+    newDate(&today)
     FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0)
     SetTimer(reminder, 0)
