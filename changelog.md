@@ -1,4 +1,4 @@
-# <> Release 2.4.3 - Cleanup, Stability & Installer
+# <> Release 2.5 - Cleanup & Stability + Installer.ahk
 This release is centered around fixing old sloppy practices that have just been left in the code because, *"if it aint broke, don't fix it"*
 - Changed all leftover uses of redundant `else if`'s to proper uses of `||` (Mostly a lot of `ImageSearch`'s that were stacked below each other). This helps cleanup repeated code blocks as well as making instances with more than 2 `||`'s more easily readable
 - Removed all instances of `%&variableX%` and replaced with `variableX` as the additional syntaxing isn't neccesary for what my scripts do
@@ -81,6 +81,8 @@ Alongside the above changes finally comes `Installer.ahk`. The concept of this s
 - Fixed a bug where timer would not restart if it encountered an error while assigning some variables
 - Now uses functions to grab `id & title` information
 - Now checks for `ahk_class #32770` which is a secondary window that would stop the user from being able to save
+- Added a custom tray menu that when click will show the `min` remaining until a save attempt
+- The script will now show a tooltip every minute leading up to the save attempt - can be disabled by adjusting a variable
 
 `right click premiere.ahk`
 - Will now stop playback before attempting to warp to the playhead if it is close to the cursor. This is to prevent the mouse from missing the playhead while trying to warp to it while playback is occuring

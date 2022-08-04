@@ -6,10 +6,22 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\save.ico") ;changes the icon this
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 #WinActivateForce
 
+;right clicking on the tray icon for this script will offer you a button to show you how much time is remaining until the next save attempt
+A_TrayMenu.Add()
+A_TrayMenu.Add("Time Remaining", timeRemain)
+timeRemain(ItemName, ItemPos, MyMenu)
+{
+    if timer = false
+        forTray := "Timer not currently tracking"
+    else
+        forTray := Round(((minutes * 60) - ElapsedTime)/ 60, 2) "min"
+    MsgBox(forTray)
+}
+
 ;This script will autosave your premire pro project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 ;It will also ensure you have the checklist script for the current project open. If it can find the file, it will open it automatically
 
-;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING HERE
+;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING HERE. (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
 minutes := 5
 global ms := minutes * 60000
 
@@ -24,6 +36,40 @@ global idle := secondsIdle * 1000
 ;SET THE AMOUNT OF SECONDS YOU WANT THE SCRIPT TO WAIT BEFORE RETRYING TO SAVE AFTER THE ABOVE IDLE ACTIVITY STOP OCCURS
 secondsRetry := 2.5
 global retry := secondsRetry * 1000
+
+;SET WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
+tooltips := true ;set "false" if you want them off
+;is the timer running?
+timer := false
+
+
+;timer for tray function
+global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
+global ElapsedTime := 0
+forTray := "Timer not currently tracking"
+
+
+StopWatch() {
+    timer := true
+    if ((A_TickCount - StartTickCount) >= 1000) ;how we determine once more than 1s has passed
+        {
+            global StartTickCount += 1000
+            global ElapsedTime += 1
+        }
+    if tooltips = true
+        {
+            x := Round((minutes * 60) - ElapsedTime)/ 60
+            if x < 4 && x > 3.98
+                toolCust("4min until a save attempt", "50")
+            if x < 3 && x > 2.98
+                toolCust("3min until a save attempt", "50")
+            if x < 2 && x > 1.98
+                toolCust("2min until a save attempt", "50")
+            if x < 1 && x > 0.98
+                toolCust("1min until a save attempt", "50")
+        }
+}
+
 
 
 ;let's define some functions to grab information
@@ -101,11 +147,13 @@ start:
 if WinExist("ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_exe AfterFX.exe")
     {
         SetTimer(save, -ms)
+        global StartTickCount := A_TickCount ;for tray function
+        SetTimer(StopWatch, 10) ;for tray function
         SetTimer(check, -msChecklist) ;if you do not wish to use the checklist script, simply comment out this timer
     }
 else
     {
-        WinWait("ahk_exe Adobe Premiere Pro.exe")
+        WinWait("ahk_exe Adobe Premiere Pro.exe") || WinWait("ahk_exe AfterFX.exe")
         goto start
     }
 
@@ -116,6 +164,8 @@ check() {
     if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe AfterFX.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
         {
             SetTimer(, -msChecklist)
+            SetTimer(StopWatch, 0) ;for tray function
+            timer := false
             goto end3
         }
     if WinExist("Editing Checklist")
@@ -139,6 +189,8 @@ save()
 {
     if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe AfterFX.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
+    SetTimer(StopWatch, 0) ;this stops the timer from counting while the save function is occuring and proceeding into negative numbers
+    timer := false
 
     stop := ""
     ToolTip("Your project is being saved!`nHold tight!`nThis function will timeout after 3s if it gets stuck")
@@ -363,5 +415,7 @@ save()
     end2:
     if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active
 		WinWaitClose("ahk_class tooltips_class32",, 2)
+    global ElapsedTime := 0
+    SetTimer(StopWatch, 10)
 }
 

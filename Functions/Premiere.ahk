@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.3
+;\\v2.14.4
 #Include General.ahk
 
 /* preset()
@@ -760,7 +760,7 @@ audioDrag(sfxName)
                 sleep 50
                 MouseGetPos(&colourX, &colourY)
                 colour := PixelGetColor(colourX, colourY)
-                if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC
+                if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD4F7EA
                     break
                 if A_Index > 2
                     {
