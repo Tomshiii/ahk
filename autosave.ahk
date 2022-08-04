@@ -149,6 +149,7 @@ if WinExist("ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_exe AfterFX.exe")
         SetTimer(save, -ms)
         global StartTickCount := A_TickCount ;for tray function
         SetTimer(StopWatch, 10) ;for tray function
+        timer := true
         SetTimer(check, -msChecklist) ;if you do not wish to use the checklist script, simply comment out this timer
     }
 else
