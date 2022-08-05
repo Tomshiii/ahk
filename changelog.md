@@ -19,6 +19,7 @@ I decided to change the name away from the original concept to `HotkeyReplacer.a
 - Moved `#F1::` -> `activeScripts()`
 - Moved `^+w::` -> `F3::` and with the other discord hotkeys
 - `F21::` will now additionally work in windows with `ahk_class #32770` (think "Save As" style windows) instead of just windows explorer
+- Checking for updates can now be toggled by right clicking the tray icon
 
 # > Functions
 - `updateChecker()` now shows `TrayTip`'s to alert the user that it's downloading the latest release & backing up their scripts

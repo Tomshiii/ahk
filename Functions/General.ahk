@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.15.1
+;\\v2.15.2
 
 ; =======================================================================================================================================
 ;
@@ -560,6 +560,36 @@ locationReplace()
 		}
 	FileAppend(A_WorkingDir, A_MyDocuments "\tomshi\location\workingDir" )
 }
+
+/*
+ This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates
+ */
+trayMen()
+{
+	ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+	A_TrayMenu.Add() ;adds a divider bar
+	A_TrayMenu.Add("Check for Updates", checkUp)
+	if ignore =  "no"
+		A_TrayMenu.Check("Check for Updates")
+	else
+		A_TrayMenu.Uncheck("Check for Updates")
+	checkUp(*)
+	{
+		ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore") ;has to be checked everytime you wish to toggle
+		if ignore = "no"
+			{
+				IniWrite('"' "yes" '"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+				A_TrayMenu.Uncheck("Check for Updates")
+			}
+		else
+			{
+				IniWrite('"' "no" '"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+				A_TrayMenu.Check("Check for Updates")
+			}
+
+	}
+}
+
 
 ; ===========================================================================================================================================
 ;
