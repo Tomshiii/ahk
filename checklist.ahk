@@ -3,7 +3,10 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.3.1"
+version := "v2.3.2"
+
+;todays date
+today := A_YYYY "_" A_MM "_" A_DD
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
@@ -25,6 +28,25 @@ toolCust(message, timeout)
     }
 }
 
+;SET THE AMOUNT OF MINUTES YOU WANT THE REMINDER TIMER TO WAIT HERE
+minutes := 1
+global ms := minutes * 60000
+;SET THE AMOUNT OF MINUTES YOU WANT INBETWEEN EACH TIME THE SCRIPT LOGS HOW MUCH TIME HAS PASSED (purely for backup purposes)
+minutes2 := 10
+global ms10 := minutes2 * 60000
+
+;checking for ini file
+if not FileExist(A_ScriptDir "\checklist.ini")
+    FileAppend("[Info]`nFirstPass=0`nSecondPass=0`nTwitchOverlay=0`nYoutubeOverlay=0`nTransitions=0`nSFX=0`nMusic=0`nPatreon=0`nIntro=0`ntime=0", A_ScriptDir "\checklist.ini")
+;grabbing hour information from ini file
+getTime := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
+timeForLog := Round(getTime / 3600, 2)
+if getTime = 0
+    timeForLog := "0.00"
+;checking for log file
+if not FileExist(A_ScriptDir "\checklist_logs.txt")
+    FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{ " today " - " timeForLog "`n", A_ScriptDir "\checklist_logs.txt")
+
 ;a function to cut repeat code - will check the last date in the logs and then break up the group if the last date is different from today
 newDate(&today)
 {
@@ -45,25 +67,6 @@ newDate(&today)
         FileAppend("}`n`n{ " today " - " timeForLog "`n",  A_ScriptDir "\checklist_logs.txt")
 }
 newDate(&today)
-
-;SET THE AMOUNT OF MINUTES YOU WANT THE REMINDER TIMER TO WAIT HERE
-minutes := 1
-global ms := minutes * 60000
-;SET THE AMOUNT OF MINUTES YOU WANT INBETWEEN EACH TIME THE SCRIPT LOGS HOW MUCH TIME HAS PASSED (purely for backup purposes)
-minutes2 := 10
-global ms10 := minutes2 * 60000
-
-;checking for ini file
-if not FileExist(A_ScriptDir "\checklist.ini")
-    FileAppend("[Info]`nFirstPass=0`nSecondPass=0`nTwitchOverlay=0`nYoutubeOverlay=0`nTransitions=0`nSFX=0`nMusic=0`nPatreon=0`nIntro=0`ntime=0", A_ScriptDir "\checklist.ini")
-;grabbing hour information from ini file
-getTime := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
-timeForLog := Round(getTime / 3600, 2)
-if getTime = 0
-    timeForLog := "0.00"
-;checking for log file
-if not FileExist(A_ScriptDir "\checklist_logs.txt")
-    FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{ " today " - " timeForLog "`n", A_ScriptDir "\checklist_logs.txt")
 
 ;getting dir name for the title
 FullFileName := A_ScriptDir
