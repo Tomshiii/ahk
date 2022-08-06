@@ -4,7 +4,7 @@ This release is centered around fixing old sloppy practices that have just been 
 - Removed all instances of `%&variableX%` and replaced with `variableX` as the additional syntaxing isn't neccesary for what my scripts do
 
 ## HotkeyReplacer.ahk
-Alongside the above changes finally comes `HotkeyReplacer.ahk`. The concept of this script was concieved way back in [`v2.3.1`](https://github.com/Tomshiii/ahk/releases/tag/v2.3.1) originally called `Installer.ahk`. It's designed to read a users local copy of `My Scripts.ahk`, take note of all their custom hotkeys by reading the `;xHotkey;` tags above each one and replacing the hotkeys in the release version. This allows quick transitioning of hotkeys between new versions.
+Alongside the above changes finally comes `HotkeyReplacer.ahk`. The concept of this script was concieved way back in [`v2.3.1`](https://github.com/Tomshiii/ahk/releases/tag/v2.3.1) (6 months ago) originally called `Installer.ahk`. It's designed to read a users local copy of `My Scripts.ahk`, take note of all their custom hotkeys by reading the `;xHotkey;` tags above each one and replacing the hotkeys in the release version. This allows quick transitioning of hotkeys between new versions.
 
 I decided to change the name away from the original concept to `HotkeyReplacer.ahk` in an attempt to cause less confusion for potential new users as being presented with a script called `Installer.ahk` on download that's only useful for someone who *already* uses my scripts is a bit counter intuitive
 - This script ***can't*** transfer over new code the user has added. Hotkey tags that aren't in the release version will simply be ignored - some user adjustment will be required in those cases

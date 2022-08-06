@@ -1,17 +1,27 @@
-# [![](https://bit.ly/3fjVx8t)](https://github.com/Tomshiii/ahk/tree/main) ahk [![](https://img.shields.io/github/v/release/Tomshiii/ahk)](https://github.com/tomshiii/ahk/releases/latest) [![](https://img.shields.io/github/last-commit/tomshiii/ahk/dev?label=last%20commit%20%28dev%29)](https://github.com/Tomshiii/ahk/commits/dev) [![](https://img.shields.io/github/license/tomshiii/ahk?color=orange)](https://github.com/tomshiii/ahk/blob/main/LICENSE)
+<div align="center">
+
+# [![](https://bit.ly/3fjVx8t)](https://github.com/Tomshiii/ahk/tree/main) ahk
+[![](https://img.shields.io/github/v/release/Tomshiii/ahk)](https://github.com/tomshiii/ahk/releases/latest) [![](https://img.shields.io/github/last-commit/tomshiii/ahk/dev?label=last%20commit%20%28dev%29)](https://github.com/Tomshiii/ahk/commits/dev) [![](https://img.shields.io/github/license/tomshiii/ahk?color=orange)](https://github.com/tomshiii/ahk/blob/main/LICENSE)
+</div>
 
 This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane and random interactions with a computer.
 
 - Video walking through [how to make sense of this repo](https://youtu.be/dSjpv_4bVCA)
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
 
+<div align="center">
+
 [![](https://user-images.githubusercontent.com/53557479/149133968-6c1ff2e0-0140-4eda-95e3-e56164d263a4.png) ![](https://img.shields.io/youtube/channel/subscribers/UCJu2dToEHzuovY6suetkcdQ?style=flat)](https://www.youtube.com/c/tomshiii)
+</div>
 
 A lot of the code in the earliest versions of my scripts was either inspired by, or taken from [Taran (previous editor for LTT)](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, transformed into `ahk v2.0` compliant scripts and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I have personally gone through them to make them function in `ahk v2.0`).
 
 You can watch me use some of these scripts in action whilst I edit away on twitch when I stream on my bot account:
 
+<div align="center">
+
 [![](https://user-images.githubusercontent.com/53557479/149135097-0f9ae87a-5157-4524-ae75-34b6aaf81c30.png) ![](https://img.shields.io/twitch/status/botshiii)](https://www.twitch.tv/botshiii)
+</div>
 
 ### AHK Version Information:
 This repo is to maintain work on the `ahk v2.0` versions of my scripts. These scripts **_will not_** work in `ahk v1.1`, the only versions of these scripts that will work with `ahk v1.1` are Releases [1.0](https://github.com/Tomshiii/ahk/releases/tag/v1.0)/[1.1](https://github.com/Tomshiii/ahk/releases/tag/v1.1)/[1.2](https://github.com/Tomshiii/ahk/releases/tag/v1.2) in this repo. They are _severely_ outdated, are practically missing everything found in the current versions of scripts, and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
