@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.4
+;\\v2.12.5
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -380,7 +380,7 @@ jumpChar(amount := 10)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.10
+;		discord \\ Last updated: v2.12.5
 ;
 ; ===========================================================================================================================================
 /* disc()
@@ -557,10 +557,12 @@ discUnread(which := "")
 {
     x2 := 0
     y2 := 0
+    message := "servers"
     if which = 2
         {
             x2 := 70
             y2 := 30
+            message := "channels"
         }
 	MouseGetPos(&xPos, &yPos)
 	WinGetPos(,,, &height)
@@ -572,7 +574,7 @@ discUnread(which := "")
 		}
 	else
 		{
-			toolCust("any unread servers", "1000", 1)
+			toolCust("any unread " message, "1000", 1)
 		}
 }
 
