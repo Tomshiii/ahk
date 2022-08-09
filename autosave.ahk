@@ -9,7 +9,7 @@ InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default bac
 ;right clicking on the tray icon for this script will offer you a button to show you how much time is remaining until the next save attempt
 A_TrayMenu.Add()
 A_TrayMenu.Add("Time Remaining", timeRemain)
-timeRemain(ItemName, ItemPos, MyMenu)
+timeRemain(*)
 {
     if timer = false
         forTray := "Timer not currently tracking"
