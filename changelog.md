@@ -3,6 +3,11 @@
 # > Functions
 - `discUnread()` now shows the proper tooltip depending on if it can't find any servers/channels
 
+# > My Scripts
+- `SC03A & c::` will now attempt to determine whether to capitilise or completely lowercase the highlighted text depending on which is more frequent
+    - Fixed a bug that caused the hotkey to ignore any text in quotation marks
+    - Removed `SC03A & v::` as it is now redundant
+
 # > Other Changes
 
 `autosave.ahk`

@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.12
+;\\v2.16.13
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.2
 
@@ -748,7 +748,7 @@ RButton::moveWin("") ;minimise
 }
 
 ;capitaliseHotkey;
-SC03A & c:: ;capitilises highlighted text
+SC03A & c:: ;will attempt to determine whether to capitilise or completely lowercase the highlighted text depending on which is more frequent
 {
 	previous := A_Clipboard
 	A_Clipboard := "" ;clears the clipboard
@@ -759,29 +759,33 @@ SC03A & c:: ;capitilises highlighted text
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
-	SendInput("{BackSpace}")
-	StringtoCapital := A_Clipboard
-	StringtoCapital := StrUpper(StringtoCapital)
-	SendInput(StringtoCapital)
-	A_Clipboard := previous
-}
-
-;lowercaseHotkey;
-SC03A & v:: ;lowercases highlighted text
-{
-	previous := A_Clipboard
-	A_Clipboard := "" ;clears the clipboard
-	Send("^c")
-	if !ClipWait(1) ;waits for the clipboard to contain data
+	length := StrLen(A_Clipboard)
+	upperCount := 0
+	lowerCount := 0
+	nonAlphaCount := 0
+	loop length
 		{
-			toolCust("Couldn't copy data to clipboard", "1000")
-			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			test := SubStr(A_Clipboard, A_Index, 1)
+			if IsUpper(test) = true
+				upperCount += 1
+			else if IsLower(test) = true
+				lowerCount += 1
+			else if IsAlpha(test) = false
+				nonAlphaCount += 1
+		}
+	toolCust("Uppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
+	if upperCount >= ((length - nonAlphaCount)/2)
+		StringtoX := StrLower(A_Clipboard)
+	else if lowerCount >= ((length - nonAlphaCount)/2)
+		StringtoX := StrUpper(A_Clipboard)
+	else
+		{
+			A_Clipboard := previous
+			toolCust("Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
 			return
 		}
 	SendInput("{BackSpace}")
-	StringtoLower := A_Clipboard
-	StringtoLower := StrLower(StringtoLower)
-	SendInput(StringtoLower)
+	SendText(StringtoX)
 	A_Clipboard := previous
 }
 
