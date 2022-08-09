@@ -37,39 +37,31 @@ global idle := secondsIdle * 1000
 secondsRetry := 2.5
 global retry := secondsRetry * 1000
 
-;SET WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
-tooltips := true ;set "false" if you want them off. This value can be adjusted at any time by right clicking the tray icon for this script
+
+if not FileExist(A_MyDocuments "\tomshi\autosave.ini")
+    FileAppend("[tooltip]`ntooltip=true", A_MyDocuments "\tomshi\autosave.ini")
+
+;DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
+tooltips := IniRead(A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
 ;is the timer running?
 timer := false
 
 A_TrayMenu.Add("Tooltip Countdown", tooltipCount)
-if tooltips = true
+if tooltips = "true"
     A_TrayMenu.Check("Tooltip Countdown")
-if tooltips = false
+if tooltips = "false"
     A_TrayMenu.Uncheck("Tooltip Countdown")
 tooltipCount(*)
 {
-    replaceVal(newVal)
-    {
-        temp := FileRead(A_ScriptFullPath)
-        getpos := InStr(temp, "tooltips :=", 1,, 1)
-        endpos := InStr(temp, ";", 1, getpos, 1)
-        replace := SubStr(temp, getpos + 9, endpos - getpos - 10)
-        newver := StrReplace(temp, replace, newVal, 1,, 1)
-        if not DirExist(A_Temp "\tomshi")
-            DirCreate(A_Temp "\tomshi")
-        FileAppend(newver, A_Temp "\tomshi\autosave.ahk")
-        FileMove(A_Temp "\tomshi\autosave.ahk", A_ScriptFullPath, 1)
-    }
-    if tooltips = true
+    if tooltips = "true"
         {
-            replaceVal(":= false")
+            IniWrite("false", A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip")
             A_TrayMenu.Uncheck("Tooltip Countdown")
             reload
         }
-    if tooltips = false
+    if tooltips = "false"
         {
-            replaceVal(":= true")
+            IniWrite("true", A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip")
             A_TrayMenu.Check("Tooltip Countdown")
             reload
         }
@@ -89,7 +81,7 @@ StopWatch() {
             global StartTickCount += 1000
             global ElapsedTime += 1
         }
-    if tooltips = true
+    if tooltips = "true"
         {
             x := Round((minutes * 60) - ElapsedTime)/ 60
             if x < 4 && x > 3.98
