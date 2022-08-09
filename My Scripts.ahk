@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.13
+;\\v2.16.14
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.2
 
@@ -760,6 +760,12 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 			return
 		}
 	length := StrLen(A_Clipboard)
+	if length > 1000
+		{
+			check := MsgBox("Strings that are too large may take a long time to process and are generally unable to be stopped without using taskmanager to kill the process`n`nAre you sure you wish to continue?", "Double Check", "4 48 4096")
+			if check = "No"
+				return
+		}
 	upperCount := 0
 	lowerCount := 0
 	nonAlphaCount := 0
