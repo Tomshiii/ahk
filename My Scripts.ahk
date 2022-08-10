@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.14
+;\\v2.16.15
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.2
 
@@ -755,6 +755,7 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
+			A_Clipboard := previous
 			toolCust("Couldn't copy data to clipboard", "1000")
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
