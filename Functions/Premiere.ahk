@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.6
+;\\v2.14.7
 #Include General.ahk
 
 /* preset()
@@ -446,7 +446,7 @@ zoom()
  @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
  @param optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
  */
-valuehold(filepath, optional)
+valuehold(filepath, optional := 0)
 {
     ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
     ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
@@ -1162,7 +1162,7 @@ hotkeyReactivate()
  @param property is the value you want to adjust
  @param optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
  */
-manInput(property, optional)
+manInput(property, optional := "")
 {
     getHotkeys(&first, &waitHotkey)
     MouseGetPos(&xpos, &ypos)

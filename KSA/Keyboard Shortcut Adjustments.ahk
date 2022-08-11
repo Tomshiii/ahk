@@ -7,6 +7,13 @@ location := "E:\Github\ahk"
 ;==activate windows==
 
 /*
+ This value will send the keyboard shortcut you have set to scale the frame to the composition size Window within Premiere.
+
+ Can be set within KSA.ahk/ini
+ */
+scaleFrameSize := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Scale frame size")
+
+/*
  This value will send the keyboard shortcut you have set to activate the Program Monitor Window within Premiere.
 
  Can be set within KSA.ahk/ini

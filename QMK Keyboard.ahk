@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.4
+;\\v2.8.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5
@@ -46,9 +46,10 @@ unassigned() ;create a tooltip for unused keys
  @param activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
  @param runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
  */
-newWin(key, classorexe, activate, runval)
+newWin(classorexe, activate, runval)
 {
-	KeyWait(key) ;prevent spamming
+	getHotkeys(&first, &second)
+	KeyWait(second) ;prevent spamming
 	if not WinExist("ahk_" classorexe . activate)
 		{
 			Run(runval)
@@ -162,12 +163,12 @@ BackSpace & l::keyframe("scale")
 BackSpace & t::keyframe("level")
 BackSpace & u::keyframe("rotation")
 BackSpace & y::keyframe("opacity")
-SC028 & SC027::manInput("position", "0") ;manually input an x value
+SC028 & SC027::manInput("position") ;manually input an x value
 SC028 & /::manInput("position", "60") ;manually input a y value
-SC028 & l::manInput("scale", "0") ;manually input a scale value
-SC028 & u::manInput("rotation", "0") ;manually input a rotation value
-SC028 & y::manInput("opacity", "0") ;manually input an opacity value
-SC028 & t::manInput("level", "0") ;manually input a level value
+SC028 & l::manInput("scale") ;manually input a scale value
+SC028 & u::manInput("rotation") ;manually input a rotation value
+SC028 & y::manInput("opacity") ;manually input an opacity value
+SC028 & t::manInput("level") ;manually input a level value
 Enter::reset()
 Enter & SC027::keyreset("position")
 Enter & /::keyreset("position")
@@ -178,12 +179,12 @@ Enter & y::keyreset("opacity")
 Right::unassigned()
 
 p::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
-SC027::valuehold("position", "0") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+SC027::valuehold("position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 /::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 
 o::preset("parametric")
-l::valuehold("scale", "0") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+l::valuehold("scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
 .::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Down::unassigned()
@@ -193,22 +194,22 @@ k::gain("-2") ;REDUCE GAIN BY -2db
 ,::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 ;Left::unassigned()
 
-u::valuehold("rotation", "0") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+u::valuehold("rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 j::gain("-6") ;REDUCE GAIN BY -6db
 m::gain("6") ;INCREASE GAIN BY 6db
 ;PgUp::unassigned()
 
-y::valuehold("opacity", "0")
+y::valuehold("opacity")
 ;h::unassigned()
 n::zoom()
 ;Space::unassigned()
 
-t::valuehold("level", "0") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+t::valuehold("level") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 g:: ;this hotkey will fill the frame to fit the window
 {
 	SendInput(timelineWindow)
 	;SendInput(selectAtPlayhead)
-	SendInput("^+1")
+	SendInput(scaleFrameSize)
 }
 b::unassigned()
 
@@ -360,7 +361,7 @@ SC028::unassigned()
 Enter::unassigned()
 ;Right::unassigned()
 
-p::SendInput("!{t}" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
+p::SendInput("!t" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
 SC027::psProp("scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
 /::unassigned()
 ;Up::unassigned()
@@ -425,7 +426,7 @@ SC028::unassigned() ; ' key
 Enter::unassigned()
 Enter & Up::closeOtherWindow("ahk_class CabinetWClass")
 Right::unassigned()
-Right & Up::newWin("Up", "class", "CabinetWClass", "explorer.exe")
+Right & Up::newWin("class", "CabinetWClass", "explorer.exe")
 
 p::unassigned()
 SC027::unassigned()
@@ -447,7 +448,7 @@ j::unassigned()
 m::unassigned()
 SC149::firefoxTap()
 Enter & SC149::closeOtherWindow("ahk_class MozillaWindowClass")
-Right & PgUp::newWin("PgUp", "exe", "firefox.exe", "firefox.exe")
+Right & PgUp::newWin("exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
 h:: ;opens the directory for the current premiere project
@@ -496,7 +497,7 @@ h:: ;opens the directory for the current premiere project
 }
 n::unassigned()
 Space::switchToDisc()
-Right & Space::newWin("Space", "exe", "msedge.exe", "msedge.exe")
+Right & Space::newWin("exe", "msedge.exe", "msedge.exe")
 Enter & Space::closeOtherWindow("ahk_exe msedge.exe")
 
 t::unassigned()

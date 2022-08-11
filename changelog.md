@@ -3,9 +3,10 @@
 # > Functions
 - `discUnread()` now shows the proper tooltip depending on if it can't find any servers/channels
 - `moveTab()` will now set the `monitor` variable to one of the two I wish to cycle between if the function is activated on a monitor that isn't included in the cycle
+- Add default values to `valuehold()` and `manInput()`
 
 `toolCust()`
--`timeout` variable will now default to `1000 (1s)` and may be omitted
+- `timeout` variable will now default to `1000 (1s)` and may be omitted
     - All `timeout` variables still containing `""` have been swapped for just integers
 
 # > My Scripts
@@ -14,6 +15,11 @@
 - Fixed a bug that caused the hotkey to ignore any text in quotation marks
 - Removed `SC03A & v::` as it is now redundant
 - Will now prompt the user if the highlighted string is too long before continuing
+
+# > QMK Keyboard
+- Fixed `p::`
+- Moved `"^+1"` to `KSA` value
+- `newWin()` now uses `getHotkeys()` to remove a required variable
 
 # > Other Changes
 
