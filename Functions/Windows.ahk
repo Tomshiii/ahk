@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.5
+;\\v2.12.6
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.4
+;		Windows Scripts \\ Last updated: v2.12.6
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -110,12 +110,12 @@ moveTab()
     getTitle(&title) ;getting the window title
     WinGetPos(&winX, &winY, &width,, title) ; getting the coords for the firefox window
     monitor := getMouseMonitor() ;checking which monitor the mouse is within
-    if monitor != 2 && monitor != 4 ;I only want this function to fire on monitors 2 & 4
+    /* if monitor != 2 && monitor != 4 ;uncomment this if you wish for this function to not do anything on non desired monitors
         {
             SendInput("{LButton Up}{RButton}")
             blockOff()
             return
-        }
+        } */
     if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
         goto move
     if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu.png") || ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
@@ -193,6 +193,10 @@ moveTab()
         }
     if monitor = 1
         MouseMove(2378, 25, 3) */
+    if monitor != 2 && monitor != 4 ;I only want this function to cycle between monitors 2 & 4
+        {
+            monitor := 2 ;so I'll set the monitor number to one of the two I wish it to cycle between
+        }
     if monitor = 4
         MouseMove(4288, -911, 3) ;if the mouse is within monitor 4, it will move it to monitor 2
     if monitor = 2 ;if the mouse is within monitor 2, it will move it to monitor 4
