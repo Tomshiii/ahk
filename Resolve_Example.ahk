@@ -10,7 +10,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\resolve.png")
 verCheck()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5
+;\\v2.5.1
 ;\\Minimum Version of "Resolve.ahk" Required for this script
 ;\\v2.11
 
@@ -127,7 +127,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
     else
         {
             blockOff()
-            toolCust("Couldn't find reference point for scrub bar", "2000")
+            toolCust("Couldn't find reference point for scrub bar", 2000)
             errorLog(A_ThisHotkey, "Couldn't find reference point for scrub bar", A_LineFile, A_LineNumber)
             return
         }

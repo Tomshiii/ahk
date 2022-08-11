@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.5
+;\\v2.14.6
 #Include General.ahk
 
 /* preset()
@@ -67,7 +67,7 @@ preset(item)
                         if A_Index > 5
                             {
                                 SendInput(findBox) ;adjust this in the ini file
-                                toolCust("if you hear windows, blame premiere", "2000")
+                                toolCust("if you hear windows, blame premiere", 2000)
                                 errorLog(A_ThisFunc "()", "If you're looking here because you heard windows beep, it's because this function loops trying to find the search box in premiere but sometimes premiere is dumb and doesn't find it when it's supposed to, then when you send the hotkey again windows complains. Thanks Adobe.", A_LineFile, A_LineNumber)
                             }
                         sleep 30
@@ -77,7 +77,7 @@ preset(item)
                         if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                             {
                                 blockOff()
-                                toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
                                 errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                                 return
                             }
@@ -94,21 +94,21 @@ preset(item)
                     sleep 100
                     SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
                     SendInput(findBox)
-                    toolCust("if you hear windows, blame premiere", "2000")
+                    toolCust("if you hear windows, blame premiere", 2000)
                     CaretGetPos(&find2x)
                     if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                         {
                             Loop {
                                     sleep 30
                                     SendInput(findBox)
-                                    toolCust("if you hear windows, blame premiere", "2000")
+                                    toolCust("if you hear windows, blame premiere", 2000)
                                     CaretGetPos(&find2x)
                                     if find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                                         break
                                     if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                         {
                                             blockOff()
-                                            toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                            toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
                                             errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                                             return
                                         }
@@ -121,7 +121,7 @@ preset(item)
                         {
                             SendInput("{Esc}")
                             sleep 50
-                            toolCust("it tried to delete your preset", "2000")
+                            toolCust("it tried to delete your preset", 2000)
                             errorLog(A_ThisFunc "()", "The function attempted to delete the users preset and was aborted", A_LineFile, A_LineNumber)
                         }
                 }
@@ -175,7 +175,7 @@ fxSearch()
                     if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                         {
                             blockOff()
-                            toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                            toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
                             errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                             return
                         }
@@ -204,7 +204,7 @@ fxSearch()
                                 if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                     {
                                         blockOff()
-                                        toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                        toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
                                         errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                                         return
                                     }
@@ -217,7 +217,7 @@ fxSearch()
                     {
                         SendInput("{Esc}")
                         sleep 50
-                        toolCust("it tried to delete your preset", "2000")
+                        toolCust("it tried to delete your preset", 2000)
                         errorLog(A_ThisFunc "()", "The function attempted to delete the users preset and was aborted", A_LineFile, A_LineNumber)
                     }
             }
@@ -520,7 +520,7 @@ valuehold(filepath, optional)
         if A_Index > 3
             {
                 blockOff()
-                toolCust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, "5000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                toolCust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, 5000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
@@ -726,7 +726,7 @@ audioDrag(sfxName)
                                 if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                     {
                                         blockOff()
-                                        toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", "3000")
+                                        toolCust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
                                         errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                                         return
                                     }
@@ -746,7 +746,7 @@ audioDrag(sfxName)
                 else
                     {
                         blockOff()
-                        toolCust("audio image", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                        toolCust("audio image", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                         errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineFile, A_LineNumber)
                         coords()
                         MouseMove(xpos, ypos)
@@ -793,7 +793,7 @@ audioDrag(sfxName)
                         if A_Index > 160 ;built in timeout
                             {
                                 blockOff()
-                                toolCust(A_ThisFunc " timed out due to no user interaction", "2000")
+                                toolCust(A_ThisFunc " timed out due to no user interaction", 2000)
                                 errorLog(A_ThisFunc "()", "timed out due to no user interaction", A_LineFile, A_LineNumber)
                                 return
                             }
@@ -878,7 +878,7 @@ audioDrag(sfxName)
         }
     else
         {
-            toolCust("you haven't opened the bin", "2000")
+            toolCust("you haven't opened the bin", 2000)
             errorLog(A_ThisFunc "()", "User hasn't opened the required bin", A_LineFile, A_LineNumber)
         }
 }
@@ -924,7 +924,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
     else
         {
             blockOff()
-            toolCust("vlc image", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("vlc image", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             MouseMove(xpos, ypos)
             return
         }
@@ -1004,7 +1004,7 @@ movepreview()
         if A_Index > 3
             {
                 blockOff()
-                toolCust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, "5000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                toolCust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, 5000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
@@ -1033,7 +1033,7 @@ movepreview()
                     {
                         MouseMove(moveX, moveY)
                         blockOff()
-                        toolCust(A_ThisFunc " couldn't find your video or it kept finding pure black at each coordinate", "2000")
+                        toolCust(A_ThisFunc " couldn't find your video or it kept finding pure black at each coordinate", 2000)
                         errorLog(A_ThisFunc "()", "Couldn't find your video or it kept finding pure black at each coordinate", A_LineFile, A_LineNumber)
                         break
                     }
@@ -1394,7 +1394,7 @@ openChecklist()
         }
     if not titlecheck
         {
-            toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+            toolCust("You're on a part of Premiere that won't contain the project path", 2000)
             return
         }
     entirePath := SubStr(name, dashLocation + "2", length)

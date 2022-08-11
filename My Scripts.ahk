@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.17
+;\\v2.16.18
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.8.3
+;\\v2.8.4
 
 ; ============================================================================================================================================
 ;
@@ -473,7 +473,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 				if A_Index > 3
 					{
 						SendInput(selectionPrem)
-						toolCust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", "2000")
+						toolCust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", 2000)
 						errorLog(A_ThisHotkey "::", "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 						return
 					}
@@ -497,7 +497,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		if A_Index > 3
 			{
 				SendInput(selectionPrem)
-				toolCust("selection tool`nUsed the selection hotkey instead", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+				toolCust("selection tool`nUsed the selection hotkey instead", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 				errorLog(A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 				return
 			}
@@ -566,7 +566,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				else
 					{
 						blockOff()
-						toolCust("project window", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+						toolCust("project window", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 						errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
 						return
 						;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
@@ -634,7 +634,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	else
 		{
 			blockOff
-			toolCust("the sfx folder", "2000", 1)
+			toolCust("the sfx folder", 2000, 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
 			return
 		}
@@ -656,7 +656,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	else
 		{
 			blockOff()
-			toolCust("the sfx folder in premiere", "2000", 1)
+			toolCust("the sfx folder in premiere", 2000, 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
 			return
 		}
@@ -673,7 +673,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		if A_Index > 5
 			{
 				blockOff()
-				toolCust("the bin", "2000", 1)
+				toolCust("the bin", 2000, 1)
 				errorLog(A_ThisHotkey "::", "Couldn't find the bin", A_LineFile, A_LineNumber)
 				return
 			}

@@ -43,7 +43,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         break
                     if A_Index > 5
                         {
-                            toolCust("Couldn't ensure the new project window opened", "2000")
+                            toolCust("Couldn't ensure the new project window opened", 2000)
                             pauseautosave()
                             pausewindowmax()
                             blockOff()
@@ -87,7 +87,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                     sleep 250
                     if A_Index > 5
                         {
-                            toolCust("couldn't find the create button", "2000")
+                            toolCust("couldn't find the create button", 2000)
                             pauseautosave()
                             pausewindowmax()
                             blockOff()

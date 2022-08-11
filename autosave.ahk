@@ -85,13 +85,13 @@ StopWatch() {
         {
             x := Round((minutes * 60) - ElapsedTime)/ 60
             if x < 4 && x > 3.98
-                toolCust("4min until a save attempt", "50")
+                toolCust("4min until a save attempt", 50)
             if x < 3 && x > 2.98
-                toolCust("3min until a save attempt", "50")
+                toolCust("3min until a save attempt", 50)
             if x < 2 && x > 1.98
-                toolCust("2min until a save attempt", "50")
+                toolCust("2min until a save attempt", 50)
             if x < 1 && x > 0.98
-                toolCust("1min until a save attempt", "50")
+                toolCust("1min until a save attempt", 50)
         }
 }
 
@@ -203,7 +203,7 @@ check() {
     if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
         WinWaitClose("ahk_class tooltips_class32",, 3)
     if not WinExist("Editing Checklist")
-        toolCust("Don't forget to start the checklist for this project!", "2000")
+        toolCust("Don't forget to start the checklist for this project!", 2000)
     SetTimer(, -msChecklist) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
     end3:
 }
@@ -242,7 +242,7 @@ save()
                 {
                     blockOff()
                     ;MsgBox("1") ;testing
-                    toolCust("You're currently doing something`nautosave has be cancelled", "2000")
+                    toolCust("You're currently doing something`nautosave has be cancelled", 2000)
                     SetTimer(, -ms)
                     goto end2
                 }
@@ -269,7 +269,7 @@ save()
                 {
                     blockOff()
                     ;MsgBox("2") ;testing
-                    toolCust("You're currently doing something`nautosave has be cancelled", "2000")
+                    toolCust("You're currently doing something`nautosave has be cancelled", 2000)
                     SetTimer(, -ms)
                     goto end2
                 }
@@ -289,7 +289,7 @@ save()
                     if A_TimeIdleKeyboard <= idle
                         {
                             SetTimer(, -retry)
-                            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
+                            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
                             goto end2
                         }
                     blockOn()
@@ -301,7 +301,7 @@ save()
                     goto end
                 }
             blockOff()
-            toolCust("No save necessary", "2000")
+            toolCust("No save necessary", 2000)
             try {
                 if id = "ahk_class CabinetWClass"
                     WinActivate("ahk_class CabinetWClass")
@@ -340,7 +340,7 @@ save()
             {
                 blockOff()
                 ;MsgBox("3") ;testing
-                toolCust("You're currently doing something`nautosave has be cancelled", "2000")
+                toolCust("You're currently doing something`nautosave has be cancelled", 2000)
                 try {
                     if id = "ahk_class CabinetWClass"
                         WinActivate("ahk_class CabinetWClass")
@@ -373,7 +373,7 @@ save()
     if A_TimeIdleKeyboard <= idle
         {
             SetTimer(, -retry)
-            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", "3000")
+            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
             goto end2
         }
 

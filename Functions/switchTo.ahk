@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.1
+;\\v2.12.2
 #Include General.ahk
 
 /*
@@ -130,7 +130,7 @@ switchToDisc()
             if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
                 WinRestore() ;winrestore will unmaximise it
             move() ; just incase it isn't in the right spot/fullscreened for some reason
-            toolCust("Discord is now active", "500") ;this is simply because it's difficult to tell when discord has focus if it was already open
+            toolCust("Discord is now active", 500) ;this is simply because it's difficult to tell when discord has focus if it was already open
         }
 }
 

@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.3
+;\\v2.8.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5
@@ -470,7 +470,7 @@ h:: ;opens the directory for the current premiere project
 			}
 			if not titlecheck
 				{
-					toolCust("You're on a part of Premiere that won't contain the project path", "2000")
+					toolCust("You're on a part of Premiere that won't contain the project path", 2000)
 					return
 				}
 			entirePath := SubStr(name, dashLocation + "2", length)
@@ -527,7 +527,7 @@ b:: ;this macro is to find the difference between 2 24h timecodes
 	diff := DateDiff("20220101" time2, "20220101" time1, "seconds")/"3600" ;do the math to determine the time difference
 	value := Round(diff, 2) ;round the result to 2dp
 	A_Clipboard := value ;copy it to the clipboard
-	toolCust(diff "`nor " value, "2000") ;and create a tooltip to show the user both the complete answer and the rounded answer
+	toolCust(diff "`nor " value, 2000) ;and create a tooltip to show the user both the complete answer and the rounded answer
 }
 
 r::unassigned()

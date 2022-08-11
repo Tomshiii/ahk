@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.15.3
+;\\v2.15.4
 
 ; =======================================================================================================================================
 ;
@@ -52,7 +52,7 @@ updateChecker(MyRelease) {
 	endpos := InStr(string, '"', , foundpos, 1)
 	end := endpos - foundpos
 	global version := SubStr(string, foundpos, end)
-	toolCust("Current " A_ScriptName " Version = " MyRelease "`nCurrent Github Release = " version, "2000")
+	toolCust("Current " A_ScriptName " Version = " MyRelease "`nCurrent Github Release = " version, 2000)
 	;checking to see if the user wishes to ignore updates
 	ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
 	if ignore = "no"
@@ -209,7 +209,7 @@ updateChecker(MyRelease) {
 								else
 									type := "exe"
 								Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
-								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, "3000")
+								toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, 3000)
 								run(downloadLocation)
 								TrayTip("Your current scripts are being backed up!", "Backig Up...", 17)
 								SetTimer(HideTrayTip, -5000)
@@ -231,9 +231,9 @@ updateChecker(MyRelease) {
 									DirMove(A_Temp "\" MyRelease, A_WorkingDir "\Backups\Script Backups\" MyRelease, "1")
 									if DirExist(A_Temp "\" MyRelease)
 										DirDelete(A_Temp "\" MyRelease, 1)
-									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", "3000")
+									toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
 								} catch as e {
-									toolCust("There was an error trying to backup your current scripts", "2000")
+									toolCust("There was an error trying to backup your current scripts", 2000)
 									errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineFile, A_LineNumber)
 								}
 								return
@@ -259,7 +259,7 @@ updateChecker(MyRelease) {
 				}
 			else
 				{
-					toolCust("This script will not prompt you with a download/changelog when a new version is available", "2000")
+					toolCust("This script will not prompt you with a download/changelog when a new version is available", 2000)
 					errorLog(A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
 					return
 				}
@@ -388,10 +388,10 @@ adobeTemp(MyRelease) {
 			CacheSize += A_LoopFileSize
 		}
 	if CacheSize > 0
-		toolCust("Total Adobe cache size - " cacheround "/" largestSize "GB", "1500")
+		toolCust("Total Adobe cache size - " cacheround "/" largestSize "GB", 1500)
 	else
 		{
-			toolCust("Total Adobe cache size - " CacheSize "/" largestSize "GB", "1500")
+			toolCust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 1500)
 			goto end
 		}
 	;then we convert that byte total to GB

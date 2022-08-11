@@ -3,7 +3,10 @@
 # > Functions
 - `discUnread()` now shows the proper tooltip depending on if it can't find any servers/channels
 - `moveTab()` will now set the `monitor` variable to one of the two I wish to cycle between if the function is activated on a monitor that isn't included in the cycle
-- `toolCust()`'s `timeout` variable will now default to `1000 (1s)` and may be omitted
+
+`toolCust()`
+-`timeout` variable will now default to `1000 (1s)` and may be omitted
+    - All `timeout` variables still containing `""` have been swapped for just integers
 
 # > My Scripts
 `SC03A & c::`

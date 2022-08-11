@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.7
+;\\v2.12.8
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -156,7 +156,7 @@ moveTab()
                             }
                         if A_Index > 6
                             {
-                                toolCust("Couldn't find the active tab colour", "1500")
+                                toolCust("Couldn't find the active tab colour", 1500)
                                 errorLog(A_ThisFunc "()", "couldn't find the active tab colour", A_LineFile, A_LineNumber)
                                 blockOff()
                                 return
@@ -166,7 +166,7 @@ moveTab()
         }
     else
         {
-            toolCust("You moved too far away from the right click context menu", "1500")
+            toolCust("You moved too far away from the right click context menu", 1500)
             errorLog(A_ThisFunc "()", "moved too far away from the right click context menu", A_LineFile, A_LineNumber)
             blockOff()
             return
@@ -424,7 +424,7 @@ disc(button)
                 ToolTip("")
                 MouseMove(x, y) ;moves the mouse back to the original coords
                 blockOff()
-                toolCust("the requested button after " A_Index " attempts", "2000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                toolCust("the requested button after " A_Index " attempts", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(A_ThisFunc "()", "Was unable to find the requested button", A_LineFile, A_LineNumber)
                 return
             }
@@ -486,7 +486,7 @@ discLocation()
     try { ;this try is here as if you close a window, then immediately try to fire this function there is no "original" window
         original := WinGetID("A")
     } catch as e {
-        toolCust("you tried to assign a closed`n window as the last active", "4000")
+        toolCust("you tried to assign a closed`n window as the last active", 4000)
         errorLog(A_ThisFunc "()", "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it", A_LineFile, A_LineNumber)
         SendInput("{Click}")
         return
@@ -547,7 +547,7 @@ discLocation()
     try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
         WinActivate(original)
     } catch as e {
-        toolCust("couldn't find original window", "2000")
+        toolCust("couldn't find original window", 2000)
         errorLog(A_ThisFunc "()", "Function couldn't activate the original window", A_LineFile, A_LineNumber)
         return
     }
