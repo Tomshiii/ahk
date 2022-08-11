@@ -23,12 +23,17 @@ if not DirExist(location)
 #SingleInstance Force
 /* toolCust()
   create a tooltip with any message
-  * @param message is what you want the tooltip to say
-  * @param timeout is how many ms you want the tooltip to last
+  @param message is what you want the tooltip to say
+  @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
+  @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
   */
-toolCust(message, timeout)
+toolCust(message, timeout := 1000, find := "")
 {
-    ToolTip(message)
+    if find != 1
+        messageFind := ""
+    else
+        messageFind := "Couldn't find "
+    ToolTip(messageFind message)
     SetTimer(timeouttime, - timeout)
     timeouttime()
     {
@@ -80,7 +85,7 @@ loop files, location "*.ahk", "R"
                     FileDelete(A_LoopFileFullPath)
                     FileCopy(parentFolder "\checklist.ahk", A_LoopFilePath, 1)
                 } catch as e {
-                    toolCust("Encountered an error with " A_LoopFileFullPath, "1000")
+                    toolCust("Encountered an error with " A_LoopFileFullPath)
                     FileAppend("Encountered an error with " A_LoopFileFullPath "`n", A_ScriptDir "\replaceChecklist_log.txt")
                 }
                 if replace = "Yes"

@@ -15,7 +15,7 @@ DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final
 SplitPath SelectedFolder, &name
 if WinExist("Checklist - " name)
     {
-        toolCust("You already have this checklist open", "1000")
+        toolCust("You already have this checklist open")
         goto end
     }
 FileCopy(location "\checklist.ahk", SelectedFolder)

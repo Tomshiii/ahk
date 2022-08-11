@@ -21,7 +21,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                     }
                 else
                     {
-                        toolCust("can't find colour", "1000")
+                        toolCust("can't find colour")
                         return
                     }
             }
@@ -38,7 +38,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                     }
                 else
                     {
-                        toolCust("can't find colour", "1000")
+                        toolCust("can't find colour")
                         return
                     }
             }
@@ -55,7 +55,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                     }
                 else
                     {
-                        toolCust("can't find colour", "1000")
+                        toolCust("can't find colour")
                         return
                     }
             }

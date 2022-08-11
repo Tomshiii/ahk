@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.15.2
+;\\v2.15.3
 
 ; =======================================================================================================================================
 ;
@@ -44,7 +44,7 @@ updateChecker(MyRelease) {
 		main.WaitForResponse()
 		string := main.ResponseText
 	} catch as e {
-		toolCust("Couldn't get version info`nYou may not be connected to the internet", "1000")
+		toolCust("Couldn't get version info`nYou may not be connected to the internet")
 		errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineFile, A_LineNumber)
 		return
 	}
@@ -67,7 +67,7 @@ updateChecker(MyRelease) {
 						change.WaitForResponse()
 						ChangeLog := change.ResponseText
 					} catch as e {
-						toolCust("Couldn't get changelog info`nYou may not be connected to the internet", "1000")
+						toolCust("Couldn't get changelog info`nYou may not be connected to the internet")
 						errorLog(A_ThisFunc "()", "Couldn't get changelog info, you may not be connected to the internet", A_LineFile, A_LineNumber)
 						return
 					}
@@ -253,7 +253,7 @@ updateChecker(MyRelease) {
 				WinWaitClose("ahk_class tooltips_class32")
 			if VerCompare(MyRelease, version) < 0
 				{
-					toolCust("You're using an outdated version of these scripts", "1000")
+					toolCust("You're using an outdated version of these scripts")
 					errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
 					return
 				}
@@ -268,7 +268,7 @@ updateChecker(MyRelease) {
 		return
 	else
 		{
-			toolCust("You put something else in the ignore.ini file you goose", "1000")
+			toolCust("You put something else in the ignore.ini file you goose")
 			errorLog(A_ThisFunc "()", "You put something else in the ignore.ini file you goose", A_LineFile, A_LineNumber)
 			return
 		}
@@ -450,7 +450,7 @@ verCheck()
                         LatestVersion := SubStr(Latestpage, startVer + 10, endVer - startVer - 10)
                         return LatestVersion
                     } catch as e {
-                        toolCust("Couldn't get the latest version of ahk`nYou may not be connected to the internet", "1000")
+                        toolCust("Couldn't get the latest version of ahk`nYou may not be connected to the internet")
                         errorLog(A_ThisFunc "()", "Couldn't get latest version of ahk, you may not be connected to the internet", A_LineFile, A_LineNumber)
                         return
                     }
@@ -624,16 +624,16 @@ coordc()
 
 ; ===========================================================================================================================================
 ;
-;		Tooltip \\ Last updated: v2.15.1
+;		Tooltip \\ Last updated: v2.15.3
 ;
 ; ===========================================================================================================================================
 /* toolCust()
   create a tooltip with any message
   @param message is what you want the tooltip to say
-  @param timeout is how many ms you want the tooltip to last
+  @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
   @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
   */
-toolCust(message, timeout, find := "")
+toolCust(message, timeout := 1000, find := "")
 {
 	if find != 1
 		messageFind := ""
@@ -704,11 +704,11 @@ mousedrag(tool, toolorig)
                 static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
                 if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
                     WinWaitClose("ahk_class tooltips_class32")
-                toolCust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh", "1000")
+                toolCust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh")
             } catch as e {
                 if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
                     WinWaitClose("ahk_class tooltips_class32")
-                toolCust("Couldn't find the ClassNN value", "1000")
+                toolCust("Couldn't find the ClassNN value")
                 errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
                 goto skip
             }

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.6
+;\\v2.12.7
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -30,7 +30,7 @@ youMouse(tenS, fiveS)
         try {
             WinActivate(lastactive) ;will reactivate the original window
         } catch as e {
-            toolCust("Failed to get information on the previously active window", "1000")
+            toolCust("Failed to get information on the previously active window")
             errorLog(A_ThisFunc "()", "Failed to get information on previously active window", A_LineFile, A_LineNumber)
         }
 
@@ -81,7 +81,7 @@ moveWin(key)
                     WinMaximize(window)
                 SendInput(key)
             } catch as e {
-                toolCust("Failed to get information on current active window", "1000")
+                toolCust("Failed to get information on current active window")
                 errorLog(A_ThisFunc "()", "Failed to get information on current active window", A_LineFile, A_LineNumber)
             }
         }
@@ -249,7 +249,7 @@ getMouseMonitor()
 			    }
 		}
 		catch {
-			toolCust(A_ThisFunc " failed to get the monitor that the mouse is within", "1000")
+			toolCust(A_ThisFunc " failed to get the monitor that the mouse is within")
             errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
 			break
 		}
@@ -265,7 +265,7 @@ getTitle(&title)
 		title := WinGetTitle("A")
         return title
 	} catch as e {
-		toolCust(A_ThisFunc "() couldn't determine the active window", "1000")
+		toolCust(A_ThisFunc "() couldn't determine the active window")
 		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		return
 	}
@@ -294,7 +294,7 @@ isFullscreen(&title, &full, window := false)
 		else
 			full := 0
 	} catch as e {
-		toolCust(A_ThisFunc "() couldn't determine the active window", "1000")
+		toolCust(A_ThisFunc "() couldn't determine the active window")
 		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
 		Exit
 	}
@@ -448,7 +448,7 @@ disc(button)
                             ;ToolTip(A_Index)
                             if A_Index > 10
                                 {
-                                    toolCust("the @ ping button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                                    toolCust("the @ ping button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                                     errorLog(A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineFile, A_LineNumber)
                                     break
                                 }
@@ -540,7 +540,7 @@ discLocation()
     if toggle > 1 or toggle < 0 ;this is here just incase the value ever ends up bigger/smaller than it's supposed to
         {
             toggle := 0
-            toolCust("stop spamming the function please`nthe functions value was too large/small", "1000")
+            toolCust("stop spamming the function please`nthe functions value was too large/small")
             errorLog(A_ThisFunc "()", "Function hit an unexpected toggle number", A_LineFile, A_LineNumber)
             return
         }
@@ -578,7 +578,7 @@ discUnread(which := "")
 		}
 	else
 		{
-			toolCust("any unread " message, "1000", 1)
+			toolCust("any unread " message,, 1)
 		}
 }
 
@@ -618,7 +618,7 @@ vscode(script)
         }
     else
         {
-            toolCust("the collapse folders button", "1000", 1)
+            toolCust("the collapse folders button",, 1)
             errorLog(A_ThisFunc "()", "Couldn't find the `collapse folders` button", A_LineFile, A_LineNumber)
             blockOff()
             return

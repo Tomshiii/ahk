@@ -66,7 +66,7 @@ try {
 } catch as e {
     pauseautosave()
     pausewindowmax()
-    toolCust("Script couldn't activate the Settings Menu", "1000")
+    toolCust("Script couldn't activate the Settings Menu")
     return
 }
 end:

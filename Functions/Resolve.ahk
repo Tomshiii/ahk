@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12
+;\\v2.12.1
 #Include General.ahk
 
 /* Rscale()
@@ -35,7 +35,7 @@ Rscale(value, property, plus)
         {
             blockOff()
             MouseMove(xpos, ypos)
-            toolCust("video tab", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
@@ -45,7 +45,7 @@ Rscale(value, property, plus)
     else
         {
             blockOff()
-            toolCust("your desired property", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }
@@ -102,7 +102,7 @@ REffect(folder, effect)
     else ;if everything fails, this else will trigger
         {
             blockOff()
-            toolCust("the effects button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the effects button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the effects button", A_LineFile, A_LineNumber)
             return
         }
@@ -118,7 +118,7 @@ closeORopen:
     else
         {
             blockOff()
-            toolCust("open/close button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("open/close button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the open/close button", A_LineFile, A_LineNumber)
             return
         }
@@ -134,7 +134,7 @@ EffectFolder:
     else ;if everything fails, this else will trigger
         {
             blockOff()
-            toolCust("the fxfolder", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the fxfolder",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the fxfolder", A_LineFile, A_LineNumber)
             return
         }
@@ -154,7 +154,7 @@ SearchButton:
     else ;if everything fails, this else will trigger
         {
             blockOff()
-            toolCust("search button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("search button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the search button", A_LineFile, A_LineNumber)
             return
         }
@@ -201,7 +201,7 @@ rvalhold(property, plus, rfelseval)
         {
             blockOff()
             MouseMove(xpos, ypos)
-            toolCust("video tab", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
@@ -212,7 +212,7 @@ rvalhold(property, plus, rfelseval)
     else
         {
             blockOff()
-            toolCust("your desired property", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }
@@ -266,7 +266,7 @@ rflip(button)
         {
             blockOff()
             MouseMove(xpos, ypos)
-            toolCust("desired button", "1000", 1)
+            toolCust("desired button",, 1)
             errorLog(A_ThisFunc "()", "Was unable to find the desired button", A_LineFile, A_LineNumber)
         }
 }
@@ -301,7 +301,7 @@ rgain(value)
         {
             blockOff()
             MouseMove(xpos, ypos)
-            toolCust("audio tab", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("audio tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the audio tab", A_LineFile, A_LineNumber)
             return
         }
@@ -311,7 +311,7 @@ rgain(value)
     else
         {
             blockOff()
-            toolCust("your desired property", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }

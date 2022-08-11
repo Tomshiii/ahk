@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.2
+;\\v2.8.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5
@@ -225,7 +225,7 @@ f:: ;this macro is to open the speed menu
 			sleep 30
 		}
 	} catch as e {
-		toolCust("something broke", "1000")
+		toolCust("something broke")
 		errorLog(A_ThisHotkey "::", "Encountered an error attempting to get the ControlClassNN", A_LineFile, A_LineNumber)
 		Exit
 	}
@@ -255,7 +255,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 	else
 		{
 			blockOff()
-			toolCust("the margin button", "1000", 1)
+			toolCust("the margin button",, 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the margin button", A_LineFile, A_LineNumber)
 		}
 }
@@ -489,7 +489,7 @@ h:: ;opens the directory for the current premiere project
 		}
 	else
 		{
-			toolCust("A Premiere/AE isn't open", "1000")
+			toolCust("A Premiere/AE isn't open")
 			errorLog(A_ThisHotkey "::", "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
 			return
 		}
@@ -551,7 +551,7 @@ End:: ;search for checklist file
 			SplitPath dir, &name
 			if WinExist("Checklist - " name)
 				{
-					toolCust("You already have this checklist open", "1000")
+					toolCust("You already have this checklist open")
 					errorLog(A_ThisHotkey "::", "You already have this checklist open", A_LineFile, A_LineNumber)
 					return
 				}
@@ -562,7 +562,7 @@ End:: ;search for checklist file
 					FileCopy("E:\Github\ahk\checklist.ahk", dir)
 					Run(dir "\checklist.ahk")
 				} catch as e {
-					toolCust("File not found", "1000")
+					toolCust("File not found")
 				}
 		}
 }

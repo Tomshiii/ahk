@@ -29,7 +29,7 @@ if not WinExist("ahk_exe obs64.exe")
 				WinGetPos(,, &width, &height, "A")
 				if ImageSearch(&xpos, &ypos, 0, 0, width, height/ "3", "*2 " Chatterino "botshiactive.png")
 					{
-						;toolCust("it thinks it's active", "1000") ;debugging
+						;toolCust("it thinks it's active") ;debugging
 						coords()
 						MouseMove(xposP, yposP)
 						return
@@ -37,7 +37,7 @@ if not WinExist("ahk_exe obs64.exe")
 				else
 					if ImageSearch(&xpos, &ypos, 0, 0, width, height/ "3", "*2 " Chatterino "botshinotactive.png")
 					{
-						;toolCust("it thinks it's not active", "1000") ;debugging
+						;toolCust("it thinks it's not active") ;debugging
 						MouseMove(xpos, ypos)
 						SendInput("{Click}")
 						coords()

@@ -37,7 +37,7 @@ check()
         {
             title := WinGetTitle("A")
             titlecheck := InStr(title, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-            ;toolCust(title, "1000") ;debugging
+            ;toolCust(title) ;debugging
             ;if title = "" || title = "Audio Gain" || title = "Save As" || InStr(title, "Encoding") || title = "New Project" || title = "Please select the destination path for your new project." || title = "Select Folder" || title = "Clip Speed / Duration" || title = "Modify Clip" ;// just some of the titles you can come across
             if not titlecheck
                 SetTimer(, -fire) ;adds 10s to the timer and will check again after that time has elapsed

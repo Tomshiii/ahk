@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.4
+;\\v2.14.5
 #Include General.ahk
 
 /* preset()
@@ -20,7 +20,7 @@ preset(item)
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -42,7 +42,7 @@ preset(item)
                     else
                         {
                             blockOff()
-                            toolCust("the eye icon", "1000", 1)
+                            toolCust("the eye icon",, 1)
                             errorLog(A_ThisFunc "()", "Couldn't find the eye icon", A_LineFile, A_LineNumber)
                             return
                         }
@@ -50,7 +50,7 @@ preset(item)
             else
                 {
                     blockOff()
-                    toolCust("the graphics tab", "1000", 1)
+                    toolCust("the graphics tab",, 1)
                     errorLog(A_ThisFunc "()", "Couldn't find the graphics tab", A_LineFile, A_LineNumber)
                     return
                 }
@@ -59,7 +59,7 @@ preset(item)
     {
         SendInput(effectsWindow) ;adjust this in the ini file
         SendInput(findBox) ;adjust this in the ini file
-        toolCust("if you hear windows, blame premiere", "1000")
+        toolCust("if you hear windows, blame premiere")
         CaretGetPos(&findx)
         if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
             {
@@ -244,7 +244,7 @@ num(xval, yval, scale)
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -255,7 +255,7 @@ num(xval, yval, scale)
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    toolCust("The wrong clips are selected", "1000")
+                    toolCust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                     blockOff()
                     return
@@ -269,7 +269,7 @@ num(xval, yval, scale)
         {
             MouseMove(xpos, ypos)
             blockOff()
-            toolCust("the video section", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the video section",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
             return
         }
@@ -280,7 +280,7 @@ num(xval, yval, scale)
         {
             MouseMove(xpos, ypos) ;moves back to the original coords
             blockOff()
-            toolCust("the motion tab", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the motion tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the motion tab", A_LineFile, A_LineNumber)
             return
         }
@@ -331,7 +331,7 @@ zoom()
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -385,7 +385,7 @@ zoom()
             sleep 50
             if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    toolCust("The wrong clips are selected", "1000")
+                    toolCust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                     blockOff()
                     return
@@ -397,7 +397,7 @@ zoom()
         {
             MouseMove(xpos, ypos)
             blockOff()
-            toolCust("the video section", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the video section",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
             return
         }
@@ -425,7 +425,7 @@ zoom()
             scale := A_Clipboard
             blockOff()
             SendInput("{Enter}")
-            toolCust("Setting up your zoom has completed", "1000")
+            toolCust("Setting up your zoom has completed")
             return
         }
     else
@@ -454,7 +454,7 @@ valuehold(filepath, optional)
     xdist := 210
     coords()
     MouseGetPos(&xpos, &ypos)
-    ;toolCust("x " xpos "`ny " ypos, "1000") ;testing stuff
+    ;toolCust("x " xpos "`ny " ypos) ;testing stuff
     blockOn()
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
@@ -463,7 +463,7 @@ valuehold(filepath, optional)
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -474,7 +474,7 @@ valuehold(filepath, optional)
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    toolCust("The wrong clips are selected", "1000")
+                    toolCust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "The wrong clips are selected", A_LineFile, A_LineNumber)
                     blockOff()
                     return
@@ -484,7 +484,7 @@ valuehold(filepath, optional)
         { ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
             if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "video.png")
                 {
-                    toolCust("you aren't scrolled down", "1000")
+                    toolCust("you aren't scrolled down")
                     errorLog(A_ThisFunc "()", "The user wasn't scrolled down", A_LineFile, A_LineNumber)
                     blockOff()
                     KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
@@ -504,7 +504,7 @@ valuehold(filepath, optional)
                     ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
                     ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
                 } catch as e {
-                    toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
+                    toolCust("Couldn't get the ClassNN of the Effects Controls panel")
                     errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineFile, A_LineNumber)
                     MouseMove(xpos, ypos)
                     return
@@ -534,7 +534,7 @@ valuehold(filepath, optional)
     else
         {
             blockOff()
-            toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
             KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
             MouseMove(xpos, ypos)
@@ -571,7 +571,7 @@ valuehold(filepath, optional)
                         }
                     MouseMove(xpos, ypos)
                     blockOff()
-                    toolCust("the reset button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                    toolCust("the reset button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Failed to find reset button", A_LineFile, A_LineNumber)
                     return
                 }
@@ -597,7 +597,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -608,7 +608,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    toolCust("The wrong clips are selected", "1000")
+                    toolCust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                     blockOff()
                     return
@@ -618,7 +618,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
         goto click
     else
         {
-            toolCust("you're already keyframing", "1000")
+            toolCust("you're already keyframing")
             errorLog(A_ThisFunc "()", "The user was already keyframing", A_LineFile, A_LineNumber)
             blockOff()
             ;KeyWait(A_PriorHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
@@ -647,7 +647,7 @@ keyframe(filepath)
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -658,7 +658,7 @@ keyframe(filepath)
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    toolCust("The wrong clips are selected", "1000")
+                    toolCust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                     blockOff()
                     return
@@ -674,7 +674,7 @@ keyframe(filepath)
         }
     else
         {
-            toolCust("Couldn't find the desired value", "1000")
+            toolCust("Couldn't find the desired value")
             errorLog(A_ThisFunc "()", "Couldn't find the desired value", A_LineFile, A_LineNumber)
             blockOff()
             return
@@ -765,7 +765,7 @@ audioDrag(sfxName)
                 if A_Index > 2
                     {
                         blockOff()
-                        toolCust("Couldn't drag the file to the timeline`ncolour was " colour, "1000")
+                        toolCust("Couldn't drag the file to the timeline`ncolour was " colour)
                         errorLog(A_ThisFunc "()", "Couldn't drag the file to the timeline because colour was " colour, A_LineFile, A_LineNumber)
                         return
                     }
@@ -837,7 +837,7 @@ audioDrag(sfxName)
                     else
                         {
                             blockOff()
-                            toolCust("Couldn't determine the Y value of desired track", "1000")
+                            toolCust("Couldn't determine the Y value of desired track")
                             errorLog(A_ThisFunc "()", "Couldn't determine the Y value of desired track", A_LineFile, A_LineNumber)
                             return
                         }
@@ -906,7 +906,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
     else ;if everything fails, this else will trigger
         {
             blockOff()
-            toolCust("sfx folder", "1000", 1)
+            toolCust("sfx folder",, 1)
             MouseMove(xpos, ypos)
             return
         }
@@ -964,7 +964,7 @@ movepreview()
         ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
-        toolCust("Couldn't find the ClassNN value", "1000")
+        toolCust("Couldn't find the ClassNN value")
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
     SendInput(timelineWindow) ;focuses the timeline
@@ -974,7 +974,7 @@ movepreview()
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    toolCust("The wrong clips are selected", "1000")
+                    toolCust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                     blockOff()
                     return
@@ -990,7 +990,7 @@ movepreview()
                     ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
                     ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
                 } catch as e {
-                    toolCust("Couldn't get the ClassNN of the Effects Controls panel", "1000")
+                    toolCust("Couldn't get the ClassNN of the Effects Controls panel")
                     errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the Effects Controls panel", A_LineFile, A_LineNumber)
                     MouseMove(xpos, ypos)
                     return
@@ -1052,7 +1052,7 @@ movepreview()
                 {
                     blockOff()
                     MouseMove(xpos, ypos)
-                    toolCust("the reset button", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                    toolCust("the reset button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Couldn't find the reset button", A_LineFile, A_LineNumber)
                     return
                 }
@@ -1079,7 +1079,7 @@ reset()
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -1090,7 +1090,7 @@ reset()
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    toolCust("The wrong clips are selected", "1000")
+                    toolCust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                     blockOff()
                     return
@@ -1103,7 +1103,7 @@ reset()
         else
             {
                 blockOff()
-                toolCust("the motion value", "1000", 1)
+                toolCust("the motion value",, 1)
                 errorLog(A_ThisFunc "()", "Couldn't find the motion image", A_LineFile, A_LineNumber)
                 return
             }
@@ -1175,7 +1175,7 @@ manInput(property, optional)
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -1186,7 +1186,7 @@ manInput(property, optional)
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    toolCust("The wrong clips are selected", "1000")
+                    toolCust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                     blockOff()
                     return
@@ -1202,7 +1202,7 @@ manInput(property, optional)
     else ;if everything fails, this else will trigger
         {
             blockOff()
-            toolCust("the property you wish to adjust", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the property you wish to adjust",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the users requested property", A_LineFile, A_LineNumber)
             return
         }
@@ -1212,7 +1212,7 @@ manInput(property, optional)
     else
         {
             blockOff()
-            toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            toolCust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
             return
         }
@@ -1257,7 +1257,7 @@ gain(amount)
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -1285,7 +1285,7 @@ gain(amount)
                     else
                         {
                             blockOff()
-                            toolCust("gain macro couldn't figure`nout what to do", "1000")
+                            toolCust("gain macro couldn't figure`nout what to do")
                             errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineFile, A_LineNumber)
                             return
                         }
@@ -1293,7 +1293,7 @@ gain(amount)
         } catch as e {
             ToolTip("")
             blockOff()
-            toolCust("ClassNN wasn't given a value", "1000")
+            toolCust("ClassNN wasn't given a value")
             errorLog(A_ThisFunc "()", "attempted an ImageSearch without a variable value", A_LineFile, A_LineNumber)
             return
         }
@@ -1320,7 +1320,7 @@ gainSecondary(keyend)
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -1337,7 +1337,7 @@ gainSecondary(keyend)
                 goto inputs
             else
                 {
-                    toolCust("gain macro couldn't figure`nout what to do", "1000")
+                    toolCust("gain macro couldn't figure`nout what to do")
                     errorLog(A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineFile, A_LineNumber)
                     return
                 }
@@ -1365,7 +1365,7 @@ openChecklist()
                 if titlecheck = ""
                     {
                         blockOff()
-                        toolCust("``titlecheck`` variable wasn't assigned a value", "1000")
+                        toolCust("``titlecheck`` variable wasn't assigned a value")
                         errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
                         return
                     }
@@ -1377,7 +1377,7 @@ openChecklist()
                 if titlecheck = ""
                     {
                         blockOff()
-                        toolCust("``afterFXTitle`` variable wasn't assigned a value", "1000")
+                        toolCust("``afterFXTitle`` variable wasn't assigned a value")
                         errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
                         return
                     }
@@ -1388,7 +1388,7 @@ openChecklist()
     if not IsSet(titlecheck) || IsSet(afterFXTitle)
         {
             blockOff()
-            toolCust("``titlecheck/afterFXTitle`` variable wasn't assigned a value", "1000")
+            toolCust("``titlecheck/afterFXTitle`` variable wasn't assigned a value")
             errorLog(A_ThisFunc "()", "``titlecheck/afterFXTitle`` variable wasn't assigned a value", A_LineFile, A_LineNumber)
             return
         }
@@ -1405,7 +1405,7 @@ openChecklist()
     if WinExist("Checklist - " name)
         {
             WinMove(-371, -233,,, "Checklist - " name) ;move it back into place incase I've moved it
-            toolCust("You already have this checklist open", "1000")
+            toolCust("You already have this checklist open")
             errorLog(A_ThisHotkey, "You already have this checklist open", A_LineFile, A_LineNumber)
             return
         }
@@ -1417,7 +1417,7 @@ openChecklist()
                 FileCopy(location "\checklist.ahk", path)
                 Run(path "\checklist.ahk")
             } catch as e {
-                toolCust("File not found", "1000")
+                toolCust("File not found")
             }
         }
 }
@@ -1432,7 +1432,7 @@ openChecklist()
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel", "1000")
+        toolCust("Couldn't get the ClassNN of the desired panel")
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
@@ -1461,7 +1461,7 @@ else
                     }
                 else
                     {
-                        toolCust("gain macro couldn't figure`nout what to do", "1000")
+                        toolCust("gain macro couldn't figure`nout what to do")
                         return
                     }
             }

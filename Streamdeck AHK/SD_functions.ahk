@@ -72,22 +72,22 @@ blockOff()
 /* toolCust()
   create a tooltip with any message
   @param message is what you want the tooltip to say
-  @param timeout is how many ms you want the tooltip to last
+  @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
   @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
   */
-  toolCust(message, timeout, find := "")
-  {
-	  if find != 1
-		  messageFind := ""
-	  else
-		  messageFind := "Couldn't find "
-	  ToolTip(message)
-	  SetTimer(timeouttime, - timeout)
-	  timeouttime()
-	  {
-		  ToolTip("")
-	  }
-  }
+toolCust(message, timeout := 1000, find := "")
+{
+	if find != 1
+		messageFind := ""
+	else
+		messageFind := "Couldn't find "
+	ToolTip(messageFind message)
+	SetTimer(timeouttime, - timeout)
+	timeouttime()
+	{
+		ToolTip("")
+	}
+}
 
 /*
  This function opens up the speed menu and sets the clips speed to whatever is set
@@ -108,7 +108,7 @@ speed(amount)
 				goto inputs
 			else
 				{
-					toolCust("gain macro couldn't figure`nout what to do", "1000")
+					toolCust("gain macro couldn't figure`nout what to do")
 					return
 				}
 		}
@@ -132,7 +132,7 @@ scale(amount)
 			else
 				{
 					blockOff()
-					toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+					toolCust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -145,14 +145,14 @@ scale(amount)
 					else
 						{
 							blockOff()
-							toolCust("the blue text", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+							toolCust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 							return
 						}
 				}
 			else ;if everything fails, this else will trigger
 				{
 					blockOff()
-					toolCust("scale", "1000", 1) ;useful tooltip to help you debug when it can't find what it's looking for
+					toolCust("scale",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 		}
@@ -178,7 +178,7 @@ pauseautosave()
 		}
 	else
 		{
-			toolCust("autosave ahk script isn't open", "1000")
+			toolCust("autosave ahk script isn't open")
 			ExitApp()
 		}
 
@@ -198,7 +198,7 @@ pausewindowmax()
 		}
 	else
 		{
-			toolCust("fullscreen ahk script isn't open", "1000")
+			toolCust("fullscreen ahk script isn't open")
 			ExitApp()
 		}
 }

@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16.16
+;\\v2.16.17
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.8.2
+;\\v2.8.3
 
 ; ============================================================================================================================================
 ;
@@ -112,9 +112,9 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 #+`:: ;this hotkey is to suspent THIS script. This is helpful when playing games as this script will try to fire and do whacky stuff while you're playing games
 {
 	if A_IsSuspended = 0
-		toolCust("you suspended hotkeys from the main script", "1000")
+		toolCust("you suspended hotkeys from the main script")
 	else
-		toolCust("you renabled hotkeys from the main script", "1000")
+		toolCust("you renabled hotkeys from the main script")
 	Suspend(-1) ; toggle suspends this script.
 }
 #SuspendExempt false
@@ -183,7 +183,7 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
-			toolCust("Couldn't copy data to clipboard", "1000")
+			toolCust("Couldn't copy data to clipboard")
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
@@ -240,7 +240,7 @@ F14:: ;open the "show more options" menu in win11
 		}
 	else if ImageSearch(&x, &y, 0, 0, width, height, "*5 " Explorer "showmore.png")
 		{
-			;toolCust(colour "`n imagesearch fired", "1000") ;for debugging
+			;toolCust(colour "`n imagesearch fired") ;for debugging
 			;SendInput("{Esc}")
 			;SendInput("{Click}")
 			if colour = colour1 || colour = colour2
@@ -254,20 +254,20 @@ F14:: ;open the "show more options" menu in win11
 		}
 	else if (colour = colour1 || colour = colour2)
 		{
-			;toolCust(colour "`n colour1&2 fired", "1000") ;for debugging
+			;toolCust(colour "`n colour1&2 fired") ;for debugging
 			SendInput("{Click}")
 			SendInput("{Esc}" "+{F10}")
 			return
 		}
 	else if (colour = colour3 || colour = colour4)
 		{
-			;toolCust(colour "`n colour3&4 fired", "1000") ;for debugging
+			;toolCust(colour "`n colour3&4 fired") ;for debugging
 			SendInput("{Esc}" "+{F10}")
 			return
 		}
 	else
 		{
-			;toolCust(colour "`n final else fired", "1000") ;for debugging
+			;toolCust(colour "`n final else fired") ;for debugging
 			SendInput("{Esc}" "+{F10}")
 			return
 		}
@@ -312,11 +312,11 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 			switchToOtherFirefoxWindow()
 		if A_Index > 5
 			{
-				toolCust("Couldn't find a youtube tab", "1000")
+				toolCust("Couldn't find a youtube tab")
 				try {
 					WinActivate(title) ;reactivates the original window
 				} catch as e {
-					toolCust("Failed to get information on last active window", "1000")
+					toolCust("Failed to get information on last active window")
 					errorLog(A_ThisHotkey "::", "Failed to get information on last active window", A_LineFile, A_LineNumber)
 				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
@@ -459,7 +459,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
         toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
 		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
     } catch as e {
-        toolCust("Couldn't find the ClassNN value", "1000")
+        toolCust("Couldn't find the ClassNN value")
         errorLog(A_ThisHotkey "::", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
 	;MouseMove 34, 917 ;location of the selection tool
@@ -540,14 +540,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			;the window you're searching for can end up being window class 3. Wicked. The function will now attempt to continue on without these values if it doesn't get them as it can still work due to other information we grab along the way
 			if A_Index > 5
 				{
-					;toolCust("Function failed to find project window", "1000")
+					;toolCust("Function failed to find project window")
 					;errorLog(A_ThisHotkey "::", "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 					break
 				}
 		}
 	} catch as e
 		{
-			toolCust("Function failed to find project window", "1000")
+			toolCust("Function failed to find project window")
 			errorLog(A_ThisHotkey "::", "Function failed to find project window", A_LineFile, A_LineNumber)
 			return
 		}
@@ -574,7 +574,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			}
 	} catch as e {
 		blockOff()
-		toolCust("Couldn't find the project window", "1000")
+		toolCust("Couldn't find the project window")
 		errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
 		return
 	}
@@ -739,7 +739,7 @@ RButton::moveWin("") ;minimise
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
-			toolCust("Couldn't copy data to clipboard", "1000")
+			toolCust("Couldn't copy data to clipboard")
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
@@ -756,7 +756,7 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			A_Clipboard := previous
-			toolCust("Couldn't copy data to clipboard", "1000")
+			toolCust("Couldn't copy data to clipboard")
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}

@@ -110,7 +110,7 @@ getID(&id)
         if WinActive("ahk_exe explorer.exe")
             id := "ahk_class CabinetWClass"
     } catch as e {
-        toolCust("couldn't grab active window", "1000")
+        toolCust("couldn't grab active window")
         errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineFile, A_LineNumber)
     }
 }
@@ -137,7 +137,7 @@ getPremName(&premCheck, &titleCheck, &saveCheck)
             }
     } catch as e {
         blockOff()
-        toolCust("Couldn't determine the titles of Adobe programs", "1000")
+        toolCust("Couldn't determine the titles of Adobe programs")
         errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
         return
     }
@@ -160,7 +160,7 @@ getAEName(&aeCheck, &aeSaveCheck)
             aeSaveCheck := ""
     } catch as e {
         blockOff()
-        toolCust("Couldn't determine the titles of Adobe programs", "1000")
+        toolCust("Couldn't determine the titles of Adobe programs")
         errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
         return
     }
@@ -231,7 +231,7 @@ save()
     if !IsSet(id) || !IsSet(titleCheck) ;then we check to make sure all of those variables were assigned values
         {
             blockOff()
-            toolCust("A variable wasn't assigned a value", "1000")
+            toolCust("A variable wasn't assigned a value")
             errorLog(A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
             SetTimer(, -ms)
             goto end2
@@ -254,7 +254,7 @@ save()
             if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
                 {
                     blockOff()
-                    toolCust("A window is currently open that may alter the saving process", "1000")
+                    toolCust("A window is currently open that may alter the saving process")
                     errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                     SetTimer(, -ms)
                     goto end
@@ -281,7 +281,7 @@ save()
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {
                             blockOff()
-                            toolCust("A window is currently open that may alter the saving process", "1000")
+                            toolCust("A window is currently open that may alter the saving process")
                             errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                             SetTimer(, -ms)
                             goto end
@@ -310,7 +310,7 @@ save()
                 else
                     WinActivate("ahk_exe " id)
             } catch as e {
-                toolCust("couldn't activate original window", "1000")
+                toolCust("couldn't activate original window")
                 errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
             }
             SetTimer(, -ms)
@@ -325,7 +325,7 @@ save()
         if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
             {
                 blockOff()
-                toolCust("A window is currently open that may alter the saving process", "1000")
+                toolCust("A window is currently open that may alter the saving process")
                 errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                 SetTimer(, -ms)
                 goto end
@@ -349,7 +349,7 @@ save()
                     else
                         WinActivate("ahk_exe " id)
                 } catch as e {
-                    toolCust("couldn't activate original window", "1000")
+                    toolCust("couldn't activate original window")
                     errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
                 }
                 SetTimer(, -ms)
@@ -357,7 +357,7 @@ save()
             }
         if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
             {
-                toolCust("If you were playing back anything, this function should resume it", "1000")
+                toolCust("If you were playing back anything, this function should resume it")
                 stop := "yes"
             }
         else
@@ -365,7 +365,7 @@ save()
     } catch as er {
         SendInput("^s") ;attempt a save just in case
         blockOff() ;then bail
-        toolCust("failed to find play/stop button", "1000")
+        toolCust("failed to find play/stop button")
         errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineFile, A_LineNumber)
         return
     }
@@ -404,7 +404,7 @@ save()
         sleep 250
         switchToPremiere()
     } catch as e {
-        toolCust("couldn't activate Premiere Pro", "1000")
+        toolCust("couldn't activate Premiere Pro")
         errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
     }
 
@@ -432,7 +432,7 @@ save()
         else
             WinActivate("ahk_exe " id)
     } catch as e {
-        toolCust("couldn't activate original window", "1000")
+        toolCust("couldn't activate original window")
         errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
     }
     ToolTip("")

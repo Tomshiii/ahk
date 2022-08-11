@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12
+;\\v2.12.1
 #Include General.ahk
 
 /*
@@ -28,7 +28,7 @@ switchToExplorer()
 closeOtherWindow(program)
 {
     value := WinGetList(program) ;gets a list of all open windows
-    toolCust(value.length - 1 " other window(s) closed", "1000") ;tooltip to display how many explorer windows are being closed
+    toolCust(value.length - 1 " other window(s) closed") ;tooltip to display how many explorer windows are being closed
     for this_value in value
         {
             if A_Index > 1 ;closes all windows that AREN'T the last active window
@@ -80,7 +80,7 @@ switchToAE()
                                 loop files path "\*.aep", "F"
                                     {
                                         Run(A_LoopFileFullPath)
-                                        toolCust("Running AE file for this project", "1000")
+                                        toolCust("Running AE file for this project")
                                         WinWait("ahk_exe AfterFX.exe")
                                         WinActivate("ahk_exe AfterFX.exe")
                                         return
@@ -92,7 +92,7 @@ switchToAE()
                                 return
                             }
                     } catch as e {
-                        toolCust("Couldn't determine proper path from Premiere", "1000")
+                        toolCust("Couldn't determine proper path from Premiere")
                         errorLog(A_ThisFunc "()", "Couldn't determine proper path from Premiere", A_LineFile, A_LineNumber)
                         runae()
                         return
@@ -378,7 +378,7 @@ switchToMusic()
             }
         }
     ;window := WinGetTitle("A") ;debugging
-    ;toolCust(window, "1000") ;debugging
+    ;toolCust(window) ;debugging
 }
 
 ; ===============================================================
