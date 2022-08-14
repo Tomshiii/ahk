@@ -66,7 +66,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 500
                 SendInput("{F4}")
                 sleep 300
-                SendInput("^a" "+{BackSpace}" SelectedFolder) ;SEND PATH HERE
+                SendInput("^a" "+{BackSpace}")
+                SendText(SelectedFolder) ;SEND PATH HERE
                 sleep 100
                 SendInput("{Enter}")
                 sleep 1000
@@ -136,7 +137,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 800
                 SendInput("{F4}")
                 sleep 800
-                SendInput("^a" "+{BackSpace}" SelectedFolder "\proxies") ;INSERT PATH AND PROXIES HERE
+                SendInput("^a" "+{BackSpace}")
+                SendText(SelectedFolder "\proxies") ;INSERT PATH AND PROXIES HERE
                 sleep 800
                 SendInput("{Enter}")
                 sleep 250
