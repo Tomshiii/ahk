@@ -473,7 +473,7 @@ screenshotOBS := IniRead(location "\KSA\Keyboard Shortcuts.ini", "OBS", "Screens
 /*
  This value is a key or key combination that is being called upon within a function. These values will need to be adjusted within KSA.ini to fit however you choose to activate these functions
  */
-manInputEnd := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "manInputEnd")
+manInputEnd := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "manualInput End")
 
 /*
   This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
