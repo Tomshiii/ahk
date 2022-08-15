@@ -1,4 +1,5 @@
-# <> Release 2.5.x - 
+# <> Release 2.5.1 - HotkeyReplacer.ahk + KSA
+With this release `HotkeyReplacer.ahk` will also replace `Keyboard Shortcuts.ini` entries with the users custom entries.
 
 # > Functions
 - `discUnread()` now shows the proper tooltip depending on if it can't find any servers/channels

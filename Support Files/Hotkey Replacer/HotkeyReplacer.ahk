@@ -34,7 +34,7 @@ if !IsSet(forRelease) || forRelease = ""
         return
     }
 
-;localVer // v2.3.1
+;localVer // v2.4
 
 ;defining the informational gui
 ReplacerGui := Gui("", "Tomshi Hotkey Replacer for " forRelease)
@@ -60,11 +60,19 @@ replace(*)
     getUserFile := FileSelect("D" 2,, "Select your current in-use script path")
     if getUserFile = ""
         return
+    getUserFile2 := getUserFile ;for the ini loop
 
     loop files getUserFile "\*.ahk", "F"
         {
             if A_LoopFileName = "My Scripts.ahk"
                 getUserFile := A_LoopFileFullPath
+            else
+                continue
+        }
+    loop files getUserFile2 "\KSA\*.ini", "F"
+        {
+            if A_LoopFileName = "Keyboard Shortcuts.ini"
+                getUserIniFile := A_LoopFileFullPath
             else
                 continue
         }
@@ -76,12 +84,27 @@ replace(*)
         MsgBox("No ``My Scripts.ahk`` file found in the user folder.`nPlease ensure you haven't renamed the script", "Error", 48)
         return
     }
+    try {
+        checkstring2 := FileRead(getUserIniFile)
+    } catch as e {
+        ReplacerGui.Destroy()
+        MsgBox("No ``Keyboard Shortcuts.ini`` file found in the user folder.`nPlease ensure you haven't renamed the script", "Error", 48)
+        return
+    }
     if FileExist(A_ScriptDir "\" forRelease "\My Scripts.ahk")
         releaseFile := FileRead(A_ScriptDir "\" forRelease "\My Scripts.ahk")
     else
         {
             ReplacerGui.Destroy()
             MsgBox("Couldn't find the release version of ``My Scripts.ahk``", "Error", 48)
+            return
+        }
+    if FileExist(A_ScriptDir "\" forRelease "\KSA\Keyboard Shortcuts.ini")
+        releaseIniFile := FileRead(A_ScriptDir "\" forRelease "\KSA\Keyboard Shortcuts.ini")
+    else
+        {
+            ReplacerGui.Destroy()
+            MsgBox("Couldn't find the release version of ``Keyboard Shortcuts.ini``", "Error", 48)
             return
         }
     if DirExist(A_ScriptDir "\" forRelease "\Backups") && !FileExist(A_ScriptDir "\" forRelease "\Backups\My Scripts.ahk")
@@ -150,9 +173,103 @@ replace(*)
                     continue ;if the release version removes a hotkey, this line will make the loop skip it
             }
             FileMove(A_Temp "\tomshi\My Scripts.ahk", A_ScriptDir "\" forRelease "\My Scripts.ahk", 1) ;once the script is done it replaces the release script with the temp versio we created
-            ReplacerGui.Destroy() ;we then close the gui window
-            MsgBox("The attempt to replace hotkeys in ``My Scripts`` has completed.`nA backup of the original script is in the ``\Backups`` folder in case something went wrong") ;and alert the user the process is complete
+            ;MsgBox("The attempt to replace hotkeys in ``My Scripts`` has completed.`nA backup of the original script is in the ``\Backups`` folder in case something went wrong") ;and alert the user the process is complete
         }
+
+    if FileExist(getUserIniFile)
+        { 
+            releaseFile := ""
+            try {
+                checkstring := FileRead(getUserIniFile)
+            } catch as e {
+                ReplacerGui.Destroy()
+                MsgBox("No ``Keyboard Shortcuts.ini`` file found in the user folder.`nPlease ensure you haven't renamed the file", "Error", 48)
+                return
+            }
+
+            if DirExist(A_ScriptDir "\" forRelease "\Backups") && !FileExist(A_ScriptDir "\" forRelease "\Backups\Keyboard Shortcuts.ini")
+                FileCopy(A_ScriptDir "\" forRelease "\KSA\Keyboard Shortcuts.ini", A_ScriptDir "\" forRelease "\Backups")
+
+            if FileExist(A_ScriptDir "\ksahotkeys.ini")
+                FileDelete(A_ScriptDir "\ksahotkeys.ini")
+            if FileExist(A_ScriptDir "\ksahotkeynames.ini")
+                FileDelete(A_ScriptDir "\ksahotkeynames.ini")
+            
+            if not FileExist(A_ScriptDir "\ksahotkeys.ini")
+                FileAppend("[ksa Hotkeys]", A_ScriptDir "\ksahotkeys.ini")
+            if not FileExist(A_ScriptDir "\ksahotkeynames.ini")
+                FileAppend("[ksa Hotkey Names]", A_ScriptDir "\ksahotkeynames.ini")
+
+            if not DirExist(A_Temp "\tomshi")
+                DirCreate(A_Temp "\tomshi")
+            if FileExist(A_Temp "\tomshi\Keyboard Shortcuts.ini")
+                FileDelete(A_Temp "\tomshi\Keyboard Shortcuts.ini")
+            ;create baseline file
+            FileAppend(releaseIniFile, A_Temp "\tomshi\Keyboard Shortcuts.ini")
+
+            ;generate user hotkeys
+            loop {
+                location := InStr(checkstring, "=", 1,, A_Index) ;getting the location of the = sign
+                if location = 0 ;if none is found, break the loop
+                    break
+                endHotkey := InStr(checkstring, '"', 1, location, 2) ;finding the end of the hotkey using the quote marks
+                hotkeyKey := SubStr(checkstring, location + 1, endHotkey + 1 - location - 1)
+
+                nameLocation := InStr(checkstring, "]", 1, location, -1)
+                hotkeyName := SubStr(checkstring, nameLocation + 3, location - nameLocation - 3)
+                IniWrite(hotkeyKey, A_ScriptDir "\ksahotkeys.ini", "ksa Hotkeys", A_Index) ;writing the hotkey itself to an ini file
+                IniWrite(hotkeyName, A_ScriptDir "\ksahotkeynames.ini", "ksa Hotkey Names", A_Index) ;writing the hotkey tag name to an ini file
+                /* MsgBox(hotkeyName)
+                if A_index > 5
+                    return */
+            }
+
+            if FileExist(A_ScriptDir "\ksahotkeys.ini") && FileExist(A_ScriptDir "\ksahotkeynames.ini")
+                {
+                    loop {
+                        try {
+                            getHotkeys := IniRead(A_ScriptDir "\ksahotkeys.ini", "ksa Hotkeys", A_Index) ;reading the hotkey
+                            getHotkeyName := IniRead(A_ScriptDir "\ksahotkeynames.ini", "ksa Hotkey Names", A_Index) ;reading the hotkey tag name
+                            ;MsgBox(getHotkeys A_Space getHotkeyName)
+                        } catch as e
+                            break ;when the script is done replacing hotkeys this line will break the loop
+
+                        if InStr(releaseIniFile, getHotkeyName "=",,, 1)
+                            {
+                                try {
+                                    gethotkeyPos := InStr(releaseIniFile, getHotkeyName "=", 1,, 1)
+                                    if getHotkeyPos = 0
+                                        break
+                                    endPos := InStr(releaseIniFile, "=", 1, getHotkeyPos, 1)
+                                    length := InStr(releaseIniFile, '"', 1, endPos, 2)
+                                    replace := SubStr(releaseIniFile, endPos + 1, (length + 1) - (endPos + 1))
+                                    /* MsgBox(replace)
+                                    if A_index > 5
+                                        return */
+                                    newIni := StrReplace(releaseIniFile, replace, '"' getHotkeys '"', 1,, 1)
+                                    if FileExist(A_Temp "\tomshi\Keyboard Shortcuts.ini")
+                                        FileDelete(A_Temp "\tomshi\Keyboard Shortcuts.ini")
+                                    FileAppend(newIni, A_Temp "\tomshi\Keyboard Shortcuts.ini") ;this line is creating a temporary versino of our new hotkey replaced script in a temp folder
+                                    releaseIniFile := FileRead(A_Temp "\tomshi\Keyboard Shortcuts.ini")
+                                } catch as e {
+                                    MsgBox("Something went wrong trying to build a .ini file", "Oops")
+                                }
+                            }
+                        else
+                            continue
+                    }
+                }
+            FileMove(A_Temp "\tomshi\Keyboard Shortcuts.ini", A_ScriptDir "\" forRelease "\KSA\Keyboard Shortcuts.ini", 1)
+        }
+    else
+        {
+            ReplacerGui.Destroy()
+            MsgBox("Couldn't find the release version of ``Keyboard Shortcuts.ini``", "Error", 48)
+            return
+        }
+        
+    ReplacerGui.Destroy() ;we then close the gui window
+    MsgBox("The attempt to replace hotkeys in ``My Scripts`` & ``Keyboard Shortcuts.ini`` has completed.`nA backup of the original script/.ini file is in the ``\Backups`` folder in case something went wrong") ;and alert the user the process is complete
 }
 
 cancel(*)
