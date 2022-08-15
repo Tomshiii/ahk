@@ -34,7 +34,7 @@ if !IsSet(forRelease) || forRelease = ""
         return
     }
 
-;localVer // v2.4
+;localVer // v2.4.1
 
 ;defining the informational gui
 ReplacerGui := Gui("", "Tomshi Hotkey Replacer for " forRelease)
@@ -149,7 +149,7 @@ replace(*)
                     ;MsgBox(getHotkeys A_Space getHotkeyName)
                 } catch as e
                     break ;when the script is done replacing hotkeys this line will break the loop
-                if InStr(releaseFile, getHotkeyName "Hotkey;",,, 1)
+                if InStr(releaseFile, getHotkeyName "Hotkey;", 1,, 1)
                     {
                         try {
                             getHotkeyPos := InStr(releaseFile, getHotkeyName "Hotkey;", 1,, 1) ;from here down we're basically doing the same as the first loop but for the realease version of `My Scripts.ahk` so we can replace it with the user hotkey instead
@@ -160,7 +160,7 @@ replace(*)
                             replace := SubStr(releaseFile, endPos + 2, length - endpos - 2)
                             ;MsgBox(replace)
                             ;MsgBox(getHotkeys A_Space getHotkeyName A_Space replace)
-                            newScript := StrReplace(releaseFile, replace, getHotkeys, 1,, 1) ;this line is replacing the release hotkey with the user hotkey
+                            newScript := StrReplace(releaseFile, ";" getHotkeyName "Hotkey;`r" replace, getHotkeyName "Hotkey;`r" getHotkeys, 1,, 1) ;this line is replacing the release hotkey with the user hotkey
                             if FileExist(A_Temp "\tomshi\My Scripts.ahk")
                                 FileDelete(A_Temp "\tomshi\My Scripts.ahk")
                             FileAppend(newScript, A_Temp "\tomshi\My Scripts.ahk") ;this line is creating a temporary versino of our new hotkey replaced script in a temp folder
@@ -178,7 +178,6 @@ replace(*)
 
     if FileExist(getUserIniFile)
         { 
-            releaseFile := ""
             try {
                 checkstring := FileRead(getUserIniFile)
             } catch as e {
@@ -234,7 +233,7 @@ replace(*)
                         } catch as e
                             break ;when the script is done replacing hotkeys this line will break the loop
 
-                        if InStr(releaseIniFile, getHotkeyName "=",,, 1)
+                        if InStr(releaseIniFile, getHotkeyName "=", 1,, 1)
                             {
                                 try {
                                     gethotkeyPos := InStr(releaseIniFile, getHotkeyName "=", 1,, 1)
@@ -246,7 +245,7 @@ replace(*)
                                     /* MsgBox(replace)
                                     if A_index > 5
                                         return */
-                                    newIni := StrReplace(releaseIniFile, replace, '"' getHotkeys '"', 1,, 1)
+                                    newIni := StrReplace(releaseIniFile, getHotkeyName "=" replace, getHotkeyName "=" '"' getHotkeys '"', 1,, 1)
                                     if FileExist(A_Temp "\tomshi\Keyboard Shortcuts.ini")
                                         FileDelete(A_Temp "\tomshi\Keyboard Shortcuts.ini")
                                     FileAppend(newIni, A_Temp "\tomshi\Keyboard Shortcuts.ini") ;this line is creating a temporary versino of our new hotkey replaced script in a temp folder
