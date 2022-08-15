@@ -3,8 +3,12 @@ With this release `HotkeyReplacer.ahk` will also replace `Keyboard Shortcuts.ini
 
 # > Functions
 - `discUnread()` now shows the proper tooltip depending on if it can't find any servers/channels
-- `moveTab()` will now set the `monitor` variable to one of the two I wish to cycle between if the function is activated on a monitor that isn't included in the cycle
 - Add default values to `valuehold()` and `manInput()`
+
+`moveTab()` 
+- Will now set the `monitor` variable to one of the two I wish to cycle between if the function is activated on a monitor that isn't included in the cycle
+- Fixed a bug that would cause the function to cycle endlessly
+- Fixed a bug that would cause a tab to sometimes not join another browser window
 
 `toolCust()`
 - `timeout` variable will now default to `1000 (1s)` and may be omitted

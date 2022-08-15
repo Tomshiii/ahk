@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.8
+;\\v2.12.9
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.6
+;		Windows Scripts \\ Last updated: v2.12.9
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -199,9 +199,10 @@ moveTab()
         }
     if monitor = 4
         MouseMove(4288, -911, 3) ;if the mouse is within monitor 4, it will move it to monitor 2
-    if monitor = 2 ;if the mouse is within monitor 2, it will move it to monitor 4
-        MouseMove(4288, 164, 3)
+    if monitor = 2
+        MouseMove(4288, 164, 3) ;if the mouse is within monitor 2, it will move it to monitor 4
     blockOff()
+    KeyWait(A_ThisHotkey)
     thisHotkey := A_ThisHotkey ;determining which XButton the user is currently using to activate the function
     if thisHotkey = "XButton1"
         otherHotkey := "XButton2" ;so that we can then assign the other XButton to a variable
@@ -210,7 +211,7 @@ moveTab()
     loop 40 { ;this loop will check for 2s if the user has released the RButton, if they have, it will drop the tab and finish the function
         if not GetKeyState("RButton", "P")
             {
-                SendInput("{LButton Up}")
+                SendInput("{LButton}")
                 break
             }
         if GetKeyState(A_ThisHotkey, "P") ;these two getkeystates are to allow the user to reactivate the function without waiting the 2s
