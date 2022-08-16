@@ -31,6 +31,7 @@ With this release `HotkeyReplacer.ahk` will also replace `Keyboard Shortcuts.ini
 - Fixed `p::`
 - Moved `"^+1"` to `KSA` value
 - `newWin()` now uses `getHotkeys()` to remove a required variable
+- Pressing "Cancel" for `b::` will now properly cancel the entire hotkey
 
 # > Other Changes
 `autosave.ahk`

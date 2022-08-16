@@ -513,7 +513,7 @@ b:: ;this macro is to find the difference between 2 24h timecodes
 		start1:
 		time := InputBox("Write the " startorend " hhmm time here`nDon't use ':'", "Input " startorend " Time", "w200 h110")
 		if time.Result = "Cancel"
-			return
+			return 0
 		Length1 := StrLen(time.Value)
 		if Length1 != "4" || time.Value > 2359
 			{
@@ -524,7 +524,11 @@ b:: ;this macro is to find the difference between 2 24h timecodes
 			return time.Value
 	}
 	time1 := calculateTime("1") ;then we call it twice
+	if time1 = 0
+		return
 	time2 := calculateTime("2")
+	if time2 = 0
+		return
 	diff := DateDiff("20220101" time2, "20220101" time1, "seconds")/"3600" ;do the math to determine the time difference
 	value := Round(diff, 2) ;round the result to 2dp
 	A_Clipboard := value ;copy it to the clipboard
