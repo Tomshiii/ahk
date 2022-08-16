@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.9
+;\\v2.12.11
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -198,9 +198,9 @@ moveTab()
             monitor := 2 ;so I'll set the monitor number to one of the two I wish it to cycle between
         }
     if monitor = 4
-        MouseMove(4288, -911, 3) ;if the mouse is within monitor 4, it will move it to monitor 2
+        MouseMove(4288, -911, 2) ;if the mouse is within monitor 4, it will move it to monitor 2
     if monitor = 2
-        MouseMove(4288, 164, 3) ;if the mouse is within monitor 2, it will move it to monitor 4
+        MouseMove(4288, 164, 2) ;if the mouse is within monitor 2, it will move it to monitor 4
     blockOff()
     KeyWait(A_ThisHotkey)
     thisHotkey := A_ThisHotkey ;determining which XButton the user is currently using to activate the function
@@ -585,7 +585,7 @@ discUnread(which := "")
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.10
+;		VSCode \\ Last updated: v2.12.11
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -614,7 +614,7 @@ vscode(script)
         {
             MouseMove(xex, yex)
             SendInput("{Click 2}")
-            MouseMove(-271, 40,, "R")
+            MouseMove(-200, 30,, "R")
             SendInput("{Click}")
         }
     else

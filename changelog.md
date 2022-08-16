@@ -4,11 +4,13 @@ With this release `HotkeyReplacer.ahk` will also replace `Keyboard Shortcuts.ini
 # > Functions
 - `discUnread()` now shows the proper tooltip depending on if it can't find any servers/channels
 - Add default values to `valuehold()` and `manInput()`
+- Updated `collapse.png` for `vscode()`
 
 `moveTab()` 
 - Will now set the `monitor` variable to one of the two I wish to cycle between if the function is activated on a monitor that isn't included in the cycle
 - Fixed a bug that would cause the function to cycle endlessly
 - Fixed a bug that would cause a tab to sometimes not join another browser window
+- Changed `MouseMove()` speed from `3 -> 2`
 
 `toolCust()`
 - `timeout` variable will now default to `1000 (1s)` and may be omitted
@@ -27,7 +29,6 @@ With this release `HotkeyReplacer.ahk` will also replace `Keyboard Shortcuts.ini
 - `newWin()` now uses `getHotkeys()` to remove a required variable
 
 # > Other Changes
-
 `autosave.ahk`
 - Removed redundant variables from `timeRemain()` function
-- `tooltips` variable now reads a `.ini` file in `A_MyDocuments \tomshi\autosave.ini` instead of an adjustable variable in the script itself
+- `tooltips` variable now reads an `.ini` file in `A_MyDocuments \tomshi\autosave.ini` instead of an adjustable variable in the script itself
