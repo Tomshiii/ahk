@@ -62,23 +62,51 @@ loop files, location "*.ahk", "R"
             {
                 inUseVer := localVer(A_LoopFileFullPath)
                 ;now we check for problem versions
-                if replace = ""
-                    {
-                        if VerCompare(latestVer, "v2.3") >= 0 && VerCompare(inUseVer, "v2.3") < 0 ;this is to alert the user of a change I made to the accompanying .ini file
-                            {
-                                warning := MsgBox("WARNING`nLater versions of ``checklist.ahk`` use incompatible .ini files. If you wish, this script can remove all old versions of the .ini files and the checklist script will automatically create a new .ini file when it is next run.`nDoing so however will remove all saved checkboxes as well as the saved time passed.`n`nIf you're okay with losing this data: Select Yes`nIf you wish for these .ini files to be left alone and manually replaced by you: Select No", "WARNING", "4 48 256 4096")
-                                if warning = "Yes"
-                                    replace := "Yes"
-                                if warning = "No"
-                                    replace := "No"
-                            }
+                
+                /* newIni()
+                 This function will facilitate the creation of new .ini files for new releases of `checklist.ahk`. It will allow me to easily add new .ini values without the user needing to do anything
+                 @param boxOrlist is a required variable to due a typo on local versions of `checklist.ahk` below v2.3
+                 */
+                newIni(boxOrlist)
+                {
+                    try {
+                        FP := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "FirstPass")
+                        SP := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "SecondPass")
+                        TW := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "TwitchOverlay")
+                        YT := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "YoutubeOverlay")
+                        TR := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Transitions")
+                        SFX := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "SFX")
+                        MU := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Music")
+                        PT := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Patreon")
+                        INTR := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Intro")
+                        TI := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "time")
                     }
-                if VerCompare(latestVer, inUseVer) <= 0
+                    if !DirExist(A_LoopFileDir "\backups")
+                        DirCreate(A_LoopFileDir "\backups")
+                    if !FileExist(A_LoopFileDir "\backups\check" boxOrlist ".ini")
+                        FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini")
+                    else
+                        {
+                            A_Clipboard := A_LoopFileDir "\backups"
+                            MsgBox("Backup of checklist.ini already exists in;`n`n" A_LoopFileDir "\backups`n`nPlease move or rename to continue. The dir has been copied to the clipboard")
+                            ExitApp()
+                        }
+                    FileDelete(A_LoopFileDir "\check" boxOrlist ".ini")
+                    FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI, A_LoopFileDir "\checklist.ini")
+                }
+                if VerCompare(latestVer, "v2.3") >= 0 && VerCompare(inUseVer, "v2.3") < 0 ;this is to alert the user of a change I made to the accompanying .ini file in local version v2.3 (or Release v2.5). I changed it from `checkbox.ini` -> `checklist.ini`
+                    newIni("box")
+                if VerCompare(latestVer, inUseVer) <= 0 ;comment out this block if you've made a small change and want to replace stuff to test without needing to increment the ver number
                     {
                         try {
                             FileAppend(A_Mon "-" A_DD "_" A_LoopFileFullPath " -- was the same or newer than the local version of checklist.ahk and was not replaced`n", A_ScriptDir "\replaceChecklist_log.txt")
                         }
                         continue
+                    }
+                if VerCompare(latestVer, inUseVer) > 0 ;This check will generate new .ini files anytime there's a new version of `checklist.ahk`. This check will allow me to easily add new ini values
+                    {
+                        if FileExist(A_LoopFileDir "\checklist.ini")
+                            newIni("list")
                     }
                 try {
                     FileAppend(A_Mon "-" A_DD "_" A_LoopFileFullPath " -- replaced " inUseVer " with // " latestVer "`n", A_ScriptDir "\replaceChecklist_log.txt")
@@ -88,20 +116,7 @@ loop files, location "*.ahk", "R"
                     toolCust("Encountered an error with " A_LoopFileFullPath)
                     FileAppend("Encountered an error with " A_LoopFileFullPath "`n", A_ScriptDir "\replaceChecklist_log.txt")
                 }
-                if replace = "Yes"
-                    {
-                        if FileExist(A_LoopFileDir "\checkbox.ini")
-                            {
-                                FileDelete(A_LoopFileDir "\checkbox.ini")
-                                FileAppend(A_Mon "-" A_DD "_" A_LoopFileDir "\checkbox.ini -- removed`n", A_ScriptDir "\replaceChecklist_log.txt")
-                            }
-                        if FileExist(A_LoopFileDir "\checklist.ini")
-                            {
-                                FileDelete(A_LoopFileDir "\checklist.ini")
-                                FileAppend(A_Mon "-" A_DD "_" A_LoopFileDir "\checklist.ini -- removed`n", A_ScriptDir "\replaceChecklist_log.txt")
-                            }
-                    }
-                }
+            }
         else
             continue
         ToolTip("")

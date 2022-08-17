@@ -15,6 +15,7 @@ With this release `HotkeyReplacer.ahk` will also replace `Keyboard Shortcuts.ini
 - Fixed a bug that would cause the function to cycle endlessly
 - Fixed a bug that would cause a tab to sometimes not join another browser window
 - Changed `MouseMove()` speed from `3 -> 2`
+- Will now return the mouse to the original coords if moving a tab from `monitor 4 -> 2` but not the other way around
 
 `toolCust()`
 - `timeout` variable will now default to `1000 (1s)` and may be omitted
@@ -34,6 +35,10 @@ With this release `HotkeyReplacer.ahk` will also replace `Keyboard Shortcuts.ini
 - Pressing "Cancel" for `b::` will now properly cancel the entire hotkey
 
 # > Other Changes
+- `replaceChecklist.ahk` can now replace the users `checklist.ini` file for each working dir to allow modification of the necessary .ini values without causing issues
+    - Users running versions of `checklist.ini` below `v2.3` (release v2.5) will now longer need to manually adjust their .ini files. This script will generate the proper .ini file automatically
+    - Will backup the local copy of `checklist.ini` to a `\backups` folder
+
 `autosave.ahk`
 - Removed redundant variables from `timeRemain()` function
 - `tooltips` variable now reads an `.ini` file in `A_MyDocuments \tomshi\autosave.ini` instead of an adjustable variable in the script itself
