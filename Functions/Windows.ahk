@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.11
+;\\v2.12.12
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.9
+;		Windows Scripts \\ Last updated: v2.12.12
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -86,8 +86,21 @@ moveWin(key)
             }
         }
 }
+
 /* moveTab()
- This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4. This function will check for 2s if you have released the RButton, if you have, it will drop the tab and finish, if you haven't it will be up to the user to press the LButton when you're done moving the tab. This function has hardcoded checks for `XButton1` & `XButton2` and is activated by having the activation hotkey as just one of those two, but then right clicking on a tab and pressing one of those two
+ This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4. This function will check for 2s if you have released the RButton, if you have, it will drop the tab and finish, if you haven't it will be up to the user to press the LButton when you're done moving the tab. This function has hardcoded checks for `XButton1` & `XButton2` and is activated by having the activation hotkey as just one of those two, but then right clicking on a tab and pressing one of those two.
+
+ The way my monitors are layed out in windows;
+
+                     -------------
+                     |    2      |
+                     |           |
+ -----               -------------
+ |   | ------------- -------------
+ | 3 | |    1      | |    4      |
+ |   | |           | |           |
+ |   | ------------- -------------
+ -----
  */
 moveTab()
 {
@@ -104,8 +117,9 @@ moveTab()
             SendInput("{" A_ThisHotkey "}")
             return
         }
-    start:
     coords()
+    MouseGetPos(&initx, &inity) ;this is here so we can move the mouse back to the starting position even if you call the function multiple times without it completing
+    start:
     MouseGetPos(&x, &y)
     getTitle(&title) ;getting the window title
     WinGetPos(&winX, &winY, &width,, title) ; getting the coords for the firefox window
@@ -220,6 +234,8 @@ moveTab()
             goto start
         sleep 50
     }
+    if monitor = 4
+        MouseMove(initx, inity, 2) ;move back to the original mouse coords. I only want to move the mouse back if I'm moving a tab from the bottom monitor, to the top
     SetTimer(isfull, -1500)
     isfull() {
         try {

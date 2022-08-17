@@ -107,7 +107,7 @@ timeline6 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, IN t
 timeline7 := 0x28282E ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
 playhead := 0x572523
 playhead2 := 0xE64B3D
-Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible. It will require you to set the y coordinate of your seek bar below as Resolve doesn't have a "move playhead to cursor" hotkey like premiere does
+Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible.
 {
     scrub := 0
     coordw()
