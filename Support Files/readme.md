@@ -1,6 +1,7 @@
 # info
 This directory is here simply to *assist* other scripts.
 
+- `\Hotkey Replacer` is a script designed to replace hotkeys in a new release of `My Scripts.ahk` with the users adjusted copies, as well as swap over KSA values
 - `\Icons` contains all the icon files for all my scripts
 - `\images` contains any images scripts use in them (eg. for a gui)
 - `\ImageSearch` contains all `.png` files for any `ImageSearch` used within any of my scripts
@@ -8,8 +9,6 @@ This directory is here simply to *assist* other scripts.
 - `\Secondary Keyboard Files` contains all files I need to make my secondary keyboard work within my workflow
 - `\shortcuts` contains all shortcut files I use within scripts
 - `Fkeys used.xlsx` is an excel file keeping track of where `Fkeys` beyond `F12` are being used
-- `ignore.ini` is for the update checker to know if you want to be prompted or not
-- `Installer.ahk` is a script designed to replace hotkeys in a new release of `My Scripts.ahk` with the users adjusted copies
 - `mouse settings.png` is just a backup of my mouse settings
 - `replaceChecklist.ahk` is a script designed to replace all `checklist.ahk` files that have been copied to their project directories, with a newer version
 

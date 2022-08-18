@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.15.4
+;\\v2.16
 
 ; =======================================================================================================================================
 ;
@@ -26,6 +26,43 @@ GroupAdd("Editors", "ahk_exe Photoshop.exe")
 ;				STARTUP
 ;
 ; =======================================================================================================================================
+/* generate()
+ This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are adding without breaking anything
+ */
+generate(MyRelease)
+{
+	;checks if script was reloaded
+	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+		return
+	deleteOld()
+	{
+		if DirExist(A_MyDocuments "\tomshi\adobe")
+			DirDelete(A_MyDocuments "\tomshi\adobe", 1)
+		if DirExist(A_MyDocuments "\tomshi\location")
+			DirDelete(A_MyDocuments "\tomshi\location", 1)
+		if FileExist(A_MyDocuments "\tomshi\autosave.ini")
+			FileDelete(A_MyDocuments "\tomshi\autosave.ini")
+		if FileExist(A_MyDocuments "\tomshi\first")
+			FileDelete(A_MyDocuments "\tomshi\first")
+	}
+	deleteOld()
+
+	if !DirExist(A_MyDocuments "\tomshi")
+		DirCreate(A_MyDocuments "\tomshi")
+	UPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
+	FC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Tracj", "first check", "false")
+	ADOBE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Tracj", "adobe temp", "")
+	WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Tracj", "working dir", A_WorkingDir)
+	TOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltips", "true")
+	if FileExist(A_MyDocuments "\tomshi\settings.ini")
+		{
+			ver := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+			if !VerCompare(MyRelease, ver) > 0
+				return
+			FileDelete(A_MyDocuments "\tomshi\settings.ini")
+		}
+	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+}
 
 /* updateChecker()
  This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the main branch of the github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog. This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
@@ -54,8 +91,8 @@ updateChecker(MyRelease) {
 	global version := SubStr(string, foundpos, end)
 	toolCust("Current " A_ScriptName " Version = " MyRelease "`nCurrent Github Release = " version, 2000)
 	;checking to see if the user wishes to ignore updates
-	ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
-	if ignore = "no"
+	ignore := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+	if ignore = "false"
 		{
 			if VerCompare(MyRelease, version) < 0
 				{
@@ -151,9 +188,9 @@ updateChecker(MyRelease) {
 					MyGui.Show()
 					prompt(*) {
 						if noprompt.Value = 1
-							IniWrite('"yes"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+							IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 						if noprompt.Value = 0
-							IniWrite('"no"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+							IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 					}
 					githubButton(*) {
 						if WinExist("Tomshiii/ahk")
@@ -247,7 +284,7 @@ updateChecker(MyRelease) {
 			else
 				return
 		}
-	else if ignore = "yes"
+	else if ignore = "true"
 		{
 			if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
 				WinWaitClose("ahk_class tooltips_class32")
@@ -268,8 +305,8 @@ updateChecker(MyRelease) {
 		return
 	else
 		{
-			toolCust("You put something else in the ignore.ini file you goose")
-			errorLog(A_ThisFunc "()", "You put something else in the ignore.ini file you goose", A_LineFile, A_LineNumber)
+			toolCust("You put something else in the settings.ini file you goose")
+			errorLog(A_ThisFunc "()", "You put something else in the settings.ini file you goose", A_LineFile, A_LineNumber)
 			return
 		}
 }
@@ -285,11 +322,11 @@ firstCheck(MyRelease) {
 		version := ""
 	if WinExist("Scripts Release " version)
 		WinWaitClose("Scripts Release " version)
-	if FileExist(A_MyDocuments "\tomshi\first") ;how the function tracks whether this is the first time the user is running the script or not
+	check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+	if check != "false" ;how the function tracks whether this is the first time the user is running the script or not
 		return
 	else
 		{
-			DirCreate(A_MyDocuments "\tomshi") ;creates the directory we'll need later
 			firstCheckGUI := Gui("", "Scripts Release " MyRelease)
 			firstCheckGUI.SetFont("S11")
 			firstCheckGUI.Opt("-Resize AlwaysOnTop")
@@ -319,7 +356,7 @@ firstCheck(MyRelease) {
 			firstCheckGUI.OnEvent("Escape", close)
 			firstCheckGUI.OnEvent("Close", close)
 			close(*) {
-				FileAppend("", A_MyDocuments "\tomshi\first") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
+				IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Track", "first check") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
 				firstCheckGUI.Destroy()
 			}
 			todoPage(*) {
@@ -353,10 +390,10 @@ adobeTemp(MyRelease) {
 		WinWaitClose("ahk_class tooltips_class32")
 	if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
 		WinWaitClose("Scripts Release " MyRelease)
-	if FileExist(A_MyDocuments "\tomshi\adobe\" A_YDay) ;checks to see if the function has already run today
+	day := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+	if day = A_YDay ;checks to see if the function has already run today
 		return
-	if not DirExist(A_MyDocuments "\tomshi\adobe") ;ensures the directory we need already exists
-		DirCreate(A_MyDocuments "\tomshi\adobe")
+
 	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
 	largestSize := 45
 
@@ -415,14 +452,7 @@ adobeTemp(MyRelease) {
 			ToolTip("")
 		}
 	end:
-	if DirExist(A_MyDocuments "\tomshi\adobe")
-		{
-			try {
-				loop files, A_MyDocuments "\tomshi\adobe\*.*"
-					FileDelete(A_LoopFileFullPath)
-			}
-		}
-	FileAppend("", A_MyDocuments "\tomshi\adobe\" A_YDay) ;tracks the day so it will not run again today
+	IniWrite(A_YDay, A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp") ;tracks the day so it will not run again today
 }
 
 /*
@@ -483,24 +513,12 @@ locationReplace()
 {
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
-	if FileExist(A_MyDocuments "\tomshi\location\workingDir")
-		{
-			checkDir := FileRead(A_MyDocuments "\tomshi\location\workingDir")
-			if checkDir = A_WorkingDir
-				return
-		}
-	if not DirExist(A_MyDocuments "\tomshi\location") ;ensures the directory we need already exists
-		DirCreate(A_MyDocuments "\tomshi\location")
-	if DirExist(A_MyDocuments "\tomshi\location")
-		{
-			try {
-				loop files, A_MyDocuments "\tomshi\location\*.*"
-					if A_LoopFileName = A_WorkingDir
-						return
-			}
-		}
+	checkDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+	if checkDir = A_WorkingDir
+		return
+
 	funcTray := "'" A_ThisFunc "()" "'" A_Space
-	found := "no"
+	found := "false"
 	tomshiOrUser := "t"
 	loop files, A_WorkingDir "\*.ahk", "R"
 		{
@@ -509,11 +527,11 @@ locationReplace()
 			read := FileRead(A_LoopFileFullPath)
 			if InStr(read, "E:\Github\ahk", 1)
 				{
-					found := "yes"
+					found := "true"
 					break
 				}
 		}
-	if found = "no"
+	if found = "false"
 		{
 			loop files, A_WorkingDir "\*.ahk", "R"
 				{
@@ -522,13 +540,13 @@ locationReplace()
 					read := FileRead(A_LoopFileFullPath)
 					if InStr(read, checkDir, 1)
 						{
-							found := "yes"
+							found := "true"
 							tomshiOrUser := "u"
 							break
 						}
 				}
 		}
-	if found = "no"
+	if found = "false"
 		return
 	TrayTip(funcTray "is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir,, 17)
 	SetTimer(end, -2000)
@@ -551,14 +569,7 @@ locationReplace()
 	end() {
 		TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
 	}
-	if DirExist(A_MyDocuments "\tomshi\location")
-		{
-			try {
-				loop files, A_MyDocuments "\tomshi\location\*.*"
-					FileDelete(A_LoopFileFullPath)
-			}
-		}
-	FileAppend(A_WorkingDir, A_MyDocuments "\tomshi\location\workingDir" )
+	IniWrite(A_WorkingDir, A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
 }
 
 /*
@@ -566,24 +577,24 @@ locationReplace()
  */
 trayMen()
 {
-	ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+	check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 	A_TrayMenu.Add() ;adds a divider bar
 	A_TrayMenu.Add("Check for Updates", checkUp)
-	if ignore =  "no"
+	if check =  "true"
 		A_TrayMenu.Check("Check for Updates")
 	else
 		A_TrayMenu.Uncheck("Check for Updates")
 	checkUp(*)
 	{
-		ignore := IniRead(A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore") ;has to be checked everytime you wish to toggle
-		if ignore = "no"
+		check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check") ;has to be checked everytime you wish to toggle
+		if check = "true"
 			{
-				IniWrite('"' "yes" '"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+				IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 				A_TrayMenu.Uncheck("Check for Updates")
 			}
 		else
 			{
-				IniWrite('"' "no" '"', A_WorkingDir "\Support Files\ignore.ini", "ignore", "ignore")
+				IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 				A_TrayMenu.Check("Check for Updates")
 			}
 

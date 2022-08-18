@@ -37,12 +37,20 @@ global idle := secondsIdle * 1000
 secondsRetry := 2.5
 global retry := secondsRetry * 1000
 
-
-if not FileExist(A_MyDocuments "\tomshi\autosave.ini")
-    FileAppend("[tooltip]`ntooltip=true", A_MyDocuments "\tomshi\autosave.ini")
+if !FileExist(A_MyDocuments "\tomshi\settings.ini")
+    {
+        sleep 5000 ;just incase this script loads before `My Scripts.ahk`
+        if !FileExist(A_MyDocuments "\tomshi\settings.ini")
+            {
+                myrelease := getVer()
+                if myrelease = ""
+                    myrelease := "v2.5" ;if you're not using `My Scripts.ahk` this line will just autopopulate a number to stop errors
+                FileAppend("[Settings]`nupdate check=yes`ntooltip=true`n`n[Track]`nadobe temp=`nworking dir=" A_WorkingDir "`nfirst check=yes`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+            }
+    }
 
 ;DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
-tooltips := IniRead(A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
+tooltips := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
 ;is the timer running?
 timer := false
 
@@ -55,13 +63,13 @@ tooltipCount(*)
 {
     if tooltips = "true"
         {
-            IniWrite("false", A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip")
+            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
             A_TrayMenu.Uncheck("Tooltip Countdown")
             reload
         }
     if tooltips = "false"
         {
-            IniWrite("true", A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip")
+            IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
             A_TrayMenu.Check("Tooltip Countdown")
             reload
         }
@@ -445,3 +453,30 @@ save()
     SetTimer(StopWatch, 10)
 }
 
+
+/*
+ This function will grab the release version from the `My Scripts.ahk` file itself. This function makes it so I don't have to change this variable manually every release
+ */
+getVer()
+{
+    loop files A_ScriptDir "\*.ahk", "R" ;this loop searches the current script directory for the `My Scripts.ahk` script
+        {
+            if A_LoopFileName = "My Scripts.ahk"
+                {
+                    myScriptDir := A_LoopFileFullPath
+                    break
+                }
+            else
+                continue
+        }
+    try {
+        releaseString := FileRead(myScriptDir) ;then we're putting the script into memory
+    } catch as e {
+        return
+    } ;then the below block is doing some string manipulation to grab the release version from it
+    foundpos := InStr(releaseString, 'v',,,2)
+    endpos := InStr(releaseString, '"', , foundpos, 1)
+    end := endpos - foundpos
+    version := SubStr(releaseString, foundpos, end)
+    return version ;before returning the version back to the function
+}
