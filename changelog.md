@@ -35,8 +35,10 @@ With this release `HotkeyReplacer.ahk` will also replace `Keyboard Shortcuts.ini
 - Pressing "Cancel" for `b::` will now properly cancel the entire hotkey
 
 # > Other Changes
+- Updated `explorer2.png` for `vscode()` so it will now work even if you have an unsaved file
+
 - `replaceChecklist.ahk` can now replace the users `checklist.ini` file for each working dir to allow modification of the necessary .ini values without causing issues
-    - Users running versions of `checklist.ini` below `v2.3` (release v2.5) will now longer need to manually adjust their .ini files. This script will generate the proper .ini file automatically
+    - Users running versions of `checklist.ini` below `v2.3` (release v2.5) will no longer need to manually adjust their .ini files. This script will generate the proper .ini file automatically
     - Will backup the local copy of `checklist.ini` to a `\backups` folder
 
 `autosave.ahk`
