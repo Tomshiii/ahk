@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.1
+;\\v2.16.2
 
 ; =======================================================================================================================================
 ;
@@ -340,17 +340,23 @@ firstCheck(MyRelease) {
 				You've gotten my main script to load without any runtime errors! (hopefully).
 				You've taken the first step to really getting the most out of these scripts!
 
+				This script alone isn't everything my repo of scripts has to offer, heading into ``Handy Hotkeys`` below and finding the hotkey for the current active scripts will show you some of the other scripts available to you!
+				Beyond those scripts there is also everything in the ``
+			)" A_WorkingDir "
+			( 
+				\Streamdeck AHK\`` directory that provides even more functionality.
+
 				The purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.
 				These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.
 
 				The below ``Handy Hotkeys`` outlines some hotkeys that are available to use anywhere within windows and are a great place to get started when trying to navigate the power of these scripts! (note: they still only scratch the surface, a large chunk of my scripts are specific to programs and will only activate if said program is the current active window)
 			)")
 			;buttons
-			todoButton := firstCheckGUI.Add("Button", "X285 Y380", "What to Do")
+			todoButton := firstCheckGUI.Add("Button", "X285 Y480", "What to Do")
 			todoButton.OnEvent("Click", todoPage)
-			hotkeysButton := firstCheckGUI.Add("Button", "X380 Y380", "Handy Hotkeys")
+			hotkeysButton := firstCheckGUI.Add("Button", "X380 Y480", "Handy Hotkeys")
 			hotkeysButton.OnEvent("Click", hotkeysPage)
-			closeButton := firstCheckGUI.Add("Button", "X500 Y380", "Close")
+			closeButton := firstCheckGUI.Add("Button", "X500 Y480", "Close")
 			closeButton.OnEvent("Click", close)
 
 			firstCheckGUI.OnEvent("Escape", close)

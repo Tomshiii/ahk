@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.2
+;\\v2.12.3
 #Include General.ahk
 
 /*
@@ -472,69 +472,57 @@ hotkeysGUI() {
 	Title.SetFont("S15")
 
     ;all hotkeys
-    selection := hotGUI.Add("ListBox", "r10 Choose1", ["#F1","#+r","#h", "#c", "#f", "#+1", "#+``", "^+c", "CapsLock & c", "CapsLock & v"])
+    selection := hotGUI.Add("ListBox", "r8 Choose1", ["#F1","#+r","#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"])
     selection.OnEvent("Change", text)
 
     selectionText := hotGUI.Add("Text", "W240 X180 Y80 H100", "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!")
     text(*) {
         if selection.Value = 1
             {
-                selectionText.Move(,, "240", "100")
+                selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 2
             {
-                selectionText.Move(,, "380", "220")
+                selectionText.Move(, 60, "380", "220")
                 selectionText.Text := "Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control.`n(note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked"
                 hotGUI.Move(,, "590", "297")
             }
         if selection.Value = 3
             {
-                selectionText.Move(,, "240", "100")
+                selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Will call this GUI so you can reference these hotkeys at any time!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 4
             {
-                selectionText.Move(,, "240", "100")
+                selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Will center the current active window in the middle of your main display!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 5
             {
-                selectionText.Move(,, "240", "100")
+                selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Will put the active window in fullscreen if it isn't already, or pull it out of fullscreen if it already is!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 6
             {
-                selectionText.Move(,, "240", "100")
-                selectionText.Text := "(That's : win > SHIFT > 1, not the actual + key)`nWill pause the ``autosave.ahk`` script!"
+                selectionText.Move(, 80, "240", "100")
+                selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F1`` hotkey and unticking the same script!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 7
             {
-                selectionText.Move(,, "240", "100")
-                selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F1`` hotkey and unticking the same script!"
+                selectionText.Move(, 80, "240", "100")
+                selectionText.Text := "Will search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 8
             {
-                selectionText.Move(,, "240", "100")
-                selectionText.Text := "Will search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
-                hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 9
-            {
-                selectionText.Move(,, "240", "100")
-                selectionText.Text := "Will remove and then capitilise the highlighted text!"
-                hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 10
-            {
-                selectionText.Move(,, "240", "100")
-                selectionText.Text := "Will remove and then lowercase the highlighted text!"
+                selectionText.Move(, 80, "240", "100")
+                selectionText.Text := "Will remove and then either capitilise or completely lowercase the highlighted text depending on which is less frequent!"
                 hotGUI.Move(,, "450", "297")
             }
     }
@@ -571,10 +559,13 @@ todoGUI()
 
     bodyText := todoGUI.Add("Text","X8 W550", "
     (
-        1. Once you've saved these scripts wherever you wish (the default value is ``E:\Github\ahk\`` if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, my scripts should automatically adjust these variables when you run ``My Scripts.ahk`` (so if you're reading this, they should already be automatically changed) but if you wish to do a sanity check, check the ``location :=`` variable in ``KSA.ahk`` and if it lines up with your directory everything should work as intended.
-             // do note; some ``Streamdeck AHK`` scripts still have hard coded dir's as they are intended for my workflow and may error out if you try to run them from a different location. //
+        1. Once you've saved these scripts wherever you wish (the default value is ``E:\Github\ahk\`` if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, my scripts should automatically adjust these variables when you run ``My Scripts.ahk`` (so if you're reading this, your directory should be ``
+    )" A_WorkingDir "
+    (
+        ``) but if you wish to do a sanity check, check the ``location :=`` variable in ``KSA.ahk`` and if it lines up with your directory everything should work as intended.
+             // do note; some ``Streamdeck AHK`` scripts still have other hard coded dir's as they are intended for my workflow and may error out if you try to run them. //
 
-        2. Take a look at ``Keyboard Shortcuts.ini`` to set your own keyboard shortcuts for programs as well as define coordinates for a few remaining ImageSearches that cannot use variables for various reason. These ``KSA`` values are used to allow for easy adjustments instead of needing to dig through scripts!
+        2. Take a look at ``Keyboard Shortcuts.ini`` to set your own keyboard shortcuts for programs as well as define coordinates for a few remaining ImageSearches that cannot use variables for various reasons. These ``KSA`` values are used to allow for easy adjustments instead of needing to dig through scripts!
 
         3. Feel free to edit any of these scripts to your liking, change any of the hotkeys, then run any of the .ahk files and enjoy!
             - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
@@ -582,8 +573,10 @@ todoGUI()
         - Scripts that will work with no tinkering include ->
         - Alt Menu acceleration disabler
         - autodismiss error
+        - autosave.ahk
+        - premiere_fullscreen_check.ahk
     )")
-    closeButton := todoGUI.Add("Button", "X500 Y350", "Close")
+    closeButton := todoGUI.Add("Button", "X500 Y400", "Close")
     closeButton.OnEvent("Click", close)
 
     todoGUI.OnEvent("Escape", close)
