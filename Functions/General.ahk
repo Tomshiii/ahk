@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16
+;\\v2.16.1
 
 ; =======================================================================================================================================
 ;
@@ -45,7 +45,7 @@ generate(MyRelease)
 		if FileExist(A_MyDocuments "\tomshi\first")
 			FileDelete(A_MyDocuments "\tomshi\first")
 	}
-	deleteOld()
+	deleteOld() ;deletes any of the old files I used to track information
 
 	if !DirExist(A_MyDocuments "\tomshi")
 		DirCreate(A_MyDocuments "\tomshi")
@@ -90,9 +90,9 @@ updateChecker(MyRelease) {
 	end := endpos - foundpos
 	global version := SubStr(string, foundpos, end)
 	toolCust("Current " A_ScriptName " Version = " MyRelease "`nCurrent Github Release = " version, 2000)
-	;checking to see if the user wishes to ignore updates
-	ignore := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-	if ignore = "false"
+	;checking to see if the user wishes to check for updates
+	check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+	if check = "true"
 		{
 			if VerCompare(MyRelease, version) < 0
 				{
@@ -284,7 +284,7 @@ updateChecker(MyRelease) {
 			else
 				return
 		}
-	else if ignore = "true"
+	else if check = "false"
 		{
 			if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
 				WinWaitClose("ahk_class tooltips_class32")
@@ -301,7 +301,7 @@ updateChecker(MyRelease) {
 					return
 				}
 		}
-	else if ignore = "stop"
+	else if check = "stop"
 		return
 	else
 		{
