@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.2
+;\\v2.16.3
 
 ; =======================================================================================================================================
 ;
@@ -27,40 +27,69 @@ GroupAdd("Editors", "ahk_exe Photoshop.exe")
 ;
 ; =======================================================================================================================================
 /* generate()
- This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are adding without breaking anything
+ This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are adding without breaking anything.
+ Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
  */
 generate(MyRelease)
 {
 	;checks if script was reloaded
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
-	deleteOld()
+	deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL)
 	{
 		if DirExist(A_MyDocuments "\tomshi\adobe")
-			DirDelete(A_MyDocuments "\tomshi\adobe", 1)
+			{
+				try {
+					loop files, A_MyDocuments "\tomshi\adobe\*.*"
+						checkAdobe := A_LoopFileName
+				}
+				if IsSet(checkAdobe)
+					ADOBE := checkAdobe
+				DirDelete(A_MyDocuments "\tomshi\adobe", 1)
+			}
 		if DirExist(A_MyDocuments "\tomshi\location")
-			DirDelete(A_MyDocuments "\tomshi\location", 1)
+			{
+				try {
+					WORK := FileRead(A_MyDocuments "\tomshi\location\workingDir")
+				}
+				if WORK != ""
+					{
+						UPDATE := IniRead(WORK "\Support Files\ignore.ini", "ignore", "ignore", "true")
+						if UPDATE = "no"
+							UPDATE := "true"
+						else UPDATE := "false"
+						if FileExist(WORK "\Support Files\ignore.ini")
+							FileDelete(WORK "\Support Files\ignore.ini")
+					}
+				DirDelete(A_MyDocuments "\tomshi\location", 1)
+			}
 		if FileExist(A_MyDocuments "\tomshi\autosave.ini")
-			FileDelete(A_MyDocuments "\tomshi\autosave.ini")
+			{
+				TOOL := IniRead(A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip", "true")
+				FileDelete(A_MyDocuments "\tomshi\autosave.ini")
+			}
 		if FileExist(A_MyDocuments "\tomshi\first")
-			FileDelete(A_MyDocuments "\tomshi\first")
+			{
+				FC := "true"
+				FileDelete(A_MyDocuments "\tomshi\first")
+			}
 	}
-	deleteOld() ;deletes any of the old files I used to track information
-
 	if !DirExist(A_MyDocuments "\tomshi")
 		DirCreate(A_MyDocuments "\tomshi")
-	UPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
-	FC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Tracj", "first check", "false")
-	ADOBE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Tracj", "adobe temp", "")
-	WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Tracj", "working dir", A_WorkingDir)
-	TOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltips", "true")
 	if FileExist(A_MyDocuments "\tomshi\settings.ini")
 		{
 			ver := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
-			if !VerCompare(MyRelease, ver) > 0
+			if !VerCompare(MyRelease, ver) > 0 ;do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
 				return
-			FileDelete(A_MyDocuments "\tomshi\settings.ini")
 		}
+	UPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
+	FC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check", "false")
+	ADOBE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp", "")
+	WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir", A_WorkingDir)
+	TOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip", "true")
+	deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
+	if FileExist(A_MyDocuments "\tomshi\settings.ini")
+		FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
 	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
