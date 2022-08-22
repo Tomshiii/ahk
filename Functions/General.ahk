@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.3
+;\\v2.16.4
 
 ; =======================================================================================================================================
 ;
@@ -379,13 +379,17 @@ firstCheck(MyRelease) {
 				These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.
 
 				The below ``Handy Hotkeys`` outlines some hotkeys that are available to use anywhere within windows and are a great place to get started when trying to navigate the power of these scripts! (note: they still only scratch the surface, a large chunk of my scripts are specific to programs and will only activate if said program is the current active window)
+
+				The below ``Settings`` GUI can be accessed at anytime by right clicking ``My Scripts.ahk`` on the taskbar.
 			)")
 			;buttons
-			todoButton := firstCheckGUI.Add("Button", "X285 Y480", "What to Do")
+			settingsButton := firstCheckGUI.Add("Button", "X200 Y+8", "Settings")
+			settingsButton.OnEvent("Click", settings)
+			todoButton := firstCheckGUI.Add("Button", "X+10", "What to Do")
 			todoButton.OnEvent("Click", todoPage)
-			hotkeysButton := firstCheckGUI.Add("Button", "X380 Y480", "Handy Hotkeys")
+			hotkeysButton := firstCheckGUI.Add("Button", "X+10", "Handy Hotkeys")
 			hotkeysButton.OnEvent("Click", hotkeysPage)
-			closeButton := firstCheckGUI.Add("Button", "X500 Y480", "Close")
+			closeButton := firstCheckGUI.Add("Button", "X+10", "Close")
 			closeButton.OnEvent("Click", close)
 
 			firstCheckGUI.OnEvent("Escape", close)
@@ -399,6 +403,15 @@ firstCheck(MyRelease) {
 			}
 			hotkeysPage(*) {
 				hotkeysGUI()
+			}
+			settings(*) {
+				firstCheckGUI.Opt("Disabled")
+				WinSetAlwaysOnTop(0, "Scripts Release " MyRelease)
+				settingsGUI()
+				WinWait("Settings " MyRelease)
+				WinActivate("Settings " MyRelease)
+				WinWaitClose("Settings " MyRelease)
+				firstCheckGUI.Opt("-Disabled")
 			}
 			firstCheckGUI.Show("AutoSize")
 		}
@@ -608,12 +621,13 @@ locationReplace()
 }
 
 /*
- This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates
+ This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
  */
 trayMen()
 {
 	check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 	A_TrayMenu.Add() ;adds a divider bar
+	A_TrayMenu.Add("Settings", settings)
 	A_TrayMenu.Add("Check for Updates", checkUp)
 	if check =  "true"
 		A_TrayMenu.Check("Check for Updates")
@@ -632,8 +646,95 @@ trayMen()
 				IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 				A_TrayMenu.Check("Check for Updates")
 			}
-
 	}
+	settings(*)
+	{
+		settingsGUI()
+	}
+}
+
+/*
+ A GUI window to allow the user to toggle settings contained within the `settings.ini` file
+ */
+settingsGUI()
+{
+	version := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+	if WinExist("Settings " version)
+		return
+	settingsGUI := Gui("+Resize +MinSize250x", "Settings " version)
+	SetTimer(resize, -10)
+	resize()
+	{
+		settingsGUI.Opt("-Resize")
+	}
+	settingsGUI.SetFont("S11")
+
+	noDefault := settingsGUI.Add("Button", "Default W0 H0", "_")
+	
+	if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check") = "true"
+		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 X9 Y7", "Check for Updates")
+	else
+		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 X9 Y7", "Check for Updates")
+	updateCheckToggle.OnEvent("Click", update)
+	update(*)
+	{
+		updateVal := updateCheckToggle.Value
+		if updateVal = 1
+			IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+		else
+			IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+	}
+
+	if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") = "true"
+		toggleToggle := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``autosave.ahk`` tooltips")
+	else
+		toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``autosave.ahk`` tooltips")
+	toggleToggle.OnEvent("Click", toggle)
+	toggle(*)
+	{
+		toggleVal := toggleToggle.Value
+		if toggleVal = 1
+			IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+		else
+			IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+	}
+
+	adobeToggle := settingsGUI.Add("Checkbox", "Checked0 Y+20", "``adobeTemp()`` reset")
+	adobeToggle.OnEvent("Click", adobe)
+	adobe(*)
+	{
+		adobeVal := adobeToggle.Value
+		if adobeVal = 1
+			IniWrite("", A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+		else
+			IniWrite(A_YDay, A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+	}
+	
+	firstToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``firstCheck()`` reset")
+	firstToggle.OnEvent("Click", first)
+	first(*)
+	{
+		firstVal := firstToggle.Value
+		if firstVal = 1
+			IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+		else
+			IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+	}
+
+
+	workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+	workDirText := settingsGUI.Add("Text", "Y+5", "`nCurrent working directory;`n" workDir)
+
+	settingsGUI.OnEvent("Escape", close)
+	settingsGUI.OnEvent("Close", close)
+	close(*)
+	{
+		if WinExist("Scripts Release " version)
+			WinSetAlwaysOnTop(1, "Scripts Release " version)
+		settingsGUI.Destroy()
+	}
+
+	settingsGUI.Show("Center AutoSize")
 }
 
 
