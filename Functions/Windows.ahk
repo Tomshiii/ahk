@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.12
+;\\v2.12.13
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.12
+;		Windows Scripts \\ Last updated: v2.12.13
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -119,6 +119,7 @@ moveTab()
         }
     coords()
     MouseGetPos(&initx, &inity) ;this is here so we can move the mouse back to the starting position even if you call the function multiple times without it completing
+    initMon := getMouseMonitor()
     start:
     MouseGetPos(&x, &y)
     getTitle(&title) ;getting the window title
@@ -234,8 +235,44 @@ moveTab()
             goto start
         sleep 50
     }
+    blockOn()
     if monitor = 4
         MouseMove(initx, inity, 2) ;move back to the original mouse coords. I only want to move the mouse back if I'm moving a tab from the bottom monitor, to the top
+    if !WinActive(title) ;this codeblock will check to see if the originally active window is still active. This is useful as sometimes when you drag a tab that wasn't active, firefox will bring the tab next to it into focus, which might not really be what you want
+        {
+            MouseGetPos(&finalX, &finalY)
+            getTitle(&currentActive)
+            WinGetPos(&x2, &y2,,, currentActive)
+            MouseMove(x2 + 30, y2 + 30, 2)
+            check := getMouseMonitor()
+            if check = monitor && currentActive != title
+                {
+                    switchToFirefox() ;activate the other firefox window
+                    checkformon1() { ;a small check to make sure a sneaky window on the wrong monitor isn't causing issues
+                        getTitle(&currentActive)
+                        WinGetPos(&x2, &y2,,, currentActive)
+                        MouseMove(x2 + 30, y2 + 30, 2)
+                        check2 := getMouseMonitor()
+                        if check2 != 4 && check2 != 2
+                            switchToFirefox()
+                    }
+                    checkformon1()
+                    if !WinActive(title) ;and see if that is the tab, if not;
+                        {
+                            switchToFirefox() ;swap back again and loop. Note: this might not work properly if you have more than two firefox windows open
+                            checkformon1()
+                            ;MsgBox("monitor = " monitor "`ncheck = " check "`nactive win = " currentActive "`noriginal active = " title) ;debugging
+                            loop 20 {
+                                SendInput("{Ctrl Down}{Tab}{Ctrl Up}")
+                                sleep 50
+                                if WinActive(title)
+                                    break
+                        }
+                    }
+                }
+            MouseMove(finalX, finalY, 2)
+        }
+    blockOff()
     SetTimer(isfull, -1500)
     isfull() {
         try {
