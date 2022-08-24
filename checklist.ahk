@@ -56,7 +56,20 @@ newDate(&today)
         ;todays date
         today := A_YYYY "_" A_MM "_" A_DD
         read := FileRead(A_ScriptDir "\checklist_logs.txt")
-        foundpos := InStr(read, A_YYYY "_",, -1)
+        if InStr(read, A_YYYY "_",, -1)
+            foundpos := InStr(read, A_YYYY "_",, -1)
+        else ;this block is just incase you open a checklist in a new year
+            {
+                lastYear := A_YYYY - 1
+                if InStr(read, lastYear "_",, -1)
+                    foundpos := InStr(read, lastYear "_",, -1)
+                else ;if the last logged years is a long time ago, we will just default back to this year to stop errors
+                    {
+                        lastdate := A_YYYY
+                        return lastdate
+                    }
+
+            }
         endpos := InStr(read, ",",, foundpos)
         end := endpos - foundpos
         lastdate := SubStr(read, foundpos, end)

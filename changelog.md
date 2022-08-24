@@ -13,5 +13,8 @@
     - Adjusted `vscode()` values in `My Scripts.ahk` to accommodate this change
 - `right click premiere.ahk` now checks for both the `Save Project` dialog box and if `Ctrl` is being pressed.
     - Pressing `Ctrl + \` is what causes premiere to freak out and enter the weird state that I created `adobe fullscreen check.ahk` for. Adding checks in this script will dramatically decrease the need for that script.
-- Small UI adjustments to `checklist.ahk`
 - Updated `collapse.png` for `vscode()`
+
+`checklist.ahk`
+- Will no longer error if you open `checklist.ahk` in a new year
+- Small UI adjustments
