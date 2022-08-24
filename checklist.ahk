@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.4"
+version := "v2.4.1"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -85,48 +85,62 @@ title.SetFont("bold")
 ver := MyGui.Add("Text", "Right X+10", "⚙ " version)
 
 ;defining checkboxes
-FirstPass := MyGui.Add("CheckBox", "vFirstPass X8", "First Pass")
+FirstPass := MyGui.Add("CheckBox", "vFirstPass X8 Y35", "First Pass")
 FirstPass.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "FirstPass")
 FirstPass.OnEvent("Click", logCheckbox)
 
-SecondPass := MyGui.Add("CheckBox", "vSecondPass", "Second Pass")
+SecondPass := MyGui.Add("CheckBox", "vSecondPass Y+4", "Second Pass")
 SecondPass.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "SecondPass")
 SecondPass.OnEvent("Click", logCheckbox)
 
-TwitchOverlay := MyGui.Add("CheckBox", "vTwitchOverlay", "Twitch overlay")
+TwitchOverlay := MyGui.Add("CheckBox", "vTwitchOverlay Y+4", "Twitch overlay")
 TwitchOverlay.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "TwitchOverlay")
 TwitchOverlay.OnEvent("Click", logCheckbox)
 
-YoutubeOverlay := MyGui.Add("CheckBox", "vYoutubeOverlay", "Youtube overlay")
+YoutubeOverlay := MyGui.Add("CheckBox", "vYoutubeOverlay Y+4", "Youtube overlay")
 YoutubeOverlay.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "YoutubeOverlay")
 YoutubeOverlay.OnEvent("Click", logCheckbox)
 
-Transitions := MyGui.Add("CheckBox", "vTransitions", "Transitions")
+Transitions := MyGui.Add("CheckBox", "vTransitions Y+4", "Transitions")
 Transitions.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Transitions")
 Transitions.OnEvent("Click", logCheckbox)
 
-SFX := MyGui.Add("CheckBox",  "vSFX", "SFX")
+SFX := MyGui.Add("CheckBox",  "vSFX Y+4", "SFX")
 SFX.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "SFX")
 SFX.OnEvent("Click", logCheckbox)
 
-Music := MyGui.Add("CheckBox", "vMusic", "Music")
+Music := MyGui.Add("CheckBox", "vMusic Y+4", "Music")
 Music.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Music")
 Music.OnEvent("Click", logCheckbox)
 
-Patreon := MyGui.Add("CheckBox", "vPatreon", "Patreon")
+Patreon := MyGui.Add("CheckBox", "vPatreon Y+4", "Patreon")
 Patreon.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Patreon")
 Patreon.OnEvent("Click", logCheckbox)
 
-Intro := MyGui.Add("CheckBox", "vIntro X+85 Y38", "Intro")
+Intro := MyGui.Add("CheckBox", "vIntro X+85 Y35", "Intro")
 Intro.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Intro")
 Intro.OnEvent("Click", logCheckbox)
+
+;buttons
+startButton := MyGui.Add("Button","X110 Y180 w50 h30", "start") ;defining the start button
+startButton.OnEvent("Click", start) ;what happens when you click the start button
+stopButton := MyGui.Add("Button","X110 Y180 Y180 w0 h0", "stop") ;defining the stop button and making it invisible for now
+stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
+group := MyGui.Add("GroupBox", "w137 h100 X167 Y120", "Time Adjust (min)")
+
+List := MyGui.Add("ComboBox", "r10 Choose5 X180 Y145 w112 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+minusButton := MyGui.Add("Button","X178 Y180 w50 h30", "-sub") ;defining the -5min button
+minusButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
+
+plusButton := MyGui.Add("Button","X+15 w50 h30", "+add") ;defining the -5min button
+plusButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
 
 ;timer text
 global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
 startHoursRounded := Round(startValue/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
 startMinutesRounded := Round(startValue/60, 2) ;getting the minutes past by dividing the seconds past then rounding to 2dp
 
-timerHoursText := MyGui.Add("Text", "X8 Y270 W60", "Hours: ") ;defining the hours text
+timerHoursText := MyGui.Add("Text", "X8 Y+25 W60", "Hours: ") ;defining the hours text
 timerHoursText.SetFont("S14")
 timerText := MyGui.Add("Text", "X+5 w200", startHoursRounded) ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
@@ -137,19 +151,6 @@ timerMinutesText.SetFont("S14")
 timerMinutes := MyGui.Add("Text", "X+1 w200", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
 
-;buttons
-startButton := MyGui.Add("Button","X110 Y230 w50 h30", "start") ;defining the start button
-startButton.OnEvent("Click", start) ;what happens when you click the start button
-stopButton := MyGui.Add("Button","X110 Y230 w0 h0", "stop") ;defining the stop button and making it invisible for now
-stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
-group := MyGui.Add("GroupBox", "w137 h100 X167 Y170", "Time Adjust (min)")
-
-List := MyGui.Add("ComboBox", "r10 Choose5 X180 Y195 w112 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
-minusButton := MyGui.Add("Button","X178 Y230 w50 h30", "-sub") ;defining the -5min button
-minusButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
-
-plusButton := MyGui.Add("Button","X+15 w50 h30", "+add") ;defining the -5min button
-plusButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
 
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", A_ScriptDir "\checklist_logs.txt")
 SetTimer(reminder, -ms)
