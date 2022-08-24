@@ -314,3 +314,59 @@ motionBlur()
     }
     ToolTip("")
 }
+
+/* timeline()
+  A weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock). This function uses a few imagesearches to determine the position of the timeline - NOTE: The imagesearches are still somewhat reliant on the way I have AE setup (I divide some coord ranges to save time on first use), you may need to adjust these if your aetimeline is in a non standard place
+  */
+aetimeline()
+{
+    coordw()
+    MouseGetPos(&xpos, &ypos)
+
+    static graphX := 0
+    static graphY := 0
+    static end := 0
+    static bottom := 0
+
+    /*
+     A small function to get the coords of the graph icon, marker icon & mountain icon to determine the position of your timeline
+     */
+    getCoords(&graphX, &graphY, &end, &bottom)
+    {
+        if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " AE "\graph.png") || ImageSearch(&graphX, &graphY, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " AE "\graph2.png")
+            {
+                graphX := x + 30
+                graphY := y + 8
+            }
+        if ImageSearch(&endX, &endY, A_ScreenWidth / 2, 200, A_ScreenWidth + 20, A_ScreenHeight, "*2 " AE "\marker.png")
+            end := endX - 12
+        if ImageSearch(&mountX, &mountY, 0, A_ScreenHeight / 4, A_ScreenWidth / 1.5, A_ScreenWidth, "*2 " AE "\mountain.png")
+            bottom := mountY - 8
+    }
+    if graphX = 0 && graphY = 0 && end = 0 && bottom = 0
+        {
+            toolCust(A_ThisFunc "() is grabbing the timeline coords", "2000")
+            getCoords(&graphX, &graphY, &end, &bottom)
+            if !IsSet(end) || !IsSet(graphX) || !IsSet(graphY) || !IsSet(bottom)
+                {
+                    toolCust("A variable was not assigned a value")
+                    errorLog(A_ThisFunc "()", "A variable was not assigned a value", A_LineFile, A_LineNumber)
+                    return
+                }
+        }
+    MouseGetPos(&newX, &newY)
+    if(xpos > graphX and xpos < end) and (ypos > graphY and ypos < bottom)
+        {
+            blockOn()
+            if newX > graphX and newX < end
+                xpos := newX
+            MouseMove(xpos, graphY) ;this will warp the mouse to the top part of your timeline defined by &timeline
+            SendInput("{Click Down}")
+            MouseMove(xpos, ypos)
+            blockOff()
+            KeyWait(A_ThisHotkey)
+            SendInput("{Click Up}")
+        }
+    else
+        return
+}

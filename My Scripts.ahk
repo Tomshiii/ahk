@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.17
+;\\v2.17.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.5
 
@@ -429,7 +429,7 @@ z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool 
 ;=============================================================================================================================================
 #HotIf WinActive("ahk_exe AfterFX.exe")
 ;aetimelineHotkey;
-Xbutton1::timeline("981", "550", "2542", "996") ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton1::aetimeline() ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aeselectionHotkey;
 Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aepreviousframeHotkey;
