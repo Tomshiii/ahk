@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.4
+;\\v2.16.5
 
 ; =======================================================================================================================================
 ;
@@ -512,7 +512,7 @@ verCheck()
 		return
 	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
 		WinWaitClose("ahk_class tooltips_class32")
-    if VerCompare(A_AhkVersion, "2.0-beta5") > 0
+    if VerCompare(A_AhkVersion, "2.0-beta.5") < 0
         {
             getLatestVer()
             {

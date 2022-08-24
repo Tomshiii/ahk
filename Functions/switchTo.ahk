@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.3
+;\\v2.12.4
 #Include General.ahk
 
 /*
@@ -574,7 +574,7 @@ todoGUI()
         - Alt Menu acceleration disabler
         - autodismiss error
         - autosave.ahk
-        - premiere_fullscreen_check.ahk
+        - adobe fullscreen check.ahk
     )")
     closeButton := todoGUI.Add("Button", "X500 Y400", "Close")
     closeButton.OnEvent("Click", close)
@@ -633,10 +633,10 @@ activeScripts(MyRelease)
         autosave := MyGui.Add("CheckBox", "Checked0", "autosave.ahk")
     autosave.ToolTip := "Clicking this checkbox will open/close the script. Reopening it will restart the autosave timer"
     autosave.OnEvent("Click", autosaveClick)
-    if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
-        premFull := MyGui.Add("CheckBox", "Checked1", "premiere_fullscreen_check.ahk")
+    if WinExist("adobe fullscreen check.ahk - AutoHotkey")
+        premFull := MyGui.Add("CheckBox", "Checked1", "adobe fullscreen check.ahk")
     else
-        premFull := MyGui.Add("CheckBox", "Checked0", "premiere_fullscreen_check.ahk")
+        premFull := MyGui.Add("CheckBox", "Checked0", "adobe fullscreen check.ahk")
     premFull.ToolTip := "Clicking this checkbox will open/close the script"
     premFull.OnEvent("Click", premFullClick)
     if WinExist("QMK Keyboard.ahk - AutoHotkey")
@@ -722,9 +722,9 @@ activeScripts(MyRelease)
         detect()
         premFullVal := premFull.Value
         if premFullVal = 1
-            Run(A_WorkingDir "\premiere_fullscreen_check.ahk") ;this line can technically never happen but oh well
+            Run(A_WorkingDir "\adobe fullscreen check.ahk") ;this line can technically never happen but oh well
         else
-            WinClose("premiere_fullscreen_check.ahk - AutoHotkey")
+            WinClose("adobe fullscreen check.ahk - AutoHotkey")
     }
     altClick(*){
         detect()

@@ -41,6 +41,8 @@ playhead := 0x2D8CEB
 
 Rbutton::
 {
+	if WinExist("Save Project") || GetKeyState("Ctrl") = 1
+		return
 	MouseGetPos &xpos, &ypos
 	Color := PixelGetColor(xpos, ypos)
 	color2 := PixelGetColor(xpos + 1, ypos)
@@ -71,6 +73,8 @@ Rbutton::
 							blockOff()
 							;ToolTip("left button pressed") ;testing
 							loop {
+								if WinExist("Save Project") || GetKeyState("Ctrl") = 1
+									break
 								static left := 0
 								static xbutton := 0
 								sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
@@ -85,7 +89,7 @@ Rbutton::
 									{
 										break
 									}
-								}
+							}
 							;ToolTip("")
 							SendInput("{LButton Up}")
 							if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
@@ -100,6 +104,8 @@ Rbutton::
 						}
 					loop
 						{
+							if WinExist("Save Project") || GetKeyState("Ctrl") = 1
+								break
 							static left := 0
 							static xbutton := 0
 							SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this

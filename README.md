@@ -49,7 +49,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
   - `Alt Menu acceleration disabler.ahk`
   - `autodismiss error.ahk`
   - `autosave.ahk`
-  - `premiere_fullscreen_check.ahk`
+  - `adobe fullscreen check.ahk`
 #### Then be aware:
 - Any scripts that still contain pixel coordinates instead of using variables (in either, `Click`, `MouseMove`, `ImageSearch`, `PixelSearch`, etc) rely not only on my monitor layout or the `coordinate mode` set, but also my workspace layout within premiere (or any applicable program) and will not necessarily work out of the box. They will require looking at the individual comments, as well as any accompanying AHK documentation (make sure you look at the ahk [v2.0](https://lexikos.github.io/v2/docs/AutoHotkey.htm) documentation and **NOT** the [v1.1](https://www.autohotkey.com/docs/AutoHotkey.htm) documentation) to get an idea of what is going on, then adjusting accordingly using `Window Spy` which gets installed alongside AHK.
 - All keyboard shortcuts within programs like Adobe Premiere/After Effects/OBS, etc that I need within a macro (eg. `^+5` to `highlight the media browser` within Premiere, or `d` for `select clip at playhead`) are definied within the [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) file instead of just sending the shortcut itself, which are then assigned variables within the [Keyboard Shortcut Adjustments.ahk](https://git.io/Jicuy) script that is then included in other scripts. Edit that ini file with your own keyboard shortcuts (and assign any new values in the ahk script as well) to get things to work.
@@ -111,7 +111,7 @@ A script that will automatically save an Adobe Premiere Pro/After Effects projec
 #### [checklist.ahk](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk)
 A script that allows me to keep informed about what I have left to do on a video editing project as well as keeping track of the hours I've put into any individual project. This file doesn't get run from this directory and is instead copied to the project folder and run from there. This script has an accompanying script in `\Support Files` that allows you to quickly replace any in use checklist files.
 
-#### [premiere_fullscreen_check.ahk](https://github.com/Tomshiii/ahk/blob/main/premiere_fullscreen_check.ahk)
+#### [adobe fullscreen check.ahk](https://github.com/Tomshiii/ahk/blob/main/adobe fullscreen check.ahk)
 A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts.
 
 #### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)

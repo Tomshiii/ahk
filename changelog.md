@@ -3,6 +3,12 @@
 ## > Functions
 - `moveTab()` will now attempt to reactivate the originally active tab
 - Added `aetimeline()` a more beefed up version of `timeline()` to be more flexible
+- Fix `verCheck()`
 
 ## > Other Changes
+- Changed `premiere_fullscreen_check` -> `adobe fullscreen check.ahk`
+    - Can now check After Effects as well
+    - Now uses `isFullscreen()` instead of hard coded values
+- `right click premiere.ahk` now checks for both the `Save Project` dialog box and if `Ctrl` is being pressed.
+    - Pressing `Ctrl + \` is what causes premiere to freak out and enter the weird state that I created `adobe fullscreen check.ahk` for. Adding checks in this script will dramatically decrease the need for that script.
 - Updated `collapse.png` for `vscode()`
