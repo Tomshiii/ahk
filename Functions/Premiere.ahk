@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.7
+;\\v2.14.8
 #Include General.ahk
 
 /* preset()
@@ -1162,7 +1162,7 @@ hotkeyReactivate()
  @param property is the value you want to adjust
  @param optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
  */
-manInput(property, optional := "")
+manInput(property, optional := 0)
 {
     getHotkeys(&first, &waitHotkey)
     MouseGetPos(&xpos, &ypos)
@@ -1207,7 +1207,7 @@ manInput(property, optional := "")
             return
         }
     colour:
-    if PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+    if PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x205cce, 2) ;searches for the blue text to the right of the scale value
         MouseMove(xcol + optional, ycol)
     else
         {

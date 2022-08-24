@@ -333,14 +333,14 @@ aetimeline()
      */
     getCoords(&graphX, &graphY, &end, &bottom)
     {
-        if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " AE "\graph.png") || ImageSearch(&graphX, &graphY, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " AE "\graph2.png")
+        if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " AE "graph.png") || ImageSearch(&graphX, &graphY, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " AE "graph2.png")
             {
                 graphX := x + 30
                 graphY := y + 8
             }
-        if ImageSearch(&endX, &endY, A_ScreenWidth / 2, 200, A_ScreenWidth + 20, A_ScreenHeight, "*2 " AE "\marker.png")
+        if ImageSearch(&endX, &endY, A_ScreenWidth / 2, 200, A_ScreenWidth + 20, A_ScreenHeight, "*2 " AE "marker.png")
             end := endX - 12
-        if ImageSearch(&mountX, &mountY, 0, A_ScreenHeight / 4, A_ScreenWidth / 1.5, A_ScreenWidth, "*2 " AE "\mountain.png")
+        if ImageSearch(&mountX, &mountY, 0, A_ScreenHeight / 4, A_ScreenWidth / 1.5, A_ScreenWidth, "*2 " AE "mountain.png")
             bottom := mountY - 8
     }
     if graphX = 0 && graphY = 0 && end = 0 && bottom = 0
