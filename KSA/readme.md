@@ -14,7 +14,7 @@ Effect Controls="^+4"
 ```
 Then within the `Keyboard Shortcut Adjustments.ahk` file you'll see;
 ```autohotkey
-location := "E:\Github\ahk" ;because this file gets #included all over the place, we need hard defined coords
+location := `A_WorkingDir` ;this directory should automatically be replaced by `locationReplace()`
 
 effectControls := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Effect Controls")
 ```

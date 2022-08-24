@@ -7,7 +7,7 @@ run A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk"
 run A_WorkingDir "\autodismiss error.ahk"
 ;run A_WorkingDir "\right click premiere.ahk" ;#include(d) in main script now
 run A_WorkingDir "\autosave.ahk"
-run A_WorkingDir "\premiere_fullscreen_check.ahk"
+run A_WorkingDir "\adobe fullscreen check.ahk"
 
 if not WinExist("ahk_exe Creative Cloud.exe")
     run "C:\Program Files\Adobe\Adobe Creative Cloud\ACC\Creative Cloud.exe"

@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.5
+;\\v2.16.6
 
 ; =======================================================================================================================================
 ;
@@ -87,10 +87,11 @@ generate(MyRelease)
 	ADOBE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp", "")
 	WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir", A_WorkingDir)
 	TOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip", "true")
+	ADOBE_GB := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB", 45)
 	deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
 	if FileExist(A_MyDocuments "\tomshi\settings.ini")
 		FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`nadobe GB=" ADOBE_GB "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /* updateChecker()
@@ -442,8 +443,8 @@ adobeTemp(MyRelease) {
 	if day = A_YDay ;checks to see if the function has already run today
 		return
 
-	;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
-	largestSize := 45
+	;SET HOW BIG YOU WANT IT TO WAIT FOR IN THE `settings.ini` FILE (IN GB) -- IT WILL DEFAULT TO 45GB
+	largestSize := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB", 45)
 
 	;first we set our counts to 0
 	CacheSize := 0
@@ -670,11 +671,14 @@ settingsGUI()
 	settingsGUI.SetFont("S11")
 
 	noDefault := settingsGUI.Add("Button", "Default W0 H0", "_")
+
+	titleText := settingsGUI.Add("Text", "W100 H20 X9 Y7", "Settings")
+	titleText.SetFont("S13 Bold")
 	
 	if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check") = "true"
-		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 X9 Y7", "Check for Updates")
+		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 Y+5", "Check for Updates")
 	else
-		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 X9 Y7", "Check for Updates")
+		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Check for Updates")
 	updateCheckToggle.OnEvent("Click", update)
 	update(*)
 	{
@@ -699,7 +703,21 @@ settingsGUI()
 			IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
 	}
 
-	adobeToggle := settingsGUI.Add("Checkbox", "Checked0 Y+20", "``adobeTemp()`` reset")
+	adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB")
+	adobeEditText := settingsGUI.Add("Text", "Y+10", "``adobeTemp()`` GB limit")
+	adobeGBEdit := settingsGUI.Add("Edit", "X+20 Y+-20 r1 W50", "")
+	settingsGUI.Add("UpDown",, adobeGBinitVal)
+	adobeGBEdit.OnEvent("Change", adobeGB)
+	adobeGB(*)
+	{
+		IniWrite(adobeGBEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB")
+	}
+
+
+	trackText := settingsGUI.Add("Text", "W100 H20 X9 Y+20", "Track")
+	trackText.SetFont("S13 Bold")
+
+	adobeToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``adobeTemp()`` reset")
 	adobeToggle.OnEvent("Click", adobe)
 	adobe(*)
 	{

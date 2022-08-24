@@ -46,7 +46,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
 
 - Scripts that will work with no tinkering *needed* (some have user adjustable variables) include;
-  - `Alt Menu acceleration disabler.ahk`
+  - `Alt_menu_acceleration_Disabler.ahk`
   - `autodismiss error.ahk`
   - `autosave.ahk`
   - `adobe fullscreen check.ahk`
@@ -61,6 +61,16 @@ An ini file/ahk script combo for defining all keyboard shortcuts for programs th
 
 #### [My Scripts.ahk](https://github.com/Tomshiii/ahk/blob/main/My%20Scripts.ahk)
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
+
+This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional;
+- `generate()` - Handles creating a `settings.ini` file in `A_MyDocuments \tomshi\` directory that handles a few user adjustable settings in my scripts. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings`
+- `locationReplace()` - Handles replacing any instance of either my original working directory, or yours if you move my scripts to a new location. eg. on first run by the user this function will replace all instances of `E:\Github\ahk` with the directory you run the script
+- `verCheck()` - This function can be found in a few of my scripts and will check to see if you're running a version of AHK that is compatible with my scripts
+- `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
+- `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as back up your current script directory
+- `firstCheck()` - Will check to see if this is the first time you're running my scripts and offer a helpful GUI to run you through a few things to get you going.
+- `oldError()` - Will remove logs in `A_ScriptDir \Error Logs\` older than 30 days
+- `adobeTemp()` - Will scan your adobe temp folders and delete them if they're larger than the user adjustable setting. This function also contains a custom folder for `After Effects` and will require the user to meddle with it for full functionality
 
 #### [QMK Keyboard.ahk](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk)
 A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.3+](https://github.com/Tomshiii/ahk/releases/tag/v2.3) I use a Planck Ez custom keyboard.
