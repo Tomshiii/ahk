@@ -41,7 +41,7 @@ playhead := 0x2D8CEB
 
 Rbutton::
 {
-	if WinExist("Save Project") || GetKeyState("Ctrl") = 1
+	if GetKeyState("Ctrl")
 		return
 	MouseGetPos &xpos, &ypos
 	Color := PixelGetColor(xpos, ypos)
@@ -73,8 +73,6 @@ Rbutton::
 							blockOff()
 							;ToolTip("left button pressed") ;testing
 							loop {
-								if WinExist("Save Project") || GetKeyState("Ctrl") = 1
-									break
 								static left := 0
 								static xbutton := 0
 								sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
@@ -85,6 +83,8 @@ Rbutton::
 										xbutton := 1
 										left := 1
 									}
+								if GetKeyState("Ctrl")
+									break
 								if not GetKeyState("Rbutton", "P")
 									{
 										break
@@ -104,7 +104,7 @@ Rbutton::
 						}
 					loop
 						{
-							if WinExist("Save Project") || GetKeyState("Ctrl") = 1
+							if GetKeyState("Ctrl")
 								break
 							static left := 0
 							static xbutton := 0

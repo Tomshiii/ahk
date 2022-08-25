@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.4.2"
+version := "v2.4.3"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -142,34 +142,34 @@ stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
 group := MyGui.Add("GroupBox", "w137 h100 X167 Y120", "Time Adjust (min)")
 
 List := MyGui.Add("ComboBox", "r10 Choose5 X180 Y145 w112 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
-minusButton := MyGui.Add("Button","X178 Y180 w50 h30", "-sub") ;defining the -5min button
-minusButton.OnEvent("Click", minusFive) ;what happens when you click the -5min button
+minusButton := MyGui.Add("Button","X178 Y180 w50 h30", "-sub") ;defining the - button
+minusButton.OnEvent("Click", minusFive) ;what happens when you click the - button
 
-plusButton := MyGui.Add("Button","X+15 w50 h30", "+add") ;defining the -5min button
-plusButton.OnEvent("Click", plusFive) ;what happens when you click the -5min button
+plusButton := MyGui.Add("Button","X+15 w50 h30", "+add") ;defining the + button
+plusButton.OnEvent("Click", plusFive) ;what happens when you click the + button
 
 ;timer text
 global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
 startHoursRounded := Round(startValue/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
-startMinutesRounded := Round(startValue/60, 2) ;getting the minutes past by dividing the seconds past then rounding to 2dp
+startMinutesRounded := Floor(((startValue/3600) - floor(startValue/3600))*60) ;getting the minutes past the hour
 
-timerHoursText := MyGui.Add("Text", "X8 Y+25 W60", "Hours: ") ;defining the hours text
+timerHoursText := MyGui.Add("Text", "X10 Y+25 W25", "H: ") ;defining the hours text
 timerHoursText.SetFont("S14")
-timerText := MyGui.Add("Text", "X+24 w200", startHoursRounded) ;setting the text that will contain the numbers
+timerText := MyGui.Add("Text", "X+2 w200", startHoursRounded) ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
 
-timerMinutesText := MyGui.Add("Text", "X8 Y+5 W80", "Minutes: ") ;defining the minutes text
+timerMinutesText := MyGui.Add("Text", "X8 Y+5 W25", "M: ") ;defining the minutes text
 timerMinutesText.SetFont("S14")
 
 timerMinutes := MyGui.Add("Text", "X+4 w200", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
 
-timerSecondsText := MyGui.Add("Text", "X8 Y+5 W80", "Seconds: ") ;defining the minutes text
+timerSecondsText := MyGui.Add("Text", "X12 Y+5 W25", "S: ") ;defining the minutes text
 timerSecondsText.SetFont("S14")
 
 minutesForSeconds := Floor(startValue/60)
 Seconds := Round((((startValue/60) - minutesForSeconds) * 60), 0)
-timerSeconds := MyGui.Add("Text", "X+4 w200", Seconds) ;setting the text that will contain the numbers
+timerSeconds := MyGui.Add("Text", "X+0 w200", Seconds) ;setting the text that will contain the numbers
 timerSeconds.SetFont("S16 cRed")
 
 
@@ -202,7 +202,7 @@ StopWatch() {
                     global ElapsedTime += 1
                     displayHours := Round(ElapsedTime/3600, 3)
                     timerText.Text := displayHours
-                    displayMinutes := Round(ElapsedTime/60, 2)
+                    displayMinutes := Floor(((ElapsedTime/3600) - floor(ElapsedTime/3600))*60)
                     timerMinutes.Text := displayMinutes
                     minforSec := Floor(ElapsedTime/60)
                     displaySeconds := Round((((ElapsedTime/60) - minforSec) * 60), 0)

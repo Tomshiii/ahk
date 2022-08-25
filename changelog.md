@@ -16,11 +16,12 @@
     - Can now check After Effects as well
     - Now uses `isFullscreen()` instead of hard coded values
     - Adjusted `vscode()` values in `My Scripts.ahk` to accommodate this change
-- `right click premiere.ahk` now checks for both the `Save Project` dialog box and if `Ctrl` is being pressed.
+- `right click premiere.ahk` now checks if `Ctrl` is being pressed.
     - Pressing `Ctrl + \` is what causes premiere to freak out and enter the weird state that I created `adobe fullscreen check.ahk` for. Adding checks in this script will dramatically decrease the need for that script.
 - Updated `collapse.png` for `vscode()`
 
 `checklist.ahk`
 - Will now show `Seconds`
+- Minutes shown will now be the amount of minutes into the hour instead of total minutes. Hours shown will still be rounded to 2dp however
 - Will no longer error if you open `checklist.ahk` in a new year
 - Small UI adjustments
