@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.6
+;\\v2.16.7
 
 ; =======================================================================================================================================
 ;
@@ -705,7 +705,7 @@ settingsGUI()
 
 	adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB")
 	adobeEditText := settingsGUI.Add("Text", "Y+10", "``adobeTemp()`` GB limit")
-	adobeGBEdit := settingsGUI.Add("Edit", "X+20 Y+-20 r1 W50", "")
+	adobeGBEdit := settingsGUI.Add("Edit", "X+25 Y+-20 r1 W50", "")
 	settingsGUI.Add("UpDown",, adobeGBinitVal)
 	adobeGBEdit.OnEvent("Change", adobeGB)
 	adobeGB(*)
@@ -714,41 +714,75 @@ settingsGUI()
 	}
 
 
-	trackText := settingsGUI.Add("Text", "W100 H20 X9 Y+20", "Track")
-	trackText.SetFont("S13 Bold")
+	resetText := settingsGUI.Add("Text", "W100 H20 X9 Y+20", "Reset")
+	resetText.SetFont("S13 Bold")
 
-	adobeToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``adobeTemp()`` reset")
+	adobeToggle := settingsGUI.Add("Button", "w100 h30 Y+5", "adobeTemp()")
+	adobeUndo := settingsGUI.Add("Button", "w0 h0", "undo?")
 	adobeToggle.OnEvent("Click", adobe)
+	adobeUndo.OnEvent("Click", adobe)
 	adobe(*)
 	{
-		adobeVal := adobeToggle.Value
-		if adobeVal = 1
-			IniWrite("", A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+		check := adobeToggle.GetPos(,, &width)
+		if width != 0
+			{
+				togglePos := adobeToggle.GetPos(&toggleX, &toggleY)
+				adobeToggle.Move(,, 0, 0)
+				adobeUndo.Move(, toggleY, 100, 30)
+			}
 		else
-			IniWrite(A_YDay, A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+			{
+				togglePos := adobeUndo.GetPos(&undoX, &undoY)
+				adobeUndo.Move(,, 0, 0)
+				adobeToggle.Move(, undoY, 100, 30)		
+			}
 	}
 	
-	firstToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``firstCheck()`` reset")
+	firstToggle := settingsGUI.Add("Button", "w100 h30 Y+-38 X+117", "firstCheck()")
+	firstUndo := settingsGUI.Add("Button", "w0 h0", "undo?")
 	firstToggle.OnEvent("Click", first)
+	firstUndo.OnEvent("Click", first)
 	first(*)
 	{
-		firstVal := firstToggle.Value
-		if firstVal = 1
-			IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+		check := firstToggle.GetPos(,, &width)
+		if width != 0
+			{
+				togglePos := firstToggle.GetPos(&toggleX, &toggleY)
+				firstToggle.Move(,, 0, 0)
+				firstUndo.Move(, toggleY, 100, 30)
+			}
 		else
-			IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+			{
+				togglePos := firstUndo.GetPos(&undoX, &undoY)
+				firstUndo.Move(,, 0, 0)
+				firstToggle.Move(, undoY, 100, 30)		
+			}
 	}
 
+	saveAndClose := settingsGUI.Add("Button", "W85 H30 X9 Y+15", "Save && Exit")
+	saveAndClose.OnEvent("Click", close)
 
 	workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
-	workDirText := settingsGUI.Add("Text", "Y+5", "`nCurrent working directory;`n" workDir)
+	workDirText := settingsGUI.Add("Text", "Right X+20 Y+-30", "Current working dir;`n" workDir)
+	workDirText.SetFont("S10")
+
 
 	settingsGUI.OnEvent("Escape", close)
 	settingsGUI.OnEvent("Close", close)
 	close(*)
 	{
+		;check to see if the user wants to reset adobeTemp()
+		checkAdobe := adobeToggle.GetPos(,, &width)
+		if width = 0
+			IniWrite("", A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+		;check to see if the user wants to reset firstCheck()
+		checkFirst := firstToggle.GetPos(,, &width)
+		if width = 0
+			IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+		;a check incase this settings gui was launched from firstCheck()
 		if WinExist("Scripts Release " version)
 			WinSetAlwaysOnTop(1, "Scripts Release " version)
+		;before finally closing
 		settingsGUI.Destroy()
 	}
 

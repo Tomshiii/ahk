@@ -5,6 +5,8 @@
 - Added `aetimeline()` a more beefed up version of `timeline()` to be more flexible
 - Fixed `verCheck()`
 - Fixed `manInput()` erroring out if `optional` variable wasn't assigned a value
+- `adobeTemp()` now sets it's `largestSize` variable in `settings.ini` & `settingsGUI()`
+- UI changes to `settingsGUI()`
 
 ## > Other Changes
 - Changed `premiere_fullscreen_check` -> `adobe fullscreen check.ahk`
