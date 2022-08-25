@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.4.1"
+version := "v2.4.2"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -155,14 +155,22 @@ startMinutesRounded := Round(startValue/60, 2) ;getting the minutes past by divi
 
 timerHoursText := MyGui.Add("Text", "X8 Y+25 W60", "Hours: ") ;defining the hours text
 timerHoursText.SetFont("S14")
-timerText := MyGui.Add("Text", "X+5 w200", startHoursRounded) ;setting the text that will contain the numbers
+timerText := MyGui.Add("Text", "X+24 w200", startHoursRounded) ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
 
 timerMinutesText := MyGui.Add("Text", "X8 Y+5 W80", "Minutes: ") ;defining the minutes text
 timerMinutesText.SetFont("S14")
 
-timerMinutes := MyGui.Add("Text", "X+1 w200", startMinutesRounded) ;setting the text that will contain the numbers
+timerMinutes := MyGui.Add("Text", "X+4 w200", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
+
+timerSecondsText := MyGui.Add("Text", "X8 Y+5 W80", "Seconds: ") ;defining the minutes text
+timerSecondsText.SetFont("S14")
+
+minutesForSeconds := Floor(startValue/60)
+Seconds := Round((((startValue/60) - minutesForSeconds) * 60), 0)
+timerSeconds := MyGui.Add("Text", "X+4 w200", Seconds) ;setting the text that will contain the numbers
+timerSeconds.SetFont("S16 cRed")
 
 
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", A_ScriptDir "\checklist_logs.txt")
@@ -176,6 +184,7 @@ start(*) {
     stopButton.Move(,, 50, 30) ;showing the stop button
     timerText.SetFont("cGreen") ;changing the colours
     timerMinutes.SetFont("cGreen")
+    timerSeconds.SetFont("cGreen")
     forFile := Round(ElapsedTime / 3600, 3)
     newDate(&today)
     FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile " -- seconds at start = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
@@ -195,6 +204,9 @@ StopWatch() {
                     timerText.Text := displayHours
                     displayMinutes := Round(ElapsedTime/60, 2)
                     timerMinutes.Text := displayMinutes
+                    minforSec := Floor(ElapsedTime/60)
+                    displaySeconds := Round((((ElapsedTime/60) - minforSec) * 60), 0)
+                    timerSeconds.Text := displaySeconds
                 }
         }
     else
@@ -210,6 +222,7 @@ stop(*) {
     stopButton.Move(,, 0, 0) ;and hide the stop button
     timerText.SetFont("cRed") ;and return the colour to red
     timerMinutes.SetFont("cRed")
+    timerSeconds.SetFont("cRed")
     SetTimer(logElapse, 0)
     SetTimer(reminder, -ms)
     global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
@@ -238,6 +251,7 @@ minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent re
     SetTimer(StopWatch, -1000)
     timerText.SetFont("cRed")
     timerMinutes.SetFont("cRed")
+    timerSeconds.SetFont("cRed")
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
     SetTimer(logElapse, 0)

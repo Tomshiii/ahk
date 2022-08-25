@@ -8,6 +8,9 @@
 - `adobeTemp()` now sets it's `largestSize` variable in `settings.ini` & `settingsGUI()`
 - UI changes to `settingsGUI()`
 
+## > My Scripts
+- `Media_Play_Pause::` for firefox will now send `{Media_Play_Pause}` if you're on the subscriptions/home page
+
 ## > Other Changes
 - Changed `premiere_fullscreen_check` -> `adobe fullscreen check.ahk`
     - Can now check After Effects as well
@@ -18,5 +21,6 @@
 - Updated `collapse.png` for `vscode()`
 
 `checklist.ahk`
+- Will now show `Seconds`
 - Will no longer error if you open `checklist.ahk` in a new year
 - Small UI adjustments

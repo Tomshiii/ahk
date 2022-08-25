@@ -296,6 +296,11 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 	getTitle(&title)
 	if (InStr(title, needle))
 		{
+			if InStr(title, "Subscriptions - YouTube — Mozilla Firefox", 1) || title = "YouTube — Mozilla Firefox"
+				{
+					SendInput("{Media_Play_Pause}")
+					return
+				}
 			SendInput("{Space}")
 			return
 		}

@@ -88,8 +88,11 @@ loop files, location "*.ahk", "R"
                     else
                         {
                             A_Clipboard := A_LoopFileDir "\backups"
-                            MsgBox("Backup of checklist.ini already exists in;`n`n" A_LoopFileDir "\backups`n`nPlease move or rename to continue. The dir has been copied to the clipboard")
-                            ExitApp()
+                            check := MsgBox("Backup of checklist.ini already exists in;`n`n" A_LoopFileDir "\backups`n`nWould you like it replaced?`nThe dir has been copied to the clipboard",, "4")
+                            if check = "No"
+                                ExitApp()
+                            if check = "Yes"
+                                FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini", 1)
                         }
                     FileDelete(A_LoopFileDir "\check" boxOrlist ".ini")
                     FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI, A_LoopFileDir "\checklist.ini")
