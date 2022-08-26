@@ -3,7 +3,7 @@
 TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.4.3"
+version := "v2.4.4"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -155,21 +155,21 @@ startMinutesRounded := Floor(((startValue/3600) - floor(startValue/3600))*60) ;g
 
 timerHoursText := MyGui.Add("Text", "X10 Y+25 W25", "H: ") ;defining the hours text
 timerHoursText.SetFont("S14")
-timerText := MyGui.Add("Text", "X+2 w200", startHoursRounded) ;setting the text that will contain the numbers
+timerText := MyGui.Add("Text", "X+1 w60", startHoursRounded) ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
 
-timerMinutesText := MyGui.Add("Text", "X8 Y+5 W25", "M: ") ;defining the minutes text
+timerMinutesText := MyGui.Add("Text", "X+10 W25", "M: ") ;defining the minutes text
 timerMinutesText.SetFont("S14")
 
-timerMinutes := MyGui.Add("Text", "X+4 w200", startMinutesRounded) ;setting the text that will contain the numbers
+timerMinutes := MyGui.Add("Text", "X+4 w30", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
 
-timerSecondsText := MyGui.Add("Text", "X12 Y+5 W25", "S: ") ;defining the minutes text
+timerSecondsText := MyGui.Add("Text", "X+10 W25", "S: ") ;defining the minutes text
 timerSecondsText.SetFont("S14")
 
 minutesForSeconds := Floor(startValue/60)
 Seconds := Round((((startValue/60) - minutesForSeconds) * 60), 0)
-timerSeconds := MyGui.Add("Text", "X+0 w200", Seconds) ;setting the text that will contain the numbers
+timerSeconds := MyGui.Add("Text", "X+0 w30", Seconds) ;setting the text that will contain the numbers
 timerSeconds.SetFont("S16 cRed")
 
 
@@ -322,5 +322,5 @@ close(*) {
 }
 
 MyGui.Show("AutoSize")
-MyGui.Move(-371, -233,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
+MyGui.Move(-345, -177,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;finish defining GUI

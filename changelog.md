@@ -25,3 +25,5 @@
 - Minutes shown will now be the amount of minutes into the hour instead of total minutes. Hours shown will still be rounded to 2dp however
 - Will no longer error if you open `checklist.ahk` in a new year
 - Small UI adjustments
+    - `H/M/S` now aligned horizontally
+    - Checkboxes are more compact
