@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.4
+;\\v2.12.5
 #Include General.ahk
 
 /*
@@ -498,7 +498,7 @@ hotkeysGUI() {
         if selection.Value = 4
             {
                 selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "Will center the current active window in the middle of your main display!"
+                selectionText.Text := "Will center the current active window in the middle the active display!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 5

@@ -19,7 +19,7 @@ I have \ set in premiere to "Move playhead to cursor" and use it in `right click
 */
 
 ;//enter your desired frequency in SECONDS in `fire_frequency` then leave `fire` as it is. By default you will see this script checks every 5s
-fire_frequency := 1
+fire_frequency := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe FS", 5)
 global fire := fire_frequency * 1000
 
 start:

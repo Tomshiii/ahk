@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.17.3
+;\\v2.17.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.5
 
@@ -121,22 +121,59 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 #SuspendExempt false
 
 ;centreHotkey;
-#c:: ;this hotkey will center the active window in the middle of your main monitor
+#c:: ;this hotkey will center the active window in the middle of the active monitor
 {
+	getMonitor(&monitor, &left2, &right2, &top2, &bottom2)
+	{
+		getTitle(&title)
+		WinGetPos(&x, &y,,, title)
+		x := x + 10
+		y := y + 10
+		numberofMonitors := SysGet(80)
+		loop numberofMonitors {
+			try {
+				MonitorGet(A_Index, &left, &top, &right, &bottom)
+				if x > left && x < right
+					{
+						if y < bottom && y > top
+							{
+								;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index)
+								monitor := A_Index
+								x2 := x
+								y2 := y
+								left2 := left
+								right2 := right
+								top2 := top
+								bottom2 := bottom
+							}
+					}
+			}
+			catch {
+				toolCust(A_ThisFunc " failed to get the monitor that the mouse is within")
+				errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
+				break
+			}
+		}
+	}
+	getMonitor(&monitor, &left2, &right2, &top2, &bottom2)
+
+	width := right2 - left2
+	height := bottom2 - top2
 	isFullscreen(&title, &full)
 	if full = 1
 		WinRestore(title) ;winrestore will unmaximise it
-	;The resolution of my main monitor is 1440p, if you have a different res monitor you mmay need to change these values
-	newWidth := 1600
-	newHeight := 900
-	newX := A_ScreenWidth / 2 - newWidth / 2
-	newY := newX / 2
-	if InStr(title, "YouTube") ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
-		{
-			newHeight := 1143
-			newY -= 100
+
+	newWidth := width / 1.6
+	newHeight := height / 1.6
+	newX := (left2 + (width - newWidth)/2)
+	newY := (bottom2 - (height + newHeight)/2)
+	;MsgBox("monitor = " monitor "`nwidth = " width "`nheight = " height "`nnewWidth = " newWidth "`nnewHeight = " newHeight "`nnewX = " newX "`nnewY = " newY "`nx = " x2 "`ny = " y2 "`nleft = " left2 "`nright = " right2 "`ntop = " top2 "`nbottom = " bottom2) ;debugging
+	
+	if InStr(title, "YouTube") && IsSet(newHeight) && monitor = 1 ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
+		{ ;x: 480	y: 120	w: 1600	h: 1170
+			newHeight := newHeight * 1.3 ;1170
+			newY := newY / 2.25
 		}
-	; Move any window that's not the desktop
 	try{
 		WinMove(newX, newY, newWidth, newHeight, title)
 	}

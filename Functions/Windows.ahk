@@ -667,7 +667,7 @@ vscode(script)
         {
             MouseMove(xex, yex)
             SendInput("{Click 2}")
-            MouseMove(-200, 30,, "R")
+            MouseMove(-170, 30,, "R")
             SendInput("{Click}")
         }
     else

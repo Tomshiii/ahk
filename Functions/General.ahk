@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.7
+;\\v2.16.8
 
 ; =======================================================================================================================================
 ;
@@ -88,10 +88,11 @@ generate(MyRelease)
 	WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir", A_WorkingDir)
 	TOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip", "true")
 	ADOBE_GB := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB", 45)
+	ADOBE_FS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe FS", 5)
 	deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
 	if FileExist(A_MyDocuments "\tomshi\settings.ini")
 		FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`nadobe GB=" ADOBE_GB "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /* updateChecker()
@@ -659,6 +660,13 @@ trayMen()
  */
 settingsGUI()
 {
+	;this function is needed to reload some scripts
+	detect()
+	{
+		DetectHiddenWindows True
+		SetTitleMatchMode 2
+	}
+
 	version := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
 	if WinExist("Settings " version)
 		return
@@ -696,23 +704,39 @@ settingsGUI()
 	toggleToggle.OnEvent("Click", toggle)
 	toggle(*)
 	{
+		detect()
 		toggleVal := toggleToggle.Value
 		if toggleVal = 1
 			IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
 		else
 			IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+
+		if WinExist("autosave.ahk - AutoHotkey")
+			PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
 	}
 
 	adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB")
-	adobeEditText := settingsGUI.Add("Text", "Y+10", "``adobeTemp()`` GB limit")
-	adobeGBEdit := settingsGUI.Add("Edit", "X+25 Y+-20 r1 W50", "")
+	adobeGBEdit := settingsGUI.Add("Edit", "Y+10 r1 W50", "")
 	settingsGUI.Add("UpDown",, adobeGBinitVal)
+	adobeEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobeTemp()`` GB limit")
 	adobeGBEdit.OnEvent("Change", adobeGB)
 	adobeGB(*)
 	{
 		IniWrite(adobeGBEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB")
 	}
-
+	
+	adobeFSinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe FS")
+	adobeFSEdit := settingsGUI.Add("Edit", "X9 Y+10 r1 W50", "")
+	settingsGUI.Add("UpDown",, adobeFSinitVal)
+	adobeFSEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobe fullscreen check.ahk`` check rate (s)")
+	adobeFSEdit.OnEvent("Change", adobeFS)
+	adobeFS(*)
+	{
+		detect()
+		IniWrite(adobeFSEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe FS")
+		if WinExist("adobe fullscreen check.ahk - AutoHotkey")
+			PostMessage 0x0111, 65303,,, "adobe fullscreen check.ahk - AutoHotkey"
+	}
 
 	resetText := settingsGUI.Add("Text", "W100 H20 X9 Y+20", "Reset")
 	resetText.SetFont("S13 Bold")

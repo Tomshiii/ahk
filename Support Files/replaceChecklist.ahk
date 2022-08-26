@@ -87,12 +87,36 @@ loop files, location "*.ahk", "R"
                         FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini")
                     else
                         {
+                            static skip := 0
+                            if skip = 1
+                                {
+                                    FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini", 1)
+                                    ExitApp()
+                                }
                             A_Clipboard := A_LoopFileDir "\backups"
-                            check := MsgBox("Backup of checklist.ini already exists in;`n`n" A_LoopFileDir "\backups`n`nWould you like it replaced?`nThe dir has been copied to the clipboard",, "4")
+                            SetTimer(changebuttons, 10)
+                            check := MsgBox("Backup of checklist.ini already exists in;`n`n" A_LoopFileDir "\backups`n`nWould you like it replaced?`nThe dir has been copied to the clipboard", "Backup?", "3")
                             if check = "No"
                                 ExitApp()
                             if check = "Yes"
                                 FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini", 1)
+                            if check = "Cancel"
+                                {
+                                    skip := 1
+                                    FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini", 1)
+                                    return
+                                }
+
+                            changebuttons()
+                            {
+                                if !WinExist("Backup?")
+                                    return  ; Keep waiting.
+                                SetTimer(, 0)
+                                WinActivate
+                                ControlSetText "&Yes", "Button1"
+                                ControlSetText "&No", "Button2"
+                                ControlSetText "&Yes to All", "Button3"
+                            }
                         }
                     FileDelete(A_LoopFileDir "\check" boxOrlist ".ini")
                     FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI, A_LoopFileDir "\checklist.ini")
