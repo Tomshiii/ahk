@@ -760,7 +760,7 @@ audioDrag(sfxName)
                 sleep 50
                 MouseGetPos(&colourX, &colourY)
                 colour := PixelGetColor(colourX, colourY)
-                if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD4F7EA || colour = 0x1B8D64 || colour = 0xFFFFFF || colour = 0xD0E1DB || colour = 0x1D7E5B || colour = 0x1FA373 || colour = 0x1D986C || colour = 0x3DFFE4 || colour = 0x23AB83 || colour = 0x248562
+                if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD4F7EA || colour = 0x1B8D64 || colour = 0xFFFFFF || colour = 0xD0E1DB || colour = 0x1D7E5B || colour = 0x1FA373 || colour = 0x1D986C || colour = 0x3DFFE4 || colour = 0x23AB83 || colour = 0x248562 || colour = 0x1FA072
                     break
                 errorLog(A_ThisFunc "()", "Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, A_LineFile, A_LineNumber)
                 if A_Index > 2

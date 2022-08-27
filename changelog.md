@@ -8,6 +8,7 @@
 - UI changes to `settingsGUI()`
 - `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
 - Add more colours to `audioDrag()`
+- `generate()` `WORK` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
 
 `moveTab()`
 - Will now attempt to reactivate the originally active tab
