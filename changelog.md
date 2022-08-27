@@ -1,16 +1,20 @@
 # <> Release 2.5.x
 
 ## > Functions
-- `moveTab()` will now attempt to reactivate the originally active tab
 - Added `aetimeline()` a more beefed up version of `timeline()` to be more flexible
 - Fixed `verCheck()`
 - Fixed `manInput()` erroring out if `optional` variable wasn't assigned a value
 - `adobeTemp()` now sets it's `largestSize` variable in `settings.ini` & `settingsGUI()`
 - UI changes to `settingsGUI()`
+- `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
+
+`moveTab()`
+- Will now attempt to reactivate the originally active tab
+- Will now check to make sure the cursor isn't attempting to resize the window before dragging the tab. (helpful if the window isn't fullscreen)
 
 ## > My Scripts
 - `Media_Play_Pause::` for firefox will now send `{Media_Play_Pause}` if you're on the subscriptions/home page
-- `#c::` will now centre the window in the current active monitor
+- `#c::` will now centre the window in the current active monitor or move it to the main monitor if activated again
 
 ## > Other Changes
 - Changed `premiere_fullscreen_check` -> `adobe fullscreen check.ahk`

@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.13
+;\\v2.12.14
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.13
+;		Windows Scripts \\ Last updated: v2.12.14
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -186,6 +186,10 @@ moveTab()
             blockOff()
             return
         }
+    if A_Cursor = "SizeNS" ;this checks to make sure you're not about to accidentally attempt to resize the window
+        {
+            MouseMove(0, 10, 2, "R")
+        }
     SendInput("{LButton Down}")
     move:
     ;the below, blocked out code was for when I wanted tabs to cycle between monitors 1, 2 & 4 and passed a variable `forwardOrback` into the function to define a direction.
@@ -317,11 +321,17 @@ getTitle(&title)
 {
     try {
 		title := WinGetTitle("A")
+        if !IsSet(title) || title = "" || title = "Program Manager"
+			{
+				toolCust("Couldn't determine the active window")
+				errorLog(A_ThisHotkey "::", "Couldn't determine the active window", A_LineFile, A_LineNumber)
+				Exit()
+			}
         return title
 	} catch as e {
 		toolCust(A_ThisFunc "() couldn't determine the active window")
 		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-		return
+		Exit()
 	}
 }
 

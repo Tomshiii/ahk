@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.17.4
+;\\v2.17.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.5
 
@@ -122,25 +122,28 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 
 ;centreHotkey;
 #c:: ;this hotkey will center the active window in the middle of the active monitor
-{
+{ ;this scripts math doesn't really work for vertical monitors
+	mainMon := 1 ;set which monitor your main monitor is (usually 1, but can check in windows display settings)
+
+	/*
+	 This function will determine which monitor the current active window is on, then return some information to help us do some math down below
+	 */
 	getMonitor(&monitor, &left2, &right2, &top2, &bottom2)
 	{
 		getTitle(&title)
 		WinGetPos(&x, &y,,, title)
-		x := x + 10
-		y := y + 10
+		x := x + 10 ;sometimes windows when fullscreened will be at -8, -8 and not 0, 0
+		y := y + 10 ;so we just add 10 pixels to both variables to ensure we're in the correct monitor
 		numberofMonitors := SysGet(80)
 		loop numberofMonitors {
 			try {
 				MonitorGet(A_Index, &left, &top, &right, &bottom)
 				if x > left && x < right
-					{
+					{ ;these two if statements determine what monitor the active window is in
 						if y < bottom && y > top
 							{
-								;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index)
+								;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index) ;debugging
 								monitor := A_Index
-								x2 := x
-								y2 := y
 								left2 := left
 								right2 := right
 								top2 := top
@@ -149,33 +152,60 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 					}
 			}
 			catch {
-				toolCust(A_ThisFunc " failed to get the monitor that the mouse is within")
-				errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
+				toolCust(A_ThisFunc "() failed to get the monitor that the active window is in")
+				errorLog(A_ThisFunc "()", "failed to get the monitor that the active window is in", A_LineFile, A_LineNumber)
 				break
 			}
 		}
 	}
-	getMonitor(&monitor, &left2, &right2, &top2, &bottom2)
-
-	width := right2 - left2
-	height := bottom2 - top2
-	isFullscreen(&title, &full)
-	if full = 1
-		WinRestore(title) ;winrestore will unmaximise it
-
-	newWidth := width / 1.6
-	newHeight := height / 1.6
-	newX := (left2 + (width - newWidth)/2)
-	newY := (bottom2 - (height + newHeight)/2)
-	;MsgBox("monitor = " monitor "`nwidth = " width "`nheight = " height "`nnewWidth = " newWidth "`nnewHeight = " newHeight "`nnewX = " newX "`nnewY = " newY "`nx = " x2 "`ny = " y2 "`nleft = " left2 "`nright = " right2 "`ntop = " top2 "`nbottom = " bottom2) ;debugging
-	
-	if InStr(title, "YouTube") && IsSet(newHeight) && monitor = 1 ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
-		{ ;x: 480	y: 120	w: 1600	h: 1170
-			newHeight := newHeight * 1.3 ;1170
+	static win := "" ;a variable we'll hold the title of the window in
+	static toggle := 1 ;a variable to determine whether to centre on the current display or move to the main one
+	getMonitor(&monitor, &left2, &right2, &top2, &bottom2) ;now we run the above function we created
+	if win = "" ;if our win variable doesn't have a title yet we run this code block
+		{
+			win := title
+			toggle := 1
+		}
+	if win != title ;if our win variable doesn't equal the active window we run this code block to reset our values
+		{
+			win := title
+			toggle := 1
+		}
+	start:
+	if toggle = 1 ;if it's the first activation for the active window we run this codeblock
+		{
+			width := right2 - left2 ;determining the width of the current monitor
+			height := bottom2 - top2 ;determining the height of the current monitor
+			isFullscreen(&title, &full) ;checking if the window is fullscreen
+			if full = 1
+				WinRestore(title) ;winrestore will unmaximise it
+		
+			newWidth := width / 1.6 ;determining our new width
+			newHeight := height / 1.6 ;determining our new height
+			newX := (left2 + (width - newWidth)/2) ;using math to centre our newly created window
+			newY := (bottom2 - (height + newHeight)/2) ;using math to centre our newly created window
+			;MsgBox("monitor = " monitor "`nwidth = " width "`nheight = " height "`nnewWidth = " newWidth "`nnewHeight = " newHeight "`nnewX = " newX "`nnewY = " newY "`nx = " x2 "`ny = " y2 "`nleft = " left2 "`nright = " right2 "`ntop = " top2 "`nbottom = " bottom2) ;debugging
+			if monitor != mainMon ;if the current monitor isn't our main monitor we will increment the toggle variable
+				toggle += 1
+			else ;otherwise we reset the win variable
+				win := ""
+		}
+	else if toggle = 2 ;if this is the second activation for the active window we run this codeblock
+		{
+			MonitorGet(mainMon, &left2, &top2, &right2, &bottom2) ;this will reset our variables with information for the main monitor
+			monitor := mainMon ;then we set the monitor value to the main monitor
+			toggle := 1 ;reset our toggle
+			win := "" ;reset our win variable
+			goto start ;and go back to the beginning
+		}
+	if InStr(title, "YouTube") && IsSet(newHeight) && monitor = mainMon ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
+		{
+			newHeight := newHeight * 1.3
 			newY := newY / 2.25
 		}
 	try{
-		WinMove(newX, newY, newWidth, newHeight, title)
+		WinMove(newX, newY, newWidth, newHeight, title) ;then we attempt to move the window
+		;toolCust("Window: " win "`nToggle: " toggle) ;for whatever reason, producing a tooltip actually breaks functionality.... huh??
 	}
 }
 
