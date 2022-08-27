@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.14
+;\\v2.12.15
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.14
+;		Windows Scripts \\ Last updated: v2.12.15
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -125,12 +125,6 @@ moveTab()
     getTitle(&title) ;getting the window title
     WinGetPos(&winX, &winY, &width,, title) ; getting the coords for the firefox window
     monitor := getMouseMonitor() ;checking which monitor the mouse is within
-    /* if monitor != 2 && monitor != 4 ;uncomment this if you wish for this function to not do anything on non desired monitors
-        {
-            SendInput("{LButton Up}{RButton}")
-            blockOff()
-            return
-        } */
     if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
         goto move
     if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu.png") || ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
@@ -192,26 +186,6 @@ moveTab()
         }
     SendInput("{LButton Down}")
     move:
-    ;the below, blocked out code was for when I wanted tabs to cycle between monitors 1, 2 & 4 and passed a variable `forwardOrback` into the function to define a direction.
-    ;I have since stopped including monitor 1 as I rarely ever want a browser window moved onto my main display
-    /* if forwardOrback = "forward"
-        {
-            if monitor = 2
-                monitor += 1
-            if monitor = 4
-                monitor -= 4
-            monitor += 1
-        }
-    if forwardOrback = "back"
-        {
-            if monitor = 4
-                monitor -= 1
-            if monitor = 1
-                monitor += 4
-            monitor -= 1
-        }
-    if monitor = 1
-        MouseMove(2378, 25, 3) */
     if monitor != 2 && monitor != 4 ;I only want this function to cycle between monitors 2 & 4
         {
             monitor := 2 ;so I'll set the monitor number to one of the two I wish it to cycle between
@@ -240,8 +214,8 @@ moveTab()
         sleep 50
     }
     blockOn()
-    if monitor = 4
-        MouseMove(initx, inity, 2) ;move back to the original mouse coords. I only want to move the mouse back if I'm moving a tab from the bottom monitor, to the top
+    if monitor = 4 || initMon = 1
+        MouseMove(initx, inity, 2) ;move back to the original mouse coords. I only want to move the mouse back if I'm moving a tab from the bottom monitor, to the top or from the main montior
     if !WinActive(title) ;this codeblock will check to see if the originally active window is still active. This is useful as sometimes when you drag a tab that wasn't active, firefox will bring the tab next to it into focus, which might not really be what you want
         {
             MouseGetPos(&finalX, &finalY)

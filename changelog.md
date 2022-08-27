@@ -11,6 +11,7 @@
 `moveTab()`
 - Will now attempt to reactivate the originally active tab
 - Will now check to make sure the cursor isn't attempting to resize the window before dragging the tab. (helpful if the window isn't fullscreen)
+- Will now move the cursor back to the original coords if function is activated from main monitor
 
 ## > My Scripts
 - `Media_Play_Pause::` for firefox will now send `{Media_Play_Pause}` if you're on the subscriptions/home page
