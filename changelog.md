@@ -7,6 +7,7 @@
 - `adobeTemp()` now sets it's `largestSize` variable in `settings.ini` & `settingsGUI()`
 - UI changes to `settingsGUI()`
 - `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
+- Add more colours to `audioDrag()`
 
 `moveTab()`
 - Will now attempt to reactivate the originally active tab
