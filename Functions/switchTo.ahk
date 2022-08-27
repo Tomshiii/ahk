@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.5
+;\\v2.12.6
 #Include General.ahk
 
 /*
@@ -472,54 +472,60 @@ hotkeysGUI() {
 	Title.SetFont("S15")
 
     ;all hotkeys
-    selection := hotGUI.Add("ListBox", "r8 Choose1", ["#F1","#+r","#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"])
+    selection := hotGUI.Add("ListBox", "r9 Choose1", ["#F1", "#F2", "#+r","#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"])
     selection.OnEvent("Change", text)
 
-    selectionText := hotGUI.Add("Text", "W240 X180 Y80 H100", "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!")
+    selectionText := hotGUI.Add("Text", "W240 X180 Y80 H100", "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!")
     text(*) {
         if selection.Value = 1
+            {
+                selectionText.Move(, 80, "240", "100")
+                selectionText.Text := "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!"
+                hotGUI.Move(,, "450", "297")
+            }
+        if selection.Value = 2
             {
                 selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!"
                 hotGUI.Move(,, "450", "297")
             }
-        if selection.Value = 2
+        if selection.Value = 3
             {
                 selectionText.Move(, 60, "380", "220")
                 selectionText.Text := "Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control.`n(note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked"
                 hotGUI.Move(,, "590", "297")
             }
-        if selection.Value = 3
+        if selection.Value = 4
             {
                 selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Will call this GUI so you can reference these hotkeys at any time!"
                 hotGUI.Move(,, "450", "297")
             }
-        if selection.Value = 4
-            {
-                selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "Will center the current active window in the middle the active display!"
-                hotGUI.Move(,, "450", "297")
-            }
         if selection.Value = 5
             {
                 selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "Will put the active window in fullscreen if it isn't already, or pull it out of fullscreen if it already is!"
+                selectionText.Text := "Will center the current active window in the middle the active display, or move the window to your main display if activated again!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 6
             {
                 selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F1`` hotkey and unticking the same script!"
+                selectionText.Text := "Will put the active window in fullscreen if it isn't already, or pull it out of fullscreen if it already is!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 7
             {
                 selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "Will search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
+                selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F1`` hotkey and unticking the same script!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 8
+            {
+                selectionText.Move(, 80, "240", "100")
+                selectionText.Text := "Will search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
+                hotGUI.Move(,, "450", "297")
+            }
+        if selection.Value = 9
             {
                 selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Will remove and then either capitilise or completely lowercase the highlighted text depending on which is less frequent!"

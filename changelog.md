@@ -18,6 +18,8 @@
 ## > My Scripts
 - `Media_Play_Pause::` for firefox will now send `{Media_Play_Pause}` if you're on the subscriptions/home page
 - `#c::` will now centre the window in the current active monitor or move it to the main monitor if activated again
+- `#F1:: - activeScripts()` changed -> `#F2::`
+    - `#F1::` now pulls up `settingsGUI()`
 
 ## > Other Changes
 - Changed `premiere_fullscreen_check` -> `adobe fullscreen check.ahk`

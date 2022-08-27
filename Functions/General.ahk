@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.8
+;\\v2.16.9
 
 ; =======================================================================================================================================
 ;
@@ -670,7 +670,7 @@ settingsGUI()
 	version := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
 	if WinExist("Settings " version)
 		return
-	settingsGUI := Gui("+Resize +MinSize250x", "Settings " version)
+	settingsGUI := Gui("+Resize +MinSize250x AlwaysOnTop", "Settings " version)
 	SetTimer(resize, -10)
 	resize()
 	{
@@ -787,7 +787,7 @@ settingsGUI()
 	saveAndClose.OnEvent("Click", close)
 
 	workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
-	workDirText := settingsGUI.Add("Text", "Right X+20 Y+-30", "Current working dir;`n" workDir)
+	workDirText := settingsGUI.Add("Text", "X+15 Y+-30", "Current working dir;`n" workDir)
 	workDirText.SetFont("S10")
 
 

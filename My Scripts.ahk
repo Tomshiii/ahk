@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.17.5
+;\\v2.17.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.5
 
@@ -103,8 +103,11 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 			}
 }
 
+;settingsHotkey;
+#F1::settingsGUI() ;This hotkey will pull up the hotkey GUI
+
 ;activescriptsHotkey;
-#F1::activeScripts(MyRelease) ;This hotkey pulls up a GUI that gives information regarding all current active scripts, as well as offering the ability to close/open any of them by simply unchecking/checking the corresponding box
+#F2::activeScripts(MyRelease) ;This hotkey pulls up a GUI that gives information regarding all current active scripts, as well as offering the ability to close/open any of them by simply unchecking/checking the corresponding box
 
 ;handyhotkeysHotkey;
 #h::hotkeysGUI() ;this hotkey pulls up a GUI showing some useful hotkeys at your disposal while using these scripts
