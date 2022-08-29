@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.17
+;\\v2.12.18
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -622,7 +622,7 @@ discUnread(which := "")
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.12.17
+;		VSCode \\ Last updated: v2.12.18
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -635,7 +635,6 @@ discUnread(which := "")
 vscode(script)
 {
     getHotkeys(&first, &second)
-    KeyWait(second)
     KeyWait(first)
     coordw()
     blockOn()

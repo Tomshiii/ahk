@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.11
+;\\v2.16.12
 
 ; =======================================================================================================================================
 ;
@@ -1058,11 +1058,11 @@ errorLog(func, error, lineFile, lineNumber)
 
 ; ===========================================================================================================================================
 ;
-;		Other \\ Last updated: v2.16.11
+;		Other \\ Last updated: v2.16.12
 ;
 ; ===========================================================================================================================================
 /* getHotkeys()
-This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire.
+This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire. If the hotkey used with this function is only 2 characters long, it will assign each of those to &first & &second respectively. If one of those characters is a special key (ie. ! or ^) it will return the virtual key so `KeyWait` will still work as expected
 @param first is the variable that will be filled with the first activation hotkey. Must be written as `&var`
 @param second is the variable that will be filled with the second activation hotkey. Must be written as `&var`
 */
@@ -1070,10 +1070,37 @@ getHotkeys(&first, &second)
 {
    getHotkey := A_ThisHotkey
    length := StrLen(getHotkey)
-   if StrLen(getHotkey) = 2
+   if length = 2
 	{
 		first := SubStr(getHotkey, 1, 1)
 		second := SubStr(getHotkey, 2, 1)
+		vk(variable)
+		{
+			if variable = "#" || variable = "!" || variable = "^" || variable = "+" || variable = "<^>!"
+				{
+					if variable = "#"
+						variable := "Win"
+					if variable = "!"
+						variable := "Alt"
+					if variable = "^"
+						variable := "Ctrl"
+					if variable = "+"
+						variable := "Shift"
+					if variable = "<^>!"
+						variable := "AltGr"
+					check := GetKeyVK(variable)
+					vkReturn := Format("vk{:X}", check)
+					return vkReturn
+				}
+			else
+				return
+		}
+		check1 := vk(first)
+		check2 := vk(second)
+		if check1 != ""
+			first := check1
+		if check2 != ""
+			second := check2
 		return
 	}
    andValue := InStr(getHotkey, "&",, 1, 1)
