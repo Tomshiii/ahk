@@ -9,6 +9,7 @@
 - `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
 - Add more colours to `audioDrag()`
 - `generate()` `WORK` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
+- `vscode()` will now send a hotkey to collapse the explorer tree instead of searching for and clicking the collapse button. The collapse button changes depending on how wide your toolbar is and constantly breaks if you accidentally change the size even slightly
 
 `moveTab()`
 - Will now attempt to reactivate the originally active tab
@@ -29,7 +30,6 @@
     - Adjusted `vscode()` values in `My Scripts.ahk` to accommodate this change
 - `right click premiere.ahk` now checks if `Ctrl` is being pressed.
     - Pressing `Ctrl + \` is what causes premiere to freak out and enter the weird state that I created `adobe fullscreen check.ahk` for. Adding checks in this script will dramatically decrease the need for that script.
-- Updated `collapse.png` for `vscode()`
 
 `checklist.ahk`
 - Will now show `Seconds`

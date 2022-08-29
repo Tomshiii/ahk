@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.15
+;\\v2.12.16
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -622,7 +622,7 @@ discUnread(which := "")
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.12.11
+;		VSCode \\ Last updated: v2.12.16
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -647,17 +647,17 @@ vscode(script)
         }
     SendInput(focusWork) ;vscode hides the buttons now all of a sudden.. thanks vscode
     sleep 50
-    if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "collapse.png") ;this imagesearch finds the collapse folders button, presses it twice, then moves across and presses repo folder
+    SendInput(collapseFold collapseFold)
+    sleep 100
+    if ImageSearch(&firstX, &firstY, 0, 0, 460, 1390, "*2 " VSCodeImage "folderDrop.png")
         {
-            MouseMove(xex, yex)
-            SendInput("{Click 2}")
-            MouseMove(-170, 30,, "R")
+            MouseMove(firstX, firstY)
             SendInput("{Click}")
         }
     else
         {
-            toolCust("the collapse folders button",, 1)
-            errorLog(A_ThisFunc "()", "Couldn't find the `collapse folders` button", A_LineFile, A_LineNumber)
+            toolCust("the folder dropdown UI",, 1)
+            errorLog(A_ThisFunc "()", "Couldn't find the folder dropdown UI", A_LineFile, A_LineNumber)
             blockOff()
             return
         }

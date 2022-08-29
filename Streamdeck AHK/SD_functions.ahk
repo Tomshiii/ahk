@@ -190,11 +190,11 @@ pauseautosave()
 pausewindowmax()
 {
 	DetectHiddenWindows True
-	if WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+	if WinExist("adobe fullscreen check.ahk - AutoHotkey")
 		{
 			WM_COMMAND := 0x0111
 			ID_FILE_PAUSE := 65403
-			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, location "\premiere_fullscreen_check.ahk ahk_class AutoHotkey"
+			PostMessage WM_COMMAND, ID_FILE_PAUSE,,, location "\adobe fullscreen check.ahk ahk_class AutoHotkey"
 		}
 	else
 		{

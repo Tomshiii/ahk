@@ -352,7 +352,7 @@ F14:: ;open the "show more options" menu in win11
 ;vscodeqmkHotkey;
 !q::vscode("620") ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
-!c::vscode("470") ;clicks on my `changelog` file in vscode
+!c::vscode("480") ;clicks on my `changelog` file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
