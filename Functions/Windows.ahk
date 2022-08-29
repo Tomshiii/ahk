@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.16
+;\\v2.12.17
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -622,7 +622,7 @@ discUnread(which := "")
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.12.16
+;		VSCode \\ Last updated: v2.12.17
 ;
 ; ===========================================================================================================================================
 /* vscode()
@@ -634,7 +634,9 @@ discUnread(which := "")
  */
 vscode(script)
 {
-    KeyWait(A_PriorKey)
+    getHotkeys(&first, &second)
+    KeyWait(second)
+    KeyWait(first)
     coordw()
     blockOn()
     MouseGetPos(&x, &y)
@@ -647,12 +649,19 @@ vscode(script)
         }
     SendInput(focusWork) ;vscode hides the buttons now all of a sudden.. thanks vscode
     sleep 50
-    SendInput(collapseFold collapseFold)
-    sleep 100
-    if ImageSearch(&firstX, &firstY, 0, 0, 460, 1390, "*2 " VSCodeImage "folderDrop.png")
+    if ImageSearch(&colX, &colY, 0, 0, 460, 1390, "*2 " VSCodeImage "folderDrop2.png") ;checks to see if you already have the first repo open
+        {
+            if ImageSearch(&dropX, &dropY, colX, colY, colX + 50, A_ScreenHeight, "*2 " VSCodeImage "dropdown.png") ;searches the screen to see if you have any folder tree's open
+                SendInput(collapseFold) ;and collapses them if you do
+            MouseMove(colX, colY) ;moves the mouse into position
+            goto skip
+        }
+    SendInput(collapseFold collapseFold) ;otherwise we close all repos
+    sleep 50
+    if ImageSearch(&firstX, &firstY, 0, 0, 460, 1390, "*2 " VSCodeImage "folderDrop.png") || ImageSearch(&firstX, &firstY, 0, 0, 460, 1390, "*2 " VSCodeImage "folderDrop_2.png") ;then search for the drop down repo icon
         {
             MouseMove(firstX, firstY)
-            SendInput("{Click}")
+            SendInput("{Click}") ;and expand it
         }
     else
         {
@@ -661,6 +670,7 @@ vscode(script)
             blockOff()
             return
         }
+    skip:
     if A_ThisHotkey = functionHotkey ;this opens my \functions folder as well as opening my main functions script
         {
             MouseGetPos(&origx, &origy)

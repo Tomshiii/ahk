@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.10
+;\\v2.16.11
 
 ; =======================================================================================================================================
 ;
@@ -1058,7 +1058,7 @@ errorLog(func, error, lineFile, lineNumber)
 
 ; ===========================================================================================================================================
 ;
-;		Other \\ Last updated: v2.14.3
+;		Other \\ Last updated: v2.16.11
 ;
 ; ===========================================================================================================================================
 /* getHotkeys()
@@ -1070,6 +1070,12 @@ getHotkeys(&first, &second)
 {
    getHotkey := A_ThisHotkey
    length := StrLen(getHotkey)
+   if StrLen(getHotkey) = 2
+	{
+		first := SubStr(getHotkey, 1, 1)
+		second := SubStr(getHotkey, 2, 1)
+		return
+	}
    andValue := InStr(getHotkey, "&",, 1, 1)
    first := SubStr(getHotkey, 1, length - (length - andValue) - 2)
    second := SubStr(getHotkey, andValue + 2, length - andValue + 2)

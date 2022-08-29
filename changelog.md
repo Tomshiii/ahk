@@ -9,7 +9,12 @@
 - `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
 - Add more colours to `audioDrag()`
 - `generate()` `WORK` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
-- `vscode()` will now send a hotkey to collapse the explorer tree instead of searching for and clicking the collapse button. The collapse button changes depending on how wide your toolbar is and constantly breaks if you accidentally change the size even slightly
+- If the activation hotkey length is only `2`, `getHotkeys()` will assign `&first` & `&second` to the first and second characters respectively
+
+`vscode()`
+- Will now send a hotkey to collapse the explorer tree instead of searching for and clicking the collapse button. The collapse button changes depending on how wide your toolbar is and constantly breaks if you accidentally change the size even slightly
+    - Will check to see if the user has the first repo expanded already -> if they do it will check to see if any explorer trees are expanded -> If there are it will send the collapse hotkey once before moving on, otherwise it will skip ahead and just move straight along 
+- Replaced `KeyWait(A_PriorKey)` with `getHotkeys()`
 
 `moveTab()`
 - Will now attempt to reactivate the originally active tab
