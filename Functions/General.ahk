@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.12
+;\\v2.16.13
 
 ; =======================================================================================================================================
 ;
@@ -81,18 +81,23 @@ generate(MyRelease)
 			ver := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
 			if !VerCompare(MyRelease, ver) > 0 ;do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
 				return
+
+			;WARNING THE USER OF SETTINGS CHANGES
+			if VerCompare(MyRelease, "v2.5.1") > 0 && VerCompare(MyRelease, "v2.5.2") <= 0 ; v2.5.2 brought changes to settings.ini and will reset some values to default
+				toolCust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
 		}
 	UPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
 	FC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check", "false")
 	ADOBE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp", "")
 	WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir", "E:\Github\ahk")
 	TOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip", "true")
-	ADOBE_GB := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB", 45)
-	ADOBE_FS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe FS", 5)
+	ADOBE_GB := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB", 45)
+	ADOBE_FS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS", 5)
+	AUTOMIN := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN", 5)
 	deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
 	if FileExist(A_MyDocuments "\tomshi\settings.ini")
 		FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /* updateChecker()
@@ -120,7 +125,7 @@ updateChecker(MyRelease) {
 	endpos := InStr(string, '"', , foundpos, 1)
 	end := endpos - foundpos
 	global version := SubStr(string, foundpos, end)
-	toolCust("Current " A_ScriptName " Version = " MyRelease "`nCurrent Github Release = " version, 2000)
+	toolCust("Current ``" A_ScriptName "`` Version = " MyRelease "`nCurrent Github Release = " version, 2000)
 	;checking to see if the user wishes to check for updates
 	check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 	if check = "true"
@@ -445,7 +450,7 @@ adobeTemp(MyRelease) {
 		return
 
 	;SET HOW BIG YOU WANT IT TO WAIT FOR IN THE `settings.ini` FILE (IN GB) -- IT WILL DEFAULT TO 45GB
-	largestSize := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB", 45)
+	largestSize := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB", 45)
 
 	;first we set our counts to 0
 	CacheSize := 0
@@ -563,6 +568,8 @@ locationReplace()
 {
 	if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
 		return
+	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+		WinWaitClose("ahk_class tooltips_class32")
 	checkDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
 	if checkDir = A_WorkingDir
 		return
@@ -680,13 +687,21 @@ settingsGUI()
 
 	noDefault := settingsGUI.Add("Button", "Default W0 H0", "_")
 
-	titleText := settingsGUI.Add("Text", "W100 H20 X9 Y7", "Settings")
-	titleText.SetFont("S13 Bold")
+	;Top Titles
+	titleText := settingsGUI.Add("Text", "W100 H25 X9 Y7", "Settings")
+	titleText.SetFont("S15 Bold Underline")
+
+	toggleText := settingsGUI.Add("Text", "W100 H20 Y+5", "Toggle")
+	toggleText.SetFont("S13 Bold")
+
+	adjustText := settingsGUI.Add("Text", "W100 H20 X+100", "Adjust")
+	adjustText.SetFont("S13 Bold")
 	
+	;CHECKBOXES
 	if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check") = "true"
-		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 Y+5", "Check for Updates")
+		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 section xs Y+5", "Check for Updates")
 	else
-		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Check for Updates")
+		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 section xs Y+5", "Check for Updates")
 	updateCheckToggle.OnEvent("Click", update)
 	update(*)
 	{
@@ -715,32 +730,48 @@ settingsGUI()
 			PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
 	}
 
-	adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB")
-	adobeGBEdit := settingsGUI.Add("Edit", "Y+10 r1 W50", "")
+	;EDIT BOXES
+	adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
+	adobeGBEdit := settingsGUI.Add("Edit", "Section xs+193 ys r1 W50", "")
 	settingsGUI.Add("UpDown",, adobeGBinitVal)
-	adobeEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobeTemp()`` GB limit")
+	adobeEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobeTemp()`` limit (GB)")
 	adobeGBEdit.OnEvent("Change", adobeGB)
 	adobeGB(*)
 	{
-		IniWrite(adobeGBEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe GB")
+		IniWrite(adobeGBEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
 	}
 	
-	adobeFSinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe FS")
-	adobeFSEdit := settingsGUI.Add("Edit", "X9 Y+10 r1 W50", "")
+	adobeFSinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS")
+	adobeFSEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50", "")
 	settingsGUI.Add("UpDown",, adobeFSinitVal)
 	adobeFSEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobe fullscreen check.ahk`` check rate (s)")
 	adobeFSEdit.OnEvent("Change", adobeFS)
 	adobeFS(*)
 	{
 		detect()
-		IniWrite(adobeFSEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Settings", "adobe FS")
+		IniWrite(adobeFSEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS")
 		if WinExist("adobe fullscreen check.ahk - AutoHotkey")
 			PostMessage 0x0111, 65303,,, "adobe fullscreen check.ahk - AutoHotkey"
 	}
+	
+	autosaveMininitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
+	autosaveMinEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50", "")
+	settingsGUI.Add("UpDown",, autosaveMininitVal)
+	autosaveMinEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``autosave.ahk`` save rate (min)")
+	autosaveMinEdit.OnEvent("Change", autosaveMin)
+	autosaveMin(*)
+	{
+		detect()
+		IniWrite(autosaveMinEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
+		if WinExist("autosave.ahk - AutoHotkey")
+			PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
+	}
 
-	resetText := settingsGUI.Add("Text", "W100 H20 X9 Y+20", "Reset")
+	;BOTTOM TEXT
+	resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+20", "Reset")
 	resetText.SetFont("S13 Bold")
 
+	;BUTTON TOGGLES
 	adobeToggle := settingsGUI.Add("Button", "w100 h30 Y+5", "adobeTemp()")
 	adobeUndo := settingsGUI.Add("Button", "w0 h0", "undo?")
 	adobeToggle.OnEvent("Click", adobe)
@@ -783,11 +814,11 @@ settingsGUI()
 			}
 	}
 
-	saveAndClose := settingsGUI.Add("Button", "W85 H30 X9 Y+15", "Save && Exit")
+	saveAndClose := settingsGUI.Add("Button", "W85 H30 xs Y+15", "Save && Exit")
 	saveAndClose.OnEvent("Click", close)
 
 	workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
-	workDirText := settingsGUI.Add("Text", "X+15 Y+-30", "Current working dir;`n" workDir)
+	workDirText := settingsGUI.Add("Text", "Center X+15 Y+-30", "Current working dir;`n" workDir)
 	workDirText.SetFont("S10")
 
 

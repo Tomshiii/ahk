@@ -1,4 +1,4 @@
-# <> Release 2.5.x
+# <> Release 2.5.2 - Fixes & Features
 
 ## > Functions
 - Added `aetimeline()` a more beefed up version of `timeline()` to be more flexible
@@ -29,10 +29,11 @@
 - `#c::` will now centre the window in the current active monitor or move it to the main monitor if activated again
 - `#F1:: - activeScripts()` changed -> `#F2::`
     - `#F1::` now pulls up `settingsGUI()`
+- `autosave.ahk` `minutes` variable (how often it saves) is now adjustable in `settings.ini/settingsGUI()`
 
 ## > Other Changes
 - Changed `premiere_fullscreen_check` -> `adobe fullscreen check.ahk`
-    - `fire_frequency` now adjustable in `settings.ini/settingsGUI()`
+    - `fire_frequency` (how often it checks) now adjustable in `settings.ini/settingsGUI()`
     - Can now check After Effects as well
     - Now uses `isFullscreen()` instead of hard coded values
     - Adjusted `vscode()` values in `My Scripts.ahk` to accommodate this change

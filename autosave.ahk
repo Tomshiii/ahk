@@ -21,8 +21,20 @@ timeRemain(*)
 ;This script will autosave your premire pro project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 ;It will also ensure you have the checklist script for the current project open. If it can find the file, it will open it automatically
 
-;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING HERE. (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
-minutes := 5
+if !FileExist(A_MyDocuments "\tomshi\settings.ini")
+    {
+        sleep 5000 ;just incase this script loads before `My Scripts.ahk`
+        if !FileExist(A_MyDocuments "\tomshi\settings.ini")
+            {
+                myrelease := getVer()
+                if myrelease = ""
+                    myrelease := "v2.5" ;if you're not using `My Scripts.ahk` this line will just autopopulate a number to stop errors
+                FileAppend("[Settings]`nupdate check=true`ntooltip=true`n`n[Adjust]`nadobe GB=45`nadobe FS=5`nautosave MIN=5`n`n[Track]`nadobe temp=`nworking dir=" A_WorkingDir "`nfirst check=true`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+            }
+    }
+
+;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
+minutes := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
 global ms := minutes * 60000
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE REMINDING YOU TO OPEN THE CHECKLIST HERE
@@ -37,17 +49,6 @@ global idle := secondsIdle * 1000
 secondsRetry := 2.5
 global retry := secondsRetry * 1000
 
-if !FileExist(A_MyDocuments "\tomshi\settings.ini")
-    {
-        sleep 5000 ;just incase this script loads before `My Scripts.ahk`
-        if !FileExist(A_MyDocuments "\tomshi\settings.ini")
-            {
-                myrelease := getVer()
-                if myrelease = ""
-                    myrelease := "v2.5" ;if you're not using `My Scripts.ahk` this line will just autopopulate a number to stop errors
-                FileAppend("[Settings]`nupdate check=yes`ntooltip=true`n`n[Track]`nadobe temp=`nworking dir=" A_WorkingDir "`nfirst check=yes`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
-            }
-    }
 
 ;DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
 tooltips := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
