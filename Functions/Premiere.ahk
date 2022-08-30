@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.9
+;\\v2.14.10
 #Include General.ahk
 
 /* preset()
@@ -760,7 +760,14 @@ audioDrag(sfxName)
                 sleep 50
                 MouseGetPos(&colourX, &colourY)
                 colour := PixelGetColor(colourX, colourY)
-                if colour = 0xCCCCCC || colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD4F7EA || colour = 0x1B8D64 || colour = 0xFFFFFF || colour = 0xD0E1DB || colour = 0x1D7E5B || colour = 0x1FA373 || colour = 0x1D986C || colour = 0x3DFFE4 || colour = 0x23AB83 || colour = 0x248562 || colour = 0x1FA072
+                if (
+                     colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD4F7EA || colour = 0x1B8D64 || colour = 0xFFFFFF || colour = 0xD0E1DB || colour = 0x1D7E5B || colour = 0x1FA373 || colour = 0x1D986C || colour = 0x3DFFE4 || colour = 0x23AB83 || colour = 0x248562 || colour = 0x1FA072 || colour = 0x1E7F5C || colour = 0x3A9B78 || colour = 0x2B8C69 || colour = 0x298A67 || colour = 0x2A8D87 || colour = 0x2A8B68 || colour = 0x1F805D || colour = 0x258663 || colour = 0x457855 || colour = 0x20815E || colour = 0x47A582 || colour = 0x4AAB88 || colour = 0x21825F || colour = 0x268764 ||
+                     ;there needs to be a trailing || for any block that isn't the final
+                    
+                    colour = 0xEEE1E1 || colour = 0xE40000 || ;colours for the red box
+
+                    colour = 0x646464 || colour = 0xB1B1B1 || colour = 0xEFEFEF || colour = 0x606060 || colour = 0x292929 || colour = 0x454545 || colour = 0x404040 || colour = 0xA7ADAB || colour = 0x3B3B3B || colour = 0x2D2D2D || colour = 0x585858 || colour = 0xD2D2D2 || colour = 0x4A4A4A || colour = 0xCCCCCC ;colours for the fx symbol box
+                )
                     break
                 errorLog(A_ThisFunc "()", "Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, A_LineFile, A_LineNumber)
                 if A_Index > 2
@@ -803,7 +810,7 @@ audioDrag(sfxName)
                                 sec += 1
                             }
                         secRemain := 8 - sec
-                        ToolTip("This function will attempt to drag your bleep to track " trackNumber "`nPress another number key to move to a different track`n`nThe function will continue once you've cut the track`n" secRemain "s remaining")
+                        ToolTip("This function will attempt to drag your bleep to:`n" A_Tab A_Tab "Track " trackNumber "`n`nPress another number key to move to a different track`nThe function will continue once you've cut the track`n" secRemain "s remaining")
                     }
                     ToolTip("")
                     blockOn()

@@ -7,8 +7,11 @@
 - `adobeTemp()` now sets it's `largestSize` variable in `settings.ini` & `settingsGUI()`
 - UI changes to `settingsGUI()`
 - `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
-- Add more colours to `audioDrag()`
 - `generate()` `WORK` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
+
+`audioDrag()`
+- Add more colours
+- Changed `bleep` tooltip to make it more obvious which track you're about to drag to
 
 `getHotkeys()`
 - If the activation hotkey length is only `2`, `&first` & `&second` will be assigned to the first and second characters respectively
