@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.16.13
+;\\v2.17
 
 ; =======================================================================================================================================
 ;
@@ -87,6 +87,7 @@ generate(MyRelease)
 				toolCust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
 		}
 	UPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
+	BETAUPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false")
 	FC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check", "false")
 	ADOBE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp", "")
 	WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir", "E:\Github\ahk")
@@ -97,7 +98,7 @@ generate(MyRelease)
 	deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
 	if FileExist(A_MyDocuments "\tomshi\settings.ini")
 		FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-	FileAppend("[Settings]`nupdate check=" UPDATE "`ntooltip=" TOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+	FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ntooltip=" TOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /* updateChecker()
@@ -110,21 +111,41 @@ updateChecker(MyRelease) {
 	main:
 	;release version
 	;Get the current release version from github
-	try {
-		main := ComObject("WinHttp.WinHttpRequest.5.1")
-		main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/My%20Scripts.ahk")
-		main.Send()
-		main.WaitForResponse()
-		string := main.ResponseText
-	} catch as e {
-		toolCust("Couldn't get version info`nYou may not be connected to the internet")
-		errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineFile, A_LineNumber)
-		return
+	getRelease(beta := false)
+	{
+		try {
+			main := ComObject("WinHttp.WinHttpRequest.5.1")
+			main.Open("GET", "https://github.com/Tomshiii/ahk/releases.atom")
+			main.Send()
+			main.WaitForResponse()
+			string := main.ResponseText
+		}  catch as e {
+			toolCust("Couldn't get version info`nYou may not be connected to the internet")
+			errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineFile, A_LineNumber)
+			Exit()
+		}
+		loop {
+			getrightURL := InStr(string, 'href="https://github.com/Tomshiii/ahk/releases/tag/', 1, 1, A_Index)
+			foundpos := InStr(string, 'v2', 1, getrightURL, 1)
+			endpos := InStr(string, '"', , foundpos, 1)
+			ver := SubStr(string, foundpos, endpos - foundpos)
+			if !InStr(ver, "pre") && !InStr(ver, "beta")
+				break
+			else if beta = true
+				break
+		}
+		return ver
 	}
-	foundpos := InStr(string, 'v',,,2)
-	endpos := InStr(string, '"', , foundpos, 1)
-	end := endpos - foundpos
-	global version := SubStr(string, foundpos, end)
+	betaprep := 0
+	if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
+		{
+			global version := getRelease(true)
+			betaprep := 1
+		}
+	else
+		global version := getRelease()
+	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+		WinWaitClose("ahk_class tooltips_class32")
 	toolCust("Current ``" A_ScriptName "`` Version = " MyRelease "`nCurrent Github Release = " version, 2000)
 	;checking to see if the user wishes to check for updates
 	check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
@@ -135,7 +156,10 @@ updateChecker(MyRelease) {
 					;grabbing changelog info
 					try {
 						change := ComObject("WinHttp.WinHttpRequest.5.1")
-						change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
+						if betaprep = 0
+							change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
+						else if betaprep = 1
+							change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
 						change.Send()
 						change.WaitForResponse()
 						ChangeLog := change.ResponseText
@@ -205,19 +229,25 @@ updateChecker(MyRelease) {
 					Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
 					Title.SetFont("S15")
 					;set github button
-					gitButton := MyGui.Add("Button", "X530 Y10", "GitHub")
+					gitButton := MyGui.Add("Button", "X+20 Y10", "GitHub")
 					gitButton.OnEvent("Click", githubButton)
+					;set changelog
+					ChangeLog := MyGui.Add("Edit", "X8 Y+5 r18 -WantCtrlA ReadOnly w590")
+					;set "don't prompt again" checkbox
+					noprompt := MyGui.Add("Checkbox", "X270 Y350", "Don't prompt again")
+					noprompt.OnEvent("Click", prompt)
+					;set beta checkbox
+					if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
+						betaCheck := MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
+					else
+						betaCheck := MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
+					betaCheck.OnEvent("Click", beta)
 					;set download button
-					downloadbutt := MyGui.Add("Button", "X445 Y350", "Download")
+					downloadbutt := MyGui.Add("Button", "X+5 Y+-30", "Download")
 					downloadbutt.OnEvent("Click", Down)
 					;set cancel button
-					cancelbutt := MyGui.Add("Button", "Default X530 Y350", "Cancel")
+					cancelbutt := MyGui.Add("Button", "Default X+5", "Cancel")
 					cancelbutt.OnEvent("Click", closegui)
-					;set changelog
-					ChangeLog := MyGui.Add("Edit", "X8 Y50 r18 -WantCtrlA ReadOnly w590")
-					;set "don't prompt again" checkbox
-					noprompt := MyGui.Add("Checkbox", "vNoPrompt X300 Y357", "Don't prompt again")
-					noprompt.OnEvent("Click", prompt)
 					;getting value for changelog
 					ChangeLog.Value := LatestChangeLog
 
@@ -227,6 +257,13 @@ updateChecker(MyRelease) {
 							IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
 						if noprompt.Value = 0
 							IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+					}
+					beta(*) {
+						if betaCheck.Value = 1
+							IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+						if betaCheck.Value = 0
+							IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+						Run(A_ScriptFullPath)
 					}
 					githubButton(*) {
 						if WinExist("Tomshiii/ahk")
@@ -698,18 +735,71 @@ settingsGUI()
 	adjustText.SetFont("S13 Bold")
 	
 	;CHECKBOXES
-	if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check") = "true"
-		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 section xs Y+5", "Check for Updates")
-	else
-		updateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 section xs Y+5", "Check for Updates")
+	checkVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
+	if checkVal = "true"
+		{
+			updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs Y+5", "Check for Updates")
+			updateCheckToggle.ToolTip := "Scripts will check for updates"
+		}
+	else if checkVal = "false"
+		{
+			updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs Y+5", "Check for Updates")
+			updateCheckToggle.ToolTip := "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available"
+		}
+	else if checkVal = "stop"
+		{
+			updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked0 section xs Y+5", "Check for Updates")
+			updateCheckToggle.ToolTip := "Scripts will NOT check for updates"
+		}
 	updateCheckToggle.OnEvent("Click", update)
 	update(*)
 	{
+		ToolTip("")
+		betaCheck := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check") ;storing the beta check value so we can toggle it back on if it was on originally
 		updateVal := updateCheckToggle.Value
 		if updateVal = 1
-			IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+			{
+				IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+				toolCust("Scripts will check for updates", 2000)
+				if betaCheck = "true"
+					betaupdateCheckToggle.Value := 1
+			}
+		else if updateVal = -1
+			{
+				IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+				toolCust("Scripts will still check for updates but will not present the user`nwith a GUI when an update is available", 2000)
+				if betaCheck = "true"
+					betaupdateCheckToggle.Value := 1
+			}
+		else if updateVal = 0
+			{
+				betaupdateCheckToggle.Value := 0
+				IniWrite("stop", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+				toolCust("Scripts will NOT check for updates", 2000)
+			}
+	}
+	
+	betaStart := false ;if the user enables the check for beta updates, we want my main script to reload on exit.
+	if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check") = "true" && updateCheckToggle.Value != 0
+		betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 section xs Y+5", "Check for Beta Updates")
+	else
+		betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 section xs Y+5", "Check for Beta Updates")
+	betaupdateCheckToggle.OnEvent("Click", betaupdate)
+	betaupdate(*)
+	{
+		updateVal := betaupdateCheckToggle.Value
+		if updateVal = 1 && updateCheckToggle.Value != 0
+			{
+				betaStart := true
+				IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+			}
+
 		else
-			IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+			{
+				betaupdateCheckToggle.Value := 0
+				betaStart := false
+				IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+			}
 	}
 
 	if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") = "true"
@@ -826,6 +916,9 @@ settingsGUI()
 	settingsGUI.OnEvent("Close", close)
 	close(*)
 	{
+		;check 
+		if betaStart = true 
+			Run(A_ScriptFullPath)
 		;check to see if the user wants to reset adobeTemp()
 		checkAdobe := adobeToggle.GetPos(,, &width)
 		if width = 0
@@ -840,6 +933,28 @@ settingsGUI()
 		;before finally closing
 		settingsGUI.Destroy()
 	}
+
+	;the below code allows for the tooltips on hover
+    ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
+    OnMessage(0x0200, On_WM_MOUSEMOVE)
+    On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
+    {
+        static PrevHwnd := 0
+        if (Hwnd != PrevHwnd)
+        {
+            Text := "", ToolTip() ; Turn off any previous tooltip.
+            CurrControl := GuiCtrlFromHwnd(Hwnd)
+            if CurrControl
+            {
+                if !CurrControl.HasProp("ToolTip")
+                    return ; No tooltip for this control.
+                Text := CurrControl.ToolTip
+                SetTimer () => ToolTip(Text), -1000
+                SetTimer () => ToolTip(), -4000 ; Remove the tooltip.
+            }
+            PrevHwnd := Hwnd
+        }
+    }
 
 	settingsGUI.Show("Center AutoSize")
 }

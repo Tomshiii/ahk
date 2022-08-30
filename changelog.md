@@ -5,9 +5,14 @@
 - Fixed `verCheck()`
 - Fixed `manInput()` erroring out if `optional` variable wasn't assigned a value
 - `adobeTemp()` now sets it's `largestSize` variable in `settings.ini` & `settingsGUI()`
-- UI changes to `settingsGUI()`
 - `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
 - `generate()` `WORK` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
+- `updateChecker()` can now check for `beta\pre-release` updates.
+    - Checking for these updates can be adjusted in `settings.ini` & `settingsGUI()` as well as on the update popup
+
+`settingsGUI()`
+- `Check for Updates` will now cycle between the 3 available options
+- UI changes
 
 `audioDrag()`
 - Add more colours
