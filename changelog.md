@@ -15,6 +15,7 @@
 `settingsGUI()`
 - `Check for Updates` will now cycle between the 3 available options
 - Now has button to open `settings.ini` file
+- Clicking on the current `working dir` opens that directory in file explorer
 - UI changes
 
 `audioDrag()`

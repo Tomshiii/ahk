@@ -1,4 +1,4 @@
-;v2.17.2
+;v2.17.3
 
 ; =======================================================================================================================================
 ;
@@ -884,7 +884,7 @@ settingsGUI()
             }
     }
 
-    iniLink := settingsGUI.Add("Button", "xs Y+15", "open settings.ini")
+    iniLink := settingsGUI.Add("Button", "section xs Y+15", "open settings.ini")
     iniLink.OnEvent("Click", ini)
     ini(*)
     {
@@ -896,10 +896,20 @@ settingsGUI()
 
     
     workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
-    workDirText := settingsGUI.Add("Text", "Center X+15 Y+-30", "Current working dir;`n" workDir)
-    workDirText.SetFont("S10")
+    currentText := settingsGUI.Add("Text", "Center X+15 Y+-30", "Current working dir;")
+    workDirText := settingsGUI.Add("Text", "Center Y+1", workDir)
+    workDirText.SetFont("S10 underline")
+    workDirText.OnEvent("Click", dir)
+    dir(*)
+    {
+        SplitPath(workDir,,,, &path)
+        if WinExist("ahk_exe explorer.exe " path)
+            WinActivate("ahk_exe explorer.exe " path)
+        else
+            Run(workDir)
+    }
     
-    saveAndClose := settingsGUI.Add("Button", "W85 H30 x+180", "Save && Exit")
+    saveAndClose := settingsGUI.Add("Button", "W85 H30 xs+420 ys", "Save && Exit")
     saveAndClose.OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
