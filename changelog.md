@@ -14,6 +14,7 @@
 
 `settingsGUI()`
 - `Check for Updates` will now cycle between the 3 available options
+- Now has button to open `settings.ini` file
 - UI changes
 
 `audioDrag()`

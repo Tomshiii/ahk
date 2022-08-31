@@ -1,4 +1,4 @@
-;v2.17.1
+;v2.17.2
 
 ; =======================================================================================================================================
 ;
@@ -705,30 +705,30 @@ settingsGUI()
     noDefault := settingsGUI.Add("Button", "Default W0 H0", "_")
 
     ;Top Titles
-    titleText := settingsGUI.Add("Text", "W100 H25 X9 Y7", "Settings")
+    titleText := settingsGUI.Add("Text", "section W100 H25 X9 Y7", "Settings")
     titleText.SetFont("S15 Bold Underline")
 
-    toggleText := settingsGUI.Add("Text", "W100 H20 Y+5", "Toggle")
+    toggleText := settingsGUI.Add("Text", "W100 H20 xs Y+5", "Toggle")
     toggleText.SetFont("S13 Bold")
 
-    adjustText := settingsGUI.Add("Text", "W100 H20 X+100", "Adjust")
+    adjustText := settingsGUI.Add("Text", "W100 H20 x+100", "Adjust")
     adjustText.SetFont("S13 Bold")
     
     ;CHECKBOXES
     checkVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
     if checkVal = "true"
         {
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs Y+5", "Check for Updates")
+            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs+5 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will check for updates"
         }
     else if checkVal = "false"
         {
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs Y+5", "Check for Updates")
+            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs+5 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available"
         }
     else if checkVal = "stop"
         {
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked0 section xs Y+5", "Check for Updates")
+            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked0 section xs+5 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will NOT check for updates"
         }
     updateCheckToggle.OnEvent("Click", update)
@@ -761,9 +761,9 @@ settingsGUI()
     
     betaStart := false ;if the user enables the check for beta updates, we want my main script to reload on exit.
     if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check") = "true" && updateCheckToggle.Value != 0
-        betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 section xs Y+5", "Check for Beta Updates")
+        betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 xs Y+5", "Check for Beta Updates")
     else
-        betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 section xs Y+5", "Check for Beta Updates")
+        betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 xs Y+5", "Check for Beta Updates")
     betaupdateCheckToggle.OnEvent("Click", betaupdate)
     betaupdate(*)
     {
@@ -884,13 +884,23 @@ settingsGUI()
             }
     }
 
-    saveAndClose := settingsGUI.Add("Button", "W85 H30 xs Y+15", "Save && Exit")
-    saveAndClose.OnEvent("Click", close)
+    iniLink := settingsGUI.Add("Button", "xs Y+15", "open settings.ini")
+    iniLink.OnEvent("Click", ini)
+    ini(*)
+    {
+        if WinExist("settings.ini")
+            WinActivate("settings.ini")
+        else
+            Run(A_MyDocuments "\tomshi\settings.ini")
+    }
 
+    
     workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
     workDirText := settingsGUI.Add("Text", "Center X+15 Y+-30", "Current working dir;`n" workDir)
     workDirText.SetFont("S10")
-
+    
+    saveAndClose := settingsGUI.Add("Button", "W85 H30 x+180", "Save && Exit")
+    saveAndClose.OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
     settingsGUI.OnEvent("Close", close)
