@@ -1,6 +1,7 @@
 ﻿SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #SingleInstance Force
 #Include "%A_ScriptDir%\KSA\Keyboard Shortcut Adjustments.ahk"
+#Include "%A_ScriptDir%\Functions\Startup.ahk"
 #Include "%A_ScriptDir%\Functions\After Effects.ahk"
 #Include "%A_ScriptDir%\Functions\Photoshop.ahk"
 #Include "%A_ScriptDir%\Functions\Premiere.ahk"
@@ -9,7 +10,7 @@
 #Include "%A_ScriptDir%\Functions\Windows.ahk"
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.1
+;\\v2.10.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5.1

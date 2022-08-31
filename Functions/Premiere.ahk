@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.10
+;\\v2.14.11
 #Include General.ahk
 
 /* preset()
@@ -1428,6 +1428,68 @@ openChecklist()
             }
         }
 }
+
+/* mousedrag()
+ Press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensuring the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
+ This version is specifically for Premiere Pro, the function below this one is for any other program
+ @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
+ @param toolorig is the button you want the script to press to bring you back to your tool of choice
+ */
+mousedrag(tool, toolorig)
+{
+    if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
+        return
+    MouseGetPos(&x, &y) ;from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
+    static xValue := 0
+    static yValue := 0
+    static xControl := 0
+    static yControl := 0
+    if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
+        {
+            try {
+                SendInput(timelineWindow)
+                effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                ControlGetPos(&xpos, &ypos, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+                static xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
+                static yValue := ypos + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
+                static xControl := xpos + 238 ;accounting for the column to the left of the timeline
+                static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
+                if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+                    WinWaitClose("ahk_class tooltips_class32")
+                toolCust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh")
+            } catch as e {
+                if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+                    WinWaitClose("ahk_class tooltips_class32")
+                toolCust("Couldn't find the ClassNN value")
+                errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
+                goto skip
+            }
+        }
+    if x > xValue || x < xControl || y < yValue || y > yControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
+        return
+    skip:
+    again()
+    {
+        if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+            {
+                if not GetKeyState(A_ThisHotkey, "P") ;this is here so it doesn't reactivate if you quickly let go before the timer comes back around
+                    return
+            }
+        else if not GetKeyState(DragKeywait, "P")
+            return
+        click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
+        SendInput tool "{LButton Down}"
+        if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+            KeyWait(A_ThisHotkey)
+        else
+            KeyWait(DragKeywait) ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
+        SendInput("{LButton Up}")
+        SendInput toolorig
+    }
+    SetTimer(again, -400)
+    again()
+}
+
 
 /*
  This function gets the classNN value and subsequent variables from the active window class.

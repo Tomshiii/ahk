@@ -1,4 +1,6 @@
 # <> Release 2.5.2 - Fixes & Features
+- Moved all `Startup` functions from `General.ahk` -> `Startup.ahk`
+- Moved `mouseDrag()` from `General.ahk` -> `Premiere.ahk`
 
 ## > Functions
 - Added `aetimeline()` a more beefed up version of `timeline()` to be more flexible
