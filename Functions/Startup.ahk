@@ -1,4 +1,5 @@
-;v2.17.3
+;v2.17.4
+#Include General.ahk
 
 ; =======================================================================================================================================
 ;
@@ -783,18 +784,31 @@ settingsGUI()
     }
 
     if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") = "true"
-        toggleToggle := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``autosave.ahk`` tooltips")
+        {
+            toggleToggle := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``autosave.ahk`` tooltips")
+            toggleToggle.ToolTip := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
+        }
     else
-        toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``autosave.ahk`` tooltips")
+        {
+            toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``autosave.ahk`` tooltips")
+            toggleToggle.ToolTip := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
+        }
     toggleToggle.OnEvent("Click", toggle)
     toggle(*)
     {
         detect()
+        ToolTip("")
         toggleVal := toggleToggle.Value
         if toggleVal = 1
-            IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+            {
+                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+                toolCust("``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
+            }
         else
-            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+            {
+                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+                toolCust("``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
+            }
 
         if WinExist("autosave.ahk - AutoHotkey")
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
@@ -814,7 +828,7 @@ settingsGUI()
     adobeFSinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS")
     adobeFSEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50", "")
     settingsGUI.Add("UpDown",, adobeFSinitVal)
-    adobeFSEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobe fullscreen check.ahk`` check rate (s)")
+    adobeFSEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``adobe fullscreen check.ahk```n check rate (sec)")
     adobeFSEdit.OnEvent("Change", adobeFS)
     adobeFS(*)
     {
@@ -825,7 +839,7 @@ settingsGUI()
     }
     
     autosaveMininitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
-    autosaveMinEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50", "")
+    autosaveMinEdit := settingsGUI.Add("Edit", "xs Y+2 r1 W50", "")
     settingsGUI.Add("UpDown",, autosaveMininitVal)
     autosaveMinEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``autosave.ahk`` save rate (min)")
     autosaveMinEdit.OnEvent("Change", autosaveMin)
@@ -909,7 +923,7 @@ settingsGUI()
             Run(workDir)
     }
     
-    saveAndClose := settingsGUI.Add("Button", "W85 H30 xs+420 ys", "Save && Exit")
+    saveAndClose := settingsGUI.Add("Button", "W85 H30 xs+350 ys", "Save && Exit")
     saveAndClose.OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
