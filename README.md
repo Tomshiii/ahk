@@ -67,7 +67,7 @@ This script will also go through a lot of important functions on boot. Some go t
 - `locationReplace()` - Handles replacing any instance of either my original working directory, or yours if you move my scripts to a new location. eg. on first run by the user this function will replace all instances of `E:\Github\ahk` with the directory you run the script
 - `verCheck()` - This function can be found in a few of my scripts and will check to see if you're running a version of AHK that is compatible with my scripts
 - `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
-- `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as back up your current script directory
+- `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as backup your current script directory
 - `firstCheck()` - Will check to see if this is the first time you're running my scripts and offer a helpful GUI to run you through a few things to get you going.
 - `oldError()` - Will remove logs in `A_ScriptDir \Error Logs\` older than 30 days
 - `adobeTemp()` - Will scan your adobe temp folders and delete them if they're larger than the user adjustable setting. This function also contains a custom folder for `After Effects` and will require the user to meddle with it for full functionality
@@ -83,16 +83,32 @@ A function is defined similar to;
 /* These are comments that dynamically display information when displayed in VSCode,
 but also serve as general comments for anyone else
  This function does something
- @param variableX is a value
- @param variableY is another value
+ @param variableX is a value you pass into the function
+ @param variableY is a variable who's value will be passed back once the function is complete
+ @param variableZ is a variable with a default value, it can be omitted
  */
-func(variableX, variableY)
+func(variableX, &variableY, variableZ := "default")
 {
-  code(variableX)
-  code(variableY)
+  if variableX = Y
+    return
+  ...
+  variableY := "value"
+  if variableZ != "default"
+    code(variableZ)
 }
 ```
-We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can simply add `func("variableX", "variableY")` to scripts.
+We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can achieve things like below;
+```autohotkey
+hotkey::
+{
+  func("variableValue", &variableYbutCalledAnything)
+  ...
+  MsgBox(variableYbutCalledAnything)
+}
+```
+Note:
+- `variableZ` doesn't have to be used and can be omitted from the function call
+- An example of a function in this repo that passes back a variable & also uses defaults is [`isFullscreen()`](https://github.com/Tomshiii/ahk/blob/main/Functions/Windows.ahk)
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
 A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.

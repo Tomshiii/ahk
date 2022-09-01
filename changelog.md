@@ -11,6 +11,7 @@
 - `generate()` `WORK` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
 - `updateChecker()` can now check for `beta\pre-release` updates.
     - Checking for these updates can be adjusted in `settings.ini` & `settingsGUI()` as well as on the update popup
+- Cut repeat code in `moveXorY()`
 
 `settingsGUI()`
 - `Check for Updates` will now cycle between the 3 available options

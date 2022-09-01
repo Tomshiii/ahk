@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.18
+;\\v2.12.19
 #Include General.ahk
 
 ; ===========================================================================================================================================
 ;
-;		Windows Scripts \\ Last updated: v2.12.15
+;		Windows Scripts
 ;
 ; ===========================================================================================================================================
 /* youMouse()
@@ -343,61 +343,55 @@ isFullscreen(&title, &full, window := false)
  A quick and dirty way to limit the axis your mouse can move
  This function has specific code for XButton1/2 and must be activated with 2 hotkeys
  */
-moveXorY() {
+moveXorY()
+{
     getHotkeys(&fr, &sc)
 	MouseGetPos(&x, &y)
 	start:
-	if sc = "XButton2"
-		{
-			if GetKeyState("XButton2", "P") ;move on X axis
-				{
-					MouseMove(x,y)
-					loop {
-                        if A_TimeIdleMouse < 500
-                            ToolTip("Your mouse will now only move along the x axis")
-						MouseGetPos(&newX, &newY)
-						MouseMove(newX, y)
-						if not GetKeyState("XButton2", "P")
-							{
-                                ToolTip("")
-                                return
-                            }
-                        if A_TimeIdleMouse > 500
-                            {
-                                MouseGetPos(&newX, &newY)
-                                if newY = y
-                                    ToolTip("Your mouse will now only move along the x axis`nYou are currently level on the y axis")
-                            }
-					}
-				}
-		}
-	if sc = "XButton1"
-		{
-			if GetKeyState("XButton1", "P") ;move on Y axis
-				{
-                    MouseMove(x,y)
-					loop {
-                        if A_TimeIdleMouse < 500
-                            ToolTip("Your mouse will now only move along the y axis")
-						MouseGetPos(&newX, &newY)
-						MouseMove(x, newY)
-						if not GetKeyState("XButton1", "P")
-							{
-                                ToolTip("")
-                                return
-                            }
-                        if A_TimeIdleMouse > 500
-                            {
-                                MouseGetPos(&newX, &newY)
-                                if newX = x
-                                    ToolTip("Your mouse will now only move along the y axis`nYou are currently level on the x axis")
-                            }
-					}
-				}
-		}
+    oneAxis(sc)
+    {
+        if GetKeyState(sc, "P") ;move on X axis
+            {
+                MouseMove(x,y)
+                loop {
+                    if A_TimeIdleMouse < 500
+                        {
+                            if sc = "XButton2"
+                                ToolTip("Your mouse will now only move along the x axis")
+                            else if sc = "XButton1"
+                                ToolTip("Your mouse will now only move along the y axis")
+                        }
+                    MouseGetPos(&newX, &newY)
+                    if sc = "XButton2"
+                        MouseMove(newX, y)
+                    else if sc = "XButton1"
+                        MouseMove(x, newY)
+                    if not GetKeyState(sc, "P")
+                        {
+                            ToolTip("")
+                            return
+                        }
+                    if A_TimeIdleMouse > 500
+                        {
+                            MouseGetPos(&newX, &newY)
+                            if sc = "XButton2"
+                                {
+                                    if newY = y
+                                        ToolTip("Your mouse will now only move along the x axis`nYou are currently level on the y axis")
+                                }
+                            else if sc = "XButton1"
+                                {
+                                    if newX = x
+                                        ToolTip("Your mouse will now only move along the y axis`nYou are currently level on the x axis")
+                                }
+                        }
+                }
+            }
+    }
+    oneAxis(sc)
     if sc != "XButton1" || sc != "XButton2"
         return
-	if GetKeyState(fr, "P") ;move on X axis
+	if GetKeyState(fr, "P")
 		goto start
 	else
 		return
