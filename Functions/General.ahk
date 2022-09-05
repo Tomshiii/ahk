@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.17.1
+;\\v2.17.2
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.1.6
@@ -152,7 +152,7 @@ timeline(timeline, x1, x2, y1)
 
 ; ===========================================================================================================================================
 ;
-;		Error Log \\ Last updated: v2.11
+;		Error Log \\ Last updated: v2.17.2
 ;
 ; ===========================================================================================================================================
 /* errorLog()
@@ -191,8 +191,13 @@ errorLog(func, error, lineFile, lineNumber)
                     Response2 := OperatingSystem.FreePhysicalMemory / "1048576"
                 Memory := Round(Response, 2)
                 FreePhysMem := Round(Response2, 2)
+                InstalledVersion := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+                LatestReleaseBeta := getScriptRelease(True)
+                LatestReleaseMain := getScriptRelease()
+                if LatestReleaseBeta = LatestReleaseMain
+                    LatestReleaseBeta := ""
                 time := A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "." A_MSec
-                start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ OS`n" A_Tab "\\ " OSName "`n" A_Tab "\\ " A_OSVersion "`n" A_Tab "\\ " OSArch "`n\\ CPU`n" A_Tab "\\ " CPU "`n" A_Tab "\\ Logical Processors - " Logical "`n\\ RAM`n" A_Tab "\\ Total Physical Memory - " Memory "GB`n" A_Tab "\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
+                start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ Tomshi's Scripts" "`n`t\\ Installed Version - " InstalledVersion "`n`t\\ Latest Version Released`n`t`t\\ main - " LatestReleaseMain "`n`t`t\\ beta - " LatestReleaseBeta "`n\\ OS`n`t\\ " OSName "`n`t\\ " A_OSVersion "`n`t\\ " OSArch "`n\\ CPU`n`t\\ " CPU "`n`t\\ Logical Processors - " Logical "`n\\ RAM`n`t\\ Total Physical Memory - " Memory "GB`n`t\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
             }
         }
     scriptPath :=  lineFile ;this is taking the path given from A_LineFile

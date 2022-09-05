@@ -1,4 +1,4 @@
-;v2.17.4
+;v2.17.5
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -81,7 +81,36 @@ generate(MyRelease)
         FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
     FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ntooltip=" TOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
- 
+
+/*
+ A function to return the most recent version of my scripts on github
+ */
+getScriptRelease(beta := false)
+{
+    try {
+        main := ComObject("WinHttp.WinHttpRequest.5.1")
+        main.Open("GET", "https://github.com/Tomshiii/ahk/releases.atom")
+        main.Send()
+        main.WaitForResponse()
+        string := main.ResponseText
+    }  catch as e {
+        toolCust("Couldn't get version info`nYou may not be connected to the internet")
+        errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineFile, A_LineNumber)
+        return 0
+    }
+    loop {
+        getrightURL := InStr(string, 'href="https://github.com/Tomshiii/ahk/releases/tag/', 1, 1, A_Index)
+        foundpos := InStr(string, 'v2', 1, getrightURL, 1)
+        endpos := InStr(string, '"', , foundpos, 1)
+        ver := SubStr(string, foundpos, endpos - foundpos)
+        if !InStr(ver, "pre") && !InStr(ver, "beta")
+            break
+        else if beta = true
+            break
+    }
+    return ver
+}
+
 /* updateChecker()
  This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the main branch of the github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog. This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
  */
@@ -91,43 +120,23 @@ updateChecker(MyRelease) {
         return
     main:
     ;release version
-    ;Get the current release version from github
-    getRelease(beta := false)
-    {
-        try {
-            main := ComObject("WinHttp.WinHttpRequest.5.1")
-            main.Open("GET", "https://github.com/Tomshiii/ahk/releases.atom")
-            main.Send()
-            main.WaitForResponse()
-            string := main.ResponseText
-        }  catch as e {
-            toolCust("Couldn't get version info`nYou may not be connected to the internet")
-            errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineFile, A_LineNumber)
-            Exit()
-        }
-        loop {
-            getrightURL := InStr(string, 'href="https://github.com/Tomshiii/ahk/releases/tag/', 1, 1, A_Index)
-            foundpos := InStr(string, 'v2', 1, getrightURL, 1)
-            endpos := InStr(string, '"', , foundpos, 1)
-            ver := SubStr(string, foundpos, endpos - foundpos)
-            if !InStr(ver, "pre") && !InStr(ver, "beta")
-                break
-            else if beta = true
-                break
-        }
-        return ver
-    }
     betaprep := 0
     if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
         {
-            global version := getRelease(true)
+            global version := getScriptRelease(true)
+            if version = 0
+                return
             betaprep := 1
         }
     else
-        global version := getRelease()
+        {
+            global version := getScriptRelease()
+            if version = 0
+                return
+        }
     if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
         WinWaitClose("ahk_class tooltips_class32")
-    toolCust("Current ``" A_ScriptName "`` Version = " MyRelease "`nCurrent Github Release = " version, 2000)
+    toolCust("Current InstalledR Version = " MyRelease "`nCurrent Github Release = " version, 2000)
     ;checking to see if the user wishes to check for updates
     check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
     if check = "true"

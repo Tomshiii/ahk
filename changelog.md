@@ -9,9 +9,11 @@
 - `adobeTemp()` now sets it's `largestSize` variable in `settings.ini` & `settingsGUI()`
 - `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
 - `generate()` `WORK` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
-- `updateChecker()` can now check for `beta\pre-release` updates.
-    - Checking for these updates can be adjusted in `settings.ini` & `settingsGUI()` as well as on the update popup
+- Added `getScriptRelease()`
+    - Allows `updateChecker()` to check for `beta\pre-release` updates.
+        - Checking for these updates can be adjusted in `settings.ini` & `settingsGUI()` as well as on the update popup
 - Cut repeat code in `moveXorY()`
+- `errorLog()` now shows the `Installed` version of my scripts as well as the latest `main/beta` release
 
 `settingsGUI()`
 - `Check for Updates` will now cycle between the 3 available options
