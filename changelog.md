@@ -65,8 +65,5 @@
 - Small UI adjustments
     - `H/M/S` now aligned horizontally
     - Checkboxes are more compact
-
-
-
-
-make updateChecker() tooltip change if version installed is the same as latest release, etc
+- Can automatically check if the in-use version is outdated compared to the local copy in the users working dir
+    - This will only work if the user has generated a `settings.ini` file

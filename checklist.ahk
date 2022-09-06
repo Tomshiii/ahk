@@ -1,15 +1,15 @@
 ;#SingleInstance Force ;LEAVE THIS LIKE THIS SO YOU DON'T ACCIDENTLY OPEN IT AGAIN
 #Requires AutoHotkey v2.0-beta.5
-TraySetIcon("E:\Github\ahk\Support Files\Icons\checklist.ico") ;YOU WILL NEED TO PUT YOUR OWN WORKING DIRECTORY HERE
+;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.4.4"
+version := "v2.4.5"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
 ;THIS SCRIPT --->>
-;isn't designed to be launch from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
+;isn't designed to be launched from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
 
 ;DO NOT RELOAD THIS SCRIPT WITHOUT FIRST STOPPING THE TIMER - PRESSING THE `X` IS FINE BUT RELOADING FROM THE FILE WILL CAUSE IT TO CLOSE WITHOUT WRITING THE ELAPSED TIME
 
@@ -38,6 +38,52 @@ global ms10 := minutes2 * 60000
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checklist.ini")
     FileAppend("[Info]`nFirstPass=0`nSecondPass=0`nTwitchOverlay=0`nYoutubeOverlay=0`nTransitions=0`nSFX=0`nMusic=0`nPatreon=0`nIntro=0`ntime=0", A_ScriptDir "\checklist.ini")
+
+;grabbing the location dir of the users copy of tomshi's scripts. This will allow any deployed checklist scripts to automatically update
+if FileExist(A_MyDocuments "\tomshi\settings.ini")
+    {
+        location := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+        TraySetIcon(location "\Support Files\Icons\checklist.ico")
+
+        localVer(location)
+        {
+            verString := FileRead(location)
+            foundpos := InStr(verString, 'v2',,,2)
+            endpos := InStr(verString, ';', , foundpos, 1)
+            end := endpos - foundpos - 5
+            version := SubStr(verString, foundpos, end)
+            return version
+        }
+        latestVer := localVer(location "\checklist.ahk")
+
+        if VerCompare(latestVer, version) > 0
+            {
+                if !DirExist(A_ScriptDir "\backup")
+                    DirCreate(A_ScriptDir "\backup")
+                FileCopy(A_ScriptFullPath, A_ScriptDir "\backup", 1)
+                FileCopy(A_ScriptDir "\checklist.ini", A_ScriptDir "\backup\checklist.ini", 1)
+                FileCopy(A_ScriptDir "\checklist_logs.txt", A_ScriptDir "\backup\checklist_logs.txt", 1)
+
+                try {
+                    FP := IniRead(A_ScriptDir "\checklist.ini", "Info", "FirstPass", "0")
+                    SP := IniRead(A_ScriptDir "\checklist.ini", "Info", "SecondPass", "0")
+                    TW := IniRead(A_ScriptDir "\checklist.ini", "Info", "TwitchOverlay", "0")
+                    YT := IniRead(A_ScriptDir "\checklist.ini", "Info", "YoutubeOverlay", "0")
+                    TR := IniRead(A_ScriptDir "\checklist.ini", "Info", "Transitions", "0")
+                    SFX := IniRead(A_ScriptDir "\checklist.ini", "Info", "SFX", "0")
+                    MU := IniRead(A_ScriptDir "\checklist.ini", "Info", "Music", "0")
+                    PT := IniRead(A_ScriptDir "\checklist.ini", "Info", "Patreon", "0")
+                    INTR := IniRead(A_ScriptDir "\checklist.ini", "Info", "Intro", "0")
+                    TI := IniRead(A_ScriptDir "\checklist.ini", "Info", "time", "0")
+                }
+                FileDelete(A_ScriptDir "\checklist.ini")
+                FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI, A_ScriptDir "\checklist.ini")
+
+                FileCopy(location "\checklist.ahk", A_ScriptFullPath, 1)
+                Reload()
+            }
+    }
+
 ;grabbing hour information from ini file
 getTime := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
 timeForLog := Round(getTime / 3600, 2)
