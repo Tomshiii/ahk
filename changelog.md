@@ -8,7 +8,7 @@
 - Fixed `manInput()` erroring out if `optional` variable wasn't assigned a value
 - `adobeTemp()` now sets it's `largestSize` variable in `settings.ini` & `settingsGUI()`
 - `getTitle()` will no longer throw an error if the title cannot be found (ie. Windows taskbar/desktop)
-- `generate()` `WORK` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
+- `generate()` `WORK :=` variable now defaults to my working dir - this fixes `locationReplace()` not firing if no `settings.ini` file exists
 - Added `getScriptRelease()`
     - Allows `updateChecker()` to check for `beta\pre-release` updates.
         - Checking for these updates can be adjusted in `settings.ini` & `settingsGUI()` as well as on the update popup
@@ -18,10 +18,11 @@
 
 `settingsGUI()`
 - `Check for Updates` will now cycle between the 3 available options
-- Now has button to open `settings.ini` file
+- Now has a button to:
+    - Open `settings.ini` file
+    - Hard reset script
 - Clicking on the current `working dir` opens that directory in file explorer
 - Fix `autosave.ahk - tooltips` checkbox hover tooltip not updating when pressed
-- Add button to hard reset script
 - UI changes
 
 `audioDrag()`
@@ -29,7 +30,7 @@
 - Changed `bleep` tooltip to make it more obvious which track you're about to drag to
 
 `getHotkeys()`
-- If the activation hotkey length is only `2`, `&first` & `&second` will be assigned to the first and second characters respectively
+- If the activation hotkey length is only `2` characters, `&first` & `&second` will be assigned to the first and second characters respectively
     - If one of those characters is a special key (ie. ! or ^) it will return the virtual key instead so `KeyWait` will still work as expected
 
 `vscode()`
@@ -43,18 +44,17 @@
 - Will now move the cursor back to the original coords if function is activated from main monitor
 
 ## > My Scripts
-- `Media_Play_Pause::` for firefox will now send `{Media_Play_Pause}` if you're on the subscriptions/home page
-- `#c::` will now centre the window in the current active monitor or move it to the main monitor if activated again
+- `Media_Play_Pause::` for firefox will now send `{Media_Play_Pause}` if you're on the subscriptions/home page instead of trying to pointlessly interact with youtube
+- `#c::` will now centre the window on the current active monitor or move it to the main monitor if activated again
 - `#F1:: - activeScripts()` changed -> `#F2::`
     - `#F1::` now pulls up `settingsGUI()`
-- `autosave.ahk` `minutes` variable (how often it saves) is now adjustable in `settings.ini/settingsGUI()`
+- `autosave.ahk` `minutes :=` variable (how often it saves) is now adjustable in `settings.ini/settingsGUI()`
 
 ## > Other Changes
 - Changed `premiere_fullscreen_check` -> `adobe fullscreen check.ahk`
-    - `fire_frequency` (how often it checks) now adjustable in `settings.ini/settingsGUI()`
+    - `fire_frequency :=` (how often it checks) now adjustable in `settings.ini/settingsGUI()`
     - Can now check After Effects as well
     - Now uses `isFullscreen()` instead of hard coded values
-    - Adjusted `vscode()` values in `My Scripts.ahk` to accommodate this change
 - `right click premiere.ahk` now checks if `Ctrl` is being pressed.
     - Pressing `Ctrl + \` is what causes premiere to freak out and enter the weird state that I created `adobe fullscreen check.ahk` for. Adding checks in this script will dramatically decrease the need for that script.
 
