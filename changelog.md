@@ -12,6 +12,7 @@
 - Added `getScriptRelease()`
     - Allows `updateChecker()` to check for `beta\pre-release` updates.
         - Checking for these updates can be adjusted in `settings.ini` & `settingsGUI()` as well as on the update popup
+- `updateChecker()` tooltip will now simply say the user is up to date if they're running the latest version
 - Cut repeat code in `moveXorY()`
 - `errorLog()` now shows the `Installed` version of my scripts as well as the latest `main/beta` release
 
@@ -19,6 +20,8 @@
 - `Check for Updates` will now cycle between the 3 available options
 - Now has button to open `settings.ini` file
 - Clicking on the current `working dir` opens that directory in file explorer
+- Fix `autosave.ahk - tooltips` checkbox hover tooltip not updating when pressed
+- Add button to hard reset script
 - UI changes
 
 `audioDrag()`
@@ -62,3 +65,8 @@
 - Small UI adjustments
     - `H/M/S` now aligned horizontally
     - Checkboxes are more compact
+
+
+
+
+make updateChecker() tooltip change if version installed is the same as latest release, etc

@@ -1,4 +1,4 @@
-;v2.17.5
+;v2.17.6
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -136,7 +136,10 @@ updateChecker(MyRelease) {
         }
     if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
         WinWaitClose("ahk_class tooltips_class32")
-    toolCust("Current InstalledR Version = " MyRelease "`nCurrent Github Release = " version, 2000)
+    if MyRelease != version
+        toolCust("Current Installed Version = " MyRelease "`nCurrent Github Release = " version, 2000)
+    else
+        toolCust("You are currently up to date", 2000)
     ;checking to see if the user wishes to check for updates
     check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
     if check = "true"
@@ -310,8 +313,8 @@ updateChecker(MyRelease) {
                                     type := "exe"
                                 Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
                                 toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, 3000)
-                                run(downloadLocation)
-                                TrayTip("Your current scripts are being backed up!", "Backig Up...", 17)
+                                Run(downloadLocation)
+                                TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
                                 SetTimer(HideTrayTip, -5000)
                                 if DirExist(A_Temp "\" MyRelease)
                                     DirDelete(A_Temp "\" MyRelease, 1)
@@ -811,11 +814,13 @@ settingsGUI()
         if toggleVal = 1
             {
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+                toggleToggle.ToolTip := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
                 toolCust("``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
             }
         else
             {
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+                toggleToggle.ToolTip := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
                 toolCust("``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
             }
 
@@ -932,7 +937,10 @@ settingsGUI()
             Run(workDir)
     }
     
-    saveAndClose := settingsGUI.Add("Button", "W85 H30 xs+350 ys", "Save && Exit")
+    hardReset := settingsGUI.Add("Button", "W85 H30 xs+350 ys-35", "Hard Reset")
+    hardReset.OnEvent("Click", hardres)
+
+    saveAndClose := settingsGUI.Add("Button", "W85 H30 y+5", "Save && Exit")
     saveAndClose.OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
@@ -955,6 +963,22 @@ settingsGUI()
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         ;before finally closing
         settingsGUI.Destroy()
+    }
+
+    hardres(*)
+    {
+        ;check to see if the user wants to reset adobeTemp()
+        checkAdobe := adobeToggle.GetPos(,, &width)
+        if width = 0
+            IniWrite("", A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+        ;check to see if the user wants to reset firstCheck()
+        checkFirst := firstToggle.GetPos(,, &width)
+        if width = 0
+            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+        ;a check incase this settings gui was launched from firstCheck()
+        if WinExist("Scripts Release " version)
+            WinSetAlwaysOnTop(1, "Scripts Release " version)
+        Run(A_ScriptFullPath)
     }
 
     ;the below code allows for the tooltips on hover

@@ -33,7 +33,6 @@ youMouse(tenS, fiveS)
             toolCust("Failed to get information on the previously active window")
             errorLog(A_ThisFunc "()", "Failed to get information on previously active window", A_LineFile, A_LineNumber)
         }
-
     }
 }
 
