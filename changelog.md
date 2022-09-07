@@ -1,4 +1,4 @@
-# <> Release 2.5.2 - Fixes & Features
+# <> Release 2.5.x - 
 
 ## > My Scripts
 - Remove Em Dash from `Media_Play_Pause::`
