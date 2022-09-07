@@ -34,7 +34,7 @@ if !IsSet(forRelease) || forRelease = ""
         return
     }
 
-;localVer // v2.4.1
+;localVer // v2.4.2
 
 ;defining the informational gui
 ReplacerGui := Gui("", "Tomshi Hotkey Replacer for " forRelease)
@@ -135,7 +135,7 @@ replace(*)
         hotkeyKey := SubStr(checkstring, location + 9, endHotkey - location - 9) ;creating a substring of just the hotkey
 
         nameLocation := InStr(checkstring, ";", 1, location, -1) ;getting the beginning location of the hotkey tag
-        hotkeyName := SubStr(checkstring, nameLocation + 1, location - nameLocation - 1) ;getting the name of the hotkey tag
+        hotkeyName := SubStr(checkstring, nameLocation + 1, location - nameLocation - 2) ;getting the name of the hotkey tag
         IniWrite(hotkeyKey, A_ScriptDir "\hotkeys.ini", "Hotkeys", A_Index) ;writing the hotkey itself to an ini file
         IniWrite(hotkeyName, A_ScriptDir "\hotkeynames.ini", "Hotkey Names", A_Index) ;writing the hotkey tag name to an ini file
     }
