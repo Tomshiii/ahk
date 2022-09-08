@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5"
+version := "v2.5.1"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -44,14 +44,18 @@ global ms10 := minutes2 * 60000
 
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checklist.ini")
-    FileAppend("[Info]`nFirstPass=0`nSecondPass=0`nTwitchOverlay=0`nYoutubeOverlay=0`nTransitions=0`nSFX=0`nMusic=0`nPatreon=0`nIntro=0`ntime=0", A_ScriptDir "\checklist.ini")
-
+    FileAppend("[Info]`nFirstPass=0`nSecondPass=0`nTwitchOverlay=0`nYoutubeOverlay=0`nTransitions=0`nSFX=0`nMusic=0`nPatreon=0`nIntro=0`ntime=0`ntooltip=1", A_ScriptDir "\checklist.ini")
+globalCheckTool := 1
 ;grabbing the location dir of the users copy of tomshi's scripts. This will allow any deployed checklist scripts to automatically update
 if FileExist(A_MyDocuments "\tomshi\settings.ini")
     {
         location := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
         TraySetIcon(location "\Support Files\Icons\checklist.ico")
-
+        tooltipSettings := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip", "true")
+        if tooltipSettings = "true"
+            global globalCheckTool := 1
+        else
+            global globalCheckTool := 0
         localVer(location)
         {
             verString := FileRead(location)
@@ -82,9 +86,10 @@ if FileExist(A_MyDocuments "\tomshi\settings.ini")
                     PT := IniRead(A_ScriptDir "\checklist.ini", "Info", "Patreon", "0")
                     INTR := IniRead(A_ScriptDir "\checklist.ini", "Info", "Intro", "0")
                     TI := IniRead(A_ScriptDir "\checklist.ini", "Info", "time", "0")
+                    TOOL := IniRead(A_ScriptDir "\checklist.ini", "Info", "tooltip", "1")
                 }
                 FileDelete(A_ScriptDir "\checklist.ini")
-                FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI, A_ScriptDir "\checklist.ini")
+                FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI "`ntooltip=" TOOL, A_ScriptDir "\checklist.ini")
 
                 FileCopy(location "\checklist.ahk", A_ScriptFullPath, 1)
                 Reload()
@@ -142,10 +147,58 @@ SplitPath FullFileName, &name
 FileMenu := Menu()
 FileMenu.Add("&Open`tCtrl+O", fileOpenCheck)
 FileMenu.Add("E&xit", close)
+
+SettingsMenu := Menu()
+SettingsMenu.Add("&Tooltips", tooltips)
+settingsToolTrack := 0
+if IniRead(A_ScriptDir "\checklist.ini", "Info", "tooltip") = "1"
+    {
+        SettingsMenu.Check("&Tooltips")
+        if globalCheckTool != 0
+            global settingsToolTrack := 1
+        else
+            global settingsToolTrack := 0
+    }
+if globalCheckTool = 0
+    SettingsMenu.Disable("&Tooltips")
+else
+    SettingsMenu.Enable("&Tooltips")
+
+tooltips(*)
+{
+    if settingsToolTrack = 1
+        {
+            global settingsToolTrack := 0
+            SettingsMenu.UnCheck("&Tooltips")
+            IniWrite("0", A_ScriptDir "\checklist.ini", "Info", "tooltip")
+            restart()
+        }
+    else if settingsToolTrack = 0
+        {
+            global settingsToolTrack := 1
+            SettingsMenu.Check("&Tooltips")
+            IniWrite("1", A_ScriptDir "\checklist.ini", "Info", "tooltip")
+            restart()
+        }
+
+    restart()
+    {
+        forFile := Round(ElapsedTime / 3600, 3)
+        IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
+        newDate(&today)
+        FileAppend("\\ The checklist tooltip setting was changed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+        SetTimer(StopWatch, 0)
+        SetTimer(reminder, 0)
+        Reload
+    }
+}
+
 HelpMenu := Menu()
 HelpMenu.Add("&About", aboutBox)
+HelpMenu.Add("&Github", github)
 bar := MenuBar()
 bar.Add("&File", FileMenu)
+bar.Add("&Settings", SettingsMenu)
 bar.Add("&Help", HelpMenu)
 
 fileOpenCheck(*)
@@ -187,6 +240,13 @@ aboutBox(*)
         MyGui.Opt("-Disabled")
         aboutGUI.Destroy
     }
+}
+github(*)
+{
+    if !WinExist("Tomshiii/ahk")
+        Run("https://github.com/Tomshiii/ahk/tree/dev")
+    else
+        WinActivate("Tomshiii/ahk")
 }
 
 ;define GUI

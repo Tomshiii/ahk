@@ -1,4 +1,4 @@
-;v2.17.6
+;v2.17.7
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -76,10 +76,11 @@ generate(MyRelease)
     ADOBE_GB := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB", 45)
     ADOBE_FS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS", 5)
     AUTOMIN := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN", 5)
+    CHECKTOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip", "true")
     deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
     if FileExist(A_MyDocuments "\tomshi\settings.ini")
         FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ntooltip=" TOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /*
@@ -826,6 +827,43 @@ settingsGUI()
 
         if WinExist("autosave.ahk - AutoHotkey")
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
+    }
+
+    wording := ""
+    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip") = "true"
+        {
+            checkTool := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``checklist.ahk`` tooltips")
+            checkTool.ToolTip := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
+        }
+    else
+        {
+            checkTool := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``checklist.ahk`` tooltips")
+            checkTool.ToolTip := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
+        }
+    checkTool.OnEvent("Click", checkToggle)
+    checkToggle(*)
+    {
+        detect()
+        ToolTip("")
+        msgboxtext := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
+        checkToggleVal := checkTool.Value
+        if checkToggleVal = 1
+            {
+                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
+                checkTool.ToolTip := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
+                toolCust("``checklist.ahk`` will produce tooltips to remind you if you've paused the timer", 2000)
+                if WinExist("checklist.ahk - AutoHotkey")
+                    MsgBox(msgboxtext,, "48 4096")
+            }
+        else
+            {
+                ifDisabled := "`n`nThis setting will override the local setting for your current checklist"
+                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
+                checkTool.ToolTip := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
+                toolCust("``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer", 2000)
+                if WinExist("checklist.ahk - AutoHotkey")
+                    MsgBox(msgboxtext ifDisabled,, "48 4096")
+            }
     }
 
     ;EDIT BOXES

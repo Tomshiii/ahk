@@ -2,13 +2,18 @@
 
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
+- `settingsGUI()` now has an option to globally enable/disable reminder tooltips for `checklist.ahk`
 
 ## > Other Changes
-- `replaceChecklist.ahk` will now ignore backup folders
+`replaceChecklist.ahk`
+- Will now ignore backup folders
+- Fixed bug causing "Yes to All" to not function correctly
+- Fixed typo causing this script to create a different `\backup` folder than `checklist.ahk`
 
 `checklist.ahk`
 - Now uses `floorDecimal()` for the `Hour` text so it ticks over more accurately
 - Added menu bar to:
     - Open other checklists
+    - Toggle tooltips for the current project (if global `checklist.ahk` tooltips are enabled)
     - Display `About` informational GUI
-- Version display moved to `About` menu bar GUI
+- Version number moved to `About` menu bar GUI

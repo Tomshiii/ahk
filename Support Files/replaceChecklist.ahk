@@ -61,9 +61,9 @@ loop files, location "*.ahk", "R"
         if A_LoopFileName = "checklist.ahk"
             {
                 ;ignore backup folders
-                if InStr(A_LoopFileDir, "backups", 1)
-                    continue
                 if InStr(A_LoopFileDir, "backup", 1)
+                    continue
+                if InStr(A_LoopFileDir, "backups", 1) ;incase the user creates their own
                     continue
                 inUseVer := localVer(A_LoopFileFullPath)
                 ;now we check for problem versions
@@ -75,40 +75,41 @@ loop files, location "*.ahk", "R"
                 newIni(boxOrlist)
                 {
                     try {
-                        FP := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "FirstPass")
-                        SP := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "SecondPass")
-                        TW := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "TwitchOverlay")
-                        YT := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "YoutubeOverlay")
-                        TR := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Transitions")
-                        SFX := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "SFX")
-                        MU := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Music")
-                        PT := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Patreon")
-                        INTR := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Intro")
-                        TI := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "time")
+                        FP := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "FirstPass", "0")
+                        SP := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "SecondPass", "0")
+                        TW := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "TwitchOverlay", "0")
+                        YT := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "YoutubeOverlay", "0")
+                        TR := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Transitions", "0")
+                        SFX := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "SFX", "0")
+                        MU := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Music", "0")
+                        PT := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Patreon", "0")
+                        INTR := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "Intro", "0")
+                        TI := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "time", "0")
+                        TOOL := IniRead(A_LoopFileDir "\check" boxOrlist ".ini", "Info", "tooltip", "1")
                     }
-                    if !DirExist(A_LoopFileDir "\backups")
-                        DirCreate(A_LoopFileDir "\backups")
-                    if !FileExist(A_LoopFileDir "\backups\check" boxOrlist ".ini")
-                        FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini")
+                    if !DirExist(A_LoopFileDir "\backup")
+                        DirCreate(A_LoopFileDir "\backup")
+                    if !FileExist(A_LoopFileDir "\backup\check" boxOrlist ".ini")
+                        FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backup\check" boxOrlist ".ini")
                     else
                         {
                             static skip := 0
                             if skip = 1
                                 {
-                                    FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini", 1)
-                                    ExitApp()
+                                    FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backup\check" boxOrlist ".ini", 1)
+                                    return
                                 }
-                            A_Clipboard := A_LoopFileDir "\backups"
+                            A_Clipboard := A_LoopFileDir "\backup"
                             SetTimer(changebuttons, 10)
-                            check := MsgBox("Backup of checklist.ini already exists in;`n`n" A_LoopFileDir "\backups`n`nWould you like it replaced?`nThe dir has been copied to the clipboard", "Backup?", "3")
+                            check := MsgBox("Backup of checklist.ini already exists in;`n`n" A_LoopFileDir "\backup`n`nWould you like it replaced?`nThe dir has been copied to the clipboard", "Backup?", "3")
                             if check = "No"
                                 ExitApp()
                             if check = "Yes"
-                                FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini", 1)
+                                FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backup\check" boxOrlist ".ini", 1)
                             if check = "Cancel"
                                 {
                                     skip := 1
-                                    FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backups\check" boxOrlist ".ini", 1)
+                                    FileCopy(A_LoopFileDir "\check" boxOrlist ".ini", A_LoopFileDir "\backup\check" boxOrlist ".ini", 1)
                                     return
                                 }
 
@@ -124,7 +125,7 @@ loop files, location "*.ahk", "R"
                             }
                         }
                     FileDelete(A_LoopFileDir "\check" boxOrlist ".ini")
-                    FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI, A_LoopFileDir "\checklist.ini")
+                    FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI "`ntooltip=" TOOL, A_LoopFileDir "\checklist.ini")
                 }
                 if VerCompare(latestVer, "v2.3") >= 0 && VerCompare(inUseVer, "v2.3") < 0 ;this is to alert the user of a change I made to the accompanying .ini file in local version v2.3 (or Release v2.5). I changed it from `checkbox.ini` -> `checklist.ini`
                     newIni("box")
