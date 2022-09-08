@@ -60,6 +60,11 @@ loop files, location "*.ahk", "R"
     {
         if A_LoopFileName = "checklist.ahk"
             {
+                ;ignore backup folders
+                if InStr(A_LoopFileDir, "backups", 1)
+                    continue
+                if InStr(A_LoopFileDir, "backup", 1)
+                    continue
                 inUseVer := localVer(A_LoopFileFullPath)
                 ;now we check for problem versions
                 
