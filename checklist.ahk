@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.4.6"
+version := "v2.5"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -138,20 +138,72 @@ newDate(&today)
 FullFileName := A_ScriptDir
 SplitPath FullFileName, &name
 
-;start defining GUI
+;define menu bar
+FileMenu := Menu()
+FileMenu.Add("&Open`tCtrl+O", fileOpenCheck)
+FileMenu.Add("E&xit", close)
+HelpMenu := Menu()
+HelpMenu.Add("&About", aboutBox)
+bar := MenuBar()
+bar.Add("&File", FileMenu)
+bar.Add("&Help", HelpMenu)
+
+fileOpenCheck(*)
+{
+    backOneDir := InStr(A_ScriptDir, "\",,, -2)
+    fullDir := SubStr(A_ScriptDir, 1, backOneDir)
+    findCheck := FileSelect(3, fullDir, "Open New Checklist.ahk", "*.ahk")
+    if findCheck = ""
+        return
+    else
+        {
+            Run(findCheck)
+            ExitApp()
+        }
+}
+aboutBox(*)
+{
+    MyGui.GetPos(&x, &y, &width, &height)
+    aboutGUI := Gui("AlwaysOnTop", "About ©")
+    aboutGUI.Opt("+Owner" MyGui.Hwnd)
+    aboutGUI.Opt("+MinSize200x200")
+    aboutGUI.SetFont("S12")
+    aboutGUI.SetFont("W400")
+    aboutGUI.BackColor := 0xF0F0F0
+    MyGui.Opt("+Disabled")
+
+    aboutGUI.Add("Text", "W200 Center", "Tomshi's Checklist`r&&`rEditing Tracker Script")
+    verstionText := aboutGUI.Add("Text", "Center W200", "⚙ " version "`n© Tomshi " A_Year)
+    verstionText.SetFont("S10")
+
+
+    aboutGUI.OnEvent("Close", aboutClose)
+    aboutGUI.Show("AutoSize")
+    aboutGUI.GetPos(,, &aboutwidth, &aboutheight)
+    aboutGUI.Move(x - (aboutwidth/2) + (width/2), y - (aboutheight/2) + (height/2))
+
+    aboutClose(*)
+    {
+        MyGui.Opt("-Disabled")
+        aboutGUI.Destroy
+    }
+}
+
+;define GUI
 MyGui := Gui("AlwaysOnTop", "Editing Checklist - " name ".proj")
+MyGui.BackColor := 0xF0F0F0
 MyGui.SetFont("S12") ;Sets the size of the font
 MyGui.SetFont("W500") ;Sets the weight of the font (thickness)
 MyGui.Opt("+MinSize300x300")
+MyGui.MenuBar := bar
+noDefault := MyGui.Add("Button", "Default W0 H0", "_")
 
 ;defining title
-title := MyGui.Add("Text", "X8 w215 H23", "Checklist - " name)
+title := MyGui.Add("Text", "X8 Y2 w215 H23", "Checklist - " name)
 title.SetFont("bold")
-;show version
-ver := MyGui.Add("Text", "Right X+10", "⚙ " version)
 
 ;defining checkboxes
-FirstPass := MyGui.Add("CheckBox", "vFirstPass X8 Y35", "First Pass")
+FirstPass := MyGui.Add("CheckBox", "Section vFirstPass X8 Y+5", "First Pass")
 FirstPass.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "FirstPass")
 FirstPass.OnEvent("Click", logCheckbox)
 
@@ -183,14 +235,14 @@ Patreon := MyGui.Add("CheckBox", "vPatreon Y+4", "Patreon")
 Patreon.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Patreon")
 Patreon.OnEvent("Click", logCheckbox)
 
-Intro := MyGui.Add("CheckBox", "vIntro X+85 Y35", "Intro")
+Intro := MyGui.Add("CheckBox", "vIntro X+85 ys", "Intro")
 Intro.Value := IniRead(A_ScriptDir "\checklist.ini", "Info", "Intro")
 Intro.OnEvent("Click", logCheckbox)
 
 ;buttons
 startButton := MyGui.Add("Button","X110 Y180 w50 h30", "start") ;defining the start button
 startButton.OnEvent("Click", start) ;what happens when you click the start button
-stopButton := MyGui.Add("Button","X110 Y180 Y180 w0 h0", "stop") ;defining the stop button and making it invisible for now
+stopButton := MyGui.Add("Button","X110 Y180 w0 h0", "stop") ;defining the stop button and making it invisible for now
 stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
 group := MyGui.Add("GroupBox", "w137 h100 X167 Y120", "Time Adjust (min)")
 
@@ -375,5 +427,5 @@ close(*) {
 }
 
 MyGui.Show("AutoSize")
-MyGui.Move(-345, -177,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
+MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;finish defining GUI

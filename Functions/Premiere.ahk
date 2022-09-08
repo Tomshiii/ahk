@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.11
+;\\v2.14.12
 #Include General.ahk
 
 /* preset()
@@ -1411,7 +1411,7 @@ openChecklist()
     SplitPath path, &name
     if WinExist("Checklist - " name)
         {
-            WinMove(-371, -233,,, "Checklist - " name) ;move it back into place incase I've moved it
+            WinMove(-345, -191,,, "Checklist - " name) ;move it back into place incase I've moved it
             toolCust("You already have this checklist open")
             errorLog(A_ThisHotkey, "You already have this checklist open", A_LineFile, A_LineNumber)
             return
