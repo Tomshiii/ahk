@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.17.2
+;\\v2.17.3
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.1.6
@@ -207,7 +207,7 @@ errorLog(func, error, lineFile, lineNumber)
 
 ; ===========================================================================================================================================
 ;
-;		Other \\ Last updated: v2.16.12
+;		Other \\ Last updated: v2.17.3
 ;
 ; ===========================================================================================================================================
 /* getHotkeys()
@@ -256,4 +256,11 @@ getHotkeys(&first, &second)
    first := SubStr(getHotkey, 1, length - (length - andValue) - 2)
    second := SubStr(getHotkey, andValue + 2, length - andValue + 2)
    return
+}
+
+/*
+ `Floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
+ */
+ floorDecimal(num,dec) {
+    return RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 }

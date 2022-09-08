@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.4.5"
+version := "v2.4.6"
 
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
@@ -26,6 +26,13 @@ toolCust(message, timeout)
     {
         ToolTip("")
     }
+}
+
+/*
+ `floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
+ */
+floorDecimal(num,dec) {
+    return RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 }
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THE REMINDER TIMER TO WAIT HERE
@@ -196,7 +203,7 @@ plusButton.OnEvent("Click", plusFive) ;what happens when you click the + button
 
 ;timer text
 global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time") ;gets the starting timecode value by reading the ini file
-startHoursRounded := Round(startValue/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
+startHoursRounded := floorDecimal(startValue/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
 startMinutesRounded := Floor(((startValue/3600) - floor(startValue/3600))*60) ;getting the minutes past the hour
 
 timerHoursText := MyGui.Add("Text", "X10 Y+25 W25", "H: ") ;defining the hours text
@@ -246,7 +253,7 @@ StopWatch() {
                 {
                     global StartTickCount += 1000
                     global ElapsedTime += 1
-                    displayHours := Round(ElapsedTime/3600, 3)
+                    displayHours := floorDecimal(ElapsedTime/3600, 3)
                     timerText.Text := displayHours
                     displayMinutes := Floor(((ElapsedTime/3600) - floor(ElapsedTime/3600))*60)
                     timerMinutes.Text := displayMinutes
