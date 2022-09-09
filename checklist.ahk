@@ -3,37 +3,13 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.1"
-
+version := "v2.5.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
 ;THIS SCRIPT --->>
 ;isn't designed to be launched from this folder specifically - it gets moved to the current project folder through a few other Streamdeck AHK scripts
-
 ;DO NOT RELOAD THIS SCRIPT WITHOUT FIRST STOPPING THE TIMER - PRESSING THE `X` IS FINE BUT RELOADING FROM THE FILE WILL CAUSE IT TO CLOSE WITHOUT WRITING THE ELAPSED TIME
-
-/* toolCust()
-  create a tooltip with any message
-  * @param message is what you want the tooltip to say
-  * @param timeout is how many ms you want the tooltip to last
-  */
-toolCust(message, timeout)
-{
-    ToolTip(message)
-    SetTimer(timeouttime, - timeout)
-    timeouttime()
-    {
-        ToolTip("")
-    }
-}
-
-/*
- `floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
- */
-floorDecimal(num,dec) {
-    return RegExReplace(num,"(?<=\.\d{" dec "}).*$")
-}
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THE REMINDER TIMER TO WAIT HERE
 minutes := 1
@@ -59,14 +35,13 @@ if FileExist(A_MyDocuments "\tomshi\settings.ini")
         localVer(location)
         {
             verString := FileRead(location)
-            foundpos := InStr(verString, 'v2',,,2)
-            endpos := InStr(verString, ';', , foundpos, 1)
-            end := endpos - foundpos - 5
+            foundpos := InStr(verString, 'v2',,, 2)
+            endpos := InStr(verString, '"', , foundpos, 1)
+            end := endpos - foundpos
             version := SubStr(verString, foundpos, end)
             return version
         }
         latestVer := localVer(location "\checklist.ahk")
-
         if VerCompare(latestVer, version) > 0
             {
                 if !DirExist(A_ScriptDir "\backup")
@@ -105,49 +80,18 @@ if getTime = 0
 if not FileExist(A_ScriptDir "\checklist_logs.txt")
     FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{ " today " - " timeForLog "`n", A_ScriptDir "\checklist_logs.txt")
 
-;a function to cut repeat code - will check the last date in the logs and then break up the group if the last date is different from today
-newDate(&today)
-{
-    ;getting the last date present in the log file
-    getLastDate(&today)
-    {
-        ;todays date
-        today := A_YYYY "_" A_MM "_" A_DD
-        read := FileRead(A_ScriptDir "\checklist_logs.txt")
-        if InStr(read, A_YYYY "_",, -1)
-            foundpos := InStr(read, A_YYYY "_",, -1)
-        else ;this block is just incase you open a checklist in a new year
-            {
-                lastYear := A_YYYY - 1
-                if InStr(read, lastYear "_",, -1)
-                    foundpos := InStr(read, lastYear "_",, -1)
-                else ;if the last logged years is a long time ago, we will just default back to this year to stop errors
-                    {
-                        lastdate := A_YYYY
-                        return lastdate
-                    }
-
-            }
-        endpos := InStr(read, ",",, foundpos)
-        end := endpos - foundpos
-        lastdate := SubStr(read, foundpos, end)
-        return lastdate
-    }
-    lastdate := getLastDate(&today)
-    if today != lastdate && lastdate != ""
-        FileAppend("}`n`n{ " today " - " timeForLog "`n",  A_ScriptDir "\checklist_logs.txt")
-}
 newDate(&today)
 
 ;getting dir name for the title
 FullFileName := A_ScriptDir
 SplitPath FullFileName, &name
 
-;define menu bar
+;define menu
+;file menus
 FileMenu := Menu()
 FileMenu.Add("&Open`tCtrl+O", fileOpenCheck)
 FileMenu.Add("E&xit", close)
-
+;settings menu
 SettingsMenu := Menu()
 SettingsMenu.Add("&Tooltips", tooltips)
 settingsToolTrack := 0
@@ -163,91 +107,19 @@ if globalCheckTool = 0
     SettingsMenu.Disable("&Tooltips")
 else
     SettingsMenu.Enable("&Tooltips")
-
-tooltips(*)
-{
-    if settingsToolTrack = 1
-        {
-            global settingsToolTrack := 0
-            SettingsMenu.UnCheck("&Tooltips")
-            IniWrite("0", A_ScriptDir "\checklist.ini", "Info", "tooltip")
-            restart()
-        }
-    else if settingsToolTrack = 0
-        {
-            global settingsToolTrack := 1
-            SettingsMenu.Check("&Tooltips")
-            IniWrite("1", A_ScriptDir "\checklist.ini", "Info", "tooltip")
-            restart()
-        }
-
-    restart()
-    {
-        forFile := Round(ElapsedTime / 3600, 3)
-        IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
-        newDate(&today)
-        FileAppend("\\ The checklist tooltip setting was changed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
-        SetTimer(StopWatch, 0)
-        SetTimer(reminder, 0)
-        Reload
-    }
-}
-
+;help menu
 HelpMenu := Menu()
 HelpMenu.Add("&About", aboutBox)
 HelpMenu.Add("&Github", github)
+updateSub := Menu()
+HelpMenu.Add("&Check for Update", updateSub)
+updateSub.Add("&Stable", updateCheck)
+updateSub.Add("&Beta", updateCheck)
+;define the entire menubar
 bar := MenuBar()
 bar.Add("&File", FileMenu)
 bar.Add("&Settings", SettingsMenu)
 bar.Add("&Help", HelpMenu)
-
-fileOpenCheck(*)
-{
-    backOneDir := InStr(A_ScriptDir, "\",,, -2)
-    fullDir := SubStr(A_ScriptDir, 1, backOneDir)
-    findCheck := FileSelect(3, fullDir, "Open New Checklist.ahk", "*.ahk")
-    if findCheck = ""
-        return
-    else
-        {
-            Run(findCheck)
-            ExitApp()
-        }
-}
-aboutBox(*)
-{
-    MyGui.GetPos(&x, &y, &width, &height)
-    aboutGUI := Gui("AlwaysOnTop", "About ©")
-    aboutGUI.Opt("+Owner" MyGui.Hwnd)
-    aboutGUI.Opt("+MinSize200x200")
-    aboutGUI.SetFont("S12")
-    aboutGUI.SetFont("W400")
-    aboutGUI.BackColor := 0xF0F0F0
-    MyGui.Opt("+Disabled")
-
-    aboutGUI.Add("Text", "W200 Center", "Tomshi's Checklist`r&&`rEditing Tracker Script")
-    verstionText := aboutGUI.Add("Text", "Center W200", "⚙ " version "`n© Tomshi " A_Year)
-    verstionText.SetFont("S10")
-
-
-    aboutGUI.OnEvent("Close", aboutClose)
-    aboutGUI.Show("AutoSize")
-    aboutGUI.GetPos(,, &aboutwidth, &aboutheight)
-    aboutGUI.Move(x - (aboutwidth/2) + (width/2), y - (aboutheight/2) + (height/2))
-
-    aboutClose(*)
-    {
-        MyGui.Opt("-Disabled")
-        aboutGUI.Destroy
-    }
-}
-github(*)
-{
-    if !WinExist("Tomshiii/ahk")
-        Run("https://github.com/Tomshiii/ahk/tree/dev")
-    else
-        WinActivate("Tomshiii/ahk")
-}
 
 ;define GUI
 MyGui := Gui("AlwaysOnTop", "Editing Checklist - " name ".proj")
@@ -344,6 +216,24 @@ SetTimer(reminder, -ms)
 ;timer
 global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
 global ElapsedTime := 0 + startValue ;a starting value for the timer
+
+
+MyGui.OnEvent("Close", close) ;what happens when you close the GUI
+MyGui.Show("AutoSize")
+MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
+;finish defining GUI
+
+
+; ===========================================================================================================
+
+;
+
+;                           CHECKLIST FUNCTIONS
+
+;
+
+; ===========================================================================================================
+
 start(*) {
     startButton.Move(,, 0, 0) ;hiding the start button
     stopButton.Move(,, 50, 30) ;showing the stop button
@@ -436,8 +326,13 @@ plusFive(*) {
 reminder() {
     if WinExist("ahk_exe Adobe Premiere Pro.exe")
         {
-            toolCust("Don't forget you have the timer stopped!", "2000")
-            SetTimer(, -ms)
+            if settingsToolTrack = 1
+                {
+                    toolCust("Don't forget you have the timer stopped!", "2000")
+                    SetTimer(, -ms)
+                }
+            else if settingsToolTrack = 0
+                SetTimer(, 0)
         }
     else
         SetTimer(, 0)
@@ -473,8 +368,7 @@ logCheckbox(*) {
                 }
         }
 }
-
-MyGui.OnEvent("Close", close) ;what happens when you close the GUI
+;what happens when you close the checklist
 close(*) {
     forFile := Round(ElapsedTime / 3600, 3)
     IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
@@ -486,6 +380,188 @@ close(*) {
     return
 }
 
-MyGui.Show("AutoSize")
-MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
-;finish defining GUI
+; ===========================================================================================================
+
+;
+
+;                           OTHER FUNCTIONS
+
+;
+
+; ===========================================================================================================
+
+/* toolCust()
+  create a tooltip with any message
+  @param message is what you want the tooltip to say
+  @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
+  @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
+  */
+toolCust(message, timeout := 1000, find := "")
+{
+    if find != 1
+        messageFind := ""
+    else
+        messageFind := "Couldn't find "
+    ToolTip(messageFind message)
+    SetTimer(timeouttime, - timeout)
+    timeouttime()
+    {
+        ToolTip("")
+    }
+}
+
+/*
+ `floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
+ */
+floorDecimal(num,dec) {
+    return RegExReplace(num,"(?<=\.\d{" dec "}).*$")
+}
+
+/*
+ A function to cut repeat code - will check the last date in the logs and then break up the group if the last date is different from today
+ */
+newDate(&today)
+{
+    ;getting the last date present in the log file
+    getLastDate(&today)
+    {
+        ;todays date
+        today := A_YYYY "_" A_MM "_" A_DD
+        read := FileRead(A_ScriptDir "\checklist_logs.txt")
+        if InStr(read, A_YYYY "_",, -1)
+            foundpos := InStr(read, A_YYYY "_",, -1)
+        else ;this block is just incase you open a checklist in a new year
+            {
+                lastYear := A_YYYY - 1
+                if InStr(read, lastYear "_",, -1)
+                    foundpos := InStr(read, lastYear "_",, -1)
+                else ;if the last logged years is a long time ago, we will just default back to this year to stop errors
+                    {
+                        lastdate := A_YYYY
+                        return lastdate
+                    }
+
+            }
+        endpos := InStr(read, ",",, foundpos)
+        end := endpos - foundpos
+        lastdate := SubStr(read, foundpos, end)
+        return lastdate
+    }
+    lastdate := getLastDate(&today)
+    if today != lastdate && lastdate != ""
+        FileAppend("}`n`n{ " today " - " timeForLog "`n",  A_ScriptDir "\checklist_logs.txt")
+}
+
+/*
+ A function for the menubar to work correctly
+ */
+tooltips(*)
+{
+    if settingsToolTrack = 1
+        {
+            global settingsToolTrack := 0
+            SettingsMenu.UnCheck("&Tooltips")
+            IniWrite("0", A_ScriptDir "\checklist.ini", "Info", "tooltip")
+            restart()
+        }
+    else if settingsToolTrack = 0
+        {
+            global settingsToolTrack := 1
+            SettingsMenu.Check("&Tooltips")
+            IniWrite("1", A_ScriptDir "\checklist.ini", "Info", "tooltip")
+            restart()
+        }
+
+    restart()
+    {
+        forFile := Round(ElapsedTime / 3600, 3)
+        IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
+        newDate(&today)
+        FileAppend("\\ The checklist tooltip setting was changed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+        SetTimer(StopWatch, 0)
+        SetTimer(reminder, 0)
+        Reload
+    }
+}
+
+fileOpenCheck(*)
+{
+    backOneDir := InStr(A_ScriptDir, "\",,, -2)
+    fullDir := SubStr(A_ScriptDir, 1, backOneDir)
+    findCheck := FileSelect(3, fullDir, "Open New Checklist.ahk", "*.ahk")
+    if findCheck = ""
+        return
+    else
+        {
+            Run(findCheck)
+            ExitApp()
+        }
+}
+aboutBox(*)
+{
+    MyGui.GetPos(&x, &y, &width, &height)
+    aboutGUI := Gui("AlwaysOnTop", "About ©")
+    aboutGUI.Opt("+Owner" MyGui.Hwnd)
+    aboutGUI.Opt("+MinSize200x200")
+    aboutGUI.SetFont("S12")
+    aboutGUI.SetFont("W400")
+    aboutGUI.BackColor := 0xF0F0F0
+    MyGui.Opt("+Disabled")
+
+    aboutGUI.Add("Text", "W200 Center", "Tomshi's Checklist`r&&`rEditing Tracker Script")
+    verstionText := aboutGUI.Add("Text", "Center W200", "⚙ " version "`n© Tomshi " A_Year)
+    verstionText.SetFont("S10")
+
+
+    aboutGUI.OnEvent("Close", aboutClose)
+    aboutGUI.Show("AutoSize")
+    aboutGUI.GetPos(,, &aboutwidth, &aboutheight)
+    aboutGUI.Move(x - (aboutwidth/2) + (width/2), y - (aboutheight/2) + (height/2))
+
+    aboutClose(*)
+    {
+        MyGui.Opt("-Disabled")
+        aboutGUI.Destroy
+    }
+}
+github(*)
+{
+    if !WinExist("Tomshiii/ahk")
+        Run("https://github.com/Tomshiii/ahk/tree/dev")
+    else
+        WinActivate("Tomshiii/ahk")
+}
+updateCheck(Item, *)
+{
+    tree := ""
+    if Item = "&Stable"
+        tree := "main"
+    if Item = "&Beta"
+        tree := "dev"
+    try {
+        main := ComObject("WinHttp.WinHttpRequest.5.1")
+        main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/" tree "/checklist.ahk")
+        main.Send()
+        main.WaitForResponse()
+        string := main.ResponseText
+    }  catch as e {
+        toolCust("Couldn't get version info`nYou may not be connected to the internet")
+        return
+    }
+    if !IsSet(string)
+        return
+    startPos := InStr(string, "version := ", 1, 1, 1)
+    endpos := InStr(string, '"',, startPos, 2)
+    latestVer := SubStr(string, startpos + 12, endpos - (startPos + 12))
+    if VerCompare(latestVer, version) > 0
+        {
+            if WinExist("ahk/checklist.ahk at " tree " · Tomshiii/ahk")
+                WinActive("ahk/checklist.ahk at " tree " · Tomshiii/ahk")
+            else
+                Run("https://github.com/Tomshiii/ahk/blob/" tree "/checklist.ahk")
+        }
+    else if VerCompare(version, latestVer) > 0
+        toolCust("You are on a more up to date version!")
+    else
+        toolCust("You are up to date!")
+}

@@ -829,7 +829,6 @@ settingsGUI()
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
     }
 
-    wording := ""
     if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip") = "true"
         {
             checkTool := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``checklist.ahk`` tooltips")
