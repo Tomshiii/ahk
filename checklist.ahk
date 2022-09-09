@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.2.1"
+version := "v2.5.2.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -574,6 +574,6 @@ hoursToday(*)
     endpos := InStr(readLog, "-",, findHours, 1)
     startHours := SubStr(readLog, findHours + 22, (endpos - 1) - (findHours + 22))
 
-    currentHours := Round(ElapsedTime / 3600, 3)
-    MsgBox("Hours worked today: " currentHours - startHours)
+    currentHours := floorDecimal(ElapsedTime / 3600, 3)
+    MsgBox("Hours worked today: " floorDecimal(currentHours - startHours, 3))
 }
