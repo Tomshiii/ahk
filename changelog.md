@@ -18,5 +18,6 @@
     - Toggle tooltips for the current project (if global `checklist.ahk` tooltips are enabled)
     - Display `About` informational GUI
     - Open the github repo
+    - Show hours worked today
     - Check for updates on both the stable and beta paths
 - Version number moved to `About` menu bar GUI

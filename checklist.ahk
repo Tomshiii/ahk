@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.2"
+version := "v2.5.2.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -112,6 +112,7 @@ HelpMenu := Menu()
 HelpMenu.Add("&About", aboutBox)
 HelpMenu.Add("&Github", github)
 updateSub := Menu()
+HelpMenu.Add("&Hours today", hoursToday)
 HelpMenu.Add("&Check for Update", updateSub)
 updateSub.Add("&Stable", updateCheck)
 updateSub.Add("&Beta", updateCheck)
@@ -564,4 +565,15 @@ updateCheck(Item, *)
         toolCust("You are on a more up to date version!")
     else
         toolCust("You are up to date!")
+}
+hoursToday(*)
+{
+    readLog := FileRead(A_ScriptDir "\checklist_logs.txt")
+    findToday := InStr(readLog, A_YYYY "_" A_MM "_" A_DD,, 1, 1)
+    findHours := InStr(readLog,  "Hours after opening =", 1, findToday, 1)
+    endpos := InStr(readLog, "-",, findHours, 1)
+    startHours := SubStr(readLog, findHours + 22, (endpos - 1) - (findHours + 22))
+
+    currentHours := Round(ElapsedTime / 3600, 3)
+    MsgBox("Hours worked today: " currentHours - startHours)
 }
