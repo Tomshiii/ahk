@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.19
+;\\v2.12.20
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -304,6 +304,7 @@ getTitle(&title)
 	} catch as e {
 		toolCust(A_ThisFunc "() couldn't determine the active window")
 		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
+        blockOff()
 		Exit()
 	}
 }
@@ -333,6 +334,7 @@ isFullscreen(&title, &full, window := false)
 	} catch as e {
 		toolCust(A_ThisFunc "() couldn't determine the active window")
 		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
+        blockOff()
 		Exit
 	}
     return

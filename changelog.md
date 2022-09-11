@@ -3,6 +3,7 @@
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
 - `settingsGUI()` now has an option to globally enable/disable reminder tooltips for `checklist.ahk`
+- Add `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
 
 ## > Other Changes
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
