@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.2.2"
+version := "v2.5.2.3"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -487,6 +487,7 @@ tooltips(*)
 
 fileOpenCheck(*)
 {
+    stop()
     backOneDir := InStr(A_ScriptDir, "\",,, -2)
     fullDir := SubStr(A_ScriptDir, 1, backOneDir)
     findCheck := FileSelect(3, fullDir, "Open New Checklist.ahk", "*.ahk")

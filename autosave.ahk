@@ -7,8 +7,8 @@ InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default bac
 #WinActivateForce
 
 ;right clicking on the tray icon for this script will offer you a button to show you how much time is remaining until the next save attempt
-A_TrayMenu.Add()
-A_TrayMenu.Add("Time Remaining", timeRemain)
+A_TrayMenu.Insert("7&")
+A_TrayMenu.Insert("8&", "Time Remaining", timeRemain)
 timeRemain(*)
 {
     if timer = false
@@ -55,7 +55,7 @@ tooltips := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
 ;is the timer running?
 timer := false
 
-A_TrayMenu.Add("Tooltip Countdown", tooltipCount)
+A_TrayMenu.Insert("9&", "Tooltip Countdown", tooltipCount)
 if tooltips = "true"
     A_TrayMenu.Check("Tooltip Countdown")
 if tooltips = "false"

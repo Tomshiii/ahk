@@ -1,4 +1,4 @@
-;v2.17.7
+;v2.17.8
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -666,9 +666,9 @@ locationReplace()
 trayMen()
 {
     check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-    A_TrayMenu.Add() ;adds a divider bar
-    A_TrayMenu.Add("Settings", settings)
-    A_TrayMenu.Add("Check for Updates", checkUp)
+    A_TrayMenu.Insert("7&") ;adds a divider bar
+    A_TrayMenu.Insert("8&", "Settings", settings)
+    A_TrayMenu.Insert("9&", "Check for Updates", checkUp)
     if check =  "true"
         A_TrayMenu.Check("Check for Updates")
     else

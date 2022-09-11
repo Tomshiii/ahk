@@ -5,6 +5,8 @@
 - `settingsGUI()` now has an option to globally enable/disable reminder tooltips for `checklist.ahk`
 
 ## > Other Changes
+- Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
+
 `replaceChecklist.ahk`
 - Will now ignore backup folders
 - Fixed bug causing "Yes to All" to not function correctly

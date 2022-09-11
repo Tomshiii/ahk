@@ -31,7 +31,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 
 ## What to do:
 1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0beta.7 or above](https://www.autohotkey.com/v2/).
-2. Extract AHK v2.0 beta, run `install.cmd` and then select `install for all users`
+2. Extract AHK v2.0 beta, run the installer and then select `install for all users`
 3. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
    - [Notepad++](https://notepad-plus-plus.org/downloads/)
      - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
@@ -41,7 +41,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 4. Download these scripts by either checking out the latest [release](https://github.com/tomshiii/ahk/releases/latest) or by cloning the repo (in either VSCode or your git manager of choice), then save them wherever you wish (I use "`E:\Github\ahk\`" if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, my scripts should automatically adjust these variables when you run `My Scripts.ahk` but if you wish to do a sanity check, check the `location :=` variable in [`KSA.ahk`](https://github.com/Tomshiii/ahk/tree/main/KSA) and if it lines up with your directory everything should work as intended.
     ###### **_Although do note; some [`Streamdeck AHK`](https://github.com/Tomshiii/ahk/tree/main/Streamdeck%20AHK) scripts still have hard coded dir's as they are intended for my workflow and may error out if you try to run them from a different location._**
 5. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/KSA) to set your own keyboard shortcuts for programs as well as define some coordinates for a few remaining imagesearches that cannot use variables for various reason, these `KSA` values are used to allow for easy adjustments instead of needing to dig through scripts!
-6. Edit, then run any of the .ahk files to then use to your liking!
+6. Edit, then run any of the .ahk files to use to your liking!
 7. Adjust the `PC Startup.ahk` file ***or*** create shortcuts to individual scripts in your startup folder (which can be accessed by pressed `win + r` and then typing in `shell:startup`)
 - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
 
