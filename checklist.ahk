@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.2.3"
+version := "v2.5.2.4"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -411,6 +411,53 @@ toolCust(message, timeout := 1000, find := "")
     }
 }
 
+/* openChecklist()
+ This function will find the path name of the current Premiere/After Effects project. This is then used when clicking "File" in the checklist menu to check if the current open project is the same project as the script you have open
+ */
+openChecklist()
+{
+    try {
+        if WinExist("Adobe Premiere Pro")
+            {
+                Name := WinGetTitle("Adobe Premiere Pro")
+                titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                if titlecheck = ""
+                    {
+                        toolCust("``titlecheck`` variable wasn't assigned a value")
+                        return 0
+                    }
+            }
+        else if WinExist("Adobe After Effects")
+            {
+                Name := WinGetTitle("Adobe After Effects")
+                titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+                if titlecheck = ""
+                    {
+                        toolCust("``afterFXTitle`` variable wasn't assigned a value")
+                        return 0
+                    }
+            }
+        dashLocation := InStr(Name, "-")
+        length := StrLen(Name) - dashLocation
+    }
+    if not IsSet(titlecheck) || IsSet(afterFXTitle)
+        {
+            toolCust("``titlecheck/afterFXTitle`` variable wasn't assigned a value")
+            return 0
+        }
+    if not titlecheck
+        {
+            toolCust("You're on a part of Premiere that won't contain the project path", 2000)
+            return 0
+        }
+    entirePath := SubStr(name, dashLocation + "2", length)
+    pathlength := StrLen(entirePath)
+    finalSlash := InStr(entirePath, "\",, -1)
+    directory := SubStr(entirePath, 1, finalSlash - "1")
+    ;noproj := SplitPath(directory,, &dir)
+    return directory
+}
+
 /*
  `floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
  */
@@ -488,6 +535,15 @@ tooltips(*)
 fileOpenCheck(*)
 {
     stop()
+    if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
+        {
+            currentWorkPath := openChecklist()
+            if currentWorkPath != A_ScriptDir && FileExist(currentWorkPath "\checklist.ahk") && currentWorkPath != 0
+                {
+                    Run(currentWorkPath "\checklist.ahk")
+                    ExitApp()
+                }
+        }
     backOneDir := InStr(A_ScriptDir, "\",,, -2)
     fullDir := SubStr(A_ScriptDir, 1, backOneDir)
     findCheck := FileSelect(3, fullDir, "Open New Checklist.ahk", "*.ahk")

@@ -7,6 +7,7 @@
 
 ## > Other Changes
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
+- Moved `getPremName()` & `getAEName()` from `autosave.ahk` -> `Windows.ahk` so that `checklist.ahk` can use them
 
 `replaceChecklist.ahk`
 - Will now ignore backup folders
