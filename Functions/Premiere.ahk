@@ -761,7 +761,7 @@ audioDrag(sfxName)
                 MouseGetPos(&colourX, &colourY)
                 colour := PixelGetColor(colourX, colourY)
                 if (
-                     colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD4F7EA || colour = 0x1B8D64 || colour = 0xFFFFFF || colour = 0xD0E1DB || colour = 0x1D7E5B || colour = 0x1FA373 || colour = 0x1D986C || colour = 0x3DFFE4 || colour = 0x23AB83 || colour = 0x248562 || colour = 0x1FA072 || colour = 0x1E7F5C || colour = 0x3A9B78 || colour = 0x2B8C69 || colour = 0x298A67 || colour = 0x2A8D87 || colour = 0x2A8B68 || colour = 0x1F805D || colour = 0x258663 || colour = 0x457855 || colour = 0x20815E || colour = 0x47A582 || colour = 0x4AAB88 || colour = 0x21825F || colour = 0x268764 ||
+                     colour = 0x156B4C || colour = 0x29D698 || colour = 0x5C67F9 || colour = 0xFEFEFE || colour = 0xFDFDFD || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD4F7EA || colour = 0x1B8D64 || colour = 0xFFFFFF || colour = 0xD0E1DB || colour = 0x1D7E5B || colour = 0x1FA373 || colour = 0x1D986C || colour = 0x3DFFE4 || colour = 0x23AB83 || colour = 0x248562 || colour = 0x1FA072 || colour = 0x1E7F5C || colour = 0x3A9B78 || colour = 0x2B8C69 || colour = 0x298A67 || colour = 0x2A8D87 || colour = 0x2A8B68 || colour = 0x1F805D || colour = 0x258663 || colour = 0x457855 || colour = 0x20815E || colour = 0x47A582 || colour = 0x4AAB88 || colour = 0x21825F || colour = 0x268764 || colour = 0x44A582 ||
                      ;there needs to be a trailing || for any block that isn't the final
                     
                     colour = 0xEEE1E1 || colour = 0xE40000 || ;colours for the red box
