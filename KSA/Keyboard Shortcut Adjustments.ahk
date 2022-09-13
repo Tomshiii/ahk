@@ -1,6 +1,7 @@
 ;Adjust the location of your scripts by changing the value below. This folder should be the root folder and with NO trailing backslash
 
 location := "E:\Github\ahk"
+commLocation := "E:\comms" ;you will need to change this manually, locationReplace() will not touch it
 
 ;[Premiere]
 

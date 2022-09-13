@@ -4,10 +4,13 @@
 - Added `floorDecimal()` to round down after a determined amount of decimal places
 - `settingsGUI()` now has an option to globally enable/disable reminder tooltips for `checklist.ahk`
 - Add `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
+- More colours for `audioDrag()`
 
 ## > Other Changes
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
 - Moved `getPremName()` & `getAEName()` from `autosave.ahk` -> `Windows.ahk` so that `checklist.ahk` can use them
+- Added `commLocation` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own variable
+    - `QMK Keyboard.ahk` `h::` now attempts to open `commLocation` if there is no Adobe project open
 
 `replaceChecklist.ahk`
 - Will now ignore backup folders

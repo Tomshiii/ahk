@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.5
+;\\v2.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5.2.1
@@ -488,6 +488,14 @@ h:: ;opens the directory for the current premiere project
 			WinWait("ahk_class CabinetWClass", pathName,, "Adobe")
 			WinActivate("ahk_class CabinetWClass", pathName, "Adobe")
 		}
+	else if DirExist(commLocation)
+		{
+			toolCust("A Premiere/AE isn't open, opening the comms folder")
+			Run(commLocation)
+			WinWait("ahk_class CabinetWClass", "comms")
+			WinActivate("ahk_class CabinetWClass", "comms")
+			return
+		}
 	else
 		{
 			toolCust("A Premiere/AE isn't open")
@@ -550,7 +558,9 @@ End:: ;search for checklist file
 		openChecklist()
 	else
 		{
-			dir := FileSelect("D2", "E:\comms", "Pick the Edit Directory")
+			if !DirExist(commLocation)
+				commLocation := "C:\"
+			dir := FileSelect("D2", commLocation, "Pick the Edit Directory")
 			if dir = ""
 				return
 			SplitPath dir, &name
