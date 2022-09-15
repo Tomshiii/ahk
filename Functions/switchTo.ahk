@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.6
+;\\v2.13
 #Include General.ahk
 
 /*
@@ -118,7 +118,7 @@ switchToDisc()
     }
     if not WinExist("ahk_exe Discord.exe")
         {
-            Run("C:\Users\Tom\AppData\Local\Discord\Update.exe --processStart Discord.exe")
+            Run("C:\Users\" A_UserName "\AppData\Local\Discord\Update.exe --processStart Discord.exe")
             WinWait("ahk_exe Discord.exe")
             if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
                 WinRestore() ;winrestore will unmaximise it
@@ -452,9 +452,19 @@ musicGUI()
         MyGui.Destroy()
     }
     MUSICFOLDER(*) {
-        Run("S:\Program Files\User\Music\")
-        WinWait("Music")
-        WinActivate("Music")
+        musicDir := "S:\Programs Files\User\Music\"
+        if DirExist(musicDir)
+            {
+                Run(musicDir)
+                WinWait("Music")
+                WinActivate("Music")
+            }
+        else
+            {
+                scriptPath :=  A_LineFile ;this is taking the path given from A_LineFile
+                scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
+                MsgBox("The requested music folder doesn't exist`n`nWritten dir: " musicDir "`nScript: " name "`nLine: " A_LineNumber-11)
+            }
         MyGui.Destroy()
     }
 }
@@ -645,6 +655,12 @@ activeScripts(MyRelease)
         premFull := MyGui.Add("CheckBox", "Checked0", "adobe fullscreen check.ahk")
     premFull.ToolTip := "Clicking this checkbox will open/close the script"
     premFull.OnEvent("Click", premFullClick)
+    if WinExist("gameCheck.ahk - AutoHotkey")
+        gameCheck := MyGui.Add("CheckBox", "Checked1", "gameCheck.ahk")
+    else
+        gameCheck := MyGui.Add("CheckBox", "Checked0", "gameCheck.ahk")
+    gameCheck.ToolTip := "Clicking this checkbox will open/close the script"
+    gameCheck.OnEvent("Click", gameCheckClick)
     if WinExist("QMK Keyboard.ahk - AutoHotkey")
         qmk := MyGui.Add("CheckBox", "Checked1", "QMK Keyboard.ahk")
     else
@@ -660,12 +676,13 @@ activeScripts(MyRelease)
 
     ;images
     myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Support Files\Icons\myscript.png")
-    altImage := MyGui.Add("Picture", "w20 h-1 X275 Y57", A_WorkingDir "\Support Files\Icons\error.ico")
-    autodisImage := MyGui.Add("Picture", "w20 h-1 X275 Y81", A_WorkingDir "\Support Files\Icons\dismiss.ico")
-    autosaveImage := MyGui.Add("Picture", "w20 h-1 X275 Y105", A_WorkingDir "\Support Files\Icons\save.ico")
-    premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y130", A_WorkingDir "\Support Files\Icons\fullscreen.ico")
-    qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y154", A_WorkingDir "\Support Files\Icons\keyboard.ico")
-    resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y177", A_WorkingDir "\Support Files\Icons\resolve.png")
+    altImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\error.ico")
+    autodisImage := MyGui.Add("Picture", "w20 h-1 X275 Y+2", A_WorkingDir "\Support Files\Icons\dismiss.ico")
+    autosaveImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\save.ico")
+    premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\fullscreen.ico")
+    gameImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\game.png")
+    qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\keyboard.ico")
+    resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y+2", A_WorkingDir "\Support Files\Icons\resolve.png")
 
     ;close button
     closeButton := MyGui.Add("Button", "X245", "Close")
@@ -704,7 +721,7 @@ activeScripts(MyRelease)
         detect()
         qmkVal := qmk.Value
         if qmkVal = 1
-            Run(A_WorkingDir "\QMK Keyboard.ahk") ;this line can technically never happen but oh well
+            Run(A_WorkingDir "\QMK Keyboard.ahk")
         else
             WinClose("QMK Keyboard.ahk - AutoHotkey")
     }
@@ -712,7 +729,7 @@ activeScripts(MyRelease)
         detect()
         resolveVal := resolve.Value
         if resolveVal = 1
-            Run(A_WorkingDir "\Resolve_Example.ahk") ;this line can technically never happen but oh well
+            Run(A_WorkingDir "\Resolve_Example.ahk")
         else
             WinClose("Resolve_Example.ahk - AutoHotkey")
     }
@@ -720,7 +737,7 @@ activeScripts(MyRelease)
         detect()
         autosaveVal := autosave.Value
         if autosaveVal = 1
-            Run(A_WorkingDir "\autosave.ahk") ;this line can technically never happen but oh well
+            Run(A_WorkingDir "\autosave.ahk")
         else
             WinClose("autosave.ahk - AutoHotkey")
     }
@@ -728,7 +745,7 @@ activeScripts(MyRelease)
         detect()
         premFullVal := premFull.Value
         if premFullVal = 1
-            Run(A_WorkingDir "\adobe fullscreen check.ahk") ;this line can technically never happen but oh well
+            Run(A_WorkingDir "\adobe fullscreen check.ahk")
         else
             WinClose("adobe fullscreen check.ahk - AutoHotkey")
     }
@@ -736,7 +753,7 @@ activeScripts(MyRelease)
         detect()
         altVal := alt.Value
         if altVal = 1
-            Run(A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk") ;this line can technically never happen but oh well
+            Run(A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk")
         else
             WinClose("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
     }
@@ -744,9 +761,17 @@ activeScripts(MyRelease)
         detect()
         autodisVal := autodis.Value
         if autodisVal = 1
-            Run(A_WorkingDir "\autodismiss error.ahk") ;this line can technically never happen but oh well
+            Run(A_WorkingDir "\autodismiss error.ahk")
         else
             WinClose("autodismiss error.ahk - AutoHotkey")
+    }
+    gameCheckClick(*){
+        detect()
+        gameCheckVal := gameCheck.Value
+        if gameCheckVal = 1
+            Run(A_WorkingDir "\gameCheck.ahk")
+        else
+            WinClose("gameCheck.ahk - AutoHotkey")
     }
 
     MyGui.OnEvent("Escape", escape)

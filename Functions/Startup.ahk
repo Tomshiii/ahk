@@ -1,4 +1,4 @@
-;v2.17.8
+;v2.18
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -77,10 +77,11 @@ generate(MyRelease)
     ADOBE_FS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS", 5)
     AUTOMIN := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN", 5)
     CHECKTOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip", "true")
+    GAMESEC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
     deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
     if FileExist(A_MyDocuments "\tomshi\settings.ini")
         FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /*
@@ -900,6 +901,19 @@ settingsGUI()
         IniWrite(autosaveMinEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
         if WinExist("autosave.ahk - AutoHotkey")
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
+    }
+
+    gameCheckInitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC")
+    gameCheckEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50", "")
+    settingsGUI.Add("UpDown",, gameCheckInitVal)
+    gameCheckEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``gameCheck.ahk`` check rate (sec)")
+    gameCheckEdit.OnEvent("Change", gameCheckMin)
+    gameCheckMin(*)
+    {
+        detect()
+        IniWrite(gameCheckEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC")
+        if WinExist("gameCheck.ahk - AutoHotkey")
+            PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
     }
 
     ;BOTTOM TEXT

@@ -1,4 +1,6 @@
-# <> Release 2.5.x
+# <> Release 2.5.3 - gameCheck.ahk
+This release brings along `gameCheck.ahk` that will automatically detect when a predetermined game is currently active and suspend `My Scripts.ahk`. This is important because `My Scripts.ahk` contains a bunch of macros that really don't play nice to games and cause a lot of basic functionality in them to break. This script will also detect when the game is no longer the active window and unsuspend `My Scripts.ahk`. Games may be periodically added to this script but feel welcome to add your own list!
+
 
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
@@ -6,6 +8,8 @@
 - Add `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
 - More colours for `audioDrag()`
 - `zoom()` sets it's variable presets in an array to remove the need for multiple variables
+- Fixed hard coded dir in `switchToDisc()`
+- Added a check in `musicGUI()` to make sure to music folder actually exists
 
 ## > Other Changes
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`

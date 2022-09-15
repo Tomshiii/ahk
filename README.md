@@ -110,6 +110,9 @@ Note:
 - `variableZ` doesn't have to be used and can be omitted from the function call
 - An example of a function in this repo that passes back a variable & also uses defaults is [`isFullscreen()`](https://github.com/Tomshiii/ahk/blob/main/Functions/Windows.ahk)
 
+#### [gameCheck.ahk](https://github.com/Tomshiii/ahk/blob/main/gameCheck.ahk)
+A script that will automatically suspend `My Scripts.ahk` when a game is detected to be the active window & then unsuspend it when the game is no longer active.
+
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
 A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.
 ```mermaid

@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.17.8
+;\\v2.18
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.8.5
 
@@ -91,6 +91,8 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 		PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
 	if WinExist("adobe fullscreen check.ahk - AutoHotkey")
 		PostMessage 0x0111, 65303,,, "adobe fullscreen check.ahk - AutoHotkey"
+	if WinExist("gameCheck.ahk - AutoHotkey")
+		PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
 	Reload
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
@@ -346,11 +348,11 @@ F14:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("580") ;clicks on the `my scripts` script in vscode
+!a::vscode("610") ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
 !f::vscode("600") ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::vscode("620") ;clicks on my `qmk` script in vscode
+!q::vscode("640") ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
 !c::vscode("480") ;clicks on my `changelog` file in vscode
 
