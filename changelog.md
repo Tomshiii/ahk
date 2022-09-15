@@ -5,6 +5,7 @@
 - `settingsGUI()` now has an option to globally enable/disable reminder tooltips for `checklist.ahk`
 - Add `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
 - More colours for `audioDrag()`
+- `zoom()` sets it's variable presets in an array to remove the need for multiple variables
 
 ## > Other Changes
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`

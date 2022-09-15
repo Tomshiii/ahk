@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.12
+;\\v2.14.13
 #Include General.ahk
 
 /* preset()
@@ -296,20 +296,13 @@ num(xval, yval, scale)
  */
 zoom()
 {
-    ;we'll put all our values at the top so they can be easily changed
+    ;we'll put all our values at the top so they can be easily changed. First value is your X coord, second value is your Y coord, third value is your Scale value
     ;alex
-    alexX := 2064
-    alexY := -26
-    alexZ := 215
-
-    alexZoomX := 3467
-    alexZoomY := 339
-    alexZoomZ := 390
+    alexXYS := [2064, -26, 215]
+    alexZoomXYS := [3467, 339, 390]
 
     ;d0yle
-    d0yleX := -57
-    d0yleY := -37
-    d0yleZ := 210
+    d0yleXYS := [-57, -37, 210]
 
     ;then we'll define the values that will allow us to change things depending on the project
     static x := 0
@@ -339,26 +332,26 @@ zoom()
     d0yle := InStr(premCheck, "d0yle")
     if d0yle != 0
         {
-            x := d0yleX
-            y := d0yleY
-            scale := d0yleZ
+            x := d0yleXYS[1]
+            y := d0yleXYS[2]
+            scale := d0yleXYS[3]
         }
     alex := InStr(premCheck, "alex")
     if alex != 0
         {
             if alexTog = 0
                 {
-                    x := alexX
-                    y := alexY
-                    scale := alexZ
+                    x := alexXYS[1]
+                    y := alexXYS[2]
+                    scale := alexXYS[3]
                     alexTog += 1
                     goto endPeople
                 }
             if alexTog = 1
                 {
-                    x := alexZoomX
-                    y := alexZoomY
-                    scale := alexZoomZ
+                    x := alexZoomXYS[1]
+                    y := alexZoomXYS[2]
+                    scale := alexZoomXYS[3]
                     alexTog -= 1
                     goto endPeople
                 }
