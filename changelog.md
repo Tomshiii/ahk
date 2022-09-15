@@ -11,8 +11,11 @@ This release brings along `gameCheck.ahk` that will automatically detect when a 
 - Added a check in `musicGUI()` to make sure to music folder actually exists
 
 `settingsGUI()`
+- Minor GUI tweaks
 - Fixed bug that caused function to error if non numeric values were entered into the edit boxes
 - Now has an option to globally enable/disable reminder tooltips for `checklist.ahk`
+- Moved `Current working dir:` to the status bar
+- Ability to add game information to `gameCheck.ahk`
 
 ## > Other Changes
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`

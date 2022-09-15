@@ -1,4 +1,4 @@
-;v2.18.1
+;v2.18.2
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -964,7 +964,44 @@ settingsGUI()
             }
     }
 
-    iniLink := settingsGUI.Add("Button", "section xs Y+15", "open settings.ini")
+    gameAdd := settingsGUI.Add("Button", "W120 H40 xs Y+35", "Add game to ``gameCheck.ahk``")
+    gameAdd.OnEvent("Click", gameAddButt)
+    gameAddButt(*)
+    {
+        detect()
+        settingsGUI.Opt("+Disabled")
+        WinSetAlwaysOnTop(0, "Settings " version)
+        addGame := InputBox("Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe", "Enter Game Info to Add", "W300 H120")
+        if addGame.Result = "Cancel"
+            {
+                WinSetAlwaysOnTop(1, "Settings " version)
+                settingsGUI.Opt("-Disabled +AlwaysOnTop")
+                WinActivate("Settings " version)
+            }
+        else
+            {
+                if !FileExist(A_WorkingDir "\gameCheck.ahk")
+                    {
+                        MsgBox("``gameCheck.ahk`` not found in the working directory")
+                        settingsGUI.Opt("-Disabled AlwaysOnTop")
+                    }
+                ;create temp folders
+                if !DirExist(A_Temp "\tomshi")
+                    DirCreate(A_Temp "\tomshi")
+                readGameCheck := FileRead(A_WorkingDir "\gameCheck.ahk")
+                findEnd := InStr(readGameCheck, "; --", 1,, 1)
+                addUserInput := StrReplace(readGameCheck, "`n; --", "GroupAdd(" '"' "games" '"' ", " '"' addGame.Value '"' ")`n; --", 1,, 1)
+                FileAppend(addUserInput, A_Temp "\tomshi\gameCheck.ahk")
+                FileMove(A_Temp "\tomshi\gameCheck.ahk", A_WorkingDir "\gameCheck.ahk", 1)
+                if WinExist("gameCheck.ahk - AutoHotkey")
+                    PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
+                WinSetAlwaysOnTop(1, "Settings " version)
+                settingsGUI.Opt("-Disabled AlwaysOnTop")
+                WinActivate("Settings " version)
+            }
+    }
+
+    iniLink := settingsGUI.Add("Button", "section X+10 Y+-35", "open settings.ini")
     iniLink.OnEvent("Click", ini)
     ini(*)
     {
@@ -976,10 +1013,9 @@ settingsGUI()
 
     
     workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
-    currentText := settingsGUI.Add("Text", "Center X+15 Y+-30", "Current working dir;")
-    workDirText := settingsGUI.Add("Text", "Center Y+1", workDir)
-    workDirText.SetFont("S10 underline")
-    workDirText.OnEvent("Click", dir)
+    workDirSB := settingsGUI.Add("StatusBar",, "  Current working dir: " workDir)
+    workDirSB.SetFont("S9")
+    workDirSB.OnEvent("Click", dir)
     dir(*)
     {
         SplitPath(workDir,,,, &path)
@@ -989,7 +1025,8 @@ settingsGUI()
             Run(workDir)
     }
     
-    hardReset := settingsGUI.Add("Button", "W85 H30 xs+350 ys-35", "Hard Reset")
+    group := settingsGUI.Add("GroupBox", "W101 H95 xs+217 ys-60", "Exit")
+    hardReset := settingsGUI.Add("Button", "W85 H30 x+-93 y+-75", "Hard Reset")
     hardReset.OnEvent("Click", hardres)
 
     saveAndClose := settingsGUI.Add("Button", "W85 H30 y+5", "Save && Exit")

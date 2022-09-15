@@ -8,13 +8,11 @@ SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file belo
 ;Add games here! you can get this info using WindowSpy that comes with ahk
 GroupAdd("games", "Minecraft ahk_exe javaw.exe") ;minecraft
 GroupAdd("games", "Terraria ahk_exe Terraria.exe") ;terraria
-
-; --
+; -- leave this line it gets used and is needed in settingsGUI()
 
 ;Set seconds delay here:
 sec := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
 secms := sec * 1000
-
 
 
 SetTimer(check, -secms)
