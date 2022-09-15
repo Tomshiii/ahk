@@ -1,4 +1,4 @@
-;v2.18
+;v2.18.1
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -728,22 +728,23 @@ settingsGUI()
 
     adjustText := settingsGUI.Add("Text", "W100 H20 x+100", "Adjust")
     adjustText.SetFont("S13 Bold")
+    decimalText := settingsGUI.Add("Text", "W180 H20 x+-40 Y+-18", "(decimals adjustable in .ini)")
     
     ;CHECKBOXES
     checkVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
     if checkVal = "true"
         {
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs+5 Y+5", "Check for Updates")
+            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs+1 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will check for updates"
         }
     else if checkVal = "false"
         {
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs+5 Y+5", "Check for Updates")
+            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs+1 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available"
         }
     else if checkVal = "stop"
         {
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked0 section xs+5 Y+5", "Check for Updates")
+            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked0 section xs+1 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will NOT check for updates"
         }
     updateCheckToggle.OnEvent("Click", update)
@@ -868,7 +869,7 @@ settingsGUI()
 
     ;EDIT BOXES
     adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
-    adobeGBEdit := settingsGUI.Add("Edit", "Section xs+193 ys r1 W50", "")
+    adobeGBEdit := settingsGUI.Add("Edit", "Section xs+197 ys r1 W50 Number", "")
     settingsGUI.Add("UpDown",, adobeGBinitVal)
     adobeEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobeTemp()`` limit (GB)")
     adobeGBEdit.OnEvent("Change", adobeGB)
@@ -878,7 +879,7 @@ settingsGUI()
     }
     
     adobeFSinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS")
-    adobeFSEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50", "")
+    adobeFSEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
     settingsGUI.Add("UpDown",, adobeFSinitVal)
     adobeFSEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``adobe fullscreen check.ahk```n check rate (sec)")
     adobeFSEdit.OnEvent("Change", adobeFS)
@@ -891,7 +892,7 @@ settingsGUI()
     }
     
     autosaveMininitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
-    autosaveMinEdit := settingsGUI.Add("Edit", "xs Y+2 r1 W50", "")
+    autosaveMinEdit := settingsGUI.Add("Edit", "xs Y+2 r1 W50 Number", "")
     settingsGUI.Add("UpDown",, autosaveMininitVal)
     autosaveMinEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``autosave.ahk`` save rate (min)")
     autosaveMinEdit.OnEvent("Change", autosaveMin)
@@ -904,7 +905,7 @@ settingsGUI()
     }
 
     gameCheckInitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC")
-    gameCheckEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50", "")
+    gameCheckEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
     settingsGUI.Add("UpDown",, gameCheckInitVal)
     gameCheckEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``gameCheck.ahk`` check rate (sec)")
     gameCheckEdit.OnEvent("Change", gameCheckMin)
