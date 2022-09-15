@@ -37,22 +37,24 @@ check()
             ScriptSuspend("My Scripts.ahk", true) ;suspend
             SetTimer(notActive, -secms)
             SetTimer(, 0)
-            return
         }
-    if !WinActive("ahk_group games") && ask = 1 ;if the user has suspended My Scripts.ahk manually outisde of a game, this block will fire and will prompt the user asking if they wish to unsuspend the scripts
+    else if !WinActive("ahk_group games") && ask = 1 ;if the user has suspended My Scripts.ahk manually outisde of a game, this block will fire and will prompt the user asking if they wish to unsuspend the scripts
         {
             if ScriptSuspend("My Scripts.ahk", false) = 1
                 {
-                    check := MsgBox("You have ``My Scripts.ahk`` suspended, do you wish to unsuspend it?`n`nIf this is not an accident, press " '"' "No" '"' " and you will not be asked again this session.", "My Scripts.ahk is Suspended", "4 32 4096") ;prompt the user with a msgbox
-                    if check = "No"
+                    checkMsg := MsgBox("You have ``My Scripts.ahk`` suspended, do you wish to unsuspend it?`n`nIf this is not an accident, press " '"' "No" '"' " and you will not be asked again this session.", "My Scripts.ahk is Suspended", "4 32 4096") ;prompt the user with a msgbox
+                    if checkMsg = "No"
                         {
                             ask := 0
                             SetTimer(, -secms)
                             ScriptSuspend("My Scripts.ahk", true)
                         }
                 }
+            else
+                SetTimer(, -secms)
         }
-    SetTimer(, -secms) ;reset the timer
+    else
+        SetTimer(, -secms)
 }
 
 
