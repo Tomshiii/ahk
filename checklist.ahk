@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.2.5"
+version := "v2.5.2.6"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -73,9 +73,9 @@ if FileExist(A_MyDocuments "\tomshi\settings.ini")
 
 ;grabbing hour information from ini file
 getTime := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
-timeForLog := Round(getTime / 3600, 2)
+timeForLog := Round(getTime / 3600, 3)
 if getTime = 0
-    timeForLog := "0.00"
+    timeForLog := "0.000"
 ;checking for log file
 if not FileExist(A_ScriptDir "\checklist_logs.txt")
     FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{ " today " - " timeForLog "`n", A_ScriptDir "\checklist_logs.txt")
@@ -112,7 +112,7 @@ HelpMenu := Menu()
 HelpMenu.Add("&About", aboutBox)
 HelpMenu.Add("&Github", github)
 updateSub := Menu()
-HelpMenu.Add("&Hours today", hoursToday)
+HelpMenu.Add("&Hours Worked", hours)
 HelpMenu.Add("&Check for Update", updateSub)
 updateSub.Add("&Stable", updateCheck)
 updateSub.Add("&Beta", updateCheck)
@@ -623,7 +623,7 @@ updateCheck(Item, *)
     else
         toolCust("You are up to date!")
 }
-hoursToday(*)
+hours(*)
 {
     readLog := FileRead(A_ScriptDir "\checklist_logs.txt")
     findToday := InStr(readLog, A_YYYY "_" A_MM "_" A_DD,, 1, 1)
@@ -632,5 +632,54 @@ hoursToday(*)
     startHours := SubStr(readLog, findHours + 22, (endpos - 1) - (findHours + 22))
 
     currentHours := floorDecimal(ElapsedTime / 3600, 3)
-    MsgBox("Hours worked today: " floorDecimal(currentHours - startHours, 3))
+    
+    increment := 0
+    StartVal := 0
+    ;;
+    loop {
+        if !InStr(readLog, "{",,, A_Index)
+            break
+        startPos := InStr(readLog, "{",,, A_Index)
+        finddash := InStr(readLog, "-",, startPos, 1)
+        dateStart := SubStr(readLog, startPos + 2, (finddash-1)-(startPos+2))
+        FindhoursEnd := InStr(readLog, "\",, finddash, 1)
+        StartHours := SubStr(readLog, finddash + 2, (FindhoursEnd-1)-(finddash+2))
+        LastDate := InStr(readLog, dateStart,,, -1)
+        findEquals := InStr(readLog, "=",, LastDate, 1)
+        lastHourEnd := InStr(readLog, "-",, findEquals, 1)
+        lastHour := SubStr(readLog, findEquals + 2, (lastHourEnd-1)-(findEquals+2))
+
+        if lastHour <= startHours
+            goto ignore
+        HoursWorkedForDate := lastHour-StartHours
+        StartVal += HoursWorkedForDate
+        increment += 1
+        ignore:
+    }
+    if StartVal <= 0 || increment <= 0
+        avg := "Not enough data"
+    else
+        avg := floorDecimal(StartVal/increment,3)
+
+    MyGui.GetPos(&x, &y, &width, &height)
+    hoursGUI := Gui("AlwaysOnTop", "Hours Worked")
+    hoursGUI.Opt("+Owner" MyGui.Hwnd)
+    hoursGUI.Opt("+MinSize200x200")
+    hoursGUI.SetFont("S11")
+    hoursGUI.SetFont("W400")
+    hoursGUI.BackColor := 0xF0F0F0
+    MyGui.Opt("+Disabled")
+
+    hoursGUI.Add("Text", "W200 Center", "Hours worked today: " floorDecimal(currentHours - startHours, 3) "`nAvg Hours per day: " avg)
+
+    hoursGUI.OnEvent("Close", hoursClose)
+    hoursGUI.Show("AutoSize")
+    hoursGUI.GetPos(,, &hourswidth, &hoursheight)
+    hoursGUI.Move(x - (hourswidth/2) + (width/2), y - (hoursheight/2) + (height/2))
+
+    hoursClose(*)
+    {
+        MyGui.Opt("-Disabled")
+        hoursGUI.Destroy
+    }
 }
