@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.2.4"
+version := "v2.5.2.5"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -191,23 +191,23 @@ global startValue := IniRead(A_ScriptDir "\checklist.ini", "Info", "time") ;gets
 startHoursRounded := floorDecimal(startValue/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
 startMinutesRounded := Floor(((startValue/3600) - floor(startValue/3600))*60) ;getting the minutes past the hour
 
-timerHoursText := MyGui.Add("Text", "X10 Y+25 W25", "H: ") ;defining the hours text
+timerHoursText := MyGui.Add("Text", "X10 Y+25 W18", "H: ") ;defining the hours text
 timerHoursText.SetFont("S14")
-timerText := MyGui.Add("Text", "X+1 w60", startHoursRounded) ;setting the text that will contain the numbers
+timerText := MyGui.Add("Text", "X+5 w70", startHoursRounded " ") ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
 
-timerMinutesText := MyGui.Add("Text", "X+10 W25", "M: ") ;defining the minutes text
+timerMinutesText := MyGui.Add("Text", "X+12 W22", "M: ") ;defining the minutes text
 timerMinutesText.SetFont("S14")
 
 timerMinutes := MyGui.Add("Text", "X+4 w30", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
 
-timerSecondsText := MyGui.Add("Text", "X+10 W25", "S: ") ;defining the minutes text
+timerSecondsText := MyGui.Add("Text", "X+10 W18", "S: ") ;defining the minutes text
 timerSecondsText.SetFont("S14")
 
 minutesForSeconds := Floor(startValue/60)
 Seconds := Round((((startValue/60) - minutesForSeconds) * 60), 0)
-timerSeconds := MyGui.Add("Text", "X+0 w30", Seconds) ;setting the text that will contain the numbers
+timerSeconds := MyGui.Add("Text", "X+5 w30", Seconds) ;setting the text that will contain the numbers
 timerSeconds.SetFont("S16 cRed")
 
 

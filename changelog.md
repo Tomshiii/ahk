@@ -29,6 +29,7 @@ This release brings along `gameCheck.ahk` that will automatically detect when a 
 - Fixed typo causing this script to create a different `\backup` folder than `checklist.ahk`
 
 `checklist.ahk`
+- Fixed `H:` number getting cut off when above 10 hours
 - Moved all functions to the bottom of the script to increase readability
 - Now uses `floorDecimal()` for the `Hour` text so it ticks over more accurately
 - Added menu bar to:

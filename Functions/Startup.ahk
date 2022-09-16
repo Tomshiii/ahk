@@ -971,7 +971,7 @@ settingsGUI()
         detect()
         settingsGUI.Opt("+Disabled")
         WinSetAlwaysOnTop(0, "Settings " version)
-        addGame := InputBox("Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe", "Enter Game Info to Add", "W300 H120")
+        addGame := InputBox("Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe`n`n*This info can be found using WindowSpy which comes alongside AHK", "Enter Game Info to Add", "W350 H160")
         if addGame.Result = "Cancel"
             {
                 WinSetAlwaysOnTop(1, "Settings " version)
@@ -1005,6 +1005,7 @@ settingsGUI()
     iniLink.OnEvent("Click", ini)
     ini(*)
     {
+        settingsGUI.Opt("-AlwaysOnTop")
         if WinExist("settings.ini")
             WinActivate("settings.ini")
         else
