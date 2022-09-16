@@ -1,4 +1,4 @@
-;v2.18.2
+;v2.18.3
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -706,6 +706,21 @@ settingsGUI()
         SetTitleMatchMode 2
     }
 
+    try { ;attempting to grab window information on the active window for `gameAddButt()`
+        winProcc := WinGetProcessName("A")
+        winTitle := WinGetTitle("A")
+        if !InStr(winTitle, " ",,, 1)
+            titleBlank := winTitle
+        else
+            {
+                getBlank := InStr(winTitle, " ",,, 1)
+                titleBlank := SubStr(winTitle, 1, getBlank -1)
+            }
+    } catch {
+        winProcc := ""
+        titleBlank := ""
+    }
+
     version := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
     if WinExist("Settings " version)
         return
@@ -964,22 +979,26 @@ settingsGUI()
             }
     }
 
-    gameAdd := settingsGUI.Add("Button", "W120 H40 xs Y+35", "Add game to ``gameCheck.ahk``")
+    gameAdd := settingsGUI.Add("Button", "W120 H40 xs Y+20", "Add game to ``gameCheck.ahk``")
     gameAdd.OnEvent("Click", gameAddButt)
     gameAddButt(*)
     {
         detect()
+        oldClip := A_Clipboard
+        A_Clipboard := titleBlank " ahk_exe " winProcc 
         settingsGUI.Opt("+Disabled")
         WinSetAlwaysOnTop(0, "Settings " version)
-        addGame := InputBox("Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe`n`n*This info can be found using WindowSpy which comes alongside AHK", "Enter Game Info to Add", "W350 H160")
+        addGame := InputBox("Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe`n`nThis function attempted to grab the correct information from the active window when you pulled up the settings GUI, try pressing Ctrl + V to see if the script grabbed the correct window information`n`n*If not, this info can be found using WindowSpy which comes alongside AHK", "Enter Game Info to Add", "W350 H250")
         if addGame.Result = "Cancel"
             {
+                A_Clipboard := oldClip
                 WinSetAlwaysOnTop(1, "Settings " version)
                 settingsGUI.Opt("-Disabled +AlwaysOnTop")
                 WinActivate("Settings " version)
             }
         else
             {
+                A_Clipboard := oldClip
                 if !FileExist(A_WorkingDir "\gameCheck.ahk")
                     {
                         MsgBox("``gameCheck.ahk`` not found in the working directory")
