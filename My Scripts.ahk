@@ -9,6 +9,7 @@ SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 A_MaxHotkeysPerInterval := 400 ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
+A_HotkeyInterval := 200
 TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
@@ -295,7 +296,7 @@ SC03A & XButton1::moveXorY()
 ;explorerbackHotkey;
 F21::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 ;showmoreHotkey;
-F14:: ;open the "show more options" menu in win11
+F18:: ;open the "show more options" menu in win11
 {
 	;Keep in mind I use dark mode on win11. Things will be different in light mode/other versions of windows
 	MouseGetPos(&mx, &my)
