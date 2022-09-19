@@ -2,7 +2,7 @@
 This release brings along `gameCheck.ahk` that will automatically detect when a predetermined game is currently active and suspend `My Scripts.ahk`. This is important because `My Scripts.ahk` contains a bunch of macros that really don't play nice to games and cause a lot of basic functionality in them to break. This script will also detect when the game is no longer the active window and unsuspend `My Scripts.ahk`. Games may be periodically added to this script but feel welcome to add your own list!
 
 ## > My Scripts
-- Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown\WheelUp`
+- Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown\WheelUp::`
 
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
@@ -22,8 +22,7 @@ This release brings along `gameCheck.ahk` that will automatically detect when a 
 
 ## > Other Changes
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
-- Moved `getPremName()` & `getAEName()` from `autosave.ahk` -> `Windows.ahk` so that `checklist.ahk` can use them
-- Added `commLocation` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own variable
+- Added `commLocation :=` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own variable
     - `QMK Keyboard.ahk` `h::` now attempts to open `commLocation` if there is no Adobe project open
 
 `replaceChecklist.ahk`

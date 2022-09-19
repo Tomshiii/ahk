@@ -985,10 +985,11 @@ settingsGUI()
     {
         detect()
         oldClip := A_Clipboard
-        A_Clipboard := titleBlank " ahk_exe " winProcc 
-        settingsGUI.Opt("+Disabled")
+        A_Clipboard := ""
+        A_Clipboard := titleBlank " ahk_exe " winProcc
         WinSetAlwaysOnTop(0, "Settings " version)
-        addGame := InputBox("Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe`n`nThis function attempted to grab the correct information from the active window when you pulled up the settings GUI, try pressing Ctrl + V to see if the script grabbed the correct window information`n`n*If not, this info can be found using WindowSpy which comes alongside AHK", "Enter Game Info to Add", "W350 H250")
+        settingsGUI.Opt("+Disabled")
+        addGame := InputBox("Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe`n`nThis function attempted to grab the correct information from the active window before you pulled up the settings GUI and then copied it to the clipboard, it has also prefilled the inputbox with that information. If it's correct hit OK, if not enter in the correct information.`n`n*If not, this info can be found using WindowSpy which comes alongside AHK", "Enter Game Info to Add", "W450 H250", A_Clipboard)
         if addGame.Result = "Cancel"
             {
                 A_Clipboard := oldClip
