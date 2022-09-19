@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13
+;\\v2.13.1
 #Include General.ahk
 
 /*
@@ -52,60 +52,68 @@ switchToPremiere()
  */
 switchToAE()
 {
-    runae() { ;cut repeat code
+    runae() ;cut repeat code
+    {
         Run(A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk")
         WinWait("ahk_exe AfterFX.exe")
         WinActivate("ahk_exe AfterFX.exe")
     }
-    if not WinExist("ahk_exe AfterFX.exe")
-        {
-            if WinExist("ahk_exe Adobe Premiere Pro.exe") ;this function will attempt to open my AE file that's related to the working premiere project before doing anything else. I always name my AE files "effects" so this is a relatively simple check
-                {
-                    try {
-                        Name := WinGetTitle("Adobe Premiere Pro")
-                        titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-                        dashLocation := InStr(Name, "-")
-                        length := StrLen(Name) - dashLocation
-                        if not titlecheck
-                            {
-                                runae()
-                                return
-                            }
-                        entirePath := SubStr(name, dashLocation + "2", length)
-                        pathlength := StrLen(entirePath)
-                        finalSlash := InStr(entirePath, "\",, -1)
-                        path := SubStr(entirePath, 1, finalSlash - "1")
-                        if FileExist(path "\*.aep")
-                            {
-                                loop files path "\*.aep", "F"
-                                    {
-                                        Run(A_LoopFileFullPath)
-                                        toolCust("Running AE file for this project")
-                                        WinWait("ahk_exe AfterFX.exe")
-                                        WinActivate("ahk_exe AfterFX.exe")
-                                        return
-                                    }
-                            }
-                        else ;if all else fails, just open AE normally
-                            {
-                                runae()
-                                return
-                            }
-                    } catch as e {
-                        toolCust("Couldn't determine proper path from Premiere")
-                        errorLog(A_ThisFunc "()", "Couldn't determine proper path from Premiere", A_LineFile, A_LineNumber)
-                        runae()
-                        return
-                    }
-                }
-            else
+    premTitle() ;pulls dir url from prem title and runs ae project in that dir
+    {
+        try {
+            Name := WinGetTitle("Adobe Premiere Pro")
+            titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            dashLocation := InStr(Name, "-")
+            length := StrLen(Name) - dashLocation
+            if not titlecheck
                 {
                     runae()
                     return
                 }
+            entirePath := SubStr(name, dashLocation + "2", length)
+            pathlength := StrLen(entirePath)
+            finalSlash := InStr(entirePath, "\",, -1)
+            path := SubStr(entirePath, 1, finalSlash - "1")
+            if FileExist(path "\*.aep")
+                {
+                    loop files path "\*.aep", "F"
+                        {
+                            Run(A_LoopFileFullPath)
+                            toolCust("Running AE file for this project")
+                            WinWait("ahk_exe AfterFX.exe")
+                            WinActivate("ahk_exe AfterFX.exe")
+                            return
+                        }
+                }
+            else ;if all else fails, just open AE normally
+                {
+                    runae()
+                    return
+                }
+        } catch as e {
+            toolCust("Couldn't determine proper path from Premiere")
+            errorLog(A_ThisFunc "()", "Couldn't determine proper path from Premiere", A_LineFile, A_LineNumber)
+            runae()
+            return
         }
-    else if WinExist("ahk_exe AfterFX.exe")
+    }
+    if !WinExist("ahk_exe AfterFX.exe") && WinExist("ahk_exe Adobe Premiere Pro.exe") ;if prem is open but AE isn't
+        premTitle()
+    else if WinExist("ahk_exe AfterFX.exe") && WinExist("ahk_exe Adobe Premiere Pro.exe") ;if both are open
+        {
+            try {
+                Name := WinGetTitle("Adobe After Effects")
+                titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
+                if slash := InStr(Name, "\",, -1) ;if there's a slash in the title, it means a project is open
+                    WinActivate("ahk_exe AfterFX.exe")
+                else
+                    premTitle()
+            }
+        }
+    else if WinExist("ahk_exe AfterFX.exe") && !WinExist("ahk_exe Adobe Premiere Pro.exe")
         WinActivate("ahk_exe AfterFX.exe")
+    else
+        runae()
 }
 
 /*

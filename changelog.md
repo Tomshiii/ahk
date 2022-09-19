@@ -11,6 +11,7 @@ This release brings along `gameCheck.ahk` that will automatically detect when a 
 - `zoom()` sets it's variable presets in an array to remove the need for multiple variables
 - Fixed hard coded dir in `switchToDisc()`
 - Added a check in `musicGUI()` to make sure to music folder actually exists
+- `switchToAE()` contains more elaborate code to be able to open the `.aep` file for the current project even once AE is already open
 
 `settingsGUI()`
 - Minor GUI tweaks
