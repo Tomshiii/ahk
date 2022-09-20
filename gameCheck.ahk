@@ -47,6 +47,8 @@ check()
                             SetTimer(, -secms)
                             ScriptSuspend("My Scripts.ahk", true)
                         }
+                    else
+                        SetTimer(, -secms)
                 }
             else
                 SetTimer(, -secms)

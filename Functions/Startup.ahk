@@ -1,4 +1,4 @@
-;v2.18.3
+;v2.18.4
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -1034,9 +1034,22 @@ settingsGUI()
 
     
     workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
-    workDirSB := settingsGUI.Add("StatusBar",, "  Current working dir: " workDir)
-    workDirSB.SetFont("S9")
-    workDirSB.OnEvent("Click", dir)
+    SB := settingsGUI.Add("StatusBar")
+    SB.SetText("  Current working dir: " workDir)
+    checkdir := SB.GetPos(,, &width)
+    parts := SB.SetParts(width + 20 + (StrLen(workDir)*5))
+    SetTimer(statecheck, -100)
+    statecheck(*)
+    {
+        if A_IsSuspended = 0
+            state := "Active"
+        else
+            state := "Suspended"
+        SB.SetText(" Scripts " state, 2)
+        SetTimer(, -1000)
+    }
+    SB.SetFont("S9")
+    SB.OnEvent("Click", dir)
     dir(*)
     {
         SplitPath(workDir,,,, &path)
@@ -1057,6 +1070,7 @@ settingsGUI()
     settingsGUI.OnEvent("Close", close)
     close(*)
     {
+        SetTimer(statecheck, 0)
         ;check 
         if betaStart = true 
             Run(A_ScriptFullPath)
@@ -1077,6 +1091,7 @@ settingsGUI()
 
     hardres(*)
     {
+        SetTimer(statecheck, 0)
         ;check to see if the user wants to reset adobeTemp()
         checkAdobe := adobeToggle.GetPos(,, &width)
         if width = 0

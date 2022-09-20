@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.1
+;\\v2.13.2
 #Include General.ahk
 
 /*
@@ -637,6 +637,17 @@ activeScripts(MyRelease)
         my := MyGui.Add("CheckBox", "Checked1", "My Scripts.ahk")
     else
         my := MyGui.Add("CheckBox", "Checked0", "My Scripts.ahk")
+    SetTimer(checkMain, -100)
+    checkMain(*)
+    {
+        if WinExist("My Scripts.ahk is Suspended")
+            WinWaitClose("My Scripts.ahk is Suspended")
+        if A_IsSuspended = 0
+            my.Value := 1
+        else
+            my.Value := 0
+        SetTimer(, -1000)
+    }
     my.ToolTip := "Clicking this checkbox will toggle suspend the script"
     my.OnEvent("Click", myClick)
     if WinExist("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
@@ -784,6 +795,7 @@ activeScripts(MyRelease)
 
     MyGui.OnEvent("Escape", escape)
     escape(*) {
+        SetTimer(checkMain, 0)
         MyGui.Destroy()
     }
 

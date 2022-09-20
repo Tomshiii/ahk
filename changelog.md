@@ -12,12 +12,14 @@ This release brings along `gameCheck.ahk` that will automatically detect when a 
 - Fixed hard coded dir in `switchToDisc()`
 - Added a check in `musicGUI()` to make sure to music folder actually exists
 - `switchToAE()` contains more elaborate code to be able to open the `.aep` file for the current project even once AE is already open
+- `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
 
 `settingsGUI()`
 - Minor GUI tweaks
 - Fixed bug that caused function to error if non numeric values were entered into the edit boxes
 - Now has an option to globally enable/disable reminder tooltips for `checklist.ahk`
 - Moved `Current working dir:` to the status bar
+    - Status bar now also shows whether `My Scripts.ahk` is active or suspended
 - Ability to add game information to `gameCheck.ahk`
 
 ## > Other Changes
