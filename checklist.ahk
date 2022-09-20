@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.2.6"
+version := "v2.5.2.7"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -632,6 +632,9 @@ hours(*)
     startHours := SubStr(readLog, findHours + 22, (endpos - 1) - (findHours + 22))
 
     currentHours := floorDecimal(ElapsedTime / 3600, 3)
+    workedToday := floorDecimal(currentHours - startHours, 3)
+    if workedToday >= 0
+        workedToday := 0
     
     increment := 0
     StartVal := 0
@@ -670,7 +673,7 @@ hours(*)
     hoursGUI.BackColor := 0xF0F0F0
     MyGui.Opt("+Disabled")
 
-    hoursGUI.Add("Text", "W200 Center", "Hours worked today: " floorDecimal(currentHours - startHours, 3) "`nAvg Hours per day: " avg)
+    hoursGUI.Add("Text", "W200 Center", "Hours worked today: " workedToday "`nDays worked: " increment "`nAvg Hours per day: " avg)
 
     hoursGUI.OnEvent("Close", hoursClose)
     hoursGUI.Show("AutoSize")

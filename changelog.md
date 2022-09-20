@@ -41,6 +41,6 @@ This release brings along `gameCheck.ahk` that will automatically detect when a 
     - Toggle tooltips for the current project (if global `checklist.ahk` tooltips are enabled)
     - Display `About` informational GUI
     - Open the github repo
-    - Show hours worked today & avg hours worked per day
+    - Show hours worked today, days worked & avg hours worked per day
     - Check for updates on both the stable and beta paths
 - Version number moved to `About` menu bar GUI
