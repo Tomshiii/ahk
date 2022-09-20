@@ -1,5 +1,7 @@
-# <> Release 2.5.3 - gameCheck.ahk
+# <> Release 2.5.3 - gameCheck.ahk + Dark Mode (sorta)
 This release brings along `gameCheck.ahk` that will automatically detect when a predetermined game is currently active and suspend `My Scripts.ahk`. This is important because `My Scripts.ahk` contains a bunch of macros that really don't play nice to games and cause a lot of basic functionality in them to break. This script will also detect when the game is no longer the active window and unsuspend `My Scripts.ahk`. Games may be periodically added to this script but feel welcome to add your own list!
+
+Alongside that, this update brings along a dark theme to certain GUI elements. AHK is rather limited in what it can apply in a modern way but a global dark mode option can now be enabled in `settingsGUI()`
 
 ## > My Scripts
 - Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown\WheelUp::`
@@ -34,12 +36,14 @@ This release brings along `gameCheck.ahk` that will automatically detect when a 
 - Fixed typo causing this script to create a different `\backup` folder than `checklist.ahk`
 
 `checklist.ahk`
+- Fixed not creating newly added `checklist.ini` settings when it copies a newer version from the working dir (you will encounter errors until you're on checklist.ahk v2.5.3 or greater and generate a .ini file)
 - Fixed `H:` number getting cut off when above 10 hours
 - Moved all functions to the bottom of the script to increase readability
 - Now uses `floorDecimal()` for the `Hour` text so it ticks over more accurately
 - Added menu bar to:
     - Open other checklists
     - Toggle tooltips for the current project (if global `checklist.ahk` tooltips are enabled)
+    - Toggle Dark Mode for the current project (if global dark mode is enabled)
     - Display `About` informational GUI
     - Open the github repo
     - Show hours worked today, days worked & avg hours worked per day

@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.2.7"
+version := "v2.5.3"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -20,8 +20,9 @@ global ms10 := minutes2 * 60000
 
 ;checking for ini file
 if not FileExist(A_ScriptDir "\checklist.ini")
-    FileAppend("[Info]`nFirstPass=0`nSecondPass=0`nTwitchOverlay=0`nYoutubeOverlay=0`nTransitions=0`nSFX=0`nMusic=0`nPatreon=0`nIntro=0`ntime=0`ntooltip=1", A_ScriptDir "\checklist.ini")
+    FileAppend("[Info]`nFirstPass=0`nSecondPass=0`nTwitchOverlay=0`nYoutubeOverlay=0`nTransitions=0`nSFX=0`nMusic=0`nPatreon=0`nIntro=0`ntime=0`ntooltip=1`ndark=1`nver=" version, A_ScriptDir "\checklist.ini")
 globalCheckTool := 1
+globalDarkTool := 1
 ;grabbing the location dir of the users copy of tomshi's scripts. This will allow any deployed checklist scripts to automatically update
 if FileExist(A_MyDocuments "\tomshi\settings.ini")
     {
@@ -32,6 +33,13 @@ if FileExist(A_MyDocuments "\tomshi\settings.ini")
             global globalCheckTool := 1
         else
             global globalCheckTool := 0
+
+        darkSettings := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode", "true")
+        if darkSettings = "true"
+            global globalDarkTool := 1
+        else
+            global globalDarkTool := 0
+
         localVer(location)
         {
             verString := FileRead(location)
@@ -42,6 +50,30 @@ if FileExist(A_MyDocuments "\tomshi\settings.ini")
             return version
         }
         latestVer := localVer(location "\checklist.ahk")
+        trythenDel(which)
+        {
+            try {
+                FP := IniRead(A_ScriptDir "\checklist.ini", "Info", "FirstPass", "0")
+                SP := IniRead(A_ScriptDir "\checklist.ini", "Info", "SecondPass", "0")
+                TW := IniRead(A_ScriptDir "\checklist.ini", "Info", "TwitchOverlay", "0")
+                YT := IniRead(A_ScriptDir "\checklist.ini", "Info", "YoutubeOverlay", "0")
+                TR := IniRead(A_ScriptDir "\checklist.ini", "Info", "Transitions", "0")
+                SFX := IniRead(A_ScriptDir "\checklist.ini", "Info", "SFX", "0")
+                MU := IniRead(A_ScriptDir "\checklist.ini", "Info", "Music", "0")
+                PT := IniRead(A_ScriptDir "\checklist.ini", "Info", "Patreon", "0")
+                INTR := IniRead(A_ScriptDir "\checklist.ini", "Info", "Intro", "0")
+                TI := IniRead(A_ScriptDir "\checklist.ini", "Info", "time", "0")
+                TOOL := IniRead(A_ScriptDir "\checklist.ini", "Info", "tooltip", "1")
+                DARK := IniRead(A_ScriptDir "\checklist.ini", "Info", "dark", "1")
+                VER := IniRead(A_ScriptDir "\checklist.ini", "Info", "ver")
+            }
+            FileDelete(A_ScriptDir "\checklist.ini")
+            FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI "`ntooltip=" TOOL "`ndark=" DARK "`nver=", A_ScriptDir "\checklist.ini")
+            if which = "VER"
+                FileAppend(VER, A_ScriptDir "\checklist.ini")
+            if which = "version"
+                FileAppend(version, A_ScriptDir "\checklist.ini")
+        }
         if VerCompare(latestVer, version) > 0
             {
                 if !DirExist(A_ScriptDir "\backup")
@@ -49,25 +81,25 @@ if FileExist(A_MyDocuments "\tomshi\settings.ini")
                 FileCopy(A_ScriptFullPath, A_ScriptDir "\backup", 1)
                 FileCopy(A_ScriptDir "\checklist.ini", A_ScriptDir "\backup\checklist.ini", 1)
                 FileCopy(A_ScriptDir "\checklist_logs.txt", A_ScriptDir "\backup\checklist_logs.txt", 1)
-
-                try {
-                    FP := IniRead(A_ScriptDir "\checklist.ini", "Info", "FirstPass", "0")
-                    SP := IniRead(A_ScriptDir "\checklist.ini", "Info", "SecondPass", "0")
-                    TW := IniRead(A_ScriptDir "\checklist.ini", "Info", "TwitchOverlay", "0")
-                    YT := IniRead(A_ScriptDir "\checklist.ini", "Info", "YoutubeOverlay", "0")
-                    TR := IniRead(A_ScriptDir "\checklist.ini", "Info", "Transitions", "0")
-                    SFX := IniRead(A_ScriptDir "\checklist.ini", "Info", "SFX", "0")
-                    MU := IniRead(A_ScriptDir "\checklist.ini", "Info", "Music", "0")
-                    PT := IniRead(A_ScriptDir "\checklist.ini", "Info", "Patreon", "0")
-                    INTR := IniRead(A_ScriptDir "\checklist.ini", "Info", "Intro", "0")
-                    TI := IniRead(A_ScriptDir "\checklist.ini", "Info", "time", "0")
-                    TOOL := IniRead(A_ScriptDir "\checklist.ini", "Info", "tooltip", "1")
-                }
-                FileDelete(A_ScriptDir "\checklist.ini")
-                FileAppend("[Info]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`ntime=" TI "`ntooltip=" TOOL, A_ScriptDir "\checklist.ini")
-
+                trythenDel("which")
                 FileCopy(location "\checklist.ahk", A_ScriptFullPath, 1)
                 Reload()
+            }
+        if VerCompare(latestVer, version) = 0
+            {
+                checkVer := IniRead(A_ScriptDir "\checklist.ini", "Info", "ver")
+                if checkVer != version
+                    {
+                        if !DirExist(A_ScriptDir "\backup")
+                            DirCreate(A_ScriptDir "\backup")
+                        FileCopy(A_ScriptFullPath, A_ScriptDir "\backup", 1)
+                        FileCopy(A_ScriptDir "\checklist.ini", A_ScriptDir "\backup\checklist.ini", 1)
+                        FileCopy(A_ScriptDir "\checklist_logs.txt", A_ScriptDir "\backup\checklist_logs.txt", 1)
+                        trythenDel("version")
+                        FileCopy(location "\checklist.ahk", A_ScriptFullPath, 1)
+                        Reload()
+                    }
+        
             }
     }
 
@@ -94,6 +126,7 @@ FileMenu.Add("E&xit", close)
 ;settings menu
 SettingsMenu := Menu()
 SettingsMenu.Add("&Tooltips", tooltips)
+SettingsMenu.Add("&Dark Mode", goDark)
 settingsToolTrack := 0
 if IniRead(A_ScriptDir "\checklist.ini", "Info", "tooltip") = "1"
     {
@@ -107,6 +140,22 @@ if globalCheckTool = 0
     SettingsMenu.Disable("&Tooltips")
 else
     SettingsMenu.Enable("&Tooltips")
+
+darkToolTrack := 0
+if IniRead(A_ScriptDir "\checklist.ini", "Info", "dark") = "1"
+{
+    SettingsMenu.Check("&Dark Mode")
+    if globalDarkTool != 0
+        global darkToolTrack := 1
+    else
+        global darkToolTrack := 0
+}
+if globalDarkTool = 0
+    SettingsMenu.Disable("&Dark Mode")
+else
+    SettingsMenu.Enable("&Dark Mode")
+
+
 ;help menu
 HelpMenu := Menu()
 HelpMenu.Add("&About", aboutBox)
@@ -218,6 +267,9 @@ SetTimer(reminder, -ms)
 global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
 global ElapsedTime := 0 + startValue ;a starting value for the timer
 
+
+if darkToolTrack = 1
+    which()
 
 MyGui.OnEvent("Close", close) ;what happens when you close the GUI
 MyGui.Show("AutoSize")
@@ -684,5 +736,48 @@ hours(*)
     {
         MyGui.Opt("-Disabled")
         hoursGUI.Destroy
+    }
+}
+
+goDark(*)
+{
+    if darkToolTrack = 1
+        {
+            global darkToolTrack := 0
+            SettingsMenu.UnCheck("&Dark Mode")
+            IniWrite("0", A_ScriptDir "\checklist.ini", "Info", "dark")
+            which(false, "Light")
+        }
+    else if darkToolTrack = 0
+        {
+            global darkToolTrack := 1
+            SettingsMenu.Check("&Dark Mode")
+            IniWrite("1", A_ScriptDir "\checklist.ini", "Info", "dark")
+            which()
+        }
+}
+
+which(dark := true, DarkorLight := "Dark")
+{
+    titleBarDarkMode(MyGui.Hwnd, dark)
+    buttonDarkMode(startButton.Hwnd, DarkorLight)
+    buttonDarkMode(stopButton.Hwnd, DarkorLight)
+    buttonDarkMode(minusButton.Hwnd, DarkorLight)
+    buttonDarkMode(plusButton.Hwnd, DarkorLight)
+
+    titleBarDarkMode(hwnd, dark := true)
+    {
+        if VerCompare(A_OSVersion, "10.0.17763") >= 0 {
+            attr := 19
+            if VerCompare(A_OSVersion, "10.0.18985") >= 0 {
+                attr := 20
+            }
+            DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "int", attr, "int*", dark, "int", 4)
+        }
+    }
+
+    buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark")
+    {
+        DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
     }
 }

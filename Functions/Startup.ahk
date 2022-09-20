@@ -1,4 +1,4 @@
-;v2.18.4
+;v2.19
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -67,6 +67,10 @@ generate(MyRelease)
             if VerCompare(MyRelease, "v2.5.1") > 0 && VerCompare(MyRelease, "v2.5.2") <= 0 ; v2.5.2 brought changes to settings.ini and will reset some values to default
                 toolCust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
         }
+    if VerCompare(A_OSVersion, "10.0.17763") < 0
+        darkVerCheck := "disabled"
+    else
+        darkVerCheck := "true"
     UPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
     BETAUPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false")
     FC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check", "false")
@@ -78,10 +82,11 @@ generate(MyRelease)
     AUTOMIN := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN", 5)
     CHECKTOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip", "true")
     GAMESEC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
+    DARK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode", darkVerCheck)
     deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
     if FileExist(A_MyDocuments "\tomshi\settings.ini")
         FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /*
@@ -245,6 +250,16 @@ updateChecker(MyRelease) {
                     cancelbutt.OnEvent("Click", closegui)
                     ;getting value for changelog
                     ChangeLog.Value := LatestChangeLog
+
+                    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+                        goDark()
+                    goDark()
+                    {
+                        titleBarDarkMode(MyGui.Hwnd)
+                        buttonDarkMode(gitButton.Hwnd)
+                        buttonDarkMode(downloadbutt.Hwnd)
+                        buttonDarkMode(cancelbutt.Hwnd)
+                    }
 
                     MyGui.Show()
                     prompt(*) {
@@ -452,6 +467,18 @@ firstCheck(MyRelease) {
                 WinWaitClose("Settings " MyRelease)
                 firstCheckGUI.Opt("-Disabled")
             }
+
+            if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+                goDark()
+            goDark()
+            {
+                titleBarDarkMode(firstCheckGUI.Hwnd)
+                buttonDarkMode(settingsButton.Hwnd)
+                buttonDarkMode(todoButton.Hwnd)
+                buttonDarkMode(hotkeysButton.Hwnd)
+                buttonDarkMode(closeButton.Hwnd)
+            }
+            
             firstCheckGUI.Show("AutoSize")
         }
 }
@@ -882,6 +909,44 @@ settingsGUI()
             }
     }
 
+    darkINI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+    if darkINI = "true"
+        {
+            darkCheck := settingsGUI.Add("Checkbox", "Checked1 Y+5", "Dark Mode")
+            darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible"
+        }
+    else if darkINI = "false"
+        {
+            darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
+            darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible"
+        }
+    else if darkINI = "Disabled"
+        {
+            darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
+            darkCheck.ToolTip := "The users OS version is too low for this feature"
+            darkCheck.Opt("+Disabled")
+        }
+    darkCheck.OnEvent("Click", darkToggle)
+    darkToggle(*)
+    {
+        ToolTip("")
+        darkToggleVal := darkCheck.Value
+        if darkToggleVal = 1
+            {
+                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+                darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible"
+                toolCust("A dark theme will be applied to certain GUI elements wherever possible", 2000)
+                goDark()
+            }
+        else
+            {
+                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+                darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible"
+                toolCust("A lighter theme will be applied to certain GUI elements wherever possible", 2000)
+                goDark(false, "Light")
+            }
+    }
+
     ;EDIT BOXES
     adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
     adobeGBEdit := settingsGUI.Add("Edit", "Section xs+197 ys r1 W50 Number", "")
@@ -1127,7 +1192,22 @@ settingsGUI()
             PrevHwnd := Hwnd
         }
     }
+    
+    darkMode := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+    if darkMode = "true"
+        goDark()
 
+    goDark(dark := true, DarkorLight := "Dark")
+    {
+            titleBarDarkMode(settingsGUI.Hwnd, dark)
+            buttonDarkMode(adobeToggle.Hwnd, DarkorLight)
+            buttonDarkMode(firstToggle.Hwnd, DarkorLight)
+            buttonDarkMode(gameAdd.Hwnd, DarkorLight)
+            buttonDarkMode(iniLink.Hwnd, DarkorLight)
+            buttonDarkMode(hardReset.Hwnd, DarkorLight)
+            buttonDarkMode(saveAndClose.Hwnd, DarkorLight)
+    }
+    
     settingsGUI.Show("Center AutoSize")
 }
  

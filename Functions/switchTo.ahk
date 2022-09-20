@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.3
+;\\v2.14
 #Include General.ahk
 
 /*
@@ -433,6 +433,19 @@ musicGUI()
     ;add an invisible button since removing the default off all the others did nothing
     removedefault := MyGui.Add("Button", "Default X0 Y0 W0 H0", "_")
     ;#finished with definitions
+
+    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+        goDark()
+    goDark()
+    {
+        titleBarDarkMode(MyGui.Hwnd)
+        buttonDarkMode(AIMPGUI.Hwnd)
+        buttonDarkMode(FoobarGUI.Hwnd)
+        buttonDarkMode(WMPGUI.Hwnd)
+        buttonDarkMode(VLCGUI.Hwnd)
+        buttonDarkMode(FOLDERGUI.Hwnd)
+    }
+    
     MyGui.Show()
     ;below is what happens when you click on each name
     AIMP(*) {
@@ -564,6 +577,16 @@ hotkeysGUI() {
 	close(*) {
 		hotGUI.Destroy()
 	}
+
+    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+        goDark()
+    goDark()
+    {
+        titleBarDarkMode(hotGUI.Hwnd)
+        buttonDarkMode(closeButton.Hwnd)
+        buttonDarkMode(noDefault.Hwnd)
+    }
+    
     ;Show the GUI
 	hotGUI.Show("AutoSize")
 }
@@ -609,6 +632,13 @@ todoGUI()
         todoGUI.Destroy()
     }
 
+    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+        goDark()
+    goDark()
+    {
+        titleBarDarkMode(todoGUI.Hwnd)
+        buttonDarkMode(closeButton.Hwnd)
+    }
     todoGUI.Show()
 }
 
@@ -706,6 +736,14 @@ activeScripts(MyRelease)
     ;close button
     closeButton := MyGui.Add("Button", "X245", "Close")
     closeButton.OnEvent("Click", escape)
+
+    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+        goDark()
+    goDark()
+    {
+        titleBarDarkMode(MyGui.Hwnd)
+        buttonDarkMode(closeButton.Hwnd)
+    }
 
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip

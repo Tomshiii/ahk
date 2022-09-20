@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.20
+;\\v2.13
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -413,6 +413,32 @@ jumpChar(amount := 10)
             return
         }
     SendInput(side)
+}
+
+/* https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
+ This function will convert a windows title bar to a dark theme if possible.
+ @param hwnd is the hwnd value of the window you wish to alter
+ @param dark is a toggle that allows you to call the inverse of this function and return the title bar to light mode. This parameter can be omitted otherwise pass false
+ */
+titleBarDarkMode(hwnd, dark := true)
+{
+    if VerCompare(A_OSVersion, "10.0.17763") >= 0 {
+        attr := 19
+        if VerCompare(A_OSVersion, "10.0.18985") >= 0 {
+            attr := 20
+        }
+        DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "int", attr, "int*", dark, "int", 4)
+    }
+}
+
+/* https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
+ This function will convert GUI buttons to a dark theme.
+ @param ctrl_hwnd is the hwnd value of the control you wish to alter
+ @param DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light" 
+ */
+buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark")
+{
+    DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
 }
 
 ; ===========================================================================================================================================
