@@ -13,6 +13,7 @@ This release brings along `gameCheck.ahk` that will automatically detect when a 
 - Added a check in `musicGUI()` to make sure to music folder actually exists
 - `switchToAE()` contains more elaborate code to be able to open the `.aep` file for the current project even once AE is already open
 - `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
+- Fixed some incorrect information in `hotkeysGUI()`
 
 `settingsGUI()`
 - Minor GUI tweaks

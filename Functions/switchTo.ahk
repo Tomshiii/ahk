@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.2
+;\\v2.13.3
 #Include General.ahk
 
 /*
@@ -534,13 +534,13 @@ hotkeysGUI() {
         if selection.Value = 7
             {
                 selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F1`` hotkey and unticking the same script!"
+                selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F2`` hotkey and unticking the same script!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 8
             {
                 selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "Will search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
+                selectionText.Text := "(That's : win > SHIFT > c, not the actual + key)`nWill search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
                 hotGUI.Move(,, "450", "297")
             }
         if selection.Value = 9

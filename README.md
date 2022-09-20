@@ -30,7 +30,7 @@ This repo is to maintain work on the `ahk v2.0` versions of my scripts. These sc
 My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) **OR** `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
 
 ## What to do:
-1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0beta.7 or above](https://www.autohotkey.com/v2/).
+1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 beta](https://www.autohotkey.com/v2/).
 2. Extract AHK v2.0 beta, run the installer and then select `install for all users`
 3. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
    - [Notepad++](https://notepad-plus-plus.org/downloads/)
@@ -63,7 +63,7 @@ An ini file/ahk script combo for defining all keyboard shortcuts for programs th
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
 
 This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional;
-- `generate()` - Handles creating a `settings.ini` file in `A_MyDocuments \tomshi\` directory that handles a few user adjustable settings in my scripts. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings`
+- `generate()` - Handles creating a `settings.ini` file in `A_MyDocuments \tomshi\` directory that handles a few user adjustable settings in my scripts. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings` or by pulling up `settingsGUI()` (default hotkey is `win + F1`)
 - `locationReplace()` - Handles replacing any instance of either my original working directory, or yours if you move my scripts to a new location. eg. on first run by the user this function will replace all instances of `E:\Github\ahk` with the directory you run the script
 - `verCheck()` - This function can be found in a few of my scripts and will check to see if you're running a version of AHK that is compatible with my scripts
 - `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
@@ -112,6 +112,19 @@ Note:
 
 #### [gameCheck.ahk](https://github.com/Tomshiii/ahk/blob/main/gameCheck.ahk)
 A script that will automatically suspend `My Scripts.ahk` when a game is detected to be the active window & then unsuspend it when the game is no longer active.
+```mermaid
+  graph TD;
+      A[gameCheck.ahk]-->B{Game List};
+      B --> C[is a game in the list open?];
+      
+      C -- yes --> D[Suspend `My Scripts.ahk`]
+      C -- no --> E[Wait 2.5s] --> C
+
+      D --> H --> F[is game still open?]
+      F -- yes --> H[Wait 2.5s] --> F
+      F -- no --> G[Unsuspend `My Scripts.ahk`]
+      G --> C
+```
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
 A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.
