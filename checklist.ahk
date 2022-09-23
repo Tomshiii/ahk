@@ -1,9 +1,9 @@
-;#SingleInstance Force ;LEAVE THIS LIKE THIS SO YOU DON'T ACCIDENTLY OPEN IT AGAIN
+#SingleInstance Force
 #Requires AutoHotkey v2.0-beta.5
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.3.1"
+version := "v2.5.4"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -159,12 +159,13 @@ else
 ;help menu
 HelpMenu := Menu()
 HelpMenu.Add("&About", aboutBox)
-HelpMenu.Add("&Github", github)
 updateSub := Menu()
-HelpMenu.Add("&Hours Worked", hours)
 HelpMenu.Add("&Check for Update", updateSub)
 updateSub.Add("&Stable", updateCheck)
 updateSub.Add("&Beta", updateCheck)
+HelpMenu.Add("&Github", github)
+HelpMenu.Add("&Hours Worked", hours)
+HelpMenu.Add("&Open Logs", openLog)
 ;define the entire menubar
 bar := MenuBar()
 bar.Add("&File", FileMenu)
@@ -780,4 +781,22 @@ which(dark := true, DarkorLight := "Dark")
     {
         DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
     }
+}
+
+openLog(*)
+{
+    if FileExist(A_ScriptDir "\checklist_logs.txt")
+        Run(A_ScriptDir "\checklist_logs.txt")
+    else
+        toolCust("the log file", 2000, 1)
+}
+
+OnExit ExitFunc
+ExitFunc(ExitReason, ExitCode)
+{
+    if ExitReason = "Single"
+        {
+            stop()   
+            close()
+        }
 }

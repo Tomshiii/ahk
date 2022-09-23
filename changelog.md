@@ -40,11 +40,13 @@ Alongside that, this update brings along a dark theme to certain GUI elements. A
 - Fixed `H:` number getting cut off when above 10 hours
 - Moved all functions to the bottom of the script to increase readability
 - Now uses `floorDecimal()` for the `Hour` text so it ticks over more accurately
+- Will now stop the timer & log information if a second instance is forcefully opened
 - Added menu bar to:
     - Open other checklists
     - Toggle tooltips for the current project (if global `checklist.ahk` tooltips are enabled)
     - Toggle Dark Mode for the current project (if global dark mode is enabled)
     - Display `About` informational GUI
+    - Open the current projects log file
     - Open the github repo
     - Show hours worked today, days worked & avg hours worked per day
     - Check for updates on both the stable and beta paths
