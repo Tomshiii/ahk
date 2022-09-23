@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.3"
+version := "v2.5.3.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -685,7 +685,7 @@ hours(*)
 
     currentHours := floorDecimal(ElapsedTime / 3600, 3)
     workedToday := floorDecimal(currentHours - startHours, 3)
-    if workedToday >= 0
+    if workedToday <= 0
         workedToday := 0
     
     increment := 0
