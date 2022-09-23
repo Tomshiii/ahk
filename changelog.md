@@ -29,6 +29,8 @@ Alongside that, this update brings along a dark theme to certain GUI elements. A
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
 - Added `commLocation :=` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own variable
     - `QMK Keyboard.ahk` `h::` now attempts to open `commLocation` if there is no Adobe project open
+- Some loops now use `until` syntaxing
+- Some loops in `right click premiere.ahk` now use `while` syntaxing
 
 `replaceChecklist.ahk`
 - Will now ignore backup folders

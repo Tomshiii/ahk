@@ -72,24 +72,21 @@ Rbutton::
 							SendInput("{LButton Down}")
 							blockOff()
 							;ToolTip("left button pressed") ;testing
-							loop {
-								static left := 0
-								static xbutton := 0
-								sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
-								if GetKeyState("LButton", "P")
-									left := 1
-								if GetKeyState("XButton2", "P")
-									{
-										xbutton := 1
+							while GetKeyState("Rbutton", "P")
+								{
+									static left := 0
+									static xbutton := 0
+									sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
+									if GetKeyState("LButton", "P")
 										left := 1
-									}
-								if GetKeyState("Ctrl")
-									break
-								if not GetKeyState("Rbutton", "P")
-									{
+									if GetKeyState("XButton2", "P")
+										{
+											xbutton := 1
+											left := 1
+										}
+									if GetKeyState("Ctrl")
 										break
-									}
-							}
+								}
 							;ToolTip("")
 							SendInput("{LButton Up}")
 							if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
@@ -102,7 +99,7 @@ Rbutton::
 								}
 							return
 						}
-					loop
+					while GetKeyState("Rbutton", "P")
 						{
 							if GetKeyState("Ctrl")
 								break
@@ -117,19 +114,16 @@ Rbutton::
 									xbutton := 1
 									left := 1
 								}
-							if not GetKeyState("Rbutton", "P")
-								{
-									if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
-										{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
-											SendInput(playStop)
-											if xbutton > 0 ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
-												SendInput(speedUpPlayback)
-											left := 0
-											xbutton := 0
-										}
-									return
-								}
 						}
+					if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
+						{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
+							SendInput(playStop)
+							if xbutton > 0 ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
+								SendInput(speedUpPlayback)
+							left := 0
+							xbutton := 0
+						}
+					return
 				}
 			Send("{Escape}") ;in case you end up inside the "delete" right click menu from the timeline
 		}
