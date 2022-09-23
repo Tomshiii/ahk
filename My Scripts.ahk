@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.18.1
+;\\v2.18.2
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.8.5
+;\\v2.9
 
 ; ============================================================================================================================================
 ;
@@ -366,7 +366,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 	SetTitleMatchMode 2
 	needle := "YouTube"
 	getTitle(&title)
-	if (InStr(title, needle))
+	if InStr(title, needle)
 		{
 			if InStr(title, "Subscriptions - YouTube Mozilla Firefox", 1) || title = "YouTube Mozilla Firefox"
 				{
@@ -546,8 +546,6 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			loop {
 				;for whatever reason, if you're clicked on another panel, then try to hit this hotkey, `ControlGetPos` refuses to actually get any value, I have no idea why. This loop will attempt to get that information anyway, but if it fails will fallback to the hotkey you have set within premiere
 				;toolCust(A_Index "`n" width "`n" height, "100")
-				if width != 0 || height != 0
-					break
 				if A_Index > 3
 					{
 						SendInput(selectionPrem)
@@ -559,7 +557,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 				SendInput(toolsWindow)
 				toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
 				ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-			}
+			} until width != 0 || height != 0
 		}
 	if height < 80 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
 		multiply := "3"

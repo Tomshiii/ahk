@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.13
+;\\v2.14.14
 #Include General.ahk
 
 /* preset()
@@ -63,7 +63,7 @@ preset(item)
         CaretGetPos(&findx)
         if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
             {
-                Loop {
+                loop {
                         if A_Index > 5
                             {
                                 SendInput(findBox) ;adjust this in the ini file
@@ -72,8 +72,6 @@ preset(item)
                             }
                         sleep 30
                         CaretGetPos(&findx)
-                        if findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                            break
                         if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                             {
                                 blockOff()
@@ -81,7 +79,7 @@ preset(item)
                                 errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                                 return
                             }
-                    }
+                    } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
             }
         SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
         SendInput("^a" "+{BackSpace}")
@@ -98,13 +96,11 @@ preset(item)
                     CaretGetPos(&find2x)
                     if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                         {
-                            Loop {
+                            loop {
                                     sleep 30
                                     SendInput(findBox)
                                     toolCust("if you hear windows, blame premiere", 2000)
                                     CaretGetPos(&find2x)
-                                    if find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                                        break
                                     if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                         {
                                             blockOff()
@@ -112,7 +108,7 @@ preset(item)
                                             errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                                             return
                                         }
-                                }
+                                } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                         }
                     SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
                     SendInput("^a" "+{BackSpace}")
@@ -166,12 +162,9 @@ fxSearch()
     CaretGetPos(&findx)
     if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
         {
-            Loop 40
-                {
+            loop 40 {
                     sleep 30
                     CaretGetPos(&findx)
-                    if findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                        break
                     if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                         {
                             blockOff()
@@ -179,7 +172,7 @@ fxSearch()
                             errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                             return
                         }
-                }
+                } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
         }
     SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
     SendInput("^a" "+{BackSpace}")
@@ -195,12 +188,9 @@ fxSearch()
                 CaretGetPos(&find2x)
                 if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                     {
-                        Loop 40
-                            {
+                        loop 40 {
                                 sleep 30
                                 CaretGetPos(&find2x)
-                                if find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                                    break
                                 if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                     {
                                         blockOff()
@@ -208,7 +198,7 @@ fxSearch()
                                         errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                                         return
                                     }
-                            }
+                            } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                     }
                 SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
                 SendInput("^a" "+{BackSpace}")
@@ -691,6 +681,7 @@ audioDrag(sfxName)
 {
     ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
     coords()
+    SendInput(selectionPrem)
     if ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
         {
             blockOn()
@@ -710,12 +701,9 @@ audioDrag(sfxName)
                 CaretGetPos(&findx)
                 if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                     {
-                        Loop 40
-                            {
+                        loop 40 {
                                 sleep 30
                                 CaretGetPos(&findx)
-                                if findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                                    break
                                 if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                     {
                                         blockOff()
@@ -723,7 +711,7 @@ audioDrag(sfxName)
                                         errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
                                         return
                                     }
-                            }
+                            } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                     }
                 SendInput("^a" "+{BackSpace}")
                 SendInput(sfxName)
@@ -732,9 +720,9 @@ audioDrag(sfxName)
                 if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") || ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
                     {
                         MouseMove(vlx, vly)
-                        sleep 50
+                        sleep 100
                         SendInput("{Click Down}")
-                        sleep 50
+                        sleep 100
                     }
                 else
                     {
@@ -787,8 +775,6 @@ audioDrag(sfxName)
                         if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
                             trackNumber := getlastHotkey
                         skip:
-                        if GetKeyState("LButton", "P") ;checking for the user cutting the bleep sfx
-                            break
                         sleep 50
                         if A_Index > 160 ;built in timeout
                             {
@@ -804,7 +790,7 @@ audioDrag(sfxName)
                             }
                         secRemain := 8 - sec
                         ToolTip("This function will attempt to drag your bleep to:`n" A_Tab A_Tab "Track " trackNumber "`n`nPress another number key to move to a different track`nThe function will continue once you've cut the track`n" secRemain "s remaining")
-                    }
+                    } until GetKeyState("LButton", "P")
                     ToolTip("")
                     blockOn()
                     sleep 50
@@ -1097,10 +1083,10 @@ reset()
                 }
         }
     MouseGetPos(&xpos, &ypos)
-    loop 5 {
+    loop {
         if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") || ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
             break
-        else
+        if A_Index > 5
             {
                 blockOff()
                 toolCust("the motion value",, 1)
@@ -1253,14 +1239,14 @@ gain(amount)
                     return
                 }
             try {
-        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-    } catch as e {
-        blockOff() ;just incase
-        toolCust("Couldn't get the ClassNN of the desired panel")
-        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
-        return
-    }
+                ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+            } catch as e {
+                blockOff() ;just incase
+                toolCust("Couldn't get the ClassNN of the desired panel")
+                errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
+                return
+            }
             if ClassNN != "DroverLord - Window Class3" || ClassNN != "DroverLord - Window Class1"
                 break
             sleep 30
