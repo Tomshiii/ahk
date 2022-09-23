@@ -1,4 +1,4 @@
-;v2.19
+;v2.19.1
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -913,12 +913,12 @@ settingsGUI()
     if darkINI = "true"
         {
             darkCheck := settingsGUI.Add("Checkbox", "Checked1 Y+5", "Dark Mode")
-            darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible"
+            darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
         }
     else if darkINI = "false"
         {
             darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
-            darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible"
+            darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
         }
     else if darkINI = "Disabled"
         {
@@ -934,14 +934,14 @@ settingsGUI()
         if darkToggleVal = 1
             {
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-                darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible"
+                darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
                 toolCust("A dark theme will be applied to certain GUI elements wherever possible", 2000)
                 goDark()
             }
         else
             {
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-                darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible"
+                darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
                 toolCust("A lighter theme will be applied to certain GUI elements wherever possible", 2000)
                 goDark(false, "Light")
             }
