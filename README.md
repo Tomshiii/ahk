@@ -153,6 +153,9 @@ A script that will automatically save an Adobe Premiere Pro/After Effects projec
 #### [checklist.ahk](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk)
 A script that allows me to keep informed about what I have left to do on a video editing project as well as keeping track of the hours I've put into any individual project. This file doesn't get run from this directory and is instead copied to the project folder and run from there. This script has an accompanying script in `\Support Files` that allows you to quickly replace any in use checklist files.
 
+#### [Multi-Instance Close.ahk](https://github.com/Tomshiii/ahk/blob/main/Multi-Instance%20close.ahk)
+A script that will periodically check for duplicate instances of any autohotkey scripts and close one of them. Even if you use `#SingleInstance Force` reloading scripts can sometimes cause a second instance to slip open. This script will hopefully mitigate the odd behaviour that occurs when this happens by closing any duplicates.
+
 #### [adobe fullscreen check.ahk](https://github.com/Tomshiii/ahk/blob/main/adobe%20fullscreen%20check.ahk)
 A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts.
 

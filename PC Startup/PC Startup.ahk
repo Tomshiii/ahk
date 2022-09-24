@@ -9,6 +9,7 @@ run A_WorkingDir "\autodismiss error.ahk"
 run A_WorkingDir "\autosave.ahk"
 run A_WorkingDir "\adobe fullscreen check.ahk"
 run A_WorkingDir "\gameCheck.ahk"
+run A_WorkingDir "\Multi-Instance Close.ahk"
 
 if not WinExist("ahk_exe Creative Cloud.exe")
     run "C:\Program Files\Adobe\Adobe Creative Cloud\ACC\Creative Cloud.exe"
