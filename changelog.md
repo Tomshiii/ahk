@@ -45,6 +45,7 @@ Alongside that, this update brings along a dark theme to certain GUI elements. A
 - Now uses `floorDecimal()` for the `Hour` text so it ticks over more accurately
 - Will now stop the timer & log information if a second instance is forcefully opened
 - Added menu bar to:
+    - Create a new checklist
     - Open other checklists
     - Toggle tooltips for the current project (if global `checklist.ahk` tooltips are enabled)
     - Toggle Dark Mode for the current project (if global dark mode is enabled)

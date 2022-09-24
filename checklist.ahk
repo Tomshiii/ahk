@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.4"
+version := "v2.5.4.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -121,6 +121,7 @@ SplitPath FullFileName, &name
 ;define menu
 ;file menus
 FileMenu := Menu()
+FileMenu.Add("&New`tCtrl+N", fileNewCheck)
 FileMenu.Add("&Open`tCtrl+O", fileOpenCheck)
 FileMenu.Add("E&xit", close)
 ;settings menu
@@ -323,7 +324,9 @@ StopWatch() {
 }
 stop(*) {
     forFile := Round(ElapsedTime / 3600, 3)
-    IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
+    checkHours := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
+    if ElapsedTime != checkHours
+        IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
     newDate(&today)
     FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Stopping Hours = " forFile " -- seconds at stop = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0) ;then stop the timer
@@ -425,9 +428,15 @@ logCheckbox(*) {
 ;what happens when you close the checklist
 close(*) {
     forFile := Round(ElapsedTime / 3600, 3)
-    IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
+    checkHours := IniRead(A_ScriptDir "\checklist.ini", "Info", "time")
+    if ElapsedTime != checkHours
+        IniWrite(ElapsedTime, A_ScriptDir "\checklist.ini", "Info", "time")
     newDate(&today)
-    FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
+    
+    if ElapsedTime = checkHours
+        FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", A_ScriptDir "\checklist_logs.txt")
+    else
+        FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", A_ScriptDir "\checklist_logs.txt")
     SetTimer(StopWatch, 0)
     SetTimer(reminder, 0)
     MyGui.Destroy()
@@ -583,6 +592,45 @@ tooltips(*)
         SetTimer(reminder, 0)
         Reload
     }
+}
+
+fileNewCheck(*)
+{
+    stop()
+    selectDir := FileSelect("D10", "::{20d04fe0-3aea-1069- a2d8-08002b30309d}", "Select target directory")
+    if selectDir = ""
+        return
+    if FileExist(A_MyDocuments "\tomshi\settings.ini")
+        {
+            workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+            try {
+                if !FileExist(selectDir "\checklist.ahk")
+                    FileCopy(workDir "\checklist.ahk", selectDir "\checklist.ahk")
+                else
+                    {
+                        MsgBox("checklist.ahk file already exists in the target directory")
+                        return
+                    }
+            } catch as e {
+                return
+            }
+        }
+    else
+        {
+            try {
+                if !FileExist(selectDir "\checklist.ahk")
+                    FileCopy(A_ScriptFullPath, selectDir "\checklist.ahk")
+                else
+                    {
+                        MsgBox("checklist.ahk file already exists in the target directory")
+                        return
+                    }
+            } catch as e {
+                return
+            }
+        }
+    Run(selectDir "\checklist.ahk")
+    close()
 }
 
 fileOpenCheck(*)
