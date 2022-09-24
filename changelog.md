@@ -5,6 +5,7 @@ Alongside that, this update brings along a dark theme to certain GUI elements. A
 
 ## > My Scripts
 - Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown\WheelUp::`
+- Added the ability to toggle `CapsLock` by double tapping it
 
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
