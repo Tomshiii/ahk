@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13
+;\\v2.13.1
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -439,6 +439,20 @@ titleBarDarkMode(hwnd, dark := true)
 buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark")
 {
     DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
+}
+
+/*
+ This function facilitates accelerated scrolling. If the window under the cursor isn't the active window when this function is called, it will activate it
+ */
+fastWheel()
+{
+	getHotkeys(&first, &second)
+	MouseGetPos(,, &UnderCursor)
+	orig := WinGetTitle(WinActive("A"))
+	titleUnder := WinGetTitle("ahk_id " UnderCursor)
+	if orig != titleUnder
+		WinActivate(titleUnder)
+	SendInput("{" second " 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 }
 
 ; ===========================================================================================================================================

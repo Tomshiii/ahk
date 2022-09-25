@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.18.5
+;\\v2.18.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.9
 
@@ -895,11 +895,11 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;You can check out \mouse settings.png in the root repo to check what mouse buttons I have remapped
-;The below scripts are to accelerate scrolling. If you encounter any slowdowns caused by spamming these two hotkeys, make sure no other hotkeys overlap with the activation script - I previously encountered issues with ;showmoreHotkey; when they were both set to the same Fkey
+;The below scripts are to accelerate scrolling. If you encounter any slowdowns caused by spamming these two hotkeys, make sure no other hotkeys overlap with the activation script - I previously encountered issues with `showmoreHotkey` when they were both set to the same Fkey
 ;wheelupHotkey;
-F14 & WheelDown::SendInput("{WheelDown 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+F14 & WheelDown::fastWheel()
 ;wheeldownHotkey;
-F14 & WheelUp::SendInput("{WheelUp 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+F14 & WheelUp::fastWheel()
 
 ;The below scripts are to swap between virtual desktops
 ;virtualrightHotkey;

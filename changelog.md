@@ -7,7 +7,8 @@ This release brings along two new scripts; `gameCheck.ahk` & `Multi-Instance Clo
 Alongside those two scripts, this update brings along a dark theme to certain GUI elements. AHK is rather limited in what it can apply in a modern way but a global dark mode option can now be enabled in `settingsGUI()`
 
 ## > My Scripts
-- Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown\WheelUp::`
+- Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown/WheelUp::`
+- `F14 & WheelDown/WheelUp::` now calls `fastWheel()`
 - Added the ability to toggle `CapsLock` by double tapping it
 - Added `#+^r::` to hard refresh all open `.ahk` scripts (not including `checklist.ahk`)
     - Added `hardReset()` for this and so it can be used elsewhere
@@ -24,6 +25,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
 - Fixed some incorrect information in `hotkeysGUI()`
 - Condensed most `OnEvent`'s for `activeScripts()` to one singular function
+- Added `fastWheel()` to replace the simple `SendInput("{WheelDown/Up 10}")` and allow the function to focus the window under the cursor if it isn't currently the active window when called
 
 `settingsGUI()`
 - Minor GUI tweaks
