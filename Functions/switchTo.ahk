@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.1
+;\\v2.14.2
 #Include General.ahk
 
 /*
@@ -691,49 +691,49 @@ activeScripts(MyRelease)
     else
         alt := MyGui.Add("CheckBox", "Checked0", "Alt_menu_acceleration_DISABLER.ahk")
     alt.ToolTip := "Clicking this checkbox will open/close the script"
-    alt.OnEvent("Click", altClick)
+    alt.OnEvent("Click", scriptClick)
     if WinExist("autodismiss error.ahk - AutoHotkey")
         autodis := MyGui.Add("CheckBox", "Checked1", "autodismiss error.ahk")
     else
         autodis := MyGui.Add("CheckBox", "Checked0", "autodismiss error.ahk")
     autodis.ToolTip := "Clicking this checkbox will open/close the script"
-    autodis.OnEvent("Click", autodisClick)
+    autodis.OnEvent("Click", scriptClick)
     if WinExist("autosave.ahk - AutoHotkey")
         autosave := MyGui.Add("CheckBox", "Checked1", "autosave.ahk")
     else
         autosave := MyGui.Add("CheckBox", "Checked0", "autosave.ahk")
     autosave.ToolTip := "Clicking this checkbox will open/close the script. Reopening it will restart the autosave timer"
-    autosave.OnEvent("Click", autosaveClick)
+    autosave.OnEvent("Click", scriptClick)
     if WinExist("adobe fullscreen check.ahk - AutoHotkey")
         premFull := MyGui.Add("CheckBox", "Checked1", "adobe fullscreen check.ahk")
     else
         premFull := MyGui.Add("CheckBox", "Checked0", "adobe fullscreen check.ahk")
     premFull.ToolTip := "Clicking this checkbox will open/close the script"
-    premFull.OnEvent("Click", premFullClick)
+    premFull.OnEvent("Click", scriptClick)
     if WinExist("gameCheck.ahk - AutoHotkey")
         gameCheck := MyGui.Add("CheckBox", "Checked1", "gameCheck.ahk")
     else
         gameCheck := MyGui.Add("CheckBox", "Checked0", "gameCheck.ahk")
     gameCheck.ToolTip := "Clicking this checkbox will open/close the script"
-    gameCheck.OnEvent("Click", gameCheckClick)
+    gameCheck.OnEvent("Click", scriptClick)
     if WinExist("Multi-Instance Close.ahk - AutoHotkey")
         multiCheck := MyGui.Add("CheckBox", "Checked1", "Multi-Instance Close.ahk")
     else
         multiCheck := MyGui.Add("CheckBox", "Checked0", "Multi-Instance Close.ahk")
     multiCheck.ToolTip := "Clicking this checkbox will open/close the script"
-    multiCheck.OnEvent("Click", multiCheckClick)
+    multiCheck.OnEvent("Click", scriptClick)
     if WinExist("QMK Keyboard.ahk - AutoHotkey")
         qmk := MyGui.Add("CheckBox", "Checked1", "QMK Keyboard.ahk")
     else
         qmk := MyGui.Add("CheckBox", "Checked0", "QMK Keyboard.ahk")
     qmk.ToolTip := "Clicking this checkbox will open/close the script"
-    qmk.OnEvent("Click", qmkClick)
+    qmk.OnEvent("Click", scriptClick)
     if WinExist("Resolve_Example.ahk - AutoHotkey")
         resolve := MyGui.Add("CheckBox", "Checked1", "Resolve_Example.ahk")
     else
         resolve := MyGui.Add("CheckBox", "Checked0", "Resolve_Example.ahk")
     resolve.ToolTip := "Clicking this checkbox will open/close the script"
-    resolve.OnEvent("Click", resolveClick)
+    resolve.OnEvent("Click", scriptClick)
 
     ;images
     myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Support Files\Icons\myscript.png")
@@ -787,69 +787,13 @@ activeScripts(MyRelease)
         else
             Suspend(-1)
     }
-    qmkClick(*){
+    scriptClick(script, *) {
         detect()
-        qmkVal := qmk.Value
-        if qmkVal = 1
-            Run(A_WorkingDir "\QMK Keyboard.ahk")
+        val := script.Value
+        if val = 1
+            Run(A_WorkingDir "\" script.text)
         else
-            WinClose("QMK Keyboard.ahk - AutoHotkey")
-    }
-    resolveClick(*){
-        detect()
-        resolveVal := resolve.Value
-        if resolveVal = 1
-            Run(A_WorkingDir "\Resolve_Example.ahk")
-        else
-            WinClose("Resolve_Example.ahk - AutoHotkey")
-    }
-    autosaveClick(*){
-        detect()
-        autosaveVal := autosave.Value
-        if autosaveVal = 1
-            Run(A_WorkingDir "\autosave.ahk")
-        else
-            WinClose("autosave.ahk - AutoHotkey")
-    }
-    premFullClick(*){
-        detect()
-        premFullVal := premFull.Value
-        if premFullVal = 1
-            Run(A_WorkingDir "\adobe fullscreen check.ahk")
-        else
-            WinClose("adobe fullscreen check.ahk - AutoHotkey")
-    }
-    altClick(*){
-        detect()
-        altVal := alt.Value
-        if altVal = 1
-            Run(A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk")
-        else
-            WinClose("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
-    }
-    autodisClick(*){
-        detect()
-        autodisVal := autodis.Value
-        if autodisVal = 1
-            Run(A_WorkingDir "\autodismiss error.ahk")
-        else
-            WinClose("autodismiss error.ahk - AutoHotkey")
-    }
-    gameCheckClick(*){
-        detect()
-        gameCheckVal := gameCheck.Value
-        if gameCheckVal = 1
-            Run(A_WorkingDir "\gameCheck.ahk")
-        else
-            WinClose("gameCheck.ahk - AutoHotkey")
-    }
-    multiCheckClick(*){
-        detect()
-        multiCheckVal := multiCheck.Value
-        if multiCheckVal = 1
-            Run(A_WorkingDir "\Multi-Instance Close.ahk")
-        else
-            WinClose("Multi-Instance Close.ahk - AutoHotkey")
+            WinClose(script.text " - AutoHotkey")
     }
 
     MyGui.OnEvent("Escape", escape)

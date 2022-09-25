@@ -23,6 +23,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `switchToAE()` contains more elaborate code to be able to open the `.aep` file for the current project even once AE is already open
 - `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
 - Fixed some incorrect information in `hotkeysGUI()`
+- Condensed most `OnEvent`'s for `activeScripts()` to one singular function
 
 `settingsGUI()`
 - Minor GUI tweaks
