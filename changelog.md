@@ -10,6 +10,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown\WheelUp::`
 - Added the ability to toggle `CapsLock` by double tapping it
 - Added `#+^r::` to hard refresh all open `.ahk` scripts (not including `checklist.ahk`)
+    - Added `hardReset()` for this and so it can be used elsewhere
 - `#+r::` will now create a list of open `.ahk` scripts and tell them to reload instead of requiring hard coded values
 
 ## > Functions

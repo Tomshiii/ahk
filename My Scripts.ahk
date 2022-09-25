@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.18.4
+;\\v2.18.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.9
 
@@ -102,22 +102,7 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 }
 
 ;hardreloadHotkey;
-#+^r:: ;this will hard reload all active ahk scripts
-{
-	DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
-	SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-	value := WinGetList("ahk_class AutoHotkey")
-	for this_value in value
-		{
-			name := WinGettitle(this_value)
-			path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
-			SplitPath(path, &ScriptName)
-			if ScriptName = "checklist.ahk" || ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk"
-				continue
-			Run(path)
-		}
-	Run(A_ScriptFullPath) ;run this current script last so all of the rest actually happen
-}
+#+^r::hardReset() ;this will hard reload all active ahk scripts
 
 ;settingsHotkey;
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI

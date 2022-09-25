@@ -1,4 +1,4 @@
-;v2.19.1
+;v2.19.2
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -83,10 +83,11 @@ generate(MyRelease)
     CHECKTOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip", "true")
     GAMESEC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
     DARK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode", darkVerCheck)
+    MULTI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC", 5)
     deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
     if FileExist(A_MyDocuments "\tomshi\settings.ini")
         FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /*
@@ -997,6 +998,19 @@ settingsGUI()
             PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
     }
 
+    multiInitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC")
+    multiEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
+    settingsGUI.Add("UpDown",, multiInitVal)
+    multiEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``Multi-Instance Close.ahk```n check rate (sec)")
+    multiEdit.OnEvent("Change", multiMin)
+    multiMin(*)
+    {
+        detect()
+        IniWrite(multiEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC")
+        if WinExist("Multi-Instance Close.ahk - AutoHotkey")
+            PostMessage 0x0111, 65303,,, "Multi-Instance Close.ahk - AutoHotkey"
+    }
+
     ;BOTTOM TEXT
     resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+20", "Reset")
     resetText.SetFont("S13 Bold")
@@ -1125,8 +1139,8 @@ settingsGUI()
     }
     
     group := settingsGUI.Add("GroupBox", "W101 H95 xs+217 ys-60", "Exit")
-    hardReset := settingsGUI.Add("Button", "W85 H30 x+-93 y+-75", "Hard Reset")
-    hardReset.OnEvent("Click", hardres)
+    hardResetVar := settingsGUI.Add("Button", "W85 H30 x+-93 y+-75", "Hard Reset")
+    hardResetVar.OnEvent("Click", hardres)
 
     saveAndClose := settingsGUI.Add("Button", "W85 H30 y+5", "Save && Exit")
     saveAndClose.OnEvent("Click", close)
@@ -1168,7 +1182,8 @@ settingsGUI()
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
-        Run(A_ScriptFullPath)
+        
+        hardReset()
     }
 
     ;the below code allows for the tooltips on hover
@@ -1204,7 +1219,7 @@ settingsGUI()
             buttonDarkMode(firstToggle.Hwnd, DarkorLight)
             buttonDarkMode(gameAdd.Hwnd, DarkorLight)
             buttonDarkMode(iniLink.Hwnd, DarkorLight)
-            buttonDarkMode(hardReset.Hwnd, DarkorLight)
+            buttonDarkMode(hardResetVar.Hwnd, DarkorLight)
             buttonDarkMode(saveAndClose.Hwnd, DarkorLight)
     }
     

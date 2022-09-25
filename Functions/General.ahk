@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.17.3
+;\\v2.17.4
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.1.6
@@ -263,4 +263,28 @@ getHotkeys(&first, &second)
  */
  floorDecimal(num,dec) {
     return RegExReplace(num,"(?<=\.\d{" dec "}).*$")
+}
+
+/*
+ A function to loop through and hard reset all active ahk scripts
+ */
+hardReset()
+{
+    DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
+    SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+
+    toolCust("All active ahk scripts are being rerun")
+    value := WinGetList("ahk_class AutoHotkey")
+    for this_value in value
+        {
+            name := WinGettitle(this_value)
+            path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
+            SplitPath(path, &ScriptName)
+            if ScriptName = "checklist.ahk" || ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk"
+                continue
+            Run(path)
+        }
+    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+        WinWaitClose("ahk_class tooltips_class32",, 1)
+    Run(A_ScriptFullPath) ;run this current script last so all of the rest actually happen
 }

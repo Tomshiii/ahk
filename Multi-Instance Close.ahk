@@ -6,6 +6,11 @@ SetTimer(check, -1)
 
 ;This script will not close multiple instances of `checklist.ahk`
 
+sec := 5
+if FileExist(A_MyDocuments "\tomshi\settings.ini")
+    sec := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC")
+global ms := sec * 1000
+
 check()
 {
     DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
@@ -31,7 +36,7 @@ check()
             windows .= ScriptName "`n"
         }
     end:
-    SetTimer(, -5000)
+    SetTimer(, -ms)
 }
 
 
