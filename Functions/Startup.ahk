@@ -1,4 +1,4 @@
-;v2.19.3
+;v2.19.4
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -733,11 +733,7 @@ trayMen()
 settingsGUI()
 {
     ;this function is needed to reload some scripts
-    detect()
-    {
-        DetectHiddenWindows True
-        SetTitleMatchMode 2
-    }
+    detect() => (DetectHiddenWindows(True), SetTitleMatchMode(2))
 
     try { ;attempting to grab window information on the active window for `gameAddButt()`
         winProcc := WinGetProcessName("A")
@@ -959,10 +955,7 @@ settingsGUI()
     settingsGUI.Add("UpDown",, adobeGBinitVal)
     adobeEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobeTemp()`` limit (GB)")
     adobeGBEdit.OnEvent("Change", adobeGB)
-    adobeGB(*)
-    {
-        IniWrite(adobeGBEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
-    }
+    adobeGB(*) => IniWrite(adobeGBEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
     
     adobeFSinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS")
     adobeFSEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")

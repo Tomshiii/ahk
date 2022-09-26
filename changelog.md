@@ -13,6 +13,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Added `#+^r::` to hard refresh all open `.ahk` scripts (not including `checklist.ahk`)
     - Added `hardReset()` for this and so it can be used elsewhere
 - `#+r::` will now create a list of open `.ahk` scripts and tell them to reload instead of requiring hard coded values
+- `SC03A & c::` now pastes the string instead of using a `Send{}` type to increase performance
 
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
@@ -44,6 +45,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
     - `QMK Keyboard.ahk` `h::` now attempts to open `commLocation` if there is no Adobe project open
 - Some loops now use `until` syntaxing
 - Some loops in `right click premiere.ahk` now use `while` syntaxing
+- `=>` notation has been used in some places
 
 `replaceChecklist.ahk`
 - Will now ignore backup folders

@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.17.5
+;\\v2.17.6
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.1.6
@@ -27,28 +27,17 @@ GroupAdd("Editors", "ahk_exe Photoshop.exe")
 /**
  * Sets coordmode to "screen"
  */
-coords()
-{
-    coordmode "pixel", "screen"
-    coordmode "mouse", "screen"
-}
+coords() => (coordmode("pixel", "screen"), coordmode("mouse", "screen"))
 
 /**
  * Sets coordmode to "window"
  */
-coordw()
-{
-    coordmode "pixel", "window"
-    coordmode "mouse", "window"
-}
+coordw() => (coordmode("pixel", "window"), coordmode("mouse", "window"))
 
 /**
  * sets coordmode to "caret"
  */
-coordc()
-{
-    coordmode "caret", "window"
-}
+coordc() => coordmode("caret", "window")
 
 ; ===========================================================================================================================================
 ;
@@ -83,22 +72,12 @@ toolCust(message, timeout := 1000, find := "")
 /**
  * blocks all user inputs [IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (CTRL + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]
  */
-blockOn()
-{
-    BlockInput "SendAndMouse"
-    BlockInput "MouseMove"
-    BlockInput "On"
-    ;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
-}
+blockOn() => (BlockInput("SendAndMouse"), BlockInput("MouseMove"), BlockInput("On")) ;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
 
 /**
  * turns off the blocks on user input
  */
-blockOff()
-{
-    blockinput "MouseMoveOff"
-    BlockInput "off"
-}
+blockOff() => (Blockinput("MouseMoveOff"), BlockInput("off"))
 
 ; ===========================================================================================================================================
 ;
@@ -261,9 +240,7 @@ getHotkeys(&first, &second)
 /**
  * `Floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
  */
- floorDecimal(num,dec) {
-    return RegExReplace(num,"(?<=\.\d{" dec "}).*$")
-}
+floorDecimal(num,dec) => RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 
 /**
  * A function to loop through and hard reset all active ahk scripts

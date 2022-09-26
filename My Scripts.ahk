@@ -829,7 +829,7 @@ RButton::moveWin("") ;minimise
 ;capitaliseHotkey;
 SC03A & c:: ;will attempt to determine whether to capitilise or completely lowercase the highlighted text depending on which is more frequent
 {
-	previous := A_Clipboard
+	previous := ClipboardAll()
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
@@ -840,12 +840,12 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 			return
 		}
 	length := StrLen(A_Clipboard)
-	if length > 9999 ;personally I started encountering issues at about 16k characters but I'm dropping that just to be safe
+	/* if length > 9999 ;personally I started encountering issues at about 16k characters but I'm dropping that just to be safe
 		{
 			check := MsgBox("Strings that are too large may take a long time to process and are generally unable to be stopped without using taskmanager to kill the process`n`nThey also may eventually start sending gibberish as things aren't able to keep up`n`nAre you sure you wish to continue?", "Double Check", "4 48 4096")
 			if check = "No"
 				return
-		}
+		} */
 	upperCount := 0
 	lowerCount := 0
 	nonAlphaCount := 0
@@ -871,8 +871,11 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 			return
 		}
 	SendInput("{BackSpace}")
-	SendText(StringtoX)
-	A_Clipboard := previous
+	A_Clipboard := ""
+	A_Clipboard := StringtoX
+	ClipWait(1)
+	SendInput("{ctrl down}v{ctrl up}")
+	SetTimer(() => A_Clipboard := previous, -1000)
 }
 
 ;timeHotkey;

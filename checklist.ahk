@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.4.2"
+version := "v2.5.4.3"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -523,9 +523,7 @@ openChecklist()
 /**
  * `floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
  */
-floorDecimal(num,dec) {
-    return RegExReplace(num,"(?<=\.\d{" dec "}).*$")
-}
+floorDecimal(num,dec) => RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 
 /**
  * A function to cut repeat code - will check the last date in the logs and then break up the group if the last date is different from today
