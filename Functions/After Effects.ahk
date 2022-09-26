@@ -1,14 +1,14 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.3
+;\\v2.12.4
 #Include General.ahk
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
 
-/* aevaluehold()
- A function to warp to one of a videos values within After Effects (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
- @param button is the hotkey within after effects that's used to open up the property you want to adjust
- @param property is the filename of just the property itself ie. "scale" not "scale.png" or "scale2"
- @param optional is for when you need the mouse to move extra coords over to avoid the first "blue" text for some properties
+/**
+ * A function to warp to one of a videos values within After Effects (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+ * @param button is the hotkey within after effects that's used to open up the property you want to adjust
+ * @param property is the filename of just the property itself ie. "scale" not "scale.png" or "scale2"
+ * @param optional is for when you need the mouse to move extra coords over to avoid the first "blue" text for some properties
  */
 aevaluehold(button, property, optional) ;this function is incredibly touchy and I need to revisit it one day to improve it so that it's actually usable, but for now I don't really use it, after effects is just too jank
 {
@@ -71,9 +71,9 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
         }
 }
 
-/* aepreset()
- This function allows you to drag and drop effects onto a clip within After Effects at the press of a button
- @param preset is the name of your preset that you wish to drag onto your clip
+/**
+ * This function allows you to drag and drop effects onto a clip within After Effects at the press of a button
+ * @param preset is the name of your preset that you wish to drag onto your clip
  */
 aePreset(preset)
 {
@@ -140,8 +140,8 @@ aePreset(preset)
     blockOff()
 }
 
-/* scaleAndPos()
- This function is to quickly begin keyframing the scale & position values.
+/**
+ * This function is to quickly begin keyframing the scale & position values.
  */
 aeScaleAndPos()
 {
@@ -199,8 +199,8 @@ aeScaleAndPos()
     blockOff()
 }
 
-/* motionBlur()
- This function will open up the composition settings window within After Effects, navigate its way to the "advanced" tab, find "shuttle angle" and increase it to a value of 360
+/**
+ * This function will open up the composition settings window within After Effects, navigate its way to the "advanced" tab, find "shuttle angle" and increase it to a value of 360
  */
 motionBlur()
 {
@@ -313,9 +313,9 @@ motionBlur()
     ToolTip("")
 }
 
-/* timeline()
-  A weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock). This function uses a few imagesearches to determine the position of the timeline - NOTE: The imagesearches are still somewhat reliant on the way I have AE setup (I divide some coord ranges to save time on first use), you may need to adjust these if your aetimeline is in a non standard place
-  */
+/**
+ * A weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock). This function uses a few imagesearches to determine the position of the timeline - NOTE: The imagesearches are still somewhat reliant on the way I have AE setup (I divide some coord ranges to save time on first use), you may need to adjust these if your aetimeline is in a non standard place
+ */
 aetimeline()
 {
     coordw()

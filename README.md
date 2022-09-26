@@ -80,12 +80,14 @@ Check out [\Secondary Keyboard Files](https://github.com/Tomshiii/ahk/tree/main/
 A sort of "hub" script that includes all [individual function files](https://github.com/Tomshiii/ahk/tree/main/Functions) into it so that ***it*** can then be [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in other scripts. You don't need to manually run this file.
 A function is defined similar to;
 ```autohotkey
-/* These are comments that dynamically display information when displayed in VSCode,
-but also serve as general comments for anyone else
- This function does something
- @param variableX is a value you pass into the function
- @param variableY is a variable who's value will be passed back once the function is complete
- @param variableZ is a variable with a default value, it can be omitted
+/**
+ * These are comments that dynamically display information when displayed in VSCode,
+ but also serve as general comments for anyone else
+ * 
+ * This function does something
+ * @param variableX is a value you pass into the function
+ * @param variableY is a variable who's value will be passed back once the function is complete
+ * @param variableZ is a variable with a default value, it can be omitted
  */
 func(variableX, &variableY, variableZ := "default")
 {

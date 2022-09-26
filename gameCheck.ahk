@@ -59,9 +59,9 @@ check()
 
 
 
-/*
- This function will suspend/unsuspend other scripts
- This script found here: https://stackoverflow.com/questions/14492650/check-if-script-is-suspended-in-autohotkey -- by Lexikos
+/**
+ * This function will suspend/unsuspend other scripts
+ * This script found here: https://stackoverflow.com/questions/14492650/check-if-script-is-suspended-in-autohotkey -- by Lexikos
  */
 ScriptSuspend(ScriptName, SuspendOn)
 {

@@ -1,12 +1,12 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.1
+;\\v2.12.2
 #Include General.ahk
 
-/* Rscale()
- A function to set the scale of a video within resolve
- @param value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
- @param property is the property you want this function to type a value into (eg. zoom)
- @param plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
+/**
+ * A function to set the scale of a video within resolve
+ * @param value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
+ * @param property is the property you want this function to type a value into (eg. zoom)
+ * @param plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
  */
 Rscale(value, property, plus)
 {
@@ -57,9 +57,9 @@ Rscale(value, property, plus)
     blockOff()
 }
 
-/* rfElse()
- A function that gets nested in the resolve scale, x/y and rotation scripts
- @param data is what the script is typing in the text box to reset its value
+/**
+ * A function that gets nested in the resolve scale, x/y and rotation scripts
+ * @param data is what the script is typing in the text box to reset its value
  */
 rfElse(data)
 ;this function, as you can probably tell, doesn't use an imagesearch. It absolutely SHOULD, but I don't use resolve and I guess I just never got around to coding in an imagesearch.
@@ -74,10 +74,10 @@ rfElse(data)
     Send("{Enter}")
 }
 
-/* REffect()
- A function to apply any effect to the clip you're hovering over within Resolve.
- @param folder is the name of your screenshots of the drop down sidebar option (in the effects window) you WANT to be active - both activated and deactivated
- @param effect is the name of the effect you want this function to type into the search box
+/**
+ * A function to apply any effect to the clip you're hovering over within Resolve.
+ * @param folder is the name of your screenshots of the drop down sidebar option (in the effects window) you WANT to be active - both activated and deactivated
+ * @param effect is the name of the effect you want this function to type into the search box
  */
 REffect(folder, effect)
 ;This function will, in order;
@@ -169,11 +169,11 @@ final:
     return
 }
 
-/* rvalhold()
- A function to provide similar functionality within Resolve to my valuehold() function for premiere
- @param property refers to both of the screenshots (either active or not) for the property you wish to adjust
- @param plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
- @param rfelseval is the value you wish to pass to rfelse()
+/**
+ * A function to provide similar functionality within Resolve to my valuehold() function for premiere
+ * @param property refers to both of the screenshots (either active or not) for the property you wish to adjust
+ * @param plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
+ * @param rfelseval is the value you wish to pass to rfelse()
  */
 rvalhold(property, plus, rfelseval)
 {
@@ -235,9 +235,9 @@ rvalhold(property, plus, rfelseval)
         }
 }
 
-/* rflip()
- A function to search for and press the horizontal/vertical flip button within Resolve
- @param button is the png name of a screenshot of the button you wish to click (either activated or deactivated)
+/**
+ * A function to search for and press the horizontal/vertical flip button within Resolve
+ * @param button is the png name of a screenshot of the button you wish to click (either activated or deactivated)
  */
 rflip(button)
 {
@@ -271,9 +271,9 @@ rflip(button)
         }
 }
 
-/* rgain()
- A function that allows you to adjust the gain of the selected clip within Resolve similar to my gain macros in premiere. You can't pull this off quite as fast as you can in premiere, but it's still pretty useful
- @param value is how much you want the gain to be adjusted by
+/**
+ * A function that allows you to adjust the gain of the selected clip within Resolve similar to my gain macros in premiere. You can't pull this off quite as fast as you can in premiere, but it's still pretty useful
+ * @param value is how much you want the gain to be adjusted by
  */
 rgain(value)
 {

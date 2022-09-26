@@ -1,9 +1,9 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.2
+;\\v2.14.3
 #Include General.ahk
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToExplorer()
 {
@@ -21,9 +21,9 @@ switchToExplorer()
         WinActivate ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
-/*
- This function when called will close all windows of the desired program EXCEPT the active one. Helpful when you accidentally have way too many windows open.
- @param program is the ahk_class or ahk_exe of the program you want this function to close
+/**
+ * This function when called will close all windows of the desired program EXCEPT the active one. Helpful when you accidentally have way too many windows open.
+ * @param program is the ahk_class or ahk_exe of the program you want this function to close
  */
 closeOtherWindow(program)
 {
@@ -36,8 +36,8 @@ closeOtherWindow(program)
         }
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToPremiere()
 {
@@ -47,8 +47,8 @@ switchToPremiere()
         WinActivate("ahk_class Premiere Pro")
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToAE()
 {
@@ -116,8 +116,8 @@ switchToAE()
         runae()
 }
 
-/*
- This switchTo function will quickly switch to the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToDisc()
 {
@@ -142,8 +142,8 @@ switchToDisc()
         }
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToPhoto()
 {
@@ -157,8 +157,8 @@ switchToPhoto()
         WinActivate("ahk_exe Photoshop.exe")
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToFirefox()
 {
@@ -171,8 +171,8 @@ switchToFirefox()
         WinActivate("ahk_exe firefox.exe")
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToOtherFirefoxWindow() ;I use this as a nested function below in firefoxTap(), you can just use this separately
 {
@@ -190,10 +190,12 @@ switchToOtherFirefoxWindow() ;I use this as a nested function below in firefoxTa
         Run("firefox.exe")
 }
 
-/*
- This function will do different things depending on how many times you press the activation hotkey.
- 1 press = switchToFirefox()
- 2 press = switchToOtherFirefoxWindow()
+/**
+ * This function will do different things depending on how many times you press the activation hotkey.
+ * 
+ * 1 press = switchToFirefox()
+ * 
+ *2 press = switchToOtherFirefoxWindow()
  */
 firefoxTap()
 {
@@ -228,8 +230,8 @@ firefoxTap()
     }
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToVSC()
 {
@@ -242,8 +244,8 @@ switchToVSC()
         WinActivate("ahk_exe Code.exe") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToGithub()
 {
@@ -256,8 +258,8 @@ switchToGithub()
         WinActivate("ahk_exe GitHubDesktop.exe") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToStreamdeck()
 {
@@ -270,8 +272,8 @@ switchToStreamdeck()
         WinActivate("ahk_exe StreamDeck.exe") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToExcel()
 {
@@ -288,8 +290,8 @@ switchToExcel()
         WinActivate("ahk_exe EXCEL.EXE")
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToWord()
 {
@@ -306,8 +308,8 @@ switchToWord()
         WinActivate("ahk_exe WINWORD.EXE")
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToWindowSpy()
 {
@@ -320,8 +322,8 @@ switchToWindowSpy()
         WinActivate("WindowSpy.ahk") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToYourPhone()
 {
@@ -334,8 +336,8 @@ switchToYourPhone()
         WinActivate("Your Phone") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToEdge()
 {
@@ -352,8 +354,8 @@ switchToEdge()
         WinActivate("ahk_exe msedge.exe") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
-/*
- This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+/**
+ * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
  */
 switchToMusic()
 {
@@ -395,10 +397,12 @@ switchToMusic()
 ;
 ; ===============================================================
 
-/*
- This function creates a GUI for the user to select which media player they wish to open.
- Currently offers AIMP, Foobar, WMP & VLC.
- This function is also used within switchToMusic()
+/**
+ * This function creates a GUI for the user to select which media player they wish to open.
+ * 
+ * Currently offers AIMP, Foobar, WMP & VLC.
+ * 
+ * This function is also used within switchToMusic()
 */
 musicGUI()
 {
@@ -490,8 +494,8 @@ musicGUI()
     }
 }
 
-/* hotkeysGUI()
- This function calls a GUI to showcase some useful hotkeys available to the user while running my scripts. This function is also called during firstCheck()
+/**
+ * This function calls a GUI to showcase some useful hotkeys available to the user while running my scripts. This function is also called during firstCheck()
  */
 hotkeysGUI() {
     if WinExist("Handy Hotkeys - Tomshi Scripts")
@@ -597,8 +601,8 @@ hotkeysGUI() {
 	hotGUI.Show("AutoSize")
 }
 
-/* todoGUI()
- This function calls a GUI help guide the user on what to do now that they've gotten `My Scripts.ahk` to run. This function is called during firstCheck()
+/**
+ * This function calls a GUI help guide the user on what to do now that they've gotten `My Scripts.ahk` to run. This function is called during firstCheck()
  */
 todoGUI()
 {
@@ -648,8 +652,8 @@ todoGUI()
     todoGUI.Show()
 }
 
-/*
- This functions pulls up a GUI that shows which of my scripts are active and allows the user to suspend/close them or unsuspend/open them
+/**
+ * This functions pulls up a GUI that shows which of my scripts are active and allows the user to suspend/close them or unsuspend/open them
  */
 activeScripts(MyRelease)
 {

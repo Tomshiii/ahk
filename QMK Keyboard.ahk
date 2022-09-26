@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9
+;\\v2.9.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5.2.1
@@ -26,8 +26,8 @@ SetNumLockState "AlwaysOn"
 ;checks to make sure the user is using a compatible version of ahk
 verCheck()
 
-/*
- This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet
+/**
+ * This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet
  */
 unassigned() ;create a tooltip for unused keys
 {
@@ -39,12 +39,12 @@ unassigned() ;create a tooltip for unused keys
 	}
 }
 
-/*
- This function is specifically designed for this script as I have a button designed to be pressed alongside another just to open new windows
- @param key is the activation key of the program (not the key to run an additional window). These are NOT listed in KSA simply because this script is so incredibly specific to my workflow
- @param classorexe is just defining if we're trying to grab the class or exe
- @param activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
- @param runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
+/**
+ * This function is specifically designed for this script as I have a button designed to be pressed alongside another just to open new windows
+ * @param key is the activation key of the program (not the key to run an additional window). These are NOT listed in KSA simply because this script is so incredibly specific to my workflow
+ * @param classorexe is just defining if we're trying to grab the class or exe
+ * @param activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
+ * @param runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
  */
 newWin(classorexe, activate, runval)
 {
@@ -60,8 +60,8 @@ newWin(classorexe, activate, runval)
 		Run(runval)
 }
 
-/* numpad000()
- A function to suppress multiple keystrokes or to do different things with multiple presses of the same key. This function is here for reference moreso than actual use
+/**
+ * A function to suppress multiple keystrokes or to do different things with multiple presses of the same key. This function is here for reference moreso than actual use
  */
 numpad000()
 {

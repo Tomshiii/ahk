@@ -26,6 +26,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Fixed some incorrect information in `hotkeysGUI()`
 - Condensed most `OnEvent`'s for `activeScripts()` to one singular function
 - Added `fastWheel()` to replace the simple `SendInput("{WheelDown/Up 10}")` and allow the function to focus the window under the cursor if it isn't currently the active window when called
+- `getMouseMonitor()` now returns a function object and passes back all information
 
 `settingsGUI()`
 - Minor GUI tweaks
@@ -34,8 +35,10 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Moved `Current working dir:` to the status bar
     - Status bar now also shows whether `My Scripts.ahk` is active or suspended
 - Ability to add game information to `gameCheck.ahk`
+- `getMonitor()` in `#c::` now returns a function object instead of a large list of variables
 
 ## > Other Changes
+- Fix all dynamic comments
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
 - Added `commLocation :=` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own variable
     - `QMK Keyboard.ahk` `h::` now attempts to open `commLocation` if there is no Adobe project open

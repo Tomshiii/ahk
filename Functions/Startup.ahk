@@ -1,4 +1,4 @@
-;v2.19.2
+;v2.19.3
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -7,9 +7,10 @@
 ;				STARTUP
 ;
 ; =======================================================================================================================================
-/* generate()
- This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are adding without breaking anything.
- Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
+/**
+ * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are adding without breaking anything.
+ * 
+ * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
  */
 generate(MyRelease)
 {
@@ -90,8 +91,8 @@ generate(MyRelease)
     FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
-/*
- A function to return the most recent version of my scripts on github
+/**
+ * A function to return the most recent version of my scripts on github
  */
 getScriptRelease(beta := false)
 {
@@ -119,8 +120,10 @@ getScriptRelease(beta := false)
     return ver
 }
 
-/* updateChecker()
- This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the main branch of the github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog. This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
+/**
+ * This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the main branch of the github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog.
+ * 
+ * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
  */
 updateChecker(MyRelease) {
     ;checks if script was reloaded
@@ -395,8 +398,8 @@ updateChecker(MyRelease) {
         }
 }
  
-/* firstCheck()
- This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
+/**
+ * This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
  */
 firstCheck(MyRelease) {
     ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
@@ -484,8 +487,8 @@ firstCheck(MyRelease) {
         }
 }
  
-/*
- This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
+/**
+ * This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
  */
 oldError() {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
@@ -495,8 +498,10 @@ oldError() {
         FileDelete(A_LoopFileFullPath)
 }
  
-/*
- This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check. It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder tree to the actual default or set it to a similar place
+/**
+ * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
+ * 
+ * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder tree to the actual default or set it to a similar place
  */
 adobeTemp(MyRelease) {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
@@ -570,8 +575,8 @@ adobeTemp(MyRelease) {
     IniWrite(A_YDay, A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp") ;tracks the day so it will not run again today
 }
  
-/*
- This function checks the users local version of AHK and ensures it is greater than v2.0-beta5. If the user is running a version earlier than that, a prompt will pop up offering the user a convenient download
+/**
+ * This function checks the users local version of AHK and ensures it is greater than v2.0-beta5. If the user is running a version earlier than that, a prompt will pop up offering the user a convenient download
  */
 verCheck()
 {
@@ -619,7 +624,7 @@ verCheck()
         }
 }
  
-/*
+/**
  Within my scripts I have a few hard coded references to the directory location I have these scripts. That however would be useless to another user who places them in another location.
  To combat this scenario, this function on script startup will check the working directory and change all instances of MY hard coded dir to the users current working directory.
  This script will take note of the users A_WorkingDir and store it in `A_MyDocuments \tomshi\location` and will check it every launch to ensure location variables are always updated and accurate
@@ -689,8 +694,8 @@ locationReplace()
     IniWrite(A_WorkingDir, A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
 }
  
-/*
- This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
+/**
+ * This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
  */
 trayMen()
 {
@@ -722,9 +727,9 @@ trayMen()
     }
 }
 
-/*
-A GUI window to allow the user to toggle settings contained within the `settings.ini` file
-*/
+/**
+ * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
+ */
 settingsGUI()
 {
     ;this function is needed to reload some scripts

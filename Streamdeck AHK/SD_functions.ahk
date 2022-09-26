@@ -31,8 +31,8 @@ discordLocation()
 	WinMove(-1080,  -274, 1080, 1600)
 }
 
-/* coords()
- sets coordmode to "screen"
+/**
+ * sets coordmode to "screen"
  */
 coords()
 {
@@ -40,8 +40,8 @@ coords()
 	coordmode "mouse", "screen"
 }
 
-/* coordw()
- sets coordmode to "window"
+/**
+ * sets coordmode to "window"
  */
 coordw()
 {
@@ -49,8 +49,8 @@ coordw()
 	coordmode "mouse", "window"
 }
 
-/* blockOn()
- blocks all user inputs [IF YOU GET STUCK IN A SCRIPT USE CTRL + ALT + DEL to open task manager and close AHK]
+/**
+ * blocks all user inputs [IF YOU GET STUCK IN A SCRIPT USE CTRL + ALT + DEL to open task manager and close AHK]
  */
 blockOn()
 {
@@ -60,8 +60,8 @@ blockOn()
 	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
 }
 
-/* blockOff()
- turns off the blocks on user input
+/**
+ * turns off the blocks on user input
  */
 blockOff()
 {
@@ -69,12 +69,12 @@ blockOff()
 	BlockInput "off"
 }
 
-/* toolCust()
-  create a tooltip with any message
-  @param message is what you want the tooltip to say
-  @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
-  @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
-  */
+/**
+ * create a tooltip with any message
+ * @param message is what you want the tooltip to say
+ * @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
+ * @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
+ */
 toolCust(message, timeout := 1000, find := "")
 {
 	if find != 1
@@ -89,9 +89,9 @@ toolCust(message, timeout := 1000, find := "")
 	}
 }
 
-/*
- This function opens up the speed menu and sets the clips speed to whatever is set
- @param amount is what speed you want your clip to be set to
+/**
+ * This function opens up the speed menu and sets the clips speed to whatever is set
+ * @param amount is what speed you want your clip to be set to
  */
 speed(amount)
 {
@@ -116,9 +116,9 @@ speed(amount)
 	SendInput(speedMenu amount "{ENTER}")
 }
 
-/*
- This function finds the scale value, clicks on it, then makes your clip whatever value you want
- @param amount is what you want the scale to be set to
+/**
+ * This function finds the scale value, clicks on it, then makes your clip whatever value you want
+ * @param amount is what you want the scale to be set to
  */
 scale(amount)
 {
@@ -164,8 +164,8 @@ scale(amount)
 	blockOff()
 }
 
-/*
- This function toggles a pause on the autosave ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
+/**
+ * This function toggles a pause on the autosave ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
  */
 pauseautosave()
 {
@@ -184,8 +184,8 @@ pauseautosave()
 
 }
 
-/*
- This function toggles a pause on the premiere_fullscreen_check ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
+/**
+ * This function toggles a pause on the premiere_fullscreen_check ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
  */
 pausewindowmax()
 {

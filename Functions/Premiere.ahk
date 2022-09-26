@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.15
+;\\v2.14.16
 #Include General.ahk
 
-/* preset()
- This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
- @param item in this function defines what it will type into the search box (the name of your preset within premiere)
+/**
+ * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
+ * @param item in this function defines what it will type into the search box (the name of your preset within premiere)
  */
 preset(item)
 {
@@ -149,8 +149,8 @@ preset(item)
     ToolTip("")
 }
 
-/*
- This function is to move to the effects window and highlight the search box to allow manual typing
+/**
+ * This function is to move to the effects window and highlight the search box to allow manual typing
  */
 fxSearch()
 {
@@ -215,11 +215,11 @@ fxSearch()
     blockOff()
 }
 
-/* num()
- this function is to simply cut down repeated code on my numpad punch in scripts. it punches the video into my preset values for highlight videos
- @param xval is the pixel value you want this function to paste into the X coord text field in premiere
- @param yval is the pixel value you want this function to paste into the y coord text field in premiere
- @param scale is the scale value you want this function to paste into the scale text field in premiere
+/**
+ * This function is to simply cut down repeated code on my numpad punch in scripts. it punches the video into my preset values for highlight videos
+ * @param xval is the pixel value you want this function to paste into the X coord text field in premiere
+ * @param yval is the pixel value you want this function to paste into the y coord text field in premiere
+ * @param scale is the scale value you want this function to paste into the scale text field in premiere
  */
 num(xval, yval, scale)
 {
@@ -281,8 +281,8 @@ num(xval, yval, scale)
     blockOff()
 }
 
-/*
- This function on first run will ask you to select a clip with the exact zoom you wish to use for the current session. Any subsequent activations of the script will simply zoom the current clip to that zoom amount. You can reset this zoom by refreshing the script
+/**
+ * This function on first run will ask you to select a clip with the exact zoom you wish to use for the current session. Any subsequent activations of the script will simply zoom the current clip to that zoom amount. You can reset this zoom by refreshing the script
  */
 zoom()
 {
@@ -424,10 +424,10 @@ zoom()
         }
 }
 
-/* valuehold()
- a preset to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
- @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
- @param optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+/**
+ * A preset to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+ * @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+ * @param optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
  */
 valuehold(filepath, optional := 0)
 {
@@ -564,9 +564,9 @@ valuehold(filepath, optional := 0)
     ToolTip("")
 }
 
-/* keyreset()
- this function is to turn off keyframing for a given property within premiere pro
- @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+/**
+ * This function is to turn off keyframing for a given property within premiere pro
+ * @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
  */
 keyreset(filepath) ;I think this function is broken atm, I need to do something about it... soon
 {
@@ -614,9 +614,9 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
     MouseMove(xpos, ypos)
 }
 
-/* keyframe()
- this function is to either turn on keyframing, or create a new keyframe at the cursor for a given property within premiere pro
- @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+/**
+ * This function is to either turn on keyframing, or create a new keyframe at the cursor for a given property within premiere pro
+ * @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
  */
 keyframe(filepath)
 {
@@ -672,10 +672,11 @@ keyframe(filepath)
     blockOff()
 }
 
-/* audioDrag()
- This function pulls an audio file out of a separate bin from the project window and back to the cursor (premiere pro)
- If `sfxName` is "bleep" there is extra code that automatically moves it to your track of choice
- @param sfxName is the name of whatever sound you want the function to pull onto the timeline
+/**
+ * This function pulls an audio file out of a separate bin from the project window and back to the cursor (premiere pro)
+ * 
+ * If `sfxName` is "bleep" there is extra code that automatically moves it to your track of choice
+ * @param sfxName is the name of whatever sound you want the function to pull onto the timeline
  */
 audioDrag(sfxName)
 {
@@ -925,9 +926,9 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 }
 */
 
-/* wheelEditPoint()
- move back and forth between edit points from anywhere in premiere
- @param direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
+/**
+ * Move back and forth between edit points from anywhere in premiere
+ * @param direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
  */
 wheelEditPoint(direction)
 {
@@ -936,8 +937,8 @@ wheelEditPoint(direction)
     KeyWait(A_ThisHotkey) ;prevents hotkey spam
 }
 
-/* movepreview()
- This function is to adjust the framing of a video within the preview window in premiere pro. Let go of this hotkey to confirm, simply tap this hotkey to reset values
+/**
+ * This function is to adjust the framing of a video within the preview window in premiere pro. Let go of this hotkey to confirm, simply tap this hotkey to reset values
  */
 movepreview()
 {
@@ -1050,8 +1051,8 @@ movepreview()
     ToolTip("")
 }
 
-/* reset()
- This script moves the cursor to the reset button to reset the "motion" effects
+/**
+ * This script moves the cursor to the reset button to reset the "motion" effects
  */
 reset()
 {
@@ -1104,8 +1105,8 @@ reset()
     blockOff()
 }
 
-/* hotkeyDeactivate()
- this allowed the old version of manInput to work
+/**
+ * This allowed the old version of manInput to work
  */
 hotkeyDeactivate()
 {
@@ -1124,8 +1125,8 @@ hotkeyDeactivate()
     Hotkey("~NumpadEnter", "r", "On")
 }
 
-/* hotkeyReactivate()
- this allowed the old version of manInput to work
+/**
+ * This allowed the old version of manInput to work
  */
 hotkeyReactivate()
 {
@@ -1143,10 +1144,10 @@ hotkeyReactivate()
     Hotkey("NumpadEnter", "NumpadEnter")
 }
 
-/* manInput()
- This function will warp to and press any value in premiere to manually input a number
- @param property is the value you want to adjust
- @param optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
+/**
+ * This function will warp to and press any value in premiere to manually input a number
+ * @param property is the value you want to adjust
+ * @param optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
  */
 manInput(property, optional := 0)
 {
@@ -1213,9 +1214,9 @@ manInput(property, optional := 0)
     blockOff()
 }
 
-/* gain()
- This function is to increase/decrease gain within premiere pro. This function will check to ensure the timeline is in focus and a clip is selected
- @param amount is the value you want the gain to adjust (eg. -2, 6, etc)
+/**
+ * This function is to increase/decrease gain within premiere pro. This function will check to ensure the timeline is in focus and a clip is selected
+ * @param amount is the value you want the gain to adjust (eg. -2, 6, etc)
  */
 gain(amount)
 {
@@ -1292,9 +1293,9 @@ gain(amount)
         ToolTip("")
 }
 
-/* gainSecondary()
- This function opens up the gain menu within premiere pro so I can input it with my secondary keyboard. This function will also check to ensure the timeline is in focus and a clip is selected. I don't really use this anymore
- @param keyend is whatever key you want the function to wait for before finishing
+/**
+ * This function opens up the gain menu within premiere pro so I can input it with my secondary keyboard. This function will also check to ensure the timeline is in focus and a clip is selected. I don't really use this anymore
+ * @param keyend is whatever key you want the function to wait for before finishing
  */
 gainSecondary(keyend)
 {
@@ -1336,8 +1337,8 @@ gainSecondary(keyend)
     hotkeyReactivate()
 }
 
-/* openChecklist()
- This function is here to cut repeat code across a few scripts, its purpose is to find the `checklist.ahk` file for the open Premiere/After Effects project. It's used in QMK.ahk and autosave.ahk
+/**
+ * This function is here to cut repeat code across a few scripts, its purpose is to find the `checklist.ahk` file for the open Premiere/After Effects project. It's used in QMK.ahk and autosave.ahk
  */
 openChecklist()
 {
@@ -1408,11 +1409,14 @@ openChecklist()
         }
 }
 
-/* mousedrag()
- Press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensuring the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
- This version is specifically for Premiere Pro, the function below this one is for any other program
- @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
- @param toolorig is the button you want the script to press to bring you back to your tool of choice
+/**
+ * Press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). 
+ 
+ * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensuring the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
+ 
+ * This version is specifically for Premiere Pro
+ * @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
+ * @param toolorig is the button you want the script to press to bring you back to your tool of choice
  */
 mousedrag(tool, toolorig)
 {

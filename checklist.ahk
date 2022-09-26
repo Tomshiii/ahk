@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.4.1"
+version := "v2.5.4.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -453,12 +453,12 @@ close(*) {
 
 ; ===========================================================================================================
 
-/* toolCust()
-  create a tooltip with any message
-  @param message is what you want the tooltip to say
-  @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
-  @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
-  */
+/**
+ * create a tooltip with any message
+ * @param message is what you want the tooltip to say
+ * @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
+ * @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
+ */
 toolCust(message, timeout := 1000, find := "")
 {
     if find != 1
@@ -473,8 +473,8 @@ toolCust(message, timeout := 1000, find := "")
     }
 }
 
-/* openChecklist()
- This function will find the path name of the current Premiere/After Effects project. This is then used when clicking "File" in the checklist menu to check if the current open project is the same project as the script you have open
+/**
+ * This function will find the path name of the current Premiere/After Effects project. This is then used when clicking "File" in the checklist menu to check if the current open project is the same project as the script you have open
  */
 openChecklist()
 {
@@ -520,15 +520,15 @@ openChecklist()
     return directory
 }
 
-/*
- `floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
+/**
+ * `floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
  */
 floorDecimal(num,dec) {
     return RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 }
 
-/*
- A function to cut repeat code - will check the last date in the logs and then break up the group if the last date is different from today
+/**
+ * A function to cut repeat code - will check the last date in the logs and then break up the group if the last date is different from today
  */
 newDate(&today)
 {
@@ -562,8 +562,8 @@ newDate(&today)
         FileAppend("}`n`n{ " today " - " timeForLog "`n",  A_ScriptDir "\checklist_logs.txt")
 }
 
-/*
- A function for the menubar to work correctly
+/**
+ * A function for the menubar to work correctly
  */
 tooltips(*)
 {

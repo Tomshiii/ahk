@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.1
+;\\v2.13.2
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -7,10 +7,11 @@
 ;		Windows Scripts
 ;
 ; ===========================================================================================================================================
-/* youMouse()
- a function to skip in youtube
- @param tenS is the hotkey for 10s skip in your direction of choice
- @param fiveS is the hotkey for 5s skip in your direction of choice
+/**
+ * A function to skip in youtube
+
+ * @param tenS is the hotkey for 10s skip in your direction of choice
+ * @param fiveS is the hotkey for 5s skip in your direction of choice
  */
 youMouse(tenS, fiveS)
 {
@@ -36,8 +37,8 @@ youMouse(tenS, fiveS)
     }
 }
 
-/* monitorWarp()
- warp anywhere on your desktop
+/**
+ * warp anywhere on your desktop
  */
 monitorWarp(x, y)
 {
@@ -45,9 +46,9 @@ monitorWarp(x, y)
     MouseMove(x, y, 2) ;I need the 2 here as I have multiple monitors and things can be funky moving that far that fast. random ahk problems. Change this if you only have 1/2 monitors and see if it works fine for you
 }
 
-/* moveWin()
- A function that will check to see if you're holding the left mouse button, then move any window around however you like
- @param key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
+/**
+ * A function that will check to see if you're holding the left mouse button, then move any window around however you like
+ * @param key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
  */
 moveWin(key)
 {
@@ -86,23 +87,26 @@ moveWin(key)
         }
 }
 
-/* moveTab()
- This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4. This function will check for 2s if you have released the RButton, if you have, it will drop the tab and finish, if you haven't it will be up to the user to press the LButton when you're done moving the tab. This function has hardcoded checks for `XButton1` & `XButton2` and is activated by having the activation hotkey as just one of those two, but then right clicking on a tab and pressing one of those two.
-
- The way my monitors are layed out in windows;
-
-                     -------------
-                     |    2      |
-                     |           |
- -----               -------------
- |   | ------------- -------------
- | 3 | |    1      | |    4      |
- |   | |           | |           |
- |   | ------------- -------------
- -----
+/**
+ * This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4.
+ * 
+ * This function will check for 2s if you have released the RButton, if you have, it will drop the tab and finish, if you haven't it will be up to the user to press the LButton when you're done moving the tab. This function has hardcoded checks for `XButton1` & `XButton2` and is activated by having the activation hotkey as just one of those two, but then right clicking on a tab and pressing one of those two.
  */
 moveTab()
 {
+    /*
+        The way my monitors are layed out in windows;
+
+                            -------------
+                            |    2      |
+                            |           |
+        -----               -------------
+        |   | ------------- -------------
+        | 3 | |    1      | |    4      |
+        |   | |           | |           |
+        |   | ------------- -------------
+        -----
+    */
     if GetKeyState("LButton", "P") && !GetKeyState("RButton", "P")
         {
             if A_ThisHotkey = "XButton2"
@@ -185,13 +189,13 @@ moveTab()
         }
     SendInput("{LButton Down}")
     move:
-    if monitor != 2 && monitor != 4 ;I only want this function to cycle between monitors 2 & 4
+    if monitor.monitor != 2 && monitor.monitor != 4 ;I only want this function to cycle between monitors 2 & 4
         {
-            monitor := 2 ;so I'll set the monitor number to one of the two I wish it to cycle between
+            monitor.monitor := 2 ;so I'll set the monitor number to one of the two I wish it to cycle between
         }
-    if monitor = 4
+    if monitor.monitor = 4
         MouseMove(4288, -911, 2) ;if the mouse is within monitor 4, it will move it to monitor 2
-    if monitor = 2
+    if monitor.monitor = 2
         MouseMove(4288, 164, 2) ;if the mouse is within monitor 2, it will move it to monitor 4
     blockOff()
     KeyWait(A_ThisHotkey)
@@ -213,7 +217,7 @@ moveTab()
         sleep 50
     }
     blockOn()
-    if monitor = 4 || initMon = 1
+    if monitor.monitor = 4 || initMon.monitor = 1
         MouseMove(initx, inity, 2) ;move back to the original mouse coords. I only want to move the mouse back if I'm moving a tab from the bottom monitor, to the top or from the main montior
     if !WinActive(title) ;this codeblock will check to see if the originally active window is still active. This is useful as sometimes when you drag a tab that wasn't active, firefox will bring the tab next to it into focus, which might not really be what you want
         {
@@ -222,7 +226,7 @@ moveTab()
             WinGetPos(&x2, &y2,,, currentActive)
             MouseMove(x2 + 30, y2 + 30, 2)
             check := getMouseMonitor()
-            if check = monitor && currentActive != title
+            if check.monitor = monitor.monitor && currentActive != title
                 {
                     switchToFirefox() ;activate the other firefox window
                     checkformon1() { ;a small check to make sure a sneaky window on the wrong monitor isn't causing issues
@@ -230,7 +234,7 @@ moveTab()
                         WinGetPos(&x2, &y2,,, currentActive)
                         MouseMove(x2 + 30, y2 + 30, 2)
                         check2 := getMouseMonitor()
-                        if check2 != 4 && check2 != 2
+                        if check2.monitor != 4 && check2.monitor != 2
                             switchToFirefox()
                     }
                     checkformon1()
@@ -261,8 +265,8 @@ moveTab()
     }
 }
 
-/* getMouseMonitor()
- This function will grab the monitor that the mouse is currently within and return it. ie if your mouse is within monitor 1 having code `monitor := getMouseMonitor()` would make monitor = 1
+/**
+ * This function will grab the monitor that the mouse is currently within and return it as well as coordinate information in the form of a function object. ie if your mouse is within monitor 1 having code `monitor := getMouseMonitor()` would make `monitor.monitor` = 1
  */
 getMouseMonitor()
 {
@@ -276,7 +280,7 @@ getMouseMonitor()
 				{
 					if y < Bottom && y > Top
                         ;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index)
-                        return A_Index
+                        return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
 			    }
 		}
 		catch {
@@ -287,8 +291,8 @@ getMouseMonitor()
 	}
 }
 
-/* getTitle()
- This function gets and returns the title for the current active window, autopopulating the `title` variable
+/**
+ * This function gets and returns the title for the current active window, autopopulating the `title` variable
  */
 getTitle(&title)
 {
@@ -309,11 +313,11 @@ getTitle(&title)
 	}
 }
 
-/* isFullscreen()
- This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
- @param title is the active window, this function will populate the `title` variable with the active window
- @param full is representing if the active window is fullscreen or not. If it is, it will return 1, else it will return 0
- @param window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
+/**
+ * This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
+ * @param title is the active window, this function will populate the `title` variable with the active window
+ * @param full is representing if the active window is fullscreen or not. If it is, it will return 1, else it will return 0
+ * @param window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
  */
 isFullscreen(&title, &full, window := false)
 {
@@ -340,9 +344,11 @@ isFullscreen(&title, &full, window := false)
     return
 }
 
-/* moveXorY()
- A quick and dirty way to limit the axis your mouse can move
- This function has specific code for XButton1/2 and must be activated with 2 hotkeys
+
+/**
+ * A quick and dirty way to limit the axis your mouse can move
+ 
+ * This function has specific code for XButton1/2 and must be activated with 2 hotkeys
  */
 moveXorY()
 {
@@ -398,10 +404,10 @@ moveXorY()
 		return
 }
 
-/*
- This function is to allow the user to simply jump 10 characters in either direction. Useful when ^Left/Right isn't getting you to where you want the cursor to be
- @param leftorright is which direction you want to assign
- @param amount is the amount of characters you want this function to jump, by default it is set to 10 and isn't required if you do not wish to override this value
+/**
+ * This function is to allow the user to simply jump 10 characters in either direction. Useful when ^Left/Right isn't getting you to where you want the cursor to be
+ * @param leftorright is which direction you want to assign
+ * @param amount is the amount of characters you want this function to jump, by default it is set to 10 and isn't required if you do not wish to override this value
  */
 jumpChar(amount := 10)
 {
@@ -415,10 +421,11 @@ jumpChar(amount := 10)
     SendInput(side)
 }
 
-/* https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
- This function will convert a windows title bar to a dark theme if possible.
- @param hwnd is the hwnd value of the window you wish to alter
- @param dark is a toggle that allows you to call the inverse of this function and return the title bar to light mode. This parameter can be omitted otherwise pass false
+/**
+ * This function will convert a windows title bar to a dark theme if possible.
+ * @param hwnd is the hwnd value of the window you wish to alter
+ * @param dark is a toggle that allows you to call the inverse of this function and return the title bar to light mode. This parameter can be omitted otherwise pass false
+ * https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
  */
 titleBarDarkMode(hwnd, dark := true)
 {
@@ -431,18 +438,19 @@ titleBarDarkMode(hwnd, dark := true)
     }
 }
 
-/* https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
- This function will convert GUI buttons to a dark theme.
- @param ctrl_hwnd is the hwnd value of the control you wish to alter
- @param DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light" 
+/**
+ * This function will convert GUI buttons to a dark theme.
+ * @param ctrl_hwnd is the hwnd value of the control you wish to alter
+ * @param DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light" 
+ https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
  */
 buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark")
 {
     DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
 }
 
-/*
- This function facilitates accelerated scrolling. If the window under the cursor isn't the active window when this function is called, it will activate it
+/**
+ * This function facilitates accelerated scrolling. If the window under the cursor isn't the active window when this function is called, it will activate it
  */
 fastWheel()
 {
@@ -460,9 +468,9 @@ fastWheel()
 ;		discord \\ Last updated: v2.12.5
 ;
 ; ===========================================================================================================================================
-/* disc()
- This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \Support Files\ImageSearch\disc[button].png
- @param button in the png name of a screenshot of the button you want the function to press
+/**
+ * This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \Support Files\ImageSearch\disc[button].png
+ * @param button in the png name of a screenshot of the button you want the function to press
  */
 disc(button)
 ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME (otherwise you'll need your own screenshots.. tbh you'll probably need your own anyway). YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
@@ -543,8 +551,8 @@ disc(button)
         }
 }
 
-/*
- This function will toggle the location of discord's window position
+/**
+ * This function will toggle the location of discord's window position
  */
 discLocation()
 {
@@ -626,9 +634,9 @@ discLocation()
     }
 }
 
-/*
- This function will search for and automatically click on either unread servers or unread channels depending on which image you feed into the function
- @param which is simply which image you want to feed into the function. I have it left blank for servers and `"2"` for channels
+/**
+ * This function will search for and automatically click on either unread servers or unread channels depending on which image you feed into the function
+ * @param which is simply which image you want to feed into the function. I have it left blank for servers and `"2"` for channels
  */
 discUnread(which := "")
 {
@@ -660,12 +668,15 @@ discUnread(which := "")
 ;		VSCode \\ Last updated: v2.12.18
 ;
 ; ===========================================================================================================================================
-/* vscode()
-  A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
-  It will also either work or not depending on what theme you have installed, I am currently using `one dark pro`
-  It will also depend on how "zoomed in" you have vscode
-  It also functions differently if you only have 1 repo cloned instead of multiple
-  @param script is the amount of pixels down the mouse must move from the collapse button to open the script I want.
+/**
+  * A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
+  
+  * It will also either work or not depending on what theme you have installed, I am currently using `one dark pro`3
+
+  * It will also depend on how "zoomed in" you have vscode
+
+  * It also functions differently if you only have 1 repo cloned instead of multiple
+  * @param script is the amount of pixels down the mouse must move from the collapse button to open the script I want.
  */
 vscode(script)
 {

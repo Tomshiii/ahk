@@ -14,9 +14,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.18.6
+;\\v2.18.7
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.9
+;\\v2.9.1
 
 ; ============================================================================================================================================
 ;
@@ -139,7 +139,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	/*
 	 This function will determine which monitor the current active window is on, then return some information to help us do some math down below
 	 */
-	getMonitor(&monitor, &left2, &right2, &top2, &bottom2)
+	getMonitor()
 	{
 		getTitle(&title)
 		WinGetPos(&x, &y,,, title)
@@ -152,14 +152,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 				if x > left && x < right
 					{ ;these two if statements determine what monitor the active window is in
 						if y < bottom && y > top
-							{
-								;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index) ;debugging
-								monitor := A_Index
-								left2 := left
-								right2 := right
-								top2 := top
-								bottom2 := bottom
-							}
+							return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
 					}
 			}
 			catch {
@@ -171,7 +164,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	}
 	static win := "" ;a variable we'll hold the title of the window in
 	static toggle := 1 ;a variable to determine whether to centre on the current display or move to the main one
-	getMonitor(&monitor, &left2, &right2, &top2, &bottom2) ;now we run the above function we created
+	monitor := getMonitor() ;now we run the above function we created
 	if win = "" ;if our win variable doesn't have a title yet we run this code block
 		{
 			win := title
@@ -185,17 +178,17 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	start:
 	if toggle = 1 ;if it's the first activation for the active window we run this codeblock
 		{
-			width := right2 - left2 ;determining the width of the current monitor
-			height := bottom2 - top2 ;determining the height of the current monitor
+			width := monitor.right - monitor.left ;determining the width of the current monitor
+			height := monitor.bottom - monitor.top ;determining the height of the current monitor
 			isFullscreen(&title, &full) ;checking if the window is fullscreen
 			if full = 1
 				WinRestore(title) ;winrestore will unmaximise it
 		
 			newWidth := width / 1.6 ;determining our new width
 			newHeight := height / 1.6 ;determining our new height
-			newX := (left2 + (width - newWidth)/2) ;using math to centre our newly created window
-			newY := (bottom2 - (height + newHeight)/2) ;using math to centre our newly created window
-			;MsgBox("monitor = " monitor "`nwidth = " width "`nheight = " height "`nnewWidth = " newWidth "`nnewHeight = " newHeight "`nnewX = " newX "`nnewY = " newY "`nx = " x2 "`ny = " y2 "`nleft = " left2 "`nright = " right2 "`ntop = " top2 "`nbottom = " bottom2) ;debugging
+			newX := (monitor.left + (width - newWidth)/2) ;using math to centre our newly created window
+			newY := (monitor.bottom - (height + newHeight)/2) ;using math to centre our newly created window
+			;MsgBox("monitor = " monitor "`nwidth = " width "`nheight = " height "`nnewWidth = " newWidth "`nnewHeight = " newHeight "`nnewX = " newX "`nnewY = " newY "`nx = " x2 "`ny = " y2 "`nleft = " monitor.left "`nright = " right2 "`ntop = " top2 "`nbottom = " monitor.bottom) ;debugging
 			if monitor != mainMon ;if the current monitor isn't our main monitor we will increment the toggle variable
 				toggle += 1
 			else ;otherwise we reset the win variable
@@ -203,13 +196,17 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		}
 	else if toggle = 2 ;if this is the second activation for the active window we run this codeblock
 		{
-			MonitorGet(mainMon, &left2, &top2, &right2, &bottom2) ;this will reset our variables with information for the main monitor
-			monitor := mainMon ;then we set the monitor value to the main monitor
+			MonitorGet(mainMon, &left, &top, &right, &bottom) ;this will reset our variables with information for the main monitor
+			monitor.monitor := mainMon ;then we set the monitor value to the main monitor
+			monitor.left := left
+			monitor.top := top
+			monitor.right := right
+			monitor.bottom := bottom
 			toggle := 1 ;reset our toggle
 			win := "" ;reset our win variable
 			goto start ;and go back to the beginning
 		}
-	if InStr(title, "YouTube") && IsSet(newHeight) && monitor = mainMon ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
+	if InStr(title, "YouTube") && IsSet(newHeight) && monitor.monitor = mainMon ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
 		{
 			newHeight := newHeight * 1.3
 			newY := newY / 2.25

@@ -1,10 +1,10 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.1
+;\\v2.12.2
 #Include General.ahk
 
-/* psProp()
- A function to warp to one of a photos values within Photoshop (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
- @param image is the png name of the image that imagesearch will use
+/**
+ * A function to warp to one of a photos values within Photoshop (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
+ * @param image is the png name of the image that imagesearch will use
  */
 psProp(image)
 {
@@ -65,8 +65,8 @@ psProp(image)
         }
 }
 
-/* psSave()
- This function is to speed through the twitch emote saving process within photoshop. Doing this manually is incredibly tedious and annoying, so why do it manually?
+/**
+ * This function is to speed through the twitch emote saving process within photoshop. Doing this manually is incredibly tedious and annoying, so why do it manually?
  */
 psSave()
 ;This script will require the latest (or at least the version containing the "save as copy" window) version of photoshop to function
@@ -161,9 +161,9 @@ psSave()
     blockOff()
 }
 
-/* psType()
- When you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want
- @param filetype is the name of the image you save to pick which filetype you want this function to click on
+/**
+ * When you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want
+ * @param filetype is the name of the image you save to pick which filetype you want this function to click on
  */
 psType(filetype)
 {

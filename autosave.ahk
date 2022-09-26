@@ -108,9 +108,9 @@ StopWatch() {
 
 ;let's define some functions to grab information
 
-/*
- This function will grab the initial active window
- @param id is the processname of the active window, we want to pass this value back to the script
+/**
+ * This function will grab the initial active window
+ * @param id is the processname of the active window, we want to pass this value back to the script
  */
 getID(&id)
 {
@@ -124,11 +124,11 @@ getID(&id)
     }
 }
 
-/*
- This function will grab the title of premiere if it exists and check to see if a save is necessary
- @param premCheck is the title of premiere, we want to pass this value back to the script
- @param titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
- @param saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+/**
+ * This function will grab the title of premiere if it exists and check to see if a save is necessary
+ * @param premCheck is the title of premiere, we want to pass this value back to the script
+ * @param titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
+ * @param saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
  */
 getPremName(&premCheck, &titleCheck, &saveCheck)
 {
@@ -152,10 +152,10 @@ getPremName(&premCheck, &titleCheck, &saveCheck)
     }
 }
 
-/*
- This function will grab the title of after effects if it exists and check to see if a save is necessary
- @param aeCheck is the title of after effects, we want to pass this value back to the script
- @param aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+/**
+ * This function will grab the title of after effects if it exists and check to see if a save is necessary
+ * @param aeCheck is the title of after effects, we want to pass this value back to the script
+ * @param aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
  */
 getAEName(&aeCheck, &aeSaveCheck)
 {
@@ -192,8 +192,8 @@ else
         goto start
     }
 
-/*
- This function is for the above SetTimer & is to check to make sure either of the editors are open & if the checklist is open
+/**
+ * This function is for the above SetTimer & is to check to make sure either of the editors are open & if the checklist is open
  */
 check() {
     if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe AfterFX.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
@@ -217,8 +217,8 @@ check() {
     end3:
 }
 
-/*
- This function is for the above SetTimer & is the entire saving function
+/**
+ * This function is for the above SetTimer & is the entire saving function
  */
 save()
 {
@@ -455,8 +455,8 @@ save()
 }
 
 
-/*
- This function will grab the release version from the `My Scripts.ahk` file itself. This function makes it so I don't have to change this variable manually every release
+/**
+ * This function will grab the release version from the `My Scripts.ahk` file itself. This function makes it so I don't have to change this variable manually every release
  */
 getVer()
 {
