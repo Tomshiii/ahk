@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.2
+;\\v2.13.3
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -458,7 +458,8 @@ fastWheel()
 	MouseGetPos(,, &UnderCursor)
 	orig := WinGetTitle(WinActive("A"))
 	titleUnder := WinGetTitle("ahk_id " UnderCursor)
-	if orig != titleUnder
+    classUnder := WinGetClass("ahk_id " UnderCursor)
+	if orig != titleUnder && classUnder != "tooltips_class32"
 		WinActivate(titleUnder)
 	SendInput("{" second " 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 }
