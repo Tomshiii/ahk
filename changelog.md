@@ -28,8 +28,12 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
 - Condensed most `OnEvent`'s for `activeScripts()` to one singular function
 - `getMouseMonitor()` now returns a function object and passes back all information
-- `toolCust()` can now take custom `x` & `y` coordinates. They are unset by default and can be omitted. It can also accept the `WhichToolTip` parameter from the actual `ToolTip` function
 - `moveXorY()` tooltips will no longer flicker
+
+`toolCust()`
+- Can now take custom `x` & `y` coordinates. They are unset by default and can be omitted
+- Can now accept the `WhichToolTip` parameter from the actual `ToolTip` function
+- Tooltip will now follow the cursor if no `x/y` coordinates have been passed to the function
 
 `zoom()`
 - Now sets it's variable presets in an array to remove the need for multiple variables
@@ -37,6 +41,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 
 `settingsGUI()`
 - Minor GUI tweaks
+- Script names are now coloured to make it easier to read
 - Fixed bug that caused function to error if non numeric values were entered into the edit boxes
 - Now has an option to globally enable/disable reminder tooltips for `checklist.ahk`
 - Moved `Current working dir:` to the status bar

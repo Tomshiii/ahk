@@ -3,7 +3,7 @@
 ;TraySetIcon(location "\Support Files\Icons\checklist.ico") ;we set this later if the user has generated a settings.ini file
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.5.4.3"
+version := "v2.5.4.4"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -454,22 +454,38 @@ close(*) {
 ; ===========================================================================================================
 
 /**
- * create a tooltip with any message
- * @param message is what you want the tooltip to say
- * @param timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
- * @param find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 for this variable if you do, or omit it if you don't
+ * Create a tooltip with any message. This tooltip will then follow the cursor and only redraw itself if the user has moved the cursor.
+ * @param {string} message is what you want the tooltip to say
+ * @param {number} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
+ * @param {boolean} find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 (or true) for this variable if you do, or omit it if you don't
+ * @param {number} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
+ * @param {number} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).
  */
-toolCust(message, timeout := 1000, find := "")
+toolCust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
 {
+    MouseGetPos(&xpos, &ypos)
+    time := A_TickCount
     if find != 1
         messageFind := ""
     else
         messageFind := "Couldn't find "
-    ToolTip(messageFind message)
-    SetTimer(timeouttime, - timeout)
-    timeouttime()
+    ToolTip(messageFind message, x?, y?, WhichToolTip?)
+    if !IsSet(x) && !IsSet(y)
+        SetTimer(moveWithMouse, 15)
+    SetTimer(() => ToolTip("",,, WhichToolTip?), - timeout)
+    moveWithMouse()
     {
-        ToolTip("")
+        if (A_TickCount - time) >= timeout
+            {
+                SetTimer(, 0)
+                ToolTip("")
+            }
+        MouseGetPos(&newX, &newY)
+        if newX != xpos || newY != ypos
+            {
+                MouseGetPos(&xpos, &ypos)
+                ToolTip(messageFind message)
+            }
     }
 }
 

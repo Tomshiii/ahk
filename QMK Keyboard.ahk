@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.1
+;\\v2.9.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5.2.1
@@ -29,15 +29,7 @@ verCheck()
 /**
  * This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet
  */
-unassigned() ;create a tooltip for unused keys
-{
-	ToolTip(A_ThisHotkey " is unassigned")
-	SetTimer(timeouttime, -1000)
-	timeouttime()
-	{
-		ToolTip("")
-	}
-}
+unassigned() => toolCust(A_ThisHotkey " is unassigned") ;create a tooltip for unused keys
 
 /**
  * This function is specifically designed for this script as I have a button designed to be pressed alongside another just to open new windows
