@@ -14,23 +14,26 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
     - Added `hardReset()` for this and so it can be used elsewhere
 - `#+r::` will now create a list of open `.ahk` scripts and tell them to reload instead of requiring hard coded values
 - `SC03A & c::` now pastes the string instead of using a `Send{}` type to increase performance
+- `getMonitor()` in `#c::` now returns a function object instead of a large list of variables
 
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
-- Add `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
-- More colours for `audioDrag()`
-- `zoom()` sets it's variable presets in an array to remove the need for multiple variables
-- Fixed hard coded dir in `switchToDisc()`
+- Added `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
+- Added more colours for `audioDrag()`
 - Added a check in `musicGUI()` to make sure to music folder actually exists
-- `switchToAE()` contains more elaborate code to be able to open the `.aep` file for the current project even once AE is already open
-- `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
-- Fixed some incorrect information in `hotkeysGUI()`
-- Condensed most `OnEvent`'s for `activeScripts()` to one singular function
 - Added `fastWheel()` to replace the simple `SendInput("{WheelDown/Up 10}")` and allow the function to focus the window under the cursor if it isn't currently the active window when called
+- Fixed hard coded dir in `switchToDisc()`
+- Fixed some incorrect information in `hotkeysGUI()`
+- `switchToAE()` now contains more elaborate code to be able to open the `.aep` file for the current Premiere project even once AE is already open
+- `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
+- Condensed most `OnEvent`'s for `activeScripts()` to one singular function
 - `getMouseMonitor()` now returns a function object and passes back all information
 - `toolCust()` can now take custom `x` & `y` coordinates. They are unset by default and can be omitted. It can also accept the `WhichToolTip` parameter from the actual `ToolTip` function
-- `zoom()` now resets toggle values after 10 seconds
 - `moveXorY()` tooltips will no longer flicker
+
+`zoom()`
+- Now sets it's variable presets in an array to remove the need for multiple variables
+- Now resets toggle values after 10 seconds
 
 `settingsGUI()`
 - Minor GUI tweaks
@@ -39,12 +42,11 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Moved `Current working dir:` to the status bar
     - Status bar now also shows whether `My Scripts.ahk` is active or suspended
 - Ability to add game information to `gameCheck.ahk`
-- `getMonitor()` in `#c::` now returns a function object instead of a large list of variables
 
 ## > Other Changes
 - Fix all dynamic comments
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
-- Added `commLocation :=` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own variable
+- Added `commLocation :=` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own dir
     - `QMK Keyboard.ahk` `h::` now attempts to open `commLocation` if there is no Adobe project open
 - Some loops now use `until` syntaxing
 - Some loops in `right click premiere.ahk` now use `while` syntaxing
