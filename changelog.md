@@ -30,6 +30,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `getMouseMonitor()` now returns a function object and passes back all information
 - `toolCust()` can now take custom `x` & `y` coordinates. They are unset by default and can be omitted. It can also accept the `WhichToolTip` parameter from the actual `ToolTip` function
 - `zoom()` now resets toggle values after 10 seconds
+- `moveXorY()` tooltips will no longer flicker
 
 `settingsGUI()`
 - Minor GUI tweaks

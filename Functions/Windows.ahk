@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.3
+;\\v2.13.4
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -357,10 +357,13 @@ moveXorY()
 	start:
     oneAxis(sc)
     {
-        if GetKeyState(sc, "P") ;move on X axis
+        while GetKeyState(sc, "P")
             {
-                MouseMove(x,y)
-                loop {
+                SetTimer(tools, 15)
+                tools() {
+                    MouseGetPos(&xx, &yy)
+                    static toolx := xx
+                    static tooly := yy
                     if A_TimeIdleMouse < 500
                         {
                             if sc = "XButton2"
@@ -368,40 +371,41 @@ moveXorY()
                             else if sc = "XButton1"
                                 ToolTip("Your mouse will now only move along the y axis")
                         }
-                    MouseGetPos(&newX, &newY)
-                    if sc = "XButton2"
-                        MouseMove(newX, y)
-                    else if sc = "XButton1"
-                        MouseMove(x, newY)
-                    if not GetKeyState(sc, "P")
-                        {
-                            ToolTip("")
-                            return
-                        }
                     if A_TimeIdleMouse > 500
                         {
                             MouseGetPos(&newX, &newY)
                             if sc = "XButton2"
                                 {
-                                    if newY = y
-                                        ToolTip("Your mouse will now only move along the x axis`nYou are currently level on the y axis")
+                                    if newY = y && newX != toolx
+                                        {
+                                            ToolTip("Your mouse will now only move along the x axis`nYou are currently level on the y axis")
+                                            toolx := newX
+                                        }
                                 }
                             else if sc = "XButton1"
                                 {
-                                    if newX = x
-                                        ToolTip("Your mouse will now only move along the y axis`nYou are currently level on the x axis")
+                                    if newX = x && newY != tooly
+                                        {
+                                            ToolTip("Your mouse will now only move along the y axis`nYou are currently level on the x axis")
+                                            tooly := newY
+                                        }
                                 }
                         }
                 }
+                MouseGetPos(&newX, &newY)
+                if sc = "XButton2"
+                    MouseMove(newX, y)
+                else if sc = "XButton1"
+                    MouseMove(x, newY)
             }
+            SetTimer(tools, 0)
+            ToolTip("")
     }
     oneAxis(sc)
     if sc != "XButton1" || sc != "XButton2"
         return
 	if GetKeyState(fr, "P")
 		goto start
-	else
-		return
 }
 
 /**
@@ -686,7 +690,11 @@ vscode(script)
     coordw()
     blockOn()
     MouseGetPos(&x, &y)
-    if ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png") || ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer2.png") ;this imagesearch is checking to ensure you're in the explorer tab
+    if (
+        ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png") ||
+        ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer2.png") ||
+        ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer3.png")
+    ) ;this imagesearch is checking to ensure you're in the explorer tab
         {
             MouseMove(xex, yex)
             SendInput("{Click}")
