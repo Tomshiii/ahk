@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.16
+;\\v2.14.17
 #Include General.ahk
 
 /**
@@ -287,6 +287,13 @@ num(xval, yval, scale)
 zoom()
 {
     ;we'll put all our values at the top so they can be easily changed. First value is your X coord, second value is your Y coord, third value is your Scale value
+    SetTimer(reset, -10000) ;reset toggle values after x seconds
+    reset() {
+        toolCust("zoom toggles reset",,, A_ScreenWidth*0.775, A_ScreenHeight*0.89) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
+        static alexTog := 0
+        static chloeTog := 0
+    }
+
     ;alex
     alexXYS := [2064, -26, 215]
     alexZoomXYS := [3467, 339, 390]
@@ -294,11 +301,17 @@ zoom()
     ;d0yle
     d0yleXYS := [-57, -37, 210]
 
+    ;chloe
+    chloeXYS := [2568, -352, 267]
+    chloeZoomXYS := [4444, -1284, 486]
+    chloetemp := [-208, -120, 222]
+
     ;then we'll define the values that will allow us to change things depending on the project
     static x := 0
     static y := 0
     static scale := 0
     static alexTog := 0
+    static chloeTog := 0
 
     KeyWait(A_ThisHotkey)
     coords()
@@ -326,11 +339,43 @@ zoom()
             y := d0yleXYS[2]
             scale := d0yleXYS[3]
         }
+    chloe := InStr(premCheck, "chloe")
+    if chloe != 0
+        {
+            if chloeTog = 0
+                {
+                    toolCust("zoom " chloeTog+1 "/3")
+                    x := chloeXYS[1]
+                    y := chloeXYS[2]
+                    scale := chloeXYS[3]
+                    chloeTog += 1
+                    goto endPeople
+                }
+            if chloeTog = 1
+                {
+                    toolCust("zoom " chloeTog+1 "/3")
+                    x := chloeZoomXYS[1]
+                    y := chloeZoomXYS[2]
+                    scale := chloeZoomXYS[3]
+                    chloeTog += 1
+                    goto endPeople
+                }
+            if chloeTog = 2
+                {
+                    toolCust("zoom " chloeTog+1 "/3")
+                    x := chloetemp[1]
+                    y := chloetemp[2]
+                    scale := chloetemp[3]
+                    chloeTog := 0
+                    goto endPeople
+                }
+        }
     alex := InStr(premCheck, "alex")
     if alex != 0
         {
             if alexTog = 0
                 {
+                    toolCust("zoom " alexTog+1 "/2")
                     x := alexXYS[1]
                     y := alexXYS[2]
                     scale := alexXYS[3]
@@ -339,6 +384,7 @@ zoom()
                 }
             if alexTog = 1
                 {
+                    toolCust("zoom " alexTog+1 "/2")
                     x := alexZoomXYS[1]
                     y := alexZoomXYS[2]
                     scale := alexZoomXYS[3]

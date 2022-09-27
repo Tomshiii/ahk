@@ -28,6 +28,8 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Condensed most `OnEvent`'s for `activeScripts()` to one singular function
 - Added `fastWheel()` to replace the simple `SendInput("{WheelDown/Up 10}")` and allow the function to focus the window under the cursor if it isn't currently the active window when called
 - `getMouseMonitor()` now returns a function object and passes back all information
+- `toolCust()` can now take custom `x` & `y` coordinates. They are unset by default and can be omitted. It can also accept the `WhichToolTip` parameter from the actual `ToolTip` function
+- `zoom()` now resets toggle values after 10 seconds
 
 `settingsGUI()`
 - Minor GUI tweaks
