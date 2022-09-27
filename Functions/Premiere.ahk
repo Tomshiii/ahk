@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.17
+;\\v2.14.18
 #Include General.ahk
 
 /**
@@ -290,8 +290,8 @@ zoom()
     SetTimer(reset, -10000) ;reset toggle values after x seconds
     reset() {
         toolCust("zoom toggles reset",,, A_ScreenWidth*0.775, A_ScreenHeight*0.89) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
-        static alexTog := 0
-        static chloeTog := 0
+        alexTog := 0
+        chloeTog := 0
     }
 
     ;alex
