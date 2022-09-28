@@ -74,11 +74,6 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
-F1::
-{
-	toolCust("hello", 3000,, 200, 200)
-	toolCust("goodbye", 3000,,,, 3)
-}
 ;reloaderHotkey;
 #+r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
 {
