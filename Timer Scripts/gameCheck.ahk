@@ -2,10 +2,11 @@
 
 #SingleInstance Force
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
-TraySetIcon(A_WorkingDir "\Support Files\Icons\game.png")
+TraySetIcon("..\Support Files\Icons\game.png")
 SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
 
-;Add games here! you can get this info using WindowSpy that comes with ahk
+;Add games here! you can get this info using WindowSpy that comes with ahk or you can activate `settingsGUI()` (default hotkey is #F1::) while you have the game active, then press the "add game to `gameCheck()`" button. It will attemp to add you game to this list automatically.
+;Format: `GameTitle ahk_exe game.exe`
 GroupAdd("games", "Minecraft ahk_exe javaw.exe") ;minecraft
 GroupAdd("games", "Terraria ahk_exe Terraria.exe") ;terraria
 ; -- leave this line it gets used and is needed in settingsGUI()

@@ -112,7 +112,7 @@ Note:
 - `variableZ` doesn't have to be used and can be omitted from the function call
 - An example of a function in this repo that passes back a variable & also uses defaults is [`isFullscreen()`](https://github.com/Tomshiii/ahk/blob/main/Functions/Windows.ahk)
 
-#### [gameCheck.ahk](https://github.com/Tomshiii/ahk/blob/main/gameCheck.ahk)
+#### [gameCheck.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/gameCheck.ahk)
 A script that will automatically suspend `My Scripts.ahk` when a game is detected to be the active window & then unsuspend it when the game is no longer active.
 ```mermaid
   graph TD;
@@ -128,7 +128,7 @@ A script that will automatically suspend `My Scripts.ahk` when a game is detecte
       G --> C
 ```
 
-#### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/autosave.ahk)
+#### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/autosave.ahk)
 A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.
 ```mermaid
   graph TD;
@@ -155,10 +155,10 @@ A script that will automatically save an Adobe Premiere Pro/After Effects projec
 #### [checklist.ahk](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk)
 A script that allows me to keep informed about what I have left to do on a video editing project as well as keeping track of the hours I've put into any individual project. This file doesn't get run from this directory and is instead copied to the project folder and run from there. This script has an accompanying script in `\Support Files` that allows you to quickly replace any in use checklist files.
 
-#### [Multi-Instance Close.ahk](https://github.com/Tomshiii/ahk/blob/main/Multi-Instance%20close.ahk)
+#### [Multi-Instance Close.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/Multi-Instance%20close.ahk)
 A script that will periodically check for duplicate instances of any autohotkey scripts and close one of them. Even if you use `#SingleInstance Force` reloading scripts can sometimes cause a second instance to slip open. This script will hopefully mitigate the odd behaviour that occurs when this happens by closing any duplicates.
 
-#### [adobe fullscreen check.ahk](https://github.com/Tomshiii/ahk/blob/main/adobe%20fullscreen%20check.ahk)
+#### [adobe fullscreen check.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/adobe%20fullscreen%20check.ahk)
 A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts.
 
 #### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)
@@ -170,10 +170,10 @@ A script that is run on PC startup to launch all my AHK scripts, as well as deal
 #### [Resolve_Example.ahk](https://github.com/Tomshiii/ahk/blob/main/Resolve_Example.ahk)
 An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough, thrown together and contains nowhere near the same amount of features.
 
-#### [Alt_menu_acceleration_DISABLER.ahk](https://github.com/Tomshiii/ahk/blob/main/Alt_menu_acceleration_DISABLER.ahk)
+#### [Alt_menu_acceleration_DISABLER.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/Alt_menu_acceleration_DISABLER.ahk)
 A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key.
 
-#### [autodismiss error.ahk](https://github.com/Tomshiii/ahk/blob/main/autodismiss%20error.ahk)
+#### [autodismiss error.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/autodismiss%20error.ahk)
 A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
 
 #### [right click premiere.ahk](https://github.com/Tomshiii/ahk/blob/main/right%20click%20premiere.ahk)

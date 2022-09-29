@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.3
+;\\v2.15
 #Include General.ahk
 
 /**
@@ -794,10 +794,15 @@ activeScripts(MyRelease)
     scriptClick(script, *) {
         detect()
         val := script.Value
-        if val = 1
+        if val != 1
+            {
+                WinClose(script.text " - AutoHotkey")
+                return
+            }
+        if script.text = "My Scripts.ahk" || script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk"
             Run(A_WorkingDir "\" script.text)
         else
-            WinClose(script.text " - AutoHotkey")
+            Run(A_WorkingDir "\Timer Scripts\" script.text)
     }
 
     MyGui.OnEvent("Escape", escape)

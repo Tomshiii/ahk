@@ -1,7 +1,7 @@
 #SingleInstance force
 SetWorkingDir A_ScriptDir
-TraySetIcon(A_WorkingDir "\Support Files\Icons\fullscreen.ico") ;changes the icon this script uses in the taskbar
-#Include "Functions.ahk"
+TraySetIcon("..\Support Files\Icons\fullscreen.ico") ;changes the icon this script uses in the taskbar
+#Include FuncRedirect.ahk
 InstallKeybdHook
 
 ;checks to make sure the user is using a compatible version of ahk

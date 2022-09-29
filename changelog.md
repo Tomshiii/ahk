@@ -50,6 +50,14 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Ability to add game information to `gameCheck.ahk`
 
 ## > Other Changes
+- Moved the following scripts to `..\Timer Scripts`;
+    - `adobe fullscreen check.ahk`
+    - `Alt_menu_acceleration_DISABLER.ahk`
+    - `autodismiss error.ahk`
+    - `autosave.ahk`
+    - `FuncRedirect.ahk`
+    - `gameCheck.ahk`
+    - `Multi-Instance Close.ahk`
 - Fix all dynamic comments
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
 - Added `commLocation :=` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own dir

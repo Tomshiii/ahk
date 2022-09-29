@@ -1,15 +1,15 @@
-SetWorkingDir "E:\Github\ahk"
+SetWorkingDir "..\"
 ;// This script is included more as a backup for myself and not really because it's helpful.
 
 Run(A_WorkingDir "\My Scripts.ahk")
 Run(A_WorkingDir "\QMK Keyboard.ahk")
-Run(A_WorkingDir "\Alt_menu_acceleration_DISABLER.ahk")
-Run(A_WorkingDir "\autodismiss error.ahk")
+Run(A_WorkingDir "\Timer Scripts\Alt_menu_acceleration_DISABLER.ahk")
+Run(A_WorkingDir "\Timer Scripts\autodismiss error.ahk")
 ;Run(A_WorkingDir "\right click premiere.ahk" ;#include(d) in main script now)
-Run(A_WorkingDir "\autosave.ahk")
-Run(A_WorkingDir "\adobe fullscreen check.ahk")
-Run(A_WorkingDir "\gameCheck.ahk")
-Run(A_WorkingDir "\Multi-Instance Close.ahk")
+Run(A_WorkingDir "\Timer Scripts\autosave.ahk")
+Run(A_WorkingDir "\Timer Scripts\adobe fullscreen check.ahk")
+Run(A_WorkingDir "\Timer Scripts\gameCheck.ahk")
+Run(A_WorkingDir "\Timer Scripts\Multi-Instance Close.ahk")
 
 if not WinExist("ahk_exe Creative Cloud.exe")
     Run("C:\Program Files\Adobe\Adobe Creative Cloud\ACC\Creative Cloud.exe")
