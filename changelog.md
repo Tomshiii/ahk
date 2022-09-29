@@ -27,8 +27,11 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `switchToAE()` now contains more elaborate code to be able to open the `.aep` file for the current Premiere project even once AE is already open
 - `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
 - Condensed most `OnEvent`'s for `activeScripts()` to one singular function
-- `getMouseMonitor()` now returns a function object and passes back all information
 - `moveXorY()` tooltips will no longer flicker
+
+`getMouseMonitor()`
+- Now returns a function object and passes back all information
+- Now `Exit`'s when `try{}` fails to stop potential runtime errors when called and a variable object hasn't been passed back
 
 `toolCust()`
 - Can now take custom `x` & `y` coordinates. They are unset by default and can be omitted

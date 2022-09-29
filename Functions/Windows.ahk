@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.4
+;\\v2.13.5
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -20,7 +20,7 @@ youMouse(tenS, fiveS)
     if WinExist("YouTube")
     {
         try {
-            lastactive := WinGetID("A") ;fills the variable [lastavtive] with the ID of the current window
+            lastactive := WinGetID("A") ;fills the variable [lastactive] with the ID of the current window
         }
         WinActivate() ;activates Youtube if there is a window of it open
         sleep 25 ;sometimes the window won't activate fast enough
@@ -190,9 +190,7 @@ moveTab()
     SendInput("{LButton Down}")
     move:
     if monitor.monitor != 2 && monitor.monitor != 4 ;I only want this function to cycle between monitors 2 & 4
-        {
-            monitor.monitor := 2 ;so I'll set the monitor number to one of the two I wish it to cycle between
-        }
+        monitor.monitor := 2 ;so I'll set the monitor number to one of the two I wish it to cycle between
     if monitor.monitor = 4
         MouseMove(4288, -911, 2) ;if the mouse is within monitor 4, it will move it to monitor 2
     if monitor.monitor = 2
@@ -284,9 +282,10 @@ getMouseMonitor()
 			    }
 		}
 		catch {
+            blockOff() ;to stop the user potentially getting stuck
 			toolCust(A_ThisFunc " failed to get the monitor that the mouse is within")
             errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
-			break
+			Exit()
 		}
 	}
 }
