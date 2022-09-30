@@ -68,6 +68,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Some loops now use `until` syntaxing
 - Some loops in `right click premiere.ahk` now use `while` syntaxing
 - `=>` notation has been used in some places
+- Fixed `End::` erroring out if no project is open
 
 `replaceChecklist.ahk`
 - Will now ignore backup folders

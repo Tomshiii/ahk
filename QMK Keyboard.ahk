@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.2
+;\\v2.9.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5.2.1
@@ -551,7 +551,7 @@ End:: ;search for checklist file
 	else
 		{
 			if !DirExist(commLocation)
-				commLocation := "C:\"
+				global commLocation := "C:\"
 			dir := FileSelect("D2", commLocation, "Pick the Edit Directory")
 			if dir = ""
 				return
