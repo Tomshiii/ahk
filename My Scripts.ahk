@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.18.9
+;\\v2.18.10
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.9.1
 
@@ -89,7 +89,11 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 				continue
 			PostMessage(0x0111, 65303,,, ScriptName " - AutoHotkey")
 		}
-	Reload
+	DetectHiddenWindows false
+	toolCust("all active ahk scripts reloading", 500)
+	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
+        WinWaitClose("ahk_class tooltips_class32")
+	Reload()
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
 		if Result = "Yes"

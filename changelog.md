@@ -13,6 +13,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Added `#+^r::` to hard refresh all open `.ahk` scripts (not including `checklist.ahk`)
     - Added `hardReset()` for this and so it can be used elsewhere
 - `#+r::` will now create a list of open `.ahk` scripts and tell them to reload instead of requiring hard coded values
+    - Will now produce a tooltip while reloading
 - `SC03A & c::` now pastes the string instead of using a `Send{}` type to increase performance
 - `getMonitor()` in `#c::` now returns a function object instead of a large list of variables
 - `#c::` & `#f::` now ignore `checklist.ahk`
@@ -29,6 +30,8 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `activeScripts()` now starts a timer to check the suspended state of `My Scripts.ahk` to update the checkbox value
 - Condensed most `OnEvent`'s for `activeScripts()` to one singular function
 - `moveXorY()` tooltips will no longer flicker
+- `moveTab()` now makes sure the monitor objects have been set 
+- Moved `getPremName()`, `getAEName()` & `getID()` => `Windows.ahk`
 
 `getMouseMonitor()`
 - Now returns a function object and passes back all information
