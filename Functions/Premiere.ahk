@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.18
+;\\v2.14.19
 #Include General.ahk
 
 /**
@@ -1431,7 +1431,6 @@ openChecklist()
             return
         }
     entirePath := SubStr(name, dashLocation + "2", length)
-    pathlength := StrLen(entirePath)
     finalSlash := InStr(entirePath, "\",, -1)
     path := SubStr(entirePath, 1, finalSlash - "1")
     SplitPath path, &name

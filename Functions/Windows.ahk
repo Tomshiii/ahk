@@ -128,6 +128,13 @@ moveTab()
     getTitle(&title) ;getting the window title
     WinGetPos(&winX, &winY, &width,, title) ; getting the coords for the firefox window
     monitor := getMouseMonitor() ;checking which monitor the mouse is within
+    if !IsObject(initMon) || !IsObject(monitor)
+        {
+            blockOff() ;to stop the user potentially getting stuck
+			toolCust(A_ThisFunc " failed to get the monitor that the mouse is within")
+            errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
+			return
+		}
     if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
         goto move
     if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu.png") || ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
@@ -330,7 +337,7 @@ isFullscreen(&title, &full, window := false)
     if title = "Program Manager" ;this is the desktop. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
         title := ""
 	try {
-		if WinGetMinMax(title) = 1 ;a return value of 1 means it is maximised
+		if WinGetMinMax(title,, "Editing Checklist -") = 1 ;a return value of 1 means it is maximised
 			full := 1
 		else
 			full := 0
@@ -465,6 +472,73 @@ fastWheel()
 	if orig != titleUnder && classUnder != "tooltips_class32"
 		WinActivate(titleUnder)
 	SendInput("{" second " 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+}
+
+/**
+ * This function will grab the title of premiere if it exists and check to see if a save is necessary
+ * @param premCheck is the title of premiere, we want to pass this value back to the script
+ * @param titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
+ * @param saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+ */
+getPremName(&premCheck, &titleCheck, &saveCheck)
+{
+    try {
+        if WinExist("ahk_exe Adobe Premiere Pro.exe")
+            {
+                premCheck := WinGetTitle("ahk_class Premiere Pro")
+                titleCheck := InStr(premCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
+            }
+        else
+            {
+                titleCheck := ""
+                saveCheck := ""
+            }
+    } catch as e {
+        blockOff()
+        toolCust("Couldn't determine the titles of Adobe programs")
+        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
+        return
+    }
+}
+ 
+ /**
+  * This function will grab the title of after effects if it exists and check to see if a save is necessary
+  * @param aeCheck is the title of after effects, we want to pass this value back to the script
+  * @param aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+  */
+getAEName(&aeCheck, &aeSaveCheck)
+{
+    try {
+        if WinExist("ahk_exe AfterFX.exe")
+            {
+                aeCheck := WinGetTitle("ahk_exe AfterFX.exe")
+                aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
+            }
+        else
+            aeSaveCheck := ""
+    } catch as e {
+        blockOff()
+        toolCust("Couldn't determine the titles of Adobe programs")
+        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
+        return
+    }
+}
+
+/**
+ * This function will grab the initial active window
+ * @param id is the processname of the active window, we want to pass this value back to the script
+ */
+getID(&id)
+{
+    try {
+        id := WinGetProcessName("A")
+        if WinActive("ahk_exe explorer.exe")
+            id := "ahk_class CabinetWClass"
+    } catch as e {
+        toolCust("couldn't grab active window")
+        errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineFile, A_LineNumber)
+    }
 }
 
 ; ===========================================================================================================================================
