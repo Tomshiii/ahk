@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.18.8
+;\\v2.18.9
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.9.1
 
@@ -142,7 +142,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	getMonitor()
 	{
 		getTitle(&title)
-		WinGetPos(&x, &y,,, title)
+		WinGetPos(&x, &y,,, title,, "Editing Checklist -")
 		x := x + 10 ;sometimes windows when fullscreened will be at -8, -8 and not 0, 0
 		y := y + 10 ;so we just add 10 pixels to both variables to ensure we're in the correct monitor
 		numberofMonitors := SysGet(80)
@@ -162,6 +162,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			}
 		}
 	}
+	title := ""
 	static win := "" ;a variable we'll hold the title of the window in
 	static toggle := 1 ;a variable to determine whether to centre on the current display or move to the main one
 	monitor := getMonitor() ;now we run the above function we created
@@ -180,9 +181,9 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		{
 			width := monitor.right - monitor.left ;determining the width of the current monitor
 			height := monitor.bottom - monitor.top ;determining the height of the current monitor
-			isFullscreen(&title, &full) ;checking if the window is fullscreen
+			isFullscreen(&title2, &full, title) ;checking if the window is fullscreen
 			if full = 1
-				WinRestore(title) ;winrestore will unmaximise it
+				WinRestore(title2,, "Editing Checklist -") ;winrestore will unmaximise it
 		
 			newWidth := width / 1.6 ;determining our new width
 			newHeight := height / 1.6 ;determining our new height
@@ -212,7 +213,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			newY := newY / 2.25
 		}
 	try{
-		WinMove(newX, newY, newWidth, newHeight, title) ;then we attempt to move the window
+		WinMove(newX, newY, newWidth, newHeight, title,, "Editing Checklist -") ;then we attempt to move the window
 		;toolCust("Window: " win "`nToggle: " toggle) ;for whatever reason, producing a tooltip actually breaks functionality.... huh??
 	}
 }
@@ -222,9 +223,9 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 {
 	isFullscreen(&title, &full)
 	if full = 0
-		WinMaximize(title) ;winrestore will unmaximise it
+		WinMaximize(title,, "Editing Checklist -") ;winrestore will unmaximise it
 	else
-		WinRestore(title)
+		WinRestore(title,, "Editing Checklist -")
 }
 
 ;jump10charHotkey;
@@ -351,13 +352,13 @@ F18:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("500") ;clicks on the `my scripts` script in vscode
+!a::vscode("530") ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
-!f::vscode("520") ;clicks on my `functions` script in vscode
+!f::vscode("530") ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::vscode("540") ;clicks on my `qmk` script in vscode
+!q::vscode("560") ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
-!c::vscode("400") ;clicks on my `changelog` file in vscode
+!c::vscode("430") ;clicks on my `changelog` file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
