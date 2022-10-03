@@ -4,9 +4,6 @@
 #Include lib\checklist\include.ahk
 TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
 
-if WinExist("Select commission folder")
-    ExitApp()
-
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 version := "v2.6.0.2"
 ;todays date
