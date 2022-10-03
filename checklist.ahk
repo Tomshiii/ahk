@@ -8,7 +8,7 @@ if WinExist("Select commission folder")
     ExitApp()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.6.0.1"
+version := "v2.6.0.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -26,7 +26,8 @@ checklist := ""
 if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
     {
         premNotOpen(&checklist, &logs, &path)
-        WinWaitClose("Select commission folder")
+        if WinExist("Select commission folder")
+            WinWaitClose("Select commission folder")
     }
 else
     {
@@ -39,13 +40,15 @@ else
                         toolCust("``titlecheck`` variable wasn't assigned a value")
                         errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
                         premNotOpen(&checklist, &logs, &path)
-                        WinWaitClose("Select commission folder")
+                        if WinExist("Select commission folder")
+                            WinWaitClose("Select commission folder")
                     }
                 dashLocation := InStr(Nameprem, "-")
                 if not dashLocation
                     {
                         premNotOpen(&checklist, &logs, &path)
-                        WinWaitClose("Select commission folder")
+                        if WinExist("Select commission folder")
+                            WinWaitClose("Select commission folder")
                         goto end
                     }
                 length := StrLen(Nameprem) - dashLocation
@@ -62,7 +65,8 @@ else
         else
             {
                 premNotOpen(&checklist, &logs, &path)
-                WinWaitClose("Select commission folder")
+                if WinExist("Select commission folder")
+                    WinWaitClose("Select commission folder")
             }
     }
 
