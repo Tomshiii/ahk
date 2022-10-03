@@ -157,8 +157,7 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         goto end
                     }
                 try {
-                    FileCopy(location "\checklist.ahk", SelectedFolder)
-                    Run(SelectedFolder "\checklist.ahk")
+                    Run("..\checklist.ahk")
                 } catch as e {
                     toolCust("File not found")
                 }

@@ -6,6 +6,24 @@ This release brings along two new scripts; `gameCheck.ahk` & `Multi-Instance Clo
 
 Alongside those two scripts, this update brings along a dark theme to certain GUI elements. AHK is rather limited in what it can apply in a modern way but a global dark mode option can now be enabled in `settingsGUI()`
 
+# > Other Big Changes
+- Completely redesigned `checklist.ahk` to run from the root dir instead of copying it to the project location
+- Moved the following scripts to `..\Timer Scripts`;
+    - `adobe fullscreen check.ahk`
+    - `Alt_menu_acceleration_DISABLER.ahk`
+    - `autodismiss error.ahk`
+    - `autosave.ahk`
+    - `FuncRedirect.ahk`
+    - `gameCheck.ahk`
+    - `Multi-Instance Close.ahk`
+- Added `..\lib\` to reduce the clutter of the root dir
+    - Moved the `Functions` & `KSA` folder => `lib`
+    - Moved all functions to their own scripts within `\lib\checklist\` to increase readability
+        - All functions are now labelled with dynamic comments to explain what they do
+- Fix all dynamic comments
+    - Add markers to all dynamic comments to indicate what type of information needs to be passed for each parameter
+- `..\` used in a lot of places now to go back a dir instead of needing hardcoded values
+
 ## > My Scripts
 - Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown/WheelUp::`
 - `F14 & WheelDown/WheelUp::` now calls `fastWheel()`
@@ -21,9 +39,9 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
 - Added `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
-- Added more colours for `audioDrag()`
 - Added a check in `musicGUI()` to make sure to music folder actually exists
 - Added `fastWheel()` to replace the simple `SendInput("{WheelDown/Up 10}")` and allow the function to focus the window under the cursor if it isn't currently the active window when called
+- Added `toolWait()` to cut repeat code => makes your script wait for tooltips to finish before continuing
 - Fixed hard coded dir in `switchToDisc()`
 - Fixed some incorrect information in `hotkeysGUI()`
 - `switchToAE()` now contains more elaborate code to be able to open the `.aep` file for the current Premiere project even once AE is already open
@@ -32,6 +50,10 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `moveXorY()` tooltips will no longer flicker
 - `moveTab()` now makes sure the monitor objects have been set 
 - Moved `getPremName()`, `getAEName()` & `getID()` => `Windows.ahk`
+
+`audioDrag()`
+- Added more colours
+- Will now lower gain before cutting instead of after
 
 `getMouseMonitor()`
 - Now returns a function object and passes back all information
@@ -57,15 +79,6 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Ability to add game information to `gameCheck.ahk`
 
 ## > Other Changes
-- Moved the following scripts to `..\Timer Scripts`;
-    - `adobe fullscreen check.ahk`
-    - `Alt_menu_acceleration_DISABLER.ahk`
-    - `autodismiss error.ahk`
-    - `autosave.ahk`
-    - `FuncRedirect.ahk`
-    - `gameCheck.ahk`
-    - `Multi-Instance Close.ahk`
-- Fix all dynamic comments
 - Adjusted positioning of tray menu items for `My Scripts.ahk` & `autosave.ahk`
 - Added `commLocation :=` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own dir
     - `QMK Keyboard.ahk` `h::` now attempts to open `commLocation` if there is no Adobe project open
@@ -73,6 +86,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Some loops in `right click premiere.ahk` now use `while` syntaxing
 - `=>` notation has been used in some places
 - Fixed `End::` erroring out if no project is open
+- `Keyboard Shortcuts Adjustments.ahk` no longer uses a hardcoded dir for the `location` variable
 
 `replaceChecklist.ahk`
 - Will now ignore backup folders
@@ -82,7 +96,6 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 `checklist.ahk`
 - Fixed not creating newly added `checklist.ini` settings when it copies a newer version from the working dir (you will encounter errors until you're on `checklist.ahk's local-v2.5.3` or greater and generate a .ini file)
 - Fixed `H:` number getting cut off when above 10 hours
-- Moved all functions to the bottom of the script to increase readability
 - Now uses `floorDecimal()` for the `Hour` text so it ticks over more accurately
 - Will now stop the timer & log information if a second instance is forcefully opened
 - Added menu bar to:

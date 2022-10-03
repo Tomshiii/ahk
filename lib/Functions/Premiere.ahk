@@ -4,7 +4,7 @@
 
 /**
  * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
- * @param item in this function defines what it will type into the search box (the name of your preset within premiere)
+ * @param {String} item in this function defines what it will type into the search box (the name of your preset within premiere)
  */
 preset(item)
 {
@@ -217,9 +217,9 @@ fxSearch()
 
 /**
  * This function is to simply cut down repeated code on my numpad punch in scripts. it punches the video into my preset values for highlight videos
- * @param xval is the pixel value you want this function to paste into the X coord text field in premiere
- * @param yval is the pixel value you want this function to paste into the y coord text field in premiere
- * @param scale is the scale value you want this function to paste into the scale text field in premiere
+ * @param {Integer} xval is the pixel value you want this function to paste into the X coord text field in premiere
+ * @param {Integer} yval is the pixel value you want this function to paste into the y coord text field in premiere
+ * @param {Integer} scale is the scale value you want this function to paste into the scale text field in premiere
  */
 num(xval, yval, scale)
 {
@@ -302,9 +302,9 @@ zoom()
     d0yleXYS := [-57, -37, 210]
 
     ;chloe
-    chloeXYS := [2568, -352, 267]
-    chloeZoomXYS := [4444, -1284, 486]
-    chloetemp := [-208, -120, 222]
+    chloeXYS := [-646, -352, 267]
+    chloeZoomXYS := [-2543, -1284, 486]
+    chloetemp := [-882, 1526, 292]
 
     ;then we'll define the values that will allow us to change things depending on the project
     static x := 0
@@ -472,8 +472,8 @@ zoom()
 
 /**
  * A preset to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
- * @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
- * @param optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+ * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+ * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
  */
 valuehold(filepath, optional := 0)
 {
@@ -612,7 +612,7 @@ valuehold(filepath, optional := 0)
 
 /**
  * This function is to turn off keyframing for a given property within premiere pro
- * @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+ * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
  */
 keyreset(filepath) ;I think this function is broken atm, I need to do something about it... soon
 {
@@ -662,7 +662,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
 
 /**
  * This function is to either turn on keyframing, or create a new keyframe at the cursor for a given property within premiere pro
- * @param filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+ * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
  */
 keyframe(filepath)
 {
@@ -722,7 +722,7 @@ keyframe(filepath)
  * This function pulls an audio file out of a separate bin from the project window and back to the cursor (premiere pro)
  * 
  * If `sfxName` is "bleep" there is extra code that automatically moves it to your track of choice
- * @param sfxName is the name of whatever sound you want the function to pull onto the timeline
+ * @param {String} sfxName is the name of whatever sound you want the function to pull onto the timeline
  */
 audioDrag(sfxName)
 {
@@ -784,10 +784,10 @@ audioDrag(sfxName)
                 MouseMove(xpos, ypos)
                 SendInput("{Click Up}")
                 SendInput(timelineWindow)
-                MouseMove(30,0,, "R")
+                ;MouseMove(30,0,, "R")
                 sleep 50
-                MouseGetPos(&colourX, &colourY)
-                colour := PixelGetColor(colourX, colourY)
+                ;MouseGetPos(&colourX, &colourY)
+                colour := PixelGetColor(xpos + 30, ypos)
                 if (
                      colour = 0x156B4C || colour = 0x1B8D64 || colour = 0x1c7d5a|| colour = 0x1D7E5B || colour = 0x1D986C || colour = 0x1E7F5C || colour = 0x1F805D || colour = 0x1FA072 || colour = 0x1FA373 || colour = 0x20815E || colour = 0x21825F || colour = 0x23AB83 || colour = 0x248562 || colour = 0x258663 || colour = 0x268764 || colour = 0x298A67 || colour = 0x29D698 || colour = 0x2A8B68 || colour = 0x2A8D87 || colour = 0x2B8C69 || colour = 0x3A9B78 || colour = 0x3DFFE4 || colour = 0x44A582 || colour = 0x457855 || colour = 0x47A582 || colour = 0x4AAB88 || colour = 0x5C67F9 || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD0E1DB || colour = 0xD4F7EA || colour = 0xFDFDFD || colour = 0xFEFEFE || colour = 0xFFFFFF  ||
                      ;there needs to be a trailing || for any block that isn't the final
@@ -805,10 +805,32 @@ audioDrag(sfxName)
                         return
                     }
             }
-            MouseMove(-30,0,, "R")
             blockOff()
             if sfxName = "bleep"
                 {
+                    sleep 50
+                    SendInput(selectionPrem)
+                    MouseGetPos(&delx, &dely)
+                    MouseMove(10, 0,, "R")
+                    sleep 50
+                    if A_Cursor != "Arrow"
+                        loop 12 {
+                            MouseMove(5, 0, 2, "R")
+                            if A_Cursor = "Arrow"
+                                {
+                                    MouseMove(5, 0, 2, "R")
+                                    sleep 25
+                                    break
+                                }
+                            sleep 50
+                        }
+                    SendInput("{Click}")
+                    sleep 50
+                    SendInput(gainAdjust)
+                    SendInput("-20")
+                    SendInput("{Enter}")
+                    WinWaitClose("Audio Gain")
+                    MouseMove(xpos, ypos)
                     trackNumber := 2
                     sleep 100
                     SendInput(cutPrem)
@@ -843,25 +865,7 @@ audioDrag(sfxName)
                     sleep 50
                     SendInput(selectionPrem)
                     MouseGetPos(&delx, &dely)
-                    MouseMove(-10, 0,, "R")
-                    sleep 50
-                    if A_Cursor != "Arrow"
-                        loop 12 {
-                            MouseMove(-5, 0, 2, "R")
-                            if A_Cursor = "Arrow"
-                                {
-                                    MouseMove(-5, 0, 2, "R")
-                                    sleep 25
-                                    break
-                                }
-                            sleep 50
-                        }
-                    SendInput("{Click}")
-                    sleep 50
-                    SendInput(gainAdjust)
-                    SendInput("-20")
-                    SendInput("{Enter}")
-                    WinWaitClose("Audio Gain")
+                    MouseMove(xpos + 10, ypos)
                     sleep 500
                     SendInput("{Click Down}")
                     MouseGetPos(&refx, &refy)
@@ -974,7 +978,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
 
 /**
  * Move back and forth between edit points from anywhere in premiere
- * @param direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
+ * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
  */
 wheelEditPoint(direction)
 {
@@ -1192,8 +1196,8 @@ hotkeyReactivate()
 
 /**
  * This function will warp to and press any value in premiere to manually input a number
- * @param property is the value you want to adjust
- * @param optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
+ * @param {String} property is the value you want to adjust. ie "scale"
+ * @param {Integer} optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
  */
 manInput(property, optional := 0)
 {
@@ -1262,7 +1266,7 @@ manInput(property, optional := 0)
 
 /**
  * This function is to increase/decrease gain within premiere pro. This function will check to ensure the timeline is in focus and a clip is selected
- * @param amount is the value you want the gain to adjust (eg. -2, 6, etc)
+ * @param {Integer} amount is the value you want the gain to adjust (eg. -2, 6, etc)
  */
 gain(amount)
 {
@@ -1341,7 +1345,7 @@ gain(amount)
 
 /**
  * This function opens up the gain menu within premiere pro so I can input it with my secondary keyboard. This function will also check to ensure the timeline is in focus and a clip is selected. I don't really use this anymore
- * @param keyend is whatever key you want the function to wait for before finishing
+ * @param {String} keyend is whatever key you want the function to wait for before finishing
  */
 gainSecondary(keyend)
 {
@@ -1388,8 +1392,7 @@ gainSecondary(keyend)
  */
 openChecklist()
 {
-    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-		WinWaitClose("ahk_class tooltips_class32")
+    toolWait()
     try {
         if WinExist("Adobe Premiere Pro")
             {
@@ -1460,8 +1463,8 @@ openChecklist()
  * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensuring the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
  
  * This version is specifically for Premiere Pro
- * @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
- * @param toolorig is the button you want the script to press to bring you back to your tool of choice
+ * @param {String} tool is the hotkey you want the program to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
+ * @param {String} toolorig is the hotkey you want the script to press to bring you back to your tool of choice (consider using KSA values)
  */
 mousedrag(tool, toolorig)
 {
@@ -1482,12 +1485,10 @@ mousedrag(tool, toolorig)
                 static yValue := ypos + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
                 static xControl := xpos + 238 ;accounting for the column to the left of the timeline
                 static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
-                if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-                    WinWaitClose("ahk_class tooltips_class32")
+                toolWait()
                 toolCust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh")
             } catch as e {
-                if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-                    WinWaitClose("ahk_class tooltips_class32")
+                toolWait()
                 toolCust("Couldn't find the ClassNN value")
                 errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
                 goto skip

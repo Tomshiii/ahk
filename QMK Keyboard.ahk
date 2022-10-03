@@ -33,10 +33,10 @@ unassigned() => toolCust(A_ThisHotkey " is unassigned") ;create a tooltip for un
 
 /**
  * This function is specifically designed for this script as I have a button designed to be pressed alongside another just to open new windows
- * @param key is the activation key of the program (not the key to run an additional window). These are NOT listed in KSA simply because this script is so incredibly specific to my workflow
- * @param classorexe is just defining if we're trying to grab the class or exe
- * @param activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
- * @param runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
+ * @param {String} key is the activation key of the program (not the key to run an additional window). These are NOT listed in KSA simply because this script is so incredibly specific to my workflow
+ * @param {String} classorexe is just defining if we're trying to grab the class or exe
+ * @param {String} activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
+ * @param {String} runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
  */
 newWin(classorexe, activate, runval)
 {
@@ -546,32 +546,10 @@ d::unassigned()
 c::unassigned()
 End:: ;search for checklist file
 {
-	if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
-		openChecklist()
-	else
-		{
-			if !DirExist(commLocation)
-				global commLocation := "C:\"
-			dir := FileSelect("D2", commLocation, "Pick the Edit Directory")
-			if dir = ""
-				return
-			SplitPath dir, &name
-			if WinExist("Checklist - " name)
-				{
-					toolCust("You already have this checklist open")
-					errorLog(A_ThisHotkey "::", "You already have this checklist open", A_LineFile, A_LineNumber)
-					return
-				}
-			if FileExist(dir "\checklist.ahk")
-				Run(dir "\checklist.ahk")
-			else
-				try {
-					FileCopy("E:\Github\ahk\checklist.ahk", dir)
-					Run(dir "\checklist.ahk")
-				} catch as e {
-					toolCust("File not found")
-				}
-		}
+	if !WinExist("Editing Checklist") && !WinExist("Select commission folder")
+		Run(A_WorkingDir "\checklist.ahk")
+	else if WinExist("Editing Checklist")
+		WinMove(-345, -191,,, "Editing Checklist -")
 }
 
 w::unassigned()

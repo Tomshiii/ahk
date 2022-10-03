@@ -4,7 +4,7 @@
 
 /**
  * A function to warp to one of a photos values within Photoshop (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
- * @param image is the png name of the image that imagesearch will use
+ * @param {String} image is the png name of the image that imagesearch will use
  */
 psProp(image)
 {
@@ -163,7 +163,7 @@ psSave()
 
 /**
  * When you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want
- * @param filetype is the name of the image you save to pick which filetype you want this function to click on
+ * @param {String} filetype is the name of the image you save to pick which filetype you want this function to click on
  */
 psType(filetype)
 {

@@ -1,6 +1,6 @@
 ;Adjust the location of your scripts by changing the value below. This folder should be the root folder and with NO trailing backslash
 
-location := "E:\Github\ahk"
+location := A_WorkingDir "\lib" ;since this script is run from within `Functions.ahk` in the root dir, we can assume the root dir is A_WorkingDir
 commLocation := "E:\comms" ;you will need to change this manually, locationReplace() will not touch it
 
 ;[Premiere]

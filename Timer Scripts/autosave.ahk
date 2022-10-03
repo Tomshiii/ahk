@@ -104,77 +104,6 @@ StopWatch() {
         }
 }
 
-
-
-;let's define some functions to grab information
-
-/**
- * This function will grab the initial active window
- * @param id is the processname of the active window, we want to pass this value back to the script
- */
-getID(&id)
-{
-    try {
-        id := WinGetProcessName("A")
-        if WinActive("ahk_exe explorer.exe")
-            id := "ahk_class CabinetWClass"
-    } catch as e {
-        toolCust("couldn't grab active window")
-        errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineFile, A_LineNumber)
-    }
-}
-
-/**
- * This function will grab the title of premiere if it exists and check to see if a save is necessary
- * @param premCheck is the title of premiere, we want to pass this value back to the script
- * @param titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
- * @param saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
- */
-getPremName(&premCheck, &titleCheck, &saveCheck)
-{
-    try {
-        if WinExist("ahk_exe Adobe Premiere Pro.exe")
-            {
-                premCheck := WinGetTitle("ahk_class Premiere Pro")
-                titleCheck := InStr(premCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-                saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
-            }
-        else
-            {
-                titleCheck := ""
-                saveCheck := ""
-            }
-    } catch as e {
-        blockOff()
-        toolCust("Couldn't determine the titles of Adobe programs")
-        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
-        return
-    }
-}
-
-/**
- * This function will grab the title of after effects if it exists and check to see if a save is necessary
- * @param aeCheck is the title of after effects, we want to pass this value back to the script
- * @param aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
- */
-getAEName(&aeCheck, &aeSaveCheck)
-{
-    try {
-        if WinExist("ahk_exe AfterFX.exe")
-            {
-                aeCheck := WinGetTitle("ahk_exe AfterFX.exe")
-                aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
-            }
-        else
-            aeSaveCheck := ""
-    } catch as e {
-        blockOff()
-        toolCust("Couldn't determine the titles of Adobe programs")
-        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
-        return
-    }
-}
-
 ;This next code starts the script
 
 start:
@@ -208,9 +137,11 @@ check() {
             SetTimer(, -msChecklist)
             goto end3
         }
-    openChecklist() ;this function can be found in \Functions\Premiere.ahk
-    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-        WinWaitClose("ahk_class tooltips_class32",, 3)
+    if !WinExist("Select commission folder")
+        Run(A_WorkingDir "\checklist.ahk")
+    else
+        WinWaitClose("Select commission folder")
+    toolWait()
     if not WinExist("Editing Checklist")
         toolCust("Don't forget to start the checklist for this project!", 2000)
     SetTimer(, -msChecklist) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
@@ -448,8 +379,7 @@ save()
     blockOff()
     SetTimer(, -ms) ;reset the timer
     end2:
-    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active
-		WinWaitClose("ahk_class tooltips_class32",, 2)
+    toolWait()
     global ElapsedTime := 0
     SetTimer(StopWatch, 10)
 }

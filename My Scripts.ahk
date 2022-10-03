@@ -91,8 +91,7 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 		}
 	DetectHiddenWindows false
 	toolCust("all active ahk scripts reloading", 500)
-	if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-        WinWaitClose("ahk_class tooltips_class32")
+	toolWait()
 	Reload()
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
@@ -356,13 +355,13 @@ F18:: ;open the "show more options" menu in win11
 
 #HotIf WinActive("ahk_exe Code.exe")
 ;vscodemsHotkey;
-!a::vscode("530") ;clicks on the `my scripts` script in vscode
+!a::vscode(480) ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
-!f::vscode("530") ;clicks on my `functions` script in vscode
+!f::vscode() ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::vscode("560") ;clicks on my `qmk` script in vscode
+!q::vscode(520) ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
-!c::vscode("430") ;clicks on my `changelog` file in vscode
+!c::vscode(390) ;clicks on my `changelog` file in vscode
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;

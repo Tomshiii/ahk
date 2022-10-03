@@ -6,9 +6,9 @@
 
 /**
  * A function to warp to one of a videos values within After Effects (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
- * @param button is the hotkey within after effects that's used to open up the property you want to adjust
- * @param property is the filename of just the property itself ie. "scale" not "scale.png" or "scale2"
- * @param optional is for when you need the mouse to move extra coords over to avoid the first "blue" text for some properties
+ * @param {String} button is the hotkey within after effects that's used to open up the property you want to adjust
+ * @param {String} property is the filename of just the property itself ie. "scale" not "scale.png" or "scale2"
+ * @param {Integer} optional is for when you need the mouse to move extra coords over to avoid the first "blue" text for some properties
  */
 aevaluehold(button, property, optional) ;this function is incredibly touchy and I need to revisit it one day to improve it so that it's actually usable, but for now I don't really use it, after effects is just too jank
 {
@@ -73,7 +73,7 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
 
 /**
  * This function allows you to drag and drop effects onto a clip within After Effects at the press of a button
- * @param preset is the name of your preset that you wish to drag onto your clip
+ * @param {String} preset is the name of your preset that you wish to drag onto your clip
  */
 aePreset(preset)
 {

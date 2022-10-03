@@ -1,6 +1,6 @@
 ;These global variables will be used across some Streamdeck AHK scripts.
-#Include "E:\Github\ahk\KSA\Keyboard Shortcut Adjustments.ahk"
-global Premiere := location "\Support Files\ImageSearch\Premiere\"
+#Include "..\lib\KSA\Keyboard Shortcut Adjustments.ahk"
+#Include "..\lib\Functions\General.ahk"
 global Windows := location "\Support Files\ImageSearch\Windows\Win11\Settings\"
 global Chatterino := location "\Support Files\ImageSearch\Chatterino\"
 
@@ -29,83 +29,6 @@ streamelementsLocation()
 discordLocation()
 {
 	WinMove(-1080,  -274, 1080, 1600)
-}
-
-/**
- * sets coordmode to "screen"
- */
-coords()
-{
-	coordmode "pixel", "screen"
-	coordmode "mouse", "screen"
-}
-
-/**
- * sets coordmode to "window"
- */
-coordw()
-{
-	coordmode "pixel", "window"
-	coordmode "mouse", "window"
-}
-
-/**
- * blocks all user inputs [IF YOU GET STUCK IN A SCRIPT USE CTRL + ALT + DEL to open task manager and close AHK]
- */
-blockOn()
-{
-	BlockInput "SendAndMouse"
-	BlockInput "MouseMove"
-	BlockInput "On"
-	;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
-}
-
-/**
- * turns off the blocks on user input
- */
-blockOff()
-{
-	blockinput "MouseMoveOff"
-	BlockInput "off"
-}
-
-/**
- * Create a tooltip with any message. This tooltip will then follow the cursor and only redraw itself if the user has moved the cursor.
- * 
- * If you wish for the tooltip to plant next to the mouse and not follow the cursor, similar to a normal tooltip, that can be achieved with something along the lines of;
- * 
- * `toolCust(message,,, MouseGetPos(&x, &y) x + 15, y)`
- * @param {string} message is what you want the tooltip to say
- * @param {number} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1s
- * @param {boolean} find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 (or true) for this variable if you do, or omit it if you don't
- * @param {number} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
- * @param {integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).
- */
-toolCust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
-{
-	MouseGetPos(&xpos, &ypos) ;log our starting mouse coords
-	time := A_TickCount ;log our starting time
-	messageFind := find = 1 ? "Couldn't find " : "" ;this is essentially saying: if find = 1 then messageFind := "Couldn't find " else messageFind := ""
-	ToolTip(messageFind message, x?, y?, WhichToolTip?) ;produce the initial cursor
-	if !IsSet(x) && !IsSet(y) ;if a x/y value hasn't been passed then that means we want the tooltip to follow the cursor
-		SetTimer(moveWithMouse, 15)
-	else
-		SetTimer(() => ToolTip("",,, WhichToolTip?), - timeout) ;otherwise we create a timer to remove the cursor after the timout period
-	moveWithMouse() ;this timer is what allows the tooltip to follow the cursor
-	{
-		if (A_TickCount - time) >= timeout ;here we compare the current time, minus the original time and see if it's been longer than the timeout time
-			{
-				SetTimer(, 0) ;if it has we kill the timer
-				ToolTip("",,, WhichToolTip?) ;and kill the tooltip
-				return ;then kill the function
-			}
-		MouseGetPos(&newX, &newY) ;here we're grabbing new mouse coords
-		if newX != xpos || newY != ypos ;so we can compare them to the old coords
-			{
-				MouseGetPos(&xpos, &ypos) ;if they're different we'll replace the original coords
-				ToolTip(messageFind message,,, WhichToolTip?) ;and produce a new tooltip
-			}
-	}
 }
 
 /**

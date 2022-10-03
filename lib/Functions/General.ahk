@@ -84,6 +84,19 @@ toolCust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     }
 }
 
+/**
+ * This function will check to see if any tooltips are active before continuing
+ * @param {Integer} timeout allows you to pass in a time value (in seconds) that you want WinWaitClose to wait before timing out. This value can be omitted and does not need to be set
+ */
+toolWait(timeout?)
+{
+    detectVal := A_DetectHiddenWindows
+    DetectHiddenWindows(0) ;we need to ensure detecthiddenwindows is disabled before proceeding or this function may never stop waiting
+    if WinExist("ahk_class tooltips_class32") 
+        WinWaitClose("ahk_class tooltips_class32",, timeout?)
+    DetectHiddenWindows(detectVal)
+}
+
 ; ===========================================================================================================================================
 ;
 ;		Blockinput \\ Last updated: v2.0.1
@@ -106,8 +119,8 @@ blockOff() => (Blockinput("MouseMoveOff"), BlockInput("off"))
 ; ===========================================================================================================================================
 /**
  * press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
- * @param tool is the thing you want the program to swap TO (ie, hand tool, zoom tool, etc)
- * @param toolorig is the button you want the script to press to bring you back to your tool of choice
+ * @param {String} tool is the hotkey you want the program to swap TO (ie, hand tool, zoom tool, etc). (consider using values in KSA)
+ * @param {String} toolorig is the button you want the script to press to bring you back to your tool of choice. (consider using values in KSA)
 */
 mousedragNotPrem(tool, toolorig)
 {
@@ -125,10 +138,10 @@ mousedragNotPrem(tool, toolorig)
 ; ===========================================================================================================================================
 /**
  * A weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
- * @param timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
- * @param x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
- * @param x2 is the furthest right pixel value of the timeline that will work with your cursor warping up to grab it
- * @param y1 is just below the bar that your mouse will be warping to, this way your mouse doesn't try doing things when you're doing other stuff above the timeline
+ * @param {Integer} timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
+ * @param {Integer} x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
+ * @param {Integer} x2 is the furthest right pixel value of the timeline that will work with your cursor warping up to grab it
+ * @param {Integer} y1 is just below the bar that your mouse will be warping to, this way your mouse doesn't try doing things when you're doing other stuff above the timeline
  */
 timeline(timeline, x1, x2, y1)
 {
@@ -156,10 +169,10 @@ timeline(timeline, x1, x2, y1)
 ; ===========================================================================================================================================
 /**
  * A function designed to log errors in scripts if they occur
- * @param func just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey "::"` if it's a hotkey
- * @param error is what text you want logged to explain the error
- * @param lineFile just type `A_LineFile`
- * @param lineNumber just type `A_LineNumber`
+ * @param {String} func just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey "::"` if it's a hotkey
+ * @param {String} error is what text you want logged to explain the error
+ * @param {String} lineFile just type `A_LineFile`
+ * @param {String} lineNumber just type `A_LineNumber`
  */
 errorLog(func, error, lineFile, lineNumber)
 {
@@ -211,8 +224,8 @@ errorLog(func, error, lineFile, lineNumber)
 ; ===========================================================================================================================================
 /**
  * This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire. If the hotkey used with this function is only 2 characters long, it will assign each of those to &first & &second respectively. If one of those characters is a special key (ie. ! or ^) it will return the virtual key so `KeyWait` will still work as expected
- * @param first is the variable that will be filled with the first activation hotkey. Must be written as `&var`
- * @param second is the variable that will be filled with the second activation hotkey. Must be written as `&var`
+ * @param {var} first is the variable that will be filled with the first activation hotkey. Must be written as `&var`
+ * @param {var} second is the variable that will be filled with the second activation hotkey. Must be written as `&var`
 */
 getHotkeys(&first, &second)
 {
@@ -259,6 +272,8 @@ getHotkeys(&first, &second)
 
 /**
  * `Floor()` is a built in math function of ahk to round down to the nearest integer, but when you want a decimal place to round down, you don't really have that many options. This function will allow us to round down after a certain amount of decimal places
+ * @param {Integer} num is the number you want this function to evaluate
+ * @param {Integer} dec is the amount of decimal places you wish the function to evaluate to
  */
 floorDecimal(num,dec) => RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 
@@ -281,7 +296,6 @@ hardReset()
                 continue
             Run(path)
         }
-    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-        WinWaitClose("ahk_class tooltips_class32",, 1)
+    toolWait()
     Run(A_ScriptFullPath) ;run this current script last so all of the rest actually happen
 }

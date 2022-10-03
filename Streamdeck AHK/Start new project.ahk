@@ -18,8 +18,7 @@ if WinExist("Checklist - " name)
         toolCust("You already have this checklist open")
         goto end
     }
-FileCopy(location "\checklist.ahk", SelectedFolder)
-Run(SelectedFolder "\checklist.ahk")
+Run("..\checklist.ahk")
 
 end:
 ;; This part then just opens the project folder

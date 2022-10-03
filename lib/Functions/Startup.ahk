@@ -145,8 +145,7 @@ updateChecker(MyRelease) {
             if version = 0
                 return
         }
-    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-        WinWaitClose("ahk_class tooltips_class32")
+    toolWait()
     if MyRelease != version
         toolCust("Current Installed Version = " MyRelease "`nCurrent Github Release = " version, 2000)
     else
@@ -373,8 +372,7 @@ updateChecker(MyRelease) {
         }
     else if check = "false"
         {
-            if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-                WinWaitClose("ahk_class tooltips_class32")
+            toolWait()
             if VerCompare(MyRelease, version) < 0
                 {
                     toolCust("You're using an outdated version of these scripts")
@@ -506,8 +504,7 @@ oldError() {
 adobeTemp(MyRelease) {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-        WinWaitClose("ahk_class tooltips_class32")
+    toolWait()
     if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
         WinWaitClose("Scripts Release " MyRelease)
     day := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
@@ -582,8 +579,7 @@ verCheck()
 {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-        WinWaitClose("ahk_class tooltips_class32")
+    toolWait()
     if VerCompare(A_AhkVersion, "2.0-beta.5") < 0
         {
             getLatestVer()
@@ -633,8 +629,7 @@ locationReplace()
 {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    if WinExist("ahk_class tooltips_class32") ;checking to see if any tooltips are active before beginning
-        WinWaitClose("ahk_class tooltips_class32")
+    toolWait()
     checkDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
     if checkDir = A_WorkingDir
         return

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15
+;\\v2.15.1
 #Include General.ahk
 
 /**
@@ -23,7 +23,7 @@ switchToExplorer()
 
 /**
  * This function when called will close all windows of the desired program EXCEPT the active one. Helpful when you accidentally have way too many windows open.
- * @param program is the ahk_class or ahk_exe of the program you want this function to close
+ * @param {String} program is the ahk_class or ahk_exe of the program you want this function to close
  */
 closeOtherWindow(program)
 {
@@ -314,7 +314,7 @@ switchToWord()
 switchToWindowSpy()
 {
     if not WinExist("WindowSpy.ahk")
-        Run(A_ProgramFiles "\AutoHotkey\WindowSpy.ahk")
+        Run(A_ProgramFiles "\AutoHotkey\UX\WindowSpy.ahk")
     GroupAdd("winspy", "ahk_class AutoHotkeyGUI")
     if WinActive("WindowSpy.ahk")
         GroupActivate("winspy", "r")

@@ -10,8 +10,8 @@
 /**
  * A function to skip in youtube
 
- * @param tenS is the hotkey for 10s skip in your direction of choice
- * @param fiveS is the hotkey for 5s skip in your direction of choice
+ * @param {String} tenS is the hotkey for 10s skip in your direction of choice
+ * @param {String} fiveS is the hotkey for 5s skip in your direction of choice
  */
 youMouse(tenS, fiveS)
 {
@@ -48,7 +48,7 @@ monitorWarp(x, y)
 
 /**
  * A function that will check to see if you're holding the left mouse button, then move any window around however you like
- * @param key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
+ * @param {String} key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
  */
 moveWin(key)
 {
@@ -321,9 +321,9 @@ getTitle(&title)
 
 /**
  * This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
- * @param title is the active window, this function will populate the `title` variable with the active window
- * @param full is representing if the active window is fullscreen or not. If it is, it will return 1, else it will return 0
- * @param window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
+ * @param {var} title is the active window, this function will populate the `title` variable with the active window
+ * @param {var} full is representing if the active window is fullscreen or not. If it is, it will return 1, else it will return 0
+ * @param {String} window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
  */
 isFullscreen(&title, &full, window := false)
 {
@@ -416,8 +416,8 @@ moveXorY()
 
 /**
  * This function is to allow the user to simply jump 10 characters in either direction. Useful when ^Left/Right isn't getting you to where you want the cursor to be
- * @param leftorright is which direction you want to assign
- * @param amount is the amount of characters you want this function to jump, by default it is set to 10 and isn't required if you do not wish to override this value
+ * @param {String} leftorright is which direction you want to assign
+ * @param {Integer} amount is the amount of characters you want this function to jump, by default it is set to 10 and isn't required if you do not wish to override this value
  */
 jumpChar(amount := 10)
 {
@@ -433,8 +433,8 @@ jumpChar(amount := 10)
 
 /**
  * This function will convert a windows title bar to a dark theme if possible.
- * @param hwnd is the hwnd value of the window you wish to alter
- * @param dark is a toggle that allows you to call the inverse of this function and return the title bar to light mode. This parameter can be omitted otherwise pass false
+ * @param {String} hwnd is the hwnd value of the window you wish to alter
+ * @param {boolean} dark is a toggle that allows you to call the inverse of this function and return the title bar to light mode. This parameter can be omitted otherwise pass false
  * https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
  */
 titleBarDarkMode(hwnd, dark := true)
@@ -450,8 +450,8 @@ titleBarDarkMode(hwnd, dark := true)
 
 /**
  * This function will convert GUI buttons to a dark theme.
- * @param ctrl_hwnd is the hwnd value of the control you wish to alter
- * @param DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light" 
+ * @param {String} ctrl_hwnd is the hwnd value of the control you wish to alter
+ * @param {boolean} DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light" 
  https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
  */
 buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark")
@@ -476,9 +476,9 @@ fastWheel()
 
 /**
  * This function will grab the title of premiere if it exists and check to see if a save is necessary
- * @param premCheck is the title of premiere, we want to pass this value back to the script
- * @param titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
- * @param saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+ * @param {var} premCheck is the title of premiere, we want to pass this value back to the script
+ * @param {var} titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
+ * @param {var} saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
  */
 getPremName(&premCheck, &titleCheck, &saveCheck)
 {
@@ -504,8 +504,8 @@ getPremName(&premCheck, &titleCheck, &saveCheck)
  
  /**
   * This function will grab the title of after effects if it exists and check to see if a save is necessary
-  * @param aeCheck is the title of after effects, we want to pass this value back to the script
-  * @param aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+  * @param {var} aeCheck is the title of after effects, we want to pass this value back to the script
+  * @param {var} aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
   */
 getAEName(&aeCheck, &aeSaveCheck)
 {
@@ -527,7 +527,7 @@ getAEName(&aeCheck, &aeSaveCheck)
 
 /**
  * This function will grab the initial active window
- * @param id is the processname of the active window, we want to pass this value back to the script
+ * @param {var} id is the processname of the active window, we want to pass this value back to the script
  */
 getID(&id)
 {
@@ -548,7 +548,7 @@ getID(&id)
 ; ===========================================================================================================================================
 /**
  * This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \Support Files\ImageSearch\disc[button].png
- * @param button in the png name of a screenshot of the button you want the function to press
+ * @param {String} button in the png name of a screenshot of the button you want the function to press
  */
 disc(button)
 ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME (otherwise you'll need your own screenshots.. tbh you'll probably need your own anyway). YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
@@ -714,7 +714,7 @@ discLocation()
 
 /**
  * This function will search for and automatically click on either unread servers or unread channels depending on which image you feed into the function
- * @param which is simply which image you want to feed into the function. I have it left blank for servers and `"2"` for channels
+ * @param {String} which is simply which image you want to feed into the function. I have it left blank for servers and `"2"` for channels
  */
 discUnread(which := "")
 {
@@ -754,9 +754,9 @@ discUnread(which := "")
   * It will also depend on how "zoomed in" you have vscode
 
   * It also functions differently if you only have 1 repo cloned instead of multiple
-  * @param script is the amount of pixels down the mouse must move from the collapse button to open the script I want.
+  * @param {Integer} script is the amount of pixels down the mouse must move from the collapse button to open the script I want.
  */
-vscode(script)
+vscode(script := 0)
 {
     getHotkeys(&first, &second)
     KeyWait(first)
