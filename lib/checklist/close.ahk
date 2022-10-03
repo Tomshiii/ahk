@@ -22,6 +22,8 @@ ExitFunc(ExitReason, ExitCode)
 {
     if ExitReason = "Single"
         {
+            if WinExist("Select commission folder")
+                return
             stop()   
             close()
         }

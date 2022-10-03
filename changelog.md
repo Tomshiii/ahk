@@ -94,7 +94,9 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Fixed typo causing this script to create a different `\backup` folder than `checklist.ahk`
 
 `checklist.ahk`
-- Fixed not creating newly added `checklist.ini` settings when it copies a newer version from the working dir (you will encounter errors until you're on `checklist.ahk's local-v2.5.3` or greater and generate a .ini file)
+
+Alongside the changes listed above;
+- Fixed not creating newly added `checklist.ini` settings
 - Fixed `H:` number getting cut off when above 10 hours
 - Now uses `floorDecimal()` for the `Hour` text so it ticks over more accurately
 - Will now stop the timer & log information if a second instance is forcefully opened

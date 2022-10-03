@@ -8,7 +8,7 @@ if WinExist("Select commission folder")
     ExitApp()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.6"
+version := "v2.6.0.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
