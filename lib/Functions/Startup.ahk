@@ -1,4 +1,4 @@
-;v2.19.6
+;v2.19.7
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -155,7 +155,7 @@ updateChecker(MyRelease) {
         return
     if check = "true"
         {
-            if !VerCompare(MyRelease, version) < 0
+            if !VerCompare(MyRelease, version) > 0
                 return
             ;grabbing changelog info
             try {
