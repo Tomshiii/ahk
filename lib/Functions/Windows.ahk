@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.5
+;\\v2.13.6
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -70,21 +70,18 @@ moveWin(key)
             SendInput("{" A_ThisHotkey "}")
             return
         }
-    else
-        {
-            try {
-                window := WinGetTitle("A") ;grabs the title of the active window
-                SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
-                if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
-                    WinMinimize(window)
-                if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
-                    WinMaximize(window)
-                SendInput(key)
-            } catch as e {
-                toolCust("Failed to get information on current active window")
-                errorLog(A_ThisFunc "()", "Failed to get information on current active window", A_LineFile, A_LineNumber)
-            }
-        }
+    try {
+        window := WinGetTitle("A") ;grabs the title of the active window
+        SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
+        if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
+            WinMinimize(window)
+        if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
+            WinMaximize(window)
+        SendInput(key)
+    } catch as e {
+        toolCust("Failed to get information on current active window")
+        errorLog(A_ThisFunc "()", "Failed to get information on current active window", A_LineFile, A_LineNumber)
+    }
 }
 
 /**
@@ -191,9 +188,7 @@ moveTab()
             return
         }
     if A_Cursor = "SizeNS" ;this checks to make sure you're not about to accidentally attempt to resize the window
-        {
-            MouseMove(0, 10, 2, "R")
-        }
+        MouseMove(0, 10, 2, "R")
     SendInput("{LButton Down}")
     move:
     if monitor.monitor != 2 && monitor.monitor != 4 ;I only want this function to cycle between monitors 2 & 4
@@ -590,43 +585,27 @@ disc(button)
     }
     Click
     sleep 100
-    if button = "DiscReply.png" ;YOU MUST CALL YOUR REPLY IMAGESEARCH FILE "DiscReply.png" FOR THIS PART OF THE CODE TO WORK - ELSE CHANGE THIS VALUE TOO
-        {
-            if ImageSearch(&x2, &y2, nx, ny/"3", width, height, "*2 " Discord "dm1.png")
+    if button != "DiscReply.png" || !ImageSearch(&x2, &y2, nx, ny/"3", width, height, "*2 " Discord "dm1.png")
+        goto end  ;YOU MUST CALL YOUR REPLY IMAGESEARCH FILE "DiscReply.png" FOR THIS PART OF THE CODE TO WORK - ELSE CHANGE THIS VALUE TOO
+    loop {
+            if ImageSearch(&xdir, &ydir, 0, height/"2", width, height, "*2 " Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the `end:` below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
                 {
-                    loop {
-                            if ImageSearch(&xdir, &ydir, 0, height/"2", width, height, "*2 " Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. if you prefer to leave that on, remove from the above sleep 100, to the last else below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
-                                {
-                                    ;ToolTip("")
-                                    MouseMove(xdir, ydir) ;moves to the @ location
-                                    Click
-                                    MouseMove(x, y) ;moves the mouse back to the original coords
-                                    blockOff()
-                                    return
-                                }
-                            ;ToolTip(A_Index)
-                            if A_Index > 10
-                                {
-                                    toolCust("the @ ping button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                                    errorLog(A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineFile, A_LineNumber)
-                                    break
-                                }
-                        }
-                    MouseMove(x, y) ;moves the mouse back to the original coords
-                    blockOff()
+                    ;ToolTip("")
+                    MouseMove(xdir, ydir) ;moves to the @ location
+                    Click
+                    goto end
                 }
-            else
+            ;ToolTip(A_Index)
+            if A_Index > 10
                 {
-                    MouseMove(x, y) ;moves the mouse back to the original coords
-                    blockOff()
-                    return
+                    toolCust("the @ ping button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                    errorLog(A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineFile, A_LineNumber)
+                    break
                 }
         }
-    else
-        {
-            MouseMove(x, y) ;moves the mouse back to the original coords
-            blockOff()
-        }
+    end:
+    MouseMove(x, y) ;moves the mouse back to the original coords
+    blockOff()        
 }
 
 /**

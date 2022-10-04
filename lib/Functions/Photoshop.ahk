@@ -176,7 +176,6 @@ psType(filetype)
             SendInput("{Enter}")
             SendInput("+{Tab}")
         }
-
     else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop filetype "2.png")
         {
             MouseMove(xpng, ypng)

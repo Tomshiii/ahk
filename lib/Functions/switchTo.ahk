@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.1
+;\\v2.15.2
 #Include General.ahk
 
 /**
@@ -74,22 +74,19 @@ switchToAE()
             pathlength := StrLen(entirePath)
             finalSlash := InStr(entirePath, "\",, -1)
             path := SubStr(entirePath, 1, finalSlash - "1")
-            if FileExist(path "\*.aep")
-                {
-                    loop files path "\*.aep", "F"
-                        {
-                            Run(A_LoopFileFullPath)
-                            toolCust("Running AE file for this project")
-                            WinWait("ahk_exe AfterFX.exe")
-                            WinActivate("ahk_exe AfterFX.exe")
-                            return
-                        }
-                }
-            else ;if all else fails, just open AE normally
+            if !FileExist(path "\*.aep")
                 {
                     runae()
                     return
                 }
+            loop files path "\*.aep", "F"
+                {
+                    Run(A_LoopFileFullPath)
+                    toolCust("Running AE file for this project")
+                    WinWait("ahk_exe AfterFX.exe")
+                    WinActivate("ahk_exe AfterFX.exe")
+                    return
+                }                
         } catch as e {
             toolCust("Couldn't determine proper path from Premiere")
             errorLog(A_ThisFunc "()", "Couldn't determine proper path from Premiere", A_LineFile, A_LineNumber)
@@ -121,9 +118,8 @@ switchToAE()
  */
 switchToDisc()
 {
-    move() { ;creating a function out of the winmove so you can easily adjust the value
-        WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe")
-    }
+    
+    move() => WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe") ;creating a function out of the winmove so you can easily adjust the value
     if not WinExist("ahk_exe Discord.exe")
         {
             Run("C:\Users\" A_UserName "\AppData\Local\Discord\Update.exe --processStart Discord.exe")
@@ -147,14 +143,14 @@ switchToDisc()
  */
 switchToPhoto()
 {
-    if not WinExist("ahk_exe Photoshop.exe")
+    if WinExist("ahk_exe Photoshop.exe")
         {
-            Run A_ScriptDir "\Support Files\shortcuts\Photoshop.exe.lnk"
-            WinWait("ahk_exe Photoshop.exe")
             WinActivate("ahk_exe Photoshop.exe")
+            return
         }
-    else if WinExist("ahk_exe Photoshop.exe")
-        WinActivate("ahk_exe Photoshop.exe")
+    Run A_ScriptDir "\Support Files\shortcuts\Photoshop.exe.lnk"
+    WinWait("ahk_exe Photoshop.exe")
+    WinActivate("ahk_exe Photoshop.exe")
 }
 
 /**
@@ -176,18 +172,18 @@ switchToFirefox()
  */
 switchToOtherFirefoxWindow() ;I use this as a nested function below in firefoxTap(), you can just use this separately
 {
-    if WinExist("ahk_exe firefox.exe")
+    if !WinExist("ahk_exe firefox.exe")
         {
-            if WinActive("ahk_class MozillaWindowClass")
-                {
-                    GroupAdd("firefoxes", "ahk_class MozillaWindowClass")
-                    GroupActivate("firefoxes", "r")
-                }
-            else
-                WinActivate("ahk_class MozillaWindowClass")
+            Run("firefox.exe")
+            return
+        }
+    if WinActive("ahk_class MozillaWindowClass")
+        {
+            GroupAdd("firefoxes", "ahk_class MozillaWindowClass")
+            GroupActivate("firefoxes", "r")
         }
     else
-        Run("firefox.exe")
+        WinActivate("ahk_class MozillaWindowClass")
 }
 
 /**
@@ -365,24 +361,16 @@ switchToMusic()
     GroupAdd("MusicPlayers", "ahk_exe foobar2000.exe")
     if not WinExist("ahk_group MusicPlayers")
         musicGUI()
-    if WinActive("ahk_group MusicPlayers")
+    if WinExist("ahk_group MusicPlayers")
         {
-            GroupActivate "MusicPlayers", "r"
+            if !WinActive("ahk_group MusicPlayers")
+                WinActivate("ahk_group MusicPlayers")
+            else
+                GroupActivate "MusicPlayers", "r"
             loop {
                 IME := WinGetTitle("A")
                 if IME = "Default IME"
                     GroupActivate "MusicPlayers", "r"
-                if IME != "Default IME"
-                    break
-            }
-        }
-    else if WinExist("ahk_group MusicPlayers")
-        {
-            WinActivate
-            loop {
-                IME := WinGetTitle("A")
-                if IME = "Default IME"
-                    WinActivate("ahk_group MusicPlayers")
                 if IME != "Default IME"
                     break
             }
@@ -408,6 +396,13 @@ musicGUI()
 {
     if WinExist("Music to open?")
         return
+    progFi := "C:\Program Files"
+    progFi32 := "C:\Program Files (x86)"
+    aimpPath := progFi32 "\AIMP3\AIMP.exe"
+    foobarPath := progFi32 "\foobar2000\foobar2000.exe"
+    wmpPath := progFi32 "\Windows Media Player\wmplayer.exe"
+    vlcPath := progFi "\VideoLAN\VLC\vlc.exe"
+
     ;if there is no music player open, a custom GUI window will open asking which program you'd like to open
     MyGui := Gui("AlwaysOnTop", "Music to open?") ;creates our GUI window
     MyGui.SetFont("S10") ;Sets the size of the font
@@ -416,20 +411,20 @@ musicGUI()
     ;#now we define the elements of the GUI window
     ;defining AIMP
     aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", A_WorkingDir "\Support Files\images\aimp.png")
-    AIMPGUI := MyGui.Add("Button", "X40 Y7", "AIMP")
-    AIMPGUI.OnEvent("Click", AIMP)
+    AIMP := MyGui.Add("Button", "X40 Y7", "AIMP")
+    AIMP.OnEvent("Click", musicRun)
     ;defining Foobar
     foobarlogo := MyGui.Add("Picture", "w20 h-1 X14 Y40", A_WorkingDir "\Support Files\images\foobar.png")
-    FoobarGUI := MyGui.Add("Button", "X40 Y40", "Foobar")
-    FoobarGUI.OnEvent("Click", Foobar)
+    foobar := MyGui.Add("Button", "X40 Y40", "Foobar")
+    foobar.OnEvent("Click", musicRun)
     ;defining Windows Media Player
     wmplogo := MyGui.Add("Picture", "w25 h-1 X140 Y9", A_WorkingDir "\Support Files\images\wmp.png")
-    WMPGUI := MyGui.Add("Button", "X170 Y7", "WMP")
-    WMPGUI.OnEvent("Click", WMP)
+    WMP := MyGui.Add("Button", "X170 Y7", "WMP")
+    WMP.OnEvent("Click", musicRun)
     ;defining VLC
     vlclogo := MyGui.Add("Picture", "w28 h-1 X138 Y42", A_WorkingDir "\Support Files\images\vlc.png")
-    VLCGUI := MyGui.Add("Button", "X170 Y40", "VLC")
-    VLCGUI.OnEvent("Click", VLC)
+    VLC := MyGui.Add("Button", "X170 Y40", "VLC")
+    VLC.OnEvent("Click", musicRun)
     ;defining music folder
     folderlogo := MyGui.Add("Picture", "w25 h-1  X14 Y86", A_WorkingDir "\Support Files\images\explorer.png")
     FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
@@ -443,41 +438,39 @@ musicGUI()
     goDark()
     {
         titleBarDarkMode(MyGui.Hwnd)
-        buttonDarkMode(AIMPGUI.Hwnd)
-        buttonDarkMode(FoobarGUI.Hwnd)
-        buttonDarkMode(WMPGUI.Hwnd)
-        buttonDarkMode(VLCGUI.Hwnd)
+        buttonDarkMode(AIMP.Hwnd)
+        buttonDarkMode(foobar.Hwnd)
+        buttonDarkMode(WMP.Hwnd)
+        buttonDarkMode(VLC.Hwnd)
         buttonDarkMode(FOLDERGUI.Hwnd)
     }
     
     MyGui.Show()
-    ;below is what happens when you click on each name
-    AIMP(*) {
-        Run("C:\Program Files (x86)\AIMP3\AIMP.exe")
-        WinWait("ahk_exe AIMP.exe")
-        WinActivate("ahk_exe AIMP.exe")
+    ;below is what happens when you click on each button
+    musicRun(button, *)
+    {
+        text := button.Text
+        if text = "AIMP"
+            Run(aimpPath)
+        if text = "Foobar"
+            {
+                Run(foobarPath)
+                text := "foobar2000"
+            }
+        if text = "WMP"
+            {
+                Run(wmpPath)
+                text := "wmplayer"
+            }
+        if text = "VLC"
+            Run(vlcPath)
+        WinWait("ahk_exe " text ".exe")
+        WinActivate("ahk_exe " text ".exe")
         MyGui.Destroy()
     }
-    Foobar(*) {
-        Run("C:\Program Files (x86)\foobar2000\foobar2000.exe")
-        WinWait("ahk_exe foobar2000.exe")
-        WinActivate("ahk_exe foobar2000.exe")
-        MyGui.Destroy()
-    }
-    WMP(*) {
-        Run("C:\Program Files (x86)\Windows Media Player\wmplayer.exe")
-        WinWait("ahk_exe wmplayer.exe")
-        WinActivate("ahk_exe wmplayer.exe")
-        MyGui.Destroy()
-    }
-    VLC(*) {
-        Run("C:\Program Files (x86)\VideoLAN\VLC\vlc.exe")
-        WinWait("ahk_exe vlc.exe")
-        WinActivate("ahk_exe vlc.exe")
-        MyGui.Destroy()
-    }
+
     MUSICFOLDER(*) {
-        musicDir := "S:\Programs Files\User\Music\"
+        musicDir := "S:\Program Files\User\Music\"
         if DirExist(musicDir)
             {
                 Run(musicDir)

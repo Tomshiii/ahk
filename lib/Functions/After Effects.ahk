@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.4
+;\\v2.12.5
 #Include General.ahk
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
@@ -14,60 +14,56 @@ aevaluehold(button, property, optional) ;this function is incredibly touchy and 
 {
     coordw()
     MouseGetPos(&x, &y)
-    if(x > 550 and x < 2542) and (y > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
-        {
-            blockOn()
-            MouseGetPos(&X, &Y)
-            if ImageSearch(&selectX, &selectY, 8, 8, 299, 100, "*2 " AE "selection.png")
-                {
-                    MouseMove(selectX, selectY)
-                    Click
-                    MouseMove(X, Y)
-                }
-            Click()
-            SendInput(anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) ~ check the keyboard shortcut ini file to adjust hotkeys
-            sleep 150
-            SendInput(button) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
-            sleep 300 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
-            if (
-                ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property ".png") ||
-                ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "2.png") ||
-                ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "Key.png") ||
-                ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "Key2.png")
-            )
-                goto colour
-            else
-                {
-                    blockOff()
-                    toolCust("the property you're after",, 1)
-                    errorLog(A_ThisFunc "()", "Couldn't find the property the user was after", A_LineFile, A_LineNumber)
-                    KeyWait(A_ThisHotkey)
-                    return
-                }
-            colour:
-            if PixelSearch(&xcol, &ycol, propX, propY + "8", propX + "740", propY + "40", 0x288ccf, 3)
-                MouseMove(xcol + optional, ycol)
-            ;sleep 50
-            if GetKeyState(A_ThisHotkey, "P")
-                {
-                    SendInput("{Click Down}")
-                    blockOff()
-                    KeyWait(A_ThisHotkey)
-                    SendInput("{Click Up}")
-                    MouseMove(x, y)
-                }
-            else ;if you tap, this function will then right click and menu to the "reset" option in the right click context menu
-                {
-                    Click("Right")
-                    SendInput("{Up 6}" "{Enter}")
-                    MouseMove(x, y)
-                    blockOff()
-                }
-        }
-    else
+    if !(x > 550 and x < 2542) and !(y > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
         {
             toolCust("you're not hovering a track")
             errorLog(A_ThisFunc "()", "User not hovering over a track", A_LineFile, A_LineNumber)
+            return
+        }
+    blockOn()
+    MouseGetPos(&X, &Y)
+    if ImageSearch(&selectX, &selectY, 8, 8, 299, 100, "*2 " AE "selection.png")
+        {
+            MouseMove(selectX, selectY)
+            Click
+            MouseMove(X, Y)
+        }
+    Click()
+    SendInput(anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) ~ check the keyboard shortcut ini file to adjust hotkeys
+    sleep 150
+    SendInput(button) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
+    sleep 300 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
+    if (
+        !ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property ".png") ||
+        !ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "2.png") ||
+        !ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "Key.png") ||
+        !ImageSearch(&propX, &propY, 0, y - "23", 550, y + "23", "*2 " AE property "Key2.png")
+    )
+        {
+            blockOff()
+            toolCust("the property you're after",, 1)
+            errorLog(A_ThisFunc "()", "Couldn't find the property the user was after", A_LineFile, A_LineNumber)
+            KeyWait(A_ThisHotkey)
+            return
+        }
+    colour:
+    if PixelSearch(&xcol, &ycol, propX, propY + "8", propX + "740", propY + "40", 0x288ccf, 3)
+        MouseMove(xcol + optional, ycol)
+    ;sleep 50
+    if GetKeyState(A_ThisHotkey, "P")
+        {
+            SendInput("{Click Down}")
+            blockOff()
+            KeyWait(A_ThisHotkey)
+            SendInput("{Click Up}")
+            MouseMove(x, y)
+        }
+    else ;if you tap, this function will then right click and menu to the "reset" option in the right click context menu
+        {
+            Click("Right")
+            SendInput("{Up 6}" "{Enter}")
+            MouseMove(x, y)
+            blockOff()
         }
 }
 
@@ -365,6 +361,4 @@ aetimeline()
             KeyWait(A_ThisHotkey)
             SendInput("{Click Up}")
         }
-    else
-        return
 }

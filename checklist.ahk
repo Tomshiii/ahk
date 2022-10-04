@@ -5,7 +5,7 @@
 TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.6.0.3"
+version := "v2.6.0.4"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -20,7 +20,7 @@ global ms := minutes * 60000
 minutes2 := 10
 global ms10 := minutes2 * 60000
 checklist := ""
-if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
+if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist is reloaded, we don't want it to automatically attempt to grab the title of the currently open premiere project - this allows us to open/create new projects while premiere is open
     {
         premNotOpen(&checklist, &logs, &path)
         if WinExist("Select commission folder")
@@ -28,43 +28,42 @@ if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
     }
 else
     {
-        if WinExist("Adobe Premiere Pro")
-            {
-                getPremName(&Nameprem, &titlecheck, &savecheck)
-                if !IsSet(titlecheck)
-                    {
-                        blockOff()
-                        toolCust("``titlecheck`` variable wasn't assigned a value")
-                        errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
-                        premNotOpen(&checklist, &logs, &path)
-                        if WinExist("Select commission folder")
-                            WinWaitClose("Select commission folder")
-                    }
-                dashLocation := InStr(Nameprem, "-")
-                if not dashLocation
-                    {
-                        premNotOpen(&checklist, &logs, &path)
-                        if WinExist("Select commission folder")
-                            WinWaitClose("Select commission folder")
-                        goto end
-                    }
-                length := StrLen(Nameprem) - dashLocation
-                entirePath := SubStr(Nameprem, dashLocation + "2", length)
-                pathlength := StrLen(entirePath)
-                finalSlash := InStr(entirePath, "\",, -1)
-                path := SubStr(entirePath, 1, finalSlash - "1")
-                checklist := path "\checklist.ini"
-                logs := path "\checklist_logs.txt"
-                if !FileExist(checklist)
-                    generateINI(checklist)
-                end:
-            }
-        else
+        if !WinExist("Adobe Premiere Pro")
             {
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")
                     WinWaitClose("Select commission folder")
+                goto end
             }
+        getPremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
+        if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
+            {
+                blockOff()
+                toolCust("``titlecheck`` variable wasn't assigned a value")
+                errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                premNotOpen(&checklist, &logs, &path)
+                if WinExist("Select commission folder")
+                    WinWaitClose("Select commission folder")
+                goto end
+            }
+        dashLocation := InStr(Nameprem, "-")
+        if not dashLocation
+            {
+                premNotOpen(&checklist, &logs, &path)
+                if WinExist("Select commission folder")
+                    WinWaitClose("Select commission folder")
+                goto end
+            }
+        length := StrLen(Nameprem) - dashLocation
+        entirePath := SubStr(Nameprem, dashLocation + "2", length)
+        pathlength := StrLen(entirePath)
+        finalSlash := InStr(entirePath, "\",, -1)
+        path := SubStr(entirePath, 1, finalSlash - "1")
+        checklist := path "\checklist.ini"
+        logs := path "\checklist_logs.txt"
+        if !FileExist(checklist)
+            generateINI(checklist)
+        end:
     }
 
 globalCheckTool := 1

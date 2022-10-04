@@ -1,4 +1,4 @@
-;v2.19.5
+;v2.19.6
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -129,7 +129,6 @@ updateChecker(MyRelease) {
     ;checks if script was reloaded
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    main:
     ;release version
     betaprep := 0
     if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
@@ -152,223 +151,222 @@ updateChecker(MyRelease) {
         toolCust("You are currently up to date", 2000)
     ;checking to see if the user wishes to check for updates
     check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+    if check = "stop"
+        return
     if check = "true"
         {
-            if VerCompare(MyRelease, version) < 0
-                {
-                    ;grabbing changelog info
-                    try {
-                        change := ComObject("WinHttp.WinHttpRequest.5.1")
-                        if betaprep = 0
-                            change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
-                        else if betaprep = 1
-                            change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
-                        change.Send()
-                        change.WaitForResponse()
-                        ChangeLog := change.ResponseText
-                    } catch as e {
-                        toolCust("Couldn't get changelog info`nYou may not be connected to the internet")
-                        errorLog(A_ThisFunc "()", "Couldn't get changelog info, you may not be connected to the internet", A_LineFile, A_LineNumber)
+            if !VerCompare(MyRelease, version) < 0
+                return
+            ;grabbing changelog info
+            try {
+                change := ComObject("WinHttp.WinHttpRequest.5.1")
+                if betaprep = 0
+                    change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
+                else if betaprep = 1
+                    change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
+                change.Send()
+                change.WaitForResponse()
+                ChangeLog := change.ResponseText
+            } catch as e {
+                toolCust("Couldn't get changelog info`nYou may not be connected to the internet")
+                errorLog(A_ThisFunc "()", "Couldn't get changelog info, you may not be connected to the internet", A_LineFile, A_LineNumber)
+                return
+            }
+            ;\\removing the warning about linking to commits
+            beginwarn := InStr(ChangeLog, "###### **_",,, 1)
+            endwarnfind := InStr(ChangeLog, "_**",,, 1)
+            endend := endwarnfind + 5
+            warnlength := endend - beginwarn
+            removewarn := SubStr(ChangeLog, beginwarn, warnlength)
+            warn := StrReplace(ChangeLog, removewarn, "", 1,, 1)
+            ;\\
+            ;\\deleting all [] surrounding links
+            deletesquare1 := StrReplace(warn, "]", "")
+            deletesquare2 := StrReplace(deletesquare1, "[", "")
+            ;\\
+            ;dealing with directories we'll need
+            if not DirExist(A_Temp "\tomshi")
+                DirCreate(A_Temp "\tomshi")
+            if FileExist(A_Temp "\tomshi\changelog.ini")
+                FileDelete(A_Temp "\tomshi\changelog.ini")
+            if FileExist(A_Temp "\tomshi\changelog.txt")
+                FileDelete(A_Temp "\tomshi\changelog.txt")
+            ;create baseline changelog
+            FileAppend(deletesquare2, A_Temp "\tomshi\changelog.txt")
+            ;keys counts how many links are found
+            keys := 0
+            loop { ;this loop will go through and copy all urls to an ini file
+                findurl := InStr(deletesquare2, "https://",,, A_Index)
+                if findurl = 0
+                    break
+                beginurl := findurl - 1
+                findendurl := InStr(deletesquare2, ")",, findurl, 1)
+                findendend := findendurl + 1
+                urllength := findendend - beginurl
+                removeulr := SubStr(deletesquare2, beginurl, urllength)
+                valueurl := IniWrite(removeulr, A_Temp "\tomshi\changelog.ini", "urls", A_Index)
+                keys += 1
+            }
+            loop keys { ;this loop will go through and remove all url's from the changelog
+                read := FileRead(A_Temp "\tomshi\changelog.txt")
+                refurl := IniRead(A_Temp "\tomshi\changelog.ini", "urls", A_Index)
+                attempt := StrReplace(read, refurl, "")
+                if FileExist(A_Temp "\tomshi\changelog.txt")
+                    FileDelete(A_Temp "\tomshi\changelog.txt")
+                FileAppend(attempt, A_Temp "\tomshi\changelog.txt")
+                finalchange := FileRead(A_Temp "\tomshi\changelog.txt")
+            }
+            if IsSet(finalchange) ;if there are no links and finalchange hasn't recieved a value, it will fall back to the original response from the changelog on github
+                LatestChangeLog := finalchange
+            else
+                LatestChangeLog := change.ResponseText
+            ;we now delete those temp files
+            if FileExist(A_Temp "\tomshi\changelog.ini")
+                FileDelete(A_Temp "\tomshi\changelog.ini")
+            if FileExist(A_Temp "\tomshi\changelog.txt")
+                FileDelete(A_Temp "\tomshi\changelog.txt")
+            ;create gui
+            MyGui := Gui("", "Scripts Release " version)
+            MyGui.SetFont("S11")
+            MyGui.Opt("+Resize +MinSize600x400 +MaxSize600x400")
+            ;set title
+            Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
+            Title.SetFont("S15")
+            ;set github button
+            gitButton := MyGui.Add("Button", "X+20 Y10", "GitHub")
+            gitButton.OnEvent("Click", githubButton)
+            ;set changelog
+            ChangeLog := MyGui.Add("Edit", "X8 Y+5 r18 -WantCtrlA ReadOnly w590")
+            ;set "don't prompt again" checkbox
+            noprompt := MyGui.Add("Checkbox", "X270 Y350", "Don't prompt again")
+            noprompt.OnEvent("Click", prompt)
+            ;set beta checkbox
+            if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
+                betaCheck := MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
+            else
+                betaCheck := MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
+            betaCheck.OnEvent("Click", beta)
+            ;set download button
+            downloadbutt := MyGui.Add("Button", "X+5 Y+-30", "Download")
+            downloadbutt.OnEvent("Click", Down)
+            ;set cancel button
+            cancelbutt := MyGui.Add("Button", "Default X+5", "Cancel")
+            cancelbutt.OnEvent("Click", closegui)
+            ;getting value for changelog
+            ChangeLog.Value := LatestChangeLog
+
+            if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+                goDark()
+            goDark()
+            {
+                titleBarDarkMode(MyGui.Hwnd)
+                buttonDarkMode(gitButton.Hwnd)
+                buttonDarkMode(downloadbutt.Hwnd)
+                buttonDarkMode(cancelbutt.Hwnd)
+            }
+
+            MyGui.Show()
+            prompt(*) {
+                if noprompt.Value = 1
+                    IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                if noprompt.Value = 0
+                    IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+            }
+            beta(*) {
+                if betaCheck.Value = 1
+                    IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+                if betaCheck.Value = 0
+                    IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+                Run(A_ScriptFullPath)
+            }
+            githubButton(*) {
+                if WinExist("Tomshiii/ahk")
+                    {
+                        WinActivate("Tomshiii/ahk")
                         return
                     }
-                    ;\\removing the warning about linking to commits
-                    beginwarn := InStr(ChangeLog, "###### **_",,, 1)
-                    endwarnfind := InStr(ChangeLog, "_**",,, 1)
-                    endend := endwarnfind + 5
-                    warnlength := endend - beginwarn
-                    removewarn := SubStr(ChangeLog, beginwarn, warnlength)
-                    warn := StrReplace(ChangeLog, removewarn, "", 1,, 1)
-                    ;\\
-                    ;\\deleting all [] surrounding links
-                    deletesquare1 := StrReplace(warn, "]", "")
-                    deletesquare2 := StrReplace(deletesquare1, "[", "")
-                    ;\\
-                    ;dealing with directories we'll need
-                    if not DirExist(A_Temp "\tomshi")
-                        DirCreate(A_Temp "\tomshi")
-                    if FileExist(A_Temp "\tomshi\changelog.ini")
-                        FileDelete(A_Temp "\tomshi\changelog.ini")
-                    if FileExist(A_Temp "\tomshi\changelog.txt")
-                        FileDelete(A_Temp "\tomshi\changelog.txt")
-                    ;create baseline changelog
-                    FileAppend(deletesquare2, A_Temp "\tomshi\changelog.txt")
-                    ;keys counts how many links are found
-                    keys := 0
-                    loop { ;this loop will go through and copy all urls to an ini file
-                        findurl := InStr(deletesquare2, "https://",,, A_Index)
-                        if findurl = 0
-                            break
-                        beginurl := findurl - 1
-                        findendurl := InStr(deletesquare2, ")",, findurl, 1)
-                        findendend := findendurl + 1
-                        urllength := findendend - beginurl
-                        removeulr := SubStr(deletesquare2, beginurl, urllength)
-                        valueurl := IniWrite(removeulr, A_Temp "\tomshi\changelog.ini", "urls", A_Index)
-                        keys += 1
-                    }
-                    loop keys { ;this loop will go through and remove all url's from the changelog
-                        read := FileRead(A_Temp "\tomshi\changelog.txt")
-                        refurl := IniRead(A_Temp "\tomshi\changelog.ini", "urls", A_Index)
-                        attempt := StrReplace(read, refurl, "")
-                        if FileExist(A_Temp "\tomshi\changelog.txt")
-                            FileDelete(A_Temp "\tomshi\changelog.txt")
-                        FileAppend(attempt, A_Temp "\tomshi\changelog.txt")
-                        finalchange := FileRead(A_Temp "\tomshi\changelog.txt")
-                    }
-                    if IsSet(finalchange) ;if there are no links and finalchange hasn't recieved a value, it will fall back to the original response from the changelog on github
-                        LatestChangeLog := finalchange
-                    else
-                        LatestChangeLog := change.ResponseText
-                    ;we now delete those temp files
-                    if FileExist(A_Temp "\tomshi\changelog.ini")
-                        FileDelete(A_Temp "\tomshi\changelog.ini")
-                    if FileExist(A_Temp "\tomshi\changelog.txt")
-                        FileDelete(A_Temp "\tomshi\changelog.txt")
-                    ;create gui
-                    MyGui := Gui("", "Scripts Release " version)
-                    MyGui.SetFont("S11")
-                    MyGui.Opt("+Resize +MinSize600x400 +MaxSize600x400")
-                    ;set title
-                    Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
-                    Title.SetFont("S15")
-                    ;set github button
-                    gitButton := MyGui.Add("Button", "X+20 Y10", "GitHub")
-                    gitButton.OnEvent("Click", githubButton)
-                    ;set changelog
-                    ChangeLog := MyGui.Add("Edit", "X8 Y+5 r18 -WantCtrlA ReadOnly w590")
-                    ;set "don't prompt again" checkbox
-                    noprompt := MyGui.Add("Checkbox", "X270 Y350", "Don't prompt again")
-                    noprompt.OnEvent("Click", prompt)
-                    ;set beta checkbox
-                    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
-                        betaCheck := MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
-                    else
-                        betaCheck := MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
-                    betaCheck.OnEvent("Click", beta)
-                    ;set download button
-                    downloadbutt := MyGui.Add("Button", "X+5 Y+-30", "Download")
-                    downloadbutt.OnEvent("Click", Down)
-                    ;set cancel button
-                    cancelbutt := MyGui.Add("Button", "Default X+5", "Cancel")
-                    cancelbutt.OnEvent("Click", closegui)
-                    ;getting value for changelog
-                    ChangeLog.Value := LatestChangeLog
-
-                    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
-                        goDark()
-                    goDark()
+                Run("https://github.com/tomshiii/ahk/releases/latest")
+            }
+            down(*) {
+                MyGui.Opt("Disabled")
+                yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
+                if yousure = "Cancel"
                     {
-                        titleBarDarkMode(MyGui.Hwnd)
-                        buttonDarkMode(gitButton.Hwnd)
-                        buttonDarkMode(downloadbutt.Hwnd)
-                        buttonDarkMode(cancelbutt.Hwnd)
+                        MyGui.Opt("-Disabled")
+                        return
                     }
-
-                    MyGui.Show()
-                    prompt(*) {
-                        if noprompt.Value = 1
-                            IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-                        if noprompt.Value = 0
-                            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-                    }
-                    beta(*) {
-                        if betaCheck.Value = 1
-                            IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
-                        if betaCheck.Value = 0
-                            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
-                        Run(A_ScriptFullPath)
-                    }
-                    githubButton(*) {
-                        if WinExist("Tomshiii/ahk")
+                MyGui.Destroy()
+                downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
+                if downloadLocation = ""
+                    return
+                else
+                    {
+                        ;ToolTip("Updated scripts are downloading")
+                        TrayTip("Updated scripts are downloading", "Downloading...", 17)
+                        SetTimer(HideTrayTip, -5000)
+                        HideTrayTip() {
+                            TrayTip
+                        }
+                        type := ""
+                        exeOrzip(filetype, &found)
+                        {
+                            whr := ComObject("WinHttp.WinHttpRequest.5.1")
+                            whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." filetype, true)
+                            whr.Send()
+                            ; Using 'true' above and the call below allows the script to remain responsive.
+                            whr.WaitForResponse()
+                            found := whr.ResponseText
+                        }
+                        exeOrzip("exe", &found)
+                        if found = "Not found"
                             {
-                                WinActivate("Tomshiii/ahk")
-                                return
-                            }
-                        Run("https://github.com/tomshiii/ahk/releases/latest")
-                    }
-                    down(*) {
-                        MyGui.Opt("Disabled")
-                        yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
-                        if yousure = "Cancel"
-                            {
-                                MyGui.Opt("-Disabled")
-                                return
-                            }
-                        MyGui.Destroy()
-                        downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
-                        if downloadLocation = ""
-                            return
-                        else
-                            {
-                                ;ToolTip("Updated scripts are downloading")
-                                TrayTip("Updated scripts are downloading", "Downloading...", 17)
-                                SetTimer(HideTrayTip, -5000)
-                                HideTrayTip() {
-                                    TrayTip
-                                }
-                                type := ""
-                                exeOrzip(filetype, &found)
-                                {
-                                    whr := ComObject("WinHttp.WinHttpRequest.5.1")
-                                    whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." filetype, true)
-                                    whr.Send()
-                                    ; Using 'true' above and the call below allows the script to remain responsive.
-                                    whr.WaitForResponse()
-                                    found := whr.ResponseText
-                                }
-                                exeOrzip("exe", &found)
+                                exeOrzip("zip", &found)
                                 if found = "Not found"
                                     {
-                                        exeOrzip("zip", &found)
-                                        if found = "Not found"
-                                            {
-                                                ToolTip("")
-                                                MsgBox("Couldn't find the latest release to download")
-                                                return
-                                            }
-                                        else
-                                            type := "zip"
+                                        ToolTip("")
+                                        MsgBox("Couldn't find the latest release to download")
+                                        return
                                     }
                                 else
-                                    type := "exe"
-                                Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
-                                toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, 3000)
-                                Run(downloadLocation)
-                                TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
-                                SetTimer(HideTrayTip, -5000)
-                                if DirExist(A_Temp "\" MyRelease)
-                                    DirDelete(A_Temp "\" MyRelease, 1)
-                                if DirExist(A_WorkingDir "\Backups\Script Backups\" MyRelease)
-                                    {
-                                        newbackup := MsgBox("You already have a backup of Release " MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
-                                        if newbackup = "Yes"
-                                            DirDelete(A_WorkingDir "\Backups\Script Backups\" MyRelease, 1)
-                                        else
-                                            {
-                                                ToolTip("")
-                                                return
-                                            }
-                                    }
-                                try {
-                                    DirCopy(A_WorkingDir, A_Temp "\" MyRelease)
-                                    DirMove(A_Temp "\" MyRelease, A_WorkingDir "\Backups\Script Backups\" MyRelease, "1")
-                                    if DirExist(A_Temp "\" MyRelease)
-                                        DirDelete(A_Temp "\" MyRelease, 1)
-                                    toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
-                                } catch as e {
-                                    toolCust("There was an error trying to backup your current scripts", 2000)
-                                    errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineFile, A_LineNumber)
-                                }
-                                return
+                                    type := "zip"
                             }
-                    }
-                    closegui(*) {
-                        MyGui.Destroy()
+                        else
+                            type := "exe"
+                        Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
+                        toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, 3000)
+                        Run(downloadLocation)
+                        TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
+                        SetTimer(HideTrayTip, -5000)
+                        if DirExist(A_Temp "\" MyRelease)
+                            DirDelete(A_Temp "\" MyRelease, 1)
+                        if DirExist(A_WorkingDir "\Backups\Script Backups\" MyRelease)
+                            {
+                                newbackup := MsgBox("You already have a backup of Release " MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
+                                if newbackup = "Yes"
+                                    DirDelete(A_WorkingDir "\Backups\Script Backups\" MyRelease, 1)
+                                else
+                                    {
+                                        ToolTip("")
+                                        return
+                                    }
+                            }
+                        try {
+                            DirCopy(A_WorkingDir, A_Temp "\" MyRelease)
+                            DirMove(A_Temp "\" MyRelease, A_WorkingDir "\Backups\Script Backups\" MyRelease, "1")
+                            if DirExist(A_Temp "\" MyRelease)
+                                DirDelete(A_Temp "\" MyRelease, 1)
+                            toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
+                        } catch as e {
+                            toolCust("There was an error trying to backup your current scripts", 2000)
+                            errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineFile, A_LineNumber)
+                        }
                         return
                     }
-                }
-            else
+            }
+            closegui(*) {
+                MyGui.Destroy()
                 return
+            }
         }
     else if check = "false"
         {
@@ -386,8 +384,6 @@ updateChecker(MyRelease) {
                     return
                 }
         }
-    else if check = "stop"
-        return
     else
         {
             toolCust("You put something else in the settings.ini file you goose")
@@ -410,79 +406,76 @@ firstCheck(MyRelease) {
     check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
     if check != "false" ;how the function tracks whether this is the first time the user is running the script or not
         return
-    else
-        {
-            firstCheckGUI := Gui("", "Scripts Release " MyRelease)
-            firstCheckGUI.SetFont("S11")
-            firstCheckGUI.Opt("-Resize AlwaysOnTop")
-            ;set title
-            Title := firstCheckGUI.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
-            Title.SetFont("S15")
-            ;text
-            bodyText := firstCheckGUI.Add("Text", "W550 X8", "
-            (
-                Congratulations!
-                You've gotten my main script to load without any runtime errors! (hopefully).
-                You've taken the first step to really getting the most out of these scripts!
+    firstCheckGUI := Gui("", "Scripts Release " MyRelease)
+    firstCheckGUI.SetFont("S11")
+    firstCheckGUI.Opt("-Resize AlwaysOnTop")
+    ;set title
+    Title := firstCheckGUI.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
+    Title.SetFont("S15")
+    ;text
+    bodyText := firstCheckGUI.Add("Text", "W550 X8", "
+    (
+        Congratulations!
+        You've gotten my main script to load without any runtime errors! (hopefully).
+        You've taken the first step to really getting the most out of these scripts!
 
-                This script alone isn't everything my repo of scripts has to offer, heading into ``Handy Hotkeys`` below and finding the hotkey for the current active scripts will show you some of the other scripts available to you!
-                Beyond those scripts there is also everything in the ``
-            )" A_WorkingDir "
-            ( 
-                \Streamdeck AHK\`` directory that provides even more functionality.
+        This script alone isn't everything my repo of scripts has to offer, heading into ``Handy Hotkeys`` below and finding the hotkey for the current active scripts will show you some of the other scripts available to you!
+        Beyond those scripts there is also everything in the ``
+    )" A_WorkingDir "
+    ( 
+        \Streamdeck AHK\`` directory that provides even more functionality.
 
-                The purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.
-                These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.
+        The purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.
+        These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.
 
-                The below ``Handy Hotkeys`` outlines some hotkeys that are available to use anywhere within windows and are a great place to get started when trying to navigate the power of these scripts! (note: they still only scratch the surface, a large chunk of my scripts are specific to programs and will only activate if said program is the current active window)
+        The below ``Handy Hotkeys`` outlines some hotkeys that are available to use anywhere within windows and are a great place to get started when trying to navigate the power of these scripts! (note: they still only scratch the surface, a large chunk of my scripts are specific to programs and will only activate if said program is the current active window)
 
-                The below ``Settings`` GUI can be accessed at anytime by right clicking ``My Scripts.ahk`` on the taskbar or by pressing ``#F1`` (by default).
-            )")
-            ;buttons
-            settingsButton := firstCheckGUI.Add("Button", "X200 Y+8", "Settings")
-            settingsButton.OnEvent("Click", settings)
-            todoButton := firstCheckGUI.Add("Button", "X+10", "What to Do")
-            todoButton.OnEvent("Click", todoPage)
-            hotkeysButton := firstCheckGUI.Add("Button", "X+10", "Handy Hotkeys")
-            hotkeysButton.OnEvent("Click", hotkeysPage)
-            closeButton := firstCheckGUI.Add("Button", "X+10", "Close")
-            closeButton.OnEvent("Click", close)
+        The below ``Settings`` GUI can be accessed at anytime by right clicking ``My Scripts.ahk`` on the taskbar or by pressing ``#F1`` (by default).
+    )")
+    ;buttons
+    settingsButton := firstCheckGUI.Add("Button", "X200 Y+8", "Settings")
+    settingsButton.OnEvent("Click", settings)
+    todoButton := firstCheckGUI.Add("Button", "X+10", "What to Do")
+    todoButton.OnEvent("Click", todoPage)
+    hotkeysButton := firstCheckGUI.Add("Button", "X+10", "Handy Hotkeys")
+    hotkeysButton.OnEvent("Click", hotkeysPage)
+    closeButton := firstCheckGUI.Add("Button", "X+10", "Close")
+    closeButton.OnEvent("Click", close)
 
-            firstCheckGUI.OnEvent("Escape", close)
-            firstCheckGUI.OnEvent("Close", close)
-            close(*) {
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Track", "first check") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
-                firstCheckGUI.Destroy()
-            }
-            todoPage(*) {
-                todoGUI()
-            }
-            hotkeysPage(*) {
-                hotkeysGUI()
-            }
-            settings(*) {
-                firstCheckGUI.Opt("Disabled")
-                WinSetAlwaysOnTop(0, "Scripts Release " MyRelease)
-                settingsGUI()
-                WinWait("Settings " MyRelease)
-                WinActivate("Settings " MyRelease)
-                WinWaitClose("Settings " MyRelease)
-                firstCheckGUI.Opt("-Disabled")
-            }
+    firstCheckGUI.OnEvent("Escape", close)
+    firstCheckGUI.OnEvent("Close", close)
+    close(*) {
+        IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Track", "first check") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
+        firstCheckGUI.Destroy()
+    }
+    todoPage(*) {
+        todoGUI()
+    }
+    hotkeysPage(*) {
+        hotkeysGUI()
+    }
+    settings(*) {
+        firstCheckGUI.Opt("Disabled")
+        WinSetAlwaysOnTop(0, "Scripts Release " MyRelease)
+        settingsGUI()
+        WinWait("Settings " MyRelease)
+        WinActivate("Settings " MyRelease)
+        WinWaitClose("Settings " MyRelease)
+        firstCheckGUI.Opt("-Disabled")
+    }
 
-            if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
-                goDark()
-            goDark()
-            {
-                titleBarDarkMode(firstCheckGUI.Hwnd)
-                buttonDarkMode(settingsButton.Hwnd)
-                buttonDarkMode(todoButton.Hwnd)
-                buttonDarkMode(hotkeysButton.Hwnd)
-                buttonDarkMode(closeButton.Hwnd)
-            }
-            
-            firstCheckGUI.Show("AutoSize")
-        }
+    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+        goDark()
+    goDark()
+    {
+        titleBarDarkMode(firstCheckGUI.Hwnd)
+        buttonDarkMode(settingsButton.Hwnd)
+        buttonDarkMode(todoButton.Hwnd)
+        buttonDarkMode(hotkeysButton.Hwnd)
+        buttonDarkMode(closeButton.Hwnd)
+    }
+    
+    firstCheckGUI.Show("AutoSize")
 }
  
 /**
@@ -601,10 +594,9 @@ verCheck()
                         return
                     }
                 }
-            if getLatestVer() != ""
-                LatestVersion := getLatestVer()
-            else
+            if getLatestVer() = ""
                 return
+            LatestVersion := getLatestVer()
             verError := MsgBox("Tomshi's scripts are designed to work on AHK v2.0-beta5 and above. Attempting to run these scripts on versions of AHK below that may result in unexpexted issues.`n`nYour current version is v" A_AhkVersion "`nThe latest version of AHK is v" LatestVersion "`n`nDo you wish to download a newer version of AHK?",, "4 16 4096")
             if verError = "Yes"
                 {
@@ -716,10 +708,7 @@ trayMen()
                 A_TrayMenu.Check("Check for Updates")
             }
     }
-    settings(*)
-    {
-        settingsGUI()
-    }
+    settings(*) => settingsGUI()
 }
 
 /**
@@ -750,10 +739,7 @@ settingsGUI()
         return
     settingsGUI := Gui("+Resize +MinSize250x AlwaysOnTop", "Settings " version)
     SetTimer(resize, -10)
-    resize()
-    {
-        settingsGUI.Opt("-Resize")
-    }
+    resize() => settingsGUI.Opt("-Resize")
     settingsGUI.SetFont("S11")
 
     noDefault := settingsGUI.Add("Button", "Default W0 H0", "_")

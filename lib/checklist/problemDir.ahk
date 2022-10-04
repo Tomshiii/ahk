@@ -19,7 +19,7 @@ problemDir(version)
                     FileCopy(logs, dir "\backup\checklist_logs.txt", 1)
                     FileDelete(logs)
                 }
-            MsgBox("checklist.ini files lower than v2.6 are no longer compatible`nYour current .ini & log files have been backed up in the project folder but a new .ini file has been generated")
+            MsgBox("checklist.ini files lower than " version " are no longer compatible`nYour current .ini & log files have been backed up in the project folder but a new .ini file has been generated")
             generateINI(checklist)
         }
 }

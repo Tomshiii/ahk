@@ -13,16 +13,15 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
     - `Alt_menu_acceleration_DISABLER.ahk`
     - `autodismiss error.ahk`
     - `autosave.ahk`
-    - `FuncRedirect.ahk`
     - `gameCheck.ahk`
     - `Multi-Instance Close.ahk`
-- Added `..\lib\` to reduce the clutter of the root dir
-    - Moved the `Functions` & `KSA` folder => `lib`
-    - Moved all functions to their own scripts within `\lib\checklist\` to increase readability
-        - All functions are now labelled with dynamic comments to explain what they do
 - Fix all dynamic comments
     - Add markers to all dynamic comments to indicate what type of information needs to be passed for each parameter
 - `..\` used in a lot of places now to go back a dir instead of needing hardcoded values
+- Added `..\lib\` to reduce the clutter of the root dir
+    - Moved the `Functions` & `KSA` folder => `lib`
+    - Moved all `checklist.ahk` functions to their own scripts within `\lib\checklist\` to increase readability
+        - All functions are now labelled with dynamic comments to explain what they do
 
 ## > My Scripts
 - Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown/WheelUp::`
