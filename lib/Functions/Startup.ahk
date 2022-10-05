@@ -1,4 +1,4 @@
-;v2.19.7
+;v2.19.8
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -1068,7 +1068,7 @@ settingsGUI()
         else
             {
                 A_Clipboard := oldClip
-                if !FileExist(A_WorkingDir "\gameCheck.ahk")
+                if !FileExist(A_WorkingDir "\Timer Scripts\gameCheck.ahk")
                     {
                         MsgBox("``gameCheck.ahk`` not found in the working directory")
                         settingsGUI.Opt("-Disabled AlwaysOnTop")
@@ -1076,11 +1076,11 @@ settingsGUI()
                 ;create temp folders
                 if !DirExist(A_Temp "\tomshi")
                     DirCreate(A_Temp "\tomshi")
-                readGameCheck := FileRead(A_WorkingDir "\gameCheck.ahk")
+                readGameCheck := FileRead(A_WorkingDir "\Timer Scripts\gameCheck.ahk")
                 findEnd := InStr(readGameCheck, "; --", 1,, 1)
                 addUserInput := StrReplace(readGameCheck, "`n; --", "GroupAdd(" '"' "games" '"' ", " '"' addGame.Value '"' ")`n; --", 1,, 1)
                 FileAppend(addUserInput, A_Temp "\tomshi\gameCheck.ahk")
-                FileMove(A_Temp "\tomshi\gameCheck.ahk", A_WorkingDir "\gameCheck.ahk", 1)
+                FileMove(A_Temp "\tomshi\gameCheck.ahk", A_WorkingDir "\Timer Scripts\gameCheck.ahk", 1)
                 if WinExist("gameCheck.ahk - AutoHotkey")
                     PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
                 WinSetAlwaysOnTop(1, "Settings " version)
