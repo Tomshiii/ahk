@@ -40,7 +40,8 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Added `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
 - Added a check in `musicGUI()` to make sure to music folder actually exists
 - Added `fastWheel()` to replace the simple `SendInput("{WheelDown/Up 10}")` and allow the function to focus the window under the cursor if it isn't currently the active window when called
-- Added `toolWait()` to cut repeat code => makes your script wait for tooltips to finish before continuing
+- Added `toolWait()` to cut repeat code. Makes your script wait for tooltips to finish before continuing
+- Added `detect()` to cut repeat code. Sets `DetectHiddenWindows` & `SetTitleMatchMode`
 - Fixed hard coded dir in `switchToDisc()`
 - Fixed some incorrect information in `hotkeysGUI()`
 - `switchToAE()` now contains more elaborate code to be able to open the `.aep` file for the current Premiere project even once AE is already open

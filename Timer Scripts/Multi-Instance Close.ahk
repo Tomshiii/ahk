@@ -14,8 +14,7 @@ global ms := sec * 1000
 
 check()
 {
-    DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
-    SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+    detect()
     value := WinGetList("ahk_class AutoHotkey")
     windows := ""
     for window in value

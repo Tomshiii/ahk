@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.17.9
+;\\v2.18
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.1.6
@@ -282,8 +282,7 @@ floorDecimal(num,dec) => RegExReplace(num,"(?<=\.\d{" dec "}).*$")
  */
 hardReset()
 {
-    DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
-    SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+    detect()
 
     toolCust("All active ahk scripts are being rerun")
     value := WinGetList("ahk_class AutoHotkey")
@@ -299,3 +298,10 @@ hardReset()
     toolWait()
     Run(A_ScriptFullPath) ;run this current script last so all of the rest actually happen
 }
+
+/**
+ * A function to cut repeat code and set some values required to detect ahk scripts
+ * @param {Integer} windows is what hidden window mode you wish for the script to take. This value `defaults to true`
+ * @param {Integer} title is what title match mode you wish for the script to take. This value `defaults to 2`
+ */
+detect(windows := true, title := 2) => (DetectHiddenWindows(windows), SetTitleMatchMode(title))

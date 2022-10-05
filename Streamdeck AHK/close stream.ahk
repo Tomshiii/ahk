@@ -1,7 +1,6 @@
 ﻿#SingleInstance Force
 #Include SD_functions.ahk
-DetectHiddenWindows(true)
-SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
+detect()
 /* if not WinExist("autosave.ahk - AutoHotkey")
 	Run("C:\Program Files\ahk\ahk\autosave.ahk")
 if not WinExist("premiere_fullscreen_check.ahk - AutoHotkey")

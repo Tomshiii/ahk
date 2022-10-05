@@ -1,4 +1,4 @@
-;v2.19.8
+;v2.20
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -717,7 +717,7 @@ trayMen()
 settingsGUI()
 {
     ;this function is needed to reload some scripts
-    detect() => (DetectHiddenWindows(True), SetTitleMatchMode(2))
+    detect()
 
     try { ;attempting to grab window information on the active window for `gameAddButt()`
         winProcc := WinGetProcessName("A")

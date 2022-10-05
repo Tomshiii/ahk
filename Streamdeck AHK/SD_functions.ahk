@@ -73,7 +73,8 @@ scale(amount)
  */
 pauseautosave()
 {
-	DetectHiddenWindows True
+	mode := A_TitleMatchMode
+	detect(true, mode)
 	if !WinExist("autosave.ahk - AutoHotkey")
 		{
 			toolCust("autosave ahk script isn't open")
@@ -89,7 +90,8 @@ pauseautosave()
  */
 pausewindowmax()
 {
-	DetectHiddenWindows True
+	mode := A_TitleMatchMode
+	detect(true, mode)
 	if !WinExist("adobe fullscreen check.ahk - AutoHotkey")
 		{
 			toolCust("fullscreen ahk script isn't open")

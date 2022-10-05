@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.2
+;\\v2.16
 #Include General.ahk
 
 /**
@@ -650,10 +650,7 @@ todoGUI()
  */
 activeScripts(MyRelease)
 {
-    detect() {
-        DetectHiddenWindows True  ; Allows a script's hidden main window to be detected.
-        SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
-    }
+    detect()
     if WinExist("Tomshi Scripts Release " MyRelease)
         return
     detect()
