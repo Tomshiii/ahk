@@ -20,7 +20,7 @@ trythenDel(which)
             VER := IniRead(checklist, "Info", "ver")
         }
         FileDelete(checklist)
-        FileAppend("[Checkboxes]`nFirstPass=" FP "`nSecondPass=" SP "`nTwitchOverlay=" TW "`nYoutubeOverlay=" YT "`nTransitions=" TR "`nSFX=" SFX "`nMusic=" MU "`nPatreon=" PT "`nIntro=" INTR "`n[Info]`ntime=" TI "`ntooltip=" TOOL "`ndark=" DARK "`nver=", checklist)
+        generateINI(checklist, FP, SP, TW, YT, TR, SFX, MU, PT, INTR, TI, TOOL, DARK, "")
         if which = "VER"
             FileAppend(VER, checklist)
         if which = "version"

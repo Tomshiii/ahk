@@ -1,4 +1,4 @@
-# <> Release 2.6 - Dark Mode (sorta) + Two New Scripts
+# <> Release 2.6 - Dark Mode (sorta) + Two New Scripts + Structure Overhaul
 This release brings along two new scripts; `gameCheck.ahk` & `Multi-Instance Close.ahk`
 
 - `gameCheck.ahk` is a script that will automatically detect when a predetermined game is currently active and suspend `My Scripts.ahk`. This is important because `My Scripts.ahk` contains a bunch of macros that really don't play nice to games and cause a lot of basic functionality in them to break. This script will also detect when the game is no longer the active window and unsuspend `My Scripts.ahk`. Games may be periodically added to this script but feel welcome to add your own list!
