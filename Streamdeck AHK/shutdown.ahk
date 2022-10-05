@@ -6,7 +6,6 @@ if not WinExist("ahk_exe GoXLR App.exe")
     Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe")
 WinWait("ahk_exe GoXLR App.exe")
 value := MsgBox("Are you sure you wish to shutdown?", "Shutdown", "4 4096")
-if value = "Yes"
-    Shutdown 1
-else
+if value != "Yes"
     return
+Shutdown 1

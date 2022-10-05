@@ -7,15 +7,8 @@ SetDefaultMouseSpeed 0
 ;
 ; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder
 ;
-firetip()
-{
-    ToolTip("couldn't find firefox")
-    SetTimer(timeouttime, -1000)
-	timeouttime()
-	{
-		ToolTip("")
-	}
-}
+firetip() => toolCust("firefox",, 1)
+
 pauseautosave()
 pausewindowmax()
 coords()
@@ -53,9 +46,7 @@ try {
     MouseMove(ffx, ffy)
     Click()
     sleep 500
-    if ImageSearch(&devX, &devY, ffX, ffY - "30", ffX + 2500, ffY + "30", "*2 " Windows "sample.png")
-        goto end
-    else
+    if !ImageSearch(&devX, &devY, ffX, ffY - "30", ffX + 2500, ffY + "30", "*2 " Windows "sample.png")
         {
             SendInput("{Tab 3}")
             ;sleep 500
@@ -71,7 +62,6 @@ try {
     toolCust("Script couldn't activate the Settings Menu")
     return
 }
-end:
 sleep 200
 WinClose("Settings")
 coords()
