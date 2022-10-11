@@ -6,21 +6,21 @@ FileMenu.Add("&Open`tCtrl+O", fileNewandOpen)
 FileMenu.Add("E&xit", close)
 ;settings menu
 SettingsMenu := Menu()
-SettingsMenu.Add("&menuTooltips", menuTooltips)
+SettingsMenu.Add("&Tooltips", menuTooltips)
 SettingsMenu.Add("&Dark Mode", goDark)
 settingsToolTrack := 0
 if IniRead(checklist, "Info", "tooltip") = "1"
     {
-        SettingsMenu.Check("&menuTooltips")
+        SettingsMenu.Check("&Tooltips")
         if globalCheckTool != 0
             global settingsToolTrack := 1
         else
             global settingsToolTrack := 0
     }
 if globalCheckTool = 0
-    SettingsMenu.Disable("&menuTooltips")
+    SettingsMenu.Disable("&Tooltips")
 else
-    SettingsMenu.Enable("&menuTooltips")
+    SettingsMenu.Enable("&Tooltips")
 
 darkToolTrack := 0
 if IniRead(checklist, "Info", "dark") = "1"
@@ -72,14 +72,14 @@ menuTooltips(*)
     if settingsToolTrack = 1
         {
             global settingsToolTrack := 0
-            SettingsMenu.UnCheck("&menuTooltips")
+            SettingsMenu.UnCheck("&Tooltips")
             IniWrite("0", checklist, "Info", "tooltip")
             restart()
         }
     else if settingsToolTrack = 0
         {
             global settingsToolTrack := 1
-            SettingsMenu.Check("&menuTooltips")
+            SettingsMenu.Check("&Tooltips")
             IniWrite("1", checklist, "Info", "tooltip")
             restart()
         }
