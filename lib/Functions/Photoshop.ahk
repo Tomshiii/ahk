@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.2
+;\\v2.13
 #Include General.ahk
 
 /**
@@ -8,10 +8,10 @@
  */
 psProp(image)
 {
-    coords()
+    coord.s()
     MouseGetPos(&xpos, &ypos)
-    coordw()
-    blockOn()
+    coord.w()
+    block.On()
     if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "text2.png") ;checks to see if you're typing
         SendInput("^{Enter}")
     if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "text.png") ;checks to see if you're in the text tool
@@ -22,8 +22,8 @@ psProp(image)
                 MouseMove(x, y)
             else ;if everything fails, this else will trigger
                 {
-                    blockOff()
-                    toolCust("the value you wish`nto adjust_1",, 1)
+                    block.Off()
+                    tool.Cust("the value you wish`nto adjust_1",, 1)
                     errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                     return
                 }
@@ -39,8 +39,8 @@ psProp(image)
             else ;if everything fails, this else will trigger
                 {
                     MouseMove(xpos, ypos)
-                    blockOff()
-                    toolCust("the value you wish`nto adjust_2",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                    block.Off()
+                    tool.Cust("the value you wish`nto adjust_2",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                     return
                 }
@@ -49,7 +49,7 @@ psProp(image)
     SendInput("{Click Down}")
     if GetKeyState(A_ThisHotkey, "P")
         {
-            blockOff()
+            block.Off()
             KeyWait(A_ThisHotkey)
             SendInput("{Click Up}")
             MouseMove(xpos, ypos)
@@ -60,7 +60,7 @@ psProp(image)
             ;fElse(data) ;check the various Functions scripts for the code to this preset
             MouseMove(xpos, ypos)
             SendInput("{Enter 2}")
-            blockOff()
+            block.Off()
             return
         }
 }
@@ -76,7 +76,7 @@ psSave()
     save(size)
     {
         WinActivate("ahk_exe Photoshop.exe")
-        blockOn()
+        block.On()
         SendInput(imageSize) ;check the keyboard shortcut ini file
         WinWait("Image Size")
         SendInput(size "{tab 2}" size "{Enter}")
@@ -88,7 +88,7 @@ psSave()
     {
         sleep 500
         Send("{TAB}{RIGHT}")
-        coordw()
+        coord.w()
         sleep 1000
         if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop "png.png")
             {
@@ -108,8 +108,8 @@ psSave()
                 else
                     {
                         MouseMove(0, 0)
-                        blockOff()
-                        toolCust("png",, 1)
+                        block.Off()
+                        tool.Cust("png",, 1)
                         errorLog(A_ThisFunc "()", "Was unable to find the png option", A_LineFile, A_LineNumber)
                         return
                     }
@@ -158,7 +158,7 @@ psSave()
     image()
     WinWait("PNG Format Options")
     SendInput("{Enter}")
-    blockOff()
+    block.Off()
 }
 
 /**
@@ -169,7 +169,7 @@ psType(filetype)
 {
     MouseGetPos(&x, &y)
     Send("{TAB}{RIGHT}") ;make sure you don't click anywhere before using this function OR put the caret back in the filename box
-    coordw()
+    coord.w()
     sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
     if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop filetype ".png")
         {
@@ -184,8 +184,8 @@ psType(filetype)
         }
     else
         {
-            blockOff()
-            toolCust("png drop down",, 1)
+            block.Off()
+            tool.Cust("png drop down",, 1)
             errorLog(A_ThisFunc "()", "Was unable to find the filetype option", A_LineFile, A_LineNumber)
             return
         }

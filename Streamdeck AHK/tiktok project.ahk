@@ -3,7 +3,7 @@
 
 if WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
-        coordw()
+        coord.w()
         SendInput("!s" "q")
         WinWait("Sequence Settings")
         sleep 500
@@ -21,7 +21,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
                     }
                 else
                     {
-                        toolCust("can't find colour")
+                        tool.Cust("can't find colour")
                         return
                     }
             }
@@ -38,7 +38,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
                     }
                 else
                     {
-                        toolCust("can't find colour")
+                        tool.Cust("can't find colour")
                         return
                     }
             }
@@ -55,7 +55,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
                     }
                 else
                     {
-                        toolCust("can't find colour")
+                        tool.Cust("can't find colour")
                         return
                     }
             }

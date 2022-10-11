@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.6
+;\\v2.14
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -31,7 +31,7 @@ youMouse(tenS, fiveS)
         try {
             WinActivate(lastactive) ;will reactivate the original window
         } catch as e {
-            toolCust("Failed to get information on the previously active window")
+            tool.Cust("Failed to get information on the previously active window")
             errorLog(A_ThisFunc "()", "Failed to get information on previously active window", A_LineFile, A_LineNumber)
         }
     }
@@ -42,7 +42,7 @@ youMouse(tenS, fiveS)
  */
 monitorWarp(x, y)
 {
-    coords()
+    coord.s()
     MouseMove(x, y, 2) ;I need the 2 here as I have multiple monitors and things can be funky moving that far that fast. random ahk problems. Change this if you only have 1/2 monitors and see if it works fine for you
 }
 
@@ -79,7 +79,7 @@ moveWin(key)
             WinMaximize(window)
         SendInput(key)
     } catch as e {
-        toolCust("Failed to get information on current active window")
+        tool.Cust("Failed to get information on current active window")
         errorLog(A_ThisFunc "()", "Failed to get information on current active window", A_LineFile, A_LineNumber)
     }
 }
@@ -117,7 +117,7 @@ moveTab()
             SendInput("{" A_ThisHotkey "}")
             return
         }
-    coords()
+    coord.s()
     MouseGetPos(&initx, &inity) ;this is here so we can move the mouse back to the starting position even if you call the function multiple times without it completing
     initMon := getMouseMonitor()
     start:
@@ -127,8 +127,8 @@ moveTab()
     monitor := getMouseMonitor() ;checking which monitor the mouse is within
     if !IsObject(initMon) || !IsObject(monitor)
         {
-            blockOff() ;to stop the user potentially getting stuck
-			toolCust(A_ThisFunc " failed to get the monitor that the mouse is within")
+            block.Off() ;to stop the user potentially getting stuck
+			tool.Cust(A_ThisFunc " failed to get the monitor that the mouse is within")
             errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
 			return
 		}
@@ -143,7 +143,7 @@ moveTab()
                     SendInput("{F6}")
                     sleep 50
                 }
-            blockOn()
+            block.On()
             ;The below block of text will go through a process of trying to find the tab you wish to move.
             ;0x42414D is the colour of the active tab
             ;0x35343A is the colour of a non active tab when you hover over it
@@ -172,9 +172,9 @@ moveTab()
                             }
                         if A_Index > 6
                             {
-                                toolCust("Couldn't find the active tab colour", 1500)
+                                tool.Cust("Couldn't find the active tab colour", 1500)
                                 errorLog(A_ThisFunc "()", "couldn't find the active tab colour", A_LineFile, A_LineNumber)
-                                blockOff()
+                                block.Off()
                                 return
                             }
                     }
@@ -182,9 +182,9 @@ moveTab()
         }
     else
         {
-            toolCust("You moved too far away from the right click context menu", 1500)
+            tool.Cust("You moved too far away from the right click context menu", 1500)
             errorLog(A_ThisFunc "()", "moved too far away from the right click context menu", A_LineFile, A_LineNumber)
-            blockOff()
+            block.Off()
             return
         }
     if A_Cursor = "SizeNS" ;this checks to make sure you're not about to accidentally attempt to resize the window
@@ -197,7 +197,7 @@ moveTab()
         MouseMove(4288, -911, 2) ;if the mouse is within monitor 4, it will move it to monitor 2
     if monitor.monitor = 2
         MouseMove(4288, 164, 2) ;if the mouse is within monitor 2, it will move it to monitor 4
-    blockOff()
+    block.Off()
     KeyWait(A_ThisHotkey)
     thisHotkey := A_ThisHotkey ;determining which XButton the user is currently using to activate the function
     if thisHotkey = "XButton1"
@@ -216,7 +216,7 @@ moveTab()
             goto start
         sleep 50
     }
-    blockOn()
+    block.On()
     if monitor.monitor = 4 || initMon.monitor = 1
         MouseMove(initx, inity, 2) ;move back to the original mouse coords. I only want to move the mouse back if I'm moving a tab from the bottom monitor, to the top or from the main montior
     if !WinActive(title) ;this codeblock will check to see if the originally active window is still active. This is useful as sometimes when you drag a tab that wasn't active, firefox will bring the tab next to it into focus, which might not really be what you want
@@ -253,7 +253,7 @@ moveTab()
                 }
             MouseMove(finalX, finalY, 2)
         }
-    blockOff()
+    block.Off()
     SetTimer(isfull, -1500)
     isfull() {
         try {
@@ -270,7 +270,7 @@ moveTab()
  */
 getMouseMonitor()
 {
-	coords()
+	coord.s()
 	MouseGetPos(&x, &y)
     numberofMonitors := SysGet(80)
 	loop numberofMonitors {
@@ -284,8 +284,8 @@ getMouseMonitor()
 			    }
 		}
 		catch {
-            blockOff() ;to stop the user potentially getting stuck
-			toolCust(A_ThisFunc " failed to get the monitor that the mouse is within")
+            block.Off() ;to stop the user potentially getting stuck
+			tool.Cust(A_ThisFunc " failed to get the monitor that the mouse is within")
             errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
 			Exit()
 		}
@@ -301,15 +301,15 @@ getTitle(&title)
 		title := WinGetTitle("A")
         if !IsSet(title) || title = "" || title = "Program Manager"
 			{
-				toolCust("Couldn't determine the active window")
+				tool.Cust("Couldn't determine the active window")
 				errorLog(A_ThisHotkey "::", "Couldn't determine the active window", A_LineFile, A_LineNumber)
 				Exit()
 			}
         return title
 	} catch as e {
-		toolCust(A_ThisFunc "() couldn't determine the active window")
+		tool.Cust(A_ThisFunc "() couldn't determine the active window")
 		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-        blockOff()
+        block.Off()
 		Exit()
 	}
 }
@@ -337,9 +337,9 @@ isFullscreen(&title, &full, window := false)
 		else
 			full := 0
 	} catch as e {
-		toolCust(A_ThisFunc "() couldn't determine the active window")
+		tool.Cust(A_ThisFunc "() couldn't determine the active window")
 		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
-        blockOff()
+        block.Off()
 		Exit
 	}
     return
@@ -490,8 +490,8 @@ getPremName(&premCheck, &titleCheck, &saveCheck)
                 saveCheck := ""
             }
     } catch as e {
-        blockOff()
-        toolCust("Couldn't determine the titles of Adobe programs")
+        block.Off()
+        tool.Cust("Couldn't determine the titles of Adobe programs")
         errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
         return
     }
@@ -513,8 +513,8 @@ getAEName(&aeCheck, &aeSaveCheck)
         else
             aeSaveCheck := ""
     } catch as e {
-        blockOff()
-        toolCust("Couldn't determine the titles of Adobe programs")
+        block.Off()
+        tool.Cust("Couldn't determine the titles of Adobe programs")
         errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
         return
     }
@@ -531,7 +531,7 @@ getID(&id)
         if WinActive("ahk_exe explorer.exe")
             id := "ahk_class CabinetWClass"
     } catch as e {
-        toolCust("couldn't grab active window")
+        tool.Cust("couldn't grab active window")
         errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineFile, A_LineNumber)
     }
 }
@@ -556,11 +556,11 @@ disc(button)
 {
     yheight := 400
     KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
-    coordw()
+    coord.w()
     MouseGetPos(&x, &y)
     WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
     ;MsgBox("x " nx "`ny " ny "`nwidth " width "`nheight " height) ;testing
-    blockOn()
+    block.On()
     click("right") ;this opens the right click context menu on the message you're hovering over
     sleep 50 ;sleep required so the right click context menu has time to open
     loop {
@@ -577,8 +577,8 @@ disc(button)
             {
                 ToolTip("")
                 MouseMove(x, y) ;moves the mouse back to the original coords
-                blockOff()
-                toolCust("the requested button after " A_Index " attempts", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                block.Off()
+                tool.Cust("the requested button after " A_Index " attempts", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(A_ThisFunc "()", "Was unable to find the requested button", A_LineFile, A_LineNumber)
                 return
             }
@@ -598,14 +598,14 @@ disc(button)
             ;ToolTip(A_Index)
             if A_Index > 10
                 {
-                    toolCust("the @ ping button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                    tool.Cust("the @ ping button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineFile, A_LineNumber)
                     break
                 }
         }
     end:
     MouseMove(x, y) ;moves the mouse back to the original coords
-    blockOff()        
+    block.Off()        
 }
 
 /**
@@ -624,7 +624,7 @@ discLocation()
     try { ;this try is here as if you close a window, then immediately try to fire this function there is no "original" window
         original := WinGetID("A")
     } catch as e {
-        toolCust("you tried to assign a closed`n window as the last active", 4000)
+        tool.Cust("you tried to assign a closed`n window as the last active", 4000)
         errorLog(A_ThisFunc "()", "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it", A_LineFile, A_LineNumber)
         SendInput("{Click}")
         return
@@ -678,14 +678,14 @@ discLocation()
     if toggle > 1 or toggle < 0 ;this is here just incase the value ever ends up bigger/smaller than it's supposed to
         {
             toggle := 0
-            toolCust("stop spamming the function please`nthe functions value was too large/small")
+            tool.Cust("stop spamming the function please`nthe functions value was too large/small")
             errorLog(A_ThisFunc "()", "Function hit an unexpected toggle number", A_LineFile, A_LineNumber)
             return
         }
     try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
         WinActivate(original)
     } catch as e {
-        toolCust("couldn't find original window", 2000)
+        tool.Cust("couldn't find original window", 2000)
         errorLog(A_ThisFunc "()", "Function couldn't activate the original window", A_LineFile, A_LineNumber)
         return
     }
@@ -716,7 +716,7 @@ discUnread(which := "")
 		}
 	else
 		{
-			toolCust("any unread " message,, 1)
+			tool.Cust("any unread " message,, 1)
 		}
 }
 
@@ -739,8 +739,8 @@ vscode(script := 0)
 {
     getHotkeys(&first, &second)
     KeyWait(first)
-    coordw()
-    blockOn()
+    coord.w()
+    block.On()
     MouseGetPos(&x, &y)
     if (
         ImageSearch(&xex, &yex, 0, 0, 460, 1390, "*2 " VSCodeImage "explorer.png") ||
@@ -771,9 +771,9 @@ vscode(script := 0)
         }
     else
         {
-            toolCust("the folder dropdown UI",, 1)
+            tool.Cust("the folder dropdown UI",, 1)
             errorLog(A_ThisFunc "()", "Couldn't find the folder dropdown UI", A_LineFile, A_LineNumber)
-            blockOff()
+            block.Off()
             return
         }
     skip:
@@ -788,5 +788,5 @@ vscode(script := 0)
     SendInput("{Click}")
     MouseMove(x, y)
     SendInput(focusCode)
-    blockOff()
+    block.Off()
 }

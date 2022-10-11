@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.16
+;\\v2.17
 #Include General.ahk
 
 /**
@@ -28,7 +28,7 @@ switchToExplorer()
 closeOtherWindow(program)
 {
     value := WinGetList(program) ;gets a list of all open windows
-    toolCust(value.length - 1 " other window(s) closed") ;tooltip to display how many explorer windows are being closed
+    tool.Cust(value.length - 1 " other window(s) closed") ;tooltip to display how many explorer windows are being closed
     for this_value in value
         {
             if A_Index > 1 ;closes all windows that AREN'T the last active window
@@ -82,13 +82,13 @@ switchToAE()
             loop files path "\*.aep", "F"
                 {
                     Run(A_LoopFileFullPath)
-                    toolCust("Running AE file for this project")
+                    tool.Cust("Running AE file for this project")
                     WinWait("ahk_exe AfterFX.exe")
                     WinActivate("ahk_exe AfterFX.exe")
                     return
                 }                
         } catch as e {
-            toolCust("Couldn't determine proper path from Premiere")
+            tool.Cust("Couldn't determine proper path from Premiere")
             errorLog(A_ThisFunc "()", "Couldn't determine proper path from Premiere", A_LineFile, A_LineNumber)
             runae()
             return
@@ -134,7 +134,7 @@ switchToDisc()
             if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
                 WinRestore() ;winrestore will unmaximise it
             move() ; just incase it isn't in the right spot/fullscreened for some reason
-            toolCust("Discord is now active", 500) ;this is simply because it's difficult to tell when discord has focus if it was already open
+            tool.Cust("Discord is now active", 500) ;this is simply because it's difficult to tell when discord has focus if it was already open
         }
 }
 
@@ -376,7 +376,7 @@ switchToMusic()
             }
         }
     ;window := WinGetTitle("A") ;debugging
-    ;toolCust(window) ;debugging
+    ;tool.Cust(window) ;debugging
 }
 
 ; ===============================================================

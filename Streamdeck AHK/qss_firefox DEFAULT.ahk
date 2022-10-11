@@ -7,11 +7,11 @@ SetDefaultMouseSpeed 0
 ;
 ; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder
 ;
-firetip() => toolCust("firefox",, 1)
+firetip() => tool.Cust("firefox",, 1)
 
 pauseautosave()
 pausewindowmax()
-coords()
+coord.s()
 MouseGetPos(&sx, &sy)
 Run("ms-settings:apps-volume")
 WinWait("Settings")
@@ -19,7 +19,7 @@ if WinExist("Settings")
     WinActivate()
 if WinActive("Settings")
     WinMaximize()
-coordw()
+coord.w()
 MouseMove(789, 375)
 sleep 1000 ;this is necessary otherwise the imagesearches will try to fire before the window even loads
 try {
@@ -57,12 +57,12 @@ try {
 } catch as e {
     pauseautosave()
     pausewindowmax()
-    toolCust("Script couldn't activate the Settings Menu")
+    tool.Cust("Script couldn't activate the Settings Menu")
     return
 }
 sleep 200
 WinClose("Settings")
-coords()
+coord.s()
 MouseMove(sx, sy, 2)
 pauseautosave()
 pausewindowmax()

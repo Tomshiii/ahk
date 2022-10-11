@@ -22,6 +22,11 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
     - Moved the `Functions` & `KSA` folder => `lib`
     - Moved all `checklist.ahk` functions to their own scripts within `\lib\checklist\` to increase readability
         - All functions are now labelled with dynamic comments to explain what they do
+- `blockOn()/blockOff()`, `toolCust()/toolWait()` & `coords(), coordw(), coordc()` all changed to class instances =>
+    - `block.On()/block.Off()`
+    - `tool.Cust()/tool.Wait()`
+        - Added `tool.Wait()` to cut repeat code. Makes your script wait for tooltips to finish before continuing
+    - `coord.s()/coord.w()/coord.c()`
 
 ## > My Scripts
 - Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown/WheelUp::`
@@ -40,7 +45,6 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Added `blockOff()` to `getTitle()` and `isFullscreen()` so that in the event they fail, the user is not potentially stuck
 - Added a check in `musicGUI()` to make sure to music folder actually exists
 - Added `fastWheel()` to replace the simple `SendInput("{WheelDown/Up 10}")` and allow the function to focus the window under the cursor if it isn't currently the active window when called
-- Added `toolWait()` to cut repeat code. Makes your script wait for tooltips to finish before continuing
 - Added `detect()` to cut repeat code. Sets `DetectHiddenWindows` & `SetTitleMatchMode`
 - Fixed hard coded dir in `switchToDisc()`
 - Fixed some incorrect information in `hotkeysGUI()`

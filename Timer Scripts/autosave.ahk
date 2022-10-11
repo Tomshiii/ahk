@@ -1,8 +1,8 @@
 #SingleInstance force ;only one instance of this script may run at a time!
 A_MaxHotkeysPerInterval := 2000
-verCheck() ;checks to make sure the user is using a compatible version of ahk
 TraySetIcon("..\Support Files\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include FuncRedirect.ahk
+verCheck() ;checks to make sure the user is using a compatible version of ahk
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 #WinActivateForce
 
@@ -33,7 +33,7 @@ if !FileExist(A_MyDocuments "\tomshi\settings.ini")
             }
     }
 
-;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
+;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tools that appear every minute towards a save attempt)
 minutes := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
 global ms := minutes * 60000
 
@@ -51,24 +51,24 @@ global retry := secondsRetry * 1000
 
 
 ;DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
-tooltips := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
+tools := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
 ;is the timer running?
 timer := false
 
 A_TrayMenu.Insert("9&", "Tooltip Countdown", tooltipCount)
-if tooltips = "true"
+if tools = "true"
     A_TrayMenu.Check("Tooltip Countdown")
-if tooltips = "false"
+if tools = "false"
     A_TrayMenu.Uncheck("Tooltip Countdown")
 tooltipCount(*)
 {
-    if tooltips = "true"
+    if tools = "true"
         {
             IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
             A_TrayMenu.Uncheck("Tooltip Countdown")
             reload
         }
-    if tooltips = "false"
+    if tools = "false"
         {
             IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
             A_TrayMenu.Check("Tooltip Countdown")
@@ -90,17 +90,17 @@ StopWatch() {
             global StartTickCount += 1000
             global ElapsedTime += 1
         }
-    if tooltips = "true"
+    if tools = "true"
         {
             x := Round((minutes * 60) - ElapsedTime)/ 60
             if x < 4 && x > 3.98
-                toolCust("4min until a save attempt", 50)
+                tool.Cust("4min until a save attempt", 50)
             if x < 3 && x > 2.98
-                toolCust("3min until a save attempt", 50)
+                tool.Cust("3min until a save attempt", 50)
             if x < 2 && x > 1.98
-                toolCust("2min until a save attempt", 50)
+                tool.Cust("2min until a save attempt", 50)
             if x < 1 && x > 0.98
-                toolCust("1min until a save attempt", 50)
+                tool.Cust("1min until a save attempt", 50)
         }
 }
 
@@ -141,9 +141,9 @@ check() {
         Run(A_WorkingDir "\checklist.ahk")
     else
         WinWaitClose("Select commission folder")
-    toolWait()
+    tool.Wait()
     if not WinExist("Editing Checklist")
-        toolCust("Don't forget to start the checklist for this project!", 2000)
+        tool.Cust("Don't forget to start the checklist for this project!", 2000)
     SetTimer(, -msChecklist) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
     end3:
 }
@@ -170,8 +170,8 @@ save()
 
     if !IsSet(id) || !IsSet(titleCheck) ;then we check to make sure all of those variables were assigned values
         {
-            blockOff()
-            toolCust("A variable wasn't assigned a value")
+            block.Off()
+            tool.Cust("A variable wasn't assigned a value")
             errorLog(A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
             SetTimer(, -ms)
             goto end2
@@ -180,9 +180,9 @@ save()
         {
             if not titleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
-                    blockOff()
+                    block.Off()
                     ;MsgBox("1") ;testing
-                    toolCust("You're currently doing something`nautosave has be cancelled", 2000)
+                    tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
                     SetTimer(, -ms)
                     goto end2
                 }
@@ -193,8 +193,8 @@ save()
             premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
                 {
-                    blockOff()
-                    toolCust("A window is currently open that may alter the saving process")
+                    block.Off()
+                    tool.Cust("A window is currently open that may alter the saving process")
                     errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                     SetTimer(, -ms)
                     goto end
@@ -207,9 +207,9 @@ save()
                 }
             if not premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
-                    blockOff()
+                    block.Off()
                     ;MsgBox("2") ;testing
-                    toolCust("You're currently doing something`nautosave has be cancelled", 2000)
+                    tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
                     SetTimer(, -ms)
                     goto end2
                 }
@@ -220,8 +220,8 @@ save()
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {
-                            blockOff()
-                            toolCust("A window is currently open that may alter the saving process")
+                            block.Off()
+                            tool.Cust("A window is currently open that may alter the saving process")
                             errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                             SetTimer(, -ms)
                             goto end
@@ -229,10 +229,10 @@ save()
                     if A_TimeIdleKeyboard <= idle
                         {
                             SetTimer(, -retry)
-                            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
+                            tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
                             goto end2
                         }
-                    blockOn()
+                    block.On()
                     WinActivate("ahk_exe AfterFX.exe")
                     sleep 500
                     SendInput("^s")
@@ -240,8 +240,8 @@ save()
                     WinWaitClose("Save Project",, 3)
                     goto end
                 }
-            blockOff()
-            toolCust("No save necessary", 2000)
+            block.Off()
+            tool.Cust("No save necessary", 2000)
             try {
                 if id = "ahk_class CabinetWClass"
                     WinActivate("ahk_class CabinetWClass")
@@ -250,7 +250,7 @@ save()
                 else
                     WinActivate("ahk_exe " id)
             } catch as e {
-                toolCust("couldn't activate original window")
+                tool.Cust("couldn't activate original window")
                 errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
             }
             SetTimer(, -ms)
@@ -264,8 +264,8 @@ save()
         premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
         if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
             {
-                blockOff()
-                toolCust("A window is currently open that may alter the saving process")
+                block.Off()
+                tool.Cust("A window is currently open that may alter the saving process")
                 errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                 SetTimer(, -ms)
                 goto end
@@ -278,9 +278,9 @@ save()
             }
         if not premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
             {
-                blockOff()
+                block.Off()
                 ;MsgBox("3") ;testing
-                toolCust("You're currently doing something`nautosave has be cancelled", 2000)
+                tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
                 try {
                     if id = "ahk_class CabinetWClass"
                         WinActivate("ahk_class CabinetWClass")
@@ -289,7 +289,7 @@ save()
                     else
                         WinActivate("ahk_exe " id)
                 } catch as e {
-                    toolCust("couldn't activate original window")
+                    tool.Cust("couldn't activate original window")
                     errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
                 }
                 SetTimer(, -ms)
@@ -297,15 +297,15 @@ save()
             }
         if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
             {
-                toolCust("If you were playing back anything, this function should resume it")
+                tool.Cust("If you were playing back anything, this function should resume it")
                 stop := "yes"
             }
         else
             stop := "no"
     } catch as er {
         SendInput("^s") ;attempt a save just in case
-        blockOff() ;then bail
-        toolCust("failed to find play/stop button")
+        block.Off() ;then bail
+        tool.Cust("failed to find play/stop button")
         errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineFile, A_LineNumber)
         return
     }
@@ -313,12 +313,12 @@ save()
     if A_TimeIdleKeyboard <= idle
         {
             SetTimer(, -retry)
-            toolCust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
+            tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
             goto end2
         }
 
     ;\\ Now we begin
-    blockOn()
+    block.On()
 
     ;\\ before finally saving
     SendInput("^s")
@@ -344,7 +344,7 @@ save()
         sleep 250
         switchToPremiere()
     } catch as e {
-        toolCust("couldn't activate Premiere Pro")
+        tool.Cust("couldn't activate Premiere Pro")
         errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
     }
 
@@ -356,7 +356,7 @@ save()
             SendInput(timelineWindow)
             sleep 100
             SendInput("{Space}")
-            blockOff()
+            block.Off()
             ToolTip("")
             SetTimer(, -ms) ;reset the timer
             SendInput(timelineWindow)
@@ -372,14 +372,14 @@ save()
         else
             WinActivate("ahk_exe " id)
     } catch as e {
-        toolCust("couldn't activate original window")
+        tool.Cust("couldn't activate original window")
         errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
     }
     ToolTip("")
-    blockOff()
+    block.Off()
     SetTimer(, -ms) ;reset the timer
     end2:
-    toolWait()
+    tool.Wait()
     global ElapsedTime := 0
     SetTimer(StopWatch, 10)
 }

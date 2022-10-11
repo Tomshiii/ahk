@@ -128,7 +128,7 @@ loop files, location "*.ahk", "R"
                     FileDelete(A_LoopFileFullPath)
                     FileCopy(parentFolder "\checklist.ahk", A_LoopFilePath, 1)
                 } catch as e {
-                    toolCust("Encountered an error with " A_LoopFileFullPath)
+                    tool.Cust("Encountered an error with " A_LoopFileFullPath)
                     FileAppend("Encountered an error with " A_LoopFileFullPath "`n", A_ScriptDir "\replaceChecklist_log.txt")
                 }
             }

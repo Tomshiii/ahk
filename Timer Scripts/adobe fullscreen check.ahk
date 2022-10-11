@@ -40,9 +40,9 @@ check()
             title := WinGetTitle("A")
             end := InStr(title, A_Year,, 1, 1)
             getProgram := SubStr(title, 7, end - 7)
-            ;toolCust(getProgram)
+            ;tool.Cust(getProgram)
             titlecheck := InStr(title, "Adobe " getProgram A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-            ;toolCust(title) ;debugging
+            ;tool.Cust(title) ;debugging
             ;if title = "" || title = "Audio Gain" || title = "Save As" || InStr(title, "Encoding") || title = "New Project" || title = "Please select the destination path for your new project." || title = "Select Folder" || title = "Clip Speed / Duration" || title = "Modify Clip" ;// just some of the titles you can come across
             if not titlecheck
                 SetTimer(, -fire) ;adds 5s to the timer and will check again after that time has elapsed
@@ -62,7 +62,7 @@ check()
                                 {
                                     fire2 := fire/1000
                                     fireRound := Round(fire2, 0)
-                                    toolCust(A_ScriptName " attempted to reset the fullscreen of " getProgram " but was reset due to interactions with a keyboard`nIt will attempt again in " fireRound "s", 2000)
+                                    tool.Cust(A_ScriptName " attempted to reset the fullscreen of " getProgram " but was reset due to interactions with a keyboard`nIt will attempt again in " fireRound "s", 2000)
                                     errorLog(A_ScriptName, "attempted to reset the fullscreen of " getProgram " but was reset due to interactions with a keyboard", A_LineFile, A_LineNumber)
                                 }
                             SetTimer(, -fire) ;adds 5s to the timer and will check again after that time has elapsed

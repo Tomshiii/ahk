@@ -66,11 +66,11 @@ Rbutton::
 					SendInput(shuttleStop)
 					if PixelSearch(&xcol, &ycol, xpos - 4, ypos, xpos + 6, ypos, playhead)
 						{
-							blockOn()
+							block.On()
 							SendInput(selectionPrem)
 							MouseMove(xcol, ycol)
 							SendInput("{LButton Down}")
-							blockOff()
+							block.Off()
 							;ToolTip("left button pressed") ;testing
 							while GetKeyState("Rbutton", "P")
 								{

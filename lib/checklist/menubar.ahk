@@ -6,21 +6,21 @@ FileMenu.Add("&Open`tCtrl+O", fileNewandOpen)
 FileMenu.Add("E&xit", close)
 ;settings menu
 SettingsMenu := Menu()
-SettingsMenu.Add("&Tooltips", tooltips)
+SettingsMenu.Add("&menuTooltips", menuTooltips)
 SettingsMenu.Add("&Dark Mode", goDark)
 settingsToolTrack := 0
 if IniRead(checklist, "Info", "tooltip") = "1"
     {
-        SettingsMenu.Check("&Tooltips")
+        SettingsMenu.Check("&menuTooltips")
         if globalCheckTool != 0
             global settingsToolTrack := 1
         else
             global settingsToolTrack := 0
     }
 if globalCheckTool = 0
-    SettingsMenu.Disable("&Tooltips")
+    SettingsMenu.Disable("&menuTooltips")
 else
-    SettingsMenu.Enable("&Tooltips")
+    SettingsMenu.Enable("&menuTooltips")
 
 darkToolTrack := 0
 if IniRead(checklist, "Info", "dark") = "1"
@@ -65,21 +65,21 @@ noDefault := MyGui.Add("Button", "Default W0 H0", "_")
 
 
 /**
- * A function for the menubar to work correctly. Is called when the tooltips setting is pressed
+ * A function for the menubar to work correctly. Is called when the menuTooltips setting is pressed
  */
-tooltips(*)
+menuTooltips(*)
 {
     if settingsToolTrack = 1
         {
             global settingsToolTrack := 0
-            SettingsMenu.UnCheck("&Tooltips")
+            SettingsMenu.UnCheck("&menuTooltips")
             IniWrite("0", checklist, "Info", "tooltip")
             restart()
         }
     else if settingsToolTrack = 0
         {
             global settingsToolTrack := 1
-            SettingsMenu.Check("&Tooltips")
+            SettingsMenu.Check("&menuTooltips")
             IniWrite("1", checklist, "Info", "tooltip")
             restart()
         }
@@ -163,7 +163,7 @@ updateCheck(Item, *)
         main.WaitForResponse()
         string := main.ResponseText
     }  catch as e {
-        toolCust("Couldn't get version info`nYou may not be connected to the internet")
+        tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
         return
     }
     if !IsSet(string)
@@ -179,9 +179,9 @@ updateCheck(Item, *)
                 Run("https://github.com/Tomshiii/ahk/blob/" tree "/checklist.ahk")
         }
     else if VerCompare(version, latestVer) > 0
-        toolCust("You are on a more up to date version!")
+        tool.Cust("You are on a more up to date version!")
     else
-        toolCust("You are up to date!")
+        tool.Cust("You are up to date!")
 }
 
 
@@ -314,5 +314,5 @@ openLog(*)
     if FileExist(logs)
         Run(logs)
     else
-        toolCust("the log file", 2000, 1)
+        tool.Cust("the log file", 2000, 1)
 }

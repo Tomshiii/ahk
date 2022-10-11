@@ -22,7 +22,7 @@ if not WinExist("ahk_exe obs64.exe")
 			WinActivate
 		else
 			WinWaitActive "ahk_exe obs64.exe"
-	blockOn()
+	block.On()
 	sleep 2500 ; you have to wait a while after obs opens before you can start sending it commands or it'll crash
 	SendInput("!p") ;Opens alt context menu - The Above 2.5s sleep is essential as obs crashes if you instantly change the profile
 	SendInput("{DOWN 7}")
@@ -100,7 +100,7 @@ if not WinExist("ahk_exe obs64.exe")
 		}
 	if WinExist("ahk_exe Docker Desktop.exe") ;waits until docker is open then brings it into focus
 		{
-			blockOn()
+			block.On()
 			WinActivate("ahk_exe Docker Desktop.exe")
 			WinWaitActive("ahk_exe Docker Desktop.exe")
 			sleep 1500
@@ -110,14 +110,14 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 1000
 			SendInput("{Click}") ;required for brothers queue program for automatic mii wii playback
 			sleep 2000
-			blockOff()
+			block.Off()
 			WinMinimize()
 		}
 	else
 		{
 			WinWaitActive("ahk_exe Docker Desktop.exe")
 			sleep 1500
-			blockOn()
+			block.On()
 			WinActivate("ahk_exe Docker Desktop.exe")
 			coordmode("pixel", "Window")
 			coordmode("mouse", "Window")
@@ -125,13 +125,13 @@ if not WinExist("ahk_exe obs64.exe")
 			sleep 1000
 			SendInput("{Click}") ;required for brothers queue program for automatic mii wii playback
 			sleep 2000
-			blockOff()
+			block.Off()
 			WinMinimize()
 		}
-	blockOff()
+	block.Off()
 	Run location "\TomSongQueueue\Builds\ApplicationDj.exe"
 	sleep 2500 ;it needed some time to open
-	blockOn()
+	block.On()
 	if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
 		WinActivate
 	sleep 500
@@ -140,13 +140,13 @@ if not WinExist("ahk_exe obs64.exe")
 		{
 			WinActivate("ahk_exe Firebot v5.exe")
 			WinWaitActive("ahk_exe Firebot v5.exe")
-			coordw()
+			coord.w()
 			MouseMove(29, 677)
 			click
 			sleep 1500
 			WinMinimize()
 		}
-	blockOff()
+	block.Off()
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
 	Run("C:\Program Files (x86)\foobar2000\foobar2000.exe")
 	Run("F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe")
@@ -160,7 +160,7 @@ if not WinExist("ahk_exe obs64.exe")
 		{
 			WinMinimize()
 		}
-	blockOn()
+	block.On()
 	sleep 3000
 	if WinExist("ahk_exe foobar2000.exe")
 		{
@@ -177,7 +177,7 @@ if not WinExist("ahk_exe obs64.exe")
 			SendInput("!p" "a")
 			MouseMove(x, y)
 		}
-	blockOff()
+	block.Off()
 	if WinExist("ahk_exe LioranBoard Receiver.exe")
 		{
 			WinWait("ahk_exe LioranBoard Receiver.exe",, 3)

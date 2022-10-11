@@ -1,4 +1,4 @@
-;v2.20
+;v2.21
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -66,7 +66,7 @@ generate(MyRelease)
 
             ;WARNING THE USER OF SETTINGS CHANGES
             if VerCompare(MyRelease, "v2.5.1") > 0 && VerCompare(MyRelease, "v2.5.2") <= 0 ; v2.5.2 brought changes to settings.ini and will reset some values to default
-                toolCust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
+                tool.Cust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
         }
     if VerCompare(A_OSVersion, "10.0.17763") < 0
         darkVerCheck := "disabled"
@@ -103,7 +103,7 @@ getScriptRelease(beta := false)
         main.WaitForResponse()
         string := main.ResponseText
     }  catch as e {
-        toolCust("Couldn't get version info`nYou may not be connected to the internet")
+        tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
         errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineFile, A_LineNumber)
         return 0
     }
@@ -144,11 +144,11 @@ updateChecker(MyRelease) {
             if version = 0
                 return
         }
-    toolWait()
+    tool.Wait()
     if MyRelease != version
-        toolCust("Current Installed Version = " MyRelease "`nCurrent Github Release = " version, 2000)
+        tool.Cust("Current Installed Version = " MyRelease "`nCurrent Github Release = " version, 2000)
     else
-        toolCust("You are currently up to date", 2000)
+        tool.Cust("You are currently up to date", 2000)
     ;checking to see if the user wishes to check for updates
     check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
     if check = "stop"
@@ -168,7 +168,7 @@ updateChecker(MyRelease) {
                 change.WaitForResponse()
                 ChangeLog := change.ResponseText
             } catch as e {
-                toolCust("Couldn't get changelog info`nYou may not be connected to the internet")
+                tool.Cust("Couldn't get changelog info`nYou may not be connected to the internet")
                 errorLog(A_ThisFunc "()", "Couldn't get changelog info, you may not be connected to the internet", A_LineFile, A_LineNumber)
                 return
             }
@@ -333,7 +333,7 @@ updateChecker(MyRelease) {
                         else
                             type := "exe"
                         Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
-                        toolCust("Release " version " of the scripts has been downloaded to " downloadLocation, 3000)
+                        tool.Cust("Release " version " of the scripts has been downloaded to " downloadLocation, 3000)
                         Run(downloadLocation)
                         TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
                         SetTimer(HideTrayTip, -5000)
@@ -355,9 +355,9 @@ updateChecker(MyRelease) {
                             DirMove(A_Temp "\" MyRelease, A_WorkingDir "\Backups\Script Backups\" MyRelease, "1")
                             if DirExist(A_Temp "\" MyRelease)
                                 DirDelete(A_Temp "\" MyRelease, 1)
-                            toolCust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
+                            tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
                         } catch as e {
-                            toolCust("There was an error trying to backup your current scripts", 2000)
+                            tool.Cust("There was an error trying to backup your current scripts", 2000)
                             errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineFile, A_LineNumber)
                         }
                         return
@@ -370,23 +370,23 @@ updateChecker(MyRelease) {
         }
     else if check = "false"
         {
-            toolWait()
+            tool.Wait()
             if VerCompare(MyRelease, version) < 0
                 {
-                    toolCust("You're using an outdated version of these scripts")
+                    tool.Cust("You're using an outdated version of these scripts")
                     errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
                     return
                 }
             else
                 {
-                    toolCust("This script will not prompt you with a download/changelog when a new version is available", 2000)
+                    tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 2000)
                     errorLog(A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
                     return
                 }
         }
     else
         {
-            toolCust("You put something else in the settings.ini file you goose")
+            tool.Cust("You put something else in the settings.ini file you goose")
             errorLog(A_ThisFunc "()", "You put something else in the settings.ini file you goose", A_LineFile, A_LineNumber)
             return
         }
@@ -497,7 +497,7 @@ oldError() {
 adobeTemp(MyRelease) {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    toolWait()
+    tool.Wait()
     if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
         WinWaitClose("Scripts Release " MyRelease)
     day := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
@@ -535,10 +535,10 @@ adobeTemp(MyRelease) {
             CacheSize += A_LoopFileSize
         }
     if CacheSize > 0
-        toolCust("Total Adobe cache size - " cacheround "/" largestSize "GB", 1500)
+        tool.Cust("Total Adobe cache size - " cacheround "/" largestSize "GB", 1500)
     else
         {
-            toolCust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 1500)
+            tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 1500)
             goto end
         }
     ;then we convert that byte total to GB
@@ -572,7 +572,7 @@ verCheck()
 {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    toolWait()
+    tool.Wait()
     if VerCompare(A_AhkVersion, "2.0-beta.5") < 0
         {
             getLatestVer()
@@ -589,7 +589,7 @@ verCheck()
                         LatestVersion := SubStr(Latestpage, startVer + 10, endVer - startVer - 10)
                         return LatestVersion
                     } catch as e {
-                        toolCust("Couldn't get the latest version of ahk`nYou may not be connected to the internet")
+                        tool.Cust("Couldn't get the latest version of ahk`nYou may not be connected to the internet")
                         errorLog(A_ThisFunc "()", "Couldn't get latest version of ahk, you may not be connected to the internet", A_LineFile, A_LineNumber)
                         return
                     }
@@ -621,7 +621,7 @@ locationReplace()
 {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    toolWait()
+    tool.Wait()
     checkDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
     if checkDir = A_WorkingDir
         return
@@ -781,14 +781,14 @@ settingsGUI()
         if updateVal = 1
             {
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-                toolCust("Scripts will check for updates", 2000)
+                tool.Cust("Scripts will check for updates", 2000)
                 if betaCheck = "true"
                     betaupdateCheckToggle.Value := 1
             }
         else if updateVal = -1
             {
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-                toolCust("Scripts will still check for updates but will not present the user`nwith a GUI when an update is available", 2000)
+                tool.Cust("Scripts will still check for updates but will not present the user`nwith a GUI when an update is available", 2000)
                 if betaCheck = "true"
                     betaupdateCheckToggle.Value := 1
             }
@@ -796,7 +796,7 @@ settingsGUI()
             {
                 betaupdateCheckToggle.Value := 0
                 IniWrite("stop", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-                toolCust("Scripts will NOT check for updates", 2000)
+                tool.Cust("Scripts will NOT check for updates", 2000)
             }
     }
     
@@ -843,13 +843,13 @@ settingsGUI()
             {
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
                 toggleToggle.ToolTip := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
-                toolCust("``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
+                tool.Cust("``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
             }
         else
             {
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
                 toggleToggle.ToolTip := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
-                toolCust("``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
+                tool.Cust("``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
             }
 
         if WinExist("autosave.ahk - AutoHotkey")
@@ -877,7 +877,7 @@ settingsGUI()
             {
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
                 checkTool.ToolTip := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
-                toolCust("``checklist.ahk`` will produce tooltips to remind you if you've paused the timer", 2000)
+                tool.Cust("``checklist.ahk`` will produce tooltips to remind you if you've paused the timer", 2000)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
             }
@@ -886,7 +886,7 @@ settingsGUI()
                 ifDisabled := "`n`nThis setting will override the local setting for your current checklist"
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
                 checkTool.ToolTip := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
-                toolCust("``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer", 2000)
+                tool.Cust("``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer", 2000)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext ifDisabled,, "48 4096")
             }
@@ -918,14 +918,14 @@ settingsGUI()
             {
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
                 darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-                toolCust("A dark theme will be applied to certain GUI elements wherever possible", 2000)
+                tool.Cust("A dark theme will be applied to certain GUI elements wherever possible", 2000)
                 goDark()
             }
         else
             {
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
                 darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-                toolCust("A lighter theme will be applied to certain GUI elements wherever possible", 2000)
+                tool.Cust("A lighter theme will be applied to certain GUI elements wherever possible", 2000)
                 goDark(false, "Light")
             }
     }

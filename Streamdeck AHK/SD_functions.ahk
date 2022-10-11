@@ -33,7 +33,7 @@ speed(amount)
 			classNN := ControlGetClassNN(ControlGetFocus("A"))
 			if classNN = "DroverLord - Window Class3"
 				{
-					toolCust("gain macro couldn't figure`nout what to do")
+					tool.Cust("gain macro couldn't figure`nout what to do")
 					return
 				}
 		}
@@ -47,15 +47,15 @@ speed(amount)
  */
 scale(amount)
 {
-	coords()
-	blockOn()
+	coord.s()
+	block.On()
 	MouseGetPos &xpos, &ypos
 	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " Premiere "scale.png") || ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " Premiere "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		{
 			if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
 				{
-					blockOff()
-					toolCust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+					block.Off()
+					tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 					return
 				}
 			MouseMove(xcol, ycol)
@@ -65,7 +65,7 @@ scale(amount)
 	SendInput("{Enter}")
 	MouseMove xpos, ypos
 	Click("middle")
-	blockOff()
+	block.Off()
 }
 
 /**
@@ -77,7 +77,7 @@ pauseautosave()
 	detect(true, mode)
 	if !WinExist("autosave.ahk - AutoHotkey")
 		{
-			toolCust("autosave ahk script isn't open")
+			tool.Cust("autosave ahk script isn't open")
 			ExitApp()
 		}
 	WM_COMMAND := 0x0111
@@ -94,7 +94,7 @@ pausewindowmax()
 	detect(true, mode)
 	if !WinExist("adobe fullscreen check.ahk - AutoHotkey")
 		{
-			toolCust("fullscreen ahk script isn't open")
+			tool.Cust("fullscreen ahk script isn't open")
 			ExitApp()
 		}
 	WM_COMMAND := 0x0111

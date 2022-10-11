@@ -10,9 +10,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\resolve.png")
 verCheck()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.5.1
+;\\v2.6
 ;\\Minimum Version of "Resolve.ahk" Required for this script
-;\\v2.11
+;\\v2.13
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5.2.1
@@ -110,13 +110,13 @@ playhead2 := 0xE64B3D
 Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible.
 {
     scrub := 0
-    coordw()
-    blockOn()
+    coord.w()
+    block.On()
     MouseGetPos &xpos, &ypos
     if not ImageSearch(&editx, &editY, A_ScreenWidth / 3, A_ScreenHeight - 150, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "edit.png")
         {
             SendInput("{RButton}")
-            blockOff()
+            block.Off()
             return
         }
     if ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png") || ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
@@ -126,8 +126,8 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
         }
     else
         {
-            blockOff()
-            toolCust("Couldn't find reference point for scrub bar", 2000)
+            block.Off()
+            tool.Cust("Couldn't find reference point for scrub bar", 2000)
             errorLog(A_ThisHotkey, "Couldn't find reference point for scrub bar", A_LineFile, A_LineNumber)
             return
         }
@@ -135,7 +135,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
     if ypos < scrub
         {
             SendInput("{Rbutton}")
-            blockOff
+            block.Off()
             return
         }
     Color := PixelGetColor(xpos, ypos)
@@ -150,18 +150,18 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
                     MouseMove(xpos, scrub) ;this will warp the mouse to the top part of your timeline defined by &timeline
                     SendInput("{Click Down}")
                     MouseMove(xpos, ypos)
-                    blockOff()
+                    block.Off()
                     KeyWait(A_ThisHotkey)
                     SendInput("{Click Up}")
                     return
                 }
             SendInput(resolveDeselect) ;in case you end up inside the "delete" right click menu from the timeline
-            blockOff()
+            block.Off()
             return
         }
     else
         sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
-        blockOff()
+        block.Off()
 }
 ;=========================================================
 ;

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.2
+;\\v2.13
 #Include General.ahk
 
 /**
@@ -11,8 +11,8 @@
 Rscale(value, property, plus)
 {
     KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
-    coordw()
-    blockOn()
+    coord.w()
+    block.On()
     SendInput(resolveSelectPlayhead)
     MouseGetPos(&xpos, &ypos)
     if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector.png")
@@ -33,9 +33,9 @@ Rscale(value, property, plus)
         }
     else
         {
-            blockOff()
+            block.Off()
             MouseMove(xpos, ypos)
-            toolCust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            tool.Cust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
@@ -44,8 +44,8 @@ Rscale(value, property, plus)
         MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
     else
         {
-            blockOff()
-            toolCust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            block.Off()
+            tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }
@@ -54,7 +54,7 @@ Rscale(value, property, plus)
     SendInput("{ENTER}")
     MouseMove(xpos, ypos)
     SendInput("{MButton}")
-    blockOff()
+    block.Off()
 }
 
 /**
@@ -88,8 +88,8 @@ REffect(folder, effect)
 ;Search for your effect of choice, then drag back to the click you were hovering over originally
 {
     KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
-    coordw()
-    blockOn()
+    coord.w()
+    block.On()
     MouseGetPos(&xpos, &ypos)
     if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects.png") ;checks to see if the effects button is deactivated
         {
@@ -101,8 +101,8 @@ REffect(folder, effect)
         goto closeORopen
     else ;if everything fails, this else will trigger
         {
-            blockOff()
-            toolCust("the effects button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            block.Off()
+            tool.Cust("the effects button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the effects button", A_LineFile, A_LineNumber)
             return
         }
@@ -117,8 +117,8 @@ closeORopen:
         }
     else
         {
-            blockOff()
-            toolCust("open/close button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            block.Off()
+            tool.Cust("open/close button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the open/close button", A_LineFile, A_LineNumber)
             return
         }
@@ -133,8 +133,8 @@ EffectFolder:
         }
     else ;if everything fails, this else will trigger
         {
-            blockOff()
-            toolCust("the fxfolder",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            block.Off()
+            tool.Cust("the fxfolder",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the fxfolder", A_LineFile, A_LineNumber)
             return
         }
@@ -153,8 +153,8 @@ SearchButton:
         }
     else ;if everything fails, this else will trigger
         {
-            blockOff()
-            toolCust("search button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            block.Off()
+            tool.Cust("search button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the search button", A_LineFile, A_LineNumber)
             return
         }
@@ -165,7 +165,7 @@ final:
     SendInput("{Click Down}")
     MouseMove(xpos, ypos, 2) ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
     SendInput("{Click Up}")
-    blockOff()
+    block.Off()
     return
 }
 
@@ -177,8 +177,8 @@ final:
  */
 rvalhold(property, plus, rfelseval)
 {
-    coordw()
-    blockOn()
+    coord.w()
+    block.On()
     SendInput(resolveSelectPlayhead)
     MouseGetPos(&xpos, &ypos)
     if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector.png")
@@ -199,9 +199,9 @@ rvalhold(property, plus, rfelseval)
         }
     else
         {
-            blockOff()
+            block.Off()
             MouseMove(xpos, ypos)
-            toolCust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            tool.Cust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
@@ -211,8 +211,8 @@ rvalhold(property, plus, rfelseval)
         MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
     else
         {
-            blockOff()
-            toolCust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            block.Off()
+            tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }
@@ -220,7 +220,7 @@ rvalhold(property, plus, rfelseval)
     SendInput("{Click Down}")
     if GetKeyState(A_ThisHotkey, "P")
         {
-            blockOff()
+            block.Off()
             KeyWait(A_ThisHotkey)
             SendInput("{Click Up}")
             MouseMove(xpos, ypos)
@@ -230,7 +230,7 @@ rvalhold(property, plus, rfelseval)
             rfElse(rfelseval) ;do note rfelse doesn't use any imagesearch information and just uses raw pixel values (not a great idea), so if you have any issues, do look into changing that
             MouseMove(xpos, ypos)
             SendInput("{MButton}")
-            blockOff()
+            block.Off()
             return
         }
 }
@@ -241,8 +241,8 @@ rvalhold(property, plus, rfelseval)
  */
 rflip(button)
 {
-    coordw()
-    blockOn()
+    coord.w()
+    block.On()
     MouseGetPos(&xpos, &ypos)
     if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") ;makes sure the video tab is selected
         {
@@ -259,14 +259,14 @@ rflip(button)
             MouseMove(xh, yh)
             click
             MouseMove(xpos, ypos)
-            blockOff()
+            block.Off()
             return
         }
     else
         {
-            blockOff()
+            block.Off()
             MouseMove(xpos, ypos)
-            toolCust("desired button",, 1)
+            tool.Cust("desired button",, 1)
             errorLog(A_ThisFunc "()", "Was unable to find the desired button", A_LineFile, A_LineNumber)
         }
 }
@@ -277,8 +277,8 @@ rflip(button)
  */
 rgain(value)
 {
-    coordw()
-    blockOn()
+    coord.w()
+    block.On()
     SendInput(resolveSelectPlayhead)
     MouseGetPos(&xpos, &ypos)
     if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector.png")
@@ -299,9 +299,9 @@ rgain(value)
         }
     else
         {
-            blockOff()
+            block.Off()
             MouseMove(xpos, ypos)
-            toolCust("audio tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            tool.Cust("audio tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the audio tab", A_LineFile, A_LineNumber)
             return
         }
@@ -310,8 +310,8 @@ rgain(value)
         MouseMove(xz + "215", yz + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
     else
         {
-            blockOff()
-            toolCust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            block.Off()
+            tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }
@@ -325,5 +325,5 @@ rgain(value)
     SendInput("{Enter}")
     MouseMove(xpos, ypos)
     SendInput("{MButton}")
-    blockOff()
+    block.Off()
 }

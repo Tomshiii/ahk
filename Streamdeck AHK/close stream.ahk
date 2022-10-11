@@ -10,7 +10,7 @@ if WinExist("Streaming.ahk")
 MsgBox("TURN OFF YOUR CAMERA", "CAMERA", "16 4096")
 if WinExist("ahk_exe obs64.exe")
 		{
-			coords()
+			coord.s()
 			MouseGetPos(&x, &y)
 			WinActivate
 			sleep 50

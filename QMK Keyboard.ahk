@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.3
+;\\v2.10
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5.2.1
@@ -29,7 +29,7 @@ verCheck()
 /**
  * This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet
  */
-unassigned() => toolCust(A_ThisHotkey " is unassigned") ;create a tooltip for unused keys
+unassigned() => tool.Cust(A_ThisHotkey " is unassigned") ;create a tooltip for unused keys
 
 /**
  * This function is specifically designed for this script as I have a button designed to be pressed alongside another just to open new windows
@@ -218,7 +218,7 @@ f:: ;this macro is to open the speed menu
 			sleep 30
 		}
 	} catch as e {
-		toolCust("something broke")
+		tool.Cust("something broke")
 		errorLog(A_ThisHotkey "::", "Encountered an error attempting to get the ControlClassNN", A_LineFile, A_LineNumber)
 		Exit
 	}
@@ -226,7 +226,7 @@ f:: ;this macro is to open the speed menu
 }
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
-	blockOn()
+	block.On()
 	MouseGetPos(&origX, &origY)
 	SendInput(timelineWindow)
 	SendInput(timelineWindow)
@@ -242,13 +242,13 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 			MouseMove(x, y)
 			SendInput("{Click}")
 			MouseMove(origX, origY)
-			blockOff()
+			block.Off()
 			return
 		}
 	else
 		{
-			blockOff()
-			toolCust("the margin button",, 1)
+			block.Off()
+			tool.Cust("the margin button",, 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the margin button", A_LineFile, A_LineNumber)
 		}
 }
@@ -463,7 +463,7 @@ h:: ;opens the directory for the current premiere project
 			}
 			if not titlecheck
 				{
-					toolCust("You're on a part of Premiere that won't contain the project path", 2000)
+					tool.Cust("You're on a part of Premiere that won't contain the project path", 2000)
 					return
 				}
 			entirePath := SubStr(name, dashLocation + "2", length)
@@ -482,7 +482,7 @@ h:: ;opens the directory for the current premiere project
 		}
 	else if DirExist(commLocation)
 		{
-			toolCust("A Premiere/AE isn't open, opening the comms folder")
+			tool.Cust("A Premiere/AE isn't open, opening the comms folder")
 			Run(commLocation)
 			WinWait("ahk_class CabinetWClass", "comms")
 			WinActivate("ahk_class CabinetWClass", "comms")
@@ -490,7 +490,7 @@ h:: ;opens the directory for the current premiere project
 		}
 	else
 		{
-			toolCust("A Premiere/AE isn't open")
+			tool.Cust("A Premiere/AE isn't open")
 			errorLog(A_ThisHotkey "::", "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
 			return
 		}
@@ -532,7 +532,7 @@ b:: ;this macro is to find the difference between 2 24h timecodes
 	diff := DateDiff("20220101" time2, "20220101" time1, "seconds")/"3600" ;do the math to determine the time difference
 	value := Round(diff, 2) ;round the result to 2dp
 	A_Clipboard := value ;copy it to the clipboard
-	toolCust(diff "`nor " value, 2000) ;and create a tooltip to show the user both the complete answer and the rounded answer
+	tool.Cust(diff "`nor " value, 2000) ;and create a tooltip to show the user both the complete answer and the rounded answer
 }
 
 r::unassigned()

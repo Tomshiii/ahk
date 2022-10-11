@@ -29,8 +29,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                     return
                 }
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
-        coordw()
-        blockOn()
+        coord.w()
+        block.On()
         sleep 200
         if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " Premiere "newProj.png")
             {
@@ -43,10 +43,10 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                         break
                     if A_Index > 5
                         {
-                            toolCust("Couldn't ensure the new project window opened", 2000)
+                            tool.Cust("Couldn't ensure the new project window opened", 2000)
                             pauseautosave()
                             pausewindowmax()
-                            blockOff()
+                            block.Off()
                             return
                         }
                 }
@@ -88,10 +88,10 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                     sleep 250
                     if A_Index > 5
                         {
-                            toolCust("couldn't find the create button", 2000)
+                            tool.Cust("couldn't find the create button", 2000)
                             pauseautosave()
                             pausewindowmax()
-                            blockOff()
+                            block.Off()
                             return
                         }
                     }
@@ -148,18 +148,18 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
                 sleep 2000
                 SendInput("{Tab}" "{Space}") ;if you're on premiere v22.5 or above you'll need 2 tabs here. I've downgraded back to 22.3.1 for stability reasons
                 sleep 1000
-                blockOff()
+                block.Off()
                 Run(SelectedFolder) ;open an explorer window for your selected directory
                 SplitPath SelectedFolder, &name
 	            if WinExist("Checklist - " name)
                     {
-                        toolCust("You already have this checklist open")
+                        tool.Cust("You already have this checklist open")
                         goto end
                     }
                 try {
                     Run("..\checklist.ahk")
                 } catch as e {
-                    toolCust("File not found")
+                    tool.Cust("File not found")
                 }
                 end:
                 pauseautosave()
@@ -170,8 +170,8 @@ If WinActive("ahk_exe Adobe Premiere Pro.exe")
             {
                 pauseautosave()
                 pausewindowmax()
-                blockOff()
-                toolCust("the new project button",, 1)
+                block.Off()
+                tool.Cust("the new project button",, 1)
                 return
             }
     }

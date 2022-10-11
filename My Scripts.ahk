@@ -14,18 +14,21 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.19
+;\\v2.20
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.9.3
+;\\v2.10
 
 ; ============================================================================================================================================
 ;
-; 														THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
-;				 											IT WILL NOT RUN IN v1.1
+; 														  THIS SCRIPT IS FOR v2.0+ OF AUTOHOTKEY
+;				 											   IT WILL NOT RUN IN v1.1
 ;									--------------------------------------------------------------------------------
-;												Everything in this script is functional within v2.0
-;											any code like "blockon()" "coords()" etc are all defined
-;										in the various Functions.ahk scripts. Look there for specific code to edit
+;										           Everything in this script is functional within v2.0
+;									   any code like `errorLog()` or `hardReset()` etc are all functions and defined
+;										in the various Functions.ahk scripts. Look there for specific code to edit.
+;
+;                                       any code like `block.On()` or `tool.Cust()` etc are functions within a class
+;										       and also defined within the various Functions.ahk scripts.
 ;
 ; ============================================================================================================================================
 ;
@@ -89,8 +92,8 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 			PostMessage(0x0111, 65303,,, ScriptName " - AutoHotkey")
 		}
 	detect(false)
-	toolCust("all active ahk scripts reloading", 500)
-	toolWait()
+	tool.Cust("all active ahk scripts reloading", 500)
+	tool.Wait()
 	Reload()
 	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
 	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
@@ -119,9 +122,9 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 #+`:: ;this hotkey is to suspent THIS script. This is helpful when playing games as this script will try to fire and do whacky stuff while you're playing games
 {
 	if A_IsSuspended = 0
-		toolCust("you suspended hotkeys from the main script")
+		tool.Cust("you suspended hotkeys from the main script")
 	else
-		toolCust("you renabled hotkeys from the main script")
+		tool.Cust("you renabled hotkeys from the main script")
 	Suspend(-1) ; toggle suspends this script.
 }
 #SuspendExempt false
@@ -158,7 +161,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 					}
 			}
 			catch {
-				toolCust(A_ThisFunc "() failed to get the monitor that the active window is in")
+				tool.Cust(A_ThisFunc "() failed to get the monitor that the active window is in")
 				errorLog(A_ThisFunc "()", "failed to get the monitor that the active window is in", A_LineFile, A_LineNumber)
 				break
 			}
@@ -216,7 +219,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		}
 	try{
 		WinMove(newX, newY, newWidth, newHeight, title,, "Editing Checklist -") ;then we attempt to move the window
-		;toolCust("Window: " win "`nToggle: " toggle) ;for whatever reason, producing a tooltip actually breaks functionality.... huh??
+		;tool.Cust("Window: " win "`nToggle: " toggle) ;for whatever reason, producing a tooltip actually breaks functionality.... huh??
 	}
 }
 
@@ -262,7 +265,7 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
-			toolCust("Couldn't copy data to clipboard")
+			tool.Cust("Couldn't copy data to clipboard")
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
@@ -319,7 +322,7 @@ F18:: ;open the "show more options" menu in win11
 		}
 	else if ImageSearch(&x, &y, 0, 0, width, height, "*5 " Explorer "showmore.png")
 		{
-			;toolCust(colour "`n imagesearch fired") ;for debugging
+			;tool.Cust(colour "`n imagesearch fired") ;for debugging
 			;SendInput("{Esc}")
 			;SendInput("{Click}")
 			if colour = colour1 || colour = colour2
@@ -333,20 +336,20 @@ F18:: ;open the "show more options" menu in win11
 		}
 	else if (colour = colour1 || colour = colour2)
 		{
-			;toolCust(colour "`n colour1&2 fired") ;for debugging
+			;tool.Cust(colour "`n colour1&2 fired") ;for debugging
 			SendInput("{Click}")
 			SendInput("{Esc}" "+{F10}")
 			return
 		}
 	else if (colour = colour3 || colour = colour4)
 		{
-			;toolCust(colour "`n colour3&4 fired") ;for debugging
+			;tool.Cust(colour "`n colour3&4 fired") ;for debugging
 			SendInput("{Esc}" "+{F10}")
 			return
 		}
 	else
 		{
-			;toolCust(colour "`n final else fired") ;for debugging
+			;tool.Cust(colour "`n final else fired") ;for debugging
 			SendInput("{Esc}" "+{F10}")
 			return
 		}
@@ -366,9 +369,9 @@ F18:: ;open the "show more options" menu in win11
 ;pauseyoutubeHotkey;
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {
-	coords()
+	coord.s()
 	MouseGetPos(&x, &y)
-	coordw()
+	coord.w()
 	SetTitleMatchMode 2
 	needle := "YouTube"
 	getTitle(&title)
@@ -388,7 +391,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 			{
 				MouseMove(xpos, ypos, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
 				SendInput("{Click}")
-				coords()
+				coord.s()
 				MouseMove(x, y, 2)
 				break
 			}
@@ -396,11 +399,11 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 			switchToOtherFirefoxWindow()
 		if A_Index > 5
 			{
-				toolCust("Couldn't find a youtube tab")
+				tool.Cust("Couldn't find a youtube tab")
 				try {
 					WinActivate(title) ;reactivates the original window
 				} catch as e {
-					toolCust("Failed to get information on last active window")
+					tool.Cust("Failed to get information on last active window")
 					errorLog(A_ThisHotkey "::", "Failed to get information on last active window", A_LineFile, A_LineNumber)
 				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
@@ -478,12 +481,12 @@ F2::discUnread(2) ;will click any unread channels
 F3:: ;this hotkey is to click the "discord" button in discord to access your dm's
 {
 	WinActivate("ahk_exe Discord.exe")
-	blockOn()
+	block.On()
 	MouseGetPos(&origx, &origy)
 	MouseMove(34, 52, 2)
 	SendInput("{Click}")
 	MouseMove(origx, origy, 2)
-	blockOff()
+	block.Off()
 }
 
 ;=============================================================================================================================================
@@ -543,7 +546,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
         toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
 		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
     } catch as e {
-        toolCust("Couldn't find the ClassNN value")
+        tool.Cust("Couldn't find the ClassNN value")
         errorLog(A_ThisHotkey "::", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
 	;MouseMove 34, 917 ;location of the selection tool
@@ -551,11 +554,11 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		{
 			loop {
 				;for whatever reason, if you're clicked on another panel, then try to hit this hotkey, `ControlGetPos` refuses to actually get any value, I have no idea why. This loop will attempt to get that information anyway, but if it fails will fallback to the hotkey you have set within premiere
-				;toolCust(A_Index "`n" width "`n" height, "100")
+				;tool.Cust(A_Index "`n" width "`n" height, "100")
 				if A_Index > 3
 					{
 						SendInput(selectionPrem)
-						toolCust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", 2000)
+						tool.Cust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", 2000)
 						errorLog(A_ThisHotkey "::", "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 						return
 					}
@@ -579,7 +582,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		if A_Index > 3
 			{
 				SendInput(selectionPrem)
-				toolCust("selection tool`nUsed the selection hotkey instead", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+				tool.Cust("selection tool`nUsed the selection hotkey instead", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 				errorLog(A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 				return
 			}
@@ -591,7 +594,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 ;premprojectHotkey;
 RAlt & p:: ;This hotkey pulls out the project window and moves it to my second monitor since adobe refuses to just save its position in your workspace
 {
-	coords()
+	coord.s()
 	shiftval := 0
 	MouseGetPos(&xpos, &ypos)
 	KeyWait("Alt")
@@ -612,7 +615,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	sleep 300
 	sanity := WinGetPos(&sanX, &sanY,,, "A") ;if you have this panel on a different monitor ahk won't be able to find it because of premiere weirdness so this value will be used in some fallback code down below
-	coordw()
+	coord.w()
 	try {
 		loop {
 			ClassNN := ControlGetClassNN(ControlGetFocus("A"))
@@ -622,19 +625,19 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			;the window you're searching for can end up being window class 3. Wicked. The function will now attempt to continue on without these values if it doesn't get them as it can still work due to other information we grab along the way
 			if A_Index > 5
 				{
-					;toolCust("Function failed to find project window")
+					;tool.Cust("Function failed to find project window")
 					;errorLog(A_ThisHotkey "::", "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 					break
 				}
 		}
 	} catch as e
 		{
-			toolCust("Function failed to find project window")
+			tool.Cust("Function failed to find project window")
 			errorLog(A_ThisHotkey "::", "Function failed to find project window", A_LineFile, A_LineNumber)
 			return
 		}
 	;MsgBox("x " toolx "`ny " tooly "`nwidth " width "`nheight " height "`nclass " ClassNN) ;debugging
-	blockOn()
+	block.On()
 	try {
 		if ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " Premiere "project.png") || ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
 			goto move
@@ -642,28 +645,28 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			goto bin
 		else
 			{
-				coords()
+				coord.s()
 				if ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " Premiere "project.png") || ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
 					goto move
 				else
 					{
-						blockOff()
-						toolCust("project window", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+						block.Off()
+						tool.Cust("project window", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 						errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
 						return
 						;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
 					}
 			}
 	} catch as e {
-		blockOff()
-		toolCust("Couldn't find the project window")
+		block.Off()
+		tool.Cust("Couldn't find the project window")
 		errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
 		return
 	}
 	move:
 	MouseMove(prx + "5", pry +"3")
 	SendInput("{Click Down}")
-	coords()
+	coord.s()
 	Sleep 100
 	MouseMove 3592, 444, 2
 	sleep 50
@@ -671,7 +674,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseMove(xpos, ypos)
 	if shiftval = 1
 		{
-			blockOff()
+			block.Off()
 			return
 		}
 	bin:
@@ -699,14 +702,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		WinMove(newX, newY, newWidth, newHeight, title)
 	}
 	sleep 250
-	coordw()
+	coord.w()
 	MouseMove(0, 0)
 	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Explorer "sfx.png")
 		{
 			MouseMove(foldx + "9", foldy + "5", 2)
 			SendInput("{Click Down}")
 			;sleep 2000
-			coords()
+			coord.s()
 			MouseMove(3240, 564, "2")
 			SendInput("{Click Up}")
 			switchToPremiere()
@@ -715,13 +718,13 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 	else
 		{
-			blockOff
-			toolCust("the sfx folder", 2000, 1)
+			block.Off()
+			tool.Cust("the sfx folder", 2000, 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
 			return
 		}
 	added:
-	coordw()
+	coord.w()
 	WinActivate("ahk_exe Adobe Premiere Pro.exe")
 	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " Premiere "list view.png")
 		{
@@ -737,8 +740,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 	else
 		{
-			blockOff()
-			toolCust("the sfx folder in premiere", 2000, 1)
+			block.Off()
+			tool.Cust("the sfx folder in premiere", 2000, 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
 			return
 		}
@@ -754,15 +757,15 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			}
 		if A_Index > 5
 			{
-				blockOff()
-				toolCust("the bin", 2000, 1)
+				block.Off()
+				tool.Cust("the bin", 2000, 1)
 				errorLog(A_ThisHotkey "::", "Couldn't find the bin", A_LineFile, A_LineNumber)
 				return
 			}
 	}
-	coords()
+	coord.s()
 	MouseMove(xpos, ypos)
-	blockOff()
+	block.Off()
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -821,7 +824,7 @@ RButton::moveWin("") ;minimise
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
-			toolCust("Couldn't copy data to clipboard")
+			tool.Cust("Couldn't copy data to clipboard")
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
@@ -838,7 +841,7 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			A_Clipboard := previous
-			toolCust("Couldn't copy data to clipboard")
+			tool.Cust("Couldn't copy data to clipboard")
 			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
@@ -862,7 +865,7 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 			else if IsAlpha(test) = false
 				nonAlphaCount += 1
 		}
-	toolCust("Uppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
+	tool.Cust("Uppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
 	if upperCount >= ((length - nonAlphaCount)/2)
 		StringtoX := StrLower(A_Clipboard)
 	else if lowerCount >= ((length - nonAlphaCount)/2)
@@ -870,7 +873,7 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 	else
 		{
 			A_Clipboard := previous
-			toolCust("Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
+			tool.Cust("Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
 			return
 		}
 	SendInput("{BackSpace}")

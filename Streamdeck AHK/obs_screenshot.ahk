@@ -14,7 +14,7 @@ if WinExist("ahk_exe obs64.exe")
                 try {
                     title := WinGetTitle("A")
                 } catch as e {
-                    toolCust("couldn't grab active window")
+                    tool.Cust("couldn't grab active window")
                 }
                 WinActivate()
                 sleep 50
@@ -23,7 +23,7 @@ if WinExist("ahk_exe obs64.exe")
                 try {
                     WinActivate(title)
                 } catch as e {
-                    toolCust("couldn't activate original window")
+                    tool.Cust("couldn't activate original window")
                 }
                 ExitApp()
             }

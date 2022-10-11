@@ -10,29 +10,29 @@ if not WinExist("ahk_exe obs64.exe")
 		WinWaitActive("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus.
 		obsLocation()
 		sleep 3000 ;waits a little bit once obs has opened so it doesn't crash
-		coords()
+		coord.s()
 		MouseGetPos &xposP, &yposP
-		blockOn()
+		block.On()
 		WinActivate("ahk_exe obs64.exe")
 		SendInput "!p"
 		sleep 200
 		SendInput "{DOWN 6}"
 		sleep 200
 		SendInput "{ENTER}"
-		coords()
-		blockOff()
+		coord.s()
+		block.Off()
 		if WinExist("ahk_exe chatterino.exe")
 			{
 				chatterinoLocationBotshi()
 				WinActivate("ahk_exe chatterino.exe")
-				coordw()
+				coord.w()
 				WinGetPos(,, &width, &height, "A")
 				if ImageSearch(&xpos, &ypos, 0, 0, width, height/ "3", "*2 " Chatterino "botshinotactive.png")
 					{
 						MouseMove(xpos, ypos)
 						SendInput("{Click}")
 					}
-				coords()
+				coord.s()
 				MouseMove(xposP, yposP)
 			}
 	}

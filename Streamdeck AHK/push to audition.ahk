@@ -17,8 +17,8 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
 		if WinExist("ahk_exe Adobe Audition.exe")
 			WinMaximize("ahk_exe Adobe Audition.exe") ;for whatever reason audition opens windowed sometimes, this just forces fullscreen
 		sleep 4000 ;audition is slow asf to load
-		coords()
-		blockOn()
+		coord.s()
+		block.On()
 		MouseGetPos &xposP, &yposP
 		MouseMove(1192, 632) ;moves the mouse to the middle of MY screen
 		SendInput "{click}" ;clicks in the middle of the screen to ensure the current audio is actually selected, audition is just jank as hell and it's easier to just add this step than to deal with it not working sometimes
@@ -36,7 +36,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
 		SendInput("^s") ;saves so the changes translate over to premiere
 		MouseMove(xposP, yposP)
 		sleep 1000
-		blockOff()
+		block.Off()
 		WinMinimize("ahk_exe Adobe Audition.exe") ;minimises audition and reactivates premiere
 		WinActivate("ahk_exe Adobe Premiere Pro.exe")
 		pauseautosave()

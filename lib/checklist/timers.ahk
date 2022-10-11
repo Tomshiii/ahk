@@ -106,7 +106,7 @@ reminder() {
         {
             if settingsToolTrack = 1
                 {
-                    toolCust("Don't forget you have the timer stopped!", "2000")
+                    tool.Cust("Don't forget you have the timer stopped!", "2000")
                     SetTimer(, -ms)
                 }
             else if settingsToolTrack = 0

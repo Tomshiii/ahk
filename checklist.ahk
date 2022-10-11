@@ -5,7 +5,7 @@
 TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.6.0.5"
+version := "v2.6.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -38,8 +38,8 @@ else
         getPremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
         if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
             {
-                blockOff()
-                toolCust("``titlecheck`` variable wasn't assigned a value")
+                block.Off()
+                tool.Cust("``titlecheck`` variable wasn't assigned a value")
                 errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")

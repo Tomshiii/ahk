@@ -28,7 +28,7 @@ check()
             SplitPath(path, &ScriptName)
             if InStr(windows, ScriptName "`n", 1,, 1) && ScriptName != "checklist.ahk" && ScriptName != "launcher.ahk"
                 {
-                    toolCust("Closing multiple instance of : " ScriptName, 3000)
+                    tool.Cust("Closing multiple instance of : " ScriptName, 3000)
                     try {
                         WinClose(window)
                     }
