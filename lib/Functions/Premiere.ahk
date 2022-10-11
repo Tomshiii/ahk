@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15
+;\\v2.15.1
 #Include General.ahk
 
 /**
@@ -1466,7 +1466,7 @@ openChecklist()
  * @param {String} tool is the hotkey you want the program to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
  * @param {String} toolorig is the hotkey you want the script to press to bring you back to your tool of choice (consider using KSA values)
  */
-mousedrag(tool, toolorig)
+mousedrag(premtool, toolorig)
 {
     if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
         return
@@ -1507,13 +1507,13 @@ mousedrag(tool, toolorig)
         else if not GetKeyState(DragKeywait, "P")
             return
         click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-        SendInput tool "{LButton Down}"
+        SendInput(premtool "{LButton Down}")
         if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             KeyWait(A_ThisHotkey)
         else
             KeyWait(DragKeywait) ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
         SendInput("{LButton Up}")
-        SendInput toolorig
+        SendInput(toolorig)
     }
     SetTimer(again, -400)
     again()

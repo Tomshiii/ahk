@@ -17,7 +17,7 @@ generate(MyRelease)
     ;checks if script was reloaded
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL)
+    deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS)
     {
         if DirExist(A_MyDocuments "\tomshi\adobe")
             {
@@ -47,7 +47,7 @@ generate(MyRelease)
             }
         if FileExist(A_MyDocuments "\tomshi\autosave.ini")
             {
-                TOOL := IniRead(A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip", "true")
+                TOOLS := IniRead(A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip", "true")
                 FileDelete(A_MyDocuments "\tomshi\autosave.ini")
             }
         if FileExist(A_MyDocuments "\tomshi\first")
@@ -77,7 +77,7 @@ generate(MyRelease)
     FC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check", "false")
     ADOBE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp", "")
     WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir", "E:\Github\ahk")
-    TOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip", "true")
+    TOOLS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip", "true")
     ADOBE_GB := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB", 45)
     ADOBE_FS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS", 5)
     AUTOMIN := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN", 5)
@@ -85,10 +85,10 @@ generate(MyRelease)
     GAMESEC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
     DARK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode", darkVerCheck)
     MULTI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC", 5)
-    deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOL) ;deletes any of the old files I used to track information
+    deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
     if FileExist(A_MyDocuments "\tomshi\settings.ini")
         FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOL "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /**

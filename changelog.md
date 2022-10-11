@@ -63,11 +63,11 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Now returns a function object and passes back all information
 - Now `Exit`'s when `try{}` fails to stop potential runtime errors when called and a variable object hasn't been passed back
 
-`toolCust()`
+`tool.Cust()`
 - Can now take custom `x` & `y` coordinates. They are unset by default and can be omitted
 - Can now accept the `WhichToolTip` parameter from the actual `ToolTip` function
 - Tooltip will now follow the cursor if no `x/y` coordinates have been passed to the function
-    - Recreating the old way can be achieved with something along the lines of; `toolCust(message,,, MouseGetPos(&x, &y) x + 15, y)`
+    - Recreating the old way can be achieved with something along the lines of; `tool.Cust(message,,, MouseGetPos(&x, &y) x + 15, y)`
 
 `zoom()`
 - Now sets it's variable presets in an array to remove the need for multiple variables
