@@ -1,8 +1,12 @@
 ;These global variables will be used across some Streamdeck AHK scripts.
-#Include "..\lib\KSA\Keyboard Shortcut Adjustments.ahk"
-#Include "..\lib\Functions\General.ahk"
-global Windows := location "\Support Files\ImageSearch\Windows\Win11\Settings\"
-global Chatterino := location "\Support Files\ImageSearch\Chatterino\"
+SetWorkingDir("..\") ;this is required for KSA to work
+#Include "..\lib\KSA\Keyboard Shortcut Adjustments.ahk" ;this is added because we need it
+#Include "..\lib\Functions\Windows.ahk" ;this is only added to prevent errors
+#Include "..\lib\Functions\switchTo.ahk" ;this is only added to prevent errors
+#Include "..\lib\Functions\Startup.ahk" ;this is only added to prevent errors
+#Include "..\lib\Functions\General.ahk" ;this is added because we need it
+global Windows := "..\Support Files\ImageSearch\Windows\Win11\Settings\"
+global Chatterino := "..\Support Files\ImageSearch\Chatterino\"
 
 ;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()

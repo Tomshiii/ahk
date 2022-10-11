@@ -1,4 +1,4 @@
-SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
+SetWorkingDir(A_ScriptDir)  ; Ensures a consistent starting directory.
 #SingleInstance Force
 #Include "%A_ScriptDir%\lib\KSA\Keyboard Shortcut Adjustments.ahk"
 #Include "%A_ScriptDir%\lib\Functions\Startup.ahk"

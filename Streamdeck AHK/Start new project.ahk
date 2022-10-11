@@ -13,9 +13,9 @@ DirCreate(SelectedFolder "\audio")
 DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
 DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
 SplitPath SelectedFolder, &name
-if WinExist("Checklist - " name)
+if WinExist("Editing Checklist -")
     {
-        tool.Cust("You already have this checklist open")
+        tool.Cust("You already have checklist.ahk open")
         goto end
     }
 Run("..\checklist.ahk")
