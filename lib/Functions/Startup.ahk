@@ -1100,7 +1100,6 @@ settingsGUI()
             Run(A_MyDocuments "\tomshi\settings.ini")
     }
 
-    
     workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
     SB := settingsGUI.Add("StatusBar")
     SB.SetText("  Current working dir: " workDir)

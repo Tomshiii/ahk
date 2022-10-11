@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13
+;\\v2.13.1
 #Include General.ahk
 
 /**
@@ -18,15 +18,14 @@ psProp(image)
         SendInput("v") ;if you are, it'll press v to go to the selection tool
     if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "InTransform.png") ;checks to see if you're already in the free transform window
         {
-            if ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " Photoshop image) ;if you are, it'll then search for your button of choice and move to it
-                MouseMove(x, y)
-            else ;if everything fails, this else will trigger
+            if !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " Photoshop image) ;if you are, it'll then search for your button of choice
                 {
                     block.Off()
                     tool.Cust("the value you wish`nto adjust_1",, 1)
                     errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                     return
                 }
+            MouseMove(x, y) ;then move to it
         }
     else
         {
@@ -34,9 +33,7 @@ psProp(image)
             ToolTip("we must wait for photoshop`nbecause it's slow as hell")
             sleep 300 ;photoshop is slow
             ToolTip("")
-            if ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " Photoshop image) ;moves to the position variable
-                MouseMove(x, y)
-            else ;if everything fails, this else will trigger
+            if !ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " Photoshop image)
                 {
                     MouseMove(xpos, ypos)
                     block.Off()
@@ -44,6 +41,7 @@ psProp(image)
                     errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                     return
                 }
+            MouseMove(x, y) ;moves to the position variable
         }
     sleep 100 ;this sleep is necessary for the "tap" functionality below (in the 'else') to work
     SendInput("{Click Down}")

@@ -309,7 +309,6 @@ floorDecimal(num,dec) => RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 hardReset()
 {
     detect()
-
     tool.Cust("All active ahk scripts are being rerun")
     value := WinGetList("ahk_class AutoHotkey")
     for this_value in value

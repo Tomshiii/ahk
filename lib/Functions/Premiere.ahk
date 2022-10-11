@@ -342,55 +342,50 @@ zoom()
     chloe := InStr(premCheck, "chloe")
     if chloe != 0
         {
+            tool.Cust("zoom " chloeTog+1 "/3")
             if chloeTog = 0
                 {
-                    tool.Cust("zoom " chloeTog+1 "/3")
                     x := chloeXYS[1]
                     y := chloeXYS[2]
                     scale := chloeXYS[3]
-                    chloeTog += 1
-                    goto endPeople
                 }
             if chloeTog = 1
                 {
-                    tool.Cust("zoom " chloeTog+1 "/3")
                     x := chloeZoomXYS[1]
                     y := chloeZoomXYS[2]
                     scale := chloeZoomXYS[3]
-                    chloeTog += 1
-                    goto endPeople
                 }
             if chloeTog = 2
                 {
-                    tool.Cust("zoom " chloeTog+1 "/3")
                     x := chloetemp[1]
                     y := chloetemp[2]
                     scale := chloetemp[3]
-                    chloeTog := 0
-                    goto endPeople
                 }
+            chloeTog += 1
+            if chloeTog > 2
+                chloeTog := 0
+            goto endPeople
         }
     alex := InStr(premCheck, "alex")
     if alex != 0
         {
+            tool.Cust("zoom " alexTog+1 "/2")
             if alexTog = 0
                 {
-                    tool.Cust("zoom " alexTog+1 "/2")
                     x := alexXYS[1]
                     y := alexXYS[2]
                     scale := alexXYS[3]
-                    alexTog += 1
-                    goto endPeople
                 }
             if alexTog = 1
                 {
-                    tool.Cust("zoom " alexTog+1 "/2")
                     x := alexZoomXYS[1]
                     y := alexZoomXYS[2]
                     scale := alexZoomXYS[3]
-                    alexTog -= 1
-                    goto endPeople
                 }
+            alexTog += 1
+            if alexTog > 1
+                alexTog := 0
+            goto endPeople
         }
     /* dangers := InStr(premCheck, "dangers") ;dangers is a video by video basis
     if dangers != 0
@@ -420,9 +415,7 @@ zoom()
                     return
                 }
         }
-    if ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") || ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "\motion3.png") ;moves to the "video" section of the effects control window tab
-        goto next
-    else
+    if !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") && !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion3.png")
         {
             MouseMove(xpos, ypos)
             block.Off()
@@ -430,27 +423,26 @@ zoom()
             errorLog(A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
             return
         }
-    next:
     MouseMove(motionX + "10", motionY + "10")
     SendInput("{Click}")
     MouseMove(xpos, ypos)
     SendInput("{Tab 2}")
     if x = 0
         {
+            cleanCopy()
+            {
+                A_Clipboard := ""
+                SendInput("^c")
+                ClipWait()
+            }
             previousClipboard := A_Clipboard
-            A_Clipboard := ""
-            SendInput("^c")
-            ClipWait()
+            cleanCopy()
             x := A_Clipboard
             SendInput("{Tab}")
-            A_Clipboard := ""
-            SendInput("^c")
-            ClipWait()
+            cleanCopy()
             y := A_Clipboard
             SendInput("{Tab}")
-            A_Clipboard := ""
-            SendInput("^c")
-            ClipWait()
+            cleanCopy()
             scale := A_Clipboard
             block.Off()
             SendInput("{Enter}")
@@ -558,9 +550,7 @@ valuehold(filepath, optional := 0)
         sleep 50
     }
     colour:
-    if PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
-        MouseMove(xcol + optional, ycol)
-    else
+    if !PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
         {
             block.Off()
             tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
@@ -569,6 +559,7 @@ valuehold(filepath, optional := 0)
             MouseMove(xpos, ypos)
             return
         }
+    MouseMove(xcol + optional, ycol)
     sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
     ;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
     if GetKeyState(A_ThisHotkey, "P")
@@ -584,12 +575,7 @@ valuehold(filepath, optional := 0)
         }
     else
         {
-            if ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust
-                {
-                    MouseMove(x2, y2)
-                    SendInput("{Click}")
-                }
-            else ;if everything fails, this else will trigger
+            if !ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
                 {
                     if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
                         {
@@ -604,6 +590,8 @@ valuehold(filepath, optional := 0)
                     errorLog(A_ThisFunc "()", "Failed to find reset button", A_LineFile, A_LineNumber)
                     return
                 }
+            MouseMove(x2, y2)
+            SendInput("{Click}")
             MouseMove(xpos, ypos)
             block.Off()
         }
@@ -729,194 +717,191 @@ audioDrag(sfxName)
     ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
     coord.s()
     SendInput(selectionPrem)
-    if ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
-        {
-            block.On()
-            coord.s()
-            MouseGetPos(&xpos, &ypos)
-            if ImageSearch(&listx, &listy, 3082, 664, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
-                {
-                    MouseMove(listx, listy)
-                    SendInput("{Click}")
-                    sleep 100
-                }
-            loop {
-                SendInput(projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
-                SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
-                ;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
-                SendInput(findBox)
-                CaretGetPos(&findx)
-                if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-                    {
-                        loop 40 {
-                                sleep 30
-                                CaretGetPos(&findx)
-                                if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
-                                    {
-                                        block.Off()
-                                        tool.Cust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
-                                        errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
-                                        return
-                                    }
-                            } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                    }
-                SendInput("^a" "+{BackSpace}")
-                SendInput(sfxName)
-                sleep 250 ;the project search is pretty slow so you might need to adjust this
-                coord.w()
-                if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") || ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
-                    {
-                        MouseMove(vlx, vly)
-                        sleep 100
-                        SendInput("{Click Down}")
-                        sleep 100
-                    }
-                else
-                    {
-                        block.Off()
-                        tool.Cust("audio image", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                        errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineFile, A_LineNumber)
-                        coord.s()
-                        MouseMove(xpos, ypos)
-                        return
-                    }
-                coord.s()
-                MouseMove(xpos, ypos)
-                SendInput("{Click Up}")
-                SendInput(timelineWindow)
-                ;MouseMove(30,0,, "R")
-                sleep 50
-                ;MouseGetPos(&colourX, &colourY)
-                colour := PixelGetColor(xpos + 30, ypos)
-                if (
-                     colour = 0x156B4C || colour = 0x1B8D64 || colour = 0x1c7d5a|| colour = 0x1D7E5B || colour = 0x1D986C || colour = 0x1E7F5C || colour = 0x1F805D || colour = 0x1FA072 || colour = 0x1FA373 || colour = 0x20815E || colour = 0x21825F || colour = 0x23AB83 || colour = 0x248562 || colour = 0x258663 || colour = 0x268764 || colour = 0x298A67 || colour = 0x29D698 || colour = 0x2A8B68 || colour = 0x2A8D87 || colour = 0x2B8C69 || colour = 0x3A9B78 || colour = 0x3DFFE4 || colour = 0x44A582 || colour = 0x457855 || colour = 0x47A582 || colour = 0x4AAB88 || colour = 0x5C67F9 || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD0E1DB || colour = 0xD4F7EA || colour = 0xFDFDFD || colour = 0xFEFEFE || colour = 0xFFFFFF  ||
-                     ;there needs to be a trailing || for any block that isn't the final
-                    
-                    colour = 0xE40000 || colour = 0xEEE1E1  || ;colours for the red box
-
-                    colour = 0x292929 || colour = 0x2D2D2D || colour = 0x3B3B3B || colour = 0x404040 || colour = 0x454545 || colour = 0x4A4A4A || colour = 0x585858 || colour = 0x606060 || colour = 0x646464 || colour = 0xA7ADAB || colour = 0xB1B1B1 || colour = 0xCCCCCC|| colour = 0xD2D2D2 || colour = 0xEFEFEF  ;colours for the fx symbol box
-                )
-                    break
-                errorLog(A_ThisFunc "()", "Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, A_LineFile, A_LineNumber)
-                if A_Index > 2
-                    {
-                        block.Off()
-                        tool.Cust("Couldn't drag the file to the timeline`ncolour was " colour)
-                        return
-                    }
-            }
-            block.Off()
-            if sfxName = "bleep"
-                {
-                    sleep 50
-                    SendInput(selectionPrem)
-                    MouseGetPos(&delx, &dely)
-                    MouseMove(10, 0,, "R")
-                    sleep 50
-                    if A_Cursor != "Arrow"
-                        loop 12 {
-                            MouseMove(5, 0, 2, "R")
-                            if A_Cursor = "Arrow"
-                                {
-                                    MouseMove(5, 0, 2, "R")
-                                    sleep 25
-                                    break
-                                }
-                            sleep 50
-                        }
-                    SendInput("{Click}")
-                    sleep 50
-                    SendInput(gainAdjust)
-                    SendInput("-20")
-                    SendInput("{Enter}")
-                    WinWaitClose("Audio Gain")
-                    MouseMove(xpos, ypos)
-                    trackNumber := 2
-                    sleep 100
-                    SendInput(cutPrem)
-                    start := A_TickCount
-                    sec := 0
-                    loop {
-                        ;check to see if the user wants the bleep on a track between 1-9
-                        getlastHotkey := A_PriorKey
-                        if getlastHotkey = ""
-                            goto skip
-                        if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
-                            trackNumber := getlastHotkey
-                        skip:
-                        sleep 50
-                        if A_Index > 160 ;built in timeout
-                            {
-                                block.Off()
-                                tool.Cust(A_ThisFunc " timed out due to no user interaction", 2000)
-                                errorLog(A_ThisFunc "()", "timed out due to no user interaction", A_LineFile, A_LineNumber)
-                                return
-                            }
-                        if ((A_TickCount - start) >= 1000)
-                            {
-                                start += 1000
-                                sec += 1
-                            }
-                        secRemain := 8 - sec
-                        ToolTip("This function will attempt to drag your bleep to:`n" A_Tab A_Tab "Track " trackNumber "`n`nPress another number key to move to a different track`nThe function will continue once you've cut the track`n" secRemain "s remaining")
-                    } until GetKeyState("LButton", "P")
-                    ToolTip("")
-                    block.On()
-                    sleep 50
-                    SendInput(selectionPrem)
-                    MouseGetPos(&delx, &dely)
-                    MouseMove(xpos + 10, ypos)
-                    sleep 500
-                    SendInput("{Click Down}")
-                    MouseGetPos(&refx, &refy)
-                    if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_2.png")
-                        MouseMove(refx, trackY, 2)
-                    else
-                        {
-                            block.Off()
-                            tool.Cust("Couldn't determine the Y value of desired track")
-                            errorLog(A_ThisFunc "()", "Couldn't determine the Y value of desired track", A_LineFile, A_LineNumber)
-                            return
-                        }
-                    SendInput("{Click Up}")
-                    sleep 50
-                    MouseMove(delx + 10, dely, 2)
-                    sleep 200
-                    if A_Cursor != "Arrow"
-                        loop 12 {
-                            MouseMove(5, 0, 2, "R")
-                            if A_Cursor = "Arrow"
-                                {
-                                    MouseMove(5, 0, 2, "R")
-                                    sleep 25
-                                    break
-                                }
-                            sleep 50
-                        }
-                    SendInput("{Click}")
-                    SendInput("{BackSpace}")
-                    MouseMove(xpos + 10, ypos)
-                    Sleep(25)
-                    if A_Cursor != "Arrow"
-                        loop 12 {
-                            MouseMove(5, 0, 2, "R")
-                            if A_Cursor = "Arrow"
-                                {
-                                    MouseMove(5, 0, 2, "R")
-                                    sleep 25
-                                    break
-                                }
-                            sleep 50
-                        }
-                    block.Off()
-                    ToolTip("")
-                    return
-                }
-        }
-    else
+    if !ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
         {
             tool.Cust("you haven't opened the bin", 2000)
             errorLog(A_ThisFunc "()", "User hasn't opened the required bin", A_LineFile, A_LineNumber)
+        }
+    block.On()
+    coord.s()
+    MouseGetPos(&xpos, &ypos)
+    if ImageSearch(&listx, &listy, 3082, 664, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
+        {
+            MouseMove(listx, listy)
+            SendInput("{Click}")
+            sleep 100
+        }
+    loop {
+        SendInput(projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
+        SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
+        ;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
+        SendInput(findBox)
+        CaretGetPos(&findx)
+        if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+            {
+                loop 40 {
+                        sleep 30
+                        CaretGetPos(&findx)
+                        if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
+                            {
+                                block.Off()
+                                tool.Cust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
+                                errorLog(A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
+                                return
+                            }
+                    } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
+            }
+        SendInput("^a" "+{BackSpace}")
+        SendInput(sfxName)
+        sleep 250 ;the project search is pretty slow so you might need to adjust this
+        coord.w()
+        if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") || ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
+            {
+                MouseMove(vlx, vly)
+                sleep 100
+                SendInput("{Click Down}")
+                sleep 100
+            }
+        else
+            {
+                block.Off()
+                tool.Cust("audio image", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog(A_ThisFunc "()", "Couldn't find the audio image", A_LineFile, A_LineNumber)
+                coord.s()
+                MouseMove(xpos, ypos)
+                return
+            }
+        coord.s()
+        MouseMove(xpos, ypos)
+        SendInput("{Click Up}")
+        SendInput(timelineWindow)
+        ;MouseMove(30,0,, "R")
+        sleep 50
+        ;MouseGetPos(&colourX, &colourY)
+        colour := PixelGetColor(xpos + 30, ypos)
+        if (
+                colour = 0x156B4C || colour = 0x1B8D64 || colour = 0x1c7d5a|| colour = 0x1D7E5B || colour = 0x1D986C || colour = 0x1E7F5C || colour = 0x1F805D || colour = 0x1FA072 || colour = 0x1FA373 || colour = 0x20815E || colour = 0x21825F || colour = 0x23AB83 || colour = 0x248562 || colour = 0x258663 || colour = 0x268764 || colour = 0x298A67 || colour = 0x29D698 || colour = 0x2A8B68 || colour = 0x2A8D87 || colour = 0x2B8C69 || colour = 0x3A9B78 || colour = 0x3DFFE4 || colour = 0x44A582 || colour = 0x457855 || colour = 0x47A582 || colour = 0x4AAB88 || colour = 0x5C67F9 || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD0E1DB || colour = 0xD4F7EA || colour = 0xFDFDFD || colour = 0xFEFEFE || colour = 0xFFFFFF  ||
+                ;there needs to be a trailing || for any block that isn't the final
+            
+            colour = 0xE40000 || colour = 0xEEE1E1  || ;colours for the red box
+
+            colour = 0x292929 || colour = 0x2D2D2D || colour = 0x3B3B3B || colour = 0x404040 || colour = 0x454545 || colour = 0x4A4A4A || colour = 0x585858 || colour = 0x606060 || colour = 0x646464 || colour = 0xA7ADAB || colour = 0xB1B1B1 || colour = 0xCCCCCC|| colour = 0xD2D2D2 || colour = 0xEFEFEF  ;colours for the fx symbol box
+        )
+            break
+        errorLog(A_ThisFunc "()", "Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, A_LineFile, A_LineNumber)
+        if A_Index > 2
+            {
+                block.Off()
+                tool.Cust("Couldn't drag the file to the timeline`ncolour was " colour)
+                return
+            }
+    }
+    block.Off()
+    if sfxName = "bleep"
+        {
+            sleep 50
+            SendInput(selectionPrem)
+            MouseGetPos(&delx, &dely)
+            MouseMove(10, 0,, "R")
+            sleep 50
+            if A_Cursor != "Arrow"
+                loop 12 {
+                    MouseMove(5, 0, 2, "R")
+                    if A_Cursor = "Arrow"
+                        {
+                            MouseMove(5, 0, 2, "R")
+                            sleep 25
+                            break
+                        }
+                    sleep 50
+                }
+            SendInput("{Click}")
+            sleep 50
+            SendInput(gainAdjust)
+            SendInput("-20")
+            SendInput("{Enter}")
+            WinWaitClose("Audio Gain")
+            MouseMove(xpos, ypos)
+            trackNumber := 2
+            sleep 100
+            SendInput(cutPrem)
+            start := A_TickCount
+            sec := 0
+            loop {
+                ;check to see if the user wants the bleep on a track between 1-9
+                getlastHotkey := A_PriorKey
+                if getlastHotkey = ""
+                    goto skip
+                if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
+                    trackNumber := getlastHotkey
+                skip:
+                sleep 50
+                if A_Index > 160 ;built in timeout
+                    {
+                        block.Off()
+                        tool.Cust(A_ThisFunc " timed out due to no user interaction", 2000)
+                        errorLog(A_ThisFunc "()", "timed out due to no user interaction", A_LineFile, A_LineNumber)
+                        return
+                    }
+                if ((A_TickCount - start) >= 1000)
+                    {
+                        start += 1000
+                        sec += 1
+                    }
+                secRemain := 8 - sec
+                ToolTip("This function will attempt to drag your bleep to:`n" A_Tab A_Tab "Track " trackNumber "`n`nPress another number key to move to a different track`nThe function will continue once you've cut the track`n" secRemain "s remaining")
+            } until GetKeyState("LButton", "P")
+            ToolTip("")
+            block.On()
+            sleep 50
+            SendInput(selectionPrem)
+            MouseGetPos(&delx, &dely)
+            MouseMove(xpos + 10, ypos)
+            sleep 500
+            SendInput("{Click Down}")
+            MouseGetPos(&refx, &refy)
+            if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_2.png")
+                MouseMove(refx, trackY, 2)
+            else
+                {
+                    block.Off()
+                    tool.Cust("Couldn't determine the Y value of desired track")
+                    errorLog(A_ThisFunc "()", "Couldn't determine the Y value of desired track", A_LineFile, A_LineNumber)
+                    return
+                }
+            SendInput("{Click Up}")
+            sleep 50
+            MouseMove(delx + 10, dely, 2)
+            sleep 200
+            if A_Cursor != "Arrow"
+                loop 12 {
+                    MouseMove(5, 0, 2, "R")
+                    if A_Cursor = "Arrow"
+                        {
+                            MouseMove(5, 0, 2, "R")
+                            sleep 25
+                            break
+                        }
+                    sleep 50
+                }
+            SendInput("{Click}")
+            SendInput("{BackSpace}")
+            MouseMove(xpos + 10, ypos)
+            Sleep(25)
+            if A_Cursor != "Arrow"
+                loop 12 {
+                    MouseMove(5, 0, 2, "R")
+                    if A_Cursor = "Arrow"
+                        {
+                            MouseMove(5, 0, 2, "R")
+                            sleep 25
+                            break
+                        }
+                    sleep 50
+                }
+            block.Off()
+            ToolTip("")
+            return
         }
 }
 
