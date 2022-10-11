@@ -526,6 +526,10 @@ focusWork := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "focus w
 */
 collapseFold := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "collapse folders")
 
+/**
+ * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+*/
+focusExplorerWin := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Hotkeys", "focus explorer window")
 
 
 ;[ImageSearchCoords]

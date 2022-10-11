@@ -54,6 +54,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `moveXorY()` tooltips will no longer flicker
 - `moveTab()` now makes sure the monitor objects have been set 
 - Moved `getPremName()`, `getAEName()` & `getID()` => `Windows.ahk`
+- `vscode()` now uses a `KSA` value to activate the `explorer window` instead of using an imagesearch. This will be less prone to breaking as everytime vscode updates, chromatic aberration on the icon changes, causing the function to break 
 
 `audioDrag()`
 - Added more colours
@@ -68,6 +69,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Can now accept the `WhichToolTip` parameter from the actual `ToolTip` function
 - Tooltip will now follow the cursor if no `x/y` coordinates have been passed to the function
     - Recreating the old way can be achieved with something along the lines of; `tool.Cust(message,,, MouseGetPos(&x, &y) x + 15, y)`
+- Timeout variable can now accept `seconds` instead of only `ms` by using a non integer, ie; `2.5` or `0.5`
 
 `zoom()`
 - Now sets it's variable presets in an array to remove the need for multiple variables
