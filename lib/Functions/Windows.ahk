@@ -338,7 +338,7 @@ isFullscreen(&title, &full, window := false)
 			full := 0
 	} catch as e {
 		tool.Cust(A_ThisFunc "() couldn't determine the active window")
-		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
+		errorLog(A_ThisFunc "()", "Couldn't determine the active window", A_LineFile, A_LineNumber)
         block.Off()
 		Exit
 	}

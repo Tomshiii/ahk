@@ -179,7 +179,7 @@ aeScaleAndPos()
             {
                 block.Off()
                 tool.Cust("The Scale property after " A_Index " attempts",, 1)
-                errorLog(A_ThisFunc, "Couldn't find the Scale property", A_LineFile, A_LineNumber)
+                errorLog(A_ThisFunc "()", "Couldn't find the Scale property", A_LineFile, A_LineNumber)
                 return
             }
     }
