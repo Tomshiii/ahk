@@ -77,8 +77,7 @@ scale(amount)
  */
 pauseautosave()
 {
-	mode := A_TitleMatchMode
-	detect(true, mode)
+	detect(true, 2)
 	if !WinExist("autosave.ahk - AutoHotkey")
 		{
 			tool.Cust("autosave ahk script isn't open")
@@ -86,7 +85,7 @@ pauseautosave()
 		}
 	WM_COMMAND := 0x0111
 	ID_FILE_PAUSE := 65403
-	PostMessage WM_COMMAND, ID_FILE_PAUSE,,, location "\autosave.ahk ahk_class AutoHotkey"
+	PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "\autosave.ahk ahk_class AutoHotkey"
 }
 
 /**
@@ -94,8 +93,7 @@ pauseautosave()
  */
 pausewindowmax()
 {
-	mode := A_TitleMatchMode
-	detect(true, mode)
+	detect(true, 2)
 	if !WinExist("adobe fullscreen check.ahk - AutoHotkey")
 		{
 			tool.Cust("fullscreen ahk script isn't open")
@@ -103,5 +101,5 @@ pausewindowmax()
 		}
 	WM_COMMAND := 0x0111
 	ID_FILE_PAUSE := 65403
-	PostMessage WM_COMMAND, ID_FILE_PAUSE,,, location "\adobe fullscreen check.ahk ahk_class AutoHotkey"
+	PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "\adobe fullscreen check.ahk ahk_class AutoHotkey"
 }
