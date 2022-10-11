@@ -17,7 +17,7 @@ close(*) {
 }
 
 ;defining what happens if the script is somehow opened a second time and the function is forced to close
-OnExit ExitFunc
+OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode)
 {
     if ExitReason = "Single"

@@ -93,6 +93,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Fixed `End::` erroring out if no project is open
 - `Keyboard Shortcuts Adjustments.ahk` no longer uses a hardcoded dir for the `location` variable
 - Removed `replaceChecklist.ahk` as `checklist.ahk` runs from the root dir now
+- All timer scripts that make use of `SetTimer` now have an `OnExit` to stop all timers in the event of a reload/error/new instance
 
 `right click premiere.ahk`
 - Some loops now use `while` syntaxing

@@ -38,3 +38,13 @@ check()
     end:
     SetTimer(, -ms)
 }
+
+;defining what happens if the script is somehow opened a second time and the function is forced to close
+OnExit(ExitFunc)
+ExitFunc(ExitReason, ExitCode)
+{
+    if ExitReason = "Single" || "Close" || "Reload" || "Error"
+        {
+            SetTimer(check, 0)
+        }
+}

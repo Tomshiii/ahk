@@ -411,3 +411,15 @@ getVer()
     version := SubStr(releaseString, foundpos, end)
     return version ;before returning the version back to the function
 }
+
+;defining what happens if the script is somehow opened a second time and the function is forced to close
+OnExit(ExitFunc)
+ExitFunc(ExitReason, ExitCode)
+{
+    if ExitReason = "Single" || "Close" || "Reload" || "Error"
+        {
+            SetTimer(check, 0)
+            SetTimer(StopWatch, 0)
+            SetTimer(save, 0)
+        }
+}
