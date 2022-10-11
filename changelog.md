@@ -92,16 +92,13 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `=>` notation has been used in some places
 - Fixed `End::` erroring out if no project is open
 - `Keyboard Shortcuts Adjustments.ahk` no longer uses a hardcoded dir for the `location` variable
+- Removed `replaceChecklist.ahk` as `checklist.ahk` runs from the root dir now
 
 `right click premiere.ahk`
 - Some loops now use `while` syntaxing
 - Removed repeat code
 - Added a timer that will check for and unstick the `Ctrl` key
 
-`replaceChecklist.ahk`
-- Will now ignore backup folders
-- Fixed bug causing "Yes to All" to not function correctly
-- Fixed typo causing this script to create a different `\backup` folder than `checklist.ahk`
 
 `checklist.ahk`
 
