@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.1
+;\\v2.14.2
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -538,7 +538,7 @@ getID(&id)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.12.5
+;		discord \\ Last updated: v2.14.2
 ;
 ; ===========================================================================================================================================
 /**
@@ -593,7 +593,7 @@ disc(button)
                     ;ToolTip("")
                     MouseMove(xdir, ydir) ;moves to the @ location
                     Click
-                    goto end
+                    break
                 }
             ;ToolTip(A_Index)
             if A_Index > 10
@@ -613,13 +613,13 @@ disc(button)
  */
 discLocation()
 {
-    position0 := 4480, -123, 1081, 1537 ;we use position0 as a reference later to compare against another value. This is the same coordinates as disc0() down below, make sure you change THEM BOTH
-    position1 := -1080, 75, 1080, 1537 ;we use position1 as a reference later to compare against another value. This is the same coordinates as disc1() down below, make sure you change THEM BOTH
+    position0 := [4480, -123, 1081, 1537] ;we use position0 as a reference later to compare against another value.
+    position1 := [-1080, 75, 1080, 1537] ;we use position1 as a reference later to compare against another value.
     disc0() { ;define your first (defult) position here
-        WinMove(4480, -123, 1081, 1537, "ahk_exe Discord.exe")
+        WinMove(position0[1], position0[2], position0[3], position0[4], "ahk_exe Discord.exe")
     }
     disc1() { ;define your second position here
-        WinMove(-1080, 75, 1080, 1537, "ahk_exe Discord.exe")
+        WinMove(position1[1], position1[2], position1[3], position1[4], "ahk_exe Discord.exe")
     }
     try { ;this try is here as if you close a window, then immediately try to fire this function there is no "original" window
         original := WinGetID("A")
@@ -708,71 +708,46 @@ discUnread(which := "")
         }
 	MouseGetPos(&xPos, &yPos)
 	WinGetPos(,,, &height)
-	if ImageSearch(&x, &y, 0 + x2, 0, 50 + y2, height, "*2 " Discord "\unread" which ".png")
+	if !ImageSearch(&x, &y, 0 + x2, 0, 50 + y2, height, "*2 " Discord "\unread" which ".png")
 		{
-			MouseMove(x + 20, y, 2)
-			SendInput("{Click}")
-			MouseMove(xPos, yPos, 2)
-		}
-	else
-		{
-			tool.Cust("any unread " message,, 1)
-		}
+            tool.Cust("any unread " message,, 1)
+            return
+        }
+    MouseMove(x + 20, y, 2)
+    SendInput("{Click}")
+    MouseMove(xPos, yPos, 2)
 }
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.14.1
+;		VSCode \\ Last updated: v2.14.2
 ;
 ; ===========================================================================================================================================
 /**
   * A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
-  
-  * It will also either work or not depending on what theme you have installed, I am currently using `one dark pro`3
-
-  * It will also depend on how "zoomed in" you have vscode
-
-  * It also functions differently if you only have 1 repo cloned instead of multiple
-  * @param {Integer} script is the amount of pixels down the mouse must move from the collapse button to open the script I want.
+  * @param {Integer} script is the amount of down inputs the script needs to input to get to the required script
  */
-vscode(script := 0)
+vscode(script?)
 {
     getHotkeys(&first, &second)
     KeyWait(first)
     coord.w()
     block.On()
-    MouseGetPos(&x, &y)
     SendInput(focusExplorerWin) ;highlight the explorer window
-    SendInput(focusWork) ;vscode hides the buttons now all of a sudden.. thanks vscode
-    if ImageSearch(&colX, &colY, 0, 0, 460, 1390, "*2 " VSCodeImage "folderDrop2.png") ;checks to see if you already have the first repo open
-        {
-            if ImageSearch(&dropX, &dropY, colX, colY, colX + 50, A_ScreenHeight, "*2 " VSCodeImage "dropdown.png") ;searches the screen to see if you have any folder tree's open
-                SendInput(collapseFold) ;and collapses them if you do
-            MouseMove(colX, colY) ;moves the mouse into position
-            goto skip
-        }
+    SendInput(focusWork)
     SendInput(collapseFold collapseFold) ;otherwise we close all repos
     sleep 50
-    if !ImageSearch(&firstX, &firstY, 0, 0, 460, 1390, "*2 " VSCodeImage "folderDrop.png") && !ImageSearch(&firstX, &firstY, 0, 0, 460, 1390, "*2 " VSCodeImage "folderDrop_2.png") ;then search for the drop down repo icon
+    SendInput("{Up 2}{Enter}") ;this highlights the top repo in the workspace
+    if A_ThisHotkey = functionHotkey ;this opens my \functions folder
         {
-            tool.Cust("the folder dropdown UI",, 1)
-            errorLog(A_ThisFunc "()", "Couldn't find the folder dropdown UI", A_LineFile, A_LineNumber)
+            SendInput("{Down 4}{Enter}")
+            SendInput("{Down 2}{Enter}")
             block.Off()
             return
         }
-    MouseMove(firstX, firstY)
-    SendInput("{Click}") ;and expand it
-    skip:
-    if A_ThisHotkey = functionHotkey ;this opens my \functions folder as well as opening my main functions script
-        {
-            MouseGetPos(&origx, &origy)
-            MouseMove(0, 105,, "R")
-            SendInput("{Click}")
-            MouseMove(origx, origy + 180)
-        }
-    MouseMove(0, script,, "R")
-    SendInput("{Click}")
-    MouseMove(x, y)
+    SendInput("{Down " script "}")
+    sleep 25
+    SendInput("{Enter}")
     SendInput(focusCode)
     block.Off()
 }

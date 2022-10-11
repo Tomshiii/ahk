@@ -54,7 +54,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `moveXorY()` tooltips will no longer flicker
 - `moveTab()` now makes sure the monitor objects have been set 
 - Moved `getPremName()`, `getAEName()` & `getID()` => `Windows.ahk`
-- `vscode()` now uses a `KSA` value to activate the `explorer window` instead of using an imagesearch. This will be less prone to breaking as everytime vscode updates, chromatic aberration on the icon changes, causing the function to break 
+- `vscode()` now uses no `ImageSearch` and instead uses nothing but hotkeys
 
 `audioDrag()`
 - Added more colours
@@ -99,10 +99,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Removed repeat code
 - Added a timer that will check for and unstick the `Ctrl` key
 
-
-`checklist.ahk`
-
-Alongside the changes listed above;
+`checklist.ahk`-- Alongside the changes listed above;
 - Fixed not creating newly added `checklist.ini` settings
 - Fixed `H:` number getting cut off when above 10 hours
 - Now uses `floorDecimal()` for the `Hour` text so it ticks over more accurately
