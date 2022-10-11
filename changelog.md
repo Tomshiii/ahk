@@ -87,10 +87,14 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Added `commLocation :=` to `Keyboard Shortcut Adjustments` for the user to manually input their own commission working dir (if they have one) so my scripts don't need to be hard coded with my own dir
     - `QMK Keyboard.ahk` `h::` now attempts to open `commLocation` if there is no Adobe project open
 - Some loops now use `until` syntaxing
-- Some loops in `right click premiere.ahk` now use `while` syntaxing
 - `=>` notation has been used in some places
 - Fixed `End::` erroring out if no project is open
 - `Keyboard Shortcuts Adjustments.ahk` no longer uses a hardcoded dir for the `location` variable
+
+`right click premiere.ahk`
+- Some loops now use `while` syntaxing
+- Removed repeat code
+- Added a timer that will check for and unstick the `Ctrl` key
 
 `replaceChecklist.ahk`
 - Will now ignore backup folders

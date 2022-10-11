@@ -41,8 +41,9 @@ playhead := 0x2D8CEB
 
 Rbutton::
 {
-	if GetKeyState("Ctrl")
-		return
+	if GetKeyState("Ctrl") {
+		SetTimer(checkCtrl, -1)
+	}
 	MouseGetPos &xpos, &ypos
 	Color := PixelGetColor(xpos, ypos)
 	color2 := PixelGetColor(xpos + 1, ypos)
@@ -54,6 +55,7 @@ Rbutton::
 			;BREAKTHROUGH -- it looks like a middle mouse click will BRING FOCUS TO a panel without doing ANYTHING ELSE like selecting or going through tabs or anything. Unfortunately, i still can't know with AHK which panel is already in focus.
 			if GetKeyState("Rbutton", "P")
 				{
+					colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
 					click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
 					if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead
 					{
@@ -72,40 +74,18 @@ Rbutton::
 							SendInput("{LButton Down}")
 							block.Off()
 							;ToolTip("left button pressed") ;testing
-							while GetKeyState("Rbutton", "P")
-								{
-									static left := 0
-									static xbutton := 0
-									sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
-									if GetKeyState("LButton", "P")
-										left := 1
-									if GetKeyState("XButton2", "P")
-										{
-											xbutton := 1
-											left := 1
-										}
-									if GetKeyState("Ctrl")
-										break
-								}
-							;ToolTip("")
-							SendInput("{LButton Up}")
-							if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
-								{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
-									SendInput(playStop)
-									if xbutton > 0 ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
-										SendInput(speedUpPlayback)
-									left := 0
-									xbutton := 0
-								}
-							return
+							colourOrNorm := "colour"
 						}
 					while GetKeyState("Rbutton", "P")
 						{
-							if GetKeyState("Ctrl")
-								break
+							if GetKeyState("Ctrl") {
+									SetTimer(checkCtrl, -2500)
+									break
+								}
 							static left := 0
 							static xbutton := 0
-							SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
+							if colourOrNorm != "colour"
+								SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 							sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
 							if GetKeyState("LButton", "P") ;this code and the check below are additions by Tomshi
 								left := 1
@@ -115,6 +95,8 @@ Rbutton::
 									left := 1
 								}
 						}
+					if colourOrNorm = "colour"
+						SendInput("{LButton Up}")
 					if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
 						{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
 							SendInput(playStop)
@@ -129,4 +111,15 @@ Rbutton::
 		}
 	else
 		sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
+}
+
+/**
+ * This function is to help stop the Ctrl modifier from getting stuck which can sometimes happen while using this script. Testing for this is difficult and as such, this function may slowly change over time
+ */
+checkCtrl()
+{
+	SendInput("{Ctrl Up}")
+	tool.Wait(1)
+	tool.Cust("ctrl key stuck, lifting", 2000)
+	SetTimer(, 0)
 }
