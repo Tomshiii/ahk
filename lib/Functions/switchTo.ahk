@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.17
+;\\v2.17.1
 #Include General.ahk
 
 /**
@@ -7,7 +7,7 @@
  */
 switchToExplorer()
 {
-    if not WinExist("ahk_class CabinetWClass") && !WinExist("ahk_class #32770")
+    if !WinExist("ahk_class CabinetWClass") && !WinExist("ahk_class #32770")
         {
             Run("explorer.exe")
             WinWait("ahk_class CabinetWClass")
@@ -41,7 +41,7 @@ closeOtherWindow(program)
  */
 switchToPremiere()
 {
-    if not WinExist("ahk_class Premiere Pro")
+    if !WinExist("ahk_class Premiere Pro")
         Run(A_ScriptDir "\Support Files\shortcuts\Adobe Premiere Pro.exe.lnk")
     else if WinExist("ahk_class Premiere Pro")
         WinActivate("ahk_class Premiere Pro")
@@ -65,7 +65,7 @@ switchToAE()
             titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             dashLocation := InStr(Name, "-")
             length := StrLen(Name) - dashLocation
-            if not titlecheck
+            if !titlecheck
                 {
                     runae()
                     return
@@ -120,7 +120,7 @@ switchToDisc()
 {
     
     move() => WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe") ;creating a function out of the winmove so you can easily adjust the value
-    if not WinExist("ahk_exe Discord.exe")
+    if !WinExist("ahk_exe Discord.exe")
         {
             Run("C:\Users\" A_UserName "\AppData\Local\Discord\Update.exe --processStart Discord.exe")
             WinWait("ahk_exe Discord.exe")
@@ -158,7 +158,7 @@ switchToPhoto()
  */
 switchToFirefox()
 {
-    if not WinExist("ahk_class MozillaWindowClass")
+    if !WinExist("ahk_class MozillaWindowClass")
         Run("firefox.exe")
     if WinActive("ahk_exe firefox.exe")
         switchToOtherFirefoxWindow()
@@ -231,7 +231,7 @@ firefoxTap()
  */
 switchToVSC()
 {
-    if not WinExist("ahk_exe Code.exe")
+    if !WinExist("ahk_exe Code.exe")
         Run("C:\Program Files\Microsoft VS Code\Code.exe")
         GroupAdd("Code", "ahk_class Chrome_WidgetWin_1")
     if WinActive("ahk_exe Code.exe")
@@ -245,7 +245,7 @@ switchToVSC()
  */
 switchToGithub()
 {
-    if not WinExist("ahk_exe GitHubDesktop.exe")
+    if !WinExist("ahk_exe GitHubDesktop.exe")
         Run("C:\Users\" A_UserName "\AppData\Local\GitHubDesktop\GitHubDesktop.exe")
         GroupAdd("git", "ahk_class Chrome_WidgetWin_1")
     if WinActive("ahk_exe GitHubDesktop.exe")
@@ -259,7 +259,7 @@ switchToGithub()
  */
 switchToStreamdeck()
 {
-    if not WinExist("ahk_exe StreamDeck.exe")
+    if !WinExist("ahk_exe StreamDeck.exe")
         Run(A_ProgramFiles "\Elgato\StreamDeck\StreamDeck.exe")
         GroupAdd("stream", "ahk_class Qt5152QWindowIcon")
     if WinActive("ahk_exe StreamDeck.exe")
@@ -273,7 +273,7 @@ switchToStreamdeck()
  */
 switchToExcel()
 {
-    if not WinExist("ahk_exe EXCEL.EXE")
+    if !WinExist("ahk_exe EXCEL.EXE")
         {
             Run(A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE")
             WinWait("ahk_exe EXCEL.EXE")
@@ -291,7 +291,7 @@ switchToExcel()
  */
 switchToWord()
 {
-    if not WinExist("ahk_exe WINWORD.EXE")
+    if !WinExist("ahk_exe WINWORD.EXE")
         {
             Run(A_ProgramFiles "\Microsoft Office\root\Office16\WINWORD.EXE")
             WinWait("ahk_exe WINWORD.EXE")
@@ -309,7 +309,7 @@ switchToWord()
  */
 switchToWindowSpy()
 {
-    if not WinExist("WindowSpy.ahk")
+    if !WinExist("WindowSpy.ahk")
         Run(A_ProgramFiles "\AutoHotkey\UX\WindowSpy.ahk")
     GroupAdd("winspy", "ahk_class AutoHotkeyGUI")
     if WinActive("WindowSpy.ahk")
@@ -323,7 +323,7 @@ switchToWindowSpy()
  */
 switchToYourPhone()
 {
-    if not WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
+    if !WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
         Run(A_ScriptDir "\Support Files\shortcuts\Your Phone.lnk")
     GroupAdd("yourphone", "ahk_class ApplicationFrameWindow")
     if WinActive("Your Phone")
@@ -337,7 +337,7 @@ switchToYourPhone()
  */
 switchToEdge()
 {
-    if not WinExist("ahk_exe msedge.exe")
+    if !WinExist("ahk_exe msedge.exe")
         {
             Run("msedge.exe")
             WinWait("ahk_exe msedge.exe")
@@ -359,7 +359,7 @@ switchToMusic()
     GroupAdd("MusicPlayers", "ahk_exe vlc.exe")
     GroupAdd("MusicPlayers", "ahk_exe AIMP.exe")
     GroupAdd("MusicPlayers", "ahk_exe foobar2000.exe")
-    if not WinExist("ahk_group MusicPlayers")
+    if !WinExist("ahk_group MusicPlayers")
         musicGUI()
     if WinExist("ahk_group MusicPlayers")
         {

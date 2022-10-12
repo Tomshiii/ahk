@@ -40,7 +40,7 @@ else
 next:
 ;MouseMove(%&ffX%, %&ffY%)
 ;MouseGetPos(&pix, &piy)
-If PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ffY% + "40", 0xD8D8D8, 3)
+if PixelSearch(&xcol, &ycol, %&ffX% + "250", %&ffY% - "10", %&ffX% + "600", %&ffY% + "40", 0xD8D8D8, 3)
     {
         MouseMove(%&xcol%, %&ycol%)
         Click()

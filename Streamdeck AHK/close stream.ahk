@@ -1,9 +1,9 @@
 ﻿#SingleInstance Force
 #Include SD_functions.ahk
 detect()
-/* if not WinExist("autosave.ahk - AutoHotkey")
+/* if !WinExist("autosave.ahk - AutoHotkey")
 	Run("C:\Program Files\ahk\ahk\autosave.ahk")
-if not WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
+if !WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
 	Run("C:\Program Files\ahk\ahk\premiere_fullscreen_check.ahk") */
 if WinExist("Streaming.ahk")
 	WinClose(,,1)

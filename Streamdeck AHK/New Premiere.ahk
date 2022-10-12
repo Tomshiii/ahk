@@ -6,7 +6,7 @@ SetDefaultMouseSpeed 0
 ;This version of the script (from 5th May, 2022) is designed for Premiere v22.3.1 (and beyond)
 ;Previous versions compatible with Premiere v22.3 can be found in previous releases of this repo (v2.3.3 and below)
 
-If WinActive("ahk_exe Adobe Premiere Pro.exe")
+if WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
         ;; This part makes you select the folder you wish to create the project in
         SelectedFolder := FileSelect("D2", "E:\", "Select your desired Folder. This Script will create the necessary sub folders")

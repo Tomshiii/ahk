@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.20.1
+;\\v2.20.2
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.20
@@ -204,9 +204,9 @@ errorLog(func, error, lineFile, lineNumber)
 {
     start := ""
     text := ""
-    if not DirExist(A_WorkingDir "\Error Logs")
+    if !DirExist(A_WorkingDir "\Error Logs")
         DirCreate(A_WorkingDir "\Error Logs")
-    if not FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    if !FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
         {
             try {
                 ;These values can be found at the following link (and the other appropriate tabs) - https://docs.microsoft.com/en-gb/windows/win32/cimwin32prov/win32-process

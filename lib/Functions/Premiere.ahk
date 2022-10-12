@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.1
+;\\v2.15.2
 #Include General.ahk
 
 /**
@@ -1406,14 +1406,14 @@ openChecklist()
         dashLocation := InStr(Name, "-")
         length := StrLen(Name) - dashLocation
     }
-    if not IsSet(titlecheck) || IsSet(afterFXTitle)
+    if !IsSet(titlecheck) || IsSet(afterFXTitle)
         {
             block.Off()
             tool.Cust("``titlecheck/afterFXTitle`` variable wasn't assigned a value")
             errorLog(A_ThisFunc "()", "``titlecheck/afterFXTitle`` variable wasn't assigned a value", A_LineFile, A_LineNumber)
             return
         }
-    if not titlecheck
+    if !titlecheck
         {
             tool.Cust("You're on a part of Premiere that won't contain the project path", 2000)
             return
@@ -1486,10 +1486,10 @@ mousedrag(premtool, toolorig)
     {
         if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             {
-                if not GetKeyState(A_ThisHotkey, "P") ;this is here so it doesn't reactivate if you quickly let go before the timer comes back around
+                if !GetKeyState(A_ThisHotkey, "P") ;this is here so it doesn't reactivate if you quickly let go before the timer comes back around
                     return
             }
-        else if not GetKeyState(DragKeywait, "P")
+        else if !GetKeyState(DragKeywait, "P")
             return
         click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
         SendInput(premtool "{LButton Down}")

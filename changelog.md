@@ -94,6 +94,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `Keyboard Shortcuts Adjustments.ahk` no longer uses a hardcoded dir for the `location` variable
 - Removed `replaceChecklist.ahk` as `checklist.ahk` runs from the root dir now
 - All timer scripts that make use of `SetTimer` now have an `OnExit` to stop all timers in the event of a reload/error/new instance
+- Changed all instances of `if not x` to `if !x` for consistency
 
 `right click premiere.ahk`
 - Some loops now use `while` syntaxing

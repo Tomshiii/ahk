@@ -12,7 +12,7 @@ goxlr() { ;this code was used to open the goxlr software after the streamdeck so
     WinMinimize("ahk_exe GoXLR App.exe")
 }
 
-If not WinExist("ahk_exe StreamDeck.exe")
+if !WinExist("ahk_exe StreamDeck.exe")
     ;Because I need to run the streamdeck exe as admin, it won't auto launch on startup because windows hates that, so I just have it launch through this script to get around that issue
     Run('*RunAs "C:\Program Files\Elgato\StreamDeck\StreamDeck.exe"')
 if WinExist("ahk_exe Creative Cloud.exe")

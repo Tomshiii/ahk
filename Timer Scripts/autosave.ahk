@@ -142,7 +142,7 @@ check() {
     else
         WinWaitClose("Select commission folder")
     tool.Wait()
-    if not WinExist("Editing Checklist")
+    if !WinExist("Editing Checklist")
         tool.Cust("Don't forget to start the checklist for this project!", 2000)
     SetTimer(, -msChecklist) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
     end3:
@@ -178,7 +178,7 @@ save()
         }
     if WinExist("ahk_exe Adobe Premiere Pro.exe")
         {
-            if not titleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+            if !titleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
                     block.Off()
                     ;MsgBox("1") ;testing
@@ -205,7 +205,7 @@ save()
                     premWinCheck := WinGetTitle("A")
                     premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                 }
-            if not premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+            if !premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
                     block.Off()
                     ;MsgBox("2") ;testing
@@ -276,7 +276,7 @@ save()
                 premWinCheck := WinGetTitle("A")
                 premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             }
-        if not premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+        if !premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
             {
                 block.Off()
                 ;MsgBox("3") ;testing

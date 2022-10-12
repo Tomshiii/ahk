@@ -1,4 +1,4 @@
-;v2.21
+;v2.21.1
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -185,7 +185,7 @@ updateChecker(MyRelease) {
             deletesquare2 := StrReplace(deletesquare1, "[", "")
             ;\\
             ;dealing with directories we'll need
-            if not DirExist(A_Temp "\tomshi")
+            if !DirExist(A_Temp "\tomshi")
                 DirCreate(A_Temp "\tomshi")
             if FileExist(A_Temp "\tomshi\changelog.ini")
                 FileDelete(A_Temp "\tomshi\changelog.ini")
@@ -399,7 +399,7 @@ firstCheck(MyRelease) {
     ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    if not IsSet(version) ;if the user has no internet, "version" will not have been assigned a value in `updateChecker()` - this checks to see if `version` has been assigned a value
+    if !IsSet(version) ;if the user has no internet, "version" will not have been assigned a value in `updateChecker()` - this checks to see if `version` has been assigned a value
         version := ""
     if WinExist("Scripts Release " version)
         WinWaitClose("Scripts Release " version)

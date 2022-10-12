@@ -5,7 +5,7 @@
 TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.6.1.1"
+version := "v2.6.1.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -47,7 +47,7 @@ else
                 goto end
             }
         dashLocation := InStr(Nameprem, "-")
-        if not dashLocation
+        if !dashLocation
             {
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")
@@ -96,7 +96,7 @@ timeForLog := Round(getTime / 3600, 3)
 if getTime = 0
     timeForLog := "0.000"
 ;checking for log file
-if not FileExist(logs)
+if !FileExist(logs)
     FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{ " today " - " timeForLog "`n", logs)
 
 newDate(&today)

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.2
+;\\v2.14.3
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -56,7 +56,7 @@ moveWin(key)
         {
             if A_ThisHotkey = "RButton"
                 {
-                    if not GetKeyState("LButton", "P") ;checks to see if the Left mouse button is held down, if it isn't, the below code will fire. This is here so you can still right click and drag
+                    if !GetKeyState("LButton", "P") ;checks to see if the Left mouse button is held down, if it isn't, the below code will fire. This is here so you can still right click and drag
                         {
                             SendInput("{RButton Down}")
                             KeyWait("RButton")
@@ -65,7 +65,7 @@ moveWin(key)
                         }
                 }
         }
-    if not GetKeyState("LButton", "P") ;checks for the left mouse button as without this check the function will continue to work until you click somewhere else
+    if !GetKeyState("LButton", "P") ;checks for the left mouse button as without this check the function will continue to work until you click somewhere else
         {
             SendInput("{" A_ThisHotkey "}")
             return
@@ -112,7 +112,7 @@ moveTab()
                 moveWin("#{Right}")
             return
         }
-    if not GetKeyState("RButton", "P")
+    if !GetKeyState("RButton", "P")
         {
             SendInput("{" A_ThisHotkey "}")
             return
@@ -205,7 +205,7 @@ moveTab()
     else
         otherHotkey := "XButton1"
     loop 40 { ;this loop will check for 2s if the user has released the RButton, if they have, it will drop the tab and finish the function
-        if not GetKeyState("RButton", "P")
+        if !GetKeyState("RButton", "P")
             {
                 SendInput("{LButton}")
                 break
@@ -630,7 +630,7 @@ discLocation()
         return
     }
     static toggle := 0 ;this is what allows us to toggle discords position
-    if not WinExist("ahk_exe Discord.exe")
+    if !WinExist("ahk_exe Discord.exe")
         {
             run("C:\Users\" A_UserName "\AppData\Local\Discord\Update.exe --processStart Discord.exe") ;this will run discord
             WinWait("ahk_exe Discord.exe")

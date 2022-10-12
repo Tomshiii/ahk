@@ -122,13 +122,13 @@ replace(*)
         FileDelete(A_ScriptDir "\hotkeynames.ini")
 
     ;create baseline ini files
-    if not FileExist(A_ScriptDir "\hotkeys.ini")
+    if !FileExist(A_ScriptDir "\hotkeys.ini")
         FileAppend("[Hotkeys]", A_ScriptDir "\hotkeys.ini")
-    if not FileExist(A_ScriptDir "\hotkeynames.ini")
+    if !FileExist(A_ScriptDir "\hotkeynames.ini")
         FileAppend("[Hotkey Names]", A_ScriptDir "\hotkeynames.ini")
 
     ;create temp folder
-    if not DirExist(A_Temp "\tomshi")
+    if !DirExist(A_Temp "\tomshi")
         DirCreate(A_Temp "\tomshi")
     if FileExist(A_Temp "\tomshi\My Scripts.ahk")
         FileDelete(A_Temp "\tomshi\My Scripts.ahk")
@@ -209,13 +209,13 @@ replace(*)
         FileDelete(A_ScriptDir "\ksahotkeynames.ini")
     
     ;create baseline ini files
-    if not FileExist(A_ScriptDir "\ksahotkeys.ini")
+    if !FileExist(A_ScriptDir "\ksahotkeys.ini")
         FileAppend("[ksa Hotkeys]", A_ScriptDir "\ksahotkeys.ini")
-    if not FileExist(A_ScriptDir "\ksahotkeynames.ini")
+    if !FileExist(A_ScriptDir "\ksahotkeynames.ini")
         FileAppend("[ksa Hotkey Names]", A_ScriptDir "\ksahotkeynames.ini")
 
     ;create temp folder
-    if not DirExist(A_Temp "\tomshi")
+    if !DirExist(A_Temp "\tomshi")
         DirCreate(A_Temp "\tomshi")
     if FileExist(A_Temp "\tomshi\Keyboard Shortcuts.ini")
         FileDelete(A_Temp "\tomshi\Keyboard Shortcuts.ini")

@@ -113,7 +113,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
     coord.w()
     block.On()
     MouseGetPos &xpos, &ypos
-    if not ImageSearch(&editx, &editY, A_ScreenWidth / 3, A_ScreenHeight - 150, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "edit.png")
+    if !ImageSearch(&editx, &editY, A_ScreenWidth / 3, A_ScreenHeight - 150, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "edit.png")
         {
             SendInput("{RButton}")
             block.Off()

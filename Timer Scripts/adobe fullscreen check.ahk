@@ -33,7 +33,7 @@ else
 
 check()
 {
-    if not WinActive("ahk_group adobe")
+    if !WinActive("ahk_group adobe")
         SetTimer(, -fire) ;if premiere isn't currently active when it gets to this check, it will wait 5s before checking again
     else
         {
@@ -44,7 +44,7 @@ check()
             titlecheck := InStr(title, "Adobe " getProgram A_Space A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             ;tool.Cust(title) ;debugging
             ;if title = "" || title = "Audio Gain" || title = "Save As" || InStr(title, "Encoding") || title = "New Project" || title = "Please select the destination path for your new project." || title = "Select Folder" || title = "Clip Speed / Duration" || title = "Modify Clip" ;// just some of the titles you can come across
-            if not titlecheck
+            if !titlecheck
                 SetTimer(, -fire) ;adds 5s to the timer and will check again after that time has elapsed
             else
                 {
