@@ -10,7 +10,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10
+;\\v2.10.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.5.2.1
@@ -42,14 +42,14 @@ newWin(classorexe, activate, runval)
 {
 	getHotkeys(&first, &second)
 	KeyWait(second) ;prevent spamming
-	if not WinExist("ahk_" classorexe . activate)
+	if WinExist("ahk_" classorexe . activate)
 		{
 			Run(runval)
-			WinWait("ahk_" classorexe . activate)
-			WinActivate("ahk_" classorexe . activate) ;in win11 running things won't always activate it and will open in the backround
+			return
 		}
-	else
-		Run(runval)
+	Run(runval)
+	WinWait("ahk_" classorexe . activate)
+	WinActivate("ahk_" classorexe . activate) ;in win11 running things won't always activate it and will open in the backround		
 }
 
 /**
@@ -237,20 +237,17 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 	ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
 	sleep 250
 	if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height, "*2 " Premiere "margin.png") || ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height, "*2 " Premiere "margin2.png") ; the above code is if you want to use ClassNN values instead of just searching the right side of the screen. I stopped using that because even though it's more universal, it's just too slow to be useful */
-	if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "margin.png") || ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "margin2.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above instead, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason (and they're slow for the project monitor for whatever reason). My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
-		{
-			MouseMove(x, y)
-			SendInput("{Click}")
-			MouseMove(origX, origY)
-			block.Off()
-			return
-		}
-	else
+	if !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "margin.png") && !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Premiere "margin2.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above instead, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason (and they're slow for the project monitor for whatever reason). My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
 		{
 			block.Off()
 			tool.Cust("the margin button",, 1)
 			errorLog(A_ThisHotkey "::", "Couldn't find the margin button", A_LineFile, A_LineNumber)
+			return
 		}
+	MouseMove(x, y)
+	SendInput("{Click}")
+	MouseMove(origX, origY)
+	block.Off()
 }
 ;PgDn::unassigned()
 
@@ -445,55 +442,52 @@ Right & PgUp::newWin("exe", "firefox.exe", "firefox.exe")
 y::unassigned()
 h:: ;opens the directory for the current premiere project
 {
-	if WinExist("Adobe Premiere Pro") || WinExist("Adobe After Effects")
+	if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects")
 		{
-			try {
-				if WinExist("Adobe Premiere Pro")
-					{
-						Name := WinGetTitle("Adobe Premiere Pro")
-						titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-					}
-				else if WinExist("Adobe After Effects")
-					{
-						Name := WinGetTitle("Adobe After Effects")
-						titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
-					}
-				dashLocation := InStr(Name, "-")
-				length := StrLen(Name) - dashLocation
-			}
-			if not titlecheck
+			if DirExist(commLocation)
 				{
-					tool.Cust("You're on a part of Premiere that won't contain the project path", 2000)
+					tool.Cust("A Premiere/AE isn't open, opening the comms folder")
+					Run(commLocation)
+					WinWait("ahk_class CabinetWClass", "comms")
+					WinActivate("ahk_class CabinetWClass", "comms")
 					return
 				}
-			entirePath := SubStr(name, dashLocation + "2", length)
-			pathlength := StrLen(entirePath)
-			finalSlash := InStr(entirePath, "\",, -1)
-			path := SubStr(entirePath, 1, finalSlash - "1")
-			SplitPath(path,,,, &pathName)
-			if WinExist("ahk_class CabinetWClass", pathName, "Adobe" "Editing Checklist", "Adobe")
-				{
-					WinActivate("ahk_class CabinetWClass", pathName, "Adobe")
-					return
-				}
-			RunWait(path)
-			WinWait("ahk_class CabinetWClass", pathName,, "Adobe")
-			WinActivate("ahk_class CabinetWClass", pathName, "Adobe")
-		}
-	else if DirExist(commLocation)
-		{
-			tool.Cust("A Premiere/AE isn't open, opening the comms folder")
-			Run(commLocation)
-			WinWait("ahk_class CabinetWClass", "comms")
-			WinActivate("ahk_class CabinetWClass", "comms")
-			return
-		}
-	else
-		{
 			tool.Cust("A Premiere/AE isn't open")
 			errorLog(A_ThisHotkey "::", "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
 			return
 		}
+	try {
+		if WinExist("Adobe Premiere Pro")
+			{
+				Name := WinGetTitle("Adobe Premiere Pro")
+				titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+			}
+		else if WinExist("Adobe After Effects")
+			{
+				Name := WinGetTitle("Adobe After Effects")
+				titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+			}
+		dashLocation := InStr(Name, "-")
+		length := StrLen(Name) - dashLocation
+	}
+	if !titlecheck
+		{
+			tool.Cust("You're on a part of Premiere that won't contain the project path", 2000)
+			return
+		}
+	entirePath := SubStr(name, dashLocation + "2", length)
+	pathlength := StrLen(entirePath)
+	finalSlash := InStr(entirePath, "\",, -1)
+	path := SubStr(entirePath, 1, finalSlash - "1")
+	SplitPath(path,,,, &pathName)
+	if WinExist("ahk_class CabinetWClass", pathName, "Adobe" "Editing Checklist", "Adobe")
+		{
+			WinActivate("ahk_class CabinetWClass", pathName, "Adobe")
+			return
+		}
+	RunWait(path)
+	WinWait("ahk_class CabinetWClass", pathName,, "Adobe")
+	WinActivate("ahk_class CabinetWClass", pathName, "Adobe")
 }
 n::unassigned()
 Space::switchToDisc()
