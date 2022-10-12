@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.20.2
+;\\v2.20.3
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.20
@@ -50,7 +50,7 @@ coord := coordinates()
 
 ; ===========================================================================================================================================
 ;
-;		Tooltip \\ Last updated: v2.20.1
+;		Tooltip \\ Last updated: v2.20.3
 ;
 ; ===========================================================================================================================================
 
@@ -62,22 +62,21 @@ class tooltips {
      * 
      * If you wish for the tooltip to plant next to the mouse and not follow the cursor, similar to a normal tooltip, that can be achieved with something along the lines of;
      * 
-     * `tool.Cust(message,,, MouseGetPos(&x, &y) x + 15, y)`
+     * `tool.Cust("message",,, MouseGetPos(&x, &y) x + 15, y)`
      * @param {string} message is what you want the tooltip to say
-     * @param {number} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a non integer, ie; `1.0`, `2.5`, etc
+     * @param {number} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a floating point number, ie; `1.0`, `2.5`, etc
      * @param {boolean} find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 (or true) for this variable if you do, or omit it if you don't
      * @param {number} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
      * @param {integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).
      */
     Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     {
-        ;if InStr(timeout, ".") ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
-        if !IsInteger(timeout)
+        if !IsInteger(timeout) && IsFloat(timeout) ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
             timeout := timeout * 1000
         MouseGetPos(&xpos, &ypos) ;log our starting mouse coords
         time := A_TickCount ;log our starting time
         messageFind := find = 1 ? "Couldn't find " : "" ;this is essentially saying: if find = 1 then messageFind := "Couldn't find " else messageFind := ""
-        ToolTip(messageFind message, x?, y?, WhichToolTip?) ;produce the initial cursor
+        ToolTip(messageFind message, x?, y?, WhichToolTip?) ;produce the initial tooltip
         if !IsSet(x) && !IsSet(y) ;if a x/y value hasn't been passed then that means we want the tooltip to follow the cursor
             SetTimer(moveWithMouse, 15)
         else

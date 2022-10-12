@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.20.1
+;\\v2.20.2
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10
 
@@ -233,8 +233,9 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		WinRestore(title,, "Editing Checklist -")
 }
 
-;jump10charHotkey;
-SC03A & Left::jumpChar()
+;jump10charLeftHotkey;
+SC03A & Left::
+;jump10charRightHotkey;
 SC03A & Right::jumpChar()
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -292,7 +293,9 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 }
 
 ;move mouse along one axis
-SC03A & XButton2::moveXorY()
+;moveXhotkey;
+SC03A & XButton2::
+;moveYhotkey;
 SC03A & XButton1::moveXorY()
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -364,6 +367,7 @@ F18:: ;open the "show more options" menu in win11
 !q::vscode(19) ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
 !c::vscode(14) ;clicks on my `changelog` file in vscode
+$^f::(SendInput(focusCode), SendInput("^f" "{BackSpace}")) ;I have a habit of always trying to ^f in the explorer window instead of the code window
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
@@ -793,7 +797,7 @@ LAlt & Xbutton2:: ;this is necessary for the below function to work
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 ;premgooseHotkey;
-F19::audioDrag("Goose_honk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
+F19::audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 ;prembleepHotkey;
 F20::audioDrag("bleep")
 

@@ -8,6 +8,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 
 # > Other Big Changes
 - Completely redesigned `checklist.ahk` to run from the root dir instead of copying it to the project location
+    - *Opening an old, inuse version of `checklist.ahk` after updating will causes issues after it attempts to update itself*
 - Moved the following scripts to `..\Timer Scripts`;
     - `adobe fullscreen check.ahk`
     - `Alt_menu_acceleration_DISABLER.ahk`
@@ -27,6 +28,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
     - `tool.Cust()/tool.Wait()`
         - Added `tool.Wait()` to cut repeat code. Makes your script wait for tooltips to finish before continuing
     - `coord.s()/coord.w()/coord.c()`
+- Cleaned up & reorganised a ***LOT*** of code to better make use of guard clauses to cut down on stacked `if/else` blocks and make things more readable
 
 ## > My Scripts
 - Changed `F14::` `show more options` hotkey -> `F18` due to it causing issues with `F14 & WheelDown/WheelUp::`
@@ -39,6 +41,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `SC03A & c::` now pastes the string instead of using a `Send{}` type to increase performance
 - `getMonitor()` in `#c::` now returns a function object instead of a large list of variables
 - `#c::` & `#f::` now ignore `checklist.ahk`
+- Added `$^f::` for VSCode to automatically highlight the code page before pulling up the search field
 
 ## > Functions
 - Added `floorDecimal()` to round down after a determined amount of decimal places
@@ -68,7 +71,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Can now take custom `x` & `y` coordinates. They are unset by default and can be omitted
 - Can now accept the `WhichToolTip` parameter from the actual `ToolTip` function
 - Tooltip will now follow the cursor if no `x/y` coordinates have been passed to the function
-    - Recreating the old way can be achieved with something along the lines of; `tool.Cust(message,,, MouseGetPos(&x, &y) x + 15, y)`
+    - Recreating the old way can be achieved with something along the lines of; `tool.Cust("message",,, MouseGetPos(&x, &y) x + 15, y)`
 - Timeout variable can now accept `seconds` instead of only `ms` by using a non integer, ie; `2.5` or `0.5`
 
 `zoom()`
