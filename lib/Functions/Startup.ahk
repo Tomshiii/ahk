@@ -1,4 +1,4 @@
-;v2.21.1
+;v2.21.2
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -132,21 +132,17 @@ updateChecker(MyRelease) {
     ;release version
     betaprep := 0
     if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
-        {
+        { ;if the user wants to check for beta updates instead, this block will fire
             global version := getScriptRelease(true)
-            if version = 0
-                return
             betaprep := 1
         }
     else
-        {
-            global version := getScriptRelease()
-            if version = 0
-                return
-        }
+        global version := getScriptRelease() ;getting non beta latest release
+    if version = 0
+        return
     tool.Wait()
     if MyRelease != version
-        tool.Cust("Current Installed Version = " MyRelease "`nCurrent Github Release = " version, 2000)
+        tool.Cust("Current Installed Version = " MyRelease "`nCurrent Github Release = " version, 5000)
     else
         tool.Cust("You are currently up to date", 2000)
     ;checking to see if the user wishes to check for updates
@@ -245,7 +241,7 @@ updateChecker(MyRelease) {
                 betaCheck := MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
             else
                 betaCheck := MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
-            betaCheck.OnEvent("Click", beta)
+            betaCheck.OnEvent("Click", prompt)
             ;set download button
             downloadbutt := MyGui.Add("Button", "X+5 Y+-30", "Download")
             downloadbutt.OnEvent("Click", Down)
@@ -266,18 +262,22 @@ updateChecker(MyRelease) {
             }
 
             MyGui.Show()
-            prompt(*) {
-                if noprompt.Value = 1
-                    IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-                if noprompt.Value = 0
-                    IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
-            }
-            beta(*) {
-                if betaCheck.Value = 1
-                    IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
-                if betaCheck.Value = 0
-                    IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
-                Run(A_ScriptFullPath)
+            prompt(guiCtrl, RowNumber) {
+                if InStr(guiCtrl.Text, "prompt")
+                    {
+                        if guiCtrl.Value = 0
+                            IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                        if guiCtrl.Value = 1
+                            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                    }
+                if InStr(guiCtrl.Text, "beta")
+                    {
+                        if guiCtrl.Value = 1
+                            IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+                        if guiCtrl.Value = 0
+                            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+                        Run(A_ScriptFullPath)
+                    }
             }
             githubButton(*) {
                 if WinExist("Tomshiii/ahk")

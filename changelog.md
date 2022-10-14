@@ -58,6 +58,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - `moveTab()` now makes sure the monitor objects have been set 
 - Moved `getPremName()`, `getAEName()` & `getID()` => `Windows.ahk`
 - `vscode()` now uses no `ImageSearch` and instead uses nothing but hotkeys
+- Fixed bug with `updateChecker()` that caused it to set the incorrect ini settings when pressing "Don't prompt again"
 
 `audioDrag()`
 - Added more colours
