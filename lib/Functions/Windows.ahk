@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.3
+;\\v2.14.4
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -725,9 +725,9 @@ discUnread(which := "")
 ; ===========================================================================================================================================
 /**
   * A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
-  * @param {Integer} script is the amount of down inputs the script needs to input to get to the required script
+  * @param {Integer} script is the amount of down inputs the script needs to input to get to the required script. Will default to 0
  */
-vscode(script?)
+vscode(script := 0)
 {
     getHotkeys(&first, &second)
     KeyWait(first)

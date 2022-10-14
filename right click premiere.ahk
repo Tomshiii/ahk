@@ -34,7 +34,8 @@ timeline5 := 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT 
 timeline6 := 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
 timeline8 := 0x202020
-playhead := 0x2D8CEB
+playhead := 0x2D8CEB ;the colour of the playhead
+timelineCol := [timeline1, timeline2, timeline3, timeline4, timeline5, timeline6, timeline7, timeline8] ;here we'll just create an array that encapsulates all of the above to make things a little easier to keep track of
 
 #HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
@@ -44,22 +45,42 @@ Rbutton::
 	if GetKeyState("Ctrl") {
 		SetTimer(checkCtrl, -1)
 	}
+	;getting base information
 	MouseGetPos &xpos, &ypos
 	Color := PixelGetColor(xpos, ypos)
 	color2 := PixelGetColor(xpos + 1, ypos)
-	if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
-		sendinput "{ESC}" ;in Premiere 13.0+, ESCAPE will now deselect clips on the timeline, in addition to its other uses. i think it is good ot use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
-		;send ^+d ;in Premiere, set CTRL SHIFT D to "DESELECT ALL"
-	else if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = timeline8 || Color = playhead)
-		{
-			;BREAKTHROUGH -- it looks like a middle mouse click will BRING FOCUS TO a panel without doing ANYTHING ELSE like selecting or going through tabs or anything. Unfortunately, i still can't know with AHK which panel is already in focus.
+
+	if (
+		Color = timelineCol[5] ||
+		Color = timelineCol[6] ||
+		Color = timelineCol[7]
+	) ;these are the timelineCol colors of a selected clip or blank space, in or outside of in/out points.
+		sendinput "{ESC}" ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
+	else if (
+		Color = timelineCol[1] ||
+		Color = timelineCol[2] ||
+		Color = timelineCol[3] ||
+		Color = timelineCol[4] ||
+		Color = timelineCol[5] ||
+		Color = timelineCol[6] ||
+		Color = timelineCol[7] ||
+		Color = timelineCol[8] ||
+		Color = playhead
+	)
+		{ ;this block is if the colour at the cursor is one of the above in the `else if()`
 			if GetKeyState("Rbutton", "P")
 				{
 					colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
-					click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
+					click("middle") ;sends the middle mouse button to BRING FOCUS TO the timelineCol, WITHOUT selecting any clips or empty spaces between clips. very nice!
 					if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead
 					{
-						if (color2 != timeline1 && color2 != timeline2 && color2 != timeline3 && color2 != timeline8 && color2 != timeline4)
+						if (
+							color2 != timelineCol[1] &&
+							color2 != timelineCol[2] &&
+							color2 != timelineCol[3] &&
+							color2 != timelineCol[8] &&
+							color2 != timelineCol[4]
+						)
 							{
 								SendInput("{Rbutton}")
 								return
@@ -87,9 +108,9 @@ Rbutton::
 							if colourOrNorm != "colour"
 								SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 							sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
-							if GetKeyState("LButton", "P") ;this code and the check below are additions by Tomshi
+							if GetKeyState("LButton", "P")
 								left := 1
-							if GetKeyState("XButton2", "P") ;this code and the check below are additions by Tomshi
+							if GetKeyState("XButton2", "P")
 								{
 									xbutton := 1
 									left := 1
@@ -114,7 +135,9 @@ Rbutton::
 }
 
 /**
- * This function is to help stop the Ctrl modifier from getting stuck which can sometimes happen while using this script. Testing for this is difficult and as such, this function may slowly change over time
+ * This function is to help stop the Ctrl modifier from getting stuck which can sometimes happen while using this script. Testing for this is difficult and as such, this function may slowly change over time.
+ * This function is necessary because some of the hotkeys used in the code above include the Ctrl modifier (^) - if interupted, this modifier can get placed in a "stuck" state where it will remain "pressed"
+ * You may be able to avoid needing this function by simply using hotkeys that do not use modifiers.
  */
 checkCtrl()
 {

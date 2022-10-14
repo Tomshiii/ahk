@@ -103,6 +103,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Some loops now use `while` syntaxing
 - Removed repeat code
 - Added a timer that will check for and unstick the `Ctrl` key
+- Made code easier to read & follow
 
 `checklist.ahk`-- Alongside the changes listed above;
 - Fixed not creating newly added `checklist.ini` settings
