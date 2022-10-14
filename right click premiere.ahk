@@ -47,9 +47,45 @@ Rbutton::
 	}
 	;getting base information
 	MouseGetPos &xpos, &ypos
+	;this block until `skip:` is getting & storing the x/y values of the timeline
+	;we do this so we can check later if the playhead is currently on the screen - if it is we'll do a shuttle stop
+	;if it isn't we won't
+	;the reason we don't want to if the playhead isn't on the screen is because if you hit shuttlestop when it's now
+	;your view of the timeline will snap to the playhead
+	static xValue := 0
+    static yValue := 0
+    static xControl := 0
+    static yControl := 0
+    if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
+        {
+            try {
+                SendInput(timelineWindow)
+                effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+                static xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
+                static yValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
+                static xControl := x + 238 ;accounting for the column to the left of the timeline
+                static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
+                tool.Wait()
+				SplitPath(A_LineFile, &scriptName)
+                tool.Cust("``" scriptName "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh")
+            } catch as e {
+                tool.Wait()
+                tool.Cust("Couldn't find the ClassNN value")
+                errorLog(scriptName, "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
+                goto skip
+            }
+        }
+    if xpos > xValue || xpos < xControl || ypos < yValue || ypos > yControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
+        {
+			SendInput("{Rbutton}")
+			return
+		}
+    skip:
+	
 	Color := PixelGetColor(xpos, ypos)
 	color2 := PixelGetColor(xpos + 1, ypos)
-
+	;now we begin checking colours
 	if (
 		Color = timelineCol[5] ||
 		Color = timelineCol[6] ||
@@ -68,67 +104,73 @@ Rbutton::
 		Color = playhead
 	)
 		{ ;this block is if the colour at the cursor is one of the above in the `else if()`
-			if GetKeyState("Rbutton", "P")
-				{
-					colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
-					click("middle") ;sends the middle mouse button to BRING FOCUS TO the timelineCol, WITHOUT selecting any clips or empty spaces between clips. very nice!
-					if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead
+			colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
+			click("middle") ;sends the middle mouse button to BRING FOCUS TO the timelineCol, WITHOUT selecting any clips or empty spaces between clips. very nice!
+			if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead
+			{
+				if (
+					color2 != timelineCol[1] &&
+					color2 != timelineCol[2] &&
+					color2 != timelineCol[3] &&
+					color2 != timelineCol[8] &&
+					color2 != timelineCol[4]
+				)
 					{
-						if (
-							color2 != timelineCol[1] &&
-							color2 != timelineCol[2] &&
-							color2 != timelineCol[3] &&
-							color2 != timelineCol[8] &&
-							color2 != timelineCol[4]
-						)
-							{
-								SendInput("{Rbutton}")
-								return
-							}
+						SendInput("{Rbutton}")
+						return
 					}
-					SendInput(shuttleStop)
-					if PixelSearch(&xcol, &ycol, xpos - 4, ypos, xpos + 6, ypos, playhead)
-						{
-							block.On()
-							SendInput(selectionPrem)
-							MouseMove(xcol, ycol)
-							SendInput("{LButton Down}")
-							block.Off()
-							;ToolTip("left button pressed") ;testing
-							colourOrNorm := "colour"
-						}
-					while GetKeyState("Rbutton", "P")
-						{
-							if GetKeyState("Ctrl") {
-									SetTimer(checkCtrl, -2500)
-									break
-								}
-							static left := 0
-							static xbutton := 0
-							if colourOrNorm != "colour"
-								SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
-							sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
-							if GetKeyState("LButton", "P")
-								left := 1
-							if GetKeyState("XButton2", "P")
-								{
-									xbutton := 1
-									left := 1
-								}
-						}
-					if colourOrNorm = "colour"
-						SendInput("{LButton Up}")
-					if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
-						{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
-							SendInput(playStop)
-							if xbutton > 0 ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
-								SendInput(speedUpPlayback)
-							left := 0
-							xbutton := 0
-						}
+			}
+			if PixelSearch(&throwx, &throwy, xValue, ypos, xControl, ypos, playhead) ;checking to see if the playhead is on the screen
+				SendInput(shuttleStop) ;if it is, we input a shuttle stop
+			if PixelSearch(&xcol, &ycol, xpos - 4, ypos, xpos + 6, ypos, playhead)
+				{
+					block.On()
+					SendInput(selectionPrem)
+					MouseMove(xcol, ycol)
+					SendInput("{LButton Down}")
+					block.Off()
+					;ToolTip("left button pressed") ;testing
+					colourOrNorm := "colour"
+				}
+			if !GetKeyState("Rbutton", "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
+				{
+					SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
+					if GetKeyState("Lbutton")
+						SendInput("{Lbutton Up}")
 					return
 				}
-			Send("{Escape}") ;in case you end up inside the "delete" right click menu from the timeline
+			while GetKeyState("Rbutton", "P")
+				{
+					if GetKeyState("Ctrl") {
+							SetTimer(checkCtrl, -2500)
+							break
+						}
+					static left := 0
+					static xbutton := 0
+					if colourOrNorm != "colour"
+						SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
+					sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
+					if GetKeyState("LButton", "P")
+						left := 1
+					if GetKeyState("XButton2", "P")
+						{
+							xbutton := 1
+							left := 1
+						}
+				}
+			if !IsSet(left) || !IsSet(xbutton)
+				return
+			if colourOrNorm = "colour"
+				SendInput("{LButton Up}")
+			if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
+				{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
+					SendInput(playStop)
+					if xbutton > 0 ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
+						SendInput(speedUpPlayback)
+					left := 0
+					xbutton := 0
+				}
+			return		
 		}
 	else
 		sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.

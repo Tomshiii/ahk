@@ -100,10 +100,14 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
 - Changed all instances of `if not x` to `if !x` for consistency
 
 `right click premiere.ahk`
+- Now grabs the `x/y` position of the timeline, similar to `mouseDrag()` to allow for;
+    - If the playhead isn't within view on the timeline, will no longer input a `shuttle stop` -- this will stop premiere snapping your timeline to the playhead when you activate the macro then causing you to move it to a random location
 - Some loops now use `while` syntaxing
 - Removed repeat code
 - Added a timer that will check for and unstick the `Ctrl` key
 - Made code easier to read & follow
+- Will no longer error if `Rbutton::` is just pressed and not held
+- Tapping `Rbutton::` will simply move the cursor end the macro
 
 `checklist.ahk`-- Alongside the changes listed above;
 - Fixed not creating newly added `checklist.ini` settings

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.2
+;\\v2.15.3
 #Include General.ahk
 
 /**
@@ -289,7 +289,7 @@ zoom()
     ;we'll put all our values at the top so they can be easily changed. First value is your X coord, second value is your Y coord, third value is your Scale value
     SetTimer(reset, -10000) ;reset toggle values after x seconds
     reset() {
-        tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.775, A_ScreenHeight*0.89) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
+        tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.945, A_ScreenHeight*0.3575) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
         alexTog := 0
         chloeTog := 0
     }

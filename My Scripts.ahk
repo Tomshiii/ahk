@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.20.2
+;\\v2.20.3
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10
 
@@ -132,7 +132,7 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 ;capsHotkey;
 SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We need this hotkey because I have capslock disabled by default
 {
-	if A_PriorHotkey = A_ThisHotkey && A_TimeSincePriorHotkey < 200
+	if A_PriorHotkey = A_ThisHotkey && A_TimeSincePriorHotkey < 250
 		SetCapsLockState !GetKeyState("CapsLock", "T")
 }
 
