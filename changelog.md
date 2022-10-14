@@ -104,7 +104,7 @@ Alongside those two scripts, this update brings along a dark theme to certain GU
     - If the playhead isn't within view on the timeline, will no longer input a `shuttle stop` -- this will stop premiere snapping your timeline to the playhead when you activate the macro then causing you to move it to a random location
 - Some loops now use `while` syntaxing
 - Removed repeat code
-- Added a timer that will check for and unstick the `Ctrl` key
+- Added a timer that will check for and unstick the `Ctrl/Shift` key
 - Made code easier to read & follow
 - Will no longer error if `Rbutton::` is just pressed and not held
 - Tapping `Rbutton::` will simply move the cursor end the macro

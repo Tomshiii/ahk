@@ -42,8 +42,8 @@ timelineCol := [timeline1, timeline2, timeline3, timeline4, timeline5, timeline6
 
 Rbutton::
 {
-	if GetKeyState("Ctrl") {
-		SetTimer(checkCtrl, -1)
+	if GetKeyState("Ctrl") || GetKeyState("Shift") {
+		SetTimer(checkStuck, -1)
 	}
 	;getting base information
 	MouseGetPos &xpos, &ypos
@@ -141,8 +141,8 @@ Rbutton::
 				}
 			while GetKeyState("Rbutton", "P")
 				{
-					if GetKeyState("Ctrl") {
-							SetTimer(checkCtrl, -2500)
+					if GetKeyState("Ctrl") || GetKeyState("Shift") {
+							SetTimer(checkStuck, -1)
 							break
 						}
 					static left := 0
@@ -177,14 +177,26 @@ Rbutton::
 }
 
 /**
- * This function is to help stop the Ctrl modifier from getting stuck which can sometimes happen while using this script. Testing for this is difficult and as such, this function may slowly change over time.
- * This function is necessary because some of the hotkeys used in the code above include the Ctrl modifier (^) - if interupted, this modifier can get placed in a "stuck" state where it will remain "pressed"
+ * This function is to help stop the Ctrl/Shift modifier from getting stuck which can sometimes happen while using this script. Testing for this is difficult and as such, this function may slowly change over time.
+ * This function is necessary because some of the hotkeys used in the code above include the Ctrl modifier (^)/Shift modifier (+) - if interupted, this modifier can get placed in a "stuck" state where it will remain "pressed"
  * You may be able to avoid needing this function by simply using hotkeys that do not use modifiers.
  */
-checkCtrl()
+checkStuck()
 {
-	SendInput("{Ctrl Up}")
+	key := ""
+	if GetKeyState("Ctrl") && !GetKeyState("Shift")
+		key := "ctrl"
+	if GetKeyState("Shift") && !GetKeyState("Ctrl")
+		key := "shift"
+	SendInput("{" key " Up}")
+	if GetKeyState("Ctrl") && GetKeyState("Shift")
+		{
+			SendInput("{Ctrl Up}")
+			SendInput("{Shift Up}")
+			key := "ctrl & shift"
+		}
 	tool.Wait(1)
-	tool.Cust("ctrl key stuck, lifting", 2000)
+	tool.Cust(key " key stuck, lifting", 2000)
+
 	SetTimer(, 0)
 }
