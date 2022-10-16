@@ -18,7 +18,7 @@ if WinExist("Editing Checklist -")
         tool.Cust("You already have checklist.ahk open")
         goto end
     }
-Run("..\checklist.ahk")
+Run(A_WorkingDir "\checklist.ahk")
 
 end:
 ;; This part then just opens the project folder

@@ -1,5 +1,5 @@
 ;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.5.2.1"
+global MyRelease := "v2.6"
 
 #SingleInstance Force
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
@@ -16,7 +16,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.20.3
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.10
+;\\v2.10.1
 
 ; ============================================================================================================================================
 ;

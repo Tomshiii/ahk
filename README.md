@@ -110,7 +110,7 @@ hotkey::
 ```
 Note:
 - `variableZ` doesn't have to be used and can be omitted from the function call
-- An example of a function in this repo that passes back a variable & also uses defaults is [`isFullscreen()`](https://github.com/Tomshiii/ahk/blob/main/Functions/Windows.ahk)
+- An example of a function in this repo that passes back a variable & also uses defaults is [`isFullscreen()`](https://github.com/Tomshiii/ahk/blob/main/lib/Functions/Windows.ahk)
 
 #### [gameCheck.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/gameCheck.ahk)
 A script that will automatically suspend `My Scripts.ahk` when a game is detected to be the active window & then unsuspend it when the game is no longer active.
