@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.20.3
+;\\v2.20.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.1
 
@@ -367,7 +367,42 @@ F18:: ;open the "show more options" menu in win11
 !q::vscode(19) ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
 !c::vscode(14) ;clicks on my `changelog` file in vscode
-$^f::(SendInput(focusCode), SendInput("^f" "{BackSpace}")) ;I have a habit of always trying to ^f in the explorer window instead of the code window
+;vscodeSearchHotkey;
+$^f:: ;I have a habit of always trying to ^f in the explorer window instead of the code window
+{ ;This macro REQUIRES `editor.emptySelectionClipboard` to be set to false within VSCode (if you use vscode)
+	SendInput(focusCode)
+	orig := ClipboardAll()
+	A_Clipboard := ""
+	SendInput("^c")
+	if !ClipWait(0.1)
+		{
+			SendInput("^f")
+			SendInput("{BackSpace}")
+			A_Clipboard := orig
+			return
+		}
+	SendInput("^f")
+	A_Clipboard := orig
+}
+;vscodeCutHotkey;
+$^x:: ;This macro is only REQUIRED because I have `editor.emptySelectionClipboard` set to false within VSCode because of the above macro.
+{ ;it recreates the usual ability to completely remove a line by pressed ^x
+	SendInput(focusCode)
+	orig := ClipboardAll()
+	A_Clipboard := ""
+	SendInput("^c")
+	if !ClipWait(0.1)
+		{
+			A_Clipboard := orig
+			SendInput("{End}")
+			SendInput("{Shift Down}{Home}{Shift Up}" "^x")
+			sleep 50
+			SendInput("{Ctrl Down}{BackSpace 2}{Ctrl Up}")
+			return
+		}
+	SendInput("^x")
+	A_Clipboard := orig
+}
 
 #HotIf WinActive("ahk_exe firefox.exe")
 ;pauseyoutubeHotkey;
