@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.3
+;\\v2.15.4
 #Include General.ahk
 
 /**
@@ -511,10 +511,7 @@ valuehold(filepath, optional := 0)
                     KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     return
                 }
-            else
-                goto next
         }
-    next:
     loop {
         if A_Index > 1
             {
