@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.1
+;\\v2.13.2
 #Include General.ahk
 
 /**
@@ -82,51 +82,58 @@ REffect(folder, effect)
 {
     getHotkeys(&first, &second)
     KeyWait(second)
+    isFullscreen(&title, &full)
+    if full = 0
+        {
+            SplitPath(A_LineFile, &filename)
+            tool.Cust("This function ``" A_ThisFunc "()`` may not work properly if the window isn't maximised`nFile: " filename "`nLine number: " A_LineNumber-14, 5.0)
+            return
+        }
     coord.w()
     block.On()
     MouseGetPos(&xpos, &ypos)
-    if !ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects.png") && !ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects2.png") 
+    if !ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " Resolve "effects.png") && !ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " Resolve "effects2.png") 
         {
             block.Off()
             tool.Cust("the effects button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the effects button", A_LineFile, A_LineNumber)
             return
         }
-    if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects.png") ;checks to see if the effects button is deactivated
+    else if ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " Resolve "effects.png") ;checks to see if the effects button is deactivated
         {
             MouseMove(xe, ye)
             SendInput("{Click}")
         }
-    if !ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "closed.png") && !ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "open.png")
+    if !ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "closed.png") && !ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "open.png")
         {
             block.Off()
             tool.Cust("open/close button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the open/close button", A_LineFile, A_LineNumber)
             return
         }
-    if ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "closed.png") ;checks to see if the effects window sidebar is opened
+    else if ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "closed.png") ;checks to see if the effects window sidebar is opened
         {
             MouseMove(xclosed, yclosed)
             SendInput("{Click}")
         }
-    if !ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder ".png") && !ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder "2.png")
+    if !ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve folder ".png") && !ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve folder "2.png")
         {
             block.Off()
             tool.Cust("the fxfolder",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the fxfolder", A_LineFile, A_LineNumber)
             return
         }
-    if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder "2.png") ;checks to see if the drop down option you want is activated
+    else if ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve folder "2.png") ;checks to see if the drop down option you want is activated
         {
             MouseMove(xfx, yfx)
             SendInput("{Click}")
         }
-    if ImageSearch(&xs, &ys, effectx1, effecty1 + "300", effectx2, effecty2, "*2 " Resolve "search2.png") ;checks to see if the search icon is deactivated
+    if ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "search2.png") ;checks to see if the search icon is deactivated
         {
             MouseMove(xs, ys)
             SendInput("{Click}")
         }
-    else if ImageSearch(&xs, &ys, 8, 8 + "300", effectx2, effecty2, "*2 " Resolve "search3.png") ;checks to see if the search icon is activated
+    else if ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "search3.png") ;checks to see if the search icon is activated
         {
             MouseMove(xs, ys)
             SendInput("{Click 2}")
@@ -134,13 +141,25 @@ REffect(folder, effect)
     else ;if everything fails, this else will trigger
         {
             block.Off()
-            tool.Cust("search button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            tool.Cust("the search button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the search button", A_LineFile, A_LineNumber)
             return
         }
     sleep 50
     SendInput(effect)
-    MouseMove(-300, 130,, "R")
+    colError()
+    {
+        tool.Cust("the desired effect",, 1)
+        errorLog(A_ThisFunc "()", "couldn't find desired effect", A_LineFile, A_LineNumber)
+        block.off
+        exit
+    }
+    MouseGetPos(&xcol, &ycol)
+    if !ImageSearch(&effx, &effy, xcol - (A_ScreenWidth/3), ycol, xcol, ycol + (A_ScreenHeight/3), "*2 " Resolve folder "3.png")
+        colError()
+    if !PixelSearch(&findx, &findy, effx + 5, effy, effx + 20, effy + 50, 0x000000)
+        colError()
+    MouseMove(findx, findy + 5, 2)
     SendInput("{Click Down}")
     MouseMove(xpos, ypos, 2) ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
     SendInput("{Click Up}")

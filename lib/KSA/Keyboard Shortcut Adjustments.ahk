@@ -734,32 +734,3 @@ propx2 := IniRead(location "\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "
   Can be set within KSA.ahk/ini
   */
 propy2 := IniRead(location "\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "Property y2")
-
-
-/**
-  * This value is the first x coordinate for the imagesearch to find everything required for the REffect() function.
-
-  Can be set within KSA.ahk/ini
-  */
-effectx1 := IniRead(location "\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect x1")
-
-/**
-  * This value is the first y coordinate for the imagesearch to find everything required for the REffect() function.
-
-  Can be set within KSA.ahk/ini
-  */
-effecty1 := IniRead(location "\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect y1")
-
-/**
-  * This value is the second x coordinate for the imagesearch to find everything required for the REffect() function.
-
-  Can be set within KSA.ahk/ini
-  */
-effectx2 := IniRead(location "\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect x2")
-
-/**
-  * This value is the second y coordinate for the imagesearch to find everything required for the REffect() function.
-
-  Can be set within KSA.ahk/ini
-  */
-effecty2 := IniRead(location "\KSA\Keyboard Shortcuts.ini", "ImageSearchCoords", "effect y2")

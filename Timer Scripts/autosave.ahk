@@ -127,9 +127,9 @@ else
 check() {
     if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe AfterFX.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
         {
-            SetTimer(, -msChecklist)
             SetTimer(StopWatch, 0) ;for tray function
             timer := false
+            SetTimer(, -msChecklist)
             goto end3
         }
     if WinExist("Editing Checklist")

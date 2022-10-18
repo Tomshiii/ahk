@@ -14,10 +14,12 @@
 
 ## > Resolve
 - `Rbutton::` now saves the timeline coordinates in a static variable to speed things up *(this forces the need for a reload if the user moves the timeline however)*
-- Now uses `getHotkeys()` in the place of `A_PriorHotkey`
+- Now uses `getHotkeys()` in place of all `A_PriorHotkey`
 - Fixed a large amount of `ImageSearch` logic blocks that I broke with `Release v2.6`
 - `rgain()` now returns the original Clipboard once complete
 - Updated some images for `Resolve 18.0.4`
+- `REffect()` will now more accurately drag the desired effect in more scenarios
+    - Will also not attempt to run while Resolve is not maximised and will notify the user
 
 ## > Other Changes
 - Removed all uses of `verCheck()` and replaced with `#Requires`
