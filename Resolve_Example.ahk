@@ -1,16 +1,16 @@
 SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 SetDefaultMouseSpeed 0
 #SingleInstance Force
-; SetNumLockState "AlwaysOn" ;uncomment if you want numlock to always be ON
-; SetCapsLockState "AlwaysOff" ;uncomment if you want capslock to always be OFF
+; SetNumLockState "AlwaysOn" ;uncomment if you want numlock to always be ON. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
+; SetCapsLockState "AlwaysOff" ;uncomment if you want capslock to always be OFF. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 TraySetIcon(A_WorkingDir "\Support Files\Icons\resolve.png")
-#Include "Functions.ahk" ;includes function definitions so they don't clog up this script. Functions.ahk must be in the same directory as this script ;includes function definitions so they don't clog up this script
+#Include "Functions.ahk" ;includes function definitions so they don't clog up this script. Functions.ahk must be in the same directory as this script
 
 ;checks to make sure the user is using a compatible version of ahk
 verCheck()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6
+;\\v2.6.1
 ;\\Minimum Version of "Resolve.ahk" Required for this script
 ;\\v2.13
 
@@ -105,11 +105,13 @@ timeline4 := 0x1E1E22 ;the color of the bare timeline NOT inside the in out poin
 timeline5 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
 timeline6 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 timeline7 := 0x28282E ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
-playhead := 0x572523
+playhead1 := 0x572523
 playhead2 := 0xE64B3D
+timelineVal := [timeline1, timeline2, timeline3, timeline4, timeline5, timeline6, timeline7]
+playheadVal := [playhead1, playhead2]
 Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible.
 {
-    scrub := 0
+    static scrub := unset
     coord.w()
     block.On()
     MouseGetPos &xpos, &ypos
@@ -119,19 +121,18 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
             block.Off()
             return
         }
-    if ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png") || ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
+    if !IsSet(scrub)
         {
+            if !ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png") && !ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
+                {
+                    block.Off()
+                    tool.Cust("Couldn't find reference point for scrub bar", 2000)
+                    errorLog(A_ThisHotkey, "Couldn't find reference point for scrub bar", A_LineFile, A_LineNumber)
+                    return
+                }
             scrub := speakY + 74
-            goto cont
+            tool.Cust("This macro has grabbed the coordinates of your timeline`nIf you move your timeline, you'll need to reload the script to grab new coordinates", 2.5)
         }
-    else
-        {
-            block.Off()
-            tool.Cust("Couldn't find reference point for scrub bar", 2000)
-            errorLog(A_ThisHotkey, "Couldn't find reference point for scrub bar", A_LineFile, A_LineNumber)
-            return
-        }
-    cont:
     if ypos < scrub
         {
             SendInput("{Rbutton}")
@@ -143,7 +144,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
         SendInput(resolveDeselect)
         */
         ;not sure if the above is really needed within resolve. I'm not entirely sure their purpose within premiere and as I don't use resolve I'm unsure of the edge case scenarios you'd run into where this may be necessary
-    if (Color = timeline1 || Color = timeline2 || Color = timeline3 || Color = timeline4 || Color = timeline5 || Color = timeline6 || Color = timeline7 || Color = playhead || Color = playhead2)
+    if (Color = timelineVal[1] || Color = timelineVal[2] || Color = timelineVal[3] || Color = timelineVal[4] || Color = timelineVal[5] || Color = timelineVal[6] || Color = timelineVal[7] || Color = playheadVal[1]|| Color = playheadVal[2])
         {
             if GetKeyState("Rbutton", "P")
                 {
@@ -159,9 +160,8 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
             block.Off()
             return
         }
-    else
-        sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
-        block.Off()
+    sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
+    block.Off()
 }
 ;=========================================================
 ;

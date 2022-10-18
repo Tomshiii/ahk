@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13
+;\\v2.13.1
 #Include General.ahk
 
 /**
@@ -10,7 +10,8 @@
  */
 Rscale(value, property, plus)
 {
-    KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
+    getHotkeys(&first, &second)
+    KeyWait(second)
     coord.w()
     block.On()
     SendInput(resolveSelectPlayhead)
@@ -20,7 +21,7 @@ Rscale(value, property, plus)
             MouseMove(xi, yi)
             click ;this opens the inspector tab
         }
-    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png")
+    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "video.png")
         {
             block.Off()
             MouseMove(xpos, ypos)
@@ -28,8 +29,11 @@ Rscale(value, property, plus)
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
-    MouseMove(xn, yn)
-    click ;"2196 139" ;this highlights the video tab
+    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png")
+        {
+            MouseMove(xn, yn)
+            click ;"2196 139" ;this highlights the video tab
+        }
     if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property ".png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property "2.png")
         {
             block.Off()
@@ -76,48 +80,56 @@ REffect(folder, effect)
 ;Open or close/reopen the search bar
 ;Search for your effect of choice, then drag back to the click you were hovering over originally
 {
-    KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
+    getHotkeys(&first, &second)
+    KeyWait(second)
     coord.w()
     block.On()
     MouseGetPos(&xpos, &ypos)
-    if !ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects.png") ;checks to see if the effects button is deactivated
+    if !ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects.png") && !ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects2.png") 
         {
             block.Off()
             tool.Cust("the effects button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the effects button", A_LineFile, A_LineNumber)
             return
         }
-    MouseMove(xe, ye)
-    SendInput("{Click}")
-    if !ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "closed.png") ;checks to see if the effects window sidebar is opened
+    if ImageSearch(&xe, &ye, effectx1, effecty1, effectx2, effecty2, "*1 " Resolve "effects.png") ;checks to see if the effects button is deactivated
+        {
+            MouseMove(xe, ye)
+            SendInput("{Click}")
+        }
+    if !ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "closed.png") && !ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "open.png")
         {
             block.Off()
             tool.Cust("open/close button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the open/close button", A_LineFile, A_LineNumber)
             return
         }
-    MouseMove(xclosed, yclosed)
-    SendInput("{Click}")
-    if !ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder "2.png") ;checks to see if the drop down option you want is activated
+    if ImageSearch(&xclosed, &yclosed, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve "closed.png") ;checks to see if the effects window sidebar is opened
+        {
+            MouseMove(xclosed, yclosed)
+            SendInput("{Click}")
+        }
+    if !ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder ".png") && !ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder "2.png")
         {
             block.Off()
             tool.Cust("the fxfolder",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the fxfolder", A_LineFile, A_LineNumber)
             return
         }
-    MouseMove(xfx, yfx)
-    SendInput("{Click}")
+    if ImageSearch(&xfx, &yfx, effectx1, effecty1, effectx2, effecty2, "*2 " Resolve folder "2.png") ;checks to see if the drop down option you want is activated
+        {
+            MouseMove(xfx, yfx)
+            SendInput("{Click}")
+        }
     if ImageSearch(&xs, &ys, effectx1, effecty1 + "300", effectx2, effecty2, "*2 " Resolve "search2.png") ;checks to see if the search icon is deactivated
         {
             MouseMove(xs, ys)
             SendInput("{Click}")
-            goto final
         }
     else if ImageSearch(&xs, &ys, 8, 8 + "300", effectx2, effecty2, "*2 " Resolve "search3.png") ;checks to see if the search icon is activated
         {
             MouseMove(xs, ys)
             SendInput("{Click 2}")
-            goto final
         }
     else ;if everything fails, this else will trigger
         {
@@ -126,7 +138,6 @@ REffect(folder, effect)
             errorLog(A_ThisFunc "()", "Was unable to find the search button", A_LineFile, A_LineNumber)
             return
         }
-    final:
     sleep 50
     SendInput(effect)
     MouseMove(-300, 130,, "R")
@@ -154,8 +165,7 @@ rvalhold(property, plus, rfelseval)
             MouseMove(xi, yi)
             click ;this opens the inspector tab
         }
-    video:
-    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png")
+    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "video.png")
         {
             block.Off()
             MouseMove(xpos, ypos)
@@ -163,8 +173,11 @@ rvalhold(property, plus, rfelseval)
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
-    MouseMove(xn, yn)
-    click ;"2196 139" ;this highlights the video tab
+    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png")
+        {
+            MouseMove(xn, yn)
+            click ;"2196 139" ;this highlights the video tab
+        }
     if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property ".png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property "2.png")
         {
             block.Off()
@@ -236,7 +249,7 @@ rgain(value)
             MouseMove(xi, yi)
             click ;this opens the inspector tab
         }
-    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio.png")
+    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio2.png")
         {
             block.Off()
             MouseMove(xpos, ypos)
@@ -244,8 +257,11 @@ rgain(value)
             errorLog(A_ThisFunc "()", "Was unable to find the audio tab", A_LineFile, A_LineNumber)
             return
         }
-    MouseMove(xn, yn)
-    click ;"2196 139" ;this highlights the video tab
+    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio.png")
+        {
+            MouseMove(xn, yn)
+            click ;"2196 139" ;this highlights the video tab
+        }
     if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume.png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume2.png") ;searches for the volume property
         {
             block.Off()
@@ -255,14 +271,22 @@ rgain(value)
         }
     MouseMove(xz + "215", yz + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
     SendInput("{Click 2}")
+    orig := ClipboardAll()
     A_Clipboard := ""
     ;sleep 50
     SendInput("^c")
-    ClipWait()
+    if !ClipWait(1)
+        {
+            block.Off()
+            tool.Cust("Clipboard timed out waiting for data")
+            errorLog(A_ThisFunc "()", "Clipboard timed out waiting for data", A_LineFile, A_LineNumber)
+            return
+        }
     gain := A_Clipboard + value
     SendInput(gain)
     SendInput("{Enter}")
     MouseMove(xpos, ypos)
     SendInput("{MButton}")
+    A_Clipboard := orig
     block.Off()
 }

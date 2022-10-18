@@ -14,7 +14,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.20.4
+;\\v2.20.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.1
 
@@ -261,7 +261,7 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 ;ahksearchHotkey;
 ^AppsKey:: ;opens highlighted ahk command in the documentation
 {
-	previous := A_Clipboard
+	previous := ClipboardAll()
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
@@ -858,7 +858,7 @@ RButton::moveWin("") ;minimise
 ;searchgoogleHotkey;
 ^+c:: ;runs a google search of highlighted text
 {
-	previous := A_Clipboard
+	previous := ClipboardAll()
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data

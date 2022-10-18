@@ -733,6 +733,7 @@ vscode(script := 0)
     coord.w()
     block.On()
     SendInput(focusExplorerWin) ;highlight the explorer window
+    sleep 50
     SendInput(focusWork)
     SendInput(collapseFold collapseFold) ;otherwise we close all repos
     sleep 50

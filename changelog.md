@@ -4,9 +4,19 @@
 - Added a slight delay to `vscode()` when expanding the `Functions` folder to ensure the right folder is expanded
 
 ## > My Scripts
-- Added `$^x::` to recreate `VSCode's` typical feature to remove an entire line with `^x`
-    - The new `$^f::` macro requires `editor.emptySelectionClipboard` to be set to `false` within `VSCode`    
-- `$^f::` now checks to see if you have anything highlighted and won't delete it from the search field if you do
+- All hotkeys that saved the state of the clipboard now save `ClipboardAll()`
+
+`$^f::`
+- Now checks to see if you have anything highlighted and won't delete it from the search field if you do
+- Now requires `editor.emptySelectionClipboard` to be set to `false` within `VSCode`
+    - Added `$^x::` to recreate `VSCode's` typical feature to remove an entire line with `^x` (setting `editor.emptySelectionClipboard` to `false` removes this feature as well)
+
+## > Resolve
+- `Rbutton::` now saves the timeline coordinates in a static variable to speed things up *(this forces the need for a reload if the user moves the timeline however)*
+- Now uses `getHotkeys()` in the place of `A_PriorHotkey`
+- Fixed a large amount of `ImageSearch` logic blocks that I broke with `Release v2.6`
+- `rgain()` now returns the original Clipboard once complete
+- Updated some images for `Resolve 18.0.4`
 
 ## > Other Changes
 
