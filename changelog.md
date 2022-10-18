@@ -1,7 +1,9 @@
 # <> Release 2.6.x
+- `verCheck()` now checks for **`beta.12`**
 
 ## > Functions
 - Added a slight delay to `vscode()` when expanding the `Functions` folder to ensure the right folder is expanded
+- `verCheck()` will now only produce one error message, not one for every script that attempts to load
 
 ## > My Scripts
 - All hotkeys that saved the state of the clipboard now save `ClipboardAll()`

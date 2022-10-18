@@ -1,4 +1,4 @@
-;v2.21.2
+;v2.21.3
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -573,7 +573,10 @@ verCheck()
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
     tool.Wait()
-    if VerCompare(A_AhkVersion, "2.0-beta.5") < 0
+    if WinExist("Incompatible AHK Version")
+        return
+    requiredVer := "2.0-beta.12"
+    if VerCompare(A_AhkVersion, requiredVer) < 0
         {
             getLatestVer()
             {
@@ -597,7 +600,7 @@ verCheck()
             if getLatestVer() = ""
                 return
             LatestVersion := getLatestVer()
-            verError := MsgBox("Tomshi's scripts are designed to work on AHK v2.0-beta5 and above. Attempting to run these scripts on versions of AHK below that may result in unexpexted issues.`n`nYour current version is v" A_AhkVersion "`nThe latest version of AHK is v" LatestVersion "`n`nDo you wish to download a newer version of AHK?",, "4 16 4096")
+            verError := MsgBox("Tomshi's scripts are designed to work on AHK " requiredVer " and above. Attempting to run these scripts on versions of AHK below that may result in unexpexted issues.`n`nYour current version is v" A_AhkVersion "`nThe latest version of AHK is v" LatestVersion "`n`nDo you wish to download a newer version of AHK?", "Incompatible AHK Version", "4 16 4096")
             if verError = "Yes"
                 {
                     downloadLoc := FileSelect("D", , "Where do you wish to download the latest version of AHK?")
