@@ -1,13 +1,11 @@
 SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 SetDefaultMouseSpeed 0
 #SingleInstance Force
+#Requires AutoHotkey v2.0-beta.12
 ; SetNumLockState "AlwaysOn" ;uncomment if you want numlock to always be ON. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 ; SetCapsLockState "AlwaysOff" ;uncomment if you want capslock to always be OFF. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 TraySetIcon(A_WorkingDir "\Support Files\Icons\resolve.png")
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. Functions.ahk must be in the same directory as this script
-
-;checks to make sure the user is using a compatible version of ahk
-verCheck()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.6.1

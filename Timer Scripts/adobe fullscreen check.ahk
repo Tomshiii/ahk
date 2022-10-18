@@ -3,9 +3,7 @@ SetWorkingDir A_ScriptDir
 TraySetIcon("..\Support Files\Icons\fullscreen.ico") ;changes the icon this script uses in the taskbar
 #Include FuncRedirect.ahk
 InstallKeybdHook
-
-;checks to make sure the user is using a compatible version of ahk
-verCheck()
+#Requires AutoHotkey v2.0-beta.12
 
 GroupAdd("adobe", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("adobe", "ahk_exe AfterFX.exe")

@@ -2,7 +2,7 @@
 A_MaxHotkeysPerInterval := 2000
 TraySetIcon("..\Support Files\Icons\save.ico") ;changes the icon this script uses in the taskbar
 #Include FuncRedirect.ahk
-verCheck() ;checks to make sure the user is using a compatible version of ahk
+#Requires AutoHotkey v2.0-beta.12
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 #WinActivateForce
 

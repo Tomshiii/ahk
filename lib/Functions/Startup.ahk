@@ -1,4 +1,4 @@
-;v2.21.3
+;v2.21.4
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -566,7 +566,8 @@ adobeTemp(MyRelease) {
 }
  
 /**
- * This function checks the users local version of AHK and ensures it is greater than v2.0-beta5. If the user is running a version earlier than that, a prompt will pop up offering the user a convenient download
+ * This function checks the users local version of AHK and ensures it is greater than v2.0-beta12. If the user is running a version earlier than that, a prompt will pop up offering the user a convenient download
+ * This function will also automatically close the script until the user updates
  */
 verCheck()
 {
@@ -574,7 +575,7 @@ verCheck()
         return
     tool.Wait()
     if WinExist("Incompatible AHK Version")
-        return
+        ExitApp()
     requiredVer := "2.0-beta.12"
     if VerCompare(A_AhkVersion, requiredVer) < 0
         {
@@ -600,7 +601,7 @@ verCheck()
             if getLatestVer() = ""
                 return
             LatestVersion := getLatestVer()
-            verError := MsgBox("Tomshi's scripts are designed to work on AHK " requiredVer " and above. Attempting to run these scripts on versions of AHK below that may result in unexpexted issues.`n`nYour current version is v" A_AhkVersion "`nThe latest version of AHK is v" LatestVersion "`n`nDo you wish to download a newer version of AHK?", "Incompatible AHK Version", "4 16 4096")
+            verError := MsgBox("Some of Tomshi's scripts are designed to work on AHK " requiredVer " and above. Attempting to run these scripts on versions of AHK below that may result in unexpexted issues.`n`nYour current version is v" A_AhkVersion "`nThe latest version of AHK is v" LatestVersion "`n`nDo you wish to download a newer version of AHK?", "Incompatible AHK Version", "4 16 4096")
             if verError = "Yes"
                 {
                     downloadLoc := FileSelect("D", , "Where do you wish to download the latest version of AHK?")
@@ -610,8 +611,7 @@ verCheck()
                     Download("https://www.autohotkey.com/download/ahk-v2.zip", downloadLoc "\ahk_v" LatestVersion ".zip")
                     ToolTip("")
                 }
-            if verError = "No"
-                return
+            ExitApp()
         }
 }
  

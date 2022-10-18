@@ -1,9 +1,8 @@
 # <> Release 2.6.x
-- `verCheck()` now checks for **`beta.12`**
+- Some scripts now require `AutoHotkey v2.0-beta.12` as a minimum
 
 ## > Functions
 - Added a slight delay to `vscode()` when expanding the `Functions` folder to ensure the right folder is expanded
-- `verCheck()` will now only produce one error message, not one for every script that attempts to load
 
 ## > My Scripts
 - All hotkeys that saved the state of the clipboard now save `ClipboardAll()`
@@ -21,6 +20,7 @@
 - Updated some images for `Resolve 18.0.4`
 
 ## > Other Changes
+- Removed all uses of `verCheck()` and replaced with `#Requires`
 
 `HotkeyReplacer.ahk`
 - All text is centered for a cleaner look

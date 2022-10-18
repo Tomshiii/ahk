@@ -12,6 +12,7 @@ A_MaxHotkeysPerInterval := 400 ;BE VERY CAREFUL WITH THIS SETTING. If you make t
 TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+#Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.20.5
@@ -62,8 +63,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 ;
 ; =======================================================================================================================================
 generate(MyRelease) ;generates/replaces the `settings.ini` file every release
-locationReplace() ;runs the location variable check
-verCheck() ;checks to make sure the user is using a compatible version of ahk
+locationReplace() ;runs the location variable 
 trayMen() ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
 updateChecker(MyRelease) ;runs the update checker
 firstCheck(MyRelease) ;runs the firstCheck() function
