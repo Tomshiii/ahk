@@ -264,7 +264,7 @@ goDark(*)
             global darkToolTrack := 0
             SettingsMenu.UnCheck("&Dark Mode")
             IniWrite("0", checklist, "Info", "dark")
-            which(false, "Light")
+            which(false, "Light", 0)
         }
     else if darkToolTrack = 0
         {
@@ -281,8 +281,18 @@ goDark(*)
  * @param {boolean} dark is a toggle that allows us to do the inverse and swap back to light mode. Pass false to do so
  * @param {string} DarkorLight is another toggle that allows us to do the inverse and swap back to light mode. Pass `"Light"` to do so
  */
-which(dark := true, DarkorLight := "Dark")
+which(dark := true, DarkorLight := "Dark", menu := 1)
 {
+    ;https://stackoverflow.com/a/58547831/894589 ;this section handles menus
+    if !IsSet(uxtheme)
+        {
+            static uxtheme := DllCall("GetModuleHandle", "str", "uxtheme", "ptr")
+            static SetPreferredAppMode := DllCall("GetProcAddress", "ptr", uxtheme, "ptr", 135, "ptr")
+            static FlushMenuThemes := DllCall("GetProcAddress", "ptr", uxtheme, "ptr", 136, "ptr")
+        }
+    DllCall(SetPreferredAppMode, "int", menu) ; Dark
+    DllCall(FlushMenuThemes)
+
     titleBarDarkMode(MyGui.Hwnd, dark)
     buttonDarkMode(startButton.Hwnd, DarkorLight)
     buttonDarkMode(stopButton.Hwnd, DarkorLight)

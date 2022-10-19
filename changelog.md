@@ -25,6 +25,7 @@
 ## > Other Changes
 - Removed all uses of `verCheck()` and replaced with `#Requires`
 - `autosave.ahk` will now attempt to reactivate the original window even if the user interupts the save by interacting with the keyboard
+- `checklist.ahk` will not apply a dark theme to the menu popouts
 
 `HotkeyReplacer.ahk`
 - All text is centered for a cleaner look
