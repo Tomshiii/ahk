@@ -162,18 +162,23 @@ save()
     ToolTip("Your project is being saved!`nHold tight!`nThis function will timeout after 3s if it gets stuck")
 
     ;\\ first we grab information on the active window
-    getID(&id)
-
+    static origWind := unset
+    if !IsSet(origWind)
+        {
+            getID(&id)
+            origWind := id
+        }
     ;\\ Then we grab the titles of both premiere and after effects so we can make sure to only fire parts of this script if a save is required
     getPremName(&premCheck, &titleCheck, &saveCheck)
     getAEName(&aeCheck, &aeSaveCheck)
 
-    if !IsSet(id) || !IsSet(titleCheck) ;then we check to make sure all of those variables were assigned values
+    if !IsSet(origWind) || !IsSet(titleCheck) ;then we check to make sure all of those variables were assigned values
         {
             block.Off()
             tool.Cust("A variable wasn't assigned a value")
             errorLog(A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
             SetTimer(, -ms)
+            origWind := unset
             goto end2
         }
     if WinExist("ahk_exe Adobe Premiere Pro.exe")
@@ -183,11 +188,10 @@ save()
                     block.Off()
                     ;MsgBox("1") ;testing
                     tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
-                    SetTimer(, -ms)
-                    goto end2
+                    goto end
                 }
         }
-    if id = "Adobe Premiere Pro.exe" ;this check is a final check to ensure the user doesn't have a menu window (or something similar) open that the first title check didn't grab (because we get the title of premiere in general and not the current active window)
+    if origWind = "Adobe Premiere Pro.exe" ;this check is a final check to ensure the user doesn't have a menu window (or something similar) open that the first title check didn't grab (because we get the title of premiere in general and not the current active window)
         {
             premWinCheck := WinGetTitle("A")
             premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
@@ -210,8 +214,7 @@ save()
                     block.Off()
                     ;MsgBox("2") ;testing
                     tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
-                    SetTimer(, -ms)
-                    goto end2
+                    goto end
                 }
         }
     if saveCheck != "*" ;will check to see if saving is necessary
@@ -243,21 +246,22 @@ save()
             block.Off()
             tool.Cust("No save necessary", 2000)
             try {
-                if id = "ahk_class CabinetWClass"
+                if origWind = "ahk_class CabinetWClass"
                     WinActivate("ahk_class CabinetWClass")
-                else if id = "Adobe Premiere Pro.exe"
+                else if origWind = "Adobe Premiere Pro.exe"
                     switchToPremiere()
                 else
-                    WinActivate("ahk_exe " id)
+                    WinActivate("ahk_exe " origWind)
             } catch as e {
                 tool.Cust("couldn't activate original window")
                 errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
             }
+            origWind := unset
             SetTimer(, -ms)
             goto end2
         }
 
-    if id != "Adobe Premiere Pro.exe" ;will activate premiere if it wasn't the original window
+    if origWind != "Adobe Premiere Pro.exe" ;will activate premiere if it wasn't the original window
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
     try {
         premWinCheck := WinGetTitle("A")
@@ -282,16 +286,17 @@ save()
                 ;MsgBox("3") ;testing
                 tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
                 try {
-                    if id = "ahk_class CabinetWClass"
+                    if origWind = "ahk_class CabinetWClass"
                         WinActivate("ahk_class CabinetWClass")
-                    else if id = "Adobe Premiere Pro.exe"
+                    else if origWind = "Adobe Premiere Pro.exe"
                         switchToPremiere()
                     else
-                        WinActivate("ahk_exe " id)
+                        WinActivate("ahk_exe " origWind)
                 } catch as e {
                     tool.Cust("couldn't activate original window")
                     errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
                 }
+                origWind := unset
                 SetTimer(, -ms)
                 goto end2
             }
@@ -307,6 +312,7 @@ save()
         block.Off() ;then bail
         tool.Cust("failed to find play/stop button")
         errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineFile, A_LineNumber)
+        origWind := unset
         return
     }
 
@@ -336,7 +342,7 @@ save()
         }
 
     ;\\ if the originally active window isn't premiere, we don't want to refocus it so we'll jump straight to the end
-    if id != "Adobe Premiere Pro.exe"
+    if origWind != "Adobe Premiere Pro.exe"
         goto end
 
     ;\\ if the orginally active window IS premiere, we now refocus premiere
@@ -360,22 +366,24 @@ save()
             ToolTip("")
             SetTimer(, -ms) ;reset the timer
             SendInput(timelineWindow)
+            origWind := unset
             goto end2
         }
 
     end:
     try { ;this is to restore the original active window
-        if id = "ahk_class CabinetWClass"
+        if origWind = "ahk_class CabinetWClass"
             WinActivate("ahk_class CabinetWClass")
-        else if id = "Adobe Premiere Pro.exe"
+        else if origWind = "Adobe Premiere Pro.exe"
             switchToPremiere()
         else
-            WinActivate("ahk_exe " id)
+            WinActivate("ahk_exe " origWind)
     } catch as e {
         tool.Cust("couldn't activate original window")
         errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
     }
     ToolTip("")
+    origWind := unset
     block.Off()
     SetTimer(, -ms) ;reset the timer
     end2:
