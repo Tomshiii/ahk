@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.4
+;\\v2.15.5
 #Include General.ahk
 
 /**
@@ -282,18 +282,19 @@ num(xval, yval, scale)
 }
 
 /**
- * This function on first run will ask you to select a clip with the exact zoom you wish to use for the current session. Any subsequent activations of the script will simply zoom the current clip to that zoom amount. You can reset this zoom by refreshing the script
+ * This function on first run will ask you to select a clip with the exact zoom you wish to use for the current session. Any subsequent activations of the script will simply zoom the current clip to that zoom amount. You can reset this zoom by refreshing the script.
+ * 
+ * If a specified client name is in the title of the window (usually in the url project path) this function will set predefined zooms
  */
 zoom()
 {
-    ;we'll put all our values at the top so they can be easily changed. First value is your X coord, second value is your Y coord, third value is your Scale value
-    SetTimer(reset, -10000) ;reset toggle values after x seconds
-    reset() {
-        tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.945, A_ScreenHeight*0.3575) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
+    reset() { ;this function is for a timer we activate anytime a clients zoom has a toggle
+        tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.945, A_ScreenHeight*0.3575, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
         alexTog := 0
         chloeTog := 0
     }
-
+    
+    ;we'll put all our values at the top so they can be easily changed. First value is your X coord, second value is your Y coord, third value is your Scale value
     ;alex
     alexXYS := [2064, -26, 215]
     alexZoomXYS := [3467, 339, 390]
@@ -331,7 +332,10 @@ zoom()
         errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
         return
     }
+    ;get title
     premCheck := WinGetTitle("ahk_class Premiere Pro")
+
+    ;any zooms with NO toggle
     d0yle := InStr(premCheck, "d0yle")
     if d0yle != 0
         {
@@ -339,9 +343,12 @@ zoom()
             y := d0yleXYS[2]
             scale := d0yleXYS[3]
         }
+
+    ;any zooms WITH a toggle
     chloe := InStr(premCheck, "chloe")
     if chloe != 0
         {
+            SetTimer(reset, -10000) ;reset toggle values after x seconds
             tool.Cust("zoom " chloeTog+1 "/3")
             if chloeTog = 0
                 {
@@ -369,6 +376,7 @@ zoom()
     alex := InStr(premCheck, "alex")
     if alex != 0
         {
+            SetTimer(reset, -10000) ;reset toggle values after x seconds
             tool.Cust("zoom " alexTog+1 "/2")
             if alexTog = 0
                 {

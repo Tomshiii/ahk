@@ -3,6 +3,7 @@
 
 ## > Functions
 - Added a slight delay to `vscode()` when expanding the `Functions` folder to ensure the right folder is expanded
+- `zoom()` tooltip to notify that toggle values have been reset now only appears if the current project has a toggle zoom
 
 ## > My Scripts
 - All hotkeys that saved the state of the clipboard now save `ClipboardAll()`
