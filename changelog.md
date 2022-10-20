@@ -4,6 +4,7 @@
 ## > Functions
 - Added a slight delay to `vscode()` when expanding the `Functions` folder to ensure the right folder is expanded
 - `zoom()` tooltip to notify that toggle values have been reset now only appears if the current project has a toggle zoom
+- `moveWin()` (when pressing the maximise hotkey) will now check to see if the active window is already maximised, and if it is, unmaximise it
 
 ## > My Scripts
 - All hotkeys that saved the state of the clipboard now save `ClipboardAll()`

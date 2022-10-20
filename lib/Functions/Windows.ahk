@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.5
+;\\v2.14.6
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -76,7 +76,13 @@ moveWin(key)
         if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
             WinMinimize(window)
         if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
-            WinMaximize(window)
+            {
+                isFullscreen(&title, &full, window)
+                if full = 0
+                    WinMaximize(window)
+                else
+                    WinRestore(window)
+            }
         SendInput(key)
     } catch as e {
         tool.Cust("Failed to get information on current active window")
