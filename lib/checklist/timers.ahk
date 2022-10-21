@@ -43,11 +43,6 @@ StopWatch() {
  * This function handles what happens when the stop button is pressed
  */
 stop(*) {
-    if !IsSet(forFile)
-        {
-            MsgBox(A_ThisFunc "() was called but ``forFile`` has not been given a value`nScript: " A_LineFile "`nLine: " A_LineNumber)
-            ExitApp()
-        }
     forFile := Round(ElapsedTime / 3600, 3)
     checkHours := IniRead(checklist, "Info", "time")
     if ElapsedTime != checkHours
@@ -150,7 +145,6 @@ waitUntil()
 {
     if !WinExist("Adobe Premiere Pro")
         {
-            
             pauseautosave()
             ScriptSuspend("autosave.ahk", false)
             SetTimer(, 0)
