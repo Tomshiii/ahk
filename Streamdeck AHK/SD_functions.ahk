@@ -71,35 +71,3 @@ scale(amount)
 	Click("middle")
 	block.Off()
 }
-
-/**
- * This function toggles a pause on the autosave ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
- */
-pauseautosave()
-{
-	detect(true, 2)
-	if !WinExist("autosave.ahk - AutoHotkey")
-		{
-			tool.Cust("autosave ahk script isn't open")
-			ExitApp()
-		}
-	WM_COMMAND := 0x0111
-	ID_FILE_PAUSE := 65403
-	PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "\autosave.ahk ahk_class AutoHotkey"
-}
-
-/**
- * This function toggles a pause on the premiere_fullscreen_check ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
- */
-pausewindowmax()
-{
-	detect(true, 2)
-	if !WinExist("adobe fullscreen check.ahk - AutoHotkey")
-		{
-			tool.Cust("fullscreen ahk script isn't open")
-			ExitApp()
-		}
-	WM_COMMAND := 0x0111
-	ID_FILE_PAUSE := 65403
-	PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "\adobe fullscreen check.ahk ahk_class AutoHotkey"
-}

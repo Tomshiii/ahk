@@ -5,7 +5,7 @@
 TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.6.1.3"
+version := "v2.6.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -20,11 +20,14 @@ global ms := minutes * 60000
 minutes2 := 10
 global ms10 := minutes2 * 60000
 checklist := ""
+global WaitTrack := 0
 if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist is reloaded, we don't want it to automatically attempt to grab the title of the currently open premiere project - this allows us to open/create new projects while premiere is open
     {
         premNotOpen(&checklist, &logs, &path)
         if WinExist("Select commission folder")
             WinWaitClose("Select commission folder")
+        if WinExist("Wait or Continue?")
+                    WinWaitClose("Wait or Continue?")
     }
 else
     {
@@ -33,6 +36,8 @@ else
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")
                     WinWaitClose("Select commission folder")
+                if WinExist("Wait or Continue?")
+                    WinWaitClose("Wait or Continue?")
                 goto end
             }
         getPremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
@@ -44,14 +49,31 @@ else
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")
                     WinWaitClose("Select commission folder")
+                if WinExist("Wait or Continue?")
+                    WinWaitClose("Wait or Continue?")
                 goto end
             }
         dashLocation := InStr(Nameprem, "-")
         if !dashLocation
             {
+                if WaitTrack = 0
+                    {
+                        ScriptSuspend("autosave.ahk", true) ;suspend
+                        pauseautosave()
+                        WaitTrack := 1
+                        SetTimer(msgboxName, 50)
+                        Result := MsgBox("You haven't opened a project yet, do you want ``" A_ScriptName "`` to wait until you have?`nOr would you like to select the checklist file now?", "Wait or Continue?", "4 32 4096")
+                        if Result = "Yes"
+                            {
+                                SetTimer(waitUntil, -1000)
+                                return
+                            }
+                    }
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")
                     WinWaitClose("Select commission folder")
+                if WinExist("Wait or Continue?")
+                    WinWaitClose("Wait or Continue?")
                 goto end
             }
         length := StrLen(Nameprem) - dashLocation

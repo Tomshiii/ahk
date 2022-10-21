@@ -43,6 +43,11 @@ StopWatch() {
  * This function handles what happens when the stop button is pressed
  */
 stop(*) {
+    if !IsSet(forFile)
+        {
+            MsgBox(A_ThisFunc "() was called but ``forFile`` has not been given a value`nScript: " A_LineFile "`nLine: " A_LineNumber)
+            ExitApp()
+        }
     forFile := Round(ElapsedTime / 3600, 3)
     checkHours := IniRead(checklist, "Info", "time")
     if ElapsedTime != checkHours
@@ -59,7 +64,12 @@ stop(*) {
     SetTimer(reminder, -ms)
     global startValue := IniRead(checklist, "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
 }
-minusOrAdd(sign) ;this function is to reduce copy/paste code in some .OnEvent return functions
+
+/**
+ * This function is to reduce copy/paste code in some .OnEvent return functions
+ * @param {any} sign is if it's the minus key or plus key
+ */
+minusOrAdd(sign)
 {
     forFile := Round(ElapsedTime / 3600, 3)
     word := ""
@@ -101,7 +111,11 @@ plusFive(*) {
     minusOrAdd("+")
 }
 
-reminder() {
+/**
+ * Reminds the user that they have the timer stopped
+ */
+reminder()
+{
     if WinExist("ahk_exe Adobe Premiere Pro.exe")
         {
             if settingsToolTrack = 1
@@ -114,4 +128,50 @@ reminder() {
         }
     else
         SetTimer(, 0)
+}
+
+/**
+ * Changes the button names of a generated msgbox
+ */
+msgboxName()
+{
+    if !WinExist("Wait or Continue?")
+        return  ; Keep waiting.
+    SetTimer(, 0)
+    WinActivate("Wait or Continue?")
+    ControlSetText("&Wait", "Button1")
+    ControlSetText("&Select Now", "Button2")
+}
+
+/**
+ * This function handles the logic for what happens if `autosave.ahk` attempts to open `checklist.ahk` before they've opened a project and the user selects "wait" in the msgbox
+ */
+waitUntil()
+{
+    if !WinExist("Adobe Premiere Pro")
+        {
+            
+            pauseautosave()
+            ScriptSuspend("autosave.ahk", false)
+            SetTimer(, 0)
+            return
+        }
+    getPremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
+    if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
+        {
+            block.Off()
+            tool.Cust("``titlecheck`` variable wasn't assigned a value")
+            errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+            SetTimer(, -1000)
+        }
+    dashLocation := InStr(Nameprem, "-")
+    if !dashLocation
+        {
+            SetTimer(, -1000)
+            return
+        }
+    Run(A_ScriptFullPath)
+        pauseautosave()
+    ScriptSuspend("autosave.ahk", false)
+    SetTimer(, 0)
 }

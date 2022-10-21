@@ -8,7 +8,12 @@ premNotOpen(&checklist, &logs, &path)
 {
     findFile := FileSelect("D 3",, "Select commission folder")
     if findFile = ""
-        ExitApp()
+        {
+            if WaitTrack != 0
+                global WaitTrack := 0
+            Run(A_WorkingDir "\Timer Scripts\autosave.ahk")
+            ExitApp()
+        }
     checklist := findFile "\checklist.ini"
     ;MsgBox(findFile "`n" checklist)
     logs := findFile "\checklist_logs.txt"

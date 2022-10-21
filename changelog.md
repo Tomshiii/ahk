@@ -26,7 +26,11 @@
 ## > Other Changes
 - Removed all uses of `verCheck()` and replaced with `#Requires`
 - `autosave.ahk` will now attempt to reactivate the original window even if the user interupts the save by interacting with the keyboard
-- `checklist.ahk` will not apply a dark theme to the menu popouts
+- Moved; `pauseautosave()`, `pausewindowmax()` & `ScriptSuspend(ScriptName, SuspendOn)` to `General.ahk`
+
+`checklist.ahk`
+- Will now apply a dark theme to the menu popouts
+- If `autosave.ahk` attempts to open `checklist.ahk` before the user has opened a project, `checklist.ahk` will now ask the user if they wish to wait until a project has been opened, or if they'd like to manually select the project
 
 `HotkeyReplacer.ahk`
 - All text is centered for a cleaner look

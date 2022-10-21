@@ -137,6 +137,8 @@ check() {
             SetTimer(, -msChecklist)
             goto end3
         }
+    if WinExist("Wait or Continue?")
+        WinWaitClose("Wait or Continue?")
     if !WinExist("Select commission folder")
         Run(A_WorkingDir "\checklist.ahk")
     else
