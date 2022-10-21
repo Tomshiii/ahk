@@ -156,31 +156,54 @@ updateCheck(Item, *)
         tree := "main"
     if Item = "&Beta"
         tree := "dev"
-    try {
-        main := ComObject("WinHttp.WinHttpRequest.5.1")
-        main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/" tree "/checklist.ahk")
-        main.Send()
-        main.WaitForResponse()
-        string := main.ResponseText
-    }  catch as e {
-        tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
-        return
-    }
-    if !IsSet(string)
-        return
-    startPos := InStr(string, "version := ", 1, 1, 1)
-    endpos := InStr(string, '"',, startPos, 2)
-    latestVer := SubStr(string, startpos + 12, endpos - (startPos + 12))
-    if VerCompare(latestVer, version) > 0
+    if !FileExist(A_MyDocuments "\tomshi\settings.ini")
         {
-            if WinExist("ahk/checklist.ahk at " tree " · Tomshiii/ahk")
-                WinActive("ahk/checklist.ahk at " tree " · Tomshiii/ahk")
+            try {
+                main := ComObject("WinHttp.WinHttpRequest.5.1")
+                main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/" tree "/checklist.ahk")
+                main.Send()
+                main.WaitForResponse()
+                string := main.ResponseText
+            }  catch as e {
+                tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
+                return
+            }
+            if !IsSet(string)
+                return
+            startPos := InStr(string, "version := ", 1, 1, 1)
+            endpos := InStr(string, '"',, startPos, 2)
+            latestVer := SubStr(string, startpos + 12, endpos - (startPos + 12))
+            if VerCompare(latestVer, version) > 0
+                {
+                    tool.Cust("There's a more up to date version!`nCurrent Version: " version "`nLatest Version: " latestVer, 5.0)
+                    if WinExist("Tomshiii/ahk at " tree)
+                        WinActive("Tomshiii/ahk at " tree)
+                    else
+                        {
+                            Run("https://github.com/Tomshiii/ahk/tree/" tree)
+                            WinWait("Tomshiii/ahk at " tree)
+                            WinActivate("Tomshiii/ahk at " tree)
+                        }
+                }
+            else if VerCompare(version, latestVer) > 0
+                tool.Cust("You are on a more up to date version!")
             else
-                Run("https://github.com/Tomshiii/ahk/blob/" tree "/checklist.ahk")
+                tool.Cust("You are up to date!")
+            return
         }
-    else if VerCompare(version, latestVer) > 0
-        tool.Cust("You are on a more up to date version!")
-    else
+    currentVer := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+    if tree = "main"
+        latestVer := getScriptRelease()
+    if tree = "dev"
+        latestVer := getScriptRelease(true)
+    if VerCompare(latestVer, currentVer) > 0
+        {
+            Run("https://github.com/Tomshiii/ahk/releases")
+            tool.Cust("There's a more up to date version!`nCurrent Release: " currentVer "`nLatest Release: " latestVer, 5.0)
+        }
+    if VerCompare(latestVer, currentVer) < 0
+        tool.Cust("It appears you've travelled through time and put yourself on a newer version...`nor you're just on a beta release and comparing to main", 5.0)
+    if VerCompare(latestVer, currentVer) = 0
         tool.Cust("You are up to date!")
 }
 
