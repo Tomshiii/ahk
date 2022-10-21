@@ -11,6 +11,7 @@ SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file belo
 GroupAdd("games", "Minecraft ahk_exe javaw.exe") ;minecraft
 GroupAdd("games", "Terraria ahk_exe Terraria.exe") ;terraria
 GroupAdd("games", "Overwatch ahk_exe Overwatch.exe") ;overwatch
+GroupAdd("games", "Sector's ahk_exe sectorsedge.exe") ;sectorsedge
 ; -- leave this line it gets used and is needed in settingsGUI()
 
 ;Set seconds delay here:

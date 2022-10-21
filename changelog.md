@@ -27,6 +27,7 @@
 - Removed all uses of `verCheck()` and replaced with `#Requires`
 - `autosave.ahk` will now attempt to reactivate the original window even if the user interupts the save by interacting with the keyboard
 - Moved; `pauseautosave()`, `pausewindowmax()` & `ScriptSuspend(ScriptName, SuspendOn)` to `General.ahk`
+- Fix edge case bug of `getID()` not assigning a value and causing an error
 
 `checklist.ahk`
 - Will now apply a dark theme to the menu popouts

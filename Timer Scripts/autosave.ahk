@@ -167,8 +167,17 @@ save()
     static origWind := unset
     if !IsSet(origWind)
         {
-            getID(&id)
-            origWind := id
+            try{
+                getID(&id)
+                origWind := id
+            } catch as e {
+                block.Off()
+                tool.Cust("A variable wasn't assigned a value")
+                errorLog(A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                origWind := unset
+                SetTimer(, -ms)
+                goto end2
+            }
         }
     ;\\ Then we grab the titles of both premiere and after effects so we can make sure to only fire parts of this script if a save is required
     getPremName(&premCheck, &titleCheck, &saveCheck)
@@ -179,8 +188,8 @@ save()
             block.Off()
             tool.Cust("A variable wasn't assigned a value")
             errorLog(A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
-            SetTimer(, -ms)
             origWind := unset
+            SetTimer(, -ms)
             goto end2
         }
     if WinExist("ahk_exe Adobe Premiere Pro.exe")
@@ -233,8 +242,8 @@ save()
                         }
                     if A_TimeIdleKeyboard <= idle
                         {
-                            SetTimer(, -retry)
                             tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
+                            SetTimer(, -retry)
                             goto end2
                         }
                     block.On()
@@ -315,7 +324,8 @@ save()
         tool.Cust("failed to find play/stop button")
         errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineFile, A_LineNumber)
         origWind := unset
-        return
+        SetTimer(, -ms)
+        goto end2
     }
 
     if A_TimeIdleKeyboard <= idle
@@ -366,9 +376,9 @@ save()
             SendInput("{Space}")
             block.Off()
             ToolTip("")
-            SetTimer(, -ms) ;reset the timer
             SendInput(timelineWindow)
             origWind := unset
+            SetTimer(, -ms) ;reset the timer
             goto end2
         }
 
