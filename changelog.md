@@ -29,6 +29,7 @@
 - Moved; `pauseautosave()`, `pausewindowmax()` & `ScriptSuspend(ScriptName, SuspendOn)` to `General.ahk`
 - Fix edge case bug of `getID()` not assigning a value and causing an error
 - Moved `gameCheck.ahk` game list to `\lib\gameCheck\Game List.ahk`
+- Fix `Multi-Instance Close.ahk` starting its timer before the `ms` variable has been set
 
 `checklist.ahk`
 - Will now apply a dark theme to the menu popouts

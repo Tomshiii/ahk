@@ -1,17 +1,20 @@
 #SingleInstance Force
 TraySetIcon("..\Support Files\Icons\M-I_C.png")
-SetTimer(check, -1)
 #Include FuncRedirect.ahk
 ;This script will check for and close scripts that have multiple instances open
 ;Even if you have #SingleInstance Force enabled, sometimes while reloading you can end up with a second instance of any given script, this script should hopefully negate that
 
 ;This script will not close multiple instances of `checklist.ahk`
-
+set:
 sec := 5
 if FileExist(A_MyDocuments "\tomshi\settings.ini")
     sec := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC")
 global ms := sec * 1000
 
+if IsSet(ms) ;we don't want the timer starting before the ms variable has been set
+    SetTimer(check, -1)
+else
+    goto set
 check()
 {
     detect()
