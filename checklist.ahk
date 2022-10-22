@@ -58,6 +58,7 @@ else
             {
                 if WaitTrack = 0
                     {
+                        tool.Wait()
                         ScriptSuspend("autosave.ahk", true) ;suspend
                         pauseautosave()
                         WaitTrack := 1

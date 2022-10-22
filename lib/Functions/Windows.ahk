@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.6
+;\\v2.14.7
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -725,7 +725,7 @@ discUnread(which := "")
 
 ; ===========================================================================================================================================
 ;
-;		VSCode \\ Last updated: v2.14.5
+;		VSCode \\ Last updated: v2.14.7
 ;
 ; ===========================================================================================================================================
 /**
@@ -736,12 +736,12 @@ vscode(script := 0)
 {
     getHotkeys(&first, &second)
     KeyWait(first)
-    coord.w()
     block.On()
+    sleep 50
     SendInput(focusExplorerWin) ;highlight the explorer window
     sleep 50
     SendInput(focusWork)
-    SendInput(collapseFold collapseFold) ;otherwise we close all repos
+    SendInput(collapseFold collapseFold) ;close all repos
     sleep 50
     SendInput("{Up 2}{Enter}") ;this highlights the top repo in the workspace
     if A_ThisHotkey = functionHotkey ;this opens my \functions folder
@@ -751,6 +751,8 @@ vscode(script := 0)
             SendInput("{Down 2}{Enter}")
             sleep 50
             block.Off()
+            tool.Wait()
+            tool.Cust("The function folder has been expanded", 2.0)
             return
         }
     SendInput("{Down " script "}")
@@ -758,4 +760,6 @@ vscode(script := 0)
     SendInput("{Enter}")
     SendInput(focusCode)
     block.Off()
+    tool.Wait()
+    tool.Cust("The proper file should now be focused", 2.0)
 }
