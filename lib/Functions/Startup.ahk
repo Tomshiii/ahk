@@ -1,4 +1,4 @@
-;v2.21.4
+;v2.21.5
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -94,7 +94,7 @@ generate(MyRelease)
 /**
  * A function to return the most recent version of my scripts on github
  */
-getScriptRelease(beta := false)
+getScriptRelease(beta := false, &changeVer := "")
 {
     try {
         main := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -113,9 +113,15 @@ getScriptRelease(beta := false)
         endpos := InStr(string, '"', , foundpos, 1)
         ver := SubStr(string, foundpos, endpos - foundpos)
         if !InStr(ver, "pre") && !InStr(ver, "beta")
-            break
+            {
+                changeVer := "main"
+                break
+            }
         else if beta = true
-            break
+            {
+                changeVer := "beta"
+                break
+            }
     }
     return ver
 }
@@ -133,11 +139,11 @@ updateChecker(MyRelease) {
     betaprep := 0
     if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
         { ;if the user wants to check for beta updates instead, this block will fire
-            global version := getScriptRelease(true)
+            global version := getScriptRelease(true, &changeVer)
             betaprep := 1
         }
     else
-        global version := getScriptRelease() ;getting non beta latest release
+        global version := getScriptRelease(, &changeVer) ;getting non beta latest release
     if version = 0
         return
     tool.Wait()
@@ -156,10 +162,10 @@ updateChecker(MyRelease) {
             ;grabbing changelog info
             try {
                 change := ComObject("WinHttp.WinHttpRequest.5.1")
-                if betaprep = 0
-                    change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
-                else if betaprep = 1
+                if betaprep = 1 && changeVer = "beta"
                     change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
+                else
+                    change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
                 change.Send()
                 change.WaitForResponse()
                 ChangeLog := change.ResponseText
