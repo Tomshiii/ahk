@@ -393,15 +393,24 @@ $^x:: ;This macro is only REQUIRED because I have `editor.emptySelectionClipboar
 	SendInput("^c")
 	if !ClipWait(0.1)
 		{
-			A_Clipboard := orig
+			amount := 1
 			SendInput("{End}")
 			SendInput("{Shift Down}{Home}{Shift Up}" "^x")
 			sleep 50
-			SendInput("{Ctrl Down}{BackSpace 2}{Ctrl Up}")
+			store := A_Clipboard
+			sleep 50
+			A_Clipboard := ""
+			SendInput("{Shift Down}{Home}{Shift Up}" "^c")
+			sleep 50
+			if StrCompare(A_Clipboard, "", 1) 
+				amount := "2"
+			SendInput("{BackSpace " amount "}")
+			A_Clipboard := orig ;restore the original clipboard
+			A_Clipboard := store ;add the cut content to the clipboard
 			return
 		}
-	SendInput("^x")
 	A_Clipboard := orig
+	SendInput("^x")
 }
 
 #HotIf WinActive("ahk_exe firefox.exe")

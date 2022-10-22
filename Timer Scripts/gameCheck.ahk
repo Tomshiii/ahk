@@ -6,13 +6,8 @@ SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory i
 TraySetIcon("..\Support Files\Icons\game.png")
 SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file below.
 
-;Add games here! you can get this info using WindowSpy that comes with ahk or you can activate `settingsGUI()` (default hotkey is #F1::) while you have the game active, then press the "add game to `gameCheck()`" button. It will attemp to add you game to this list automatically.
-;Format: `GameTitle ahk_exe game.exe`
-GroupAdd("games", "Minecraft ahk_exe javaw.exe") ;minecraft
-GroupAdd("games", "Terraria ahk_exe Terraria.exe") ;terraria
-GroupAdd("games", "Overwatch ahk_exe Overwatch.exe") ;overwatch
-GroupAdd("games", "Sector's ahk_exe sectorsedge.exe") ;sectorsedge
-; -- leave this line it gets used and is needed in settingsGUI()
+;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
+#Include "..\lib\gameCheck\Game List.ahk"
 
 ;Set seconds delay here:
 sec := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
