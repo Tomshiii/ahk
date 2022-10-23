@@ -37,6 +37,7 @@
 - If `autosave.ahk` attempts to open `checklist.ahk` before the user has opened a project, `checklist.ahk` will now ask the user if they wish to wait until a project has been opened, or if they'd like to manually select the project
 - `Check for Updates`
     - If the user has generated a `settings.ini` file, it will now compare the local `Release` version, to the latest release version on github instead of checking the local version of `checklist.ahk`
+        - If the user is on a pre-release and then checks for an update in the beta channel, it will then comapre the local `checklist.ahk` version to the version on the `dev` branch on github
     - If the user hasn't generated a `settings.ini` file, it will now just open the root dir of the repo on github instead of the individual `checklist.ahk` url (now that so many things related to `checklist.ahk` are separated into the `\lib` dir, it makes no sense to point the user to that specific page)
 
 `HotkeyReplacer.ahk`

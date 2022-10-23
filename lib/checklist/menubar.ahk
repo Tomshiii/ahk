@@ -203,6 +203,35 @@ updateCheck(Item, *)
         }
     if VerCompare(latestVer, currentVer) < 0
         tool.Cust("It appears you've travelled through time and put yourself on a newer version...`nor you're just on a beta release and comparing to main", 5.0)
+    if VerCompare(latestVer, currentVer) = 0 && tree = "dev"
+        { ;if the user is on the latest pre release but checks for an update on the beta channel
+            try { ;we then compare the local ver of checklist.ahk to the local ver on github
+                main := ComObject("WinHttp.WinHttpRequest.5.1")
+                main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/checklist.ahk")
+                main.Send()
+                main.WaitForResponse()
+                string := main.ResponseText
+            }  catch as e {
+                tool.Cust("You are up to date!") ;if the file can't be read, just fall back to this alert
+                return
+            }
+            if !IsSet(string)
+                return
+            startPos := InStr(string, "version := ", 1, 1, 1)
+            endpos := InStr(string, '"',, startPos, 2)
+            latestLocalVer := SubStr(string, startpos + 12, endpos - (startPos + 12))
+            if VerCompare(latestLocalVer, version) > 0
+                {
+                    if WinExist("Tomshiii/ahk at " tree)
+                        WinActive("Tomshiii/ahk at " tree)
+                    else
+                        Run("https://github.com/Tomshiii/ahk/tree/" tree)
+                    tool.Cust("You're on the latest release, but there are newer files relating to ``checklist.ahk`` available", 5.0)
+                    return
+                }
+            else
+                tool.Cust("You are up to date!")
+        }
     if VerCompare(latestVer, currentVer) = 0
         tool.Cust("You are up to date!")
 }
