@@ -303,9 +303,9 @@ zoom()
     d0yleXYS := [-57, -37, 210]
 
     ;chloe
-    chloeXYS := [-646, -352, 267]
-    chloeZoomXYS := [-2543, -1284, 486]
-    chloetemp := [-882, 1526, 292]
+    chloeXYS := [-415, -238, 267]
+    chloeZoomXYS := [-1679, -854, 486]
+    chloetemp := [632, 278, 292]
 
     ;then we'll define the values that will allow us to change things depending on the project
     static x := 0
