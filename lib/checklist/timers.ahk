@@ -43,6 +43,13 @@ StopWatch() {
  * This function handles what happens when the stop button is pressed
  */
 stop(*) {
+    if !IsSet(ElapsedTime)
+        {
+            if !WinExist("Editing Checklist - ")
+                Run(A_ScriptFullPath)
+            else
+                ExitApp()
+        }
     forFile := Round(ElapsedTime / 3600, 3)
     checkHours := IniRead(checklist, "Info", "time")
     if ElapsedTime != checkHours
