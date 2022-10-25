@@ -1,4 +1,4 @@
-;v2.21.5
+;v2.22
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -85,10 +85,11 @@ generate(MyRelease)
     GAMESEC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
     DARK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode", darkVerCheck)
     MULTI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC", 5)
+    WAIT := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait", "false")
     deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
     if FileExist(A_MyDocuments "\tomshi\settings.ini")
         FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
 /**
@@ -901,6 +902,41 @@ settingsGUI()
             }
     }
 
+    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait") = "true"
+        {
+            checkWait := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``checklist.ahk`` always wait")
+            checkWait.ToolTip := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
+        }
+    else
+        {
+            checkWait := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``checklist.ahk`` always wait")
+            checkWait.ToolTip := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
+        }
+    checkWait.OnEvent("Click", waitToggle)
+    waitToggle(*)
+    {
+        detect()
+        ToolTip("")
+        msgboxtext := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
+        checkWaitVal := checkWait.Value
+        if checkWaitVal = 1
+            {
+                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
+                checkWait.ToolTip := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
+                tool.Cust("``checklist.ahk`` will always wait for you to open a premiere project before opening", 2.0)
+                if WinExist("checklist.ahk - AutoHotkey")
+                    MsgBox(msgboxtext,, "48 4096")
+            }
+        else
+            {
+                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
+                checkWait.ToolTip := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
+                tool.Cust("``checklist.ahk`` will prompt the user if you wish to wait or manually open a project", 2.0)
+                if WinExist("checklist.ahk - AutoHotkey")
+                    MsgBox(msgboxtext,, "48 4096")
+            }
+    }
+
     darkINI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
     if darkINI = "true"
         {
@@ -1222,5 +1258,3 @@ settingsGUI()
     
     settingsGUI.Show("Center AutoSize")
 }
- 
- 

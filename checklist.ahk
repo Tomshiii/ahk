@@ -56,6 +56,19 @@ else
         dashLocation := InStr(Nameprem, "-")
         if !dashLocation
             {
+                if FileExist(A_MyDocuments "\tomshi\settings.ini") ;checks to see if the user wants to always wait until they open a project
+                    {
+                        waitCheck := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist Wait", "false")
+                        if waitCheck = "true"
+                            {
+                                WaitTrack := 1
+                                tool.Wait()
+                                ScriptSuspend("autosave.ahk", true) ;suspend
+                                pauseautosave()
+                                SetTimer(waitUntil, -1000)
+                                return
+                            }
+                    }
                 if WaitTrack = 0
                     {
                         tool.Wait()

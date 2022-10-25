@@ -132,7 +132,13 @@ check() {
             SetTimer(, -msChecklist)
             goto end3
         }
-    if WinExist("Editing Checklist")
+    detect()
+    if WinExist("checklist.ahk") && !WinExist("Editing Checklist -")
+        {
+            Pause()
+            Suspend()
+        }
+    if WinExist("Editing Checklist -")
         {
             SetTimer(, -msChecklist)
             goto end3
