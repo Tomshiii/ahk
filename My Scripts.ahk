@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.20.5
+;\\v2.20.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.1
 
@@ -77,7 +77,7 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
-;reloaderHotkey;
+;reloadHotkey;
 #+r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
 {
 	detect()
@@ -106,7 +106,7 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 			}
 }
 
-;hardreloadHotkey;
+;hardresetHotkey;
 #+^r::hardReset() ;this will hard reload all active ahk scripts
 
 ;settingsHotkey;
@@ -118,7 +118,7 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 ;handyhotkeysHotkey;
 #h::hotkeysGUI() ;this hotkey pulls up a GUI showing some useful hotkeys at your disposal while using these scripts
 
-;suspenderHotkey;
+;suspendHotkey;
 #+`:: ;this hotkey is to suspent THIS script. This is helpful when playing games as this script will try to fire and do whacky stuff while you're playing games
 {
 	if A_IsSuspended = 0
@@ -273,24 +273,6 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 	Run("https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm")
 	A_Clipboard := previous
 }
-;streamfoobarHotkey;
-^F22:: ;opens foobar, ensures the right playlist is selected, then makes it select a song at random. This is for my stream.
-{
-	Run("C:\Program Files (x86)\foobar2000\foobar2000.exe") ;I can't use vlc because the mii wii themes currently use that so ha ha here we goooooooo
-	WinWait("ahk_exe foobar2000.exe")
-	if WinExist("ahk_exe foobar2000.exe")
-		WinActivate
-	sleep 1000
-	WinGetPos(,, &width, &height, "A")
-	MouseGetPos(&x, &y)
-	if ImageSearch(&xdir, &ydir, 0, 0, width, height, "*2 " A_WorkingDir "\Support Files\ImageSearch\Foobar\pokemon.png")
-		{
-			MouseMove(xdir, ydir)
-			SendInput("{Click}")
-		}
-	SendInput("!p" "a")
-	MouseMove(x, y)
-}
 
 ;move mouse along one axis
 ;moveXhotkey;
@@ -367,7 +349,7 @@ F18:: ;open the "show more options" menu in win11
 !q::vscode(19) ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
 !c::vscode(14) ;clicks on my `changelog` file in vscode
-;vscodeSearchHotkey;
+;vscodesearchHotkey;
 $^f:: ;I have a habit of always trying to ^f in the explorer window instead of the code window
 { ;This macro REQUIRES `editor.emptySelectionClipboard` to be set to false within VSCode (if you use vscode)
 	SendInput(focusCode)
@@ -384,7 +366,7 @@ $^f:: ;I have a habit of always trying to ^f in the explorer window instead of t
 	SendInput("^f")
 	A_Clipboard := orig
 }
-;vscodeCutHotkey;
+;vscodecutHotkey;
 $^x:: ;This macro is only REQUIRED because I have `editor.emptySelectionClipboard` set to false within VSCode because of the above macro.
 { ;it recreates the usual ability to completely remove a line by pressed ^x
 	SendInput(focusCode)
@@ -462,6 +444,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 }
 
 ;the below disables the numpad on youtube so you don't accidentally skip around a video
+;numpadytHotkey;
 Numpad0::
 Numpad1::
 Numpad2::
@@ -521,11 +504,11 @@ SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering 
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(A_WorkingDir "\Support Files\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
-;discServHotkey;
+;discserverHotkey;
 F1::discUnread() ;will click any unread servers
-;discMsgHotkey;
+;discmsgHotkey;
 F2::discUnread(2) ;will click any unread channels
-;discDMHotkey;
+;discdmHotkey;
 F3:: ;this hotkey is to click the "discord" button in discord to access your dm's
 {
 	WinActivate("ahk_exe Discord.exe")
@@ -821,35 +804,35 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-;prempreviouseditHotkey;
+;previouseditHotkey;
 F21::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
-;premnexteditHotkey;
+;nexteditHotkey;
 F23::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
 ;playstopHotkey;
 F18::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse button
 ;nudgeupHotkey;
 F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
-;premslowDownHotkey;
+;slowDownHotkey;
 F14 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
-;premspeedUpHotkey;
+;speedUpHotkey;
 F14 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
-;premnudgedownHotkey;
+;nudgedownHotkey;
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
-;premmousedrag1Hotkey;
+;mousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
-;premmousedrag2Hotkey;
+;mousedrag2Hotkey;
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
-;premgooseHotkey;
+;gooseHotkey;
 F19::audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
-;prembleepHotkey;
+;bleepHotkey;
 F20::audioDrag("bleep")
 
-;---------------------------------------------------------------------------------------------------------------------------------------------
+;=============================================================================================================================================
 ;
 ;		other - NOT an editor
 ;
-;---------------------------------------------------------------------------------------------------------------------------------------------
+;=============================================================================================================================================
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 
 ;winmaxHotkey;
