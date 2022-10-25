@@ -7,6 +7,10 @@
 - `moveWin()` (when pressing the maximise hotkey) will now check to see if the active window is already maximised, and if it is, unmaximise it
 - `updateChecker()` will (while beta update checking is enabled) no longer show the update changelog as the current `dev branch` changelog unless the latest update is actually a pre-release
 
+`settingsGUI()`
+- Will now break up toggle checkboxes between general settings and individual script settings
+- If the user clicks the `settings.ini` button, a timer will now start that will reenable `AlwaysOnTop` for `settingsGUI()` once the user closes the `settings.ini` window
+
 ## > My Scripts
 - All hotkeys that saved the state of the clipboard now save `ClipboardAll()`
 

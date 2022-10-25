@@ -1,4 +1,4 @@
-;v2.22
+;v2.22.1
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -761,7 +761,7 @@ settingsGUI()
     toggleText := settingsGUI.Add("Text", "W100 H20 xs Y+5", "Toggle")
     toggleText.SetFont("S13 Bold")
 
-    adjustText := settingsGUI.Add("Text", "W100 H20 x+100", "Adjust")
+    adjustText := settingsGUI.Add("Text", "W100 H20 x+125", "Adjust")
     adjustText.SetFont("S13 Bold")
     decimalText := settingsGUI.Add("Text", "W180 H20 x+-40 Y+-18", "(decimals adjustable in .ini)")
     
@@ -833,14 +833,56 @@ settingsGUI()
             }
     }
 
+    darkINI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+    if darkINI = "true"
+        {
+            darkCheck := settingsGUI.Add("Checkbox", "Checked1 Y+5", "Dark Mode")
+            darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
+        }
+    else if darkINI = "false"
+        {
+            darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
+            darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
+        }
+    else if darkINI = "Disabled"
+        {
+            darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
+            darkCheck.ToolTip := "The users OS version is too low for this feature"
+            darkCheck.Opt("+Disabled")
+        }
+    darkCheck.OnEvent("Click", darkToggle)
+    darkToggle(*)
+    {
+        ToolTip("")
+        darkToggleVal := darkCheck.Value
+        if darkToggleVal = 1
+            {
+                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+                darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
+                tool.Cust("A dark theme will be applied to certain GUI elements wherever possible", 2000)
+                goDark()
+            }
+        else
+            {
+                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+                darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
+                tool.Cust("A lighter theme will be applied to certain GUI elements wherever possible", 2000)
+                goDark(false, "Light")
+            }
+    }
+
+    ;====================================================================================================
+    ;scripts
+
+
     if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") = "true"
         {
-            toggleToggle := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``autosave.ahk`` tooltips")
+            toggleToggle := settingsGUI.Add("Checkbox", "Checked1 Y+15", "``autosave.ahk`` tooltips")
             toggleToggle.ToolTip := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
         }
     else
         {
-            toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``autosave.ahk`` tooltips")
+            toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+15", "``autosave.ahk`` tooltips")
             toggleToggle.ToolTip := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
         }
     toggleToggle.OnEvent("Click", toggle)
@@ -937,47 +979,10 @@ settingsGUI()
             }
     }
 
-    darkINI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-    if darkINI = "true"
-        {
-            darkCheck := settingsGUI.Add("Checkbox", "Checked1 Y+5", "Dark Mode")
-            darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-        }
-    else if darkINI = "false"
-        {
-            darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
-            darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-        }
-    else if darkINI = "Disabled"
-        {
-            darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
-            darkCheck.ToolTip := "The users OS version is too low for this feature"
-            darkCheck.Opt("+Disabled")
-        }
-    darkCheck.OnEvent("Click", darkToggle)
-    darkToggle(*)
-    {
-        ToolTip("")
-        darkToggleVal := darkCheck.Value
-        if darkToggleVal = 1
-            {
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-                darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-                tool.Cust("A dark theme will be applied to certain GUI elements wherever possible", 2000)
-                goDark()
-            }
-        else
-            {
-                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-                darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-                tool.Cust("A lighter theme will be applied to certain GUI elements wherever possible", 2000)
-                goDark(false, "Light")
-            }
-    }
 
     ;EDIT BOXES
     adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
-    adobeGBEdit := settingsGUI.Add("Edit", "Section xs+197 ys r1 W50 Number", "")
+    adobeGBEdit := settingsGUI.Add("Edit", "Section xs+223 ys r1 W50 Number", "")
     settingsGUI.Add("UpDown",, adobeGBinitVal)
     adobeEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobeTemp()``")
     adobeEditText.SetFont("cd53c3c")
@@ -1143,6 +1148,25 @@ settingsGUI()
             WinActivate("settings.ini")
         else
             Run(A_MyDocuments "\tomshi\settings.ini")
+        WinWait("settings.ini")
+        SetTimer(iniWait, -100)
+    }
+    iniWait()
+    {
+        if !WinExist("Settings " version)
+            {
+                SetTimer(, 0)
+                goto end
+            }
+        if WinExist("settings.ini")
+            {
+                SetTimer(, -1000)
+                goto end
+            }
+        if !WinExist("settings.ini") && WinExist("Settings " version)
+            settingsGUI.Opt("+AlwaysOnTop")
+        SetTimer(, 0)
+        end:
     }
 
     workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
@@ -1171,7 +1195,7 @@ settingsGUI()
             Run(workDir)
     }
     
-    group := settingsGUI.Add("GroupBox", "W101 H95 xs+217 ys-60", "Exit")
+    group := settingsGUI.Add("GroupBox", "W101 H95 xs+227 ys-60", "Exit")
     hardResetVar := settingsGUI.Add("Button", "W85 H30 x+-93 y+-75", "Hard Reset")
     hardResetVar.OnEvent("Click", hardres)
 
@@ -1183,6 +1207,7 @@ settingsGUI()
     close(*)
     {
         SetTimer(statecheck, 0)
+        SetTimer(iniWait, 0)
         ;check 
         if betaStart = true 
             Run(A_ScriptFullPath)
@@ -1204,6 +1229,7 @@ settingsGUI()
     hardres(*)
     {
         SetTimer(statecheck, 0)
+        SetTimer(iniWait, 0)
         ;check to see if the user wants to reset adobeTemp()
         checkAdobe := adobeToggle.GetPos(,, &width)
         if width = 0
