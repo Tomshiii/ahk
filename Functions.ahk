@@ -8,9 +8,7 @@ SetWorkingDir(A_ScriptDir)  ; Ensures a consistent starting directory.
 #Include "%A_ScriptDir%\lib\Functions\Resolve.ahk"
 #Include "%A_ScriptDir%\lib\Functions\switchTo.ahk"
 #Include "%A_ScriptDir%\lib\Functions\Windows.ahk"
-
-;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.2
+#Include "%A_ScriptDir%\lib\Functions\GUIs.ahk"
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.6
@@ -37,5 +35,3 @@ SetWorkingDir(A_ScriptDir)  ; Ensures a consistent starting directory.
 ; These values will be the only thing you should theoretically need to change to get things working in your own setups (outside of potentially needing your own screenshots for things as different setups can mean different colours etc etc)
 ; Most premiere functions require no tinkering before getting started as we can sneakily grab the coordinates of some panels within premiere without needing to define them anywhere. Not all of my scripts have this kind of treatment though as sometimes it's just not practical, sometimes a function is so heavily reliant on my workspace/workflow that it would be a waste of time as you'd need to change a bunch of stuff anyway, or sometimes it's just not possible with the way I'm doing things.
 ; For the functions that don't get this special treatment, I have tried to make as many of these values as possible directly editable within KSI.ini to make it both easier and faster for you to adjust these scripts to your own layouts. Take a look over there before looking around in here
-
-; Here we will define a bunch of global variables that we will reference in ImageSearches. This is simply to help cut down the amount of things needed to write out and also to just make things cleaner overall to look at and help discern. Please note I have no way to add dynamic comments to these for VSCode users.

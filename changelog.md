@@ -1,5 +1,6 @@
 # <> Release 2.6.x
 - Some scripts now require `AutoHotkey v2.0-beta.12` as a minimum
+- Moved; `settingsGUI()`, `musicGUI()`, `hotkeysGUI()`, `todoGUI()` &  `activeScripts()` => `GUIs.ahk`
 
 ## > Functions
 - Added a slight delay to `vscode()` when expanding the `Functions` folder to ensure the right folder is expanded
