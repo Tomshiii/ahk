@@ -1,4 +1,4 @@
-;v2.22.1
+;v2.22.2
 #Include General.ahk
 
 ; =======================================================================================================================================
@@ -1280,6 +1280,8 @@ settingsGUI()
             buttonDarkMode(iniLink.Hwnd, DarkorLight)
             buttonDarkMode(hardResetVar.Hwnd, DarkorLight)
             buttonDarkMode(saveAndClose.Hwnd, DarkorLight)
+            buttonDarkMode(adobeUndo.Hwnd, DarkorLight)
+            buttonDarkMode(firstUndo.Hwnd, DarkorLight)
     }
     
     settingsGUI.Show("Center AutoSize")

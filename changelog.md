@@ -6,10 +6,12 @@
 - `zoom()` tooltip to notify that toggle values have been reset now only appears if the current project has a toggle zoom
 - `moveWin()` (when pressing the maximise hotkey) will now check to see if the active window is already maximised, and if it is, unmaximise it
 - `updateChecker()` will (while beta update checking is enabled) no longer show the update changelog as the current `dev branch` changelog unless the latest update is actually a pre-release
+- `getTitle()` will now ignore ahk GUIs
 
 `settingsGUI()`
 - Will now break up toggle checkboxes between general settings and individual script settings
 - If the user clicks the `settings.ini` button, a timer will now start that will reenable `AlwaysOnTop` for `settingsGUI()` once the user closes the `settings.ini` window
+- `undo?` buttons will now follow dark mode settings
 
 ## > My Scripts
 - All hotkeys that saved the state of the clipboard now save `ClipboardAll()`
@@ -42,7 +44,7 @@
     - A new checkbox toggle in `Settings` can force them to always wait for you to open a project before automatically opening 
 - `Check for Updates`
     - If the user has generated a `settings.ini` file, it will now compare the local `Release` version, to the latest release version on github instead of checking the local version of `checklist.ahk`
-        - If the user is on a pre-release and then checks for an update in the beta channel, it will then comapre the local `checklist.ahk` version to the version on the `dev` branch on github
+        - If the user is on a pre-release and then checks for an update in the beta channel, it will then compare the local `checklist.ahk` version to the version on the `dev` branch on github
     - If the user hasn't generated a `settings.ini` file, it will now just open the root dir of the repo on github instead of the individual `checklist.ahk` url (now that so many things related to `checklist.ahk` are separated into the `\lib` dir, it makes no sense to point the user to that specific page)
 
 `HotkeyReplacer.ahk`

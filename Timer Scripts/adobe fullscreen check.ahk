@@ -58,7 +58,7 @@ check()
                             isFullscreen(&title, &full)
                             if full = 0
                                 {
-                                    fireRound := Round(fire/1000, 0)
+                                    fireRound := Round(fire/1000, 1)
                                     tool.Cust(A_ScriptName " attempted to reset the fullscreen of " getProgram " but was reset due to interactions with a keyboard`nIt will attempt again in " fireRound "s", 2000)
                                     errorLog(A_ScriptName, "attempted to reset the fullscreen of " getProgram " but was reset due to interactions with a keyboard", A_LineFile, A_LineNumber)
                                 }

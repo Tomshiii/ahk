@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.7
+;\\v2.14.8
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -304,7 +304,7 @@ getMouseMonitor()
 getTitle(&title)
 {
     try {
-		title := WinGetTitle("A")
+		title := WinGetTitle("A",, "ahk_exe AutoHotkey64.exe")
         if !IsSet(title) || title = "" || title = "Program Manager"
 			{
 				tool.Cust("Couldn't determine the active window")
