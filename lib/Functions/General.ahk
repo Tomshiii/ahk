@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.20.3
+;\\v2.20.4
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.20
@@ -264,16 +264,18 @@ getHotkeys(&first, &second)
 		{
 			if variable = "#" || variable = "!" || variable = "^" || variable = "+" || variable = "<^>!"
 				{
-					if variable = "#"
-						variable := "Win"
-					if variable = "!"
-						variable := "Alt"
-					if variable = "^"
-						variable := "Ctrl"
-					if variable = "+"
-						variable := "Shift"
-					if variable = "<^>!"
-						variable := "AltGr"
+                    switch variable {
+                        case "#":
+                            variable := "Win"
+                        case "!":
+                            variable := "Alt"
+                        case "^":
+                            variable := "Ctrl"
+                        case "+":
+                            variable := "Shift"
+                        case "<^>!":
+                            variable := "AltGr"
+                    }
 					check := GetKeyVK(variable)
 					vkReturn := Format("vk{:X}", check)
 					return vkReturn
@@ -303,12 +305,15 @@ getHotkeys(&first, &second)
 floorDecimal(num,dec) => RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 
 /**
- * A function to loop through and hard reset all active ahk scripts
+ * A function to loop through and either reload or hard reset all* active ahk scripts
  */
-hardReset()
+reload_Reset(which)
 {
     detect()
-    tool.Cust("All active ahk scripts are being rerun")
+    if which = "reload"
+        tool.Cust("all active ahk scripts reloading", 500)
+    if which = "reset"
+        tool.Cust("All active ahk scripts are being rerun")
     value := WinGetList("ahk_class AutoHotkey")
     for this_value in value
         {
@@ -317,10 +322,28 @@ hardReset()
             SplitPath(path, &ScriptName)
             if ScriptName = "checklist.ahk" || ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk"
                 continue
-            Run(path)
+            if which = "reload"
+                PostMessage(0x0111, 65303,,, ScriptName " - AutoHotkey")
+            if which = "reset"
+                Run(path)
         }
+    detect(false)
     tool.Wait()
-    Run(A_ScriptFullPath) ;run this current script last so all of the rest actually happen
+    switch which {
+        case "reset":
+            Run(A_ScriptFullPath) ;run this current script last so all of the rest actually happen
+        case "reload":
+            Reload()
+            Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+            Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
+                if Result = "Yes"
+                    {
+                        if WinExist("ahk_exe Code.exe")
+                                WinActivate
+                        else
+                            Run("C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe")
+                    }
+    }
 }
 
 /**

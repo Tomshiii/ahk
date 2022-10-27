@@ -1,4 +1,4 @@
-# <> Release 2.6.x
+# <> Release 2.6.1 -
 - Some scripts now require `AutoHotkey v2.0-beta.12` as a minimum
 - Moved; `settingsGUI()`, `musicGUI()`, `hotkeysGUI()`, `todoGUI()` &  `activeScripts()` => `GUIs.ahk`
 
@@ -11,11 +11,15 @@
 
 `settingsGUI()`
 - Will now break up toggle checkboxes between general settings and individual script settings
-- If the user clicks the `settings.ini` button, a timer will now start that will reenable `AlwaysOnTop` for `settingsGUI()` once the user closes the `settings.ini` window
 - `undo?` buttons will now follow dark mode settings
+
+`settings.ini button`
+- If the user clicks the `settings.ini` button, a timer will now start that will reenable `AlwaysOnTop` for `settingsGUI()` once the user closes the `settings.ini` window
+- If the user clicks the button again once `settings.ini` is already open, it will be closed and reopened to refresh the information
 
 ## > My Scripts
 - All hotkeys that saved the state of the clipboard now save `ClipboardAll()`
+- Combined `#+r::` and `hardReset()` into one function => `reload_Reset()` to cut repeat code
 
 `$^f::`
 - Now checks to see if you have anything highlighted and won't delete it from the search field if you do
@@ -38,6 +42,23 @@
 - Fix edge case bug of `getID()` not assigning a value and causing an error
 - Moved `gameCheck.ahk` game list to `\lib\gameCheck\Game List.ahk`
 - Fix `Multi-Instance Close.ahk` starting its timer before the `ms` variable has been set
+
+[o] A lot of code blocks like; 
+```autohotkey
+if var = x
+    ...
+if var = y
+    ...
+```
+have been replaced with;
+```autohotkey
+switch var {
+    case x:
+        ...
+    case y:
+        ...
+}
+```
 
 `checklist.ahk`
 - Will now apply a dark theme to the menu popouts

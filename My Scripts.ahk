@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.20.6
+;\\v2.21
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.1
 
@@ -78,36 +78,10 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
 ;reloadHotkey;
-#+r:: ;this reload script will now attempt to reload all of my scripts, not only this main script
-{
-	detect()
-	value := WinGetList("ahk_class AutoHotkey")
-	for this_value in value ;this will go through each active .ahk script and tell it to reload
-		{
-			name := WinGettitle(this_value)
-			path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
-			SplitPath(path, &ScriptName)
-			if ScriptName = "checklist.ahk" || ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk"
-				continue
-			PostMessage(0x0111, 65303,,, ScriptName " - AutoHotkey")
-		}
-	detect(false)
-	tool.Cust("all active ahk scripts reloading", 500)
-	tool.Wait()
-	Reload()
-	Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
-		if Result = "Yes"
-			{
-				if WinExist("ahk_exe Code.exe")
-						WinActivate
-				else
-					Run("C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe")
-			}
-}
+#+r::reload_Reset("reload") ;this reload script will attempt to reload all* active ahk scripts, not only this main script
 
 ;hardresetHotkey;
-#+^r::hardReset() ;this will hard reload all active ahk scripts
+#+^r::reload_Reset("reset") ;this will hard rerun all active ahk scripts
 
 ;settingsHotkey;
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI
@@ -182,8 +156,8 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			toggle := 1
 		}
 	start:
-	if toggle = 1 ;if it's the first activation for the active window we run this codeblock
-		{
+	switch toggle {
+		case 1: ;first toggle
 			width := monitor.right - monitor.left ;determining the width of the current monitor
 			height := monitor.bottom - monitor.top ;determining the height of the current monitor
 			isFullscreen(&title2, &full, title) ;checking if the window is fullscreen
@@ -199,9 +173,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 				toggle += 1
 			else ;otherwise we reset the win variable
 				win := ""
-		}
-	else if toggle = 2 ;if this is the second activation for the active window we run this codeblock
-		{
+		case 2: ;second toggle
 			MonitorGet(mainMon, &left, &top, &right, &bottom) ;this will reset our variables with information for the main monitor
 			monitor.monitor := mainMon ;then we set the monitor value to the main monitor
 			monitor.left := left
@@ -211,7 +183,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			toggle := 1 ;reset our toggle
 			win := "" ;reset our win variable
 			goto start ;and go back to the beginning
-		}
+	}
 	if InStr(title, "YouTube") && IsSet(newHeight) && monitor.monitor = mainMon ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
 		{
 			newHeight := newHeight * 1.3

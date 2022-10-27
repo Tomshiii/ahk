@@ -50,47 +50,39 @@ settingsGUI()
     ;checkboxes
 
     checkVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
-    if checkVal = "true"
-        {
+    switch checkVal {
+        case "true":
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs+1 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will check for updates"
-        }
-    else if checkVal = "false"
-        {
+        case "false":
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs+1 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available"
-        }
-    else if checkVal = "stop"
-        {
+        case "stop":
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked0 section xs+1 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will NOT check for updates"
-        }
+    }
     updateCheckToggle.OnEvent("Click", update)
     update(*)
     {
         ToolTip("")
         betaCheck := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check") ;storing the beta check value so we can toggle it back on if it was on originally
         updateVal := updateCheckToggle.Value
-        if updateVal = 1
-            {
+        switch updateVal {
+            case 1: ;true
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
                 tool.Cust("Scripts will check for updates", 2000)
                 if betaCheck = "true"
                     betaupdateCheckToggle.Value := 1
-            }
-        else if updateVal = -1
-            {
+            case -1: ;false
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
                 tool.Cust("Scripts will still check for updates but will not present the user`nwith a GUI when an update is available", 2000)
                 if betaCheck = "true"
                     betaupdateCheckToggle.Value := 1
-            }
-        else if updateVal = 0
-            {
+            case 0: ;stop
                 betaupdateCheckToggle.Value := 0
                 IniWrite("stop", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
                 tool.Cust("Scripts will NOT check for updates", 2000)
-            }
+        }
     }
 
     betaStart := false ;if the user enables the check for beta updates, we want my main script to reload on exit.
@@ -117,90 +109,78 @@ settingsGUI()
     }
 
     darkINI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-    if darkINI = "true"
-        {
+    switch darkINI {
+        case "true":
             darkCheck := settingsGUI.Add("Checkbox", "Checked1 Y+5", "Dark Mode")
             darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-        }
-    else if darkINI = "false"
-        {
+        case "false":       
             darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
             darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-        }
-    else if darkINI = "Disabled"
-        {
+        case "Disabled":
             darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
             darkCheck.ToolTip := "The users OS version is too low for this feature"
             darkCheck.Opt("+Disabled")
-        }
+    }
     darkCheck.OnEvent("Click", darkToggle)
     darkToggle(*)
     {
         ToolTip("")
         darkToggleVal := darkCheck.Value
-        if darkToggleVal = 1
-            {
+        switch darkToggleVal {
+            case 1:
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
                 darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
                 tool.Cust("A dark theme will be applied to certain GUI elements wherever possible", 2000)
                 goDark()
-            }
-        else
-            {
+            case 0:
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
                 darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
                 tool.Cust("A lighter theme will be applied to certain GUI elements wherever possible", 2000)
                 goDark(false, "Light")
-            }
+        }
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;script checkboxes
 
-
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip") = "true"
-        {
+    tooltipCheck := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+    switch tooltipCheck {
+        case "true":
             toggleToggle := settingsGUI.Add("Checkbox", "Checked1 Y+15", "``autosave.ahk`` tooltips")
             toggleToggle.ToolTip := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
-        }
-    else
-        {
+        case "false":
             toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+15", "``autosave.ahk`` tooltips")
             toggleToggle.ToolTip := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
-        }
+    }
     toggleToggle.OnEvent("Click", toggle)
     toggle(*)
     {
         detect()
         ToolTip("")
         toggleVal := toggleToggle.Value
-        if toggleVal = 1
-            {
+        switch toggleVal {
+            case 1:
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
                 toggleToggle.ToolTip := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
                 tool.Cust("``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
-            }
-        else
-            {
+            case 0:
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
                 toggleToggle.ToolTip := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
                 tool.Cust("``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
-            }
-
+        }
         if WinExist("autosave.ahk - AutoHotkey")
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
     }
 
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip") = "true"
-        {
+    checklistTooltip := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
+    switch checklistTooltip {
+        case "true":
             checkTool := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``checklist.ahk`` tooltips")
             checkTool.ToolTip := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
-        }
-    else
-        {
+        case "false":
             checkTool := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``checklist.ahk`` tooltips")
             checkTool.ToolTip := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
-        }
+    }
     checkTool.OnEvent("Click", checkToggle)
     checkToggle(*)
     {
@@ -208,35 +188,32 @@ settingsGUI()
         ToolTip("")
         msgboxtext := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
         checkToggleVal := checkTool.Value
-        if checkToggleVal = 1
-            {
+        switch checkToggleVal {
+            case 1:
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
                 checkTool.ToolTip := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
                 tool.Cust("``checklist.ahk`` will produce tooltips to remind you if you've paused the timer", 2000)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
-            }
-        else
-            {
+            case 0:
                 ifDisabled := "`n`nThis setting will override the local setting for your current checklist"
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
                 checkTool.ToolTip := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
                 tool.Cust("``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer", 2000)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext ifDisabled,, "48 4096")
-            }
+        }
     }
 
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait") = "true"
-        {
+    checklistWait := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
+    switch checklistWait {
+        case "true":
             checkWait := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``checklist.ahk`` always wait")
             checkWait.ToolTip := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
-        }
-    else
-        {
+        case "false":
             checkWait := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``checklist.ahk`` always wait")
             checkWait.ToolTip := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
-        }
+    }
     checkWait.OnEvent("Click", waitToggle)
     waitToggle(*)
     {
@@ -244,22 +221,20 @@ settingsGUI()
         ToolTip("")
         msgboxtext := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
         checkWaitVal := checkWait.Value
-        if checkWaitVal = 1
-            {
+        switch checkWaitVal {
+            case 1:
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
                 checkWait.ToolTip := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
                 tool.Cust("``checklist.ahk`` will always wait for you to open a premiere project before opening", 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
-            }
-        else
-            {
+            case 0:
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
                 checkWait.ToolTip := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
                 tool.Cust("``checklist.ahk`` will prompt the user if you wish to wait or manually open a project", 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
-            }
+        }
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -434,8 +409,20 @@ settingsGUI()
     ini(*)
     {
         settingsGUI.Opt("-AlwaysOnTop")
-        if WinExist("settings.ini")
-            WinActivate("settings.ini")
+        if WinExist("settings.ini") ;if ini already open, get pos, close, and then reopen to refresh
+            {
+                coord.s()
+                getpos := WinGetPos(&x, &y, &width, &height, "settings.ini")
+                WinClose("settings.ini")
+                WinWaitClose("settings.ini")
+                Run(A_MyDocuments "\tomshi\settings.ini")
+                WinWait("settings.ini")
+                WinActivate("settings.ini")
+                prior := A_WinDelay
+                A_WinDelay := 500
+                WinMove(x, y, width, height, "settings.ini")
+                A_WinDelay := prior
+            }
         else
             Run(A_MyDocuments "\tomshi\settings.ini")
         WinWait("settings.ini")
@@ -538,7 +525,7 @@ settingsGUI()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         
-        hardReset()
+        reload_Reset("reset")
     }
 
     ;the below code allows for the tooltips on hover
