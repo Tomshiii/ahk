@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.8
+;\\v2.14.9
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -304,7 +304,12 @@ getMouseMonitor()
 getTitle(&title)
 {
     try {
-		title := WinGetTitle("A",, "ahk_exe AutoHotkey64.exe")
+        check := WinGetProcessName("A")
+        if check = "AutoHotkey64.exe"
+            ignore := WinGetTitle(check)
+        else
+            ignore := ""
+		title := WinGetTitle("A",, ignore)
         if !IsSet(title) || title = "" || title = "Program Manager"
 			{
 				tool.Cust("Couldn't determine the active window")
@@ -313,8 +318,8 @@ getTitle(&title)
 			}
         return title
 	} catch as e {
-		tool.Cust(A_ThisFunc "() couldn't determine the active window")
-		errorLog(A_ThisFunc, "Couldn't determine the active window", A_LineFile, A_LineNumber)
+		tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
+		errorLog(A_ThisFunc, "Couldn't determine the active window or you're attempting to interact with an ahk GUI", A_LineFile, A_LineNumber)
         block.Off()
 		Exit()
 	}
