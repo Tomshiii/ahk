@@ -8,6 +8,8 @@
 - `moveWin()` (when pressing the maximise hotkey) will now check to see if the active window is already maximised, and if it is, unmaximise it
 - `updateChecker()` will (while beta update checking is enabled) no longer show the update changelog as the current `dev branch` changelog unless the latest update is actually a pre-release
 - `getTitle()` will now ignore ahk GUIs
+- Fixed `aetimeline()` & `mousedragNotPrem()` attempting to fire in `Save As` windows
+- Add 50ms delay to `movepreview()` to make it more consistent
 
 `settingsGUI()`
 - Will now break up toggle checkboxes between general settings and individual script settings

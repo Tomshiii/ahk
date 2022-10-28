@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13
+;\\v2.13.1
 #Include General.ahk
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
@@ -316,17 +316,19 @@ aetimeline()
 {
     coord.w()
     MouseGetPos(&xpos, &ypos)
-
-    static graphX := 0
-    static graphY := 0
-    static end := 0
-    static bottom := 0
+    static graphX := unset
+    static graphY := unset
+    static end := unset
+    static bottom := unset
 
     /*
      A small function to get the coords of the graph icon, marker icon & mountain icon to determine the position of your timeline
      */
     getCoords(&graphX, &graphY, &end, &bottom)
     {
+        if !InStr(WinGetTitle("A"), "Adobe After Effects " A_Year " -")
+            return
+        tool.Cust(A_ThisFunc "() is grabbing the timeline coords", "2000")
         if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " AE "graph.png") || ImageSearch(&graphX, &graphY, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " AE "graph2.png")
             {
                 graphX := x + 30
@@ -337,16 +339,13 @@ aetimeline()
         if ImageSearch(&mountX, &mountY, 0, A_ScreenHeight / 4, A_ScreenWidth / 1.5, A_ScreenWidth, "*2 " AE "mountain.png")
             bottom := mountY - 8
     }
-    if graphX = 0 && graphY = 0 && end = 0 && bottom = 0
+    getCoords(&graphX, &graphY, &end, &bottom)
+    if !IsSet(graphX) || !IsSet(graphY) || !IsSet(end) || !IsSet(bottom)
         {
-            tool.Cust(A_ThisFunc "() is grabbing the timeline coords", "2000")
-            getCoords(&graphX, &graphY, &end, &bottom)
-            if !IsSet(end) || !IsSet(graphX) || !IsSet(graphY) || !IsSet(bottom)
-                {
-                    tool.Cust("A variable was not assigned a value")
-                    errorLog(A_ThisFunc "()", "A variable was not assigned a value", A_LineFile, A_LineNumber)
-                    return
-                }
+            SendInput("{" A_ThisHotkey "}")
+            tool.Cust("A variable was not assigned a value`nor the main window is not active")
+            errorLog(A_ThisFunc "()", "A variable was not assigned a value`nor the main window is not active", A_LineFile, A_LineNumber)
+            return
         }
     MouseGetPos(&newX, &newY)
     if(xpos > graphX and xpos < end) and (ypos > graphY and ypos < bottom)

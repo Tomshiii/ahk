@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.6
+;\\v2.15.7
 #Include General.ahk
 
 /**
@@ -30,30 +30,24 @@ preset(item)
             SendInput(timelineWindow) ;focuses the timeline
             SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
             sleep 100
-            if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
-                {
-                    if ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " Premiere "eye.png") ;searches for the eye icon for the original text
-                        {
-                            MouseMove(xeye, yeye)
-                            SendInput("{Click}")
-                            MouseGetPos(&eyeX, &eyeY)
-                            sleep 50
-                        }
-                    else
-                        {
-                            block.Off()
-                            tool.Cust("the eye icon",, 1)
-                            errorLog(A_ThisFunc "()", "Couldn't find the eye icon", A_LineFile, A_LineNumber)
-                            return
-                        }
-                }
-            else
+            if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
                 {
                     block.Off()
                     tool.Cust("the graphics tab",, 1)
                     errorLog(A_ThisFunc "()", "Couldn't find the graphics tab", A_LineFile, A_LineNumber)
                     return
                 }
+            if !ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " Premiere "eye.png") ;searches for the eye icon for the original text
+                {
+                    block.Off()
+                    tool.Cust("the eye icon",, 1)
+                    errorLog(A_ThisFunc "()", "Couldn't find the eye icon", A_LineFile, A_LineNumber)
+                    return
+                }
+            MouseMove(xeye, yeye)
+            SendInput("{Click}")
+            MouseGetPos(&eyeX, &eyeY)
+            sleep 50
         }
     effectbox() ;this is simply to cut needing to repeat this code below
     {
@@ -636,9 +630,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
                     return
                 }
         }
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
-        goto click
-    else
+    if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") && !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
         {
             tool.Cust("you're already keyframing")
             errorLog(A_ThisFunc "()", "The user was already keyframing", A_LineFile, A_LineNumber)
@@ -646,7 +638,6 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
             ;KeyWait(A_PriorHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
             return
         }
-    click:
     MouseMove(x + "7", y + "4")
     click
     block.Off()
@@ -760,14 +751,7 @@ audioDrag(sfxName)
         SendInput(sfxName)
         sleep 250 ;the project search is pretty slow so you might need to adjust this
         coord.w()
-        if ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") || ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
-            {
-                MouseMove(vlx, vly)
-                sleep 100
-                SendInput("{Click Down}")
-                sleep 100
-            }
-        else
+        if !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") && !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
             {
                 block.Off()
                 tool.Cust("audio image", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
@@ -776,6 +760,10 @@ audioDrag(sfxName)
                 MouseMove(xpos, ypos)
                 return
             }
+        MouseMove(vlx, vly)
+        sleep 100
+        SendInput("{Click Down}")
+        sleep 100
         coord.s()
         MouseMove(xpos, ypos)
         SendInput("{Click Up}")
@@ -865,15 +853,14 @@ audioDrag(sfxName)
             sleep 500
             SendInput("{Click Down}")
             MouseGetPos(&refx, &refy)
-            if ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_1.png") || ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_2.png")
-                MouseMove(refx, trackY, 2)
-            else
+            if !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_1.png") && !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_2.png")
                 {
                     block.Off()
                     tool.Cust("Couldn't determine the Y value of desired track")
                     errorLog(A_ThisFunc "()", "Couldn't determine the Y value of desired track", A_LineFile, A_LineNumber)
                     return
                 }
+            MouseMove(refx, trackY, 2)
             SendInput("{Click Up}")
             sleep 50
             MouseMove(delx + 10, dely, 2)
@@ -1066,16 +1053,15 @@ movepreview()
                     }
             }
             SendInput("{Click Down}")
+            sleep 50
             block.Off()
-            KeyWait A_ThisHotkey
+            KeyWait(A_ThisHotkey)
             SendInput("{Click Up}")
             ;MouseMove(xpos, ypos) ; // moving the mouse position back to origin after doing this is incredibly disorienting
         }
     else
         {
-            if ImageSearch(&xcol, &ycol, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "reset.png") ;these coords are set higher than they should but for whatever reason it only works if I do that????????
-                    MouseMove(xcol, ycol)
-            else ;if everything fails, this else will trigger
+            if !ImageSearch(&xcol, &ycol, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "reset.png")
                 {
                     block.Off()
                     MouseMove(xpos, ypos)
@@ -1083,6 +1069,7 @@ movepreview()
                     errorLog(A_ThisFunc "()", "Couldn't find the reset button", A_LineFile, A_LineNumber)
                     return
                 }
+            MouseMove(xcol, ycol)
             Click
             sleep 50
             MouseMove(xpos, ypos)
@@ -1136,10 +1123,8 @@ reset()
             }
     }
     SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
-    ;SendInput(labelIris) ;highlights the timeline, then changes the track colour so I know that clip has been zoomed in
     if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
         MouseMove(xcol, ycol)
-    ;SendInput, {WheelUp 10} ;not necessary as we use imagesearch to check for the motion value
     click
     MouseMove(xpos, ypos)
     block.Off()
@@ -1220,29 +1205,25 @@ manInput(property, optional := 0)
                 }
         }
     if ( ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property ".png") ||
-        ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "2.png") ||
-        ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "3.png") ||
-        ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "4.png")
+        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property ".png") &&
+        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "2.png") &&
+        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "3.png") &&
+        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "4.png")
     )
-        goto colour
-    else ;if everything fails, this else will trigger
         {
             block.Off()
             tool.Cust("the property you wish to adjust",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Couldn't find the users requested property", A_LineFile, A_LineNumber)
             return
         }
-    colour:
-    if PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x205cce, 2) ;searches for the blue text to the right of the scale value
-        MouseMove(xcol + optional, ycol)
-    else
+    if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x205cce, 2) ;searches for the blue text to the right of the scale value
         {
             block.Off()
             tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
             return
         }
+    MouseMove(xcol + optional, ycol)
     keywait(waitHotkey)
     SendInput("{Click}")
     ToolTip("manInput() is waiting for the " "'" manInputEnd "'" "`nkey to be pressed")
@@ -1337,7 +1318,7 @@ gain(amount)
  * This function opens up the gain menu within premiere pro so I can input it with my secondary keyboard. This function will also check to ensure the timeline is in focus and a clip is selected. I don't really use this anymore
  * @param {String} keyend is whatever key you want the function to wait for before finishing
  */
-gainSecondary(keyend)
+/* gainSecondary(keyend)
 {
     getHotkeys(&first, &waitKey)
     SendInput(effectControls)
@@ -1375,12 +1356,12 @@ gainSecondary(keyend)
     SendInput(gainAdjust) ;~ check the keyboard shortcut ini file to adjust hotkeys
     KeyWait(keyend, "D") ;waits until the final hotkey is pressed before continuing
     hotkeyReactivate()
-}
+} */
 
 /**
  * This function is here to cut repeat code across a few scripts, its purpose is to find the `checklist.ahk` file for the open Premiere/After Effects project. It's used in QMK.ahk and autosave.ahk
  */
-openChecklist()
+/* openChecklist()
 {
     tool.Wait()
     try {
@@ -1445,7 +1426,7 @@ openChecklist()
                 tool.Cust("File not found")
             }
         }
-}
+} */
 
 /**
  * Press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). 
@@ -1508,49 +1489,3 @@ mousedrag(premtool, toolorig)
     SetTimer(again, -400)
     again()
 }
-
-
-/*
- This function gets the classNN value and subsequent variables from the active window class.
- */
-/* getClassNN(&ClassNN, &classX, &classY, &width, &height) ;removed use of this function as if it fails to grab classNN values and errors out, the function that calls this one won't know and will continue on as if it's values got passed back
-{
-    try {
-        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-    } catch as e {
-        block.Off() ;just incase
-        tool.Cust("Couldn't get the ClassNN of the desired panel")
-        errorLog(A_ThisFunc "()", "Function couldn't determine the ClassNN of the desired panel", A_LineFile, A_LineNumber)
-        return
-    }
-} */
-; ===========================================================================================================================================
-; Old
-; ===========================================================================================================================================
-/*
-gain() ;old gain code (v2.3.14)to use imagesearch instead of the ClassNN information
-/*
-if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\Support Files\ImageSearch\Premiere\motion2.png")
-    goto inputs
-else
-    {
-        if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\Support Files\ImageSearch\Premiere\motion3.png") ;checks to see if the "motion" tab is highlighted as if it is, you'll start inputting values in that tab instead of adjusting the gain
-            {
-                SendInput("^+9") ;selects the timeline
-                goto inputs
-            }
-        else
-            {
-                if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " A_WorkingDir "\Support Files\ImageSearch\Premiere\noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-                    {
-                        SendInput("^+9" "d")
-                        goto inputs
-                    }
-                else
-                    {
-                        tool.Cust("gain macro couldn't figure`nout what to do")
-                        return
-                    }
-            }
-    } */

@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.20.4
+;\\v2.20.5
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.20
@@ -139,7 +139,7 @@ block := Inputs()
 
 ; ===========================================================================================================================================
 ;
-;		Mouse Drag \\ Last updated: v2.12.3
+;		Mouse Drag \\ Last updated: v2.20.5
 ;
 ; ===========================================================================================================================================
 /**
@@ -149,6 +149,11 @@ block := Inputs()
 */
 mousedragNotPrem(tool, toolorig)
 {
+    if WinActive("ahk_exe AfterFX.exe") && !InStr(WinGetTitle("A"), "Adobe After Effects " A_Year " -") || WinActive("Save As") || WinActive("Save a Copy") 
+        {
+            SendInput("{" A_ThisHotkey "}")
+            return
+        }
     click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
     SendInput tool "{LButton Down}"
     KeyWait(A_ThisHotkey)
@@ -244,7 +249,7 @@ errorLog(func, error, lineFile, lineNumber)
 
 ; ===========================================================================================================================================
 ;
-;		Other \\ Last updated: v2.17.3
+;		Other \\ Last updated: v2.20.5
 ;
 ; ===========================================================================================================================================
 /**
@@ -262,26 +267,23 @@ getHotkeys(&first, &second)
 		second := SubStr(getHotkey, 2, 1)
 		vk(variable)
 		{
-			if variable = "#" || variable = "!" || variable = "^" || variable = "+" || variable = "<^>!"
-				{
-                    switch variable {
-                        case "#":
-                            variable := "Win"
-                        case "!":
-                            variable := "Alt"
-                        case "^":
-                            variable := "Ctrl"
-                        case "+":
-                            variable := "Shift"
-                        case "<^>!":
-                            variable := "AltGr"
-                    }
-					check := GetKeyVK(variable)
-					vkReturn := Format("vk{:X}", check)
-					return vkReturn
-				}
-			else
-				return
+            switch variable {
+                case "#":
+                    variable := "Win"
+                case "!":
+                    variable := "Alt"
+                case "^":
+                    variable := "Ctrl"
+                case "+":
+                    variable := "Shift"
+                case "<^>!":
+                    variable := "AltGr"
+                default:
+                    return
+            }
+            check := GetKeyVK(variable)
+            vkReturn := Format("vk{:X}", check)
+            return vkReturn
 		}
 		check1 := vk(first)
 		check2 := vk(second)
