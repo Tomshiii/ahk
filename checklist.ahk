@@ -27,7 +27,7 @@ if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist 
         if WinExist("Select commission folder")
             WinWaitClose("Select commission folder")
         if WinExist("Wait or Continue?")
-                    WinWaitClose("Wait or Continue?")
+            WinWaitClose("Wait or Continue?")
     }
 else
     {

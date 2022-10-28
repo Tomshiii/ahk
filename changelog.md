@@ -1,4 +1,4 @@
-# <> Release 2.6.1 -
+# <> Release 2.6.1 - Hotfix & QoL
 - Some scripts now require `AutoHotkey v2.0-beta.12` as a minimum
 - Moved; `settingsGUI()`, `musicGUI()`, `hotkeysGUI()`, `todoGUI()` &  `activeScripts()` => `GUIs.ahk`
 
@@ -13,7 +13,7 @@
 - Will now break up toggle checkboxes between general settings and individual script settings
 - `undo?` buttons will now follow dark mode settings
 
-`settings.ini button`
+> `settings.ini button`
 - If the user clicks the `settings.ini` button, a timer will now start that will reenable `AlwaysOnTop` for `settingsGUI()` once the user closes the `settings.ini` window
 - If the user clicks the button again once `settings.ini` is already open, it will be closed and reopened to refresh the information
 
@@ -43,31 +43,15 @@
 - Moved `gameCheck.ahk` game list to `\lib\gameCheck\Game List.ahk`
 - Fix `Multi-Instance Close.ahk` starting its timer before the `ms` variable has been set
 
-[o] A lot of code blocks like; 
-```autohotkey
-if var = x
-    ...
-if var = y
-    ...
-```
-have been replaced with;
-```autohotkey
-switch var {
-    case x:
-        ...
-    case y:
-        ...
-}
-```
-
 `checklist.ahk`
 - Will now apply a dark theme to the menu popouts
 - If `autosave.ahk` attempts to open `checklist.ahk` before the user has opened a project, `checklist.ahk` will now ask the user if they wish to wait until a project has been opened, or if they'd like to manually select the project
-    - A new checkbox toggle in `Settings` can force them to always wait for you to open a project before automatically opening 
-- `Check for Updates`
-    - If the user has generated a `settings.ini` file, it will now compare the local `Release` version, to the latest release version on github instead of checking the local version of `checklist.ahk`
-        - If the user is on a pre-release and then checks for an update in the beta channel, it will then compare the local `checklist.ahk` version to the version on the `dev` branch on github
-    - If the user hasn't generated a `settings.ini` file, it will now just open the root dir of the repo on github instead of the individual `checklist.ahk` url (now that so many things related to `checklist.ahk` are separated into the `\lib` dir, it makes no sense to point the user to that specific page)
+    - A new checkbox toggle in `Settings` can force `autosave.ahk` & `checklist.ahk` to always wait for the user to open a project before automatically opening 
+
+> `Check for Updates menu button`
+- If the user has generated a `settings.ini` file, it will now compare the local `Release` version, to the latest release version on github instead of checking the local version of `checklist.ahk`
+    - If the user is on a pre-release and then checks for an update in the beta channel, it will then compare the local `checklist.ahk` version to the version on the `dev` branch on github
+- If the user hasn't generated a `settings.ini` file, it will now just open the root dir of the repo on github instead of the individual `checklist.ahk` url (now that so many things related to `checklist.ahk` are separated into the `\lib` dir, it makes no sense to point the user to that specific page)
 
 `HotkeyReplacer.ahk`
 - All text is centered for a cleaner look
@@ -75,3 +59,29 @@ switch var {
 - Now shows a progress bar
 - Now shows a status bar that updates during the various steps in the process
 - Now follows global dark mode settings (defaults to dark mode if no settings.ini file has been generated yet)
+
+`switch code blocks`
+- A lot of `if` code blocks have been replaced with `switch` code blocks, eg; 
+```autoit
+if var = x
+    {
+        ...
+        ...
+    }
+if var = y
+    {
+        ...
+        ...
+    }
+```
+have been replaced with;
+```autoit
+switch var {
+    case x:
+        ...
+        ...
+    case y:
+        ...
+        ...
+}
+```

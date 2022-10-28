@@ -133,7 +133,7 @@ check() {
             goto end3
         }
     detect()
-    if WinExist("checklist.ahk") && !WinExist("Editing Checklist -")
+    if WinExist("checklist.ahk",, "Visual Studio Code") && !WinExist("Editing Checklist -")
         {
             Pause()
             Suspend()
