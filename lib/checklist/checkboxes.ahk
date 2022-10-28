@@ -35,18 +35,18 @@ loop checkbox.count {
  * @returns {object} returns an object of the amount of boxes and the entire [checkboxes] list
  */
 getCheckboxNum()
-  {
+{
     var := IniRead(checklist, "Checkboxes")
     count := 0
     pos := 1
     loop {
-      if !InStr(var, "=",,, A_Index)
+        if !InStr(var, "=",,, A_Index)
         break
-      pos := InStr(var, "=",,, A_Index)
-      count += 1
+        pos := InStr(var, "=",,, A_Index)
+        count += 1
     }
     return {count: count, list: var}
-  }
+}
 
 
 /**

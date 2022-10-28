@@ -46,6 +46,7 @@
 - Fix `Multi-Instance Close.ahk` starting its timer before the `ms` variable has been set
 
 `checklist.ahk`
+- All GUI elements are declared in `construct.ahk` instead of `checklist.ahk`
 - Will now apply a dark theme to the menu popouts
 - If `autosave.ahk` attempts to open `checklist.ahk` before the user has opened a project, `checklist.ahk` will now ask the user if they wish to wait until a project has been opened, or if they'd like to manually select the project
     - A new checkbox toggle in `Settings` can force `autosave.ahk` & `checklist.ahk` to always wait for the user to open a project before automatically opening 

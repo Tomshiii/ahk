@@ -5,7 +5,7 @@
 TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.6.2.4"
+version := "v2.6.3"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -137,21 +137,8 @@ if !FileExist(logs)
 
 newDate(&today)
 
-;menubar
-#Include lib\checklist\menubar.ahk
-
-;defining title
-title := MyGui.Add("Text", "X8 Y2 w215 H23", "Checklist - " name)
-title.SetFont("bold")
-
-;checkboxes
-#Include lib\checklist\checkboxes.ahk
-
-;buttons
-#Include lib\checklist\buttons.ahk
-
-;timer text
-#Include lib\checklist\timerText.ahk
+;constructing the GUI
+#Include lib\checklist\contruct.ahk
 
 
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", logs)
