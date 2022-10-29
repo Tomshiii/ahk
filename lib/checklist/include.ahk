@@ -6,3 +6,4 @@
 #Include timers.ahk
 #Include log.ahk
 #Include close.ahk
+#Include getPath.ahk

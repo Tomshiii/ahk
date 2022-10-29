@@ -61,7 +61,6 @@ This script is the "central" script if you will. A lot of my windows scripts are
 This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional;
 - `generate()` - Handles creating a `settings.ini` file in `A_MyDocuments \tomshi\` directory that handles a few user adjustable settings in my scripts. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings` or by pulling up `settingsGUI()` (default hotkey is `win + F1`)
 - `locationReplace()` - Handles replacing any instance of either my original working directory, or yours if you move my scripts to a new location. eg. on first run by the user this function will replace all instances of `E:\Github\ahk` with the directory you run the script
-- `verCheck()` - This function can be found in a few of my scripts and will check to see if you're running a version of AHK that is compatible with my scripts
 - `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
 - `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as backup your current script directory
 - `firstCheck()` - Will check to see if this is the first time you're running my scripts and offer a helpful GUI to run you through a few things to get you going.
@@ -96,7 +95,8 @@ func(variableX, &variableY, variableZ := "default")
 }
 ```
 We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can achieve things like below;
-```autohotkey
+```autoit
+#Include Functions.ahk
 hotkey::
 {
   func("variableValue", &variableYbutCalledAnything)

@@ -5,7 +5,7 @@
 TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.6.3"
+version := "v2.7"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -31,7 +31,7 @@ if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist 
     }
 else
     {
-        if !WinExist("Adobe Premiere Pro")
+        if !WinExist("Adobe Premiere Pro") && !WinExist("ahk_exe AfterFX.exe")
             {
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")
@@ -40,21 +40,59 @@ else
                     WinWaitClose("Wait or Continue?")
                 goto end
             }
-        getPremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
-        if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
+        dashLocation := unset
+        dashLocationAE := unset
+        if WinExist("Adobe Premiere Pro")
             {
-                block.Off()
-                tool.Cust("``titlecheck`` variable wasn't assigned a value")
-                errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
-                premNotOpen(&checklist, &logs, &path)
-                if WinExist("Select commission folder")
-                    WinWaitClose("Select commission folder")
-                if WinExist("Wait or Continue?")
-                    WinWaitClose("Wait or Continue?")
-                goto end
+                getPremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
+                if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
+                    {
+                        block.Off()
+                        tool.Cust("``titlecheck`` variable wasn't assigned a value")
+                        errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                        premNotOpen(&checklist, &logs, &path)
+                        if WinExist("Select commission folder")
+                            WinWaitClose("Select commission folder")
+                        if WinExist("Wait or Continue?")
+                            WinWaitClose("Wait or Continue?")
+                        goto end
+                    }
+                dashLocation := InStr(Nameprem, "-")
+                if dashLocation = 0
+                    dashLocation := unset
             }
-        dashLocation := InStr(Nameprem, "-")
-        if !dashLocation
+        else if WinExist("ahk_exe AfterFX.exe")
+            {
+                aeCheck := WinGetTitle("ahk_exe AfterFX.exe")
+                if !IsSet(aeCheck) ;we ensure the title variable has been assigned before proceeding forward
+                    {
+                        block.Off()
+                        tool.Cust("``aeCheck`` variable wasn't assigned a value")
+                        errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                        premNotOpen(&checklist, &logs, &path)
+                        if WinExist("Select commission folder")
+                            WinWaitClose("Select commission folder")
+                        if WinExist("Wait or Continue?")
+                            WinWaitClose("Wait or Continue?")
+                        goto end
+                    }
+                if !InStr(aeCheck, ":`\")
+                    {
+                        try {
+                            aeCheck := WinGetTitle("Adobe After Effects")
+                        }
+                        if !InStr(aeCheck, ":`\")
+                            dashLocationAE := unset
+                        else
+                            dashLocationAE := InStr(aeCheck, ":`\")
+                    }
+                else
+                    dashLocationAE := InStr(aeCheck, ":`\")
+                /* MsgBox("aeCheck " aeCheck)
+                if IsSet(dashLocationAE)
+                    MsgBox("dash " dashLocationAE) */
+            }
+        if !IsSet(dashLocation) && !IsSet(dashLocationAE)
             {
                 if FileExist(A_MyDocuments "\tomshi\settings.ini") ;checks to see if the user wants to always wait until they open a project
                     {
@@ -90,15 +128,13 @@ else
                     WinWaitClose("Wait or Continue?")
                 goto end
             }
-        length := StrLen(Nameprem) - dashLocation
-        entirePath := SubStr(Nameprem, dashLocation + "2", length)
-        pathlength := StrLen(entirePath)
-        finalSlash := InStr(entirePath, "\",, -1)
-        path := SubStr(entirePath, 1, finalSlash - "1")
-        checklist := path "\checklist.ini"
-        logs := path "\checklist_logs.txt"
-        if !FileExist(checklist)
-            generateINI(checklist)
+        if IsSet(dashLocation)
+            getPath(Nameprem, dashLocation, &checklist, &logs, &path)
+        else if IsSet(dashLocationAE)
+            {
+                getaeDash := InStr(aeCheck, "-")
+                getPath(aeCheck, getaeDash, &checklist, &logs, &path)
+            }
         end:
     }
 

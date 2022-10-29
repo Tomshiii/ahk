@@ -48,8 +48,9 @@
 `checklist.ahk`
 - All GUI elements are declared in `construct.ahk` instead of `checklist.ahk`
 - Will now apply a dark theme to the menu popouts
+- Will now work automatically with `After Effects` projects instead of just `Premiere Pro`
 - If `autosave.ahk` attempts to open `checklist.ahk` before the user has opened a project, `checklist.ahk` will now ask the user if they wish to wait until a project has been opened, or if they'd like to manually select the project
-    - A new checkbox toggle in `Settings` can force `autosave.ahk` & `checklist.ahk` to always wait for the user to open a project before automatically opening 
+    - A new checkbox toggle in `Settings` can force `autosave.ahk` & `checklist.ahk` to always wait for the user to open a project before automatically opening
 
 > `Check for Updates menu button`
 - If the user has generated a `settings.ini` file, it will now compare the local `Release` version, to the latest release version on github instead of checking the local version of `checklist.ahk`

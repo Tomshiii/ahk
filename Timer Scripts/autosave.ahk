@@ -117,7 +117,7 @@ if WinExist("ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_exe AfterFX.exe")
     }
 else
     {
-        WinWait("ahk_exe Adobe Premiere Pro.exe") || WinWait("ahk_exe AfterFX.exe")
+        sleep 2500
         goto start
     }
 
