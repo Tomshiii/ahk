@@ -52,17 +52,6 @@ bar.Add("&File", FileMenu)
 bar.Add("&Settings", SettingsMenu)
 bar.Add("&Help", HelpMenu)
 
-;define GUI
-MyGui := Gui("AlwaysOnTop", "Editing Checklist - " name ".proj")
-MyGui.BackColor := 0xF0F0F0
-MyGui.SetFont("S12") ;Sets the size of the font
-MyGui.SetFont("W500") ;Sets the weight of the font (thickness)
-MyGui.Opt("+MinSize300x300")
-MyGui.MenuBar := bar
-noDefault := MyGui.Add("Button", "Default W0 H0", "_")
-
-
-
 
 /**
  * A function for the menubar to work correctly. Is called when the menuTooltips setting is pressed
@@ -282,12 +271,10 @@ hours(*)
         avg := floorDecimal(StartVal/increment,3)
 
     MyGui.GetPos(&x, &y, &width, &height)
-    hoursGUI := Gui("AlwaysOnTop", "Hours Worked")
+    hoursGUI := tomshiBasic("AlwaysOnTop", "Hours Worked")
     hoursGUI.Opt("+Owner" MyGui.Hwnd)
     hoursGUI.Opt("+MinSize200x200")
-    hoursGUI.SetFont("S11")
     hoursGUI.SetFont("W400")
-    hoursGUI.BackColor := 0xF0F0F0
     MyGui.Opt("+Disabled")
 
     hoursGUI.Add("Text", "W200 Center", "Hours worked today: " workedToday "`nDays worked: " increment "`nAvg Hours per day: " avg)

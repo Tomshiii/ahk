@@ -12,8 +12,8 @@ class ChecklistGui extends Gui {
         this.MenuBar := bar
 
         ;defining title
-        title := this.Add("Text", "X8 Y2 w215 H23", "Checklist - " name)
-        title.SetFont("bold")
+        titleText := this.Add("Text", "X8 Y2 w215 H23", "Checklist - " name)
+        titleText.SetFont("bold")
     }
 }
 
@@ -28,3 +28,4 @@ MyGui := ChecklistGui("AlwaysOnTop")
 
 ;creating timer text
 #Include timerText.ahk
+noDefault := MyGui.Add("Button", "Default X0 Y0 W0 H0", ".")

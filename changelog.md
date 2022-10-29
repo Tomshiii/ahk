@@ -1,6 +1,7 @@
 # <> Release 2.6.1 - Hotfix & QoL
 - Some scripts now require `AutoHotkey v2.0-beta.12` as a minimum
 - Moved; `settingsGUI()`, `musicGUI()`, `hotkeysGUI()`, `todoGUI()` &  `activeScripts()` => `GUIs.ahk`
+- Created `tomshiBasic()` which is a simple template for GUIs so I can easily maintain a consistent experience without needing to repeat code
 
 ## > Functions
 - Added a slight delay to `vscode()` when expanding the `Functions` folder to ensure the right folder is expanded
@@ -61,6 +62,7 @@
 - If `autosave.ahk` attempts to open `checklist.ahk` before the user has opened a project, `checklist.ahk` will now ask the user if they wish to wait until a project has been opened, or if they'd like to manually select the project
     - A new checkbox toggle in `Settings` can force `autosave.ahk` & `checklist.ahk` to always wait for the user to open a project before automatically opening
 - If the user clicks the `Open Logs` menu button again once `checklist_logs.txt` is already open, it will be closed and reopened to refresh the information
+- Will no longer focus it's window when it initially runs
 
 > `'Check for Updates' menu button`
 - If the user has generated a `settings.ini` file, it will now compare the local `Release` version, to the latest release version on github instead of checking the local version of `checklist.ahk`

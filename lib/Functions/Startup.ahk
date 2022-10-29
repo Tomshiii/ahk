@@ -1,4 +1,4 @@
-;v2.23
+;v2.23.1
 #Include General.ahk
 #Include GUIs.ahk
 ; =======================================================================================================================================
@@ -229,9 +229,7 @@ updateChecker(MyRelease) {
             if FileExist(A_Temp "\tomshi\changelog.txt")
                 FileDelete(A_Temp "\tomshi\changelog.txt")
             ;create gui
-            MyGui := Gui("", "Scripts Release " version)
-            MyGui.SetFont("S11")
-            MyGui.Opt("+Resize +MinSize600x400 +MaxSize600x400")
+            MyGui := tomshiBasic("+Resize +MinSize600x400 +MaxSize600x400", "Scripts Release " version)
             ;set title
             Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
             Title.SetFont("S15")

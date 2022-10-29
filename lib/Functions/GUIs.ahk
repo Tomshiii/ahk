@@ -1,5 +1,17 @@
 #Include General.ahk
 
+/*
+ * This class is to provide a basic template for all GUIs I create to maintain a consistent theme
+ */
+class tomshiBasic extends Gui {
+    __New(options?, title:="") {
+        super.__new(options?, title, this)
+        this.BackColor := 0xF0F0F0
+        this.SetFont("S11") ;Sets the size of the font
+        this.SetFont("W500") ;Sets the weight of the font (thickness)
+    }
+}
+
 /**
  * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
  */
@@ -32,10 +44,9 @@ settingsGUI()
 
     if WinExist("Settings " version)
         return
-    settingsGUI := Gui("+Resize +MinSize250x AlwaysOnTop", "Settings " version)
+    settingsGUI := tomshiBasic("+Resize +MinSize250x AlwaysOnTop", "Settings " version)
     SetTimer(resize, -10)
     resize() => settingsGUI.Opt("-Resize")
-    settingsGUI.SetFont("S11")
 
     noDefault := settingsGUI.Add("Button", "Default W0 H0", "_")
 
@@ -544,8 +555,6 @@ settingsGUI()
 
 class gameCheckGUI extends Gui {
     __new(dark, version, wintitle, process, options?, title:="") {
-        ; Any of the constructor parameters can be modified below.
-        ; In particular, pass 'this' as the third parameter (the event sink).
         super.__new(options?, title, this)
         this.BackColor := 0xF0F0F0
         this.SetFont("S11") ;Sets the size of the font
@@ -757,9 +766,7 @@ musicGUI()
 hotkeysGUI() {
     if WinExist("Handy Hotkeys - Tomshi Scripts")
         return
-    hotGUI := Gui("", "Handy Hotkeys - Tomshi Scripts")
-	hotGUI.SetFont("S11")
-	hotGUI.Opt("-Resize AlwaysOnTop")
+    hotGUI := tomshiBasic("-Resize AlwaysOnTop", "Handy Hotkeys - Tomshi Scripts")
 	Title := hotGUI.Add("Text", "H30 X8 W300", "Handy Hotkeys!")
 	Title.SetFont("S15")
 
@@ -918,9 +925,7 @@ activeScripts(MyRelease)
     if WinExist("Tomshi Scripts Release " MyRelease)
         return
     detect()
-    MyGui := Gui("", "Tomshi Scripts Release " MyRelease)
-    MyGui.SetFont("S11")
-    MyGui.Opt("-Resize AlwaysOnTop")
+    MyGui := tomshiBasic("-Resize AlwaysOnTop", "Tomshi Scripts Release " MyRelease)
     ;nofocus
     ;add an invisible button since removing the default off all the others did nothing
     removedefault := MyGui.Add("Button", "Default X0 Y0 w0 h0", "_")
