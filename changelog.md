@@ -16,6 +16,14 @@
 - Will now break up toggle checkboxes between general settings and individual script settings
 - `undo?` buttons will now follow dark mode settings
 
+> `'Add game to gameCheck.ahk' button`
+- Now creates it's own GUI instead of just using an inputbox
+    - Allows it to now follow `dark mode` settings
+- Window title and Window Process name shown separately instead of combined into the same box
+    - Window title will now show in full by default instead of only the first word
+- Will now alert the user if adding the requested game was sucessful or not
+- No longer copies anything to the clipboard
+
 > `settings.ini button`
 - If the user clicks the `settings.ini` button, a timer will now start that will reenable `AlwaysOnTop` for `settingsGUI()` once the user closes the `settings.ini` window
 - If the user clicks the button again once `settings.ini` is already open, it will be closed and reopened to refresh the information
@@ -54,7 +62,7 @@
     - A new checkbox toggle in `Settings` can force `autosave.ahk` & `checklist.ahk` to always wait for the user to open a project before automatically opening
 - If the user clicks the `Open Logs` menu button again once `checklist_logs.txt` is already open, it will be closed and reopened to refresh the information
 
-> `Check for Updates menu button`
+> `'Check for Updates' menu button`
 - If the user has generated a `settings.ini` file, it will now compare the local `Release` version, to the latest release version on github instead of checking the local version of `checklist.ahk`
     - If the user is on a pre-release and then checks for an update in the beta channel, it will then compare the local `checklist.ahk` version to the version on the `dev` branch on github
 - If the user hasn't generated a `settings.ini` file, it will now just open the root dir of the repo on github instead of the individual `checklist.ahk` url (now that so many things related to `checklist.ahk` are separated into the `\lib` dir, it makes no sense to point the user to that specific page)
