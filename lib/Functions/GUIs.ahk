@@ -410,19 +410,7 @@ settingsGUI()
     {
         settingsGUI.Opt("-AlwaysOnTop")
         if WinExist("settings.ini") ;if ini already open, get pos, close, and then reopen to refresh
-            {
-                coord.s()
-                getpos := WinGetPos(&x, &y, &width, &height, "settings.ini")
-                WinClose("settings.ini")
-                WinWaitClose("settings.ini")
-                Run(A_MyDocuments "\tomshi\settings.ini")
-                WinWait("settings.ini")
-                WinActivate("settings.ini")
-                prior := A_WinDelay
-                A_WinDelay := 500
-                WinMove(x, y, width, height, "settings.ini")
-                A_WinDelay := prior
-            }
+            refreshWin("settings.ini", A_MyDocuments "\tomshi\settings.ini")
         else
             Run(A_MyDocuments "\tomshi\settings.ini")
         WinWait("settings.ini")

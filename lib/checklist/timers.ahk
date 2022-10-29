@@ -120,13 +120,13 @@ reminder()
 {
     if WinExist("ahk_exe Adobe Premiere Pro.exe")
         {
-            if settingsToolTrack = 1
-                {
+            switch settingsToolTrack {
+                case 1:
                     tool.Cust("Don't forget you have the timer stopped!", "2000")
                     SetTimer(, -ms)
-                }
-            else if settingsToolTrack = 0
-                SetTimer(, 0)
+                case 0:
+                    SetTimer(, 0)
+            }
         }
     else
         SetTimer(, 0)

@@ -69,20 +69,18 @@ noDefault := MyGui.Add("Button", "Default W0 H0", "_")
  */
 menuTooltips(*)
 {
-    if settingsToolTrack = 1
-        {
+    switch settingsToolTrack {
+        case 1:
             global settingsToolTrack := 0
             SettingsMenu.UnCheck("&Tooltips")
             IniWrite("0", checklist, "Info", "tooltip")
             restart()
-        }
-    else if settingsToolTrack = 0
-        {
+        case 0:
             global settingsToolTrack := 1
             SettingsMenu.Check("&Tooltips")
             IniWrite("1", checklist, "Info", "tooltip")
             restart()
-        }
+    }
 
     restart()
     {
@@ -311,20 +309,18 @@ hours(*)
  */
 goDark(*)
 {
-    if darkToolTrack = 1
-        {
+    switch darkToolTrack {
+        case 1:
             global darkToolTrack := 0
             SettingsMenu.UnCheck("&Dark Mode")
             IniWrite("0", checklist, "Info", "dark")
             which(false, "Light", 0)
-        }
-    else if darkToolTrack = 0
-        {
+        case 0:
             global darkToolTrack := 1
             SettingsMenu.Check("&Dark Mode")
             IniWrite("1", checklist, "Info", "dark")
             which()
-        }
+    }
 }
 
 
@@ -362,10 +358,7 @@ which(dark := true, DarkorLight := "Dark", menu := 1)
         }
     }
 
-    buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark")
-    {
-        DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
-    }
+    buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark") => DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
 }
 
 /**
@@ -373,8 +366,14 @@ which(dark := true, DarkorLight := "Dark", menu := 1)
  */
 openLog(*)
 {
-    if FileExist(logs)
-        Run(logs)
+    if !FileExist(logs)
+        {
+            tool.Cust("the log file", 2000, 1)
+            return
+        }
+    if WinExist("checklist_logs.txt")
+        refreshWin("checklist_logs.txt", logs)
     else
-        tool.Cust("the log file", 2000, 1)
+        Run(logs)
+    
 }

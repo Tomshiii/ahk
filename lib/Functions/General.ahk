@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.20.5
+;\\v2.20.6
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.20
@@ -423,4 +423,24 @@ ScriptSuspend(ScriptName, SuspendOn)
         ; Otherwise, it already in the right state.
     }
     DetectHiddenWindows %&dhw%
+}
+
+/**
+ * A function to close a window, then reopen it in an attempt to refresh its information (for example, a txt file)
+ * @param {any} window is the title of the window you wish to target
+ * @param {any} runTarget is the path of the file you wish to open
+ */
+refreshWin(window, runTarget)
+{
+    coord.s()
+    getpos := WinGetPos(&x, &y, &width, &height, window)
+    WinClose(window)
+    WinWaitClose(window)
+    Run(runTarget)
+    WinWait(window)
+    WinActivate(window)
+    prior := A_WinDelay
+    A_WinDelay := 500
+    WinMove(x, y, width, height, window)
+    A_WinDelay := prior
 }

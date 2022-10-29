@@ -10,6 +10,7 @@
 - `getTitle()` will now ignore ahk GUIs
 - Fixed `aetimeline()` & `mousedragNotPrem()` attempting to fire in `Save As` windows
 - Add 50ms delay to `movepreview()` to make it more consistent
+- Added `refreshWin()` to close & reopen a window to refresh its contents
 
 `settingsGUI()`
 - Will now break up toggle checkboxes between general settings and individual script settings
@@ -51,6 +52,7 @@
 - Will now work automatically with `After Effects` projects instead of just `Premiere Pro`
 - If `autosave.ahk` attempts to open `checklist.ahk` before the user has opened a project, `checklist.ahk` will now ask the user if they wish to wait until a project has been opened, or if they'd like to manually select the project
     - A new checkbox toggle in `Settings` can force `autosave.ahk` & `checklist.ahk` to always wait for the user to open a project before automatically opening
+- If the user clicks the `Open Logs` menu button again once `checklist_logs.txt` is already open, it will be closed and reopened to refresh the information
 
 > `Check for Updates menu button`
 - If the user has generated a `settings.ini` file, it will now compare the local `Release` version, to the latest release version on github instead of checking the local version of `checklist.ahk`
