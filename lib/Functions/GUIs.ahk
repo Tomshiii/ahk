@@ -604,7 +604,8 @@ class gameCheckGUI extends Gui {
             if procVal != gameProcess.Value
                 procVal := gameProcess.Value
             ;check for game list file
-            if !FileExist(A_WorkingDir "\lib\gameCheck\Game List.ahk")
+            rootDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+            if !FileExist(rootDir "\lib\gameCheck\Game List.ahk")
                 {
                     MsgBox("``Game List.ahk`` not found in the proper directory")
                     this.Hide()
@@ -614,29 +615,35 @@ class gameCheckGUI extends Gui {
             ;create temp folders
             if !DirExist(A_Temp "\tomshi")
                 DirCreate(A_Temp "\tomshi")
-            readGameCheck := FileRead(A_WorkingDir "\lib\gameCheck\Game List.ahk")
+            readGameCheck := FileRead(rootDir "\lib\gameCheck\Game List.ahk")
             findEnd := InStr(readGameCheck, "; --", 1,, 1)
             addUserInput := StrReplace(readGameCheck, "; --", "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
             FileAppend(addUserInput, A_Temp "\tomshi\Game List.ahk")
-            FileMove(A_Temp "\tomshi\Game List.ahk", A_WorkingDir "\lib\gameCheck\Game List.ahk", 1)
+            FileMove(A_Temp "\tomshi\Game List.ahk", rootDir "\lib\gameCheck\Game List.ahk", 1)
             if WinExist("gameCheck.ahk - AutoHotkey")
                 PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
 
             ;check if worked
-            readAgain := FileRead(A_WorkingDir "\lib\gameCheck\Game List.ahk")
+            readAgain := FileRead(rootDir "\lib\gameCheck\Game List.ahk")
             if InStr(readAgain, "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
                 {
                     this.Hide()
                     MsgBox("Game added succesfully!")
-                    WinSetAlwaysOnTop(1, "Settings " version)
-                    WinActivate("Settings " version)
+                    if WinExist("Settings " version)
+                        {
+                            WinSetAlwaysOnTop(1, "Settings " version)
+                            WinActivate("Settings " version)
+                        }
                 }
             else
                 {
                     this.Hide()
                     MsgBox("Game added unsuccesfully :(")
-                    WinSetAlwaysOnTop(1, "Settings " version)
-                    WinActivate("Settings " version)
+                    if WinExist("Settings " version)
+                        {
+                            WinSetAlwaysOnTop(1, "Settings " version)
+                            WinActivate("Settings " version)
+                        }
                 }
         }
 
@@ -776,66 +783,48 @@ hotkeysGUI() {
 
     selectionText := hotGUI.Add("Text", "W240 X180 Y80 H100", "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!")
     text(*) {
-        if selection.Value = 1
-            {
+        switch selection.Value {
+            case 1:
                 selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!"
                 hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 2
-            {
+            case 2:
                 selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!"
                 hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 3
-            {
+            case 3:
                 selectionText.Move(, 60, "380", "220")
                 selectionText.Text := "Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control.`n`n(note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked"
                 hotGUI.Move(,, "590", "297")
-            }
-        if selection.Value = 4
-            {
+            case 4:
                 selectionText.Move(, 60, "380", "220")
                 selectionText.Text := "Will rerun all active ahk scripts, effectively hard restarting them!. If at anytime a normal refresh isn't enough attempt this hotkey.`n`n(note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked"
                 hotGUI.Move(,, "590", "297")
-            }
-        if selection.Value = 5
-            {
+            case 5:
                 selectionText.Move(, 100, "240", "100")
                 selectionText.Text := "Will call this GUI so you can reference these hotkeys at any time!"
                 hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 6
-            {
+            case 6:
                 selectionText.Move(, 100, "240", "100")
                 selectionText.Text := "Will center the current active window in the middle the active display, or move the window to your main display if activated again!"
                 hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 7
-            {
+            case 7:
                 selectionText.Move(, 100, "240", "100")
                 selectionText.Text := "Will put the active window in fullscreen if it isn't already, or pull it out of fullscreen if it already is!"
                 hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 8
-            {
+            case 8:
                 selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F2`` hotkey and unticking the same script!"
                 hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 9
-            {
+            case 9:
                 selectionText.Move(, 80, "240", "100")
                 selectionText.Text := "(That's : win > SHIFT > c, not the actual + key)`nWill search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
                 hotGUI.Move(,, "450", "297")
-            }
-        if selection.Value = 10
-            {
+            case 10:
                 selectionText.Move(, 100, "240", "100")
                 selectionText.Text := "Will remove and then either capitilise or completely lowercase the highlighted text depending on which is less frequent!"
                 hotGUI.Move(,, "450", "297")
-            }
+        }
     }
 
     ;buttons
@@ -924,7 +913,6 @@ activeScripts(MyRelease)
     detect()
     if WinExist("Tomshi Scripts Release " MyRelease)
         return
-    detect()
     MyGui := tomshiBasic("-Resize AlwaysOnTop", "Tomshi Scripts Release " MyRelease)
     ;nofocus
     ;add an invisible button since removing the default off all the others did nothing
@@ -932,72 +920,47 @@ activeScripts(MyRelease)
     ;active scripts
     text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
     text.SetFont("S13")
-    if A_IsSuspended = 0
-        my := MyGui.Add("CheckBox", "Checked1", "My Scripts.ahk")
-    else
-        my := MyGui.Add("CheckBox", "Checked0", "My Scripts.ahk")
-    SetTimer(checkMain, -100)
-    checkMain(*)
-    {
-        if WinExist("My Scripts.ahk is Suspended")
-            WinWaitClose("My Scripts.ahk is Suspended")
-        if A_IsSuspended = 0
-            my.Value := 1
-        else
-            my.Value := 0
-        SetTimer(, -1000)
-    }
+    
+    ;checkboxes
+    my := MyGui.Add("CheckBox", "Checked0", "My Scripts.ahk")
     my.ToolTip := "Clicking this checkbox will toggle suspend the script"
     my.OnEvent("Click", myClick)
-    if WinExist("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey")
-        alt := MyGui.Add("CheckBox", "Checked1", "Alt_menu_acceleration_DISABLER.ahk")
-    else
-        alt := MyGui.Add("CheckBox", "Checked0", "Alt_menu_acceleration_DISABLER.ahk")
+    
+    alt := MyGui.Add("CheckBox", "Checked0", "Alt_menu_acceleration_DISABLER.ahk")
     alt.ToolTip := "Clicking this checkbox will open/close the script"
-    alt.OnEvent("Click", scriptClick)
-    if WinExist("autodismiss error.ahk - AutoHotkey")
-        autodis := MyGui.Add("CheckBox", "Checked1", "autodismiss error.ahk")
-    else
-        autodis := MyGui.Add("CheckBox", "Checked0", "autodismiss error.ahk")
-    autodis.ToolTip := "Clicking this checkbox will open/close the script"
-    autodis.OnEvent("Click", scriptClick)
-    if WinExist("autosave.ahk - AutoHotkey")
-        autosave := MyGui.Add("CheckBox", "Checked1", "autosave.ahk")
-    else
-        autosave := MyGui.Add("CheckBox", "Checked0", "autosave.ahk")
-    autosave.ToolTip := "Clicking this checkbox will open/close the script. Reopening it will restart the autosave timer"
-    autosave.OnEvent("Click", scriptClick)
-    if WinExist("adobe fullscreen check.ahk - AutoHotkey")
-        premFull := MyGui.Add("CheckBox", "Checked1", "adobe fullscreen check.ahk")
-    else
-        premFull := MyGui.Add("CheckBox", "Checked0", "adobe fullscreen check.ahk")
-    premFull.ToolTip := "Clicking this checkbox will open/close the script"
-    premFull.OnEvent("Click", scriptClick)
-    if WinExist("gameCheck.ahk - AutoHotkey")
-        gameCheck := MyGui.Add("CheckBox", "Checked1", "gameCheck.ahk")
-    else
-        gameCheck := MyGui.Add("CheckBox", "Checked0", "gameCheck.ahk")
-    gameCheck.ToolTip := "Clicking this checkbox will open/close the script"
-    gameCheck.OnEvent("Click", scriptClick)
-    if WinExist("Multi-Instance Close.ahk - AutoHotkey")
-        multiCheck := MyGui.Add("CheckBox", "Checked1", "Multi-Instance Close.ahk")
-    else
-        multiCheck := MyGui.Add("CheckBox", "Checked0", "Multi-Instance Close.ahk")
-    multiCheck.ToolTip := "Clicking this checkbox will open/close the script"
-    multiCheck.OnEvent("Click", scriptClick)
-    if WinExist("QMK Keyboard.ahk - AutoHotkey")
-        qmk := MyGui.Add("CheckBox", "Checked1", "QMK Keyboard.ahk")
-    else
-        qmk := MyGui.Add("CheckBox", "Checked0", "QMK Keyboard.ahk")
-    qmk.ToolTip := "Clicking this checkbox will open/close the script"
-    qmk.OnEvent("Click", scriptClick)
-    if WinExist("Resolve_Example.ahk - AutoHotkey")
-        resolve := MyGui.Add("CheckBox", "Checked1", "Resolve_Example.ahk")
-    else
-        resolve := MyGui.Add("CheckBox", "Checked0", "Resolve_Example.ahk")
-    resolve.ToolTip := "Clicking this checkbox will open/close the script"
-    resolve.OnEvent("Click", scriptClick)
 
+    autodis := MyGui.Add("CheckBox", "Checked0", "autodismiss error.ahk")
+    autodis.ToolTip := "Clicking this checkbox will open/close the script"
+
+    autosave := MyGui.Add("CheckBox", "Checked0", "autosave.ahk")
+    autosave.ToolTip := "Clicking this checkbox will open/close the script. Reopening it will restart the autosave timer"
+
+    premFull := MyGui.Add("CheckBox", "Checked0", "adobe fullscreen check.ahk")
+    premFull.ToolTip := "Clicking this checkbox will open/close the script"
+
+    gameCheck := MyGui.Add("CheckBox", "Checked0", "gameCheck.ahk")
+    gameCheck.ToolTip := "Clicking this checkbox will open/close the script"
+
+    multiCheck := MyGui.Add("CheckBox", "Checked0", "Multi-Instance Close.ahk")
+    multiCheck.ToolTip := "Clicking this checkbox will open/close the script"
+
+    qmk := MyGui.Add("CheckBox", "Checked0", "QMK Keyboard.ahk")
+    qmk.ToolTip := "Clicking this checkbox will open/close the script"
+
+    resolve := MyGui.Add("CheckBox", "Checked0", "Resolve_Example.ahk")
+    resolve.ToolTip := "Clicking this checkbox will open/close the script"
+
+    ;set checkbox onevent.
+    ;only works because only thing I've generated so far is checkboxes
+    for hwnd, GuiCtrlObj in MyGui
+        {
+            if A_Index < 4 ;skips the invisible button, the title text, My Scripts.ahk and something else, probably the gui itself
+                continue
+            GuiCtrlObj.OnEvent("Click", scriptClick)
+        }
+
+    SetTimer(checkScripts, -100)
+        
     ;images
     myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Support Files\Icons\myscript.png")
     altImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\error.ico")
@@ -1043,13 +1006,8 @@ activeScripts(MyRelease)
         }
     }
     ;below is all of the callback functions
-    myClick(*){
-        myVal := my.Value
-        if myVal = 1
-            Suspend(-1)
-        else
-            Suspend(-1)
-    }
+    myClick(*) => Suspend(-1)
+
     scriptClick(script, *) {
         detect()
         val := script.Value
@@ -1058,15 +1016,34 @@ activeScripts(MyRelease)
                 WinClose(script.text " - AutoHotkey")
                 return
             }
-        if script.text = "My Scripts.ahk" || script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk"
+        if script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk"
             Run(A_WorkingDir "\" script.text)
         else
             Run(A_WorkingDir "\Timer Scripts\" script.text)
     }
 
+    checkScripts(*)
+    {
+        detect()
+        if WinExist("My Scripts.ahk is Suspended")
+            WinWaitClose("My Scripts.ahk is Suspended")
+     
+        my.Value := (A_IsSuspended = 0) ? 1 : 0
+        alt.Value := WinExist("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey") ? 1 : 0
+        autodis.Value := WinExist("autodismiss error.ahk - AutoHotkey") ? 1 : 0
+        autosave.Value := WinExist("autosave.ahk - AutoHotkey") ? 1 : 0
+        premFull.Value := WinExist("adobe fullscreen check.ahk - AutoHotkey") ? 1 : 0
+        gameCheck.Value := WinExist("gameCheck.ahk - AutoHotkey") ? 1 : 0
+        multiCheck.Value := WinExist("Multi-Instance Close.ahk - AutoHotkey") ? 1 : 0
+        qmk.Value := WinExist("QMK Keyboard.ahk - AutoHotkey") ? 1 : 0
+        resolve.Value := WinExist("Resolve_Example.ahk - AutoHotkey") ? 1 : 0
+
+        SetTimer(, -100)
+    }
+
     MyGui.OnEvent("Escape", escape)
     escape(*) {
-        SetTimer(checkMain, 0)
+        SetTimer(checkScripts, 0)
         MyGui.Destroy()
     }
 

@@ -8,7 +8,7 @@
 ;
 ; =======================================================================================================================================
 /**
- * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are adding without breaking anything.
+ * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
  * 
  * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
  */
@@ -92,8 +92,12 @@ generate(MyRelease)
     FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
 }
 
+
 /**
  * A function to return the most recent version of my scripts on github
+ * @param {Boolean} beta A `true/false` to determine if you want this function to check for a full release, or a prerelease. Can be omitted
+ * @param {VarRef} changeVer Determines which changelog to show in `updateChecker()` GUI
+ * @returns {number|string} returns a string containing the latest version number
  */
 getScriptRelease(beta := false, &changeVer := "")
 {
@@ -128,7 +132,9 @@ getScriptRelease(beta := false, &changeVer := "")
 }
 
 /**
- * This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the main branch of the github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog.
+ * This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the latest release on github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog.
+ * 
+ * Which branch the user wishes to check for (either beta, or main releases) can be determined by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`)
  * 
  * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
  */
@@ -497,7 +503,7 @@ oldError() {
 /**
  * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
  * 
- * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder tree to the actual default or set it to a similar place
+ * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
  */
 adobeTemp(MyRelease) {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
@@ -623,7 +629,7 @@ verCheck()
 /**
  Within my scripts I have a few hard coded references to the directory location I have these scripts. That however would be useless to another user who places them in another location.
  To combat this scenario, this function on script startup will check the working directory and change all instances of MY hard coded dir to the users current working directory.
- This script will take note of the users A_WorkingDir and store it in `A_MyDocuments \tomshi\location` and will check it every launch to ensure location variables are always updated and accurate
+ This script will take note of the users A_WorkingDir and store it in `A_MyDocuments \tomshi\settings.ini` and will check it every launch to ensure location variables are always updated and accurate
  */
 locationReplace()
 {

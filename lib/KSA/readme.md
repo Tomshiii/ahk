@@ -4,7 +4,7 @@ _**You do not need to run this script, it gets `#Include(d)` in `Functions.ahk` 
 
 With the addition of [`[Keyboard Shortcuts.ini]`](https://github.com/Tomshiii/ahk/blob/main/lib/KSA/Keyboard%20Shortcuts.ini) you are able to quickly go in and adjust any keyboard shortcut and have it instantly reflect within any scripts that use it.
 
-Alongside this .ini file is the companion [`[Keyboard Shortcut Adjustments.ahk]`](https://github.com/Tomshiii/ahk/blob/main/lib/KSA/Keyboard%20Shortcut%20Adjustments.ahk) file which is where we create the values we then later call from within scripts.
+Alongside this .ini file is the companion [`[Keyboard Shortcut Adjustments.ahk]`](https://github.com/Tomshiii/ahk/blob/main/lib/KSA/Keyboard%20Shortcut%20Adjustments.ahk) file which is where we create the variables we then later call from within scripts.
 
 So first we define the hotkey within the `Keyboard Shortcuts.ini` file
 ```autohotkey
@@ -14,7 +14,7 @@ Effect Controls="^+4"
 ```
 Then within the `Keyboard Shortcut Adjustments.ahk` file you'll see;
 ```autohotkey
-location := `A_WorkingDir` ;this directory should automatically be replaced by `locationReplace()`
+location := A_WorkingDir "\lib"
 
 effectControls := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Effect Controls")
 ```

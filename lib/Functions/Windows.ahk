@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.9
+;\\v2.14.10
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -48,6 +48,8 @@ monitorWarp(x, y)
 
 /**
  * A function that will check to see if you're holding the left mouse button, then move any window around however you like
+ * 
+ * If the activation hotkey is `Rbutton`, this function will minimise the current window.
  * @param {String} key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
  */
 moveWin(key)
@@ -94,6 +96,9 @@ moveWin(key)
  * This function allows you to move tabs within certain monitors in windows. I currently have this function set up to cycle between monitors 2 & 4.
  * 
  * This function will check for 2s if you have released the RButton, if you have, it will drop the tab and finish, if you haven't it will be up to the user to press the LButton when you're done moving the tab. This function has hardcoded checks for `XButton1` & `XButton2` and is activated by having the activation hotkey as just one of those two, but then right clicking on a tab and pressing one of those two.
+ * 
+ * As of firefox version 106, for this function to work it either requires you to follow the instructions in the link below to disable the tab search arrow, or it'll require you to make adjustments to the pixel values in this script.
+ * https://www.askvg.com/tip-remove-tabs-search-arrow-button-from-firefox-title-bar/
  */
 moveTab()
 {
@@ -271,8 +276,10 @@ moveTab()
     }
 }
 
+
 /**
  * This function will grab the monitor that the mouse is currently within and return it as well as coordinate information in the form of a function object. ie if your mouse is within monitor 1 having code `monitor := getMouseMonitor()` would make `monitor.monitor` = 1
+ * @returns {object} containing the monitor number, the left/right/top/bottom pixel coordinate
  */
 getMouseMonitor()
 {
@@ -300,6 +307,7 @@ getMouseMonitor()
 
 /**
  * This function gets and returns the title for the current active window, autopopulating the `title` variable
+ * @param {VarRef} title populates with the active window
  */
 getTitle(&title)
 {
@@ -421,8 +429,8 @@ moveXorY()
 }
 
 /**
- * This function is to allow the user to simply jump 10 characters in either direction. Useful when ^Left/Right isn't getting you to where you want the cursor to be
- * @param {String} leftorright is which direction you want to assign
+ * This function is to allow the user to simply jump 10 characters in either direction. Useful when ^Left/^Right isn't getting you to where you want the cursor to be
+ *
  * @param {Integer} amount is the amount of characters you want this function to jump, by default it is set to 10 and isn't required if you do not wish to override this value
  */
 jumpChar(amount := 10)
@@ -458,7 +466,7 @@ titleBarDarkMode(hwnd, dark := true)
 /**
  * This function will convert GUI buttons to a dark theme.
  * @param {String} ctrl_hwnd is the hwnd value of the control you wish to alter
- * @param {boolean} DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light" 
+ * @param {String} DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light" 
  * 
  * https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
  */
@@ -548,7 +556,7 @@ getID(&id)
 
 ; ===========================================================================================================================================
 ;
-;		discord \\ Last updated: v2.14.2
+;		discord \\ Last updated: v2.14.10
 ;
 ; ===========================================================================================================================================
 /**
@@ -565,7 +573,8 @@ disc(button)
 ;ensure this function only fires if discord is active ( #HotIf WinActive("ahk_exe Discord.exe") ) - VERY IMPORTANT
 {
     yheight := 400
-    KeyWait(A_PriorKey) ;use A_PriorKey when you're using 2 buttons to activate a macro
+    getHotkeys(&first, &second)
+    KeyWait(first) ;use A_PriorKey when you're using 2 buttons to activate a macro
     coord.w()
     MouseGetPos(&x, &y)
     WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.7
+;\\v2.15.8
 #Include General.ahk
 
 /**
@@ -465,7 +465,7 @@ zoom()
 }
 
 /**
- * A preset to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
+ * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
  * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
  * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
  */
@@ -1079,7 +1079,7 @@ movepreview()
 }
 
 /**
- * This script moves the cursor to the reset button to reset the "motion" effects
+ * This function moves the cursor to the reset button to reset the "motion" effects
  */
 reset()
 {
@@ -1241,6 +1241,12 @@ manInput(property, optional := 0)
  */
 gain(amount)
 {
+    if !IsNumber(amount) 
+        {
+            tool.Cust("You have put a non numeric value as this function's parameter", 2.0)
+            errorLog(A_ThisFunc "()", "User put a non numeric value in function's parameter", A_LineFile, A_LineNumber)
+            return
+        }
     KeyWait(A_ThisHotkey)
     Critical
     ToolTip("Adjusting Gain")
@@ -1429,13 +1435,13 @@ gain(amount)
 } */
 
 /**
- * Press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example). 
+ * Press a button(ideally a mouse button), this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example). 
  
- * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensuring the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
+ * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
  
  * This version is specifically for Premiere Pro
- * @param {String} tool is the hotkey you want the program to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
- * @param {String} toolorig is the hotkey you want the script to press to bring you back to your tool of choice (consider using KSA values)
+ * @param {String} tool is the hotkey you want the script to input to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
+ * @param {String} toolorig is the hotkey you want the script to input to bring you back to your tool of choice (consider using KSA values)
  */
 mousedrag(premtool, toolorig)
 {

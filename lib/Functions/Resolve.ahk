@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.2
+;\\v2.13.3
 #Include General.ahk
 
 /**
@@ -52,7 +52,7 @@ Rscale(value, property, plus)
 
 /**
  * A function that gets nested in the resolve scale, x/y and rotation scripts
- * @param {String} data is what the script is typing in the text box to reset its value
+ * @param {Integer} data is what the script is typing in the text box to reset its value
  */
 rfElse(data)
 ;this function, as you can probably tell, doesn't use an imagesearch. It absolutely SHOULD, but I don't use resolve and I guess I just never got around to coding in an imagesearch.
@@ -171,7 +171,7 @@ REffect(folder, effect)
  * A function to provide similar functionality within Resolve to my valuehold() function for premiere
  * @param {String} property refers to both of the screenshots (either active or not) for the property you wish to adjust
  * @param {Integer} plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
- * @param {String} rfelseval is the value you wish to pass to rfelse()
+ * @param {Integer} rfelseval is the value you wish to pass to rfelse()
  */
 rvalhold(property, plus, rfelseval)
 {
@@ -259,6 +259,12 @@ rflip(button)
  */
 rgain(value)
 {
+    if !IsNumber(value)
+        {
+            tool.Cust("You have put a non numeric value as this function's parameter", 2.0)
+            errorLog(A_ThisFunc "()", "User put a non numeric value in function's parameter", A_LineFile, A_LineNumber)
+            return
+        }
     coord.w()
     block.On()
     SendInput(resolveSelectPlayhead)

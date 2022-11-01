@@ -15,7 +15,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21
+;\\v2.21.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.1
 
@@ -246,17 +246,17 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 	A_Clipboard := previous
 }
 
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		other
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------
 ;move mouse along one axis
 ;moveXhotkey;
 SC03A & XButton2::
 ;moveYhotkey;
 SC03A & XButton1::moveXorY()
 
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;
-;		other
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf WinActive("ahk_class CabinetWClass") || WinActive("ahk_class #32770") ;windows explorer
 ;explorerbackHotkey;
 F21::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
@@ -795,7 +795,7 @@ LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
 Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
-;gooseHotkey;
+;bonkHotkey;
 F19::audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 ;bleepHotkey;
 F20::audioDrag("bleep")

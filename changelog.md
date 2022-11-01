@@ -12,6 +12,13 @@
 - Fixed `aetimeline()` & `mousedragNotPrem()` attempting to fire in `Save As` windows
 - Add 50ms delay to `movepreview()` to make it more consistent
 - Added `refreshWin()` to close & reopen a window to refresh its contents
+- `tool.Cust()` will now make sure `WhichTooltip` is an integer between 1-20
+- `gain()` & `rgain()` will now make sure the parameter passed is a number
+- `disc()` now uses `getHotkeys()` instead of `KeyWait(A_PriorHotkey)`
+
+`activeScripts()`
+- Now creates it's checkboxes, then uses a loop to attatch the `.OnEvent("Click")` to all of them
+- Timer that runs now checks ALL active scripts instead of just `My Scripts.ahk` and updates checkboxes if a script is opened/closed while GUI is open
 
 `settingsGUI()`
 - Will now break up toggle checkboxes between general settings and individual script settings
@@ -20,6 +27,7 @@
 > `'Add game to gameCheck.ahk' button`
 - Now creates it's own GUI instead of just using an inputbox
     - Allows it to now follow `dark mode` settings
+    - Allows this GUI to be called by right clicking on `gameCheck.ahk`
 - Window title and Window Process name shown separately instead of combined into the same box
     - Window title will now show in full by default instead of only the first word
 - Will now alert the user if adding the requested game was sucessful or not

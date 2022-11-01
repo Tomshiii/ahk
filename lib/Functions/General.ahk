@@ -18,7 +18,7 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.20.6
+;\\v2.20.7
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.20
@@ -50,7 +50,7 @@ coord := coordinates()
 
 ; ===========================================================================================================================================
 ;
-;		Tooltip \\ Last updated: v2.20.3
+;		Tooltip \\ Last updated: v2.20.7
 ;
 ; ===========================================================================================================================================
 
@@ -67,12 +67,19 @@ class tooltips {
      * @param {number} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a floating point number, ie; `1.0`, `2.5`, etc
      * @param {boolean} find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 (or true) for this variable if you do, or omit it if you don't
      * @param {number} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
-     * @param {integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).
+     * @param {integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified or set larger than 20, that number is 1 (the first).
      */
     Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     {
         if !IsInteger(timeout) && IsFloat(timeout) ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
             timeout := timeout * 1000
+        if IsSet(WhichToolTip)
+            {
+                if !IsInteger(WhichToolTip)
+                    WhichToolTip := 1
+                if WhichToolTip > 20 || WhichToolTip < 1
+                    WhichToolTip := 1
+            }
         MouseGetPos(&xpos, &ypos) ;log our starting mouse coords
         time := A_TickCount ;log our starting time
         messageFind := find = 1 ? "Couldn't find " : "" ;this is essentially saying: if find = 1 then messageFind := "Couldn't find " else messageFind := ""
@@ -253,7 +260,9 @@ errorLog(func, error, lineFile, lineNumber)
 ;
 ; ===========================================================================================================================================
 /**
- * This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire. If the hotkey used with this function is only 2 characters long, it will assign each of those to &first & &second respectively. If one of those characters is a special key (ie. ! or ^) it will return the virtual key so `KeyWait` will still work as expected
+ * This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire.
+ * 
+ * If the hotkey used with this function is only 2 characters long, it will assign each of those to &first & &second respectively. If one of those characters is a special key (ie. ! or ^) it will return the virtual key so `KeyWait` will still work as expected
  * @param {var} first is the variable that will be filled with the first activation hotkey. Must be written as `&var`
  * @param {var} second is the variable that will be filled with the second activation hotkey. Must be written as `&var`
 */
@@ -350,13 +359,13 @@ reload_Reset(which)
 
 /**
  * A function to cut repeat code and set some values required to detect ahk scripts
- * @param {Integer} windows is what hidden window mode you wish for the script to take. This value `defaults to true`
- * @param {Integer} title is what title match mode you wish for the script to take. This value `defaults to 2`
+ * @param {Boolean} windows is what hidden window mode you wish for the script to take. This value `defaults to true`
+ * @param {Integer/String} title is what title match mode you wish for the script to take. This value `defaults to 2`
  */
 detect(windows := true, title := 2) => (DetectHiddenWindows(windows), SetTitleMatchMode(title))
 
 /**
- * This function toggles a pause on the autosave ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
+ * This function toggles a pause on the autosave ahk script.
  */
 pauseautosave()
 {
@@ -372,7 +381,7 @@ pauseautosave()
 }
  
  /**
-  * This function toggles a pause on the premiere_fullscreen_check ahk script. Due to the location of this function script, a full filepath has to be given, if you hold these scripts in a different location to me, these will error out
+  * This function toggles a pause on the premiere_fullscreen_check ahk script.
   */
 pausewindowmax()
 {

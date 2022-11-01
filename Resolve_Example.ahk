@@ -8,7 +8,7 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\resolve.png")
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. Functions.ahk must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.1
+;\\v2.6.2
 ;\\Minimum Version of "Resolve.ahk" Required for this script
 ;\\v2.13
 
@@ -64,10 +64,10 @@ WheelLeft::Up
 ;=========================================================
 ;		hold and drag (or click)
 ;=========================================================
-F1::rvalhold("zoom", "60", "1") ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
-F2::rvalhold("position", "80", "1") ;press then hold F2 and drag to increase/decrese x position. Let go of F2 to confirm. Tap to reset
-F3::rvalhold("position", "210", "1") ;press then hold F3 and drag to increase/decrese y position. Let go of F3 to confirm. Tap to reset
-F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/decrese rotation. Let go of F4 to confirm. Tap to reset
+F1::rvalhold("zoom", 60, 1) ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
+F2::rvalhold("position", 80, 1) ;press then hold F2 and drag to increase/decrese x position. Let go of F2 to confirm. Tap to reset
+F3::rvalhold("position", 210, 1) ;press then hold F3 and drag to increase/decrese y position. Let go of F3 to confirm. Tap to reset
+F4::rvalhold("rotation", 240, 0) ;press then hold F4 and drag to increase/decrese rotation. Let go of F4 to confirm. Tap to reset
 
 ;=========================================================
 ;		flips
@@ -78,9 +78,9 @@ F4::rvalhold("rotation", "240", "0") ;press then hold F4 and drag to increase/de
 ;=========================================================
 ;		Scale Adjustments
 ;=========================================================
-^1::Rscale("1", "zoom", "60") ;makes the scale of current selected clip 100
-^2::Rscale("2", "zoom", "60") ;makes the scale of current selected clip 200
-^3::Rscale("3", "zoom", "60") ;makes the scale of current selected clip 300
+^1::Rscale(1, "zoom", 60) ;makes the scale of current selected clip 100
+^2::Rscale(2, "zoom", 60) ;makes the scale of current selected clip 200
+^3::Rscale(3, "zoom", 60) ;makes the scale of current selected clip 300
 
 ;=========================================================
 ;
@@ -166,6 +166,6 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
 ;		gain
 ;
 ;=========================================================
-Numpad1::rgain("-2")
-Numpad2::rgain("2")
-Numpad3::rgain("6")
+Numpad1::rgain(-2)
+Numpad2::rgain(2)
+Numpad3::rgain(6)

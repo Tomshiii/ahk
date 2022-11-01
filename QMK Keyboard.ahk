@@ -31,7 +31,6 @@ unassigned() => tool.Cust(A_ThisHotkey " is unassigned") ;create a tooltip for u
 
 /**
  * This function is specifically designed for this script as I have a button designed to be pressed alongside another just to open new windows
- * @param {String} key is the activation key of the program (not the key to run an additional window). These are NOT listed in KSA simply because this script is so incredibly specific to my workflow
  * @param {String} classorexe is just defining if we're trying to grab the class or exe
  * @param {String} activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
  * @param {String} runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
