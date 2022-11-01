@@ -15,6 +15,7 @@
 - `tool.Cust()` will now make sure `WhichTooltip` is an integer between 1-20
 - `gain()` & `rgain()` will now make sure the parameter passed is a number
 - `disc()` now uses `getHotkeys()` instead of `KeyWait(A_PriorHotkey)`
+- Move `On_WM_MOUSEMOVE()` to `General.ahk` to remove repeat declarations
 
 `activeScripts()`
 - Now creates it's checkboxes, then uses a loop to attatch the `.OnEvent("Click")` to all of them

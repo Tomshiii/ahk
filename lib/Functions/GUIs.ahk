@@ -126,15 +126,15 @@ settingsGUI()
     }
 
     darkINI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+    darkCheck := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(darkINI) " Y+5", "Dark Mode")
+    darkToolY := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
+    darkToolN := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
     switch darkINI {
         case "true":
-            darkCheck := settingsGUI.Add("Checkbox", "Checked1 Y+5", "Dark Mode")
-            darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
+            darkCheck.ToolTip := darkToolY
         case "false":       
-            darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
-            darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
+            darkCheck.ToolTip := darkToolN
         case "Disabled":
-            darkCheck := settingsGUI.Add("Checkbox", "Checked0 Y+5", "Dark Mode")
             darkCheck.ToolTip := "The users OS version is too low for this feature"
             darkCheck.Opt("+Disabled")
     }
@@ -146,13 +146,13 @@ settingsGUI()
         switch darkToggleVal {
             case 1:
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-                darkCheck.ToolTip := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-                tool.Cust("A dark theme will be applied to certain GUI elements wherever possible", 2000)
+                darkCheck.ToolTip := darkToolY
+                tool.Cust(darkToolY, 2000)
                 goDark()
             case 0:
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-                darkCheck.ToolTip := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-                tool.Cust("A lighter theme will be applied to certain GUI elements wherever possible", 2000)
+                darkCheck.ToolTip := darkToolN
+                tool.Cust(darkToolN, 2000)
                 goDark(false, "Light")
         }
     }
@@ -161,13 +161,14 @@ settingsGUI()
     ;script checkboxes
 
     tooltipCheck := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+    toggleToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(tooltipCheck) " Y+15", "``autosave.ahk`` tooltips")
+    toggleToolY := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
+    toggleToolN := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
     switch tooltipCheck {
         case "true":
-            toggleToggle := settingsGUI.Add("Checkbox", "Checked1 Y+15", "``autosave.ahk`` tooltips")
-            toggleToggle.ToolTip := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
+            toggleToggle.ToolTip := toggleToolY
         case "false":
-            toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+15", "``autosave.ahk`` tooltips")
-            toggleToggle.ToolTip := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
+            toggleToggle.ToolTip := toggleToolN
     }
     toggleToggle.OnEvent("Click", toggle)
     toggle(*)
@@ -178,25 +179,26 @@ settingsGUI()
         switch toggleVal {
             case 1:
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
-                toggleToggle.ToolTip := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
-                tool.Cust("``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
+                toggleToggle.ToolTip := toggleToolY
+                tool.Cust(toggleToolY, 2000)
             case 0:
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
-                toggleToggle.ToolTip := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
-                tool.Cust("``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up", 2000)
+                toggleToggle.ToolTip := toggleToolN
+                tool.Cust(toggleToolN, 2000)
         }
         if WinExist("autosave.ahk - AutoHotkey")
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
     }
 
     checklistTooltip := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
+    checkTool := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistTooltip) " Y+5", "``checklist.ahk`` tooltips")
+    checkToolY := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
+    checkToolN := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
     switch checklistTooltip {
         case "true":
-            checkTool := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``checklist.ahk`` tooltips")
-            checkTool.ToolTip := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
+            checkTool.ToolTip := checkToolY
         case "false":
-            checkTool := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``checklist.ahk`` tooltips")
-            checkTool.ToolTip := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
+            checkTool.ToolTip := checkToolN
     }
     checkTool.OnEvent("Click", checkToggle)
     checkToggle(*)
@@ -208,28 +210,29 @@ settingsGUI()
         switch checkToggleVal {
             case 1:
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
-                checkTool.ToolTip := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
-                tool.Cust("``checklist.ahk`` will produce tooltips to remind you if you've paused the timer", 2000)
+                checkTool.ToolTip := checkToolY
+                tool.Cust(checkToolY, 2000)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
             case 0:
                 ifDisabled := "`n`nThis setting will override the local setting for your current checklist"
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
-                checkTool.ToolTip := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
-                tool.Cust("``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer", 2000)
+                checkTool.ToolTip := checkToolN
+                tool.Cust(checkToolN, 2000)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext ifDisabled,, "48 4096")
         }
     }
 
     checklistWait := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
+    checkWait := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistWait) " Y+5", "``checklist.ahk`` always wait")
+    waitToolY := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
+    waitToolN := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
     switch checklistWait {
         case "true":
-            checkWait := settingsGUI.Add("Checkbox", "Checked1 Y+5", "``checklist.ahk`` always wait")
-            checkWait.ToolTip := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
+            checkWait.ToolTip := waitToolY
         case "false":
-            checkWait := settingsGUI.Add("Checkbox", "Checked0 Y+5", "``checklist.ahk`` always wait")
-            checkWait.ToolTip := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
+            checkWait.ToolTip := waitToolN
     }
     checkWait.OnEvent("Click", waitToggle)
     waitToggle(*)
@@ -241,17 +244,25 @@ settingsGUI()
         switch checkWaitVal {
             case 1:
                 IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
-                checkWait.ToolTip := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
-                tool.Cust("``checklist.ahk`` will always wait for you to open a premiere project before opening", 2.0)
+                checkWait.ToolTip := waitToolY
+                tool.Cust(waitToolY, 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
             case 0:
                 IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
-                checkWait.ToolTip := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
-                tool.Cust("``checklist.ahk`` will prompt the user if you wish to wait or manually open a project", 2.0)
+                checkWait.ToolTip := waitToolN
+                tool.Cust(waitToolN, 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
         }
+    }
+
+    trueOrfalse(var)
+    {
+        if var = "true"
+            return 1
+        else
+            return 0
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -272,14 +283,7 @@ settingsGUI()
     adobeFSEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``adobe fullscreen check.ahk``")
     adobeFSEditText.SetFont("cd53c3c")
     settingsGUI.Add("Text", "Y+-1", " check rate (sec)")
-    adobeFSEdit.OnEvent("Change", adobeFS)
-    adobeFS(*)
-    {
-        detect()
-        IniWrite(adobeFSEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS")
-        if WinExist("adobe fullscreen check.ahk - AutoHotkey")
-            PostMessage 0x0111, 65303,,, "adobe fullscreen check.ahk - AutoHotkey"
-    }
+    adobeFSEdit.OnEvent("Change", editCtrl.bind("adobe fullscreen check.ahk", "adobe FS"))
 
     autosaveMininitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
     autosaveMinEdit := settingsGUI.Add("Edit", "xs Y+2 r1 W50 Number", "")
@@ -287,14 +291,7 @@ settingsGUI()
     autosaveMinEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``autosave.ahk``")
     autosaveMinEditText.SetFont("c4141d5")
     settingsGUI.Add("Text", "X+1", " save rate (min)")
-    autosaveMinEdit.OnEvent("Change", autosaveMin)
-    autosaveMin(*)
-    {
-        detect()
-        IniWrite(autosaveMinEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
-        if WinExist("autosave.ahk - AutoHotkey")
-            PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
-    }
+    autosaveMinEdit.OnEvent("Change", editCtrl.bind("autosave.ahk", "autosave MIN"))
 
     gameCheckInitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC")
     gameCheckEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
@@ -302,14 +299,7 @@ settingsGUI()
     gameCheckEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``gameCheck.ahk``")
     gameCheckEditText.SetFont("c328832")
     settingsGUI.Add("Text", "X+1", " check rate (sec)")
-    gameCheckEdit.OnEvent("Change", gameCheckMin)
-    gameCheckMin(*)
-    {
-        detect()
-        IniWrite(gameCheckEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC")
-        if WinExist("gameCheck.ahk - AutoHotkey")
-            PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
-    }
+    gameCheckEdit.OnEvent("Change", editCtrl.bind("gameCheck.ahk", "game SEC"))
 
     multiInitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC")
     multiEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
@@ -317,14 +307,14 @@ settingsGUI()
     multiEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``Multi-Instance Close.ahk``")
     multiEditText.SetFont("c983d98")
     settingsGUI.Add("Text", "Y+-1", " check rate (sec)")
-    multiEdit.OnEvent("Change", multiMin)
-    multiMin(*)
+    multiEdit.OnEvent("Change", editCtrl.bind("Multi-Instance Close.ahk", "multi SEC"))
+
+    editCtrl(script, ini, ctrl, *)
     {
-            detect()
-            IniWrite(multiEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC")
-            if WinExist("Multi-Instance Close.ahk - AutoHotkey")
-                PostMessage 0x0111, 65303,,, "Multi-Instance Close.ahk - AutoHotkey"
-        }
+        IniWrite(ctrl.value, A_MyDocuments "\tomshi\settings.ini", "Adjust", ini)
+        if WinExist(script " - AutoHotkey")
+            PostMessage 0x0111, 65303,,, script " - AutoHotkey"
+    }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;BOTTOM TEXT
@@ -335,47 +325,24 @@ settingsGUI()
     ;BUTTON TOGGLES
 
     adobeToggle := settingsGUI.Add("Button", "w100 h30 Y+5", "adobeTemp()")
-    adobeUndo := settingsGUI.Add("Button", "w0 h0", "undo?")
-    adobeToggle.OnEvent("Click", adobe)
-    adobeUndo.OnEvent("Click", adobe)
-    adobe(*)
-    {
-        check := adobeToggle.GetPos(,, &width)
-        if width != 0
-            {
-                togglePos := adobeToggle.GetPos(&toggleX, &toggleY)
-                adobeToggle.Move(,, 0, 0)
-                adobeUndo.Move(, toggleY, 100, 30)
-            }
-        else
-            {
-                togglePos := adobeUndo.GetPos(&undoX, &undoY)
-                adobeUndo.Move(,, 0, 0)
-                adobeToggle.Move(, undoY, 100, 30)		
-            }
-    }
+    adobeToggle.OnEvent("Click", buttons.bind("adobe"))
 
-    firstToggle := settingsGUI.Add("Button", "w100 h30 Y+-38 X+117", "firstCheck()")
-    firstUndo := settingsGUI.Add("Button", "w0 h0", "undo?")
-    firstToggle.OnEvent("Click", first)
-    firstUndo.OnEvent("Click", first)
-    first(*)
-    {
-        check := firstToggle.GetPos(,, &width)
-        if width != 0
-            {
-                togglePos := firstToggle.GetPos(&toggleX, &toggleY)
-                firstToggle.Move(,, 0, 0)
-                firstUndo.Move(, toggleY, 100, 30)
-            }
-        else
-            {
-                togglePos := firstUndo.GetPos(&undoX, &undoY)
-                firstUndo.Move(,, 0, 0)
-                firstToggle.Move(, undoY, 100, 30)		
-            }
-    }
+    firstToggle := settingsGUI.Add("Button", "w100 h30 X+15", "firstCheck()")
+    firstToggle.OnEvent("Click", buttons.bind("first"))
 
+    buttons(which, button, *)
+    {
+        if which = "adobe"
+            buttonTitle := "adobeTemp()"
+        if which = "first"
+            buttonTitle := "firstCheck()"
+        switch button.text {
+            case buttonTitle:
+                button.Text := "undo?"
+            case "undo?":
+                button.Text := buttonTitle
+        }
+    }
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;OTHER BUTTONS
 
@@ -463,75 +430,41 @@ settingsGUI()
 
     group := settingsGUI.Add("GroupBox", "W101 H95 xs+227 ys-60", "Exit")
     hardResetVar := settingsGUI.Add("Button", "W85 H30 x+-93 y+-75", "Hard Reset")
-    hardResetVar.OnEvent("Click", hardres)
+    hardResetVar.OnEvent("Click", close.bind("hard"))
 
     saveAndClose := settingsGUI.Add("Button", "W85 H30 y+5", "Save && Exit")
     saveAndClose.OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
     settingsGUI.OnEvent("Close", close)
-    close(*)
+    close(butt?, *)
     {
         SetTimer(statecheck, 0)
         SetTimer(iniWait, 0)
-        ;check 
-        if betaStart = true 
-            Run(A_ScriptFullPath)
+        if !IsSet(butt) ;have to do it this way instead of using `butt.text` because hitting the X to close would cause an error doing that. Binding the function is the only way
+            {
+                ;check
+                if betaStart = true 
+                    Run(A_ScriptFullPath)
+            }
         ;check to see if the user wants to reset adobeTemp()
-        checkAdobe := adobeToggle.GetPos(,, &width)
-        if width = 0
+        if adobeToggle.Text = "undo?"
             IniWrite("", A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
         ;check to see if the user wants to reset firstCheck()
-        checkFirst := firstToggle.GetPos(,, &width)
-        if width = 0
+        if firstToggle.Text = "undo?"
             IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
+        if IsSet(butt) && butt = "hard"
+            reload_Reset("reset")
         ;before finally closing
         settingsGUI.Destroy()
-    }
-
-    hardres(*)
-    {
-        SetTimer(statecheck, 0)
-        SetTimer(iniWait, 0)
-        ;check to see if the user wants to reset adobeTemp()
-        checkAdobe := adobeToggle.GetPos(,, &width)
-        if width = 0
-            IniWrite("", A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
-        ;check to see if the user wants to reset firstCheck()
-        checkFirst := firstToggle.GetPos(,, &width)
-        if width = 0
-            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
-        ;a check incase this settings gui was launched from firstCheck()
-        if WinExist("Scripts Release " version)
-            WinSetAlwaysOnTop(1, "Scripts Release " version)
-        
-        reload_Reset("reset")
     }
 
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
     OnMessage(0x0200, On_WM_MOUSEMOVE)
-    On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
-    {
-        static PrevHwnd := 0
-        if (Hwnd != PrevHwnd)
-        {
-            Text := "", ToolTip() ; Turn off any previous tooltip.
-            CurrControl := GuiCtrlFromHwnd(Hwnd)
-            if CurrControl
-            {
-                if !CurrControl.HasProp("ToolTip")
-                    return ; No tooltip for this control.
-                Text := CurrControl.ToolTip
-                SetTimer () => ToolTip(Text), -1000
-                SetTimer () => ToolTip(), -4000 ; Remove the tooltip.
-            }
-            PrevHwnd := Hwnd
-        }
-    }
 
     ;gets defined at the top of the script
     if darkMode = "true"
@@ -546,8 +479,6 @@ settingsGUI()
             buttonDarkMode(iniLink.Hwnd, DarkorLight)
             buttonDarkMode(hardResetVar.Hwnd, DarkorLight)
             buttonDarkMode(saveAndClose.Hwnd, DarkorLight)
-            buttonDarkMode(adobeUndo.Hwnd, DarkorLight)
-            buttonDarkMode(firstUndo.Hwnd, DarkorLight)
     }
 
     settingsGUI.Show("Center AutoSize")
@@ -569,7 +500,7 @@ class gameCheckGUI extends Gui {
         text2 := this.Add("Text", "Y+4 W440 Center", "*try to remove any information from the title that is likely to change, eg. version numbers or extra text that isn't a part of the game title (Terraria for example adds little quotes to the title that changes everytime you run the game)")
         text2.SetFont("S9 italic")
         text3 := this.Add("Text", "Y+-8 W440", "This function attempted to grab the correct information from the active window before you pulled up the settings GUI and then prefilled the input boxes with that information. If it's correct hit OK, if not enter in the correct information.`n`n*If not, this info can be found using WindowSpy which comes alongside AHK")
-        
+
         ;defining edit boxes
         gameTitleTitle := this.Add("Text", "Section", "Game Title: ")
         gameTitle := this.Add("Edit", "xs+120 ys-5 r1 -WantReturn vgameTitle w300", wintitle)
@@ -987,24 +918,7 @@ activeScripts(MyRelease)
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
     OnMessage(0x0200, On_WM_MOUSEMOVE)
-    On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
-    {
-        static PrevHwnd := 0
-        if (Hwnd != PrevHwnd)
-        {
-            Text := "", ToolTip() ; Turn off any previous tooltip.
-            CurrControl := GuiCtrlFromHwnd(Hwnd)
-            if CurrControl
-            {
-                if !CurrControl.HasProp("ToolTip")
-                    return ; No tooltip for this control.
-                Text := CurrControl.ToolTip
-                SetTimer () => ToolTip(Text), -1000
-                SetTimer () => ToolTip(), -4000 ; Remove the tooltip.
-            }
-            PrevHwnd := Hwnd
-        }
-    }
+    
     ;below is all of the callback functions
     myClick(*) => Suspend(-1)
 
