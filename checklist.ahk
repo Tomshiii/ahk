@@ -5,7 +5,7 @@
 TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.7.1"
+version := "v2.7.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
