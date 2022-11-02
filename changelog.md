@@ -1,4 +1,8 @@
 # <> Release 2.6.1 - Hotfix & QoL
+Alongside this release comes the [Wiki Page!.](https://github.com/Tomshiii/ahk/wiki) There you will find documentation for just about everything relating to my scripts!
+
+### Other big changes
+
 - Some scripts now require `AutoHotkey v2.0-beta.12` as a minimum
 - Moved; `settingsGUI()`, `musicGUI()`, `hotkeysGUI()`, `todoGUI()` &  `activeScripts()` => `GUIs.ahk`
 - Created `tomshiBasic()` which is a simple template for GUIs so I can easily maintain a consistent experience without needing to repeat code

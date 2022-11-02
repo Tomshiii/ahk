@@ -29,28 +29,10 @@ This repo is to maintain work on the `ahk v2.0` versions of my scripts. These sc
 ## QMK Keyboard:
 My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) **OR** `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
 
-## What to do:
-1. Download and install [AHK v1.1](https://www.autohotkey.com/) then download [AHK v2.0 beta](https://www.autohotkey.com/v2/).
-2. Extract AHK v2.0 beta, run the installer and then select `install for all users`
-3. Download and install either; (You could technically just edit scripts in notepad if you really wanted to, but I honestly don't recommend it)
-   - [Notepad++](https://notepad-plus-plus.org/downloads/)
-     - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
-   - [VSCode](https://code.visualstudio.com/)
-     - Then install an AHK extension within the program for a more complete package.
-    ###### **_It is recommended you use VSCode as a lot of my variables have dynamic comments that can be viewed across the entire program that could help you understand what is going on._**
-4. Download these scripts by either checking out the latest [release](https://github.com/tomshiii/ahk/releases/latest) or by cloning the repo (in either VSCode or your git manager of choice), then save them wherever you wish (I use "`E:\Github\ahk\`" if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, my scripts should automatically adjust these variables when you run `My Scripts.ahk` but if you wish to do a sanity check, check the `working dir` value in `A_MyDocuments \tomshi\settings.ini` and if it lines up with your directory everything should work as intended.
-    ###### **_Although do note; some [`Streamdeck AHK`](https://github.com/Tomshiii/ahk/tree/main/Streamdeck%20AHK) scripts still have hard coded dir's as they are intended for my workflow and may error out if you try to run them from a different location._**
-5. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/lib/KSA) to set your own keyboard shortcuts for programs as well as define some coordinates for a few remaining imagesearches that cannot use variables for various reason, these `KSA` values are used to allow for easy adjustments instead of needing to dig through scripts!
-6. Run `My Scripts.ahk` to get started! (it's the main "hub" script)
-7. You can then edit and run any of the .ahk files to use to your liking!
-8. Adjust the `PC Startup.ahk` file ***or*** create shortcuts to individual scripts in your startup folder (which can be accessed by pressed `win + r` and then typing in `shell:startup`)
-- If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
+## [Getting Started:](https://github.com/Tomshiii/ahk/wiki)
+Indepth instructions on how to get started, as well as complete definitions of everything can be found [over on the wiki page](https://github.com/Tomshiii/ahk/wiki).
 
-#### Then be aware:
-- Any scripts that still contain pixel coordinates instead of using variables (in either, `Click`, `MouseMove`, `ImageSearch`, `PixelSearch`, etc) rely not only on my monitor layout or the `coordinate mode` set, but also my workspace layout within premiere (or any applicable program) and will not necessarily work out of the box. They will require looking at the individual comments, as well as any accompanying AHK documentation (make sure you look at the ahk [v2.0](https://lexikos.github.io/v2/docs/AutoHotkey.htm) documentation and **NOT** the [v1.1](https://www.autohotkey.com/docs/AutoHotkey.htm) documentation) to get an idea of what is going on, then adjusting accordingly using `Window Spy` which gets installed alongside AHK.
-- All keyboard shortcuts within programs like Adobe Premiere/After Effects/OBS, etc that I need within a macro (eg. `^+5` to `highlight the media browser` within Premiere, or `d` for `select clip at playhead`) are definied within the [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/lib/KSA) file instead of just sending the shortcut itself, which are then assigned variables within the [Keyboard Shortcut Adjustments.ahk](https://github.com/Tomshiii/ahk/blob/main/lib/KSA/Keyboard%20Shortcut%20Adjustments.ahk) script that is then included in other scripts. Edit that ini file with your own keyboard shortcuts (and assign any new values in the ahk script as well) to get things to work.
-
-## Explanation:
+## Short Explanation:
 
 #### [Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk](https://github.com/Tomshiii/ahk/tree/main/lib/KSA)
 An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses it. You do NOT need to run this ahk file, it is [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in `Functions.ahk`

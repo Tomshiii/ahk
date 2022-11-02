@@ -20,7 +20,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
 		coord.s()
 		block.On()
 		MouseGetPos &xposP, &yposP
-		MouseMove(1192, 632) ;moves the mouse to the middle of MY screen
+		MouseMove(A_ScreenWidth/2, A_ScreenHeight/2) ;moves the mouse to the middle of MY screen
 		SendInput "{click}" ;clicks in the middle of the screen to ensure the current audio is actually selected, audition is just jank as hell and it's easier to just add this step than to deal with it not working sometimes
 		sleep 1000
 		MouseMove(301, 373) ;moves the mouse to the preset selector
@@ -31,7 +31,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
 		sleep 2200
 		SendInput("!rnn{ENTER}") ;menus to the normalise preset in the alt menu
 		sleep 2200
-		MouseMove(1192, 632) ;moves back to the middle of the screen and clicks
+		MouseMove(A_ScreenWidth/2, A_ScreenHeight/2) ;moves back to the middle of the screen and clicks
 		SendInput("{click}")
 		SendInput("^s") ;saves so the changes translate over to premiere
 		MouseMove(xposP, yposP)
