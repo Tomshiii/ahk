@@ -15,7 +15,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.4
+;\\v2.21.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.3
 
@@ -258,7 +258,38 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 			return
 		}
 	Run("https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm")
+	SetTimer(check.bind(A_Clipboard, A_TickCount), 250)
 	A_Clipboard := previous
+	
+	/**
+	 * Will check to see if the desired page has loaded or if an error page occured
+	 * @param {String} pass Passes in the clipboard, ie, what you're searching for
+	 * @param {Integer} tick Passes in the original tickcount so this timer can time out after 5s
+	 */
+	check(pass, tick) {
+		timepass := A_TickCount-tick
+		if !WinExist("ahk_exe firefox.exe")
+			WinWait("ahk_exe firefox.exe")
+		title := WinGetTitle("ahk_exe firefox.exe")
+		if InStr(title, pass)
+			{
+				SetTimer(, 0)
+				return
+			}
+		if InStr(title, "Error!") || timepass >= 5000
+			{
+				WinActivate("ahk_exe firefox.exe")
+				SendInput("^w")
+				Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm")
+				SetTimer(, 0)
+				return
+			}
+		if InStr(title, "Quick Reference") || timepass >= 5000
+			{
+				SetTimer(, 0)
+				return
+			}
+	}
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
