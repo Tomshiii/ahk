@@ -38,17 +38,17 @@ class ptf {
         "settings",        A_MyDocuments "\tomshi\settings.ini",
 
         ;shortcuts
-        "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk"
-        "AE",              this.Shortcuts "\AfterFX.exe.lnk"
-        "DiscordTS",       this.Shortcuts "\DiscordTimeStamper.exe.lnk"
-        "OBS",             this.Shortcuts "\obs64.lnk"
-        "Photoshop",       this.Shortcuts "\Photoshop.exe.lnk"
-        "SL_Chatbot",      this.Shortcuts "\Streamlabs Chatbot.lnk"
-        "YourPhone",       this.Shortcuts "\Your Phone.lnk"
+        "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",
+        "AE",              this.Shortcuts "\AfterFX.exe.lnk",
+        "DiscordTS",       this.Shortcuts "\DiscordTimeStamper.exe.lnk",
+        "OBS",             this.Shortcuts "\obs64.lnk",
+        "Photoshop",       this.Shortcuts "\Photoshop.exe.lnk",
+        "SL_Chatbot",      this.Shortcuts "\Streamlabs Chatbot.lnk",
+        "YourPhone",       this.Shortcuts "\Your Phone.lnk",
 
         ;programs
-        "LiveSplit",       "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe"
-        "LioranBoard",     this.LioranBoardDir "\LioranBoard Receiver.exe"
+        "LiveSplit",       "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe",
+        "LioranBoard",     this.LioranBoardDir "\LioranBoard Receiver.exe",
     )
 }
 
