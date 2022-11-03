@@ -15,7 +15,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.6
+;\\v2.21.7
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.3
 
@@ -227,6 +227,9 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 SC03A & Left::
 ;jump10charRightHotkey;
 SC03A & Right::jumpChar()
+
+;refreshWinHotkey;
+SC03A & F5::refreshWin("A", WinGetProcessPath("A"))
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

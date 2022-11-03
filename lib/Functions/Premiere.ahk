@@ -295,7 +295,7 @@ zoom()
     d0yleXYS := [-57, -37, 210]
 
     ;chloe
-    chloeXYS := [-415, -238, 267]
+    chloeXYS := [-426, -238, 267]
     chloeZoomXYS := [-1679, -854, 486]
     chloetemp := [632, 278, 292]
 

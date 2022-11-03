@@ -274,7 +274,6 @@ moveTab()
     }
 }
 
-
 /**
  * This function will grab the monitor that the mouse is currently within and return it as well as coordinate information in the form of a function object. ie if your mouse is within monitor 1 having code `monitor := getMouseMonitor()` would make `monitor.monitor` = 1
  * @returns {object} containing the monitor number, the left/right/top/bottom pixel coordinate
@@ -361,7 +360,6 @@ isFullscreen(&title, &full, window := false)
 	}
     return
 }
-
 
 /**
  * A quick and dirty way to limit the axis your mouse can move
@@ -550,6 +548,34 @@ getID(&id)
         tool.Cust("couldn't grab active window")
         errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineFile, A_LineNumber)
     }
+}
+
+/**
+ * A function that returns the path of an open explorer window
+ * 
+ * Original code found here: https://www.autohotkey.com/boards/viewtopic.php?p=422751#p387113
+ * @param {number} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
+ * @returns {String} the directory path of the explorer window
+ */
+GetExplorerPath(hwnd := 0)
+{ 
+    if(hwnd==0){
+        explorerHwnd := WinActive("ahk_class CabinetWClass")
+        if(explorerHwnd==0)
+            explorerHwnd := WinExist("ahk_class CabinetWClass")
+    }
+    else
+        explorerHwnd := WinExist("ahk_class CabinetWClass ahk_id " . hwnd)
+    
+    if (explorerHwnd){
+        for window in ComObject("Shell.Application").Windows{
+            try{
+                if (window && window.hwnd && window.hwnd==explorerHwnd)
+                    return window.Document.Folder.Self.Path
+            }
+        }
+    }
+    return false
 }
 
 ; ===========================================================================================================================================
