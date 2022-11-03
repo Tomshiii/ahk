@@ -9,15 +9,15 @@ SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 A_MaxHotkeysPerInterval := 400 ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
-TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon this script uses in the taskbar
+TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 #Include "Functions.ahk" ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
 #Include "right click premiere.ahk" ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.2
+;\\v2.21.3
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.10.2
+;\\v2.10.3
 
 ; ============================================================================================================================================
 ;
@@ -115,8 +115,8 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 { ;this scripts math doesn't really work for vertical monitors
 	mainMon := 1 ;set which monitor your main monitor is (usually 1, but can check in windows display settings)
 
-	/*
-	 This function will determine which monitor the current active window is on, then return some information to help us do some math down below
+	/**
+	 * This function will determine which monitor the current active window is on, then return some information to help us do some math down below
 	 */
 	getMonitor()
 	{
@@ -474,7 +474,7 @@ SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;thi
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
-^+t::Run(A_WorkingDir "\Support Files\shortcuts\DiscordTimeStamper.exe.lnk") ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
+^+t::Run(ptf.Files["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 ;discserverHotkey;
 F1::discUnread() ;will click any unread servers
@@ -688,7 +688,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 	else
 		{
-			Run("E:\_Editing stuff")
+			Run(ptf.EditingStuff)
 			WinWait("_Editing stuff")
 			WinActivate("_Editing stuff")
 		}

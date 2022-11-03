@@ -1,19 +1,56 @@
-/*
- * A collection of all ImageSearch directories. Stands for Point to File
+/**
+ * A collection of file & directory paths. Stands for Point to File.
 */
 class ptf {
-    static Discord := A_WorkingDir "\Support Files\ImageSearch\Discord\"
-    static Premiere := A_WorkingDir "\Support Files\ImageSearch\Premiere\"
-    static AE := A_WorkingDir "\Support Files\ImageSearch\AE\"
-    static Photoshop := A_WorkingDir "\Support Files\ImageSearch\Photoshop\"
-    static Resolve := A_WorkingDir "\Support Files\ImageSearch\Resolve\"
-    static VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
-    static Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
-    static Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
-    static Windows := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Settings\"
-	static Chatterino := A_WorkingDir "\Support Files\ImageSearch\Chatterino\"
-}
+    ;general
+    static SupportFiles := A_WorkingDir "\Support Files"
+    static Shortcuts := this.SupportFiles "\shortcuts"
 
+    ;My Stuff
+    static MyDir := "E:"
+    static EditingStuff := this.MyDir "\_Editing Stuff"
+    static LioranBoardDir := "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
+
+    ;ImageSearch
+    static ImgSearch := this.SupportFiles "\ImageSearch"
+    static Discord := this.ImgSearch "\Discord\"
+    static Premiere := this.ImgSearch "\Premiere\"
+    static AE := this.ImgSearch "\AE\"
+    static Photoshop := this.ImgSearch "\Photoshop\"
+    static Resolve := this.ImgSearch "\Resolve\"
+    static VSCodeImage := this.ImgSearch "\VSCode\"
+    static Explorer := this.ImgSearch "\Windows\Win11\Explorer\"
+    static Firefox := this.ImgSearch "\Firefox\"
+    static Windows := this.ImgSearch "\Windows\Win11\Settings\"
+	static Chatterino := this.ImgSearch "\Chatterino\"
+
+    ;Icons
+    static Icons := this.SupportFiles "\Icons"
+    static guiIMG := this.SupportFiles "\images"
+
+    ;System
+    static LocalAppData := "C:\Users\" A_UserName "\AppData\Local"
+    static ProgFi := "C:\Program Files"
+    static ProgFi32 := "C:\Program Files (x86)"
+
+    ;complete file links
+    static files := Map(
+        "settings",        A_MyDocuments "\tomshi\settings.ini",
+
+        ;shortcuts
+        "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk"
+        "AE",              this.Shortcuts "\AfterFX.exe.lnk"
+        "DiscordTS",       this.Shortcuts "\DiscordTimeStamper.exe.lnk"
+        "OBS",             this.Shortcuts "\obs64.lnk"
+        "Photoshop",       this.Shortcuts "\Photoshop.exe.lnk"
+        "SL_Chatbot",      this.Shortcuts "\Streamlabs Chatbot.lnk"
+        "YourPhone",       this.Shortcuts "\Your Phone.lnk"
+
+        ;programs
+        "LiveSplit",       "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe"
+        "LioranBoard",     this.LioranBoardDir "\LioranBoard Receiver.exe"
+    )
+}
 
 ;define browsers
 GroupAdd("Browsers", "ahk_exe firefox.exe")
@@ -32,9 +69,9 @@ GroupAdd("Editors", "ahk_exe Photoshop.exe")
 ;		Coordmode \\ Last updated: v2.20
 ;
 ; ===========================================================================================================================================
-/*
+/**
  * A class to contain often used coordmode settings for easier coding.
-*/
+ */
 class coordinates {
     /**
      * This function is a part of the class `coordinates`
@@ -64,9 +101,9 @@ coord := coordinates()
 ;		Tooltip \\ Last updated: v2.20.7
 ;
 ; ===========================================================================================================================================
-/*
+/**
  * A class to contain often used tooltip functions for easier coding.
-*/
+ */
 class tooltips {
     /**
      * This function is a part of the class `tooltips`
@@ -140,6 +177,9 @@ tool := tooltips()
 ;		Blockinput \\ Last updated: v2.20
 ;
 ; ===========================================================================================================================================
+/**
+ * A class to contain often used blockinput functions for easier coding.
+ */
 class inputs {
     /**
      * This function is a part of the class `inputs`
@@ -253,7 +293,7 @@ errorLog(func, error, lineFile, lineNumber)
                     Response2 := OperatingSystem.FreePhysicalMemory / "1048576"
                 Memory := Round(Response, 2)
                 FreePhysMem := Round(Response2, 2)
-                InstalledVersion := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+                InstalledVersion := IniRead(ptf.files["settings"], "Track", "version")
                 LatestReleaseBeta := getScriptRelease(True)
                 LatestReleaseMain := getScriptRelease()
                 if LatestReleaseBeta = LatestReleaseMain
@@ -365,7 +405,7 @@ reload_Reset(which)
                         if WinExist("ahk_exe Code.exe")
                                 WinActivate
                         else
-                            Run("C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe")
+                            Run(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
                     }
     }
 }

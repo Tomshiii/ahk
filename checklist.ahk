@@ -2,10 +2,10 @@
 #Requires AutoHotkey v2.0-beta.5
 #Include Functions.ahk
 #Include lib\checklist\include.ahk
-TraySetIcon(A_WorkingDir "\Support Files\Icons\checklist.ico")
+TraySetIcon(ptf.Icons "\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.7.2"
+version := "v2.8"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -94,9 +94,9 @@ else
             }
         if !IsSet(dashLocation) && !IsSet(dashLocationAE)
             {
-                if FileExist(A_MyDocuments "\tomshi\settings.ini") ;checks to see if the user wants to always wait until they open a project
+                if FileExist(ptf.files["settings"]) ;checks to see if the user wants to always wait until they open a project
                     {
-                        waitCheck := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist Wait", "false")
+                        waitCheck := IniRead(ptf.files["settings"], "Settings", "checklist Wait", "false")
                         if waitCheck = "true"
                             {
                                 WaitTrack := 1
@@ -113,7 +113,7 @@ else
                         ScriptSuspend("autosave.ahk", true) ;suspend
                         pauseautosave()
                         WaitTrack := 1
-                        SetTimer(msgboxName, 50)
+                        SetTimer(change_msgButton, 50)
                         Result := MsgBox("You haven't opened a project yet, do you want ``" A_ScriptName "`` to wait until you have?`nOr would you like to select the checklist file now?", "Wait or Continue?", "4 32 4096")
                         if Result = "Yes"
                             {
@@ -141,16 +141,16 @@ else
 globalCheckTool := 1
 globalDarkTool := 1
 ;grabbing the location dir of the users copy of tomshi's scripts. This will allow any deployed checklist scripts to automatically update
-if FileExist(A_MyDocuments "\tomshi\settings.ini")
+if FileExist(ptf.files["settings"])
     {
-        location := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
-        tooltipSettings := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip", "true")
+        location := IniRead(ptf.files["settings"], "Track", "working dir")
+        tooltipSettings := IniRead(ptf.files["settings"], "Settings", "checklist tooltip", "true")
         if tooltipSettings = "true"
             global globalCheckTool := 1
         else
             global globalCheckTool := 0
 
-        darkSettings := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode", "true")
+        darkSettings := IniRead(ptf.files["settings"], "Settings", "dark mode", "true")
         if darkSettings = "true"
             global globalDarkTool := 1
         else

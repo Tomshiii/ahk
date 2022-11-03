@@ -3,7 +3,7 @@ SetWorkingDir A_ScriptDir
 #Requires AutoHotkey v2.0-beta.12
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
-TraySetIcon(A_WorkingDir "\Support Files\Icons\keyboard.ico")
+TraySetIcon(ptf.Icons "\keyboard.ico")
 ;SetCapsLockState "AlwaysOff" ;having this on broke my main script for whatever reason
 SetNumLockState "AlwaysOn"
 #SingleInstance Force ;only one instance of this script may run at a time!
@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.2
+;\\v2.10.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.6.1
@@ -103,7 +103,7 @@ dele() ;this is here so manInput() can work, you can just ignore this
 				if WinExist("ahk_exe Code.exe")
 						WinActivate
 				else
-					Run "C:\Users\Tom\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+					Run ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe"
 			}
 }
 */

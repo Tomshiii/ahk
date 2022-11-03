@@ -9,7 +9,7 @@ SetDefaultMouseSpeed 0
 if WinActive("ahk_exe Adobe Premiere Pro.exe")
     {
         ;; This part makes you select the folder you wish to create the project in
-        SelectedFolder := FileSelect("D2", "E:\", "Select your desired Folder. This Script will create the necessary sub folders")
+        SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Select your desired Folder. This Script will create the necessary sub folders")
         if SelectedFolder = ""
             return
         pauseautosave()

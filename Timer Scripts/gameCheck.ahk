@@ -10,11 +10,11 @@ SetTitleMatchMode 2  ; Avoids the need to specify the full path of the file belo
 #Include "..\lib\gameCheck\Game List.ahk"
 
 ;Set seconds delay here:
-sec := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
+sec := IniRead(ptf.files["settings"], "Adjust", "game SEC", 2.5)
 secms := sec * 1000
 
-darkMode := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-version := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+darkMode := IniRead(ptf.files["settings"], "Settings", "dark mode")
+version := IniRead(ptf.files["settings"], "Track", "version")
 
 gameGUI := gameCheckGUI(darkMode, version, "", "", "AlwaysOnTop", "Add game to gameCheck.ahk")
 A_TrayMenu.Insert("7&") ;adds a divider bar

@@ -2,14 +2,17 @@
 SetWorkingDir "..\"
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
-TraySetIcon(A_WorkingDir "\Support Files\Icons\streaming.ico") ;changes the icon this script uses in the taskbar
+TraySetIcon(ptf.Icons "\streaming.ico") ;changes the icon this script uses in the taskbar
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 #SingleInstance Force
+#Include "..\lib\KSA\Keyboard Shortcut Adjustments.ahk" ;this is added because we need it
+#Include "..\lib\Functions\Windows.ahk" ;this is only added to prevent errors
+#Include "..\lib\Functions\switchTo.ahk" ;this is only added to prevent errors
+#Include "..\lib\Functions\Startup.ahk" ;this is only added to prevent errors
+#Include "..\lib\Functions\General.ahk" ;this is added because we need it
 
 IniWrite(0, A_WorkingDir "\Stream\Streaming.ini", "Number", "Left")
 
-replayBuffer := IniRead(A_WorkingDir "\KSA\Keyboard Shortcuts.ini", "OBS", "Replay Buffer")
-sourceRecord1 := IniRead(A_WorkingDir "\KSA\Keyboard Shortcuts.ini", "OBS", "Source Record 1")
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ;
 ;	This file exists because obs must be run as admin for the best performance

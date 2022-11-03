@@ -4,11 +4,11 @@ if !WinExist("ahk_exe obs64.exe")
 {
 	SetWorkingDir A_ScriptDir
 	SetWinDelay 0 ;makes windows move instantly
-	Run("..\Stream\Streaming.ahk")
+	Run(A_WorkingDir "\Stream\Streaming.ahk")
 	/* if !WinExist("ahk_exe GoXLR App.exe") ;I don't use the goxlr anymore
-		Run("C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe") */
-	Run("C:\Users\Tom\AppData\Local\firebotv5\Firebot v5.exe")
-	Run("C:\Program Files\Docker\Docker\frontend\Docker Desktop.exe")
+		Run(ptf.ProgFi32 "\TC-Helicon\GOXLR\GoXLR App.exe") */
+	Run(ptf.LocalAppData "\firebotv5\Firebot v5.exe")
+	Run(ptf.ProgFi "\Docker\Docker\frontend\Docker Desktop.exe")
 	/* Result := MsgBox("have you started the goxlr bruh",, "1 4096")
 	if Result = "OK"
 		{
@@ -17,7 +17,7 @@ if !WinExist("ahk_exe obs64.exe")
 	else
 		return
 	next: */
-	Run("..\Support Files\shortcuts\obs64.lnk") ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
+	Run(ptf.files["OBS"]) ;opening shortcuts helps to make sure obs doesn't complain about having an incorrect working directory
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
 		else
@@ -148,14 +148,14 @@ if !WinExist("ahk_exe obs64.exe")
 		}
 	block.Off()
 	;Run, chrome.exe https://dashboard.twitch.tv/u/tomshi/stream-manager only need this if I'm doing something subpoint related
-	Run("C:\Program Files (x86)\foobar2000\foobar2000.exe")
-	Run("F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe")
-	;Run, C:\Program Files\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
+	Run(ptf.ProgFi32 "\foobar2000\foobar2000.exe")
+	Run(ptf.files["LiveSplit"])
+	;Run, ptf.ProgFi "\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run("chrome.exe https://www.twitch.tv/popout/tomshi/chat")
 	if WinExist("ahk_exe Discord.exe")
 		discordLocation()
-	SetWorkingDir "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
-	Run("F:\Twitch\lioranboard\LioranBoard Receiver(PC)\LioranBoard Receiver.exe")
+	SetWorkingDir(ptf.LioranBoardDir) 
+	Run(ptf.files["LioranBoard"])
 	if WinExist("ahk_exe ApplicationDj.exe")
 		{
 			WinMinimize()

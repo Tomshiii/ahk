@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.11
+;\\v2.15
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -651,7 +651,7 @@ discLocation()
     static toggle := 0 ;this is what allows us to toggle discords position
     if !WinExist("ahk_exe Discord.exe")
         {
-            run("C:\Users\" A_UserName "\AppData\Local\Discord\Update.exe --processStart Discord.exe") ;this will run discord
+            run(ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe") ;this will run discord
             WinWait("ahk_exe Discord.exe")
             sleep 1000
             WinActivate("ahk_exe Discord.exe")

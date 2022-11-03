@@ -30,7 +30,7 @@ ExitFunc(ExitReason, ExitCode)
     if ExitReason = "Single"
         {
             SetTimer(waitUntil, 0)
-            SetTimer(msgboxName, 0)
+            SetTimer(change_msgButton, 0)
             ScriptSuspend("autosave.ahk", false)
             if WinExist("Select commission folder")
                 return

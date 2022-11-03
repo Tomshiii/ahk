@@ -1,7 +1,8 @@
 ;#SingleInstance Force ;don't want to accidentally start a second instance while it's mid move
+#Include SD_functions.ahk
 
 ;; This part makes you select the folder you wish to move
-SelectedFolder := FileSelect("D2", "E:\", "Pick the folder you wish to move.")
+SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Pick the folder you wish to move.")
 if SelectedFolder = ""
     return
 

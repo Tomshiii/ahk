@@ -135,7 +135,7 @@ reminder()
 /**
  * Changes the button names of a generated msgbox
  */
-msgboxName()
+change_msgButton()
 {
     if !WinExist("Wait or Continue?")
         return  ; Keep waiting.

@@ -1,4 +1,4 @@
-;v2.23.1
+;v2.24
 #Include General.ahk
 #Include GUIs.ahk
 ; =======================================================================================================================================
@@ -58,9 +58,9 @@ generate(MyRelease)
     }
     if !DirExist(A_MyDocuments "\tomshi")
         DirCreate(A_MyDocuments "\tomshi")
-    if FileExist(A_MyDocuments "\tomshi\settings.ini")
+    if FileExist(ptf.files["settings"])
         {
-            ver := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+            ver := IniRead(ptf.files["settings"], "Track", "version")
             if !VerCompare(MyRelease, ver) > 0 ;do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
                 return
 
@@ -72,24 +72,24 @@ generate(MyRelease)
         darkVerCheck := "disabled"
     else
         darkVerCheck := "true"
-    UPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
-    BETAUPDATE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false")
-    FC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check", "false")
-    ADOBE := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp", "")
-    WORK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir", "E:\Github\ahk")
-    TOOLS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip", "true")
-    ADOBE_GB := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB", 45)
-    ADOBE_FS := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS", 5)
-    AUTOMIN := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN", 5)
-    CHECKTOOL := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip", "true")
-    GAMESEC := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC", 2.5)
-    DARK := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode", darkVerCheck)
-    MULTI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC", 5)
-    WAIT := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait", "false")
+    UPDATE := IniRead(ptf.files["settings"], "Settings", "update check", "true")
+    BETAUPDATE := IniRead(ptf.files["settings"], "Settings", "beta update check", "false")
+    FC := IniRead(ptf.files["settings"], "Track", "first check", "false")
+    ADOBE := IniRead(ptf.files["settings"], "Track", "adobe temp", "")
+    WORK := IniRead(ptf.files["settings"], "Track", "working dir", "E:\Github\ahk")
+    TOOLS := IniRead(ptf.files["settings"], "Settings", "tooltip", "true")
+    ADOBE_GB := IniRead(ptf.files["settings"], "Adjust", "adobe GB", 45)
+    ADOBE_FS := IniRead(ptf.files["settings"], "Adjust", "adobe FS", 5)
+    AUTOMIN := IniRead(ptf.files["settings"], "Adjust", "autosave MIN", 5)
+    CHECKTOOL := IniRead(ptf.files["settings"], "Settings", "checklist tooltip", "true")
+    GAMESEC := IniRead(ptf.files["settings"], "Adjust", "game SEC", 2.5)
+    DARK := IniRead(ptf.files["settings"], "Settings", "dark mode", darkVerCheck)
+    MULTI := IniRead(ptf.files["settings"], "Adjust", "multi SEC", 5)
+    WAIT := IniRead(ptf.files["settings"], "Settings", "checklist wait", "false")
     deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
-    if FileExist(A_MyDocuments "\tomshi\settings.ini")
-        FileDelete(A_MyDocuments "\tomshi\settings.ini") ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, A_MyDocuments "\tomshi\settings.ini")
+    if FileExist(ptf.files["settings"])
+        FileDelete(ptf.files["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, ptf.files["settings"])
 }
 
 
@@ -144,7 +144,7 @@ updateChecker(MyRelease) {
         return
     ;release version
     betaprep := 0
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
+    if IniRead(ptf.files["settings"], "Settings", "beta update check", "false") = "true"
         { ;if the user wants to check for beta updates instead, this block will fire
             global version := getScriptRelease(true, &changeVer)
             betaprep := 1
@@ -159,7 +159,7 @@ updateChecker(MyRelease) {
     else
         tool.Cust("You are currently up to date", 2000)
     ;checking to see if the user wishes to check for updates
-    check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+    check := IniRead(ptf.files["settings"], "Settings", "update check")
     if check = "stop"
         return
     if check = "true"
@@ -248,7 +248,7 @@ updateChecker(MyRelease) {
             noprompt := MyGui.Add("Checkbox", "X270 Y350", "Don't prompt again")
             noprompt.OnEvent("Click", prompt)
             ;set beta checkbox
-            if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check", "false") = "true"
+            if IniRead(ptf.files["settings"], "Settings", "beta update check", "false") = "true"
                 betaCheck := MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
             else
                 betaCheck := MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
@@ -262,7 +262,7 @@ updateChecker(MyRelease) {
             ;getting value for changelog
             ChangeLog.Value := LatestChangeLog
 
-            if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+            if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
                 goDark()
             goDark()
             {
@@ -277,16 +277,16 @@ updateChecker(MyRelease) {
                 if InStr(guiCtrl.Text, "prompt")
                     {
                         if guiCtrl.Value = 0
-                            IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                            IniWrite("true", ptf.files["settings"], "Settings", "update check")
                         if guiCtrl.Value = 1
-                            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                            IniWrite("false", ptf.files["settings"], "Settings", "update check")
                     }
                 if InStr(guiCtrl.Text, "beta")
                     {
                         if guiCtrl.Value = 1
-                            IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+                            IniWrite("true", ptf.files["settings"], "Settings", "beta update check")
                         if guiCtrl.Value = 0
-                            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+                            IniWrite("false", ptf.files["settings"], "Settings", "beta update check")
                         Run(A_ScriptFullPath)
                     }
             }
@@ -414,7 +414,7 @@ firstCheck(MyRelease) {
         version := ""
     if WinExist("Scripts Release " version)
         WinWaitClose("Scripts Release " version)
-    check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+    check := IniRead(ptf.files["settings"], "Track", "first check")
     if check != "false" ;how the function tracks whether this is the first time the user is running the script or not
         return
     firstCheckGUI := Gui("", "Scripts Release " MyRelease)
@@ -424,7 +424,7 @@ firstCheck(MyRelease) {
     Title := firstCheckGUI.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
     Title.SetFont("S15")
     ;text
-    bodyText := firstCheckGUI.Add("Text", "W550 X8", "
+    bodyText := firstCheckGUI.Add("Text", "W550 X8 Center", "
     (
         Congratulations!
         You've gotten my main script to load without any runtime errors! (hopefully).
@@ -456,7 +456,7 @@ firstCheck(MyRelease) {
     firstCheckGUI.OnEvent("Escape", close)
     firstCheckGUI.OnEvent("Close", close)
     close(*) {
-        IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Track", "first check") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
+        IniWrite("true", ptf.files["settings"], "Track", "first check") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
         firstCheckGUI.Destroy()
     }
     todoPage(*) {
@@ -475,7 +475,7 @@ firstCheck(MyRelease) {
         firstCheckGUI.Opt("-Disabled")
     }
 
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+    if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
         goDark()
     goDark()
     {
@@ -511,12 +511,12 @@ adobeTemp(MyRelease) {
     tool.Wait()
     if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
         WinWaitClose("Scripts Release " MyRelease)
-    day := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+    day := IniRead(ptf.files["settings"], "Track", "adobe temp")
     if day = A_YDay ;checks to see if the function has already run today
         return
 
     ;SET HOW BIG YOU WANT IT TO WAIT FOR IN THE `settings.ini` FILE (IN GB) -- IT WILL DEFAULT TO 45GB
-    largestSize := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB", 45)
+    largestSize := IniRead(ptf.files["settings"], "Adjust", "adobe GB", 45)
 
     ;first we set our counts to 0
     CacheSize := 0
@@ -573,7 +573,7 @@ adobeTemp(MyRelease) {
             ToolTip("")
         }
     end:
-    IniWrite(A_YDay, A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp") ;tracks the day so it will not run again today
+    IniWrite(A_YDay, ptf.files["settings"], "Track", "adobe temp") ;tracks the day so it will not run again today
 }
  
 /**
@@ -636,7 +636,7 @@ locationReplace()
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
     tool.Wait()
-    checkDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+    checkDir := IniRead(ptf.files["settings"], "Track", "working dir")
     if checkDir = A_WorkingDir
         return
 
@@ -692,7 +692,7 @@ locationReplace()
     end() {
         TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
     }
-    IniWrite(A_WorkingDir, A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+    IniWrite(A_WorkingDir, ptf.files["settings"], "Track", "working dir")
 }
  
 /**
@@ -700,7 +700,7 @@ locationReplace()
  */
 trayMen()
 {
-    check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+    check := IniRead(ptf.files["settings"], "Settings", "update check")
     A_TrayMenu.Insert("7&") ;adds a divider bar
     A_TrayMenu.Insert("8&", "Settings", settings)
     A_TrayMenu.Insert("9&", "Check for Updates", checkUp)
@@ -710,15 +710,15 @@ trayMen()
         A_TrayMenu.Uncheck("Check for Updates")
     checkUp(*)
     {
-        check := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check") ;has to be checked everytime you wish to toggle
+        check := IniRead(ptf.files["settings"], "Settings", "update check") ;has to be checked everytime you wish to toggle
         if check = "true"
             {
-                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                IniWrite("false", ptf.files["settings"], "Settings", "update check")
                 A_TrayMenu.Uncheck("Check for Updates")
             }
         else
             {
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                IniWrite("true", ptf.files["settings"], "Settings", "update check")
                 A_TrayMenu.Check("Check for Updates")
             }
     }

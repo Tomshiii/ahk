@@ -143,7 +143,7 @@ updateCheck(Item, *)
         tree := "main"
     if Item = "&Beta"
         tree := "dev"
-    if !FileExist(A_MyDocuments "\tomshi\settings.ini")
+    if !FileExist(ptf.files["settings"])
         {
             try {
                 main := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -178,7 +178,7 @@ updateCheck(Item, *)
                 tool.Cust("You are up to date!")
             return
         }
-    currentVer := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+    currentVer := IniRead(ptf.files["settings"], "Track", "version")
     if tree = "main"
         latestVer := getScriptRelease()
     if tree = "dev"

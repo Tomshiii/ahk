@@ -1,10 +1,6 @@
 ﻿#SingleInstance Force
 #Include SD_functions.ahk
 detect()
-/* if !WinExist("autosave.ahk - AutoHotkey")
-	Run("C:\Program Files\ahk\ahk\autosave.ahk")
-if !WinExist("premiere_fullscreen_check.ahk - AutoHotkey")
-	Run("C:\Program Files\ahk\ahk\premiere_fullscreen_check.ahk") */
 if WinExist("Streaming.ahk")
 	WinClose(,,1)
 MsgBox("TURN OFF YOUR CAMERA", "CAMERA", "16 4096")

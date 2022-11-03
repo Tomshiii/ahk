@@ -35,8 +35,8 @@ settingsGUI()
         titleBlank := ""
     }
     
-    darkMode := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
-    version := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "version")
+    darkMode := IniRead(ptf.files["settings"], "Settings", "dark mode")
+    version := IniRead(ptf.files["settings"], "Track", "version")
 
     ;gameCheckGUI
     gameTitle := "Add game to gameCheck.ahk"
@@ -66,7 +66,7 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;checkboxes
 
-    checkVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "update check", "true")
+    checkVal := IniRead(ptf.files["settings"], "Settings", "update check", "true")
     switch checkVal {
         case "true":
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs+1 Y+5", "Check for Updates")
@@ -82,28 +82,28 @@ settingsGUI()
     update(*)
     {
         ToolTip("")
-        betaCheck := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check") ;storing the beta check value so we can toggle it back on if it was on originally
+        betaCheck := IniRead(ptf.files["settings"], "Settings", "beta update check") ;storing the beta check value so we can toggle it back on if it was on originally
         updateVal := updateCheckToggle.Value
         switch updateVal {
             case 1: ;true
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                IniWrite("true", ptf.files["settings"], "Settings", "update check")
                 tool.Cust("Scripts will check for updates", 2000)
                 if betaCheck = "true"
                     betaupdateCheckToggle.Value := 1
             case -1: ;false
-                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                IniWrite("false", ptf.files["settings"], "Settings", "update check")
                 tool.Cust("Scripts will still check for updates but will not present the user`nwith a GUI when an update is available", 2000)
                 if betaCheck = "true"
                     betaupdateCheckToggle.Value := 1
             case 0: ;stop
                 betaupdateCheckToggle.Value := 0
-                IniWrite("stop", A_MyDocuments "\tomshi\settings.ini", "Settings", "update check")
+                IniWrite("stop", ptf.files["settings"], "Settings", "update check")
                 tool.Cust("Scripts will NOT check for updates", 2000)
         }
     }
 
     betaStart := false ;if the user enables the check for beta updates, we want my main script to reload on exit.
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check") = "true" && updateCheckToggle.Value != 0
+    if IniRead(ptf.files["settings"], "Settings", "beta update check") = "true" && updateCheckToggle.Value != 0
         betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 xs Y+5", "Check for Beta Updates")
     else
         betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 xs Y+5", "Check for Beta Updates")
@@ -114,18 +114,18 @@ settingsGUI()
         if updateVal = 1 && updateCheckToggle.Value != 0
             {
                 betaStart := true
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+                IniWrite("true", ptf.files["settings"], "Settings", "beta update check")
             }
 
         else
             {
                 betaupdateCheckToggle.Value := 0
                 betaStart := false
-                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "beta update check")
+                IniWrite("false", ptf.files["settings"], "Settings", "beta update check")
             }
     }
 
-    darkINI := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+    darkINI := IniRead(ptf.files["settings"], "Settings", "dark mode")
     darkCheck := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(darkINI) " Y+5", "Dark Mode")
     darkToolY := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
     darkToolN := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
@@ -145,12 +145,12 @@ settingsGUI()
         darkToggleVal := darkCheck.Value
         switch darkToggleVal {
             case 1:
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+                IniWrite("true", ptf.files["settings"], "Settings", "dark mode")
                 darkCheck.ToolTip := darkToolY
                 tool.Cust(darkToolY, 2000)
                 goDark()
             case 0:
-                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode")
+                IniWrite("false", ptf.files["settings"], "Settings", "dark mode")
                 darkCheck.ToolTip := darkToolN
                 tool.Cust(darkToolN, 2000)
                 goDark(false, "Light")
@@ -160,7 +160,7 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;script checkboxes
 
-    tooltipCheck := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+    tooltipCheck := IniRead(ptf.files["settings"], "Settings", "tooltip")
     toggleToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(tooltipCheck) " Y+15", "``autosave.ahk`` tooltips")
     toggleToolY := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
     toggleToolN := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
@@ -178,11 +178,11 @@ settingsGUI()
         toggleVal := toggleToggle.Value
         switch toggleVal {
             case 1:
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+                IniWrite("true", ptf.files["settings"], "Settings", "tooltip")
                 toggleToggle.ToolTip := toggleToolY
                 tool.Cust(toggleToolY, 2000)
             case 0:
-                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "tooltip")
+                IniWrite("false", ptf.files["settings"], "Settings", "tooltip")
                 toggleToggle.ToolTip := toggleToolN
                 tool.Cust(toggleToolN, 2000)
         }
@@ -190,7 +190,7 @@ settingsGUI()
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
     }
 
-    checklistTooltip := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
+    checklistTooltip := IniRead(ptf.files["settings"], "Settings", "checklist tooltip")
     checkTool := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistTooltip) " Y+5", "``checklist.ahk`` tooltips")
     checkToolY := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
     checkToolN := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
@@ -209,14 +209,14 @@ settingsGUI()
         checkToggleVal := checkTool.Value
         switch checkToggleVal {
             case 1:
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
+                IniWrite("true", ptf.files["settings"], "Settings", "checklist tooltip")
                 checkTool.ToolTip := checkToolY
                 tool.Cust(checkToolY, 2000)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
             case 0:
                 ifDisabled := "`n`nThis setting will override the local setting for your current checklist"
-                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist tooltip")
+                IniWrite("false", ptf.files["settings"], "Settings", "checklist tooltip")
                 checkTool.ToolTip := checkToolN
                 tool.Cust(checkToolN, 2000)
                 if WinExist("checklist.ahk - AutoHotkey")
@@ -224,7 +224,7 @@ settingsGUI()
         }
     }
 
-    checklistWait := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
+    checklistWait := IniRead(ptf.files["settings"], "Settings", "checklist wait")
     checkWait := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistWait) " Y+5", "``checklist.ahk`` always wait")
     waitToolY := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
     waitToolN := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
@@ -243,13 +243,13 @@ settingsGUI()
         checkWaitVal := checkWait.Value
         switch checkWaitVal {
             case 1:
-                IniWrite("true", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
+                IniWrite("true", ptf.files["settings"], "Settings", "checklist wait")
                 checkWait.ToolTip := waitToolY
                 tool.Cust(waitToolY, 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
             case 0:
-                IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Settings", "checklist wait")
+                IniWrite("false", ptf.files["settings"], "Settings", "checklist wait")
                 checkWait.ToolTip := waitToolN
                 tool.Cust(waitToolN, 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
@@ -268,16 +268,16 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;EDIT BOXES
 
-    adobeGBinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
+    adobeGBinitVal := IniRead(ptf.files["settings"], "Adjust", "adobe GB")
     adobeGBEdit := settingsGUI.Add("Edit", "Section xs+223 ys r1 W50 Number", "")
     settingsGUI.Add("UpDown",, adobeGBinitVal)
     adobeEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobeTemp()``")
     adobeEditText.SetFont("cd53c3c")
     settingsGUI.Add("Text", "X+1", " limit (GB)")
     adobeGBEdit.OnEvent("Change", adobeGB)
-    adobeGB(*) => IniWrite(adobeGBEdit.Value, A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe GB")
+    adobeGB(*) => IniWrite(adobeGBEdit.Value, ptf.files["settings"], "Adjust", "adobe GB")
 
-    adobeFSinitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "adobe FS")
+    adobeFSinitVal := IniRead(ptf.files["settings"], "Adjust", "adobe FS")
     adobeFSEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
     settingsGUI.Add("UpDown",, adobeFSinitVal)
     adobeFSEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``adobe fullscreen check.ahk``")
@@ -285,7 +285,7 @@ settingsGUI()
     settingsGUI.Add("Text", "Y+-1", " check rate (sec)")
     adobeFSEdit.OnEvent("Change", editCtrl.bind("adobe fullscreen check.ahk", "adobe FS"))
 
-    autosaveMininitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "autosave MIN")
+    autosaveMininitVal := IniRead(ptf.files["settings"], "Adjust", "autosave MIN")
     autosaveMinEdit := settingsGUI.Add("Edit", "xs Y+2 r1 W50 Number", "")
     settingsGUI.Add("UpDown",, autosaveMininitVal)
     autosaveMinEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``autosave.ahk``")
@@ -293,7 +293,7 @@ settingsGUI()
     settingsGUI.Add("Text", "X+1", " save rate (min)")
     autosaveMinEdit.OnEvent("Change", editCtrl.bind("autosave.ahk", "autosave MIN"))
 
-    gameCheckInitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "game SEC")
+    gameCheckInitVal := IniRead(ptf.files["settings"], "Adjust", "game SEC")
     gameCheckEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
     settingsGUI.Add("UpDown",, gameCheckInitVal)
     gameCheckEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``gameCheck.ahk``")
@@ -301,7 +301,7 @@ settingsGUI()
     settingsGUI.Add("Text", "X+1", " check rate (sec)")
     gameCheckEdit.OnEvent("Change", editCtrl.bind("gameCheck.ahk", "game SEC"))
 
-    multiInitVal := IniRead(A_MyDocuments "\tomshi\settings.ini", "Adjust", "multi SEC")
+    multiInitVal := IniRead(ptf.files["settings"], "Adjust", "multi SEC")
     multiEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
     settingsGUI.Add("UpDown",, multiInitVal)
     multiEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``Multi-Instance Close.ahk``")
@@ -311,7 +311,7 @@ settingsGUI()
 
     editCtrl(script, ini, ctrl, *)
     {
-        IniWrite(ctrl.value, A_MyDocuments "\tomshi\settings.ini", "Adjust", ini)
+        IniWrite(ctrl.value, ptf.files["settings"], "Adjust", ini)
         if WinExist(script " - AutoHotkey")
             PostMessage 0x0111, 65303,,, script " - AutoHotkey"
     }
@@ -372,9 +372,9 @@ settingsGUI()
     {
         settingsGUI.Opt("-AlwaysOnTop")
         if WinExist("settings.ini") ;if ini already open, get pos, close, and then reopen to refresh
-            refreshWin("settings.ini", A_MyDocuments "\tomshi\settings.ini")
+            refreshWin("settings.ini", ptf.files["settings"])
         else
-            Run(A_MyDocuments "\tomshi\settings.ini")
+            Run(ptf.files["settings"])
         WinWait("settings.ini")
         SetTimer(iniWait, -100)
     }
@@ -399,7 +399,7 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;STATUS BAR
 
-    workDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+    workDir := IniRead(ptf.files["settings"], "Track", "working dir")
     SB := settingsGUI.Add("StatusBar")
     SB.SetText("  Current working dir: " workDir)
     checkdir := SB.GetPos(,, &width)
@@ -449,10 +449,10 @@ settingsGUI()
             }
         ;check to see if the user wants to reset adobeTemp()
         if adobeToggle.Text = "undo?"
-            IniWrite("", A_MyDocuments "\tomshi\settings.ini", "Track", "adobe temp")
+            IniWrite("", ptf.files["settings"], "Track", "adobe temp")
         ;check to see if the user wants to reset firstCheck()
         if firstToggle.Text = "undo?"
-            IniWrite("false", A_MyDocuments "\tomshi\settings.ini", "Track", "first check")
+            IniWrite("false", ptf.files["settings"], "Track", "first check")
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
@@ -535,7 +535,7 @@ class gameCheckGUI extends Gui {
             if procVal != gameProcess.Value
                 procVal := gameProcess.Value
             ;check for game list file
-            rootDir := IniRead(A_MyDocuments "\tomshi\settings.ini", "Track", "working dir")
+            rootDir := IniRead(ptf.files["settings"], "Track", "working dir")
             if !FileExist(rootDir "\lib\gameCheck\Game List.ahk")
                 {
                     MsgBox("``Game List.ahk`` not found in the proper directory")
@@ -607,12 +607,11 @@ musicGUI()
 {
     if WinExist("Music to open?")
         return
-    progFi := "C:\Program Files"
-    progFi32 := "C:\Program Files (x86)"
-    aimpPath := progFi32 "\AIMP3\AIMP.exe"
-    foobarPath := progFi32 "\foobar2000\foobar2000.exe"
-    wmpPath := progFi32 "\Windows Media Player\wmplayer.exe"
-    vlcPath := progFi "\VideoLAN\VLC\vlc.exe"
+
+    aimpPath := ptf.ProgFi32 "\AIMP3\AIMP.exe"
+    foobarPath := ptf.ProgFi32 "\foobar2000\foobar2000.exe"
+    wmpPath := ptf.ProgFi32 "\Windows Media Player\wmplayer.exe"
+    vlcPath := ptf.ProgFi "\VideoLAN\VLC\vlc.exe"
 
     ;if there is no music player open, a custom GUI window will open asking which program you'd like to open
     MyGui := Gui("AlwaysOnTop", "Music to open?") ;creates our GUI window
@@ -621,30 +620,30 @@ musicGUI()
     MyGui.Opt("-Resize +MinSize260x120 +MaxSize260x120") ;Sets a minimum size for the window
     ;#now we define the elements of the GUI window
     ;defining AIMP
-    aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", A_WorkingDir "\Support Files\images\aimp.png")
+    aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", ptf.guiIMG "\aimp.png")
     AIMP := MyGui.Add("Button", "X40 Y7", "AIMP")
     AIMP.OnEvent("Click", musicRun)
     ;defining Foobar
-    foobarlogo := MyGui.Add("Picture", "w20 h-1 X14 Y40", A_WorkingDir "\Support Files\images\foobar.png")
+    foobarlogo := MyGui.Add("Picture", "w20 h-1 X14 Y40", ptf.guiIMG "\foobar.png")
     foobar := MyGui.Add("Button", "X40 Y40", "Foobar")
     foobar.OnEvent("Click", musicRun)
     ;defining Windows Media Player
-    wmplogo := MyGui.Add("Picture", "w25 h-1 X140 Y9", A_WorkingDir "\Support Files\images\wmp.png")
+    wmplogo := MyGui.Add("Picture", "w25 h-1 X140 Y9", ptf.guiIMG "\wmp.png")
     WMP := MyGui.Add("Button", "X170 Y7", "WMP")
     WMP.OnEvent("Click", musicRun)
     ;defining VLC
-    vlclogo := MyGui.Add("Picture", "w28 h-1 X138 Y42", A_WorkingDir "\Support Files\images\vlc.png")
+    vlclogo := MyGui.Add("Picture", "w28 h-1 X138 Y42", ptf.guiIMG "\vlc.png")
     VLC := MyGui.Add("Button", "X170 Y40", "VLC")
     VLC.OnEvent("Click", musicRun)
     ;defining music folder
-    folderlogo := MyGui.Add("Picture", "w25 h-1  X14 Y86", A_WorkingDir "\Support Files\images\explorer.png")
+    folderlogo := MyGui.Add("Picture", "w25 h-1  X14 Y86", ptf.guiIMG "\explorer.png")
     FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
     FOLDERGUI.OnEvent("Click", MUSICFOLDER)
     ;add an invisible button since removing the default off all the others did nothing
     removedefault := MyGui.Add("Button", "Default X0 Y0 W0 H0", "_")
     ;#finished with definitions
 
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+    if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
         goDark()
     goDark()
     {
@@ -661,20 +660,18 @@ musicGUI()
     musicRun(button, *)
     {
         text := button.Text
-        if text = "AIMP"
-            Run(aimpPath)
-        if text = "Foobar"
-            {
+        switch button.Text {
+            case "AIMP":
+                Run(aimpPath)
+            case "Foobar":
                 Run(foobarPath)
                 text := "foobar2000"
-            }
-        if text = "WMP"
-            {
+            case "WMP":
                 Run(wmpPath)
                 text := "wmplayer"
-            }
-        if text = "VLC"
-            Run(vlcPath)
+            case "VLC":
+                Run(vlcPath)
+        }
         WinWait("ahk_exe " text ".exe")
         WinActivate("ahk_exe " text ".exe")
         MyGui.Destroy()
@@ -772,7 +769,7 @@ hotkeysGUI() {
 		hotGUI.Destroy()
 	}
 
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+    if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
         goDark()
     goDark()
     {
@@ -792,13 +789,11 @@ todoGUI()
 {
     if WinExist("What to Do - Tomshi Scripts")
         return
-    todoGUI := Gui("", "What to Do - Tomshi Scripts")
-	todoGUI.SetFont("S11")
-	todoGUI.Opt("-Resize AlwaysOnTop")
+    todoGUI := tomshiBasic("-Resize AlwaysOnTop", "What to Do - Tomshi Scripts")
 	Title := todoGUI.Add("Text", "H30 X8 W300", "What to Do")
 	Title.SetFont("S15")
 
-    bodyText := todoGUI.Add("Text","X8 W550", "
+    bodyText := todoGUI.Add("Text","X8 W550 Center", "
     (
         1. Once you've saved these scripts wherever you wish (the default value is ``E:\Github\ahk\`` if you want all the directory information to just line up without any editing) but if you wish to use a custom directory, my scripts should automatically adjust these variables when you run ``My Scripts.ahk`` (so if you're reading this, your directory should be ``
     )" A_WorkingDir "
@@ -808,16 +803,11 @@ todoGUI()
 
         2. Take a look at ``Keyboard Shortcuts.ini`` to set your own keyboard shortcuts for programs as well as define coordinates for a few remaining ImageSearches that cannot use variables for various reasons. These ``KSA`` values are used to allow for easy adjustments instead of needing to dig through scripts!
 
-        3. Feel free to edit any of these scripts to your liking, change any of the hotkeys, then run any of the .ahk files and enjoy!
-            - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
+        3. Take a look at ``General.ahk`` in the class ``class ptf {`` to adjust all assigned filepaths!
 
-        - Scripts that will work with no tinkering include ->
-        - Alt Menu acceleration disabler
-        - autodismiss error
-        - autosave.ahk
-        - adobe fullscreen check.ahk
+        4. You can then edit and run any of the .ahk files to use to your liking!
     )")
-    closeButton := todoGUI.Add("Button", "X500 Y400", "Close")
+    closeButton := todoGUI.Add("Button", "x+-90 y+10", "Close")
     closeButton.OnEvent("Click", close)
 
     todoGUI.OnEvent("Escape", close)
@@ -826,7 +816,7 @@ todoGUI()
         todoGUI.Destroy()
     }
 
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+    if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
         goDark()
     goDark()
     {
@@ -853,7 +843,7 @@ activeScripts(MyRelease)
     text.SetFont("S13")
     
     ;checkboxes
-    my := MyGui.Add("CheckBox", "Checked0", "My Scripts.ahk")
+    my := MyGui.Add("CheckBox", "Checked0 Section", "My Scripts.ahk")
     my.ToolTip := "Clicking this checkbox will toggle suspend the script"
     my.OnEvent("Click", myClick)
     
@@ -893,21 +883,21 @@ activeScripts(MyRelease)
     SetTimer(checkScripts, -100)
         
     ;images
-    myImage := MyGui.Add("Picture", "w20 h-1 X275 Y33", A_WorkingDir "\Support Files\Icons\myscript.png")
-    altImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\error.ico")
-    autodisImage := MyGui.Add("Picture", "w20 h-1 X275 Y+2", A_WorkingDir "\Support Files\Icons\dismiss.ico")
-    autosaveImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\save.ico")
-    premFullImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\fullscreen.ico")
-    gameImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\game.png")
-    multiImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\M-I_C.png")
-    qmkImage := MyGui.Add("Picture", "w20 h-1 X275 Y+5", A_WorkingDir "\Support Files\Icons\keyboard.ico")
-    resolveImage := MyGui.Add("Picture", "w20 h-1 X275 Y+2", A_WorkingDir "\Support Files\Icons\resolve.png")
+    myImage := MyGui.Add("Picture", "w20 h-1 X275 Ys", ptf.Icons "\myscript.png")
+    altImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\error.ico")
+    autodisImage := MyGui.Add("Picture", "w20 h-1 Y+2", ptf.Icons "\dismiss.ico")
+    autosaveImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\save.ico")
+    premFullImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\fullscreen.ico")
+    gameImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\game.png")
+    multiImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\M-I_C.png")
+    qmkImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\keyboard.ico")
+    resolveImage := MyGui.Add("Picture", "w20 h-1 Y+2", ptf.Icons "\resolve.png")
 
     ;close button
     closeButton := MyGui.Add("Button", "X245", "Close")
     closeButton.OnEvent("Click", escape)
 
-    if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true"
+    if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
         goDark()
     goDark()
     {
@@ -956,6 +946,7 @@ activeScripts(MyRelease)
     }
 
     MyGui.OnEvent("Escape", escape)
+    MyGui.OnEvent("Close", escape)
     escape(*) {
         SetTimer(checkScripts, 0)
         MyGui.Destroy()

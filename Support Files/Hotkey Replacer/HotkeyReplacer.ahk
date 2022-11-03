@@ -335,8 +335,8 @@ cancel(*) => ReplacerGui.Destroy()
 
 
 
-/*
- This function will grab the release version from the `My Scripts.ahk` file itself. This function makes it so I don't have to change this variable manually every release
+/**
+ * This function will grab the release version from the `My Scripts.ahk` file itself. This function makes it so I don't have to change this variable manually every release
  */
 getVer()
 {

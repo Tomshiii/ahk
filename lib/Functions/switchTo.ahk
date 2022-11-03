@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.18
+;\\v2.19
 #Include General.ahk
 #Include GUIs.ahk
 
@@ -43,7 +43,7 @@ closeOtherWindow(program)
 switchToPremiere()
 {
     if !WinExist("ahk_class Premiere Pro")
-        Run(A_ScriptDir "\Support Files\shortcuts\Adobe Premiere Pro.exe.lnk")
+        Run(ptf.files["Premiere"])
     else if WinExist("ahk_class Premiere Pro")
         WinActivate("ahk_class Premiere Pro")
 }
@@ -55,7 +55,7 @@ switchToAE()
 {
     runae() ;cut repeat code
     {
-        Run(A_ScriptDir "\Support Files\shortcuts\AfterFX.exe.lnk")
+        Run(ptf.files["AE"])
         WinWait("ahk_exe AfterFX.exe")
         WinActivate("ahk_exe AfterFX.exe")
     }
@@ -123,7 +123,7 @@ switchToDisc()
     move() => WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe") ;creating a function out of the winmove so you can easily adjust the value
     if !WinExist("ahk_exe Discord.exe")
         {
-            Run("C:\Users\" A_UserName "\AppData\Local\Discord\Update.exe --processStart Discord.exe")
+            Run(ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe")
             WinWait("ahk_exe Discord.exe")
             if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
                 WinRestore() ;winrestore will unmaximise it
@@ -149,7 +149,7 @@ switchToPhoto()
             WinActivate("ahk_exe Photoshop.exe")
             return
         }
-    Run A_ScriptDir "\Support Files\shortcuts\Photoshop.exe.lnk"
+    Run(ptf.files["Photoshop"])
     WinWait("ahk_exe Photoshop.exe")
     WinActivate("ahk_exe Photoshop.exe")
 }
@@ -233,7 +233,7 @@ firefoxTap()
 switchToVSC()
 {
     if !WinExist("ahk_exe Code.exe")
-        Run("C:\Program Files\Microsoft VS Code\Code.exe")
+        Run(ptf.ProgFi "\Microsoft VS Code\Code.exe")
         GroupAdd("Code", "ahk_class Chrome_WidgetWin_1")
     if WinActive("ahk_exe Code.exe")
         GroupActivate("Code", "r")
@@ -247,7 +247,7 @@ switchToVSC()
 switchToGithub()
 {
     if !WinExist("ahk_exe GitHubDesktop.exe")
-        Run("C:\Users\" A_UserName "\AppData\Local\GitHubDesktop\GitHubDesktop.exe")
+        Run(ptf.LocalAppData "\GitHubDesktop\GitHubDesktop.exe")
         GroupAdd("git", "ahk_class Chrome_WidgetWin_1")
     if WinActive("ahk_exe GitHubDesktop.exe")
         GroupActivate("git", "r")
@@ -261,7 +261,7 @@ switchToGithub()
 switchToStreamdeck()
 {
     if !WinExist("ahk_exe StreamDeck.exe")
-        Run(A_ProgramFiles "\Elgato\StreamDeck\StreamDeck.exe")
+        Run(ptf.ProgFi "\Elgato\StreamDeck\StreamDeck.exe")
         GroupAdd("stream", "ahk_class Qt5152QWindowIcon")
     if WinActive("ahk_exe StreamDeck.exe")
         GroupActivate("stream", "r")
@@ -276,7 +276,7 @@ switchToExcel()
 {
     if !WinExist("ahk_exe EXCEL.EXE")
         {
-            Run(A_ProgramFiles "\Microsoft Office\root\Office16\EXCEL.EXE")
+            Run(ptf.ProgFi "\Microsoft Office\root\Office16\EXCEL.EXE")
             WinWait("ahk_exe EXCEL.EXE")
             WinActivate("ahk_exe EXCEL.EXE")
         }
@@ -294,7 +294,7 @@ switchToWord()
 {
     if !WinExist("ahk_exe WINWORD.EXE")
         {
-            Run(A_ProgramFiles "\Microsoft Office\root\Office16\WINWORD.EXE")
+            Run(ptf.ProgFi "\Microsoft Office\root\Office16\WINWORD.EXE")
             WinWait("ahk_exe WINWORD.EXE")
             WinActivate("ahk_exe WINWORD.EXE")
         }
@@ -311,7 +311,7 @@ switchToWord()
 switchToWindowSpy()
 {
     if !WinExist("WindowSpy.ahk")
-        Run(A_ProgramFiles "\AutoHotkey\UX\WindowSpy.ahk")
+        Run(ptf.ProgFi "\AutoHotkey\UX\WindowSpy.ahk")
     GroupAdd("winspy", "ahk_class AutoHotkeyGUI")
     if WinActive("WindowSpy.ahk")
         GroupActivate("winspy", "r")
@@ -325,7 +325,7 @@ switchToWindowSpy()
 switchToYourPhone()
 {
     if !WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
-        Run(A_ScriptDir "\Support Files\shortcuts\Your Phone.lnk")
+        Run(ptf.files["YourPhone"])
     GroupAdd("yourphone", "ahk_class ApplicationFrameWindow")
     if WinActive("Your Phone")
         GroupActivate("yourphone", "r")

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.9
+;\\v2.16
 #Include General.ahk
 
 /**
@@ -1426,7 +1426,7 @@ gain(amount)
     else
         {
             try {
-                FileCopy(location "\checklist.ahk", path)
+                FileCopy(A_WorkingDir "\checklist.ahk", path)
                 Run(path "\checklist.ahk")
             } catch as e {
                 tool.Cust("File not found")
