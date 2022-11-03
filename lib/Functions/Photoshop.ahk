@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.1
+;\\v2.13.2
 #Include General.ahk
 
 /**
@@ -12,13 +12,13 @@ psProp(image)
     MouseGetPos(&xpos, &ypos)
     coord.w()
     block.On()
-    if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "text2.png") ;checks to see if you're typing
+    if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "text2.png") ;checks to see if you're typing
         SendInput("^{Enter}")
-    if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "text.png") ;checks to see if you're in the text tool
+    if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "text.png") ;checks to see if you're in the text tool
         SendInput("v") ;if you are, it'll press v to go to the selection tool
-    if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " Photoshop "InTransform.png") ;checks to see if you're already in the free transform window
+    if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "InTransform.png") ;checks to see if you're already in the free transform window
         {
-            if !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " Photoshop image) ;if you are, it'll then search for your button of choice
+            if !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " ptf.Photoshop image) ;if you are, it'll then search for your button of choice
                 {
                     block.Off()
                     tool.Cust("the value you wish`nto adjust_1",, 1)
@@ -33,7 +33,7 @@ psProp(image)
             ToolTip("we must wait for photoshop`nbecause it's slow as hell")
             sleep 300 ;photoshop is slow
             ToolTip("")
-            if !ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " Photoshop image)
+            if !ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " ptf.Photoshop image)
                 {
                     MouseMove(xpos, ypos)
                     block.Off()
@@ -88,14 +88,14 @@ psSave()
         Send("{TAB}{RIGHT}")
         coord.w()
         sleep 1000
-        if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop "png.png")
+        if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop "png.png")
             {
                 MouseMove(0, 0)
                 SendInput("{Enter 2}")
             }
         else
             {
-                if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop "png2.png")
+                if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop "png2.png")
                     {
                         MouseMove(xpng, ypng)
                         SendInput("{Click}")
@@ -169,12 +169,12 @@ psType(filetype)
     Send("{TAB}{RIGHT}") ;make sure you don't click anywhere before using this function OR put the caret back in the filename box
     coord.w()
     sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
-    if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop filetype ".png")
+    if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop filetype ".png")
         {
             SendInput("{Enter}")
             SendInput("+{Tab}")
         }
-    else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " Photoshop filetype "2.png")
+    else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop filetype "2.png")
         {
             MouseMove(xpng, ypng)
             SendInput("{Click}")

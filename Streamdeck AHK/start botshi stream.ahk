@@ -27,7 +27,7 @@ if !WinExist("ahk_exe obs64.exe")
 				WinActivate("ahk_exe chatterino.exe")
 				coord.w()
 				WinGetPos(,, &width, &height, "A")
-				if ImageSearch(&xpos, &ypos, 0, 0, width, height/ "3", "*2 " Chatterino "botshinotactive.png")
+				if ImageSearch(&xpos, &ypos, 0, 0, width, height/ "3", "*2 " ptf.Chatterino "botshinotactive.png")
 					{
 						MouseMove(xpos, ypos)
 						SendInput("{Click}")

@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.14.10
+;\\v2.14.11
 #Include General.ahk
 
 ; ===========================================================================================================================================
@@ -145,11 +145,11 @@ moveTab()
 		}
     if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
         goto move
-    if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu.png") || ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " Firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
+    if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " ptf.firefox "contextMenu.png") || ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " ptf.firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
         {
             SendInput("{Escape}")
             sleep 50
-            if ImageSearch(&urlX, &urlY, winX, winY, winX + (width / 2), (winY + 200), "*2 " Firefox "url.png") ;this checks to make sure the url bar isn't higlighted as it's the same colour as an active tab in firefox
+            if ImageSearch(&urlX, &urlY, winX, winY, winX + (width / 2), (winY + 200), "*2 " ptf.firefox "url.png") ;this checks to make sure the url bar isn't higlighted as it's the same colour as an active tab in firefox
                 {
                     SendInput("{F6}")
                     sleep 50
@@ -583,7 +583,7 @@ disc(button)
     click("right") ;this opens the right click context menu on the message you're hovering over
     sleep 50 ;sleep required so the right click context menu has time to open
     loop {
-        if ImageSearch(&xpos, &ypos, x - "200", y -"400",  x + "200", y + yheight, "*2 " Discord button) ;searches for the button you've requested
+        if ImageSearch(&xpos, &ypos, x - "200", y -"400",  x + "200", y + yheight, "*2 " ptf.Discord button) ;searches for the button you've requested
             {
                 MouseMove(xpos, ypos)
                 break
@@ -604,10 +604,10 @@ disc(button)
     }
     Click
     sleep 100
-    if button != "DiscReply.png" || !ImageSearch(&x2, &y2, nx, ny/"3", width, height, "*2 " Discord "dm1.png")
+    if button != "DiscReply.png" || !ImageSearch(&x2, &y2, nx, ny/"3", width, height, "*2 " ptf.Discord "dm1.png")
         goto end  ;YOU MUST CALL YOUR REPLY IMAGESEARCH FILE "DiscReply.png" FOR THIS PART OF THE CODE TO WORK - ELSE CHANGE THIS VALUE TOO
     loop {
-            if ImageSearch(&xdir, &ydir, 0, height/"2", width, height, "*2 " Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the `end:` below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+            if ImageSearch(&xdir, &ydir, 0, height/"2", width, height, "*2 " ptf.Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the `end:` below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
                 {
                     ;ToolTip("")
                     MouseMove(xdir, ydir) ;moves to the @ location
@@ -727,7 +727,7 @@ discUnread(which := "")
         }
 	MouseGetPos(&xPos, &yPos)
 	WinGetPos(,,, &height)
-	if !ImageSearch(&x, &y, 0 + x2, 0, 50 + y2, height, "*2 " Discord "\unread" which ".png")
+	if !ImageSearch(&x, &y, 0 + x2, 0, 50 + y2, height, "*2 " ptf.Discord "\unread" which ".png")
 		{
             tool.Cust("any unread " message,, 1)
             return

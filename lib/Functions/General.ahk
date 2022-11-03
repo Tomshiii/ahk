@@ -1,11 +1,19 @@
-global Discord := A_WorkingDir "\Support Files\ImageSearch\Discord\"
-global Premiere := A_WorkingDir "\Support Files\ImageSearch\Premiere\"
-global AE := A_WorkingDir "\Support Files\ImageSearch\AE\"
-global Photoshop := A_WorkingDir "\Support Files\ImageSearch\Photoshop\"
-global Resolve := A_WorkingDir "\Support Files\ImageSearch\Resolve\"
-global VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
-global Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
-global Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
+/*
+ * A collection of all ImageSearch directories. Stands for Point to File
+*/
+class ptf {
+    static Discord := A_WorkingDir "\Support Files\ImageSearch\Discord\"
+    static Premiere := A_WorkingDir "\Support Files\ImageSearch\Premiere\"
+    static AE := A_WorkingDir "\Support Files\ImageSearch\AE\"
+    static Photoshop := A_WorkingDir "\Support Files\ImageSearch\Photoshop\"
+    static Resolve := A_WorkingDir "\Support Files\ImageSearch\Resolve\"
+    static VSCodeImage := A_WorkingDir "\Support Files\ImageSearch\VSCode\"
+    static Explorer := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Explorer\"
+    static Firefox := A_WorkingDir "\Support Files\ImageSearch\Firefox\"
+    static Windows := A_WorkingDir "\Support Files\ImageSearch\Windows\Win11\Settings\"
+	static Chatterino := A_WorkingDir "\Support Files\ImageSearch\Chatterino\"
+}
+
 
 ;define browsers
 GroupAdd("Browsers", "ahk_exe firefox.exe")
@@ -18,12 +26,15 @@ GroupAdd("Editors", "ahk_exe AfterFX.exe")
 GroupAdd("Editors", "ahk_exe Resolve.exe")
 GroupAdd("Editors", "ahk_exe Photoshop.exe")
 
-;\\v2.20.8
+;\\v2.20.9
 ; ===========================================================================================================================================
 ;
 ;		Coordmode \\ Last updated: v2.20
 ;
 ; ===========================================================================================================================================
+/*
+ * A class to contain often used coordmode settings for easier coding.
+*/
 class coordinates {
     /**
      * This function is a part of the class `coordinates`
@@ -53,7 +64,9 @@ coord := coordinates()
 ;		Tooltip \\ Last updated: v2.20.7
 ;
 ; ===========================================================================================================================================
-
+/*
+ * A class to contain often used tooltip functions for easier coding.
+*/
 class tooltips {
     /**
      * This function is a part of the class `tooltips`

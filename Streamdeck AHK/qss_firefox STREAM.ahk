@@ -1,11 +1,10 @@
 #SingleInstance Force
-SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0
 #Include SD_functions.ahk
 #WinActivateForce
 
 ;
-; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder
+; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder.
 ;
 firetip() => tool.Cust("firefox",, 1)
 
@@ -29,14 +28,14 @@ try {
             WinActivate("Settings")
         ToolTip("This function searched " A_Index " time(s) to find firefox`nActive window: " active)
         if (
-            ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox3.png") ||
-            ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox.png") ||
-            ImageSearch(&ffX, &ffY, 8, 8, 2567, 1447, "*2 " Windows "firefox2.png")
+            ImageSearch(&ffX, &ffY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Windows "firefox3.png") ||
+            ImageSearch(&ffX, &ffY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Windows "firefox.png") ||
+            ImageSearch(&ffX, &ffY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Windows "firefox2.png")
         )
             break
-        ToolTip("")
         if A_Index > 5
             {
+                ToolTip("")
                 pauseautosave()
                 pausewindowmax()
                 firetip()
@@ -46,7 +45,7 @@ try {
     MouseMove(ffx, ffy)
     Click()
     sleep 500
-    if !ImageSearch(&devX, &devY, ffX, ffY - "30", ffX + 2500, ffY + "30", "*2 " Windows "sample.png")
+    if !ImageSearch(&devX, &devY, ffX, ffY - "30", ffX + 2500, ffY + "30", "*2 " ptf.Windows "sample.png")
         {
             SendInput("{Tab 3}")
             ;sleep 500

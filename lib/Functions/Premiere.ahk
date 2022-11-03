@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.15.8
+;\\v2.15.9
 #Include General.ahk
 
 /**
@@ -30,14 +30,14 @@ preset(item)
             SendInput(timelineWindow) ;focuses the timeline
             SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
             sleep 100
-            if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
+            if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
                 {
                     block.Off()
                     tool.Cust("the graphics tab",, 1)
                     errorLog(A_ThisFunc "()", "Couldn't find the graphics tab", A_LineFile, A_LineNumber)
                     return
                 }
-            if !ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " Premiere "eye.png") ;searches for the eye icon for the original text
+            if !ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
                 {
                     block.Off()
                     tool.Cust("the eye icon",, 1)
@@ -233,11 +233,11 @@ num(xval, yval, scale)
         return
     }
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     tool.Cust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -247,7 +247,7 @@ num(xval, yval, scale)
         }
     SendInput(timelineWindow) ;adjust this in the ini file
     SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "video.png") ;moves to the "video" section of the effects control window tab
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png") ;moves to the "video" section of the effects control window tab
         goto next
     else
         {
@@ -258,7 +258,7 @@ num(xval, yval, scale)
             return
         }
     next:
-    if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") || (&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion3.png") ;moves to the motion tab
+    if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") || (&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;moves to the motion tab
         MouseMove(x2 + "10", y2 + "10")
     else ;if everything fails, this else will trigger
         {
@@ -405,11 +405,11 @@ zoom()
                 return
         }
     SendInput(timelineWindow)
-    if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     tool.Cust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -417,7 +417,7 @@ zoom()
                     return
                 }
         }
-    if !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") && !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion3.png")
+    if !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") && !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png")
         {
             MouseMove(xpos, ypos)
             block.Off()
@@ -491,11 +491,11 @@ valuehold(filepath, optional := 0)
         return
     }
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
         { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     tool.Cust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "The wrong clips are selected", A_LineFile, A_LineNumber)
@@ -505,7 +505,7 @@ valuehold(filepath, optional := 0)
         }
     if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, YOUR PNG MUST BE CALLED "levels.png"
         { ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
-            if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "video.png")
+            if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png")
                 {
                     tool.Cust("you aren't scrolled down")
                     errorLog(A_ThisFunc "()", "The user wasn't scrolled down", A_LineFile, A_LineNumber)
@@ -531,10 +531,10 @@ valuehold(filepath, optional := 0)
                 }
             }
         if ( ;finds the value you want to adjust, then finds the value adjustment to the right of it
-                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath ".png") ||
-                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") ||
-                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "3.png") ||
-                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath ".png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "3.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
         )
             break
         if A_Index > 3
@@ -574,7 +574,7 @@ valuehold(filepath, optional := 0)
         }
     else
         {
-            if !ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
+            if !ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " ptf.Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
                 {
                     if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
                         {
@@ -618,11 +618,11 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
         return
     }
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     tool.Cust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -630,7 +630,7 @@ keyreset(filepath) ;I think this function is broken atm, I need to do something 
                     return
                 }
         }
-    if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") && !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
+    if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") && !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
         {
             tool.Cust("you're already keyframing")
             errorLog(A_ThisFunc "()", "The user was already keyframing", A_LineFile, A_LineNumber)
@@ -665,11 +665,11 @@ keyframe(filepath)
         return
     }
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     tool.Cust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -677,9 +677,9 @@ keyframe(filepath)
                     return
                 }
         }
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "2.png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "4.png")
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
             goto next
-    else if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath ".png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere filepath "3.png")
+    else if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath ".png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "3.png")
         {
             MouseMove(x + "5", y + "5")
             Click()
@@ -693,7 +693,7 @@ keyframe(filepath)
             return
         }
     next:
-    if ImageSearch(&keyx, &keyy, x, y, x + "500", y + "20", "*2 " Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, x, y, x + "500", y + "20", "*2 " Premiere "keyframeButton2.png")
+    if ImageSearch(&keyx, &keyy, x, y, x + "500", y + "20", "*2 " ptf.Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, x, y, x + "500", y + "20", "*2 " ptf.Premiere "keyframeButton2.png")
         MouseMove(keyx + "3", keyy)
     Click()
     end:
@@ -713,7 +713,7 @@ audioDrag(sfxName)
     ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
     coord.s()
     SendInput(selectionPrem)
-    if !ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
+    if !ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " ptf.Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
         {
             tool.Cust("you haven't opened the bin", 2000)
             errorLog(A_ThisFunc "()", "User hasn't opened the required bin", A_LineFile, A_LineNumber)
@@ -721,7 +721,7 @@ audioDrag(sfxName)
     block.On()
     coord.s()
     MouseGetPos(&xpos, &ypos)
-    if ImageSearch(&listx, &listy, 3082, 664, 3591, 1265, "*2 " Premiere "list view.png") ;checks to make sure you're in the list view
+    if ImageSearch(&listx, &listy, 3082, 664, 3591, 1265, "*2 " ptf.Premiere "list view.png") ;checks to make sure you're in the list view
         {
             MouseMove(listx, listy)
             SendInput("{Click}")
@@ -751,7 +751,7 @@ audioDrag(sfxName)
         SendInput(sfxName)
         sleep 250 ;the project search is pretty slow so you might need to adjust this
         coord.w()
-        if !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio.png") && !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " Premiere "audio2.png") ;searches for the audio image next to an audio file
+        if !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " ptf.Premiere "audio.png") && !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " ptf.Premiere "audio2.png") ;searches for the audio image next to an audio file
             {
                 block.Off()
                 tool.Cust("audio image", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
@@ -853,7 +853,7 @@ audioDrag(sfxName)
             sleep 500
             SendInput("{Click Down}")
             MouseGetPos(&refx, &refy)
-            if !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_1.png") && !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " Premiere "track " trackNumber "_2.png")
+            if !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " ptf.Premiere "track " trackNumber "_1.png") && !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " ptf.Premiere "track " trackNumber "_2.png")
                 {
                     block.Off()
                     tool.Cust("Couldn't determine the Y value of desired track")
@@ -907,7 +907,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
     MouseGetPos(&xpos, &ypos)
     SendInput(mediaBrowser) ;highlights the media browser ~ check the keyboard shortcut ini file to adjust hotkeys
     sleep 10
-    if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere folder ".png") ;searches for my sfx folder in the media browser to see if it's already selected or not
+    if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " ptf.Premiere folder ".png") ;searches for my sfx folder in the media browser to see if it's already selected or not
         {
             MouseMove(sfx, sfy) ;if it isn't selected, this will move to it then click it
             SendInput("{Click}")
@@ -915,7 +915,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
             sleep 100
             goto next
         }
-    else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere folder "2.png") ;if it is selected, this will see it, then move on
+    else if ImageSearch(&sfx, &sfy, mbX1, mbY1, mbX2, mbY2, "*2 " ptf.Premiere folder "2.png") ;if it is selected, this will see it, then move on
         goto next
     else ;if everything fails, this else will trigger
         {
@@ -930,7 +930,7 @@ audioDrag(folder, sfxName) (old | uses media browser instead of a project bin)
     SendInput("^a" "+{BackSpace}") ;deletes anything that might be in the search box
     SendInput(sfxName)
     sleep 150
-    if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " Premiere "vlc.png") ;searches for the vlc icon to grab the track
+    if ImageSearch(&vlx, &vly, mbX1, mbY1, mbX2, mbY2, "*2 " ptf.Premiere "vlc.png") ;searches for the vlc icon to grab the track
         {
             MouseMove(vlx, vly)
             SendInput("{Click Down}")
@@ -982,11 +982,11 @@ movepreview()
         errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
     }
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     tool.Cust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -1010,7 +1010,7 @@ movepreview()
                     return
                 }
             }
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion.png") ;moves to the motion tab
+        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
                 {
                     MouseMove(x + "25", y)
                     break
@@ -1061,7 +1061,7 @@ movepreview()
         }
     else
         {
-            if !ImageSearch(&xcol, &ycol, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "reset.png")
+            if !ImageSearch(&xcol, &ycol, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "reset.png")
                 {
                     block.Off()
                     MouseMove(xpos, ypos)
@@ -1098,11 +1098,11 @@ reset()
         return
     }
     SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     tool.Cust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -1112,7 +1112,7 @@ reset()
         }
     MouseGetPos(&xpos, &ypos)
     loop {
-        if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion2.png") || ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "motion3.png") ;checks if the "motion" value is in view
+        if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") || ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;checks if the "motion" value is in view
             break
         if A_Index > 5
             {
@@ -1123,7 +1123,7 @@ reset()
             }
     }
     SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
-    if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
+    if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " ptf.Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
         MouseMove(xcol, ycol)
     click
     MouseMove(xpos, ypos)
@@ -1192,11 +1192,11 @@ manInput(property, optional := 0)
         return
     }
     SendInput(timelineWindow)
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;searches to check if no clips are selected
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
         {
             SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     tool.Cust("The wrong clips are selected")
                     errorLog(A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
@@ -1205,10 +1205,10 @@ manInput(property, optional := 0)
                 }
         }
     if ( ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property ".png") &&
-        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "2.png") &&
-        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "3.png") &&
-        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere property "4.png")
+        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere property ".png") &&
+        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere property "2.png") &&
+        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere property "3.png") &&
+        !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere property "4.png")
     )
         {
             block.Off()
@@ -1286,7 +1286,7 @@ gain(amount)
         goto start */
         SendInput(timelineWindow)
         try {
-            if ImageSearch(&x3, &y3, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+            if ImageSearch(&x3, &y3, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                 {
                     SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                     goto inputs
@@ -1339,7 +1339,7 @@ gain(amount)
         return
     }
     SendInput(timelineWindow)
-    if ImageSearch(&x3, &y3, classX, classY, classX + (width/ECDivide), classY + height, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+    if ImageSearch(&x3, &y3, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
         {
             SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
             goto inputs

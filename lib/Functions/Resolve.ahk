@@ -1,5 +1,5 @@
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.3
+;\\v2.13.4
 #Include General.ahk
 
 /**
@@ -16,12 +16,12 @@ Rscale(value, property, plus)
     block.On()
     SendInput(resolveSelectPlayhead)
     MouseGetPos(&xpos, &ypos)
-    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
+    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " ptf.Resolve "inspector2.png")
         {
             MouseMove(xi, yi)
             click ;this opens the inspector tab
         }
-    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "video.png")
+    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "video.png")
         {
             block.Off()
             MouseMove(xpos, ypos)
@@ -29,12 +29,12 @@ Rscale(value, property, plus)
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
-    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png")
+    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png")
         {
             MouseMove(xn, yn)
             click ;"2196 139" ;this highlights the video tab
         }
-    if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property ".png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property "2.png")
+    if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve property "2.png")
         {
             block.Off()
             tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
@@ -92,48 +92,48 @@ REffect(folder, effect)
     coord.w()
     block.On()
     MouseGetPos(&xpos, &ypos)
-    if !ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " Resolve "effects.png") && !ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " Resolve "effects2.png") 
+    if !ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " ptf.Resolve "effects.png") && !ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " ptf.Resolve "effects2.png") 
         {
             block.Off()
             tool.Cust("the effects button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the effects button", A_LineFile, A_LineNumber)
             return
         }
-    else if ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " Resolve "effects.png") ;checks to see if the effects button is deactivated
+    else if ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " ptf.Resolve "effects.png") ;checks to see if the effects button is deactivated
         {
             MouseMove(xe, ye)
             SendInput("{Click}")
         }
-    if !ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "closed.png") && !ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "open.png")
+    if !ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "closed.png") && !ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "open.png")
         {
             block.Off()
             tool.Cust("open/close button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the open/close button", A_LineFile, A_LineNumber)
             return
         }
-    else if ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "closed.png") ;checks to see if the effects window sidebar is opened
+    else if ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "closed.png") ;checks to see if the effects window sidebar is opened
         {
             MouseMove(xclosed, yclosed)
             SendInput("{Click}")
         }
-    if !ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve folder ".png") && !ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve folder "2.png")
+    if !ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve folder ".png") && !ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve folder "2.png")
         {
             block.Off()
             tool.Cust("the fxfolder",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
             errorLog(A_ThisFunc "()", "Was unable to find the fxfolder", A_LineFile, A_LineNumber)
             return
         }
-    else if ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve folder "2.png") ;checks to see if the drop down option you want is activated
+    else if ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve folder "2.png") ;checks to see if the drop down option you want is activated
         {
             MouseMove(xfx, yfx)
             SendInput("{Click}")
         }
-    if ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "search2.png") ;checks to see if the search icon is deactivated
+    if ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search2.png") ;checks to see if the search icon is deactivated
         {
             MouseMove(xs, ys)
             SendInput("{Click}")
         }
-    else if ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " Resolve "search3.png") ;checks to see if the search icon is activated
+    else if ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search3.png") ;checks to see if the search icon is activated
         {
             MouseMove(xs, ys)
             SendInput("{Click 2}")
@@ -155,7 +155,7 @@ REffect(folder, effect)
         exit
     }
     MouseGetPos(&xcol, &ycol)
-    if !ImageSearch(&effx, &effy, xcol - (A_ScreenWidth/3), ycol, xcol, ycol + (A_ScreenHeight/3), "*2 " Resolve folder "3.png")
+    if !ImageSearch(&effx, &effy, xcol - (A_ScreenWidth/3), ycol, xcol, ycol + (A_ScreenHeight/3), "*2 " ptf.Resolve folder "3.png")
         colError()
     if !PixelSearch(&findx, &findy, effx + 5, effy, effx + 20, effy + 50, 0x000000)
         colError()
@@ -179,12 +179,12 @@ rvalhold(property, plus, rfelseval)
     block.On()
     SendInput(resolveSelectPlayhead)
     MouseGetPos(&xpos, &ypos)
-    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
+    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " ptf.Resolve "inspector2.png")
         {
             MouseMove(xi, yi)
             click ;this opens the inspector tab
         }
-    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "video.png")
+    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "video.png")
         {
             block.Off()
             MouseMove(xpos, ypos)
@@ -192,12 +192,12 @@ rvalhold(property, plus, rfelseval)
             errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
-    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png")
+    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png")
         {
             MouseMove(xn, yn)
             click ;"2196 139" ;this highlights the video tab
         }
-    if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property ".png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve property "2.png")
+    if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve property "2.png")
         {
             block.Off()
             tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
@@ -230,17 +230,17 @@ rflip(button)
     coord.w()
     block.On()
     MouseGetPos(&xpos, &ypos)
-    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "videoN.png") ;makes sure the video tab is selected
+    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png") ;makes sure the video tab is selected
         {
             MouseMove(xn, yn)
             click
         }
-    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*5 " Resolve "inspector2.png")
+    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*5 " ptf.Resolve "inspector2.png")
         {
             MouseMove(xi, yi)
             click
         }
-    if !ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve button ".png") && !ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " Resolve button "2.png")
+    if !ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve button ".png") && !ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve button "2.png")
         {
             block.Off()
             MouseMove(xpos, ypos)
@@ -269,12 +269,12 @@ rgain(value)
     block.On()
     SendInput(resolveSelectPlayhead)
     MouseGetPos(&xpos, &ypos)
-    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " Resolve "inspector2.png")
+    if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " ptf.Resolve "inspector2.png")
         {
             MouseMove(xi, yi)
             click ;this opens the inspector tab
         }
-    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio2.png")
+    if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "audio.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "audio2.png")
         {
             block.Off()
             MouseMove(xpos, ypos)
@@ -282,12 +282,12 @@ rgain(value)
             errorLog(A_ThisFunc "()", "Was unable to find the audio tab", A_LineFile, A_LineNumber)
             return
         }
-    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " Resolve "audio.png")
+    if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "audio.png")
         {
             MouseMove(xn, yn)
             click ;"2196 139" ;this highlights the video tab
         }
-    if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume.png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " Resolve "volume2.png") ;searches for the volume property
+    if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve "volume.png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve "volume2.png") ;searches for the volume property
         {
             block.Off()
             tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for

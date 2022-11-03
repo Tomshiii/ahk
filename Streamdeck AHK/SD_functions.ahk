@@ -5,10 +5,8 @@ SetWorkingDir("..\") ;this is required for KSA to work
 #Include "..\lib\Functions\switchTo.ahk" ;this is only added to prevent errors
 #Include "..\lib\Functions\Startup.ahk" ;this is only added to prevent errors
 #Include "..\lib\Functions\General.ahk" ;this is added because we need it
-global Windows := "..\Support Files\ImageSearch\Windows\Win11\Settings\"
-global Chatterino := "..\Support Files\ImageSearch\Chatterino\"
 
-;recently went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
+;went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()
 {
 	if WinExist("ahk_exe obs64.exe")
@@ -30,7 +28,7 @@ discordLocation() => WinMove(-1080,  -274, 1080, 1600)
 speed(amount)
 {
 	ControlFocus "DroverLord - Window Class3" , "Adobe Premiere Pro"
-	if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+	if ImageSearch(&x3, &y3, 1, 965, 624, 1352, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
 		SendInput(timelineWindow selectAtPlayhead)
 	else
 		{
@@ -54,7 +52,7 @@ scale(amount)
 	coord.s()
 	block.On()
 	MouseGetPos &xpos, &ypos
-	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " Premiere "scale.png") || ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " Premiere "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
+	if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " ptf.Premiere "scale.png") || ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " ptf.Premiere "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
 		{
 			if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
 				{

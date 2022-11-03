@@ -32,14 +32,14 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
         coord.w()
         block.On()
         sleep 200
-        if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " Premiere "newProj.png")
+        if ImageSearch(&x, &y, 0, 0, 629, 348, "*2 " ptf.Premiere "newProj.png")
             {
                 MouseMove(x, y)
                 SendInput("{Click}")
                 sleep 1000
                 loop {
                     sleep 1000
-                    if ImageSearch(&nox, &noy, 1219, 54, 1347, 85, "*2 " Premiere "noProj.png")
+                    if ImageSearch(&nox, &noy, 1219, 54, 1347, 85, "*2 " ptf.Premiere "noProj.png")
                         break
                     if A_Index > 5
                         {
@@ -77,7 +77,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
                 SendInput("{Enter 4}")
                 sleep 1000
                 loop {
-                    if ImageSearch(&crex, &crey, 2290, 1274, 2559, 1349, "*2 " Premiere "create.png")
+                    if ImageSearch(&crex, &crey, 2290, 1274, 2559, 1349, "*2 " ptf.Premiere "create.png")
                     {
                         MouseMove(crex, crey)
                         SendInput("{Click}")

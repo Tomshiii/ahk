@@ -15,9 +15,9 @@ TraySetIcon(A_WorkingDir "\Support Files\Icons\myscript.png") ;changes the icon 
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.1
+;\\v2.21.2
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.10.1
+;\\v2.10.2
 
 ; ============================================================================================================================================
 ;
@@ -277,7 +277,7 @@ F18:: ;open the "show more options" menu in win11
 			WinMaximize
 			return
 		}
-	else if ImageSearch(&x, &y, 0, 0, width, height, "*5 " Explorer "showmore.png")
+	else if ImageSearch(&x, &y, 0, 0, width, height, "*5 " ptf.Explorer "showmore.png")
 		{
 			;tool.Cust(colour "`n imagesearch fired") ;for debugging
 			;SendInput("{Esc}")
@@ -389,7 +389,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 		}
 	else loop {
 		WinGetPos(,, &width,, "A")
-		if ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " firefox "youtube1.png") || ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " firefox "youtube2.png")
+		if ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " ptf.firefox "youtube1.png") || ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " ptf.firefox "youtube2.png")
 			{
 				MouseMove(xpos, ypos, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
 				SendInput("{Click}")
@@ -576,7 +576,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	else
 		multiply := "1"
 	loop {
-		if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height * multiply, "*2 " Premiere "selection.png") ;moves to the selection tool
+		if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height * multiply, "*2 " ptf.Premiere "selection.png") ;moves to the selection tool
 			{
 				MouseMove(x, y)
 				break
@@ -642,14 +642,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	;MsgBox("x " toolx "`ny " tooly "`nwidth " width "`nheight " height "`nclass " ClassNN) ;debugging
 	block.On()
 	try {
-		if ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " Premiere "project.png") || ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " Premiere "project2.png") ;searches for the project window to grab the track
+		if ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " ptf.Premiere "project2.png") ;searches for the project window to grab the track
 			goto move
-		else if ImageSearch(&prx, &pry, toolx, tooly, width, height, "*2 " Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
+		else if ImageSearch(&prx, &pry, toolx, tooly, width, height, "*2 " ptf.Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
 			goto bin
 		else
 			{
 				coord.s()
-				if ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " Premiere "project.png") || ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
+				if ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
 					goto move
 				else
 					{
@@ -707,7 +707,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	sleep 250
 	coord.w()
 	MouseMove(0, 0)
-	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Explorer "sfx.png")
+	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Explorer "sfx.png")
 		{
 			MouseMove(foldx + "9", foldy + "5", 2)
 			SendInput("{Click Down}")
@@ -729,13 +729,13 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	added:
 	coord.w()
 	WinActivate("ahk_exe Adobe Premiere Pro.exe")
-	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " Premiere "list view.png")
+	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " ptf.Premiere "list view.png")
 		{
 			MouseMove(listx, listy)
 			SendInput("{Click}")
 			sleep 100
 		}
-	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj.png") || ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " Premiere "sfxinproj2.png")
+	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj.png") || ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj2.png")
 		{
 			MouseMove(fold2x + "5", fold2y + "2")
 			SendInput("{Click 2}")
@@ -749,7 +749,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			return
 		}
 	loop {
-		if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " Premiere "binsfx.png")
+		if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " ptf.Premiere "binsfx.png")
 			{
 				MouseMove(fold3x + "20", fold3y + "4", 2)
 				SendInput("{Click Down}")
