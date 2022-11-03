@@ -15,7 +15,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.3
+;\\v2.21.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.3
 
@@ -121,6 +121,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	getMonitor()
 	{
 		getTitle(&title)
+		tryagain:
 		WinGetPos(&x, &y,,, title,, "Editing Checklist -")
 		x := x + 10 ;sometimes windows when fullscreened will be at -8, -8 and not 0, 0
 		y := y + 10 ;so we just add 10 pixels to both variables to ensure we're in the correct monitor
@@ -140,11 +141,25 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 				break
 			}
 		}
+		try { ;if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
+			isFullscreen(&testWin, &full, title)
+			if full = 0
+				{
+					WinMaximize(title,, "Editing Checklist -")
+					goto tryagain
+				}
+		}
 	}
 	title := ""
 	static win := "" ;a variable we'll hold the title of the window in
 	static toggle := 1 ;a variable to determine whether to centre on the current display or move to the main one
 	monitor := getMonitor() ;now we run the above function we created
+	if !IsObject(monitor) || !IsSet(monitor)
+		{
+			tool.Cust("Failed to get information about the window/monitor relationship`nThe window may be overlapping monitors")
+			errorLog(A_ThisHotkey "::", "Failed to get information about the window/monitor relationship", A_LineFile, A_LineNumber)
+			return
+		}
 	if win = "" ;if our win variable doesn't have a title yet we run this code block
 		{
 			win := title
