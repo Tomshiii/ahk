@@ -1,12 +1,6 @@
-;v2.24
 #Include General.ahk
 #Include GUIs.ahk
-; =======================================================================================================================================
-;
-;
-;				STARTUP
-;
-; =======================================================================================================================================
+
 /**
  * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
  * 

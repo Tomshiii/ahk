@@ -15,7 +15,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.5
+;\\v2.21.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.3
 
@@ -78,10 +78,13 @@ adobeTemp(MyRelease) ;runs the loop to delete cache files
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
 ;reloadHotkey;
-#+r::reload_Reset("reload") ;this reload script will attempt to reload all* active ahk scripts, not only this main script
+#+r::reload_reset_exit("reload") ;this reload script will attempt to reload all* active ahk scripts, not only this main script
 
 ;hardresetHotkey;
-#+^r::reload_Reset("reset") ;this will hard rerun all active ahk scripts
+#+^r::reload_reset_exit("reset") ;this will hard rerun all active ahk scripts
+
+;panicExitHotkey;
+#F12::reload_reset_exit("exit") ;this is a panic button and will shutdown all active ahk scripts
 
 ;settingsHotkey;
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI

@@ -9,8 +9,6 @@ TraySetIcon(ptf.Icons "\resolve.png")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.6.3
-;\\Minimum Version of "Resolve.ahk" Required for this script
-;\\v2.13
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.6.1

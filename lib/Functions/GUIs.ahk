@@ -457,7 +457,7 @@ settingsGUI()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         if IsSet(butt) && butt = "hard"
-            reload_Reset("reset")
+            reload_reset_exit("reset")
         ;before finally closing
         settingsGUI.Destroy()
     }

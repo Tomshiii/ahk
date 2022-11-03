@@ -1,5 +1,3 @@
-;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.4
 #Include General.ahk
 
 /**

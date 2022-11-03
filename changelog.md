@@ -6,6 +6,7 @@
 
 ## > My Scripts
 - `^AppsKey:: ;ahksearchHotkey;` will now attempt to check the tab the user opened to see if an error page opened instead.
+- Added `#F12:: ;panicExitHotkey;` to run `reload_reset_exit("exit")`
 
 `#c:: ;centreHotkey;` 
 - Will now ensure the `monitor` object is actually set before continuing to stop errors
@@ -13,9 +14,11 @@
 
 ## > Functions
 - Fixed `activeScripts()` being unable to relaunched if closed with `x` windows button
+- `reload_Reset()` changed to `reload_reset_exit()` and can now close all active ahk scripts
 
 ## > Other Changes
 - Removed a lot of lingering `location` variables from `Streamdeck AHK` scripts
+- Removed reduntant version tracking of some scripts
 
 `checklist.ahk`
 - Changed `msgboxName()` to `change_msgButton()` to stop incorrect autocomplete in VSCode

@@ -371,25 +371,36 @@ floorDecimal(num,dec) => RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 /**
  * A function to loop through and either reload or hard reset all* active ahk scripts
  */
-reload_Reset(which)
+reload_reset_exit(which)
 {
+    
+    switch which {
+        case "reload":
+            tool.Cust("all active ahk scripts reloading", 500)
+        case "reset":
+            tool.Cust("All active ahk scripts are being rerun")
+        case "exit":
+            tool.Cust("All active ahk scripts are being CLOSED")
+    }
     detect()
-    if which = "reload"
-        tool.Cust("all active ahk scripts reloading", 500)
-    if which = "reset"
-        tool.Cust("All active ahk scripts are being rerun")
     value := WinGetList("ahk_class AutoHotkey")
     for this_value in value
         {
-            name := WinGettitle(this_value)
+            name := WinGettitle(this_value,, "Visual Studio Code")
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
             SplitPath(path, &ScriptName)
             if ScriptName = "checklist.ahk" || ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk"
                 continue
-            if which = "reload"
-                PostMessage(0x0111, 65303,,, ScriptName " - AutoHotkey")
-            if which = "reset"
-                Run(path)
+            PID := WinGetPID(ScriptName)
+            switch which {
+                case "reload":
+                    PostMessage(0x0111, 65303,,, ScriptName " - AutoHotkey")
+                case "reset":
+                    Run(path)
+                case "exit":
+                    ProcessClose(PID)
+            }
+
         }
     detect(false)
     tool.Wait()
@@ -403,10 +414,14 @@ reload_Reset(which)
                 if Result = "Yes"
                     {
                         if WinExist("ahk_exe Code.exe")
-                                WinActivate
+                            WinActivate
                         else
                             Run(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
                     }
+        case "exit":
+            detect()
+            if WinExist("My Scripts.ahk")
+                ProcessClose(WinGetPID("My Scripts.ahk"))
     }
 }
 
