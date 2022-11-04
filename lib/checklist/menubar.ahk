@@ -95,12 +95,8 @@ fileNewandOpen(*) => Reload()
 aboutBox(*)
 {
     MyGui.GetPos(&x, &y, &width, &height)
-    aboutGUI := Gui("AlwaysOnTop", "About ©")
+    aboutGUI := tomshiBasic(12, 400, "AlwaysOnTop +MinSize200x200", "About ©")
     aboutGUI.Opt("+Owner" MyGui.Hwnd)
-    aboutGUI.Opt("+MinSize200x200")
-    aboutGUI.SetFont("S12")
-    aboutGUI.SetFont("W400")
-    aboutGUI.BackColor := 0xF0F0F0
     MyGui.Opt("+Disabled")
 
     aboutGUI.Add("Text", "W200 Center", "Tomshi's Checklist`r&&`rEditing Tracker Script")
@@ -111,6 +107,9 @@ aboutBox(*)
     aboutGUI.Show("AutoSize")
     aboutGUI.GetPos(,, &aboutwidth, &aboutheight)
     aboutGUI.Move(x - (aboutwidth/2) + (width/2), y - (aboutheight/2) + (height/2))
+
+    if darkToolTrack = 1
+        titleBarDarkMode(aboutGUI.Hwnd)
 
     aboutClose(*)
     {
@@ -271,10 +270,8 @@ hours(*)
         avg := floorDecimal(StartVal/increment,3)
 
     MyGui.GetPos(&x, &y, &width, &height)
-    hoursGUI := tomshiBasic("AlwaysOnTop", "Hours Worked")
+    hoursGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Hours Worked")
     hoursGUI.Opt("+Owner" MyGui.Hwnd)
-    hoursGUI.Opt("+MinSize200x200")
-    hoursGUI.SetFont("W400")
     MyGui.Opt("+Disabled")
 
     hoursGUI.Add("Text", "W200 Center", "Hours worked today: " workedToday "`nDays worked: " increment "`nAvg Hours per day: " avg)
@@ -283,6 +280,9 @@ hours(*)
     hoursGUI.Show("AutoSize")
     hoursGUI.GetPos(,, &hourswidth, &hoursheight)
     hoursGUI.Move(x - (hourswidth/2) + (width/2), y - (hoursheight/2) + (height/2))
+
+    if darkToolTrack = 1
+        titleBarDarkMode(hoursGUI.Hwnd)
 
     hoursClose(*)
     {
@@ -318,34 +318,13 @@ goDark(*)
  */
 which(dark := true, DarkorLight := "Dark", menu := 1)
 {
-    ;https://stackoverflow.com/a/58547831/894589 ;this section handles menus
-    if !IsSet(uxtheme)
-        {
-            static uxtheme := DllCall("GetModuleHandle", "str", "uxtheme", "ptr")
-            static SetPreferredAppMode := DllCall("GetProcAddress", "ptr", uxtheme, "ptr", 135, "ptr")
-            static FlushMenuThemes := DllCall("GetProcAddress", "ptr", uxtheme, "ptr", 136, "ptr")
-        }
-    DllCall(SetPreferredAppMode, "int", menu) ; Dark
-    DllCall(FlushMenuThemes)
-
+    
+    menuDarkMode(menu)
     titleBarDarkMode(MyGui.Hwnd, dark)
     buttonDarkMode(startButton.Hwnd, DarkorLight)
     buttonDarkMode(stopButton.Hwnd, DarkorLight)
     buttonDarkMode(minusButton.Hwnd, DarkorLight)
     buttonDarkMode(plusButton.Hwnd, DarkorLight)
-
-    titleBarDarkMode(hwnd, dark := true)
-    {
-        if VerCompare(A_OSVersion, "10.0.17763") >= 0 {
-            attr := 19
-            if VerCompare(A_OSVersion, "10.0.18985") >= 0 {
-                attr := 20
-            }
-            DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "int", attr, "int*", dark, "int", 4)
-        }
-    }
-
-    buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark") => DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
 }
 
 /**

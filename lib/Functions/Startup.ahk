@@ -229,10 +229,9 @@ updateChecker(MyRelease) {
             if FileExist(A_Temp "\tomshi\changelog.txt")
                 FileDelete(A_Temp "\tomshi\changelog.txt")
             ;create gui
-            MyGui := tomshiBasic("+Resize +MinSize600x400 +MaxSize600x400", "Scripts Release " version)
+            MyGui := tomshiBasic(15,, "+Resize +MinSize600x400 +MaxSize600x400", "Scripts Release " version)
             ;set title
             Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
-            Title.SetFont("S15")
             ;set github button
             gitButton := MyGui.Add("Button", "X+20 Y10", "GitHub")
             gitButton.OnEvent("Click", githubButton)

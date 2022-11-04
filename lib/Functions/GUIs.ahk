@@ -4,11 +4,10 @@
  * This class is to provide a basic template for all GUIs I create to maintain a consistent theme
  */
 class tomshiBasic extends Gui {
-    __New(options?, title:="") {
+    __New(ogFontSize := 11, ogFontWeight := 500, options?, title:="") {
         super.__new(options?, title, this)
         this.BackColor := 0xF0F0F0
-        this.SetFont("S11") ;Sets the size of the font
-        this.SetFont("W500") ;Sets the weight of the font (thickness)
+        this.SetFont("S" ogFontSize " W" ogFontWeight) ;Sets the size of the font
     }
 }
 
@@ -44,7 +43,7 @@ settingsGUI()
 
     if WinExist("Settings " version)
         return
-    settingsGUI := tomshiBasic("+Resize +MinSize250x AlwaysOnTop", "Settings " version)
+    settingsGUI := tomshiBasic(,, "+Resize +MinSize250x AlwaysOnTop", "Settings " version)
     SetTimer(resize, -10)
     resize() => settingsGUI.Opt("-Resize")
 
@@ -614,10 +613,7 @@ musicGUI()
     vlcPath := ptf.ProgFi "\VideoLAN\VLC\vlc.exe"
 
     ;if there is no music player open, a custom GUI window will open asking which program you'd like to open
-    MyGui := Gui("AlwaysOnTop", "Music to open?") ;creates our GUI window
-    MyGui.SetFont("S10") ;Sets the size of the font
-    MyGui.SetFont("W600") ;Sets the weight of the font (thickness)
-    MyGui.Opt("-Resize +MinSize260x120 +MaxSize260x120") ;Sets a minimum size for the window
+    MyGui := tomshiBasic(10, 600, "AlwaysOnTop -Resize +MinSize260x120 +MaxSize260x120", "Music to open?") ;creates our GUI window
     ;#now we define the elements of the GUI window
     ;defining AIMP
     aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", ptf.guiIMG "\aimp.png")
@@ -701,9 +697,9 @@ musicGUI()
 hotkeysGUI() {
     if WinExist("Handy Hotkeys - Tomshi Scripts")
         return
-    hotGUI := tomshiBasic("-Resize AlwaysOnTop", "Handy Hotkeys - Tomshi Scripts")
+    hotGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Handy Hotkeys - Tomshi Scripts")
 	Title := hotGUI.Add("Text", "H30 X8 W300", "Handy Hotkeys!")
-	Title.SetFont("S15")
+    Title.SetFont("S15")
 
     ;all hotkeys
     selection := hotGUI.Add("ListBox", "r10 Choose1", ["#F1", "#F2", "#+r", "#+^r", "#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"])
@@ -789,9 +785,9 @@ todoGUI()
 {
     if WinExist("What to Do - Tomshi Scripts")
         return
-    todoGUI := tomshiBasic("-Resize AlwaysOnTop", "What to Do - Tomshi Scripts")
+    todoGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "What to Do - Tomshi Scripts")
 	Title := todoGUI.Add("Text", "H30 X8 W300", "What to Do")
-	Title.SetFont("S15")
+    Title.SetFont("S15")
 
     bodyText := todoGUI.Add("Text","X8 W550 Center", "
     (
@@ -834,13 +830,13 @@ activeScripts(MyRelease)
     detect()
     if WinExist("Tomshi Scripts Release " MyRelease)
         return
-    MyGui := tomshiBasic("-Resize AlwaysOnTop", "Tomshi Scripts Release " MyRelease)
+    MyGui := tomshiBasic(,, "-Resize AlwaysOnTop", "Tomshi Scripts Release " MyRelease)
     ;nofocus
     ;add an invisible button since removing the default off all the others did nothing
     removedefault := MyGui.Add("Button", "Default X0 Y0 w0 h0", "_")
     ;active scripts
     text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
-    text.SetFont("S13")
+    text.SetFont("S13 Bold")
     
     ;checkboxes
     my := MyGui.Add("CheckBox", "Checked0 Section", "My Scripts.ahk")

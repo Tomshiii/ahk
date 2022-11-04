@@ -16,6 +16,7 @@
 ## > Functions
 - Fixed `activeScripts()` being unable to relaunched if closed with `x` windows button
 - `reload_Reset()` changed to `reload_reset_exit()` and can now close all active ahk scripts
+- `tomshiBasic()` can now pass in font size/weight settings
 
 `refreshWin()`
 - Can now determine the filepath of `notepad` & `explorer.exe` windows if the user passes `"A"` to both parameters of the function
@@ -27,3 +28,5 @@
 
 `checklist.ahk`
 - Changed `msgboxName()` to `change_msgButton()` to stop incorrect autocomplete in VSCode
+- `About` & `Hours Worked` GUI now follow dark mode settings
+- Removed duplicate dark mode functions from `menubar.ahk`

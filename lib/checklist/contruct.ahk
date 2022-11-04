@@ -1,8 +1,7 @@
 #Include menubar.ahk
 
 ; MyGui will be the actual Gui instance.
-MyGui := tomshiBasic("AlwaysOnTop +MinSize300x300", "Editing Checklist - " name ".proj")
-MyGui.SetFont("S12")
+MyGui := tomshiBasic(12,, "AlwaysOnTop +MinSize300x300", "Editing Checklist - " name ".proj")
 MyGui.MenuBar := bar
 
 ;defining title
