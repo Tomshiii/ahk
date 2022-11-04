@@ -1,6 +1,6 @@
 #SingleInstance Force
-TraySetIcon("..\Support Files\Icons\M-I_C.png")
 #Include FuncRedirect.ahk
+TraySetIcon(ptf.Icons "\M-I_C.png")
 ;This script will check for and close scripts that have multiple instances open
 ;Even if you have #SingleInstance Force enabled, sometimes while reloading you can end up with a second instance of any given script, this script should hopefully negate that
 
@@ -47,7 +47,5 @@ OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode)
 {
     if ExitReason = "Single" || "Close" || "Reload" || "Error"
-        {
-            SetTimer(check, 0)
-        }
+        SetTimer(check, 0)
 }

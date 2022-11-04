@@ -37,11 +37,11 @@ F17:: ;lioranboard sends f17 when channel point reward comes through
 		{
 			KeyWait("F5", "D T105")
 			IniWrite(songs - 1, ptf.files["StreamINI"], "Number", "Left")
-			Run ptf.files["SongQUEUE"]
+			Run(ptf.files["SongQUEUE"])
 			return
 		}
 	if songs = 0
-		Run ptf.files["SongQUEUE"]
+		Run(ptf.files["SongQUEUE"])
 }
 
 F22::  ;temporary way to play full mii wii song using lioranboard

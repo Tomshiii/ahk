@@ -16,87 +16,31 @@ if WinExist("ahk_exe obs64.exe")
 			MouseMove(x, y, 2)
 		}
 if WinExist("ahk_exe foobar2000.exe")
-	{
-		;WinActivate
-		;SendInput("!{F4}")
-		;WinClose(,,2)
-		ProcessClose("foobar2000.exe")
-	}
+	ProcessClose("foobar2000.exe")
 if WinExist("All Moons UPDATED v.1.3.0")
 	{
 		WinActivate
 		SendInput("!{F4}")
-		;WinClose(,,2)
 	}
-;	if WinExist("Twitch") ;leaving this in will close the window you're using after a raid which is just annoying so I'd rather just manually close my dashboard window
-;		{
-;			WinActivate
-;			WinClose(,,1)
-;		}
-;WinClose, ahk_exe LiveSplit.exe ;don't include, just incase of gold/pbs
-;WinClose, LiveSplit ;don't include, just incase of gold/pbs
+
 if WinExist("ahk_exe chrome.exe")
-	{
-		;WinActivate
-		;SendInput("!{F4}")
-		;WinKill(,,2)
-		;coordmode "pixel", "window"
-		;coordmode "mouse", "window"
-		;MouseMove(780, 13)
-		;click
-		ProcessClose("chrome.exe")
-	}
+	ProcessClose("chrome.exe")
 if WinExist("ahk_exe StreamLabels.exe")
-	{
-		;WinActivate
-		;SendInput("!{F4}")
-		;WinClose(,,2)
-		ProcessClose("StreamLabels.exe")
-	}
+	ProcessClose("StreamLabels.exe")
 if WinExist("ahk_exe chatterino.exe")
-	{
-		;WinActivate
-		;SendInput("!{F4}")
-		;WinClose(,,2)
-		ProcessClose("chatterino.exe")
-	}
+	ProcessClose("chatterino.exe")
 if WinExist("ahk_exe LioranBoard Receiver.exe")
-	{
-		;WinRestore
-		;WinActivate
-		;SendInput("!{F4}")
-		;WinClose(,,2)
-		ProcessClose("LioranBoard Receiver.exe")
-	}
+	ProcessClose("LioranBoard Receiver.exe")
 if WinExist("ahk_exe ApplicationDj.exe")
-	{
-		;WinRestore
-		;WinActivate
-		;SendInput("!{F4}")
-		;WinClose(,,2)
-		ProcessClose("ApplicationDj.exe")
-	}
+	ProcessClose("ApplicationDj.exe")
 if WinExist("ahk_exe Discord.exe")
 	discordLocation()
 if WinExist("ahk_exe Docker Desktop.exe")
-	{
-		;WinRestore
-		;WinActivate
-		;SendInput("!{F4}")
-		;WinKill(,,2)
-		ProcessClose("Docker Desktop.exe")
-	}
+	ProcessClose("Docker Desktop.exe")
 if WinExist("ahk_exe Streamlabs Chatbot.exe")
-	{
-		;WinActivate
-		;SendInput("!{F4}")
-		;WinClose(,,2)
-		ProcessClose("Streamlabs Chatbot.exe")
-	}
+	ProcessClose("Streamlabs Chatbot.exe")
 if WinExist("ahk_exe Firebot v5.exe")
-	{
-		ProcessClose("Firebot v5.exe")
-	}
+	ProcessClose("Firebot v5.exe")
 if WinExist("StreamElements - Activity feed")
 	{
 		WinActivate

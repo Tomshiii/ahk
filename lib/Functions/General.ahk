@@ -3,37 +3,37 @@
 */
 class ptf {
     ;general
-    static SupportFiles := A_WorkingDir "\Support Files"
-    static Shortcuts := this.SupportFiles "\shortcuts"
-    static Stream := A_WorkingDir "\Stream"
+    static SupportFiles      := A_WorkingDir "\Support Files"
+    static Shortcuts         := this.SupportFiles "\shortcuts"
+    static Stream            := A_WorkingDir "\Stream"
 
     ;My Stuff
-    static MyDir := "E:"
-    static EditingStuff := this.MyDir "\_Editing Stuff"
-    static LioranBoardDir := "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
-    static musicDir := "S:\Program Files\User\Music\"
+    static MyDir             := "E:"
+    static EditingStuff      := this.MyDir "\_Editing Stuff"
+    static LioranBoardDir    := "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
+    static musicDir          := "S:\Program Files\User\Music\"
 
     ;ImageSearch
-    static ImgSearch := this.SupportFiles "\ImageSearch"
-    static Discord := this.ImgSearch "\Discord\"
-    static Premiere := this.ImgSearch "\Premiere\"
-    static AE := this.ImgSearch "\AE\"
-    static Photoshop := this.ImgSearch "\Photoshop\"
-    static Resolve := this.ImgSearch "\Resolve\"
-    static VSCodeImage := this.ImgSearch "\VSCode\"
-    static Explorer := this.ImgSearch "\Windows\Win11\Explorer\"
-    static Firefox := this.ImgSearch "\Firefox\"
-    static Windows := this.ImgSearch "\Windows\Win11\Settings\"
-	static Chatterino := this.ImgSearch "\Chatterino\"
+    static ImgSearch         := this.SupportFiles "\ImageSearch"
+    static Discord           := this.ImgSearch "\Discord\"
+    static Premiere          := this.ImgSearch "\Premiere\"
+    static AE                := this.ImgSearch "\AE\"
+    static Photoshop         := this.ImgSearch "\Photoshop\"
+    static Resolve           := this.ImgSearch "\Resolve\"
+    static VSCodeImage       := this.ImgSearch "\VSCode\"
+    static Explorer          := this.ImgSearch "\Windows\Win11\Explorer\"
+    static Firefox           := this.ImgSearch "\Firefox\"
+    static Windows           := this.ImgSearch "\Windows\Win11\Settings\"
+	static Chatterino        := this.ImgSearch "\Chatterino\"
 
     ;Icons
-    static Icons := this.SupportFiles "\Icons"
-    static guiIMG := this.SupportFiles "\images"
+    static Icons             := this.SupportFiles "\Icons"
+    static guiIMG            := this.SupportFiles "\images"
 
     ;System
-    static LocalAppData := "C:\Users\" A_UserName "\AppData\Local"
-    static ProgFi := "C:\Program Files"
-    static ProgFi32 := "C:\Program Files (x86)"
+    static LocalAppData      := "C:\Users\" A_UserName "\AppData\Local"
+    static ProgFi            := "C:\Program Files"
+    static ProgFi32          := "C:\Program Files (x86)"
 
     ;complete file links
     static files := Map(
@@ -55,7 +55,8 @@ class ptf {
         ;stream
         "StreamINI",       this.Stream "\Streaming.ini",
         "StreamAHK",       this.Stream "\Streaming.ahk",
-        "SognQUEUE",       A_WorkingDir "\TomSongQueueue\Builds\SongQueuer.exe",
+        "SongQUEUE",       A_WorkingDir "\TomSongQueueue\Builds\SongQueuer.exe",
+        "SongDJ",          A_WorkingDir "\TomSongQueueue\Builds\ApplicationDj.exe",
         "Wii Music",       A_WorkingDir "\Sounds\Wii Music.mp3"
     )
 }

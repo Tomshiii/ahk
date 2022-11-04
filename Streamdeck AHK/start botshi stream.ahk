@@ -1,7 +1,7 @@
 ﻿#Include SD_functions.ahk
 if !WinExist("ahk_exe obs64.exe")
 	{
-		Run(A_WorkingDir "\Stream\Streaming.ahk")
+		Run(ptf.files["StreamAHK"])
 		Run(ptf.ProgFi "\Chatterino\chatterino.exe")
 		;MsgBox("have you opened the goxlr stuff yet bud",, "262144")
 		/* if !WinExist("ahk_exe GoXLR App.exe") ;I don't use the goxlr anymore

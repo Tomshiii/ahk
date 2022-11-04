@@ -1,9 +1,9 @@
 #SingleInstance force
-SetWorkingDir A_ScriptDir
-TraySetIcon("..\Support Files\Icons\fullscreen.ico") ;changes the icon this script uses in the taskbar
-#Include FuncRedirect.ahk
-InstallKeybdHook
 #Requires AutoHotkey v2.0-beta.12
+#Include FuncRedirect.ahk
+SetWorkingDir A_ScriptDir
+TraySetIcon(ptf.Icons "\fullscreen.ico") ;changes the icon this script uses in the taskbar
+InstallKeybdHook
 
 GroupAdd("adobe", "ahk_exe Adobe Premiere Pro.exe")
 GroupAdd("adobe", "ahk_exe AfterFX.exe")

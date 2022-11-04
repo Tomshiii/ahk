@@ -1,7 +1,8 @@
 ﻿#SingleInstance force ;only one instance of this script may run at a time!
-TraySetIcon("..\Support Files\Icons\dismiss.ico")
-A_MaxHotkeysPerInterval := 2000
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
+#Include FuncRedirect.ahk
+TraySetIcon(ptf.Icons "\dismiss.ico")
+A_MaxHotkeysPerInterval := 2000
 
 ; you know that extremely annoying dialouge box that says,
 ; "This action will delete existing keyframes. Do you want to continue?"

@@ -1,8 +1,8 @@
 #SingleInstance force ;only one instance of this script may run at a time!
-A_MaxHotkeysPerInterval := 2000
-TraySetIcon("..\Support Files\Icons\save.ico") ;changes the icon this script uses in the taskbar
-#Include FuncRedirect.ahk
 #Requires AutoHotkey v2.0-beta.12
+#Include FuncRedirect.ahk
+A_MaxHotkeysPerInterval := 2000
+TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 #WinActivateForce
 
