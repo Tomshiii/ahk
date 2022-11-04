@@ -37,8 +37,8 @@ class ptf {
     static ProgFi32          := "C:\Program Files (x86)"
 
     ;variables
-    static PremYear          := IniRead(this.SettingsLoc, "adjust", "prem year", A_Year)
-    static AEYear            := IniRead(this.SettingsLoc, "adjust", "ae year", A_Year)
+    static PremYear          := IniRead(this.SettingsLoc "\settings.ini", "adjust", "prem year", A_Year)
+    static AEYear            := IniRead(this.SettingsLoc "\settings.ini", "adjust", "ae year", A_Year)
 
     ;complete file links
     static files := Map(
