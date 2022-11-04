@@ -80,10 +80,12 @@ generate(MyRelease)
     DARK := IniRead(ptf.files["settings"], "Settings", "dark mode", darkVerCheck)
     MULTI := IniRead(ptf.files["settings"], "Adjust", "multi SEC", 5)
     WAIT := IniRead(ptf.files["settings"], "Settings", "checklist wait", "false")
+    PREMYEAR := IniRead(ptf.files["settings"], "Adjust", "prem year", A_Year)
+    AEYEAR := IniRead(ptf.files["settings"], "Adjust", "ae year", A_Year)
     deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
     if FileExist(ptf.files["settings"])
         FileDelete(ptf.files["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, ptf.files["settings"])
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`nprem year=" PREMYEAR "`nae year=" AEYEAR "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, ptf.files["settings"])
 }
 
 

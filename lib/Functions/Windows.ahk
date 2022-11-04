@@ -513,7 +513,7 @@ getPremName(&premCheck, &titleCheck, &saveCheck)
         if WinExist("ahk_exe Adobe Premiere Pro.exe")
             {
                 premCheck := WinGetTitle("ahk_class Premiere Pro")
-                titleCheck := InStr(premCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                titleCheck := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                 saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
             }
         else

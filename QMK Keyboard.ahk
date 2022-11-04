@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.3
+;\\v2.10.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.6.1
@@ -457,12 +457,12 @@ h:: ;opens the directory for the current premiere project
 		if WinExist("Adobe Premiere Pro")
 			{
 				Name := WinGetTitle("Adobe Premiere Pro")
-				titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+				titlecheck := InStr(Name, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
 			}
 		else if WinExist("Adobe After Effects")
 			{
 				Name := WinGetTitle("Adobe After Effects")
-				titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+				titlecheck := InStr(Name, "Adobe After Effects " ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
 			}
 		dashLocation := InStr(Name, "-")
 		length := StrLen(Name) - dashLocation

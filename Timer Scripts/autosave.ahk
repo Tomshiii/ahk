@@ -211,7 +211,7 @@ save()
     if origWind = "Adobe Premiere Pro.exe" ;this check is a final check to ensure the user doesn't have a menu window (or something similar) open that the first title check didn't grab (because we get the title of premiere in general and not the current active window)
         {
             premWinCheck := WinGetTitle("A")
-            premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
                 {
                     block.Off()
@@ -224,7 +224,7 @@ save()
                 {
                     switchToPremiere()
                     premWinCheck := WinGetTitle("A")
-                    premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                    premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                 }
             if !premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
@@ -282,7 +282,7 @@ save()
         WinActivate("ahk_exe Adobe Premiere Pro.exe")
     try {
         premWinCheck := WinGetTitle("A")
-        premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+        premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
         if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
             {
                 block.Off()
@@ -295,7 +295,7 @@ save()
             {
                 switchToPremiere()
                 premWinCheck := WinGetTitle("A")
-                premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             }
         if !premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
             {

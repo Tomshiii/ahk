@@ -36,10 +36,16 @@ check()
     else
         {
             title := WinGetTitle("A")
-            end := InStr(title, A_Year,, 1, 1) - 1
+            if InStr(title, "Adobe Premiere Pro")
+                year := ptf.PremYear
+            else if InStr(title, "Adobe After Effects")
+                year := ptf.AEYear
+            else
+                year := A_Year
+            end := InStr(title, year,, 1, 1) - 1
             getProgram := SubStr(title, 7, end - 7)
             ;tool.Cust(getProgram)
-            titlecheck := InStr(title, "Adobe " getProgram A_Space A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            titlecheck := InStr(title, "Adobe " getProgram A_Space year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             ;tool.Cust(title) ;debugging
             ;if title = "" || title = "Audio Gain" || title = "Save As" || InStr(title, "Encoding") || title = "New Project" || title = "Please select the destination path for your new project." || title = "Select Folder" || title = "Clip Speed / Duration" || title = "Modify Clip" ;// just some of the titles you can come across
             if !titlecheck

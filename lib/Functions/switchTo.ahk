@@ -61,7 +61,7 @@ switchToAE()
     {
         try {
             Name := WinGetTitle("Adobe Premiere Pro")
-            titlecheck := InStr(Name, "Adobe Premiere Pro " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            titlecheck := InStr(Name, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             dashLocation := InStr(Name, "-")
             length := StrLen(Name) - dashLocation
             if !titlecheck
@@ -99,7 +99,7 @@ switchToAE()
         {
             try {
                 Name := WinGetTitle("Adobe After Effects")
-                titlecheck := InStr(Name, "Adobe After Effects " A_Year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
+                titlecheck := InStr(Name, "Adobe After Effects " ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
                 if slash := InStr(Name, "\",, -1) ;if there's a slash in the title, it means a project is open
                     WinActivate("ahk_exe AfterFX.exe")
                 else

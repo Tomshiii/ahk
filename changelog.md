@@ -19,6 +19,7 @@
 - `tomshiBasic()` can now pass in font size/weight settings
 - `hotkeysGUI()` now uses objects, maps & Arrays to define it's values
 - `updateChecker()` will now correctly stop itself checking for an update when the user has selected that as their setting
+- `settingsGUI()` can now adjust the `Year` version of `After Effects & Premiere Pro` these scripts look for
 
 `refreshWin()`
 - Can now determine the filepath of `notepad` & `explorer.exe` windows if the user passes `"A"` to both parameters of the function

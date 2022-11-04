@@ -36,6 +36,10 @@ class ptf {
     static ProgFi            := "C:\Program Files"
     static ProgFi32          := "C:\Program Files (x86)"
 
+    ;variables
+    static PremYear          := IniRead(this.SettingsLoc, "adjust", "prem year", A_Year)
+    static AEYear            := IniRead(this.SettingsLoc, "adjust", "ae year", A_Year)
+
     ;complete file links
     static files := Map(
         "settings",        A_MyDocuments "\tomshi\settings.ini",
@@ -218,7 +222,7 @@ block := Inputs()
 */
 mousedragNotPrem(tool, toolorig)
 {
-    if WinActive("ahk_exe AfterFX.exe") && !InStr(WinGetTitle("A"), "Adobe After Effects " A_Year " -") || WinActive("Save As") || WinActive("Save a Copy") 
+    if WinActive("ahk_exe AfterFX.exe") && !InStr(WinGetTitle("A"), "Adobe After Effects " ptf.AEYear " -") || WinActive("Save As") || WinActive("Save a Copy") 
         {
             SendInput("{" A_ThisHotkey "}")
             return

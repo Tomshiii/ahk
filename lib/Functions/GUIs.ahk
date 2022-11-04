@@ -313,6 +313,18 @@ settingsGUI()
     settingsGUI.Add("Text", "Y+-1", " check rate (sec)")
     multiEdit.OnEvent("Change", editCtrl.bind("Multi-Instance Close.ahk", "multi SEC"))
 
+    premInitYear := IniRead(ptf.files["settings"], "Adjust", "prem year")
+    premEdit := settingsGUI.Add("Edit", "xs Y+5 r1 W50 Number Limit4", premInitYear)
+    premEditText := settingsGUI.Add("Text", "X+5 Y+-20", "Adobe Premiere Year")
+    premEditText.SetFont("c8644c7")
+    premEdit.OnEvent("Change", editCtrl.Bind("--", "prem year"))
+    
+    AEInitYear := IniRead(ptf.files["settings"], "Adjust", "ae year")
+    AE_Edit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number Limit4", AEInitYear)
+    AE_EditText := settingsGUI.Add("Text", "X+5 Y+-20", "Adobe After Effects Year")
+    AE_EditText.SetFont("c393665")
+    AE_Edit.OnEvent("Change", editCtrl.Bind("--", "ae year"))
+
     editCtrl(script, ini, ctrl, *)
     {
         IniWrite(ctrl.value, ptf.files["settings"], "Adjust", ini)
@@ -462,6 +474,8 @@ settingsGUI()
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         if IsSet(butt) && butt = "hard"
             reload_reset_exit("reset")
+        if premEdit.Value != premInitYear || AE_Edit.Value != AEInitYear
+            reload_reset_exit("reset")
         ;before finally closing
         settingsGUI.Destroy()
     }
@@ -534,7 +548,7 @@ class gameCheckGUI extends Gui {
                 buttonDarkMode(addButton.Hwnd)
                 buttonDarkMode(cancelButton.Hwnd)
             }
-        
+
         /**
          * This function handles the logic behind the add button
          * @param {any} version is the version number that gets passed into the class
