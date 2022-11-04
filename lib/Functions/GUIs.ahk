@@ -1,13 +1,18 @@
 #Include General.ahk
 
-/*
+/**
  * This class is to provide a basic template for all GUIs I create to maintain a consistent theme
+ * 
+ * @param FontSize allows you to pass in a custom default GUI font size. Defaults to 11, can be omitted
+ * @param FontWeight allows you to pass in a custom default GUI font weight. Defaults to 11, can be omitted
+ * @param options? allows you to pass in all GUI options that you would normally pass to a GUI. Can be omitted
+ * @param title allows you to pass in a title for the GUI. Can be omitted
  */
 class tomshiBasic extends Gui {
-    __New(ogFontSize := 11, ogFontWeight := 500, options?, title:="") {
+    __New(FontSize := 11, FontWeight := 500, options?, title:="") {
         super.__new(options?, title, this)
         this.BackColor := 0xF0F0F0
-        this.SetFont("S" ogFontSize " W" ogFontWeight) ;Sets the size of the font
+        this.SetFont("S" FontSize " W" FontWeight) ;Sets the size of the font
     }
 }
 
@@ -483,6 +488,16 @@ settingsGUI()
     settingsGUI.Show("Center AutoSize")
 }
 
+/**
+ * A class to define the gameCheck add GUI window
+ * 
+ * @param dark is passing in whether dark mode is enabled or not
+ * @param version is passing in the current version number
+ * @param wintitle is passing in the originally active winTitle when `settingsGUI()` was called
+ * @param process is passing in the originally active winProcess when `settingsGUI()` was called
+ * @param options is defining any GUI options
+ * @param title is to set a title for the GUI
+ */
 class gameCheckGUI extends Gui {
     __new(dark, version, wintitle, process, options?, title:="") {
         super.__new(options?, title, this)
@@ -701,62 +716,99 @@ hotkeysGUI() {
 	Title := hotGUI.Add("Text", "H30 X8 W300", "Handy Hotkeys!")
     Title.SetFont("S15")
 
+    gui_Small := {x: 450, y: 313}
+    gui_Big := {x: 590}
+    guiText_y := [60, 80, 100]
+
+    widthSize := Map(
+        "small", 240,
+        "large", 380,
+    )
+    heightSize := Map(
+        "small", 100,
+        "large", 220,
+    )
+
     ;all hotkeys
-    selection := hotGUI.Add("ListBox", "r10 Choose1", ["#F1", "#F2", "#+r", "#+^r", "#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"])
+    selection := hotGUI.Add("ListBox", "r11 Choose1", ["#F1", "#F2", "#F12", "#+r", "#+^r", "#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"])
     selection.OnEvent("Change", text)
+
+    ;buttons
+    ;close button
+	closeButton := hotGUI.Add("Button", "X8 Y+10", "Close")
+	closeButton.OnEvent("Click", close)
+    ;remove the default
+	noDefault := hotGUI.Add("Button", "X0 Y0 W0 H0", "")
 
     selectionText := hotGUI.Add("Text", "W240 X180 Y80 H100", "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!")
     text(*) {
         switch selection.Value {
             case 1:
-                selectionText.Move(, 80, "240", "100")
+                selectionText.Move(, guiText_y[2], widthSize["small"], heightSize["small"])
                 selectionText.Text := "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!"
-                hotGUI.Move(,, "450", "297")
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 2:
-                selectionText.Move(, 80, "240", "100")
+                selectionText.Move(, guiText_y[2], widthSize["small"], heightSize["small"])
                 selectionText.Text := "Pulls up an informational window regarding the currently active scripts, as well as a quick and easy way to close/open any of them. Try it now!"
-                hotGUI.Move(,, "450", "297")
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 3:
-                selectionText.Move(, 60, "380", "220")
-                selectionText.Text := "Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control.`n`n(note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked"
-                hotGUI.Move(,, "590", "297")
+                selectionText.Move(, guiText_y[2], widthSize["small"], heightSize["small"])
+                selectionText.Text := "A panic button that will loop through and force close all active* ahk scripts!`n`n*will not close ``checklist.ahk``"
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 4:
-                selectionText.Move(, 60, "380", "220")
-                selectionText.Text := "Will rerun all active ahk scripts, effectively hard restarting them!. If at anytime a normal refresh isn't enough attempt this hotkey.`n`n(note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).`nAlternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked"
-                hotGUI.Move(,, "590", "297")
+                selectionText.Move(, guiText_y[1], widthSize["large"], heightSize["large"])
+                selectionText.Text := "
+                (
+                    Will refresh all scripts! At anytime if you get stuck in a script press this hotkey to regain control.`n
+                    (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).
+                    Alternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked.
+                )"
+                hotGUI.Move(,, gui_Big.x, gui_Small.y)
             case 5:
-                selectionText.Move(, 100, "240", "100")
-                selectionText.Text := "Will call this GUI so you can reference these hotkeys at any time!"
-                hotGUI.Move(,, "450", "297")
+                selectionText.Move(, guiText_y[1], widthSize["large"], heightSize["large"])
+                selectionText.Text := "
+                (
+                    Will rerun all active ahk scripts, effectively hard restarting them!. If at anytime a normal refresh isn't enough attempt this hotkey.`n
+                    (note: refreshing will not stop scripts run separately ie. from a streamdeck as they are their own process and not included in the refresh hotkey).
+                    Alternatively you can also press ^!{del} (ctrl + alt + del) to access task manager, even if inputs are blocked.
+                )"
+                hotGUI.Move(,, gui_Big.x, gui_Small.y)
             case 6:
-                selectionText.Move(, 100, "240", "100")
-                selectionText.Text := "Will center the current active window in the middle the active display, or move the window to your main display if activated again!"
-                hotGUI.Move(,, "450", "297")
+                selectionText.Move(, guiText_y[3], widthSize["small"], heightSize["small"])
+                selectionText.Text := "Will call this GUI so you can reference these hotkeys at any time!"
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 7:
-                selectionText.Move(, 100, "240", "100")
-                selectionText.Text := "Will put the active window in fullscreen if it isn't already, or pull it out of fullscreen if it already is!"
-                hotGUI.Move(,, "450", "297")
+                selectionText.Move(, guiText_y[3], widthSize["small"], heightSize["small"])
+                selectionText.Text := "Will center the current active window in the middle the active display, or move the window to your main display if activated again!"
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 8:
-                selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "(That's : win > SHIFT > ``, not the actual + key)`nWill suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F2`` hotkey and unticking the same script!"
-                hotGUI.Move(,, "450", "297")
+                selectionText.Move(, guiText_y[3], widthSize["small"], heightSize["small"])
+                selectionText.Text := "Will put the active window in fullscreen if it isn't already, or pull it out of fullscreen if it already is!"
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 9:
-                selectionText.Move(, 80, "240", "100")
-                selectionText.Text := "(That's : win > SHIFT > c, not the actual + key)`nWill search google for whatever text you have highlighted!`nThis hotkey is set to not activate while Premiere Pro/After Effects is active!"
-                hotGUI.Move(,, "450", "297")
+                selectionText.Move(, guiText_y[2], widthSize["small"], heightSize["small"])
+                selectionText.Text := "
+                (
+                    (That's : win > SHIFT > ``, not the actual + key)
+                    Will suspend the ``My Scripts.ahk`` script! - this is similar to using the ``#F2`` hotkey and unticking the same script!
+                )"
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 10:
-                selectionText.Move(, 100, "240", "100")
+                selectionText.Move(, guiText_y[2], widthSize["small"], heightSize["small"])
+                selectionText.Text := "
+                (
+                    (That's : win > SHIFT > c, not the actual + key)
+                    Will search google for whatever text you have highlighted!
+                    This hotkey is set to not activate while Premiere Pro/After Effects is active!
+                )"
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
+            case 11:
+                selectionText.Move(, guiText_y[3], widthSize["small"], heightSize["small"])
                 selectionText.Text := "Will remove and then either capitilise or completely lowercase the highlighted text depending on which is less frequent!"
-                hotGUI.Move(,, "450", "297")
+                hotGUI.Move(,, gui_Small.x, gui_Small.y)
         }
     }
 
-    ;buttons
-    ;remove the default
-	noDefault := hotGUI.Add("Button", "X0 Y0 W0 H0", "")
-    ;close button
-	closeButton := hotGUI.Add("Button", "X8 Y220", "Close")
-	closeButton.OnEvent("Click", close)
     ;what happens when you close the GUI
     hotGUI.OnEvent("Escape", close)
     hotGUI.OnEvent("Close", close)
@@ -773,7 +825,7 @@ hotkeysGUI() {
         buttonDarkMode(closeButton.Hwnd)
         buttonDarkMode(noDefault.Hwnd)
     }
-    
+
     ;Show the GUI
 	hotGUI.Show("AutoSize")
 }
