@@ -129,7 +129,7 @@ if WinExist("ahk_exe obs64.exe")
 			WinMinimize()
 		}
 	block.Off()
-	RunRun(ptf.files["SongDJ"])
+	Run(ptf.files["SongDJ"])
 	sleep 2500 ;it needed some time to open
 	block.On()
 	if WinExist("ahk_exe ApplicationDj.exe") ;waits until ttp's program is open then brings it into focus
@@ -169,7 +169,7 @@ if WinExist("ahk_exe obs64.exe")
 			sleep 1000
 			WinGetPos(,, &width, &height, "A")
 			MouseGetPos(&x, &y)
-			if ImageSearch(&xdir, &ydir, 0, 0, width, height, "*2 " "..\Support Files\ImageSearch\Foobar\streambeats.png")
+			if ImageSearch(&xdir, &ydir, 0, 0, width, height, "*2 " ptf.ImgSearch "\Foobar\streambeats.png")
 				{
 					MouseMove(xdir, ydir)
 					SendInput("{Click}")

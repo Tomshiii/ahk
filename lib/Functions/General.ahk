@@ -6,6 +6,7 @@ class ptf {
     static SupportFiles      := A_WorkingDir "\Support Files"
     static Shortcuts         := this.SupportFiles "\shortcuts"
     static Stream            := A_WorkingDir "\Stream"
+    static SettingsLoc       := A_MyDocuments "\tomshi"
 
     ;My Stuff
     static MyDir             := "E:"

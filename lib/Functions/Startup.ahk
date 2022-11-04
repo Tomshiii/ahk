@@ -50,8 +50,8 @@ generate(MyRelease)
                 FileDelete(A_MyDocuments "\tomshi\first")
             }
     }
-    if !DirExist(A_MyDocuments "\tomshi")
-        DirCreate(A_MyDocuments "\tomshi")
+    if !DirExist(ptf.SettingsLoc)
+        DirCreate(ptf.SettingsLoc)
     if FileExist(ptf.files["settings"])
         {
             ver := IniRead(ptf.files["settings"], "Track", "version")
@@ -136,7 +136,10 @@ updateChecker(MyRelease) {
     ;checks if script was reloaded
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    ;release version
+    ;checking to see if the user wishes to check for updates
+    check := IniRead(ptf.files["settings"], "Settings", "update check")
+    if check = "stop"
+        return
     betaprep := 0
     if IniRead(ptf.files["settings"], "Settings", "beta update check", "false") = "true"
         { ;if the user wants to check for beta updates instead, this block will fire
@@ -152,12 +155,26 @@ updateChecker(MyRelease) {
         tool.Cust("Current Installed Version = " MyRelease "`nCurrent Github Release = " version, 5000)
     else
         tool.Cust("You are currently up to date", 2000)
-    ;checking to see if the user wishes to check for updates
-    check := IniRead(ptf.files["settings"], "Settings", "update check")
-    if check = "stop"
-        return
-    if check = "true"
-        {
+    switch check {
+        default:
+            tool.Cust("You put something else in the settings.ini file you goose")
+            errorLog(A_ThisFunc "()", "You put something else in the settings.ini file you goose", A_LineFile, A_LineNumber)
+            return
+        case "false":
+            tool.Wait()
+            if VerCompare(MyRelease, version) < 0
+                {
+                    tool.Cust("You're using an outdated version of these scripts", 3.0)
+                    errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
+                    return
+                }
+            else
+                {
+                    tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
+                    errorLog(A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
+                    return
+                }
+        case "true":
             if !VerCompare(MyRelease, version) > 0
                 return
             ;grabbing changelog info
@@ -229,9 +246,10 @@ updateChecker(MyRelease) {
             if FileExist(A_Temp "\tomshi\changelog.txt")
                 FileDelete(A_Temp "\tomshi\changelog.txt")
             ;create gui
-            MyGui := tomshiBasic(15,, "+Resize +MinSize600x400 +MaxSize600x400", "Scripts Release " version)
+            MyGui := tomshiBasic(,, "+Resize +MinSize600x400 +MaxSize600x400", "Scripts Release " version)
             ;set title
             Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
+            Title.SetFont("S15")
             ;set github button
             gitButton := MyGui.Add("Button", "X+20 Y10", "GitHub")
             gitButton.OnEvent("Click", githubButton)
@@ -263,23 +281,28 @@ updateChecker(MyRelease) {
                 buttonDarkMode(gitButton.Hwnd)
                 buttonDarkMode(downloadbutt.Hwnd)
                 buttonDarkMode(cancelbutt.Hwnd)
+                buttonDarkMode(ChangeLog.Hwnd)
             }
 
             MyGui.Show()
             prompt(guiCtrl, RowNumber) {
                 if InStr(guiCtrl.Text, "prompt")
                     {
-                        if guiCtrl.Value = 0
-                            IniWrite("true", ptf.files["settings"], "Settings", "update check")
-                        if guiCtrl.Value = 1
-                            IniWrite("false", ptf.files["settings"], "Settings", "update check")
+                        switch guiCtrl.Value {
+                            case 0:
+                                IniWrite("true", ptf.files["settings"], "Settings", "update check")
+                            case 1:
+                                IniWrite("false", ptf.files["settings"], "Settings", "update check")
+                        }
                     }
                 if InStr(guiCtrl.Text, "beta")
                     {
-                        if guiCtrl.Value = 1
-                            IniWrite("true", ptf.files["settings"], "Settings", "beta update check")
-                        if guiCtrl.Value = 0
-                            IniWrite("false", ptf.files["settings"], "Settings", "beta update check")
+                        switch guiCtrl.Value {
+                            case 1:
+                                IniWrite("true", ptf.files["settings"], "Settings", "beta update check")
+                            case 0:
+                                IniWrite("false", ptf.files["settings"], "Settings", "beta update check")
+                        }
                         Run(A_ScriptFullPath)
                     }
             }
@@ -371,29 +394,7 @@ updateChecker(MyRelease) {
                 MyGui.Destroy()
                 return
             }
-        }
-    else if check = "false"
-        {
-            tool.Wait()
-            if VerCompare(MyRelease, version) < 0
-                {
-                    tool.Cust("You're using an outdated version of these scripts")
-                    errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
-                    return
-                }
-            else
-                {
-                    tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 2000)
-                    errorLog(A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
-                    return
-                }
-        }
-    else
-        {
-            tool.Cust("You put something else in the settings.ini file you goose")
-            errorLog(A_ThisFunc "()", "You put something else in the settings.ini file you goose", A_LineFile, A_LineNumber)
-            return
-        }
+    }
 }
  
 /**
