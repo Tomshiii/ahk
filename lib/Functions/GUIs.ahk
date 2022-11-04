@@ -689,10 +689,9 @@ musicGUI()
     }
 
     MUSICFOLDER(*) {
-        musicDir := "S:\Program Files\User\Music\"
-        if DirExist(musicDir)
+        if DirExist(ptf.musicDir)
             {
-                Run(musicDir)
+                Run(ptf.musicDir)
                 WinWait("Music")
                 WinActivate("Music")
             }
@@ -700,7 +699,7 @@ musicGUI()
             {
                 scriptPath :=  A_LineFile ;this is taking the path given from A_LineFile
                 scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
-                MsgBox("The requested music folder doesn't exist`n`nWritten dir: " musicDir "`nScript: " name "`nLine: " A_LineNumber-11)
+                MsgBox("The requested music folder doesn't exist`n`nWritten dir: " ptf.musicDir "`nScript: " name "`nLine: " A_LineNumber-11)
             }
         MyGui.Destroy()
     }
@@ -714,12 +713,13 @@ hotkeysGUI() {
         return
     hotGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Handy Hotkeys - Tomshi Scripts")
 	Title := hotGUI.Add("Text", "H30 X8 W300", "Handy Hotkeys!")
-    Title.SetFont("S15")
+    Title.SetFont("S15 Bold")
 
-    gui_Small := {x: 450, y: 313}
+    ;sizing GUI
+    gui_Small := {x: 450, y: 281}
     gui_Big := {x: 590}
-    guiText_y := [60, 80, 100]
-
+    guiText_y := [60, 80, 90] ;text y position
+    ;sizing text
     widthSize := Map(
         "small", 240,
         "large", 380,
@@ -728,9 +728,11 @@ hotkeysGUI() {
         "small", 100,
         "large", 220,
     )
+    ;defining hotkeys
+    hotkeys := ["#F1", "#F2", "#F12", "#+r", "#+^r", "#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"]
 
-    ;all hotkeys
-    selection := hotGUI.Add("ListBox", "r11 Choose1", ["#F1", "#F2", "#F12", "#+r", "#+^r", "#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"])
+    ;add listbox
+    selection := hotGUI.Add("ListBox", "r" hotkeys.Length -2 " Choose1", [hotkeys[1], hotkeys[2], hotkeys[3], hotkeys[4], hotkeys[5], hotkeys[6], hotkeys[7], hotkeys[8], hotkeys[9], hotkeys[10], hotkeys[11]])
     selection.OnEvent("Change", text)
 
     ;buttons
@@ -813,9 +815,7 @@ hotkeysGUI() {
     hotGUI.OnEvent("Escape", close)
     hotGUI.OnEvent("Close", close)
     ;onEvent Functions
-	close(*) {
-		hotGUI.Destroy()
-	}
+	close(*) => hotGUI.Destroy()
 
     if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
         goDark()
@@ -824,6 +824,7 @@ hotkeysGUI() {
         titleBarDarkMode(hotGUI.Hwnd)
         buttonDarkMode(closeButton.Hwnd)
         buttonDarkMode(noDefault.Hwnd)
+        buttonDarkMode(selection.Hwnd)
     }
 
     ;Show the GUI

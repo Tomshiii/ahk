@@ -5,11 +5,13 @@ class ptf {
     ;general
     static SupportFiles := A_WorkingDir "\Support Files"
     static Shortcuts := this.SupportFiles "\shortcuts"
+    static Stream := A_WorkingDir "\Stream"
 
     ;My Stuff
     static MyDir := "E:"
     static EditingStuff := this.MyDir "\_Editing Stuff"
     static LioranBoardDir := "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
+    static musicDir := "S:\Program Files\User\Music\"
 
     ;ImageSearch
     static ImgSearch := this.SupportFiles "\ImageSearch"
@@ -49,6 +51,12 @@ class ptf {
         ;programs
         "LiveSplit",       "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe",
         "LioranBoard",     this.LioranBoardDir "\LioranBoard Receiver.exe",
+
+        ;stream
+        "StreamINI",       this.Stream "\Streaming.ini",
+        "StreamAHK",       this.Stream "\Streaming.ahk",
+        "SognQUEUE",       A_WorkingDir "\TomSongQueueue\Builds\SongQueuer.exe",
+        "Wii Music",       A_WorkingDir "\Sounds\Wii Music.mp3"
     )
 }
 

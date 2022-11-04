@@ -11,7 +11,7 @@ TraySetIcon(ptf.Icons "\streaming.ico") ;changes the icon this script uses in th
 #Include "..\lib\Functions\Startup.ahk" ;this is only added to prevent errors
 #Include "..\lib\Functions\General.ahk" ;this is added because we need it
 
-IniWrite(0, A_WorkingDir "\Stream\Streaming.ini", "Number", "Left")
+IniWrite(0, ptf.files["StreamINI"], "Number", "Left")
 
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ;
@@ -21,38 +21,38 @@ IniWrite(0, A_WorkingDir "\Stream\Streaming.ini", "Number", "Left")
 ;
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ; This is just so I have a way to relaunch it manually as admin for debugging purposes
-F6::Run '*RunAs ' A_WorkingDir "\Stream\Streaming.ahk"
+F6::Run('*RunAs ' ptf.files["StreamAHK"])
 
 ;===========================================================================================================================================================================
 ;
 ;		Stream
 ;
 ;===========================================================================================================================================================================
-#HotIf not WinActive("ahk_exe Adobe Premiere Pro.exe")
+#HotIf !WinActive("ahk_exe Adobe Premiere Pro.exe")
 
-F17:: ;Run "E:\Github\ahk\TomSongQueueue\Builds\SongQueuer.exe" ;lioranboard sends f17 when channel point reward comes through
+F17:: ;lioranboard sends f17 when channel point reward comes through
 {
-	songs := IniRead(A_WorkingDir "\Stream\Streaming.ini", "Number", "Left")
+	songs := IniRead(ptf.files["StreamINI"], "Number", "Left")
 	if songs = 1
 		{
 			KeyWait("F5", "D T105")
-			IniWrite(songs - 1, A_WorkingDir "\Stream\Streaming.ini", "Number", "Left")
-			Run A_WorkingDir "\TomSongQueueue\Builds\SongQueuer.exe"
+			IniWrite(songs - 1, ptf.files["StreamINI"], "Number", "Left")
+			Run ptf.files["SongQUEUE"]
 			return
 		}
 	if songs = 0
-		Run A_WorkingDir "\TomSongQueueue\Builds\SongQueuer.exe"
+		Run ptf.files["SongQUEUE"]
 }
 
 F22::  ;temporary way to play full mii wii song using lioranboard
 {
-	songs := IniRead(A_WorkingDir "\Stream\Streaming.ini", "Number", "Left")
-	IniWrite(songs + 1, A_WorkingDir "\Stream\Streaming.ini", "Number", "Left")
-	Run(A_WorkingDir "\Sounds\Wii Music.mp3")
+	songs := IniRead(ptf.files["StreamINI"], "Number", "Left")
+	IniWrite(songs + 1, ptf.files["StreamINI"], "Number", "Left")
+	Run(ptf.files["Wii Music"])
 	sleep 105000
 	if WinExist("ahk_exe vlc.exe")
 		WinClose("ahk_exe vlc.exe")
-	IniWrite(0, A_WorkingDir "\Stream\Streaming.ini", "Number", "Left")
+	IniWrite(0, ptf.files["StreamINI"], "Number", "Left")
 }
 
 
