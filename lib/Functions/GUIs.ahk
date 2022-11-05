@@ -905,56 +905,66 @@ activeScripts(MyRelease)
     text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
     text.SetFont("S13 Bold")
     
-    ;checkboxes
-    my := MyGui.Add("CheckBox", "Checked0 Section", "My Scripts.ahk")
-    my.ToolTip := "Clicking this checkbox will toggle suspend the script"
-    my.OnEvent("Click", myClick)
-    
-    alt := MyGui.Add("CheckBox", "Checked0", "Alt_menu_acceleration_DISABLER.ahk")
-    alt.ToolTip := "Clicking this checkbox will open/close the script"
+    scripts := ["myscript", "error", "dismiss", "save", "fullscreen", "game", "M-I_C", "keyboard", "resolve"]
+    names := Map(
+        scripts[1],      "My Scripts.ahk",
+        scripts[2],      "Alt_menu_acceleration_DISABLER.ahk",
+        scripts[3],      "autodismiss error.ahk",
+        scripts[4],      "autosave.ahk",
+        scripts[5],      "adobe fullscreen check.ahk",
+        scripts[6],      "gameCheck.ahk",
+        scripts[7],      "Multi-Instance Close.ahk",
+        scripts[8],      "QMK Keyboard.ahk",
+        scripts[9],      "Resolve_Example.ahk",
+    )
+    tooltiptext := Map(
+        scripts[1],      "Clicking this checkbox will toggle suspend the script",
+        scripts[2],      "Clicking this checkbox will open/close the script",
+    )
 
-    autodis := MyGui.Add("CheckBox", "Checked0", "autodismiss error.ahk")
-    autodis.ToolTip := "Clicking this checkbox will open/close the script"
-
-    autosave := MyGui.Add("CheckBox", "Checked0", "autosave.ahk")
-    autosave.ToolTip := "Clicking this checkbox will open/close the script. Reopening it will restart the autosave timer"
-
-    premFull := MyGui.Add("CheckBox", "Checked0", "adobe fullscreen check.ahk")
-    premFull.ToolTip := "Clicking this checkbox will open/close the script"
-
-    gameCheck := MyGui.Add("CheckBox", "Checked0", "gameCheck.ahk")
-    gameCheck.ToolTip := "Clicking this checkbox will open/close the script"
-
-    multiCheck := MyGui.Add("CheckBox", "Checked0", "Multi-Instance Close.ahk")
-    multiCheck.ToolTip := "Clicking this checkbox will open/close the script"
-
-    qmk := MyGui.Add("CheckBox", "Checked0", "QMK Keyboard.ahk")
-    qmk.ToolTip := "Clicking this checkbox will open/close the script"
-
-    resolve := MyGui.Add("CheckBox", "Checked0", "Resolve_Example.ahk")
-    resolve.ToolTip := "Clicking this checkbox will open/close the script"
-
-    ;set checkbox onevent.
-    ;only works because only thing I've generated so far is checkboxes
-    for hwnd, GuiCtrlObj in MyGui
-        {
-            if A_Index < 4 ;skips the invisible button, the title text, My Scripts.ahk and something else, probably the gui itself
-                continue
-            GuiCtrlObj.OnEvent("Click", scriptClick)
+    createCheck()
+    {
+        loop scripts.Length {
+            if A_Index = 1
+                {
+                    MyGui.Add("CheckBox", "Section Checked0 v" scripts[A_Index], names[scripts[A_Index]])
+                    MyGui[scripts[1]].OnEvent("Click", myClick)
+                    MyGui[scripts[1]].ToolTip := tooltiptext[scripts[1]]
+                    
+                }
+            else
+                {
+                    MyGui.Add("CheckBox", "xs Checked0 v" scripts[A_Index], names[scripts[A_Index]])
+                    MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
+                    MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
+                }
         }
+        loop scripts.Length {
+            if A_Index = 1
+                MyGui.Add("Picture", "w20 h-1 X275 Ys", ptf.Icons "\" scripts[A_Index] ".png")
+            else
+                {
+                    switch scripts[A_Index] {
+                        case "game":
+                            type := ".png"
+                        case "dismiss" :
+                            y := "+2"
+                        case "M-I_C" :
+                            type := ".png"
+                        case "resolve":
+                            type := ".png"
+                            y := "+2"
+                        default:
+                            type := ".ico"
+                            y := "+5"
+                    }
+                    MyGui.Add("Picture", "w20 h-1 Y" y, ptf.Icons "\" scripts[A_Index] type)
+                }
+        }
+    }
+    createCheck()
 
     SetTimer(checkScripts, -100)
-        
-    ;images
-    myImage := MyGui.Add("Picture", "w20 h-1 X275 Ys", ptf.Icons "\myscript.png")
-    altImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\error.ico")
-    autodisImage := MyGui.Add("Picture", "w20 h-1 Y+2", ptf.Icons "\dismiss.ico")
-    autosaveImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\save.ico")
-    premFullImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\fullscreen.ico")
-    gameImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\game.png")
-    multiImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\M-I_C.png")
-    qmkImage := MyGui.Add("Picture", "w20 h-1 Y+5", ptf.Icons "\keyboard.ico")
-    resolveImage := MyGui.Add("Picture", "w20 h-1 Y+2", ptf.Icons "\resolve.png")
 
     ;close button
     closeButton := MyGui.Add("Button", "X245", "Close")
@@ -994,16 +1004,11 @@ activeScripts(MyRelease)
         detect()
         if WinExist("My Scripts.ahk is Suspended")
             WinWaitClose("My Scripts.ahk is Suspended")
-     
-        my.Value := (A_IsSuspended = 0) ? 1 : 0
-        alt.Value := WinExist("Alt_menu_acceleration_DISABLER.ahk - AutoHotkey") ? 1 : 0
-        autodis.Value := WinExist("autodismiss error.ahk - AutoHotkey") ? 1 : 0
-        autosave.Value := WinExist("autosave.ahk - AutoHotkey") ? 1 : 0
-        premFull.Value := WinExist("adobe fullscreen check.ahk - AutoHotkey") ? 1 : 0
-        gameCheck.Value := WinExist("gameCheck.ahk - AutoHotkey") ? 1 : 0
-        multiCheck.Value := WinExist("Multi-Instance Close.ahk - AutoHotkey") ? 1 : 0
-        qmk.Value := WinExist("QMK Keyboard.ahk - AutoHotkey") ? 1 : 0
-        resolve.Value := WinExist("Resolve_Example.ahk - AutoHotkey") ? 1 : 0
+
+        MyGui[scripts[1]].Value := (A_IsSuspended = 0) ? 1 : 0
+        loop scripts.Length - 1 {
+            MyGui[scripts[A_Index + 1]].Value := WinExist(names[scripts[A_Index + 1]] " - AutoHotkey") ? 1 : 0
+        }
 
         SetTimer(, -100)
     }
