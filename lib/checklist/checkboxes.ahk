@@ -3,6 +3,8 @@ checkbox := getCheckboxNum()
 ;this function will go through the [Checkboxes] section of the checklist.ini file and generate the same amount of checkboxes as there are values
 loop checkbox.count {
     checkboxState := getCheckboxKeys(A_Index)
+    x := Mod(A_Index, 9)
+    y := Mod(A_Index, 8)
     if A_Index = 1
     {
         control := checkboxState.name
@@ -11,7 +13,7 @@ loop checkbox.count {
         checkEvent := MyGui.Add("Checkbox", "Section v" control " Y+4 Checked" checkboxState.currentState, checkboxState.name)
         checkEvent.OnEvent("Click", logCheckbox)
     }
-    if A_Index < 9 && A_Index != 1
+    if x != 0 && A_Index != 1
     {
         control := checkboxState.name
         if InStr(checkboxState.name, " ")
@@ -19,12 +21,20 @@ loop checkbox.count {
         checkEvent := MyGui.Add("Checkbox", "v" control " Y+4 Checked" checkboxState.currentState, checkboxState.name)
         checkEvent.OnEvent("Click", logCheckbox)
     }
-    if A_Index >= 9
+    if x = 0 && A_Index < 10 ;create the second column. The && -- part is necessary so the column down't overlap the timer
     {
         control := checkboxState.name
         if InStr(checkboxState.name, " ")
             control := controlCreate()
-        checkEvent := MyGui.Add("Checkbox",  "v" control " X+85 Ys Checked" checkboxState.currentState, checkboxState.name)
+        checkEvent := MyGui.Add("Checkbox",  "Section v" control " X+85 Ys Checked" checkboxState.currentState, checkboxState.name)
+        checkEvent.OnEvent("Click", logCheckbox)
+    }
+    if y = 0 && A_Index > 10 ;create the third column and beyond
+    {
+        control := checkboxState.name
+        if InStr(checkboxState.name, " ")
+            control := controlCreate()
+        checkEvent := MyGui.Add("Checkbox",  "Section v" control " X+85 Ys Checked" checkboxState.currentState, checkboxState.name)
         checkEvent.OnEvent("Click", logCheckbox)
     }
 }
@@ -41,7 +51,7 @@ getCheckboxNum()
     pos := 1
     loop {
         if !InStr(var, "=",,, A_Index)
-        break
+            break
         pos := InStr(var, "=",,, A_Index)
         count += 1
     }

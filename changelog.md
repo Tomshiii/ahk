@@ -37,3 +37,4 @@
 - Changed `msgboxName()` to `change_msgButton()` to stop incorrect autocomplete in VSCode
 - `About` & `Hours Worked` GUI now follow dark mode settings
 - Removed duplicate dark mode functions from `menubar.ahk`
+- Will now better handle generating more than 16 checkboxes
