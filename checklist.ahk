@@ -5,7 +5,7 @@
 TraySetIcon(ptf.Icons "\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.8.1"
+version := "v2.9"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -21,6 +21,8 @@ minutes2 := 10
 global ms10 := minutes2 * 60000
 checklist := ""
 global WaitTrack := 0
+global morethannine := unset
+global morethan11 := unset
 if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist is reloaded, we don't want it to automatically attempt to grab the title of the currently open premiere project - this allows us to open/create new projects while premiere is open
     {
         premNotOpen(&checklist, &logs, &path)

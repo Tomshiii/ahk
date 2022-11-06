@@ -181,7 +181,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			isFullscreen(&title2, &full, title) ;checking if the window is fullscreen
 			if full = 1
 				WinRestore(title2,, "Editing Checklist -") ;winrestore will unmaximise it
-		
+
 			newWidth := width / 1.6 ;determining our new width
 			newHeight := height / 1.6 ;determining our new height
 			newX := (monitor.left + (width - newWidth)/2) ;using math to centre our newly created window

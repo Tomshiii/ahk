@@ -1,6 +1,7 @@
 ;define menu
 ;file menus
 FileMenu := Menu()
+FileMenu.Add("&Add Checkbox`tCtrl+A", addNew)
 FileMenu.Add("&New`tCtrl+N", fileNewandOpen)
 FileMenu.Add("&Open`tCtrl+O", fileNewandOpen)
 FileMenu.Add("E&xit", close)
@@ -342,4 +343,50 @@ openLog(*)
     else
         Run(logs)
     
+}
+
+addNew(*)
+{
+    stop()
+    MyGui.GetPos(&x, &y, &width, &height)
+    addGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Hours Worked")
+    addGUI.Opt("+Owner" MyGui.Hwnd)
+    MyGui.Opt("+Disabled")
+
+    addGUI.Add("Text", "W150", "Add Checkbox")
+    addcheck := addGUI.Add("Edit", "r1 W150 y+10")
+    submitbut := addGUI.Add("Button", "", "add")
+    submitbut.OnEvent("Click", addcheckbox)
+
+    addGUI.OnEvent("Close", addClose)
+    addGUI.Show()
+
+    addGUI.Show("AutoSize")
+    addGUI.GetPos(,, &addwidth, &addheight)
+    addGUI.Move(x - (addwidth/2) + (width/2), y - (addheight/2) + (height/2))
+
+    if darkToolTrack = 1
+        titleBarDarkMode(addGUI.Hwnd)
+
+    addcheckbox(*)
+    {
+        readini := IniRead(checklist, "Checkboxes")
+        if InStr(readini, addcheck.value)
+            {
+                MsgBox("Checkbox already exists!")
+                return
+            }
+        else
+            {
+                IniWrite("0", checklist, "Checkboxes", addcheck.Value)
+                Run(A_ScriptDir "\lib\checklist\destroy&open.ahk")
+            }
+        
+    }
+
+    addClose(*)
+    {
+        MyGui.Opt("-Disabled")
+        addGUI.Destroy
+    }
 }

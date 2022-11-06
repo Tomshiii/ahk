@@ -34,6 +34,8 @@
 - Removed reduntant version tracking of some scripts
 
 `checklist.ahk`
+- Can now better handle more than the default amount of checkboxes
+    - Can now Add checkboxes through the `File Menu`
 - Changed `msgboxName()` to `change_msgButton()` to stop incorrect autocomplete in VSCode
 - `About` & `Hours Worked` GUI now follow dark mode settings
 - Removed duplicate dark mode functions from `menubar.ahk`

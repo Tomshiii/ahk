@@ -1,6 +1,15 @@
 ;defining all buttons
 ;everything is relative to this group box, simply move it to move the entire group
-group := MyGui.Add("GroupBox", "w137 h100 Y+45", "Time Adjust (min)")
+
+buttonHeights := Map(
+    "lessthan11",       "Y+45",
+    "morethan11",       "x+100 Y152",
+)
+
+if !IsSet(morethan11)
+    group := MyGui.Add("GroupBox", "w137 h100 " buttonHeights["lessthan11"], "Time Adjust (min)")
+else
+    group := MyGui.Add("GroupBox", "w137 h100 x+100 " buttonHeights["morethan11"], "Time Adjust (min)")
 
 List := MyGui.Add("ComboBox", "r10 Choose5 xp+12 Yp+30 w113 h30", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
 minusButton := MyGui.Add("Button"," Y+7 w50 h30", "-sub") ;defining the - button

@@ -3,7 +3,11 @@ global startValue := IniRead(checklist, "Info", "time") ;gets the starting timec
 startHoursRounded := floorDecimal(startValue/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
 startMinutesRounded := Floor(((startValue/3600) - floor(startValue/3600))*60) ;getting the minutes past the hour
 
-timerHoursText := MyGui.Add("Text", "X8 Y+65 W18", "H: ") ;defining the hours text
+timeHeights := Map(
+    "default",       "Y224",
+)
+
+timerHoursText := MyGui.Add("Text", "X8 " timeHeights["default"] " W18", "H: ") ;defining the hours text
 timerHoursText.SetFont("S14")
 timerText := MyGui.Add("Text", "X+5 w70", startHoursRounded " ") ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")

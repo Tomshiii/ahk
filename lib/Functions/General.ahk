@@ -581,20 +581,20 @@ refreshWin(window, runTarget)
  * code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
  */
 On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
+{
+    static PrevHwnd := 0
+    if (Hwnd != PrevHwnd)
     {
-        static PrevHwnd := 0
-        if (Hwnd != PrevHwnd)
+        Text := "", ToolTip() ; Turn off any previous tooltip.
+        CurrControl := GuiCtrlFromHwnd(Hwnd)
+        if CurrControl
         {
-            Text := "", ToolTip() ; Turn off any previous tooltip.
-            CurrControl := GuiCtrlFromHwnd(Hwnd)
-            if CurrControl
-            {
-                if !CurrControl.HasProp("ToolTip")
-                    return ; No tooltip for this control.
-                Text := CurrControl.ToolTip
-                SetTimer () => ToolTip(Text), -1000
-                SetTimer () => ToolTip(), -4000 ; Remove the tooltip.
-            }
-            PrevHwnd := Hwnd
+            if !CurrControl.HasProp("ToolTip")
+                return ; No tooltip for this control.
+            Text := CurrControl.ToolTip
+            SetTimer () => ToolTip(Text), -1000
+            SetTimer () => ToolTip(), -4000 ; Remove the tooltip.
         }
+        PrevHwnd := Hwnd
     }
+}
