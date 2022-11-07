@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.4
+;\\v2.10.5
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.6.1
@@ -433,7 +433,7 @@ u::unassigned()
 j::unassigned()
 m::unassigned()
 SC149::firefoxTap()
-Enter & SC149::closeOtherWindow("ahk_class MozillaWindowClass")
+Enter & SC149::closeOtherWindow(browser.class["firefox"])
 Right & PgUp::newWin("exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
@@ -489,7 +489,7 @@ h:: ;opens the directory for the current premiere project
 n::unassigned()
 Space::switchToDisc()
 Right & Space::newWin("exe", "msedge.exe", "msedge.exe")
-Enter & Space::closeOtherWindow("ahk_exe msedge.exe")
+Enter & Space::closeOtherWindow(browser.winTitle["edge"])
 
 t::unassigned()
 g::unassigned()

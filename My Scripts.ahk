@@ -15,9 +15,9 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.7
+;\\v2.21.8
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.10.3
+;\\v2.10.5
 
 ; ============================================================================================================================================
 ;
@@ -274,9 +274,9 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 	 */
 	check(pass, tick) {
 		timepass := A_TickCount-tick
-		if !WinExist("ahk_exe firefox.exe")
-			WinWait("ahk_exe firefox.exe")
-		title := WinGetTitle("ahk_exe firefox.exe")
+		if !WinExist(browser.winTitle["firefox"])
+			WinWait(browser.winTitle["firefox"])
+		title := WinGetTitle(browser.winTitle["firefox"])
 		if InStr(title, pass)
 			{
 				SetTimer(, 0)
@@ -284,7 +284,7 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 			}
 		if InStr(title, "Error!") || timepass >= 5000
 			{
-				WinActivate("ahk_exe firefox.exe")
+				WinActivate(browser.winTitle["firefox"])
 				SendInput("^w")
 				Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm")
 				SetTimer(, 0)
@@ -419,7 +419,7 @@ $^x:: ;This macro is only REQUIRED because I have `editor.emptySelectionClipboar
 	SendInput("^x")
 }
 
-#HotIf WinActive("ahk_exe firefox.exe")
+#HotIf WinActive(browser.winTitle["firefox"])
 ;pauseyoutubeHotkey;
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {

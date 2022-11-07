@@ -23,7 +23,7 @@ if WinExist("All Moons UPDATED v.1.3.0")
 		SendInput("!{F4}")
 	}
 
-if WinExist("ahk_exe chrome.exe")
+if WinExist(browser.winTitle["chrome"])
 	ProcessClose("chrome.exe")
 if WinExist("ahk_exe StreamLabels.exe")
 	ProcessClose("StreamLabels.exe")

@@ -157,13 +157,13 @@ switchToPhoto()
  */
 switchToFirefox()
 {
-    if !WinExist("ahk_class MozillaWindowClass")
+    if !WinExist(browser.class["firefox"])
         Run("firefox.exe")
-    if WinActive("ahk_exe firefox.exe")
+    if WinActive(browser.winTitle["firefox"])
         switchToOtherFirefoxWindow()
-    else if WinExist("ahk_exe firefox.exe")
+    else if WinExist(browser.winTitle["firefox"])
         ;WinRestore ahk_exe firefox.exe
-        WinActivate("ahk_exe firefox.exe")
+        WinActivate(browser.winTitle["firefox"])
 }
 
 /**
@@ -171,18 +171,18 @@ switchToFirefox()
  */
 switchToOtherFirefoxWindow() ;I use this as a nested function below in firefoxTap(), you can just use this separately
 {
-    if !WinExist("ahk_exe firefox.exe")
+    if !WinExist(browser.winTitle["firefox"])
         {
             Run("firefox.exe")
             return
         }
-    if WinActive("ahk_class MozillaWindowClass")
+    if WinActive(browser.class["firefox"])
         {
-            GroupAdd("firefoxes", "ahk_class MozillaWindowClass")
+            GroupAdd("firefoxes", browser.class["firefox"])
             GroupActivate("firefoxes", "r")
+            return
         }
-    else
-        WinActivate("ahk_class MozillaWindowClass")
+    WinActivate(browser.class["firefox"])
 }
 
 /**
@@ -336,17 +336,17 @@ switchToYourPhone()
  */
 switchToEdge()
 {
-    if !WinExist("ahk_exe msedge.exe")
+    if !WinExist(browser.winTitle["edge"])
         {
             Run("msedge.exe")
-            WinWait("ahk_exe msedge.exe")
-            WinActivate("ahk_exe msedge.exe")
+            WinWait(browser.winTitle["edge"])
+            WinActivate(browser.winTitle["edge"])
         }
-    GroupAdd("git", "ahk_exe msedge.exe")
-    if WinActive("ahk_exe msedge.exe")
+    GroupAdd("git", browser.winTitle["edge"])
+    if WinActive(browser.winTitle["edge"])
         GroupActivate("git", "r")
-    else if WinExist("ahk_exe msedge.exe")
-        WinActivate("ahk_exe msedge.exe") ;you have to use WinActivatebottom if you didn't create a window group.
+    else if WinExist(browser.winTitle["edge"])
+        WinActivate(browser.winTitle["edge"]) ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /**

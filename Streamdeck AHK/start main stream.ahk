@@ -50,16 +50,16 @@ if WinExist("ahk_exe obs64.exe")
 		;not using this currently
 	obsLocation() ;Moves obs into position
 /* 	Run "firefox.exe https://docs.google.com/presentation/d/1b6pCuOIrw4pEF6GACxrBh8C-mB4XsDeHLM50cj4jAkQ/edit#slide=id.g90e8195d3c_16_958" ;opens the AM route doc to pauline questions
-		if WinExist("ahk_exe firefox.exe")
+		if WinExist(browser.winTitle["firefox"])
 			WinActivate
 		else
-			WinWaitActive "ahk_exe firefox.exe"
+			WinWaitActive browser.winTitle["firefox"]
 	sleep 1000 ;waits before opening the next tab or firefox derps out */
 	Run("firefox.exe https://dashboard.twitch.tv/u/tomshi/stream-manager")
 	sleep 1000
 	Run("firefox.exe https://yoink.streamelements.com/activity-feed?activitiesToolbar=false&popout=true&theme=dark&withSetupWizard=false")
 	sleep 9000
-	if WinExist("ahk_exe firefox.exe")
+	if WinExist(browser.winTitle["firefox"])
 		{
 			WinActivate
 			SetKeyDelay 100

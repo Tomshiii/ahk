@@ -66,9 +66,22 @@ class ptf {
     )
 }
 
+class browser {
+    static winTitle := Map(
+        "firefox",        "ahk_exe firefox.exe",
+        "chrome",         "ahk_exe chrome",
+        "edge",           "ahk_exe msedge",
+    )
+    static class := Map(
+        "firefox",        "ahk_class MozillaWindowClass",
+        "chrome",         "ahk_class Chrome_WidgetWin_1",
+        "edge",           "ahk_class Chrome_WidgetWin_1",
+    )
+}
+
 ;define browsers
-GroupAdd("Browsers", "ahk_exe firefox.exe")
-GroupAdd("Browsers", "ahk_exe chrome.exe")
+GroupAdd("Browsers", browser.winTitle["firefox"])
+GroupAdd("Browsers", browser.winTitle["chrome"])
 GroupAdd("Browsers", "ahk_exe Code.exe")
 
 ;define editors
@@ -85,29 +98,29 @@ GroupAdd("Editors", "ahk_exe Photoshop.exe")
 /**
  * A class to contain often used coordmode settings for easier coding.
  */
-class coordinates {
+class coord {
     /**
      * This function is a part of the class `coordinates`
      * 
      * Sets coordmode to "screen"
      */
-    s() => (coordmode("pixel", "screen"), coordmode("mouse", "screen"))
+    static s() => (coordmode("pixel", "screen"), coordmode("mouse", "screen"))
 
     /**
      * This function is a part of the class `coordinates`
      * 
      * Sets coordmode to "window"
      */
-    w() => (coordmode("pixel", "window"), coordmode("mouse", "window"))
+     static w() => (coordmode("pixel", "window"), coordmode("mouse", "window"))
     
     /**
      * This function is a part of the class `coordinates`
      * 
      * sets coordmode to "caret"
      */
-    c() => coordmode("caret", "window")
+     static c() => coordmode("caret", "window")
 }
-coord := coordinates()
+;coord := coordinates()
 
 ; ===========================================================================================================================================
 ;
@@ -117,7 +130,7 @@ coord := coordinates()
 /**
  * A class to contain often used tooltip functions for easier coding.
  */
-class tooltips {
+class tool {
     /**
      * This function is a part of the class `tooltips`
      * 
@@ -132,7 +145,7 @@ class tooltips {
      * @param {number} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
      * @param {integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified or set larger than 20, that number is 1 (the first).
      */
-    Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
+    static Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     {
         if !IsInteger(timeout) && IsFloat(timeout) ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
             timeout := timeout * 1000
@@ -174,7 +187,7 @@ class tooltips {
      * This function will check to see if any tooltips are active before continuing
      * @param {Integer} timeout allows you to pass in a time value (in seconds) that you want WinWaitClose to wait before timing out. This value can be omitted and does not need to be set
      */
-    Wait(timeout?)
+    static Wait(timeout?)
     {
         detectVal := A_DetectHiddenWindows
         DetectHiddenWindows(0) ;we need to ensure detecthiddenwindows is disabled before proceeding or this function may never stop waiting
@@ -183,7 +196,6 @@ class tooltips {
         DetectHiddenWindows(detectVal)
     }
 }
-tool := tooltips()
 
 ; ===========================================================================================================================================
 ;
@@ -193,22 +205,21 @@ tool := tooltips()
 /**
  * A class to contain often used blockinput functions for easier coding.
  */
-class inputs {
+class block {
     /**
      * This function is a part of the class `inputs`
      * 
      * Blocks all user inputs [IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (CTRL + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]
      */
-    On() => (BlockInput("SendAndMouse"), BlockInput("MouseMove"), BlockInput("On")) ;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
+    static On() => (BlockInput("SendAndMouse"), BlockInput("MouseMove"), BlockInput("On")) ;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
 
     /**
      * This function is a part of the class `inputs`
      * 
      * turns off the blocks on user input
      */
-    Off() => (Blockinput("MouseMoveOff"), BlockInput("off"))
+    static Off() => (Blockinput("MouseMoveOff"), BlockInput("off"))
 }
-block := Inputs()
 
 ; ===========================================================================================================================================
 ;
@@ -549,7 +560,7 @@ refreshWin(window, runTarget)
     if !WinWaitClose(window,, 1.5)
         {
             tool.Cust("waiting for the window to close timed out")
-            tool.errorLog(A_ThisFunc "()", "waiting for the window to close timed out", A_LineFile, A_LineNumber)
+            errorLog(A_ThisFunc "()", "waiting for the window to close timed out", A_LineFile, A_LineNumber)
             return
         }
     sleep 250
@@ -563,7 +574,7 @@ refreshWin(window, runTarget)
                 if !WinWait(window,, 1.5)
                     {
                         tool.Cust("waiting for the window to open timed out")
-                        tool.errorLog(A_ThisFunc "()", "waiting for the window to open timed out", A_LineFile, A_LineNumber)
+                        errorLog(A_ThisFunc "()", "waiting for the window to open timed out", A_LineFile, A_LineNumber)
                         return
                     }
             }

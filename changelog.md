@@ -1,8 +1,34 @@
-# <> Release 2.6.x - 
+# <> Release 2.7 - Class Variables
 `class ptf {` *(point to file)*
-- Replace `ImageSearch` `global variables` with path variables
+- Replace `ImageSearch` `global variables` with class path variables
 - Add as many directory locations as possible as class variables
-- Add as many file directory locations as a `Map()`; `files`
+- Add as many file locations as possible as a `Map()`; `files`
+
+To call a dir;
+```autohotkey
+ptf.VariableName
+eg. ptf.ImgSearch ; links to `A_WorkingDir "\ImageSearch"`
+```
+To call a file;
+```autohotkey
+ptf.files["key name"]
+eg. ptf.files["settings"] ; links to `A_MyDocuments "\tomshi\settings.ini"`
+```
+
+`class browser {`
+- Replace all references to browser wintitles & classes with Map variables
+
+To call a browser winTitle
+```autohotkey
+browser.winTitle["browsername"]
+eg. browser.winTitle["firefox"] ; calls `ahk_exe firefox.exe`
+```
+
+To call a browser class
+```autohotkey
+browser.class["browsername"]
+eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
+```
 
 ## > My Scripts
 - `^AppsKey:: ;ahksearchHotkey;` will now attempt to check the tab the user opened to see if an error page opened instead.
@@ -35,7 +61,7 @@
 
 `checklist.ahk`
 - Can now better handle more than the default amount of checkboxes
-    - Can now Add checkboxes through the `File Menu`
+    - Can now add checkboxes through the `File Menu`
 - Changed `msgboxName()` to `change_msgButton()` to stop incorrect autocomplete in VSCode
 - `About` & `Hours Worked` GUI now follow dark mode settings
 - Removed duplicate dark mode functions from `menubar.ahk`
