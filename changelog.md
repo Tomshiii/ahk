@@ -66,3 +66,5 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 - `About` & `Hours Worked` GUI now follow dark mode settings
 - Removed duplicate dark mode functions from `menubar.ahk`
 - Will now better handle generating more than 16 checkboxes
+- Will now better handle numbers larger than 99h
+    - Now has a maximum of `999.999` hours

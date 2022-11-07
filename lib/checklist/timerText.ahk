@@ -7,9 +7,20 @@ timeHeights := Map(
     "default",       "Y224",
 )
 
+lengthCheck := StrLen(startHoursRounded)
+if lengthCheck > 7
+    {
+        MsgBox("Time listed in ``checklist.ini`` is too large.")
+        return
+    }
+if lengthCheck < 6
+    width := 60
+else
+    width := 70 + ((lengthCheck-6)*12)
+
 timerHoursText := MyGui.Add("Text", "X8 " timeHeights["default"] " W18", "H: ") ;defining the hours text
 timerHoursText.SetFont("S14")
-timerText := MyGui.Add("Text", "X+5 w70", startHoursRounded " ") ;setting the text that will contain the numbers
+timerText := MyGui.Add("Text", "X+5 w" width, startHoursRounded) ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
 
 timerMinutesText := MyGui.Add("Text", "X+12 W22", "M: ") ;defining the minutes text
