@@ -49,6 +49,7 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 - Can now adjust the `Year` version of `After Effects & Premiere Pro` these scripts look for
 - Moved code relating to the generation of the `Edit boxes` to `"..\settingsGUI\editValues.ahk`
 - Moved `gameCheckGUI class` to `"..\settingsGUI\gameCheckGUI.ahk`
+- Fixed error occuring if `settingsGUI()` was closed while `gameCheckGUI` is open
 
 `activeScripts()`
 - Fixed being unable to relaunched if closed with `x` windows button

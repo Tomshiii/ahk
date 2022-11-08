@@ -351,7 +351,8 @@ settingsGUI()
         WinSetAlwaysOnTop(0, "Settings " version)
         settingsGUI.Opt("+Disabled")
         WinWaitClose(gameTitle)
-        settingsGUI.Opt("-Disabled")
+        if WinExist("Settings " version)
+            settingsGUI.Opt("-Disabled")
     }
 
     iniLink := settingsGUI.Add("Button", "section X+10 Y+-35", "open settings.ini")
