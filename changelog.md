@@ -33,7 +33,7 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 ## > My Scripts
 - `^AppsKey:: ;ahksearchHotkey;` will now attempt to check the tab the user opened to see if an error page opened instead.
 - Added `#F12:: ;panicExitHotkey;` to run `reload_reset_exit("exit")`
-- Added `SC03A & F5:: refreshWinHotkey` to refresh the current active window.
+- Added `SC03A & F5:: ;refreshWinHotkey;` to refresh the current active window.
 
 `#c:: ;centreHotkey;` 
 - Will now ensure the `monitor` object is actually set before continuing to stop errors
@@ -44,7 +44,11 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 - `tomshiBasic()` can now pass in font size/weight settings
 - `hotkeysGUI()` now uses objects, maps & Arrays to define its values
 - `updateChecker()` will now correctly stop itself checking for an update when the user has selected that as their setting
-- `settingsGUI()` can now adjust the `Year` version of `After Effects & Premiere Pro` these scripts look for
+
+`settingsGUI()`
+- Can now adjust the `Year` version of `After Effects & Premiere Pro` these scripts look for
+- Moved code relating to the generation of the `Edit boxes` to `"..\settingsGUI\editValues.ahk`
+- Moved `gameCheckGUI class` to `"..\settingsGUI\gameCheckGUI.ahk`
 
 `activeScripts()`
 - Fixed being unable to relaunched if closed with `x` windows button

@@ -16,6 +16,8 @@ class tomshiBasic extends Gui {
     }
 }
 
+#Include "..\settingsGUI\gameCheckGUI.ahk"
+#Include "..\settingsGUI\editValues.ahk"
 /**
  * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
  */
@@ -38,7 +40,7 @@ settingsGUI()
         winProcc := ""
         titleBlank := ""
     }
-    
+
     darkMode := IniRead(ptf.files["settings"], "Settings", "dark mode")
     version := IniRead(ptf.files["settings"], "Track", "version")
 
@@ -271,59 +273,29 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;EDIT BOXES
-
-    adobeGBinitVal := IniRead(ptf.files["settings"], "Adjust", "adobe GB")
-    adobeGBEdit := settingsGUI.Add("Edit", "Section xs+223 ys r1 W50 Number", "")
-    settingsGUI.Add("UpDown",, adobeGBinitVal)
-    adobeEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``adobeTemp()``")
-    adobeEditText.SetFont("cd53c3c")
-    settingsGUI.Add("Text", "X+1", " limit (GB)")
-    adobeGBEdit.OnEvent("Change", adobeGB)
-    adobeGB(*) => IniWrite(adobeGBEdit.Value, ptf.files["settings"], "Adjust", "adobe GB")
-
-    adobeFSinitVal := IniRead(ptf.files["settings"], "Adjust", "adobe FS")
-    adobeFSEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
-    settingsGUI.Add("UpDown",, adobeFSinitVal)
-    adobeFSEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``adobe fullscreen check.ahk``")
-    adobeFSEditText.SetFont("cd53c3c")
-    settingsGUI.Add("Text", "Y+-1", " check rate (sec)")
-    adobeFSEdit.OnEvent("Change", editCtrl.bind("adobe fullscreen check.ahk", "adobe FS"))
-
-    autosaveMininitVal := IniRead(ptf.files["settings"], "Adjust", "autosave MIN")
-    autosaveMinEdit := settingsGUI.Add("Edit", "xs Y+2 r1 W50 Number", "")
-    settingsGUI.Add("UpDown",, autosaveMininitVal)
-    autosaveMinEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``autosave.ahk``")
-    autosaveMinEditText.SetFont("c4141d5")
-    settingsGUI.Add("Text", "X+1", " save rate (min)")
-    autosaveMinEdit.OnEvent("Change", editCtrl.bind("autosave.ahk", "autosave MIN"))
-
-    gameCheckInitVal := IniRead(ptf.files["settings"], "Adjust", "game SEC")
-    gameCheckEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
-    settingsGUI.Add("UpDown",, gameCheckInitVal)
-    gameCheckEditText := settingsGUI.Add("Text", "X+5 Y+-20", "``gameCheck.ahk``")
-    gameCheckEditText.SetFont("c328832")
-    settingsGUI.Add("Text", "X+1", " check rate (sec)")
-    gameCheckEdit.OnEvent("Change", editCtrl.bind("gameCheck.ahk", "game SEC"))
-
-    multiInitVal := IniRead(ptf.files["settings"], "Adjust", "multi SEC")
-    multiEdit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number", "")
-    settingsGUI.Add("UpDown",, multiInitVal)
-    multiEditText := settingsGUI.Add("Text", "X+5 Y+-28", "``Multi-Instance Close.ahk``")
-    multiEditText.SetFont("c983d98")
-    settingsGUI.Add("Text", "Y+-1", " check rate (sec)")
-    multiEdit.OnEvent("Change", editCtrl.bind("Multi-Instance Close.ahk", "multi SEC"))
-
     premInitYear := IniRead(ptf.files["settings"], "Adjust", "prem year")
-    premEdit := settingsGUI.Add("Edit", "xs Y+5 r1 W50 Number Limit4", premInitYear)
-    premEditText := settingsGUI.Add("Text", "X+5 Y+-20", "Adobe Premiere Year")
-    premEditText.SetFont("c8644c7")
-    premEdit.OnEvent("Change", editCtrl.Bind("--", "prem year"))
-    
     AEInitYear := IniRead(ptf.files["settings"], "Adjust", "ae year")
-    AE_Edit := settingsGUI.Add("Edit", "xs Y+10 r1 W50 Number Limit4", AEInitYear)
-    AE_EditText := settingsGUI.Add("Text", "X+5 Y+-20", "Adobe After Effects Year")
-    AE_EditText.SetFont("c393665")
-    AE_Edit.OnEvent("Change", editCtrl.Bind("--", "ae year"))
+    ;this loop auto generates the edit boxes using "..\settingsGUI\maps.ahk"
+    loop set_Edit_Val.Length {
+        if A_Index < set_Edit_Val.Length - 2
+            {
+                initVal := IniRead(ptf.files["settings"], "Adjust", set_Edit_Val.iniInput[A_Index])
+                settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])
+                settingsGUI.Add("UpDown",, initVal)
+                settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
+                settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
+                settingsGUI.Add("Text", set_Edit_Val.otherTextPos[A_Index], set_Edit_Val.otherText[A_Index])
+                settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index], set_Edit_Val.iniInput[A_Index]))
+            }
+        if A_Index > set_Edit_Val.Length - 2
+            {
+                initVal := IniRead(ptf.files["settings"], "Adjust", set_Edit_Val.iniInput[A_Index])
+                settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number Limit4 v" set_Edit_Val.control[A_Index], initVal)
+                settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
+                settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
+                settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index], set_Edit_Val.iniInput[A_Index]))
+            }
+    }
 
     editCtrl(script, ini, ctrl, *)
     {
@@ -474,7 +446,7 @@ settingsGUI()
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         if IsSet(butt) && butt = "hard"
             reload_reset_exit("reset")
-        if premEdit.Value != premInitYear || AE_Edit.Value != AEInitYear
+        if settingsGUI[set_Edit_Val.control[set_Edit_Val.num[6]]].Value != premInitYear || settingsGUI[set_Edit_Val.control[set_Edit_Val.num[7]]].Value != AEInitYear
             reload_reset_exit("reset")
         ;before finally closing
         settingsGUI.Destroy()
@@ -501,128 +473,6 @@ settingsGUI()
 
     settingsGUI.Show("Center AutoSize")
 }
-
-/**
- * A class to define the gameCheck add GUI window
- * 
- * @param dark is passing in whether dark mode is enabled or not
- * @param version is passing in the current version number
- * @param wintitle is passing in the originally active winTitle when `settingsGUI()` was called
- * @param process is passing in the originally active winProcess when `settingsGUI()` was called
- * @param options is defining any GUI options
- * @param title is to set a title for the GUI
- */
-class gameCheckGUI extends Gui {
-    __new(dark, version, wintitle, process, options?, title:="") {
-        super.__new(options?, title, this)
-        this.BackColor := 0xF0F0F0
-        this.SetFont("S11") ;Sets the size of the font
-        this.SetFont("W500") ;Sets the weight of the font (thickness)
-        this.Opt("+MinSize450x320 +MaxSize450x")
-
-        ;setting up
-        detect()
-
-        ;defining text
-        text1 := this.Add("Text", "W440 Center", "Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe")
-        text2 := this.Add("Text", "Y+4 W440 Center", "*try to remove any information from the title that is likely to change, eg. version numbers or extra text that isn't a part of the game title (Terraria for example adds little quotes to the title that changes everytime you run the game)")
-        text2.SetFont("S9 italic")
-        text3 := this.Add("Text", "Y+-8 W440", "This function attempted to grab the correct information from the active window before you pulled up the settings GUI and then prefilled the input boxes with that information. If it's correct hit OK, if not enter in the correct information.`n`n*If not, this info can be found using WindowSpy which comes alongside AHK")
-
-        ;defining edit boxes
-        gameTitleTitle := this.Add("Text", "Section", "Game Title: ")
-        gameTitle := this.Add("Edit", "xs+120 ys-5 r1 -WantReturn vgameTitle w300", wintitle)
-
-        gameProcessText := this.Add("Text", "xs ys+25 Section", "Process Name: ")
-        gameProcess := this.Add("Edit", "xs+120 ys-5 r1 -WantReturn vgameProcess w300", "ahk_exe " process)
-
-        ;defining buttons
-        addButton := this.Add("Button", "xs+187 ys+30 Section", "add to ``gameCheck.ahk``")
-        addButton.OnEvent("Click", addButton_Click.Bind(version, gameTitle.Text, gameProcess.Text))
-        cancelButton := this.Add("Button", "xs+175 ys", "cancel")
-        cancelButton.OnEvent("Click", cancelButton_Click)
-
-        if dark = "true"
-            {
-                titleBarDarkMode(this.Hwnd)
-                buttonDarkMode(addButton.Hwnd)
-                buttonDarkMode(cancelButton.Hwnd)
-            }
-
-        /**
-         * This function handles the logic behind the add button
-         * @param {any} version is the version number that gets passed into the class
-         * @param {any} titleVal is the original title name that gets passed into the class
-         * @param {any} procVal is the process name that gets passed into the class
-         * @param {any} testButton is a default paramater
-         * @param {any} unusedInfo is a default paramater
-         */
-        addButton_Click(version, titleVal, procVal, testButton, unusedInfo) {
-            if titleVal != gameTitle.Value
-                titleVal := gameTitle.Value
-            if procVal != gameProcess.Value
-                procVal := gameProcess.Value
-            ;check for game list file
-            rootDir := IniRead(ptf.files["settings"], "Track", "working dir")
-            if !FileExist(rootDir "\lib\gameCheck\Game List.ahk")
-                {
-                    MsgBox("``Game List.ahk`` not found in the proper directory")
-                    this.Hide()
-                    WinSetAlwaysOnTop(1, "Settings " version)
-                    WinActivate("Settings " version)
-                }
-            ;create temp folders
-            if !DirExist(A_Temp "\tomshi")
-                DirCreate(A_Temp "\tomshi")
-            readGameCheck := FileRead(rootDir "\lib\gameCheck\Game List.ahk")
-            findEnd := InStr(readGameCheck, "; --", 1,, 1)
-            addUserInput := StrReplace(readGameCheck, "; --", "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
-            FileAppend(addUserInput, A_Temp "\tomshi\Game List.ahk")
-            FileMove(A_Temp "\tomshi\Game List.ahk", rootDir "\lib\gameCheck\Game List.ahk", 1)
-            if WinExist("gameCheck.ahk - AutoHotkey")
-                PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
-
-            ;check if worked
-            readAgain := FileRead(rootDir "\lib\gameCheck\Game List.ahk")
-            if InStr(readAgain, "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
-                {
-                    this.Hide()
-                    MsgBox("Game added succesfully!")
-                    if WinExist("Settings " version)
-                        {
-                            WinSetAlwaysOnTop(1, "Settings " version)
-                            WinActivate("Settings " version)
-                        }
-                }
-            else
-                {
-                    this.Hide()
-                    MsgBox("Game added unsuccesfully :(")
-                    if WinExist("Settings " version)
-                        {
-                            WinSetAlwaysOnTop(1, "Settings " version)
-                            WinActivate("Settings " version)
-                        }
-                }
-        }
-
-        /**
-         * Handles the logic behind the cancel button
-         * @param {any} testButton is a default paramater
-         * @param {any} unusedInfo is a default paramater
-         */
-        cancelButton_Click(testButton, unusedInfo) {
-            if WinExist("Settings " version)
-                {
-                    WinSetAlwaysOnTop(1, "Settings " version)
-                    WinActivate("Settings " version)
-                }
-            this.Hide()
-        }
-    }
-
-}
-
 
 /**
  * This function creates a GUI for the user to select which media player they wish to open.
@@ -930,7 +780,6 @@ activeScripts(MyRelease)
                     MyGui.Add("CheckBox", "Section Checked0 v" scripts[A_Index], names[scripts[A_Index]])
                     MyGui[scripts[1]].OnEvent("Click", myClick)
                     MyGui[scripts[1]].ToolTip := tooltiptext[scripts[1]]
-                    
                 }
             else
                 {
@@ -981,7 +830,7 @@ activeScripts(MyRelease)
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
     OnMessage(0x0200, On_WM_MOUSEMOVE)
-    
+
     ;below is all of the callback functions
     myClick(*) => Suspend(-1)
 
@@ -1009,7 +858,6 @@ activeScripts(MyRelease)
         loop scripts.Length - 1 {
             MyGui[scripts[A_Index + 1]].Value := WinExist(names[scripts[A_Index + 1]] " - AutoHotkey") ? 1 : 0
         }
-
         SetTimer(, -100)
     }
 
