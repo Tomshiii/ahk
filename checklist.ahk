@@ -5,7 +5,7 @@
 TraySetIcon(ptf.Icons "\checklist.ico")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.9"
+version := "v2.9.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -185,12 +185,11 @@ SetTimer(reminder, -ms)
 ;timer
 global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
 global ElapsedTime := 0 + startValue ;a starting value for the timer
-
+global logActive := false
 
 if darkToolTrack = 1
     which()
 
-MyGui.OnEvent("Close", close) ;what happens when you close the GUI
 MyGui.Show("AutoSize NoActivate")
 MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;finish defining GUI

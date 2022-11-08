@@ -12,13 +12,15 @@ close(*) {
     if ElapsedTime != checkHours
         IniWrite(ElapsedTime, checklist, "Info", "time")
     newDate(&today)
-    
+
     if ElapsedTime = checkHours
         FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", logs)
     else
         FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", logs)
     SetTimer(StopWatch, 0)
     SetTimer(reminder, 0)
+    if logElapse = true
+        SetTimer(logElapse, 0)
     MyGui.Destroy()
     return
 }
@@ -34,7 +36,9 @@ ExitFunc(ExitReason, ExitCode)
             ScriptSuspend("autosave.ahk", false)
             if WinExist("Select commission folder")
                 return
-            stop()   
+            stop()
             close()
         }
+    else
+        close() ;what happens when you close the GUI
 }

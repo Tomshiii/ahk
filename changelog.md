@@ -61,10 +61,14 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 
 `checklist.ahk`
 - Can now better handle more than the default amount of checkboxes
-    - Can now add checkboxes through the `File Menu`
 - Changed `msgboxName()` to `change_msgButton()` to stop incorrect autocomplete in VSCode
 - `About` & `Hours Worked` GUI now follow dark mode settings
 - Removed duplicate dark mode functions from `menubar.ahk`
 - Will now better handle generating more than 16 checkboxes
 - Will now better handle numbers larger than 99h
     - Now has a maximum of `999.999` hours
+- Fixed bug causing error on close of window
+
+> `Menu Bar`
+- Can now add checkboxes through the `File Menu`
+- Can now open the Project folder through the `File Menu`

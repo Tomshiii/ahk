@@ -63,6 +63,7 @@ stop(*) {
     timerMinutes.SetFont("cRed")
     timerSeconds.SetFont("cRed")
     SetTimer(logElapse, 0)
+    global logActive := false
     SetTimer(reminder, -ms)
     global startValue := IniRead(checklist, "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
 }
@@ -99,6 +100,7 @@ minusOrAdd(sign)
     startButton.Move(,, 50, 30)
     stopButton.Move(,, 0, 0)
     SetTimer(logElapse, 0)
+    global logActive := false
     SetTimer(reminder, -ms)
     global startValue := IniRead(checklist, "Info", "time")
     global ElapsedTime := 0 + startValue

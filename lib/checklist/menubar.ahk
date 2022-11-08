@@ -4,6 +4,7 @@ FileMenu := Menu()
 FileMenu.Add("&Add Checkbox`tCtrl+A", addNew)
 FileMenu.Add("&New`tCtrl+N", fileNewandOpen)
 FileMenu.Add("&Open`tCtrl+O", fileNewandOpen)
+FileMenu.Add("&Open Project Folder`tCtrl+P", openProj)
 FileMenu.Add("E&xit", close)
 ;settings menu
 SettingsMenu := Menu()
@@ -46,7 +47,7 @@ updateSub.Add("&Stable", updateCheck)
 updateSub.Add("&Beta", updateCheck)
 HelpMenu.Add("&Github", github)
 HelpMenu.Add("&Hours Worked", hours)
-HelpMenu.Add("&Open Logs", openLog)
+HelpMenu.Add("&Open Logs`tCtrl+L", openLog)
 ;define the entire menubar
 bar := MenuBar()
 bar.Add("&File", FileMenu)
@@ -241,7 +242,7 @@ hours(*)
     workedToday := floorDecimal(currentHours - startHours, 3)
     if workedToday <= 0
         workedToday := 0
-    
+
     increment := 0
     StartVal := 0
     ;;
@@ -311,7 +312,6 @@ goDark(*)
     }
 }
 
-
 /**
  * This function is called by `goDark()` and handles toggling dark mode for checklist.ahk
  * @param {boolean} dark is a toggle that allows us to do the inverse and swap back to light mode. Pass false to do so
@@ -342,12 +342,26 @@ openLog(*)
         refreshWin("checklist_logs.txt", logs)
     else
         Run(logs)
-    
+}
+
+/**
+ * This function is called when the Open Project Folder menu option is selected
+ */
+openProj(*)
+{
+    SplitPath(checklist,, &projDir)
+    if WinExist(projDir)
+        WinActivate(projDir)
+    else
+        {
+            Run(projDir)
+            WinWait(projDir)
+            WinActivate(projDir)
+        }
 }
 
 addNew(*)
 {
-    stop()
     MyGui.GetPos(&x, &y, &width, &height)
     addGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Hours Worked")
     addGUI.Opt("+Owner" MyGui.Hwnd)
@@ -359,8 +373,6 @@ addNew(*)
     submitbut.OnEvent("Click", addcheckbox)
 
     addGUI.OnEvent("Close", addClose)
-    addGUI.Show()
-
     addGUI.Show("AutoSize")
     addGUI.GetPos(,, &addwidth, &addheight)
     addGUI.Move(x - (addwidth/2) + (width/2), y - (addheight/2) + (height/2))
@@ -376,12 +388,8 @@ addNew(*)
                 MsgBox("Checkbox already exists!")
                 return
             }
-        else
-            {
-                IniWrite("0", checklist, "Checkboxes", addcheck.Value)
-                Run(A_ScriptDir "\lib\checklist\destroy&open.ahk")
-            }
-        
+        IniWrite("0", checklist, "Checkboxes", addcheck.Value)
+        Run(A_ScriptDir "\lib\checklist\destroy&open.ahk")
     }
 
     addClose(*)

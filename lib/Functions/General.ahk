@@ -365,7 +365,7 @@ getHotkeys(&first, &second)
                 case "<^>!":
                     variable := "AltGr"
                 default:
-                    return
+                    return false
             }
             check := GetKeyVK(variable)
             vkReturn := Format("vk{:X}", check)
@@ -373,9 +373,9 @@ getHotkeys(&first, &second)
 		}
 		check1 := vk(first)
 		check2 := vk(second)
-		if check1 != ""
+		if check1 != false
 			first := check1
-		if check2 != ""
+		if check2 != false
 			second := check2
 		return
 	}

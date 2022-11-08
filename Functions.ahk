@@ -21,11 +21,11 @@ SetWorkingDir(A_ScriptDir)  ; Ensures a consistent starting directory.
 ; for example:
 ; func(variable)
 ; 	{
-;		code(%&variable%)
+;		code(variable)
 ;	}
 ; Then in our main scripts we call on these functions like:
 ; Hotkey::func("information")
-; then whatever you place within the "" will be put wherever you have a %&variable%
+; then whatever you place within the "" will be put wherever you have a variable
 ; I make use of code like this all throughout this script. All variables are explained above their respective functions and dynamically display that information when you hover over a function if you're using VSCode
 
 ; I have made a concious effort throughout the workings of this script to keep out as many raw pixel coords as possible, preferring imagesearches to ensure correct mouse movements

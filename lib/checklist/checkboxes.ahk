@@ -133,7 +133,6 @@ gatherCheckboxes()
                 global morethannine := true
                 continue
             }
-        
     }
 
     /* loop listedNames.Length {

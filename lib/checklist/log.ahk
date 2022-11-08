@@ -2,6 +2,7 @@
  * The function that is called when the neccesary amount of minutes have passed and information needs to be logged
  */
 logElapse() {
+    global logActive := true
     forFile := Round(ElapsedTime / 3600, 3)
     newDate(&today)
     FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- current hours = " forFile " -- current seconds = " ElapsedTime "`n", logs)
