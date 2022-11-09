@@ -133,11 +133,6 @@ check() {
             goto end3
         }
     detect()
-    if WinExist("checklist.ahk",, "Visual Studio Code") && !WinExist("Editing Checklist -")
-        {
-            Pause()
-            Suspend()
-        }
     if WinExist("Editing Checklist -")
         {
             SetTimer(, -msChecklist)
@@ -145,12 +140,18 @@ check() {
         }
     if WinExist("Wait or Continue?")
         WinWaitClose("Wait or Continue?")
+    sleep 1000
+    if WinExist("waitUntil.ahk")
+        {
+            SetTimer(, -msChecklist)
+            goto end3
+        }
     if !WinExist("Select commission folder")
         Run(A_WorkingDir "\checklist.ahk")
     else
         WinWaitClose("Select commission folder")
     tool.Wait()
-    if !WinExist("Editing Checklist")
+    if !WinExist("Editing Checklist -")
         tool.Cust("Don't forget to start the checklist for this project!", 2000)
     SetTimer(, -msChecklist) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
     end3:

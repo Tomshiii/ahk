@@ -4,6 +4,8 @@
 #Include lib\checklist\include.ahk
 TraySetIcon(ptf.Icons "\checklist.ico")
 
+closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
+
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 version := "v2.9.1"
 ;todays date
@@ -27,9 +29,9 @@ if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist 
     {
         premNotOpen(&checklist, &logs, &path)
         if WinExist("Select commission folder")
-            WinWaitClose("Select commission folder")
+            ExitApp()
         if WinExist("Wait or Continue?")
-            WinWaitClose("Wait or Continue?")
+            ExitApp()
     }
 else
     {
@@ -39,8 +41,7 @@ else
                 if WinExist("Select commission folder")
                     WinWaitClose("Select commission folder")
                 if WinExist("Wait or Continue?")
-                    WinWaitClose("Wait or Continue?")
-                goto end
+                    ExitApp()
             }
         dashLocation := unset
         dashLocationAE := unset
@@ -57,7 +58,6 @@ else
                             WinWaitClose("Select commission folder")
                         if WinExist("Wait or Continue?")
                             WinWaitClose("Wait or Continue?")
-                        goto end
                     }
                 dashLocation := InStr(Nameprem, "-")
                 if dashLocation = 0
@@ -96,6 +96,7 @@ else
             }
         if !IsSet(dashLocation) && !IsSet(dashLocationAE)
             {
+                detect()
                 if FileExist(ptf.files["settings"]) ;checks to see if the user wants to always wait until they open a project
                     {
                         waitCheck := IniRead(ptf.files["settings"], "Settings", "checklist Wait", "false")
@@ -103,32 +104,24 @@ else
                             {
                                 WaitTrack := 1
                                 tool.Wait()
-                                ScriptSuspend("autosave.ahk", true) ;suspend
-                                pauseautosave()
-                                SetTimer(waitUntil, -1000)
-                                return
+                                haltChecklist()
                             }
                     }
                 if WaitTrack = 0
                     {
                         tool.Wait()
-                        ScriptSuspend("autosave.ahk", true) ;suspend
-                        pauseautosave()
                         WaitTrack := 1
                         SetTimer(change_msgButton, 50)
                         Result := MsgBox("You haven't opened a project yet, do you want ``" A_ScriptName "`` to wait until you have?`nOr would you like to select the checklist file now?", "Wait or Continue?", "4 32 4096")
                         if Result = "Yes"
+                            haltChecklist()
+                        else
                             {
-                                SetTimer(waitUntil, -1000)
-                                return
+                                premNotOpen(&checklist, &logs, &path)
+                                if WinExist("Select commission folder")
+                                    WinWaitClose("Select commission folder")
                             }
                     }
-                premNotOpen(&checklist, &logs, &path)
-                if WinExist("Select commission folder")
-                    WinWaitClose("Select commission folder")
-                if WinExist("Wait or Continue?")
-                    WinWaitClose("Wait or Continue?")
-                goto end
             }
         if IsSet(dashLocation)
             getPath(Nameprem, dashLocation, &checklist, &logs, &path)
@@ -189,7 +182,7 @@ global logActive := false
 
 if darkToolTrack = 1
     which()
-
+MyGui.OnEvent("Close", ExitFunc.Bind("", ""))
 MyGui.Show("AutoSize NoActivate")
 MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;finish defining GUI

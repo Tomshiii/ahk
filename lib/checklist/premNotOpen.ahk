@@ -11,8 +11,9 @@ premNotOpen(&checklist, &logs, &path)
         {
             if WaitTrack != 0
                 global WaitTrack := 0
-            Run(A_WorkingDir "\Timer Scripts\autosave.ahk")
-            ExitApp()
+            detect()
+            if WinExist("checklist.ahk",, "Visual Studio Code")
+                ProcessClose(WinGetPID("checklist.ahk",, "Visual Studio Code"))
         }
     checklist := findFile "\checklist.ini"
     ;MsgBox(findFile "`n" checklist)

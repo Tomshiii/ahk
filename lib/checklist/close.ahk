@@ -21,8 +21,15 @@ close(*) {
     SetTimer(reminder, 0)
     if logElapse = true
         SetTimer(logElapse, 0)
-    MyGui.Destroy()
+    ;MyGui.Destroy()
     return
+}
+
+closeWaitUntil()
+{
+    detect()
+    if WinExist("waitUntil.ahk")
+        ProcessClose(WinGetPID("waitUntil.ahk",, "Visual Studio Code"))
 }
 
 ;defining what happens if the script is somehow opened a second time and the function is forced to close
@@ -31,14 +38,16 @@ ExitFunc(ExitReason, ExitCode)
 {
     if ExitReason = "Single"
         {
-            SetTimer(waitUntil, 0)
+            closeWaitUntil()
             SetTimer(change_msgButton, 0)
-            ScriptSuspend("autosave.ahk", false)
             if WinExist("Select commission folder")
                 return
             stop()
             close()
         }
     else
-        close() ;what happens when you close the GUI
+        {
+            closeWaitUntil()
+            close() ;what happens when you close the GUI
+        }
 }

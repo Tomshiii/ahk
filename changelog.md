@@ -68,6 +68,7 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 - Removed reduntant version tracking of some scripts
 
 `checklist.ahk`
+- Will no longer pause/suspend `autosave.ahk` while waiting for a project to open, instead opting to pause/suspend itself and run `waitUntil.ahk` to wait until a project is open which will then close & rerun `checklist.ahk` to have it automatically open
 - Can now better handle more than the default amount of checkboxes
 - Changed `msgboxName()` to `change_msgButton()` to stop incorrect autocomplete in VSCode
 - `About` & `Hours Worked` GUI now follow dark mode settings

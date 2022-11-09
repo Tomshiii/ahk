@@ -7,3 +7,4 @@
 #Include log.ahk
 #Include close.ahk
 #Include getPath.ahk
+#Include haltChecklist.ahk
