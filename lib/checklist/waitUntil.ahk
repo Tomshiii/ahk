@@ -1,11 +1,12 @@
 SetTimer(waitUntil, -1000)
 #SingleInstance Force
 SetWorkingDir("..\..\")
-#Include "..\KSA\Keyboard Shortcut Adjustments.ahk" ;this is added because we need it
+#Include "..\KSA\Keyboard Shortcut Adjustments.ahk" ;this is only added to prevent errors
 #Include "..\Functions\Windows.ahk" ;this is only added to prevent errors
 #Include "..\Functions\switchTo.ahk" ;this is only added to prevent errors
 #Include "..\Functions\Startup.ahk" ;this is only added to prevent errors
 #Include "..\Functions\General.ahk" ;this is added because we need it
+TraySetIcon(ptf.Icons "\waitUntil.png")
 waitUntil()
 {
     detect()
