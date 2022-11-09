@@ -7,6 +7,7 @@ class ptf {
     static Shortcuts         := this.SupportFiles "\shortcuts"
     static Stream            := A_WorkingDir "\Stream"
     static SettingsLoc       := A_MyDocuments "\tomshi"
+    static ErrorLog          := A_WorkingDir "\Error Logs"
 
     ;My Stuff
     static MyDir             := "E:"
@@ -294,9 +295,9 @@ errorLog(func, error, lineFile, lineNumber)
 {
     start := ""
     text := ""
-    if !DirExist(A_WorkingDir "\Error Logs")
-        DirCreate(A_WorkingDir "\Error Logs")
-    if !FileExist(A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    if !DirExist(ptf.ErrorLog)
+        DirCreate(ptf.ErrorLog)
+    if !FileExist(ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
         {
             try {
                 ;These values can be found at the following link (and the other appropriate tabs) - https://docs.microsoft.com/en-gb/windows/win32/cimwin32prov/win32-process
@@ -330,7 +331,7 @@ errorLog(func, error, lineFile, lineNumber)
         }
     scriptPath :=  lineFile ;this is taking the path given from A_LineFile
     scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
-    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " '"' error '"' " // Script: ``" name "``, Line Number: " lineNumber "`n", A_WorkingDir "\Error Logs\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " '"' error '"' " // Script: ``" name "``, Line Number: " lineNumber "`n",ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }
 
 ; ===========================================================================================================================================
@@ -397,9 +398,11 @@ floorDecimal(num,dec) => RegExReplace(num,"(?<=\.\d{" dec "}).*$")
 /**
  * A function to loop through and either reload or hard reset all* active ahk scripts
  */
-reload_reset_exit(which)
+reload_reset_exit(which, includeChecklist?)
 {
-    
+    all := false
+    if IsSet(includeChecklist)
+        all := true
     switch which {
         case "reload":
             tool.Cust("all active ahk scripts reloading", 500)
@@ -415,7 +418,9 @@ reload_reset_exit(which)
             name := WinGettitle(this_value,, "Visual Studio Code")
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
             SplitPath(path, &ScriptName)
-            if ScriptName = "checklist.ahk" || ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk"
+            if all != true && (ScriptName = "checklist.ahk" || ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk")
+                continue
+            if all = true && (ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk")
                 continue
             PID := WinGetPID(ScriptName)
             switch which {
@@ -447,7 +452,7 @@ reload_reset_exit(which)
         case "exit":
             detect()
             if WinExist("My Scripts.ahk")
-                ProcessClose(WinGetPID("My Scripts.ahk"))
+                ProcessClose(WinGetPID("My Scripts.ahk",, "Visual Studio Code"))
     }
 }
 

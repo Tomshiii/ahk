@@ -33,6 +33,7 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 ## > My Scripts
 - `^AppsKey:: ;ahksearchHotkey;` will now attempt to check the tab the user opened to see if an error page opened instead.
 - Added `#F12:: ;panicExitHotkey;` to run `reload_reset_exit("exit")`
+    - Added `#+F12:: ;panicExitALLHotkey;` to run `reload_reset_exit("exit", true)` (includes `checklist.ahk`)
 - Added `SC03A & F5:: ;refreshWinHotkey;` to refresh the current active window.
 
 `#c:: ;centreHotkey;` 
@@ -41,9 +42,11 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 
 ## > Functions
 - `reload_Reset()` changed to `reload_reset_exit()` and can now close all active ahk scripts
+    - Will ignore `checklist.ahk` by default but can have it included by setting its second parameter
 - `tomshiBasic()` can now pass in font size/weight settings
 - `hotkeysGUI()` now uses objects, maps & Arrays to define its values
 - `updateChecker()` will now correctly stop itself checking for an update when the user has selected that as their setting
+- Fixed `errorLog()` producing log files in the incorrect directory if called from a `timer script`
 
 `settingsGUI()`
 - Can now adjust the `Year` version of `After Effects & Premiere Pro` these scripts look for
