@@ -11,6 +11,7 @@ class ptf {
     ;My Stuff
     static MyDir             := "E:"
     static EditingStuff      := this.MyDir "\_Editing Stuff"
+    static comms             := this.MyDir "\comms"
     static LioranBoardDir    := "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
     static musicDir          := "S:\Program Files\User\Music\"
 
@@ -42,7 +43,8 @@ class ptf {
 
     ;complete file links
     static files := Map(
-        "settings",        A_MyDocuments "\tomshi\settings.ini",
+        "settings",        this.SettingsLoc "\settings.ini",
+        "KSAini",          A_WorkingDir "\lib\KSA\Keyboard Shortcuts.ini",
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",
@@ -323,7 +325,7 @@ errorLog(func, error, lineFile, lineNumber)
                 if LatestReleaseBeta = LatestReleaseMain
                     LatestReleaseBeta := ""
                 time := A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "." A_MSec
-                start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ Tomshi's Scripts" "`n`t\\ Installed Version - " InstalledVersion "`n`t\\ Latest Version Released`n`t`t\\ main - " LatestReleaseMain "`n`t`t\\ beta - " LatestReleaseBeta "`n\\ OS`n`t\\ " OSName "`n`t\\ " A_OSVersion "`n`t\\ " OSArch "`n\\ CPU`n`t\\ " CPU "`n`t\\ Logical Processors - " Logical "`n\\ RAM`n`t\\ Total Physical Memory - " Memory "GB`n`t\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
+                start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ Tomshi's Scripts" "`n`t\\ Installed Version - " InstalledVersion "`n`t\\ Latest Version Released`n`t`t\\ main - " LatestReleaseMain "`n`t`t\\ beta - " LatestReleaseBeta "`n\\ OS`n`t\\ " OSName "`n`t\\ " A_OSVersion "`n`t\\ " OSArch "`n\\ CPU`n`t\\ " RTrim(CPU) "`n`t\\ Logical Processors - " Logical "`n\\ RAM`n`t\\ Total Physical Memory - " Memory "GB`n`t\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
             }
         }
     scriptPath :=  lineFile ;this is taking the path given from A_LineFile

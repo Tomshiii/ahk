@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.5
+;\\v2.10.6
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.6.1
@@ -441,10 +441,10 @@ h:: ;opens the directory for the current premiere project
 {
 	if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects")
 		{
-			if DirExist(commLocation)
+			if DirExist(ptf.comms)
 				{
 					tool.Cust("A Premiere/AE isn't open, opening the comms folder")
-					Run(commLocation)
+					Run(ptf.comms)
 					WinWait("ahk_class CabinetWClass", "comms")
 					WinActivate("ahk_class CabinetWClass", "comms")
 					return
