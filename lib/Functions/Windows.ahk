@@ -762,7 +762,7 @@ discUnread(which := "")
         MouseMove(x + var, y, 2)
         SendInput("{Click}")
         MouseMove(xPos, yPos, 2)
-        return
+        Exit()
     }
     switch which {
         default:
