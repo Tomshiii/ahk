@@ -758,25 +758,35 @@ discLocation()
  */
 discUnread(which := "")
 {
-    x2 := 0
-    y2 := 0
-    message := "servers"
-    if which = 2
-        {
+    end(var := 20) {
+        MouseMove(x + var, y, 2)
+        SendInput("{Click}")
+        MouseMove(xPos, yPos, 2)
+        return
+    }
+    switch which {
+        default:
+            x2 := 0
+            y2 := 0
+            message := "servers"
+        case 2:
             x2 := 70
             y2 := 30
             message := "channels"
-        }
+    }
 	MouseGetPos(&xPos, &yPos)
 	WinGetPos(,,, &height)
-	if !ImageSearch(&x, &y, 0 + x2, 0, 50 + y2, height, "*2 " ptf.Discord "\unread" which ".png")
+    if which = ""
+        {
+            if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " ptf.Discord "\unread3.png")
+                end(-20)
+        }
+	if !ImageSearch(&x, &y, 0 + x2, 0, 50 + y2, height, "*2 " ptf.Discord "\unread" which ".png") || !IsSet(x)
 		{
             tool.Cust("any unread " message,, 1)
             return
         }
-    MouseMove(x + 20, y, 2)
-    SendInput("{Click}")
-    MouseMove(xPos, yPos, 2)
+    end()
 }
 
 ; ===========================================================================================================================================

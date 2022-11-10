@@ -46,6 +46,7 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 - `tomshiBasic()` can now pass in font size/weight settings
 - `hotkeysGUI()` now uses objects, maps & Arrays to define its values
 - Fixed `errorLog()` producing log files in the incorrect directory if called from a `timer script`
+- Fixed `discUnread()` no longer working on dms due to a change with discord
 - Add `libUpdateCheck()` to check for lib file updates
 
 `updateChecker()`
