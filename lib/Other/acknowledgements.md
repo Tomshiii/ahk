@@ -1,0 +1,1 @@
+`ComVar.ahk` => `thqby`: https://github.com/thqby/ahk2_lib/blob/master/ComVar.ahk

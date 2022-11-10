@@ -15,7 +15,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.9
+;\\v2.21.10
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.10.5
 
@@ -69,6 +69,7 @@ updateChecker(MyRelease) ;runs the update checker
 firstCheck(MyRelease) ;runs the firstCheck() function
 oldError() ;runs the loop to delete old log files
 adobeTemp(MyRelease) ;runs the loop to delete cache files
+libUpdateCheck() ;runs a loop to check for lib updates
 
 ;=============================================================================================================================================
 ;

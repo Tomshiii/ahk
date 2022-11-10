@@ -3,11 +3,13 @@
 */
 class ptf {
     ;general
-    static SupportFiles      := A_WorkingDir "\Support Files"
+    static rootDir           := A_WorkingDir
+    static SupportFiles      := this.rootDir "\Support Files"
     static Shortcuts         := this.SupportFiles "\shortcuts"
-    static Stream            := A_WorkingDir "\Stream"
+    static Stream            := this.rootDir "\Stream"
+    static ErrorLog          := this.rootDir "\Error Logs"
+    static lib               := this.rootDir "\lib"
     static SettingsLoc       := A_MyDocuments "\tomshi"
-    static ErrorLog          := A_WorkingDir "\Error Logs"
 
     ;My Stuff
     static MyDir             := "E:"
@@ -45,8 +47,8 @@ class ptf {
     ;complete file links
     static files := Map(
         "settings",        this.SettingsLoc "\settings.ini",
-        "KSAini",          A_WorkingDir "\lib\KSA\Keyboard Shortcuts.ini",
-        "updateCheckGUI",  A_WorkingDir "\lib\Other\WebView2\updateCheckGUI.ahk",
+        "KSAini",          this.lib "\KSA\Keyboard Shortcuts.ini",
+        "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",
@@ -64,9 +66,9 @@ class ptf {
         ;stream
         "StreamINI",       this.Stream "\Streaming.ini",
         "StreamAHK",       this.Stream "\Streaming.ahk",
-        "SongQUEUE",       A_WorkingDir "\TomSongQueueue\Builds\SongQueuer.exe",
-        "SongDJ",          A_WorkingDir "\TomSongQueueue\Builds\ApplicationDj.exe",
-        "Wii Music",       A_WorkingDir "\Sounds\Wii Music.mp3"
+        "SongQUEUE",       this.rootDir "\TomSongQueueue\Builds\SongQueuer.exe",
+        "SongDJ",          this.rootDir "\TomSongQueueue\Builds\ApplicationDj.exe",
+        "Wii Music",       this.rootDir "\Sounds\Wii Music.mp3"
     )
 }
 

@@ -660,3 +660,96 @@ trayMen()
     }
     settings(*) => settingsGUI()
 }
+
+/**
+ * This class is a collection of information relating to external lib files used by my scripts.
+ */
+class libs {
+    static webView2 := {
+        name: "WebView2",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/WebView2/WebView2.ahk",
+        scriptPos: ptf.lib "\Other\WebView2"
+    }
+    static comVar := {
+        name: "ComVar",                                     url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/ComVar.ahk",
+        scriptPos: ptf.lib "\Other"
+    }
+
+    static name        := [this.webView2.name, this.comVar.name, ]
+    static url         := [this.webView2.url, this.comVar.url, ]
+    static scriptPos   := [this.webView2.scriptPos, this.comVar.scriptPos, ]
+}
+
+/**
+ * This function will loop through `class libs {` and ensure that all libs are up to date. This function will not fire on a reload
+ */
+libUpdateCheck()
+{
+    if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+        return
+    /**
+     * This function get's the local version of the requested lib
+     * @param {any} path is the local path the lib is located
+     * @returns {Obj} returns the local lib version number or the entire script in a string
+     */
+    localVer(path) {
+        script := FileRead(path)
+        getVerPos := InStr(script, "@version")
+        if getVerPos = 0 ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
+            return {version: "", script: script}
+        endPos := InStr(script, "*",, getVerPos, 1) - 2
+        localVerStr := SubStr(script, getVerPos + 9, endPos-(getVerPos + 9))
+        return {version: localVerStr, script: script}
+    }
+    /**
+     * This function get's the latest version of the requested lib
+     * @param {any} url is the url the function will check (raw.github links recommended)
+     * @returns {string} returns the latest lib version number
+     */
+    getString(url) {
+        try {
+            main := ComObject("WinHttp.WinHttpRequest.5.1")
+            main.Open("GET", url)
+            main.Send()
+            main.WaitForResponse()
+            string := main.ResponseText
+        }  catch as e {
+            tool.Cust("Couldn't get version info`nYou may not be connected to the internet or lib url may be incorrect")
+            errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet or lib url may be incorrect => " url, A_LineFile, A_LineNumber)
+            return 0
+        }
+        if InStr(string, "﻿") ;removes zero width no-break space
+            string := StrReplace(string, "﻿", "")
+        getVerPos := InStr(string, "@version")
+        if getVerPos = 0
+            return {version: "", script: string}
+        endPos := InStr(string, "*",, getVerPos, 1) - 2
+        ver := SubStr(string, getVerPos + 9, endPos-(getVerPos + 9))
+        return {version: ver, script: string}
+    }
+    ;begin loop
+    loop libs.name.Length {
+        localVersion := localVer(libs.scriptPos[A_Index] "\" libs.name[A_Index] ".ahk")
+        latestVer := getString(libs.url[A_Index])
+        if latestVer.version = ""
+            { ;if the lib doesn't have a @version tag, we'll instead compare the entire file against the local copy and override it if there are differences
+                if localVersion.script !== latestVer.script
+                    {
+                        tool.Wait()
+                        Download(libs.url[A_Index], libs.scriptPos[A_Index] "\" libs.name[A_Index] ".ahk")
+                        tool.Cust(libs.name[A_Index] ".ahk lib file updated")
+                    }
+                continue
+            }
+        if latestVer = 0
+            continue
+        if VerCompare(latestVer.version, localVersion.version) > 0
+            {
+                tool.Wait()
+                Download(libs.url[A_Index], libs.scriptPos[A_Index] "\" libs.name[A_Index] ".ahk")
+                tool.Cust(libs.name[A_Index] ".ahk lib file updated to v" latestVer.version)
+                continue
+            }
+    }
+    tool.Wait()
+    tool.Cust("libs up to date")
+}

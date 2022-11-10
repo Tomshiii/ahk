@@ -7,7 +7,7 @@
  * @webview2version 1.0.1072.54
  ***********************************************************************/
 
-#Include ComVar.ahk
+#Include '..\ComVar.ahk'
 class WebView2 extends WebView2.Base {
 	/**
 	 * create Edge WebView2 control.
