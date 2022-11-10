@@ -642,21 +642,17 @@ trayMen()
     A_TrayMenu.Insert("9&", "Check for Updates", checkUp)
     if check =  "true"
         A_TrayMenu.Check("Check for Updates")
-    else
-        A_TrayMenu.Uncheck("Check for Updates")
     checkUp(*)
     {
         check := IniRead(ptf.files["settings"], "Settings", "update check") ;has to be checked everytime you wish to toggle
-        if check = "true"
-            {
+        switch check {
+            case "true":
                 IniWrite("false", ptf.files["settings"], "Settings", "update check")
                 A_TrayMenu.Uncheck("Check for Updates")
-            }
-        else
-            {
+            case "false":
                 IniWrite("true", ptf.files["settings"], "Settings", "update check")
                 A_TrayMenu.Check("Check for Updates")
-            }
+        }
     }
     settings(*) => settingsGUI()
 }

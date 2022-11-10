@@ -50,7 +50,7 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 
 `updateChecker()`
 - Will now correctly stop itself checking for an update when the user has selected that as their setting
-- Will no longer provide the changelog in an editbox, instead offering the user the option to show the changelog - if they do, will use `WebView2` to load the github release page
+- Will no longer provide the changelog in an edit box, instead offering the user the option to show the changelog - if they do, will use `WebView2` to load the github release page
 
 `settingsGUI()`
 - Can now adjust the `Year` version of `After Effects & Premiere Pro` these scripts look for

@@ -42,6 +42,7 @@ else
                     WinWaitClose("Select commission folder")
                 if WinExist("Wait or Continue?")
                     ExitApp()
+                goto end
             }
         dashLocation := unset
         dashLocationAE := unset
