@@ -179,86 +179,35 @@ updateChecker(MyRelease) {
         case "true":
             if !VerCompare(MyRelease, version) > 0
                 return
-            ;grabbing changelog info
-            try {
-                change := ComObject("WinHttp.WinHttpRequest.5.1")
-                if betaprep = 1 && changeVer = "beta"
-                    change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/dev/changelog.md")
-                else
-                    change.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/main/changelog.md")
-                change.Send()
-                change.WaitForResponse()
-                ChangeLog := change.ResponseText
-            } catch as e {
-                tool.Cust("Couldn't get changelog info`nYou may not be connected to the internet")
-                errorLog(A_ThisFunc "()", "Couldn't get changelog info, you may not be connected to the internet", A_LineFile, A_LineNumber)
-                return
-            }
-            ;\\removing the warning about linking to commits
-            beginwarn := InStr(ChangeLog, "###### **_",,, 1)
-            endwarnfind := InStr(ChangeLog, "_**",,, 1)
-            endend := endwarnfind + 5
-            warnlength := endend - beginwarn
-            removewarn := SubStr(ChangeLog, beginwarn, warnlength)
-            warn := StrReplace(ChangeLog, removewarn, "", 1,, 1)
-            ;\\
-            ;\\deleting all [] surrounding links
-            deletesquare1 := StrReplace(warn, "]", "")
-            deletesquare2 := StrReplace(deletesquare1, "[", "")
-            ;\\
-            ;dealing with directories we'll need
-            if !DirExist(A_Temp "\tomshi")
-                DirCreate(A_Temp "\tomshi")
-            if FileExist(A_Temp "\tomshi\changelog.ini")
-                FileDelete(A_Temp "\tomshi\changelog.ini")
-            if FileExist(A_Temp "\tomshi\changelog.txt")
-                FileDelete(A_Temp "\tomshi\changelog.txt")
-            ;create baseline changelog
-            FileAppend(deletesquare2, A_Temp "\tomshi\changelog.txt")
-            ;keys counts how many links are found
-            keys := 0
-            loop { ;this loop will go through and copy all urls to an ini file
-                findurl := InStr(deletesquare2, "https://",,, A_Index)
-                if findurl = 0
-                    break
-                beginurl := findurl - 1
-                findendurl := InStr(deletesquare2, ")",, findurl, 1)
-                findendend := findendurl + 1
-                urllength := findendend - beginurl
-                removeulr := SubStr(deletesquare2, beginurl, urllength)
-                valueurl := IniWrite(removeulr, A_Temp "\tomshi\changelog.ini", "urls", A_Index)
-                keys += 1
-            }
-            loop keys { ;this loop will go through and remove all url's from the changelog
-                read := FileRead(A_Temp "\tomshi\changelog.txt")
-                refurl := IniRead(A_Temp "\tomshi\changelog.ini", "urls", A_Index)
-                attempt := StrReplace(read, refurl, "")
-                if FileExist(A_Temp "\tomshi\changelog.txt")
-                    FileDelete(A_Temp "\tomshi\changelog.txt")
-                FileAppend(attempt, A_Temp "\tomshi\changelog.txt")
-                finalchange := FileRead(A_Temp "\tomshi\changelog.txt")
-            }
-            if IsSet(finalchange) ;if there are no links and finalchange hasn't recieved a value, it will fall back to the original response from the changelog on github
-                LatestChangeLog := finalchange
-            else
-                LatestChangeLog := change.ResponseText
-            ;we now delete those temp files
-            if FileExist(A_Temp "\tomshi\changelog.ini")
-                FileDelete(A_Temp "\tomshi\changelog.ini")
-            if FileExist(A_Temp "\tomshi\changelog.txt")
-                FileDelete(A_Temp "\tomshi\changelog.txt")
             ;create gui
-            MyGui := tomshiBasic(,, "+Resize +MinSize600x400 +MaxSize600x400", "Scripts Release " version)
+            MyGui := tomshiBasic(,, "+Resize +MaxSize600x400 AlwaysOnTop", "Scripts Release " version)
             ;set title
-            Title := MyGui.Add("Text", "H40 W500", "New Scripts - Release " version)
+            Title := MyGui.Add("Text", "Section H40 W350", "New Scripts - Release " version)
             Title.SetFont("S15")
             ;set github button
             gitButton := MyGui.Add("Button", "X+20 Y10", "GitHub")
             gitButton.OnEvent("Click", githubButton)
-            ;set changelog
-            ChangeLog := MyGui.Add("Edit", "X8 Y+5 r18 -WantCtrlA ReadOnly w590")
+
+            ;view changelog
+            view := MyGui.Add("Button", "Section xs Y+20 h40 W100", "View Latest Changelog")
+            view.OnEvent("Click", viewClick)
+            viewClick(*)
+            {
+                Run(ptf.files["updateCheckGUI"])
+                WinSetAlwaysOnTop(0, "Scripts Release " version)
+                WinWait("updateCheckGUI")
+                WinActivate("updateCheckGUI")
+            }
+
+            ;set download button
+            gitButton.GetPos(&x)
+            downloadbutt := MyGui.Add("Button", "Section X" x-85 " ys+13", "Download")
+            downloadbutt.OnEvent("Click", Down)
+            ;set cancel button
+            cancelbutt := MyGui.Add("Button", "Default X+5", "Cancel")
+            cancelbutt.OnEvent("Click", closegui)
             ;set "don't prompt again" checkbox
-            noprompt := MyGui.Add("Checkbox", "X270 Y350", "Don't prompt again")
+            noprompt := MyGui.Add("Checkbox", "xs-175 Ys-10", "Don't prompt again")
             noprompt.OnEvent("Click", prompt)
             ;set beta checkbox
             if IniRead(ptf.files["settings"], "Settings", "beta update check", "false") = "true"
@@ -266,14 +215,6 @@ updateChecker(MyRelease) {
             else
                 betaCheck := MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
             betaCheck.OnEvent("Click", prompt)
-            ;set download button
-            downloadbutt := MyGui.Add("Button", "X+5 Y+-30", "Download")
-            downloadbutt.OnEvent("Click", Down)
-            ;set cancel button
-            cancelbutt := MyGui.Add("Button", "Default X+5", "Cancel")
-            cancelbutt.OnEvent("Click", closegui)
-            ;getting value for changelog
-            ChangeLog.Value := LatestChangeLog
 
             if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
                 goDark()
@@ -283,7 +224,6 @@ updateChecker(MyRelease) {
                 buttonDarkMode(gitButton.Hwnd)
                 buttonDarkMode(downloadbutt.Hwnd)
                 buttonDarkMode(cancelbutt.Hwnd)
-                buttonDarkMode(ChangeLog.Hwnd)
             }
 
             MyGui.Show()
@@ -314,7 +254,7 @@ updateChecker(MyRelease) {
                         WinActivate("Tomshiii/ahk")
                         return
                     }
-                Run("https://github.com/tomshiii/ahk/releases/latest")
+                Run("https://github.com/tomshiii/ahk/releases")
             }
             down(*) {
                 MyGui.Opt("Disabled")

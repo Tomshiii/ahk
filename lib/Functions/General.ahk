@@ -46,6 +46,7 @@ class ptf {
     static files := Map(
         "settings",        this.SettingsLoc "\settings.ini",
         "KSAini",          A_WorkingDir "\lib\KSA\Keyboard Shortcuts.ini",
+        "updateCheckGUI",  A_WorkingDir "\lib\Other\WebView2\updateCheckGUI.ahk",
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",

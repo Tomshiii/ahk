@@ -45,8 +45,11 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
     - Will ignore `checklist.ahk` by default but can have it included by setting its second parameter
 - `tomshiBasic()` can now pass in font size/weight settings
 - `hotkeysGUI()` now uses objects, maps & Arrays to define its values
-- `updateChecker()` will now correctly stop itself checking for an update when the user has selected that as their setting
 - Fixed `errorLog()` producing log files in the incorrect directory if called from a `timer script`
+
+`updateChecker()`
+- Will now correctly stop itself checking for an update when the user has selected that as their setting
+- Will no longer provide the changelog in an editbox, instead offering the user the option to show the changelog - if they do, will use `WebView2` to load the github release page
 
 `settingsGUI()`
 - Can now adjust the `Year` version of `After Effects & Premiere Pro` these scripts look for
