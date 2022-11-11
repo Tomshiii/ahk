@@ -288,16 +288,38 @@ timeline(timeline, x1, x2, y1)
 ;
 ; ===========================================================================================================================================
 /**
- * A function designed to log errors in scripts if they occur
- * @param {String} func just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey "::"` if it's a hotkey
- * @param {String} error is what text you want logged to explain the error
- * @param {String} lineFile just type `A_LineFile`
- * @param {String} lineNumber just type `A_LineNumber`
+ * A function designed to log errors in scripts if they occur. Simply pass in an error object and optionally pass a backup func/hotkey name.
+ * 
+ * If you wish to log an error without passing in a errorObj, you can pass manual information in as well.
+ * @param {Object} err The error object you can simply pass in
+ * @param {String} backupfunc Sometimes the error object doesn't pass through what func/hotkey has the issue - just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey "::"` if it's a hotkey
+ * @param {String} backupErr is what text you want logged to explain the error
+ * @param {String} backupLineFile just type `A_LineFile`
+ * @param {Integer} backupLineNumber just type `A_LineNumber`
  */
-errorLog(func, error, lineFile, lineNumber)
+errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?)
 {
     start := ""
     text := ""
+    beginning := ""
+    if !IsObject(err)
+        {
+            func := backupfunc
+            error := backupErr
+            lineFile := backupLineFile
+            lineNumber := backupLineNumber
+            goto start
+        }
+    func := err.what
+    if func = "" && IsSet(backupfunc?)
+        func := backupfunc
+    error := type(err) ": " err.Message
+    lineFile := err.File
+    lineNumber := err.Line
+    extra := err.Extra
+    if IsSet(extra) && extra != ""
+        beginning := "``" extra "``-- "
+    start:
     if !DirExist(ptf.ErrorLog)
         DirCreate(ptf.ErrorLog)
     if !FileExist(ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
@@ -332,9 +354,9 @@ errorLog(func, error, lineFile, lineNumber)
                 start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ Tomshi's Scripts" "`n`t\\ Installed Version - " InstalledVersion "`n`t\\ Latest Version Released`n`t`t\\ main - " LatestReleaseMain "`n`t`t\\ beta - " LatestReleaseBeta "`n\\ OS`n`t\\ " OSName "`n`t\\ " A_OSVersion "`n`t\\ " OSArch "`n\\ CPU`n`t\\ " RTrim(CPU) "`n`t\\ Logical Processors - " Logical "`n\\ RAM`n`t\\ Total Physical Memory - " Memory "GB`n`t\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
             }
         }
-    scriptPath :=  lineFile ;this is taking the path given from A_LineFile
+    scriptPath := lineFile ;this is taking the path given from A_LineFile
     scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
-    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " '"' error '"' " // Script: ``" name "``, Line Number: " lineNumber "`n",ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " beginning '"' error '"' " // Script: ``" name "``, Line Number: " lineNumber "`n",ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }
 
 ; ===========================================================================================================================================
@@ -559,7 +581,7 @@ refreshWin(window, runTarget)
                     if !path
                         {
                             tool.Cust("Couldn't determine the path of the explorer window")
-                            errorLog(A_ThisFunc "()", "Couldn't determine the path of the explorer window", A_LineFile, A_LineNumber)
+                            errorLog(, A_ThisFunc "()", "Couldn't determine the path of the explorer window", A_LineFile, A_LineNumber)
                             return
                         }
                     runTarget := path
@@ -570,7 +592,7 @@ refreshWin(window, runTarget)
     if !WinWaitClose(window,, 1.5)
         {
             tool.Cust("waiting for the window to close timed out")
-            errorLog(A_ThisFunc "()", "waiting for the window to close timed out", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "waiting for the window to close timed out", A_LineFile, A_LineNumber)
             return
         }
     sleep 250
@@ -584,7 +606,7 @@ refreshWin(window, runTarget)
                 if !WinWait(window,, 1.5)
                     {
                         tool.Cust("waiting for the window to open timed out")
-                        errorLog(A_ThisFunc "()", "waiting for the window to open timed out", A_LineFile, A_LineNumber)
+                        errorLog(, A_ThisFunc "()", "waiting for the window to open timed out", A_LineFile, A_LineNumber)
                         return
                     }
             }

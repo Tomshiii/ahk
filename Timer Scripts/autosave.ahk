@@ -180,7 +180,7 @@ save()
             } catch as e {
                 block.Off()
                 tool.Cust("A variable wasn't assigned a value")
-                errorLog(A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                errorLog(e, A_ThisFunc "()")
                 origWind := unset
                 SetTimer(, -ms)
                 goto end2
@@ -194,7 +194,7 @@ save()
         {
             block.Off()
             tool.Cust("A variable wasn't assigned a value")
-            errorLog(A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
             origWind := unset
             SetTimer(, -ms)
             goto end2
@@ -217,7 +217,7 @@ save()
                 {
                     block.Off()
                     tool.Cust("A window is currently open that may alter the saving process")
-                    errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                    errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                     SetTimer(, -ms)
                     goto end
                 }
@@ -243,7 +243,7 @@ save()
                         {
                             block.Off()
                             tool.Cust("A window is currently open that may alter the saving process")
-                            errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                            errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                             SetTimer(, -ms)
                             goto end
                         }
@@ -272,7 +272,7 @@ save()
                     WinActivate("ahk_exe " origWind)
             } catch as e {
                 tool.Cust("couldn't activate original window")
-                errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
+                errorLog(e, A_ThisFunc "()")
             }
             origWind := unset
             SetTimer(, -ms)
@@ -288,7 +288,7 @@ save()
             {
                 block.Off()
                 tool.Cust("A window is currently open that may alter the saving process")
-                errorLog(A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                 SetTimer(, -ms)
                 goto end
             }
@@ -312,7 +312,7 @@ save()
                         WinActivate("ahk_exe " origWind)
                 } catch as e {
                     tool.Cust("couldn't activate original window")
-                    errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
+                    errorLog(e, A_ThisFunc "()")
                 }
                 origWind := unset
                 SetTimer(, -ms)
@@ -329,7 +329,7 @@ save()
         SendInput("^s") ;attempt a save just in case
         block.Off() ;then bail
         tool.Cust("failed to find play/stop button")
-        errorLog(A_ThisFunc "()", "Couldn't find the play/stop button", A_LineFile, A_LineNumber)
+        errorLog(er, A_ThisFunc "()")
         origWind := unset
         SetTimer(, -ms)
         goto end2
@@ -370,7 +370,7 @@ save()
         switchToPremiere()
     } catch as e {
         tool.Cust("couldn't activate Premiere Pro")
-        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
     }
 
     ;\\ if a video was playing, we now start it up again
@@ -399,7 +399,7 @@ save()
             WinActivate("ahk_exe " origWind)
     } catch as e {
         tool.Cust("couldn't activate original window")
-        errorLog(A_ThisFunc "()", "Couldn't activate the original active window", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
     }
     ToolTip("")
     origWind := unset

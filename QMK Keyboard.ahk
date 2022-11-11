@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.10.6
+;\\v2.11
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.6.1
@@ -216,7 +216,7 @@ f:: ;this macro is to open the speed menu
 		}
 	} catch as e {
 		tool.Cust("something broke")
-		errorLog(A_ThisHotkey "::", "Encountered an error attempting to get the ControlClassNN", A_LineFile, A_LineNumber)
+		errorLog(e, A_ThisHotkey "::")
 		Exit
 	}
 	SendInput(selectAtPlayhead speedHotkey)
@@ -238,7 +238,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 		{
 			block.Off()
 			tool.Cust("the margin button",, 1)
-			errorLog(A_ThisHotkey "::", "Couldn't find the margin button", A_LineFile, A_LineNumber)
+			errorLog(, A_ThisHotkey "::", "Couldn't find the margin button", A_LineFile, A_LineNumber)
 			return
 		}
 	MouseMove(x, y)
@@ -450,7 +450,7 @@ h:: ;opens the directory for the current premiere project
 					return
 				}
 			tool.Cust("A Premiere/AE isn't open")
-			errorLog(A_ThisHotkey "::", "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
+			errorLog(, A_ThisHotkey "::", "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
 			return
 		}
 	try {

@@ -24,7 +24,7 @@ Rscale(value, property, plus)
             block.Off()
             MouseMove(xpos, ypos)
             tool.Cust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
     if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png")
@@ -36,7 +36,7 @@ Rscale(value, property, plus)
         {
             block.Off()
             tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }
     MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
@@ -94,7 +94,7 @@ REffect(folder, effect)
         {
             block.Off()
             tool.Cust("the effects button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the effects button", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the effects button", A_LineFile, A_LineNumber)
             return
         }
     else if ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " ptf.Resolve "effects.png") ;checks to see if the effects button is deactivated
@@ -106,7 +106,7 @@ REffect(folder, effect)
         {
             block.Off()
             tool.Cust("open/close button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the open/close button", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the open/close button", A_LineFile, A_LineNumber)
             return
         }
     else if ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "closed.png") ;checks to see if the effects window sidebar is opened
@@ -118,7 +118,7 @@ REffect(folder, effect)
         {
             block.Off()
             tool.Cust("the fxfolder",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the fxfolder", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the fxfolder", A_LineFile, A_LineNumber)
             return
         }
     else if ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve folder "2.png") ;checks to see if the drop down option you want is activated
@@ -140,7 +140,7 @@ REffect(folder, effect)
         {
             block.Off()
             tool.Cust("the search button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the search button", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the search button", A_LineFile, A_LineNumber)
             return
         }
     sleep 50
@@ -148,7 +148,7 @@ REffect(folder, effect)
     colError()
     {
         tool.Cust("the desired effect",, 1)
-        errorLog(A_ThisFunc "()", "couldn't find desired effect", A_LineFile, A_LineNumber)
+        errorLog(, A_ThisFunc "()", "couldn't find desired effect", A_LineFile, A_LineNumber)
         block.off
         exit
     }
@@ -187,7 +187,7 @@ rvalhold(property, plus, rfelseval)
             block.Off()
             MouseMove(xpos, ypos)
             tool.Cust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
             return
         }
     if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png")
@@ -199,7 +199,7 @@ rvalhold(property, plus, rfelseval)
         {
             block.Off()
             tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }
     MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
@@ -243,7 +243,7 @@ rflip(button)
             block.Off()
             MouseMove(xpos, ypos)
             tool.Cust("desired button",, 1)
-            errorLog(A_ThisFunc "()", "Was unable to find the desired button", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the desired button", A_LineFile, A_LineNumber)
         }
     MouseMove(xh, yh)
     click
@@ -260,7 +260,7 @@ rgain(value)
     if !IsNumber(value)
         {
             tool.Cust("You have put a non numeric value as this function's parameter", 2.0)
-            errorLog(A_ThisFunc "()", "User put a non numeric value in function's parameter", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "User put a non numeric value in function's parameter", A_LineFile, A_LineNumber)
             return
         }
     coord.w()
@@ -277,7 +277,7 @@ rgain(value)
             block.Off()
             MouseMove(xpos, ypos)
             tool.Cust("audio tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the audio tab", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the audio tab", A_LineFile, A_LineNumber)
             return
         }
     if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "audio.png")
@@ -289,7 +289,7 @@ rgain(value)
         {
             block.Off()
             tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
             return
         }
     MouseMove(xz + "215", yz + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
@@ -302,7 +302,7 @@ rgain(value)
         {
             block.Off()
             tool.Cust("Clipboard timed out waiting for data")
-            errorLog(A_ThisFunc "()", "Clipboard timed out waiting for data", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Clipboard timed out waiting for data", A_LineFile, A_LineNumber)
             return
         }
     gain := A_Clipboard + value

@@ -53,7 +53,7 @@ else
                     {
                         block.Off()
                         tool.Cust("``titlecheck`` variable wasn't assigned a value")
-                        errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                        errorLog(, A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
                         premNotOpen(&checklist, &logs, &path)
                         if WinExist("Select commission folder")
                             WinWaitClose("Select commission folder")
@@ -71,7 +71,7 @@ else
                     {
                         block.Off()
                         tool.Cust("``aeCheck`` variable wasn't assigned a value")
-                        errorLog(A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                        errorLog(, A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
                         premNotOpen(&checklist, &logs, &path)
                         if WinExist("Select commission folder")
                             WinWaitClose("Select commission folder")

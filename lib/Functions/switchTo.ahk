@@ -88,7 +88,7 @@ switchToAE()
                 }                
         } catch as e {
             tool.Cust("Couldn't determine proper path from Premiere")
-            errorLog(A_ThisFunc "()", "Couldn't determine proper path from Premiere", A_LineFile, A_LineNumber)
+            errorLog(e, A_ThisFunc "()")
             runae()
             return
         }

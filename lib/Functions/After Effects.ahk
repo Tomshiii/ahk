@@ -15,7 +15,7 @@ aevaluehold(button, property, optional := 0) ;this function is incredibly touchy
     if !(x > 550 and x < 2542) and !(y > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
         {
             tool.Cust("you're not hovering a track")
-            errorLog(A_ThisFunc "()", "User not hovering over a track", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "User not hovering over a track", A_LineFile, A_LineNumber)
             return
         }
         block.On()
@@ -40,7 +40,7 @@ aevaluehold(button, property, optional := 0) ;this function is incredibly touchy
         {
             block.Off()
             tool.Cust("the property you're after",, 1)
-            errorLog(A_ThisFunc "()", "Couldn't find the property the user was after", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Couldn't find the property the user was after", A_LineFile, A_LineNumber)
             KeyWait(A_ThisHotkey)
             return
         }
@@ -78,7 +78,7 @@ aePreset(preset)
     if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
         {
             tool.Cust("you haven't selected a clip`nor aren't hovering the right spot")
-            errorLog(A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineFile, A_LineNumber)
             block.Off()
             Exit
         }
@@ -89,7 +89,7 @@ aePreset(preset)
         ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
     } catch as e {
         tool.Cust("Couldn't find the ClassNN value")
-        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
     }
     if ImageSearch(&x2, &y2, efx, efy, efx + width, efy + height, "*2 " ptf.AE "findbox.png") || ImageSearch(&x2, &y2, efx, efy, efx + width, efy + height, "*2 " ptf.AE "findbox2.png")
         goto move
@@ -97,7 +97,7 @@ aePreset(preset)
         {
             block.Off()
             tool.Cust("couldn't find the magnifying glass")
-            errorLog(A_ThisFunc "()", "Couldn't find the magnifying glass", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Couldn't find the magnifying glass", A_LineFile, A_LineNumber)
             return
         }
     move:
@@ -115,7 +115,7 @@ aePreset(preset)
                     {
                         block.Off()
                         tool.Cust("Couldn't determine the caret")
-                        errorLog(A_ThisFunc "()","Function couldn't determine the caret position", A_LineFile, A_LineNumber)
+                        errorLog(, A_ThisFunc "()","Function couldn't determine the caret position", A_LineFile, A_LineNumber)
                         return
                     }
             } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -147,7 +147,7 @@ aeScaleAndPos()
     if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
         {
             tool.Cust("you haven't selected a clip`nor aren't hovering the right spot")
-            errorLog(A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "User not hovering over the right spot on the track", A_LineFile, A_LineNumber)
             block.Off()
             Exit
         }
@@ -156,7 +156,7 @@ aeScaleAndPos()
         ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
     } catch as e {
         tool.Cust("Couldn't find the ClassNN value")
-        errorLog(A_ThisFunc "()", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
     }
     ;ToolTip(efx ", " efy) ;debugging
     SendInput(audioAE "s") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
@@ -177,7 +177,7 @@ aeScaleAndPos()
             {
                 block.Off()
                 tool.Cust("The Scale property after " A_Index " attempts",, 1)
-                errorLog(A_ThisFunc "()", "Couldn't find the Scale property", A_LineFile, A_LineNumber)
+                errorLog(, A_ThisFunc "()", "Couldn't find the Scale property", A_LineFile, A_LineNumber)
                 return
             }
     }
@@ -219,7 +219,7 @@ motionBlur()
         if A_Index > 4
             {
                 tool.Cust("Couldn't find blur button")
-                errorLog(A_ThisFunc "()", "Couldn't find the blur button", A_LineFile, A_LineNumber)
+                errorLog(, A_ThisFunc "()", "Couldn't find the blur button", A_LineFile, A_LineNumber)
                 break
             }
     }
@@ -247,7 +247,7 @@ motionBlur()
                 coord.s()
                 MouseMove(x, y)
                 block.Off()
-                errorLog(A_ThisFunc "()", "Couldn't find the Advanced tab", A_LineFile, A_LineNumber)
+                errorLog(, A_ThisFunc "()", "Couldn't find the Advanced tab", A_LineFile, A_LineNumber)
                 tool.Cust("the Advanced tab",, 1)
                 return
             }
@@ -271,7 +271,7 @@ motionBlur()
                 coord.s()
                 MouseMove(x, y)
                 block.Off()
-                errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle image", A_LineFile, A_LineNumber)
+                errorLog(, A_ThisFunc "()", "Couldn't find the Shutter Angle image", A_LineFile, A_LineNumber)
                 tool.Cust("the Shutter Angle image",, 1)
                 return
             }
@@ -299,7 +299,7 @@ motionBlur()
                 coord.s()
                 MouseMove(x, y)
                 block.Off()
-                errorLog(A_ThisFunc "()", "Couldn't find the Shutter Angle value", A_LineFile, A_LineNumber)
+                errorLog(, A_ThisFunc "()", "Couldn't find the Shutter Angle value", A_LineFile, A_LineNumber)
                 tool.Cust("the Shutter Angle value",, 1)
                 return
             }
@@ -350,7 +350,7 @@ aetimeline()
                     tool.Cust("The main window is not active")
                 default:
                     tool.Cust("A variable was not assigned a value")
-                    errorLog(A_ThisFunc "()", "A variable was not assigned a value`nor the main window is not active", A_LineFile, A_LineNumber)
+                    errorLog(, A_ThisFunc "()", "A variable was not assigned a value`nor the main window is not active", A_LineFile, A_LineNumber)
             }
             return
         }

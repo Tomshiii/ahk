@@ -15,9 +15,9 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.21.10
+;\\v2.22
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.10.5
+;\\v2.11
 
 ; ============================================================================================================================================
 ;
@@ -141,9 +141,9 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 							return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
 					}
 			}
-			catch {
+			catch as e {
 				tool.Cust(A_ThisFunc "() failed to get the monitor that the active window is in")
-				errorLog(A_ThisFunc "()", "failed to get the monitor that the active window is in", A_LineFile, A_LineNumber)
+				errorLog(e, A_ThisFunc "()")
 				break
 			}
 		}
@@ -163,7 +163,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	if !IsObject(monitor) || !IsSet(monitor)
 		{
 			tool.Cust("Failed to get information about the window/monitor relationship`nThe window may be overlapping monitors")
-			errorLog(A_ThisHotkey "::", "Failed to get information about the window/monitor relationship", A_LineFile, A_LineNumber)
+			errorLog(, A_ThisHotkey "::", "Failed to get information about the window/monitor relationship", A_LineFile, A_LineNumber)
 			return
 		}
 	if win = "" ;if our win variable doesn't have a title yet we run this code block
@@ -263,7 +263,7 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			tool.Cust("Couldn't copy data to clipboard")
-			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			errorLog(, A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
 	Run("https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm")
@@ -461,7 +461,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 					WinActivate(title) ;reactivates the original window
 				} catch as e {
 					tool.Cust("Failed to get information on last active window")
-					errorLog(A_ThisHotkey "::", "Failed to get information on last active window", A_LineFile, A_LineNumber)
+					errorLog(e, A_ThisHotkey "::")
 				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 				return
@@ -605,7 +605,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
     } catch as e {
         tool.Cust("Couldn't find the ClassNN value")
-        errorLog(A_ThisHotkey "::", "Couldn't find the ClassNN value", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisHotkey "::")
     }
 	;MouseMove 34, 917 ;location of the selection tool
 	if width = 0 || height = 0
@@ -617,7 +617,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 					{
 						SendInput(selectionPrem)
 						tool.Cust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", 2000)
-						errorLog(A_ThisHotkey "::", "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
+						errorLog(, A_ThisHotkey "::", "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 						return
 					}
 				sleep 100
@@ -641,7 +641,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			{
 				SendInput(selectionPrem)
 				tool.Cust("selection tool`nUsed the selection hotkey instead", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-				errorLog(A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
+				errorLog(, A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 				return
 			}
 	}
@@ -684,14 +684,13 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			if A_Index > 5
 				{
 					;tool.Cust("Function failed to find project window")
-					;errorLog(A_ThisHotkey "::", "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
+					;errorLog(, A_ThisHotkey "::", "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 					break
 				}
 		}
-	} catch as e
-		{
+	} catch as e {
 			tool.Cust("Function failed to find project window")
-			errorLog(A_ThisHotkey "::", "Function failed to find project window", A_LineFile, A_LineNumber)
+			errorLog(e, A_ThisHotkey "::")
 			return
 		}
 	;MsgBox("x " toolx "`ny " tooly "`nwidth " width "`nheight " height "`nclass " ClassNN) ;debugging
@@ -707,18 +706,12 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				if ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
 					goto move
 				else
-					{
-						block.Off()
-						tool.Cust("project window", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-						errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
-						return
-						;if the project window is on a secondary monitor ahk can have a difficult time trying to find it. I have this issue with the monitor to the left of my "main" display
-					}
+					throw Error e
 			}
 	} catch as e {
 		block.Off()
 		tool.Cust("Couldn't find the project window")
-		errorLog(A_ThisHotkey "::", "Couldn't find the project window", A_LineFile, A_LineNumber)
+		errorLog(e, A_ThisHotkey "::")
 		return
 	}
 	move:
@@ -778,7 +771,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			block.Off()
 			tool.Cust("the sfx folder", 2000, 1)
-			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
+			errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
 			return
 		}
 	added:
@@ -800,7 +793,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		{
 			block.Off()
 			tool.Cust("the sfx folder in premiere", 2000, 1)
-			errorLog(A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
+			errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
 			return
 		}
 	loop {
@@ -817,7 +810,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			{
 				block.Off()
 				tool.Cust("the bin", 2000, 1)
-				errorLog(A_ThisHotkey "::", "Couldn't find the bin", A_LineFile, A_LineNumber)
+				errorLog(, A_ThisHotkey "::", "Couldn't find the bin", A_LineFile, A_LineNumber)
 				return
 			}
 	}
@@ -883,7 +876,7 @@ RButton::moveWin("") ;minimise
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			tool.Cust("Couldn't copy data to clipboard")
-			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			errorLog(, A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
 	Run("https://www.google.com/search?d&q=" A_Clipboard)
@@ -900,7 +893,7 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 		{
 			A_Clipboard := previous
 			tool.Cust("Couldn't copy data to clipboard")
-			errorLog(A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			errorLog(, A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
 			return
 		}
 	length := StrLen(A_Clipboard)

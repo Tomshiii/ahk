@@ -105,7 +105,7 @@ getScriptRelease(beta := false, &changeVer := "")
         string := main.ResponseText
     }  catch as e {
         tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
-        errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
         return 0
     }
     loop {
@@ -160,20 +160,20 @@ updateChecker(MyRelease) {
     switch check {
         default:
             tool.Cust("You put something else in the settings.ini file you goose")
-            errorLog(A_ThisFunc "()", "You put something else in the settings.ini file you goose", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "You put something else in the settings.ini file you goose", A_LineFile, A_LineNumber)
             return
         case "false":
             tool.Wait()
             if VerCompare(MyRelease, version) < 0
                 {
                     tool.Cust("You're using an outdated version of these scripts", 3.0)
-                    errorLog(A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
+                    errorLog(, A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
                     return
                 }
             else
                 {
                     tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
-                    errorLog(A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
+                    errorLog(, A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
                     return
                 }
         case "true":
@@ -327,7 +327,7 @@ updateChecker(MyRelease) {
                             tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
                         } catch as e {
                             tool.Cust("There was an error trying to backup your current scripts", 2000)
-                            errorLog(A_ThisFunc "()", "There was an error trying to backup your current scripts", A_LineFile, A_LineNumber)
+                            errorLog(e, A_ThisFunc "()")
                         }
                         return
                     }
@@ -528,23 +528,23 @@ verCheck()
         {
             getLatestVer()
             {
-                    try {
-                        latest := ComObject("WinHttp.WinHttpRequest.5.1")
-                        latest.Open("GET", "https://lexikos.github.io/v2/docs/AutoHotkey.htm")
-                        latest.Send()
-                        latest.WaitForResponse()
-                        Latestpage := latest.ResponseText
+                try {
+                    latest := ComObject("WinHttp.WinHttpRequest.5.1")
+                    latest.Open("GET", "https://lexikos.github.io/v2/docs/AutoHotkey.htm")
+                    latest.Send()
+                    latest.WaitForResponse()
+                    Latestpage := latest.ResponseText
 
-                        startVer := InStr(Latestpage, "<!--ver-->", 1,, 1)
-                        endVer := InStr(Latestpage, "<!--/ver-->", 1,, 1)
-                        LatestVersion := SubStr(Latestpage, startVer + 10, endVer - startVer - 10)
-                        return LatestVersion
-                    } catch as e {
-                        tool.Cust("Couldn't get the latest version of ahk`nYou may not be connected to the internet")
-                        errorLog(A_ThisFunc "()", "Couldn't get latest version of ahk, you may not be connected to the internet", A_LineFile, A_LineNumber)
-                        return
-                    }
+                    startVer := InStr(Latestpage, "<!--ver-->", 1,, 1)
+                    endVer := InStr(Latestpage, "<!--/ver-->", 1,, 1)
+                    LatestVersion := SubStr(Latestpage, startVer + 10, endVer - startVer - 10)
+                    return LatestVersion
+                } catch as e {
+                    tool.Cust("Couldn't get the latest version of ahk`nYou may not be connected to the internet")
+                    errorLog(e, A_ThisFunc "()")
+                    return
                 }
+            }
             if getLatestVer() = ""
                 return
             LatestVersion := getLatestVer()
@@ -710,7 +710,7 @@ libUpdateCheck()
             string := main.ResponseText
         }  catch as e {
             tool.Cust("Couldn't get version info`nYou may not be connected to the internet or lib url may be incorrect")
-            errorLog(A_ThisFunc "()", "Couldn't get version info, you may not be connected to the internet or lib url may be incorrect => " url, A_LineFile, A_LineNumber)
+            errorLog(e, A_ThisFunc "()")
             return 0
         }
         if InStr(string, "﻿") ;removes zero width no-break space

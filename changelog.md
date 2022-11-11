@@ -48,6 +48,7 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 - Fixed `errorLog()` producing log files in the incorrect directory if called from a `timer script`
 - Fixed `discUnread()` no longer working on dms due to a change with discord
 - Add `libUpdateCheck()` to check for lib file updates
+- `errorLogs()` can now accept an `Error Object` and omit the rest of its parameters
 
 `updateChecker()`
 - Will now correctly stop itself checking for an update when the user has selected that as their setting

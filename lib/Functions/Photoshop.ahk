@@ -20,7 +20,7 @@ psProp(image)
                 {
                     block.Off()
                     tool.Cust("the value you wish`nto adjust_1",, 1)
-                    errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
+                    errorLog(, A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                     return
                 }
             MouseMove(x, y) ;then move to it
@@ -36,7 +36,7 @@ psProp(image)
                     MouseMove(xpos, ypos)
                     block.Off()
                     tool.Cust("the value you wish`nto adjust_2",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
+                    errorLog(, A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                     return
                 }
             MouseMove(x, y) ;moves to the position variable
@@ -106,7 +106,7 @@ psSave()
                         MouseMove(0, 0)
                         block.Off()
                         tool.Cust("png",, 1)
-                        errorLog(A_ThisFunc "()", "Was unable to find the png option", A_LineFile, A_LineNumber)
+                        errorLog(, A_ThisFunc "()", "Was unable to find the png option", A_LineFile, A_LineNumber)
                         return
                     }
             }
@@ -182,7 +182,7 @@ psType(filetype)
         {
             block.Off()
             tool.Cust("png drop down",, 1)
-            errorLog(A_ThisFunc "()", "Was unable to find the filetype option", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Was unable to find the filetype option", A_LineFile, A_LineNumber)
             return
         }
     MouseMove(x, y)

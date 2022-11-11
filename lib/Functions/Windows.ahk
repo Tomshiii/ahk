@@ -30,7 +30,7 @@ youMouse(tenS, fiveS)
             WinActivate(lastactive) ;will reactivate the original window
         } catch as e {
             tool.Cust("Failed to get information on the previously active window")
-            errorLog(A_ThisFunc "()", "Failed to get information on previously active window", A_LineFile, A_LineNumber)
+            errorLog(e, A_ThisFunc "()")
         }
     }
 }
@@ -86,7 +86,7 @@ moveWin(key)
         SendInput(key)
     } catch as e {
         tool.Cust("Failed to get information on current active window")
-        errorLog(A_ThisFunc "()", "Failed to get information on current active window", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
     }
 }
 
@@ -138,63 +138,60 @@ moveTab()
         {
             block.Off() ;to stop the user potentially getting stuck
 			tool.Cust(A_ThisFunc " failed to get the monitor that the mouse is within")
-            errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
 			return
 		}
     if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
         goto move
-    if ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " ptf.firefox "contextMenu.png") || ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " ptf.firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
-        {
-            SendInput("{Escape}")
-            sleep 50
-            if ImageSearch(&urlX, &urlY, winX, winY, winX + (width / 2), (winY + 200), "*2 " ptf.firefox "url.png") ;this checks to make sure the url bar isn't higlighted as it's the same colour as an active tab in firefox
-                {
-                    SendInput("{F6}")
-                    sleep 50
-                }
-            block.On()
-            ;The below block of text will go through a process of trying to find the tab you wish to move.
-            ;0x42414D is the colour of the active tab
-            ;0x35343A is the colour of a non active tab when you hover over it
-            ;I use firefox in dark mode
-            if PixelSearch(&colx, &coly, contX - 30, contY - 30, contX + 5, contY + 30, 0x42414D) ;this is checking to see if the tab you're clicked on is selected
-                MouseMove(colx, coly)
-            else ;if the tab isn't selected we will enter this else block
-                {
-                    MouseGetPos(&startX, &startY)
-                    loop {
-                        MouseMove(-5, 0,, "R") ;next we attempt to move the mouse over the tab to hover it and change it's colour
-                        MouseGetPos(&searchX, &searchY)
-                        if PixelGetColor(searchX, searchY) = 0x35343A ;then we check for the hover colour
-                            break
-                        if A_Index > 4 ;then we simply run through some different possible locations for the tab
-                            {
-                                MouseMove(startX - 20, startY - 10)
-                                if PixelGetColor(searchX, searchY) = 0x35343A
-                                    break
-                            }
-                        if A_Index > 5
-                            {
-                                MouseMove(startX - 20, startY + 10)
-                                if PixelGetColor(searchX, searchY) = 0x35343A
-                                    break
-                            }
-                        if A_Index > 6
-                            {
-                                tool.Cust("Couldn't find the active tab colour", 1500)
-                                errorLog(A_ThisFunc "()", "couldn't find the active tab colour", A_LineFile, A_LineNumber)
-                                block.Off()
-                                return
-                            }
-                    }
-                }
-        }
-    else
+    if !ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " ptf.firefox "contextMenu.png") && !ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " ptf.firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
         {
             tool.Cust("You moved too far away from the right click context menu", 1500)
-            errorLog(A_ThisFunc "()", "moved too far away from the right click context menu", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "moved too far away from the right click context menu", A_LineFile, A_LineNumber)
             block.Off()
             return
+        }
+    SendInput("{Escape}")
+    sleep 50
+    if ImageSearch(&urlX, &urlY, winX, winY, winX + (width / 2), (winY + 200), "*2 " ptf.firefox "url.png") ;this checks to make sure the url bar isn't higlighted as it's the same colour as an active tab in firefox
+        {
+            SendInput("{F6}")
+            sleep 50
+        }
+    block.On()
+    ;The below block of text will go through a process of trying to find the tab you wish to move.
+    ;0x42414D is the colour of the active tab
+    ;0x35343A is the colour of a non active tab when you hover over it
+    ;I use firefox in dark mode
+    if PixelSearch(&colx, &coly, contX - 30, contY - 30, contX + 5, contY + 30, 0x42414D) ;this is checking to see if the tab you're clicked on is selected
+        MouseMove(colx, coly)
+    else ;if the tab isn't selected we will enter this else block
+        {
+            MouseGetPos(&startX, &startY)
+            loop {
+                MouseMove(-5, 0,, "R") ;next we attempt to move the mouse over the tab to hover it and change it's colour
+                MouseGetPos(&searchX, &searchY)
+                if PixelGetColor(searchX, searchY) = 0x35343A ;then we check for the hover colour
+                    break
+                if A_Index > 4 ;then we simply run through some different possible locations for the tab
+                    {
+                        MouseMove(startX - 20, startY - 10)
+                        if PixelGetColor(searchX, searchY) = 0x35343A
+                            break
+                    }
+                if A_Index > 5
+                    {
+                        MouseMove(startX - 20, startY + 10)
+                        if PixelGetColor(searchX, searchY) = 0x35343A
+                            break
+                    }
+                if A_Index > 6
+                    {
+                        tool.Cust("Couldn't find the active tab colour", 1500)
+                        errorLog(, A_ThisFunc "()", "couldn't find the active tab colour", A_LineFile, A_LineNumber)
+                        block.Off()
+                        return
+                    }
+            }
         }
     if A_Cursor = "SizeNS" ;this checks to make sure you're not about to accidentally attempt to resize the window
         MouseMove(0, 10, 2, "R")
@@ -292,11 +289,13 @@ getMouseMonitor()
                         ;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index)
                         return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
 			    }
+            if A_Index >= numberofMonitors
+                throw TargetError("Couldn't find the monitor", A_ThisFunc "()")
 		}
-		catch {
+		catch TargetError as e {
             block.Off() ;to stop the user potentially getting stuck
-			tool.Cust(A_ThisFunc " failed to get the monitor that the mouse is within")
-            errorLog(A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
+			tool.Cust(A_ThisFunc "() failed to get the monitor that the mouse is within", 2.0)
+            errorLog(e, A_ThisFunc "()")
 			Exit()
 		}
 	}
@@ -316,15 +315,11 @@ getTitle(&title)
             ignore := ""
 		title := WinGetTitle("A",, ignore)
         if !IsSet(title) || title = "" || title = "Program Manager"
-			{
-				tool.Cust("Couldn't determine the active window")
-				errorLog(A_ThisHotkey "::", "Couldn't determine the active window", A_LineFile, A_LineNumber)
-				Exit()
-			}
+            throw Error e
         return title
 	} catch as e {
 		tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
-		errorLog(A_ThisFunc, "Couldn't determine the active window or you're attempting to interact with an ahk GUI", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
         block.Off()
 		Exit()
 	}
@@ -354,11 +349,10 @@ isFullscreen(&title, &full, window := false)
 			full := 0
 	} catch as e {
 		tool.Cust(A_ThisFunc "() couldn't determine the active window")
-		errorLog(A_ThisFunc "()", "Couldn't determine the active window", A_LineFile, A_LineNumber)
+		errorLog(e, A_ThisFunc "()")
         block.Off()
 		Exit
 	}
-    return
 }
 
 /**
@@ -524,7 +518,7 @@ getPremName(&premCheck, &titleCheck, &saveCheck)
     } catch as e {
         block.Off()
         tool.Cust("Couldn't determine the titles of Adobe programs")
-        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
         return
     }
 }
@@ -547,7 +541,7 @@ getAEName(&aeCheck, &aeSaveCheck)
     } catch as e {
         block.Off()
         tool.Cust("Couldn't determine the titles of Adobe programs")
-        errorLog(A_ThisFunc "()", "Couldn't determine the titles of Adobe programs", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
         return
     }
 }
@@ -564,7 +558,7 @@ getID(&id)
             id := "ahk_class CabinetWClass"
     } catch as e {
         tool.Cust("couldn't grab active window")
-        errorLog(A_ThisFunc "()", "Couldn't define the active window", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
     }
 }
 
@@ -640,7 +634,7 @@ disc(button)
                 MouseMove(x, y) ;moves the mouse back to the original coords
                 block.Off()
                 tool.Cust("the requested button after " A_Index " attempts", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(A_ThisFunc "()", "Was unable to find the requested button", A_LineFile, A_LineNumber)
+                errorLog(, A_ThisFunc "()", "Was unable to find the requested button", A_LineFile, A_LineNumber)
                 return
             }
     }
@@ -660,7 +654,7 @@ disc(button)
             if A_Index > 10
                 {
                     tool.Cust("the @ ping button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineFile, A_LineNumber)
+                    errorLog(, A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineFile, A_LineNumber)
                     break
                 }
         }
@@ -686,7 +680,7 @@ discLocation()
         original := WinGetID("A")
     } catch as e {
         tool.Cust("you tried to assign a closed`n window as the last active", 4000)
-        errorLog(A_ThisFunc "()", "Function tried to assign a closed window as the last active window and therefor couldn't switch back to it", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
         SendInput("{Click}")
         return
     }
@@ -740,14 +734,14 @@ discLocation()
         {
             toggle := 0
             tool.Cust("stop spamming the function please`nthe functions value was too large/small")
-            errorLog(A_ThisFunc "()", "Function hit an unexpected toggle number", A_LineFile, A_LineNumber)
+            errorLog(, A_ThisFunc "()", "Function hit an unexpected toggle number", A_LineFile, A_LineNumber)
             return
         }
     try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
         WinActivate(original)
     } catch as e {
         tool.Cust("couldn't find original window", 2000)
-        errorLog(A_ThisFunc "()", "Function couldn't activate the original window", A_LineFile, A_LineNumber)
+        errorLog(e, A_ThisFunc "()")
         return
     }
 }

@@ -123,7 +123,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
                 {
                     block.Off()
                     tool.Cust("Couldn't find reference point for scrub bar", 2000)
-                    errorLog(A_ThisHotkey, "Couldn't find reference point for scrub bar", A_LineFile, A_LineNumber)
+                    errorLog(, A_ThisHotkey, "Couldn't find reference point for scrub bar", A_LineFile, A_LineNumber)
                     return
                 }
             scrub := speakY + 74
