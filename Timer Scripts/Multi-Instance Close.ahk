@@ -28,15 +28,15 @@ check()
             if !IsSet(newWin) || !IsSet(window)
                 continue
             path := SubStr(newWin, 1, InStr(newWin, " -",,, 1) -1)
-            SplitPath(path, &ScriptName)
-            if InStr(windows, ScriptName "`n", 1,, 1) && ScriptName != "checklist.ahk" && ScriptName != "launcher.ahk"
+            script := SplitPathObj(path)
+            if InStr(windows, script.Name "`n", 1,, 1) && script.Name != "checklist.ahk" && script.Name != "launcher.ahk"
                 {
-                    tool.Cust("Closing multiple instance of : " ScriptName, 3000)
+                    tool.Cust("Closing multiple instance of : " script.Name, 3000)
                     try {
                         WinClose(window)
                     }
                 }
-            windows .= ScriptName "`n"
+            windows .= script.Name "`n"
         }
     end:
     SetTimer(, -ms)

@@ -67,8 +67,8 @@ Rbutton::
                 static xControl := x + 238 ;accounting for the column to the left of the timeline
                 static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
                 tool.Wait()
-				SplitPath(A_LineFile, &scriptName)
-                tool.Cust("``" scriptName "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0)
+				script := SplitPathObj(A_LineFile)
+                tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0)
             } catch as e {
                 tool.Wait()
                 tool.Cust("Couldn't find the ClassNN value")

@@ -355,8 +355,8 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?)
             }
         }
     scriptPath := lineFile ;this is taking the path given from A_LineFile
-    scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
-    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " beginning '"' error '"' " // Script: ``" name "``, Line Number: " lineNumber "`n",ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    script := SplitPathObj(scriptPath) ;and splitting it out into just the .ahk filename
+    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " beginning '"' error '"' " // Script: ``" script.Name "``, Line Number: " lineNumber "`n",ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }
 
 ; ===========================================================================================================================================
@@ -442,15 +442,15 @@ reload_reset_exit(which, includeChecklist?)
         {
             name := WinGettitle(this_value,, "Visual Studio Code")
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
-            SplitPath(path, &ScriptName)
-            if all != true && (ScriptName = "checklist.ahk" || ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk")
+            script := SplitPathObj(path)
+            if all != true && (script.Name = "checklist.ahk" || script.Name = "My Scripts.ahk" || script.Name = "launcher.ahk")
                 continue
-            if all = true && (ScriptName = "My Scripts.ahk" || ScriptName = "launcher.ahk")
+            if all = true && (script.Name = "My Scripts.ahk" || script.Name = "launcher.ahk")
                 continue
-            PID := WinGetPID(ScriptName)
+            PID := WinGetPID(script.Name)
             switch which {
                 case "reload":
-                    PostMessage(0x0111, 65303,,, ScriptName " - AutoHotkey")
+                    PostMessage(0x0111, 65303,,, script.Name " - AutoHotkey")
                 case "reset":
                     Run(path)
                 case "exit":
@@ -640,4 +640,25 @@ On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
         }
         PrevHwnd := Hwnd
     }
+}
+
+/**
+ * This function turns the inbuilt function `SplitPath` into a function that returns an object.
+ * 
+ * script.`Name`       ;returns `My Scripts.ahk`
+ * 
+ * script.`Dir`        ;returns `E:\Github\ahk`
+ * 
+ * script.`Ext`        ;returns `ahk`
+ * 
+ * script.`NameNoExt`  ;returns `My Scripts`
+ * 
+ * script.Drive      ;returns `E:`
+ * @param {any} Path is the input path that will be split
+ * @returns {object} `x.path` - `x.name` - `x.dir` - `x.ext` - `x.namenoext` - `x.drive`
+ */
+SplitPathObj(Path)
+{
+    SplitPath(Path, &Name, &Dir, &Ext, &NameNoExt, &Drive)
+    return {Name: Name, Dir: Dir, Ext: Ext, NameNoExt: NameNoExt, Drive: Drive}
 }

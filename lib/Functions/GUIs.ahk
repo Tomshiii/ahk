@@ -407,9 +407,9 @@ settingsGUI()
     SB.OnEvent("Click", dir)
     dir(*)
     {
-        SplitPath(workDir,,,, &path)
-        if WinExist("ahk_exe explorer.exe " path)
-            WinActivate("ahk_exe explorer.exe " path)
+        dirName := SplitPathObj(workDir)
+        if WinExist("ahk_exe explorer.exe " dirName.NameNoExt)
+            WinActivate("ahk_exe explorer.exe " dirName.NameNoExt)
         else
             Run(workDir)
     }
@@ -563,8 +563,8 @@ musicGUI()
         else
             {
                 scriptPath :=  A_LineFile ;this is taking the path given from A_LineFile
-                scriptName := SplitPath(scriptPath, &name) ;and splitting it out into just the .ahk filename
-                MsgBox("The requested music folder doesn't exist`n`nWritten dir: " ptf.musicDir "`nScript: " name "`nLine: " A_LineNumber-11)
+                script := SplitPathObj(scriptPath) ;and splitting it out into just the .ahk filename
+                MsgBox("The requested music folder doesn't exist`n`nWritten dir: " ptf.musicDir "`nScript: " script.Name "`nLine: " A_LineNumber-11)
             }
         MyGui.Destroy()
     }

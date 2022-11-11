@@ -245,9 +245,7 @@ num(xval, yval, scale)
         }
     SendInput(timelineWindow) ;adjust this in the ini file
     SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png") ;moves to the "video" section of the effects control window tab
-        goto next
-    else
+    if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png") ;moves to the "video" section of the effects control window tab
         {
             MouseMove(xpos, ypos)
             block.Off()
@@ -255,10 +253,7 @@ num(xval, yval, scale)
             errorLog(, A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
             return
         }
-    next:
-    if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") || (&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;moves to the motion tab
-        MouseMove(x2 + "10", y2 + "10")
-    else ;if everything fails, this else will trigger
+    if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") && !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;moves to the motion tab
         {
             MouseMove(xpos, ypos) ;moves back to the original coords
             block.Off()
@@ -266,6 +261,7 @@ num(xval, yval, scale)
             errorLog(, A_ThisFunc "()", "Couldn't find the motion tab", A_LineFile, A_LineNumber)
             return
         }
+    MouseMove(x2 + "10", y2 + "10")
     SendInput("{Click}")
     SendInput("{Tab 2}" xval "{Tab}" yval "{Tab}" scale "{ENTER}")
     SendInput("{Enter}")
