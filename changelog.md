@@ -45,14 +45,16 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
     - Will ignore `checklist.ahk` by default but can have it included by setting its second parameter
 - `tomshiBasic()` can now pass in font size/weight settings
 - `hotkeysGUI()` now uses objects, maps & Arrays to define its values
+- `errorLogs()` can now accept an `Error Object` and omit the rest of its parameters
 - Fixed `errorLog()` producing log files in the incorrect directory if called from a `timer script`
 - Fixed `discUnread()` no longer working on dms due to a change with discord
 - Add `libUpdateCheck()` to check for lib file updates
-- `errorLogs()` can now accept an `Error Object` and omit the rest of its parameters
+- Add `SplitPathObj()` to wrap `SplitPath` into an object
 
 `updateChecker()`
 - Will now correctly stop itself checking for an update when the user has selected that as their setting
 - Will no longer provide the changelog in an edit box, instead offering the user the option to show the changelog - if they do, will use `WebView2` to load the github release page
+- When the user selects the download button, `DLFile.ahk` is now called to provide realtime download information
 
 `settingsGUI()`
 - Can now adjust the `Year` version of `After Effects & Premiere Pro` these scripts look for

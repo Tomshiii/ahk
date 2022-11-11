@@ -9,6 +9,7 @@ SetWorkingDir(A_ScriptDir)  ; Ensures a consistent starting directory.
 #Include "%A_ScriptDir%\lib\Functions\switchTo.ahk"
 #Include "%A_ScriptDir%\lib\Functions\Windows.ahk"
 #Include "%A_ScriptDir%\lib\Functions\GUIs.ahk"
+#Include "%A_ScriptDir%\lib\Other\IncludeLibs.ahk"
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.6.1

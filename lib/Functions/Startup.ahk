@@ -1,5 +1,6 @@
 #Include General.ahk
 #Include GUIs.ahk
+#Include "..\Other\IncludeLibs.ahk"
 
 /**
  * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
@@ -257,7 +258,7 @@ updateChecker(MyRelease) {
                 Run("https://github.com/tomshiii/ahk/releases")
             }
             down(*) {
-                MyGui.Opt("Disabled")
+                MyGui.Opt("Disabled -AlwaysOnTop")
                 yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
                 if yousure = "Cancel"
                     {
@@ -274,7 +275,7 @@ updateChecker(MyRelease) {
                         TrayTip("Updated scripts are downloading", "Downloading...", 17)
                         SetTimer(HideTrayTip, -5000)
                         HideTrayTip() {
-                            TrayTip
+                            TrayTip()
                         }
                         type := ""
                         exeOrzip(filetype, &found)
@@ -301,11 +302,58 @@ updateChecker(MyRelease) {
                             }
                         else
                             type := "exe"
-                        Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
-                        tool.Cust("Release " version " of the scripts has been downloaded to " downloadLocation, 3000)
-                        Run(downloadLocation)
-                        TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
-                        SetTimer(HideTrayTip, -5000)
+
+                        ; #Start DLFile
+
+                        url := "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type
+                        dest := downloadLocation "\"
+
+                        DL := DLFile(url,dest,callback)
+
+                        g := Gui("+AlwaysOnTop -MaximizeBox -MinimizeBox", "Download Progress")
+                        g.OnEvent("close",(*)=>g.Hide())
+                        g.OnEvent("escape",(*)=>g.Hide())
+                        g.SetFont(,"Consolas")
+                        g.Add("Text","w300 vText1 -Wrap")
+                        g.Add("Progress","w300 vProg",0)
+                        g.Add("Text","w300 vText2 -Wrap")
+                        g.Add("Button","x255 w75 vCancel","Cancel").OnEvent("click",events)
+                        g.Add("Button","x255 yp w75 vResume Hidden","Resume").OnEvent("click",events)
+                        g.Show()
+
+                        DL.Start()
+
+                        events(ctl,info) {
+                            If (ctl.name = "Cancel") {
+                                If ctl.text = "Exit" {
+                                    g.Hide()
+                                } Else {
+                                    DL.cancel := true
+                                    g["Text2"].Text := "Download Cancelled! / Percent: " DL.perc "% / Exit = ESC"
+                                    g["Resume"].Visible := true
+                                    g["Cancel"].Visible := false
+                                }
+                            } Else if (ctl.name = "Resume") {
+                                g["Resume"].Visible := false
+                                g["Cancel"].Visible := true
+                                DL.Start() ; note that execution stops here until download is finished or DL.cancel is set to TRUE.
+                            }
+                        }
+
+                        callback(o:="") { ; g is global in this case
+                            g["Text1"].Text := o.file
+                            g["Text2"].Text := Round(o.bps/1024) " KBps   /   Percent: " o.perc "%"
+                            g["Prog"].Value := o.perc
+
+                            If o.perc = 100
+                                {
+                                    g["Cancel"].Text := "Exit"
+                                    Run(dest)
+                                    g.Hide()
+                                }
+                        }
+                        ; #end DLFile
+
                         if DirExist(A_Temp "\" MyRelease)
                             DirDelete(A_Temp "\" MyRelease, 1)
                         if DirExist(A_WorkingDir "\Backups\Script Backups\" MyRelease)
@@ -316,15 +364,20 @@ updateChecker(MyRelease) {
                                 else
                                     {
                                         ToolTip("")
+                                        TrayTip()
                                         return
                                     }
                             }
                         try {
+                            TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
+                            SetTimer(HideTrayTip, -5000)
                             DirCopy(A_WorkingDir, A_Temp "\" MyRelease)
                             DirMove(A_Temp "\" MyRelease, A_WorkingDir "\Backups\Script Backups\" MyRelease, "1")
                             if DirExist(A_Temp "\" MyRelease)
                                 DirDelete(A_Temp "\" MyRelease, 1)
                             tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
+                            if WinExist("Download Progress") && g["Cancel"].Text := "Exit"
+                                g.Destroy()
                         } catch as e {
                             tool.Cust("There was an error trying to backup your current scripts", 2000)
                             errorLog(e, A_ThisFunc "()")
