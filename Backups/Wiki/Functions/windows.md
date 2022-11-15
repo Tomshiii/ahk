@@ -130,7 +130,7 @@ Type: Integer
 ***
 
 ## `titleBarDarkMode()`
-This function will convert a windows title bar to a dark theme if possible.
+This function will convert a windows title bar to a dark/light theme if possible.
 
 Original code found [here](https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661).
 ```
@@ -146,7 +146,7 @@ Type: Boolean
 ***
 
 ## `buttonDarkMode()`
-This function will convert GUI buttons to a dark theme.
+This function will convert GUI buttons to a dark/light theme.
 
 Original code found [here](https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661).
 ```
@@ -159,6 +159,18 @@ Type: String/Variable
 #### DarkorLight
 Type: String
 > This parameter is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted for dark mode, otherwise pass "Light".
+***
+
+## `menuDarkMode()`
+This function will convert GUI menus to dark mode/light mode.
+
+Original code found [here](https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661).
+```
+menuDarkMode( [{DarkorLight}] )
+```
+#### DarkorLight
+Type: Boolean
+> This parameter is a toggle that allows you to call the inverse of this function and return the menu to light mode. This parameter can be omitted for dark mode, otherwise pass "0"
 ***
 
 ## `fastWheel()`
@@ -204,6 +216,16 @@ getID( [&id] )
 #### &id
 Type: VarRef
 > This parameter is the processname of the active window, we want to pass this value back to the script.
+***
+
+## `GetExplorerPath()`
+A function to extract the directory path of an open explorer window.
+```
+GetExplorerPath( [{hwnd}] )
+```
+#### hwnd
+Type: Integer
+> This parameter is the hwnd number of the window you wish to focus. If no hwnd number is provided, the function will determine the hwnd of the active window instead.
 ***
 
 ## `disc()`

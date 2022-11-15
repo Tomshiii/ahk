@@ -1,15 +1,44 @@
 A list of `General.ahk` Functions complete with definitions.
 
-This script not only contains a stew of functions, but also a lot of global variables, as well as some group assignments used in other places.
-
-The script starts by defining all ImageSearch folder paths (`..\Support Files\ImageSearch\dir` by default).
-
-Then goes on to define a browser group, and an editor group.
+This script not only contains a stew of functions, classes, as well as some group assignments used in other places.
 ***
 
-## class coordinates {
+## class ptf {
+`Point to File`, this class contains all directory and file locations that I can possibly assign. Keeping all definitions in the one place allows for easier adjusting of file locations in the future, as well as an easier time for another user to come through and adjust.
 
-## `coord`
+#### `ptf.Variable`
+Example;
+```
+;for directory locations
+ptf.SupportFiles ;passes: A_WorkingDir "\Support Files"
+```
+
+#### `ptf.files["variable"]`
+Example;
+```
+;for absolute file locations
+ptf.files["settings"] ;passes: A_MyDocuments "\tomshi\settings.ini"
+```
+***
+
+## class browser {
+This class contains a set of key/value pairs of browser `winTitles` & `classes`. Currently contains information for; firefox, chrome & msedge
+
+Example;
+```autohotkey
+;for winTitle
+broswer.winTitle["firefox"] ;passes: ahk_exe firefox.exe
+
+;for class
+browser.class["firefox"] ;passes: ahk_class MozillaWindowClass
+```
+***
+
+## GroupAdd
+The script then goes on to define a browser group, and an editor group.
+***
+
+## class coord {
 This class contains 3 different coordinate mode definitions to make setting coordmodes a bit easier during coding.
 
 ```
@@ -19,13 +48,13 @@ coord.c() ; sets coordmode("caret", "window")
 ```
 ***
 
-## class tooltips {
+## class tool {
 This class contains two tooltip functions that help with tooltip creation and management.
 
-## `tool.Cust()`
+## `Cust()`
 This function allows the creation of a tooltip with any message, for a custom duration. This tooltip will then follow the cursor and only redraw itself if the user has moved the cursor.
 ```
-tool.c( [message, {timeout, find, x, y, WhichToolTip}] )
+tool.Cust( [message, {timeout, find, x, y, WhichToolTip}] )
 ```
 #### message
 Type: String
@@ -69,7 +98,7 @@ Example #2
 tool.Cust("hello",,, MouseGetPos(&x, &y) x + 15, y) ; Produces a tooltip that says "hello" next to the cursor when called and will stay there for 1 second
 ```
 
-## `tool.Wait()`
+## `Wait()`
 This function will check to see if any tooltips are active and will wait for them to disappear before continuing.
 ```
 tool.Wait( [{timeout}] )
@@ -79,9 +108,7 @@ Type: Integer
 > This parameter allows you to pass in a time value (in seconds) that you want `WinWaitClose` to wait before timing out. This value can be omitted and does not need to be set.
 ***
 
-## class inputs {
-
-## `block`
+## class block {
 This class contains 2 different block input mode definitions to make setting blockinputs a bit easier during coding.
 ```
 block.On() ; Blocks all user inputs
@@ -112,23 +139,31 @@ If a file for the current day doesn't exist, this function will create it, and c
 
 If a file for the current day does exist, the current log will simply be appended to the end of the file.
 ```
-errorLog( [func, error, lineFile, lineNumber] )
+errorLog( [{err, backupFunc, backupErr, backupLineFile, backupLineNumber}] )
 ```
-#### func
+#### err
+Type: Error Object
+> This variable is an Error Object you can simply pass into the function to prefill all the required information. These error objects are usually found in `try{}/catch{}` blocks.
+>
+> If the user wishes to log an error outside of a block of code that would throw an Error Object, they can manually input the required information in the remaining parameters and omit this parameter.
+
+#### backupFunc
 Type: String/Variable
-> This variable is to alert the log if it's being called from a function or a hotkey. If you're calling errorLog from a function, simply pass `A_ThisFunc "()"`, if you're calling from a hotkey, pass `A_ThisHotkey "::"`.
+> If the user is passing in an Error Object, there is code to still use this variable in the event that the object's `.What` is empty so it is good practice to still include this parameter.
+>
+> If the user isn't passing in an Error Obkect, this variable is to alert the log if it's being called from a function or a hotkey. If you're calling errorLog() from a function, simply pass `A_ThisFunc "()"`, if you're calling from a hotkey, pass `A_ThisHotkey "::"`.
 
-#### error
+#### backupErr
 Type: String
-> This parameter is a description of the error
+> This parameter is a description of the error. This parameter is only necessary if the user isn't passing in an Error Object
 
-#### lineFile
+#### backupLineFile
 Type: String/Variable - Filepath
-> This parameter is the filepath of the script CALLING the function. Simply pass `A_LineFile`
+> This parameter is the filepath of the script CALLING the function. Simply pass `A_LineFile`. This parameter is only necessary if the user isn't passing in an Error Object
 
-#### lineNumber
+#### backupLineNumber
 Type: Integer
-> This parameter is the line number where the error is occuring. Simply pass `A_LineNumber`
+> This parameter is the line number where the error is occuring. Simply pass `A_LineNumber`. This parameter is only necessary if the user isn't passing in an Error Object
 ***
 
 ## `getHotkeys()`
@@ -180,16 +215,20 @@ Type: Integer
 > This parameter is the amount of decimal places you wish the function to evaluate to.
 ***
 
-## `reload_Reset()`
-A function that will loop through and either `reload` or `hard reset` all active AutoHotkey scripts.
+## `reload_reset_exit()`
+A function that will loop through and either `reload`, `hard reset` (by rerunning the file directly) or `exiting` (by force closing the process) all active AutoHotkey scripts.
+
+This function will ignore `checklist.ahk` unless you set `includeChecklist`.
 ```
-reload_Reset( [which] )
+reload_reset_exit( [which, {includeChecklist}] )
 ```
 #### which
 Type: String
-> This parameter determines whether the loop with reload or reset all scripts.
+> This parameter determines whether the loop will reload, reset or exit all scripts.
 
-This function will ignore `checklist.ahk`.
+#### includeChecklist
+Type: Any
+> This parameter determines whether the loop will include `checklist.ahk`.
 ***
 
 ## `detect()`
@@ -231,6 +270,10 @@ Type: Boolean
 
 ## `refreshWin()`
 A function to close a window, then reopen it in an attempt to refresh its information (for example, a txt file).
+
+If the user passes `"A"` into both of the variables to indicate they want to focus on the active window and said active window is either `Notepad*` or `Windows Explorer`, there is added code in this function to retrieve the filepath of said window and reopen it automatically.
+
+**If there are multiple notepad windows open, this function will refresh all of them.*
 ```
 refreshWin( [window, runTarget] )
 ```
@@ -241,3 +284,26 @@ Type: String/Variable
 #### runTarget
 Type: String - Filepath
 > This parameter is the path of the file you wish to open.
+***
+
+## `SplitPathObj()`
+This function is a psudo replacement to the built in function `SplitPath` where instead of needing to remember the correct amount of commas for what you need, all variables get returned as an object instead.
+```
+SplitPathObj( [path] )
+```
+
+#### Path
+Type: String
+> This parameter is the path you wish to have split by the function.
+
+Example:
+```autohotkey
+path := "E:\Github\ahk\My Scripts.ahk"
+script := SplitPathObj(path)
+
+script.Name       ;returns `My Scripts.ahk`
+script.Dir        ;returns `E:\Github\ahk`
+script.Ext        ;returns `ahk`
+script.NameNoExt  ;returns `My Scripts`
+script.Drive      ;returns `E:`
+```

@@ -58,7 +58,7 @@ This function will open up the composition settings window within After Effects,
 ***
 
 ## `aetimeline()`
-*A weaker version of `right click premiere.ahk`*
+*A weaker version of [`right click premiere.ahk`](https://github.com/Tomshiii/ahk/wiki/right-click-premiere.ahk)*
 
 This function will gather the coordinates of the After Effects timeline and store them, then it will allow the user to move the playhead at the press of a button. Set this button to something quick to access like a mouse button (`Xbutton1/2`) or if you wish to use the keyboard, something a little more obscure like `Ctrl + Capslock`.
 ***
@@ -167,7 +167,7 @@ Type: Integer/Float
 ***
 
 ## `mouseDrag()`
-Press a button(ideally a mouse button), this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
+Press a button (ideally a mouse button), this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
 
 This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
 ```

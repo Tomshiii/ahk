@@ -44,10 +44,16 @@ On this page, I will be referring to macros by their `;Hotkey;` tag and not thei
 *The below hotkeys will function even while the script is suspended.*
 
 ## `reloadHotkey`
-runs: [`reload_Reset("reload")`](https://github.com/Tomshiii/ahk/wiki/General-Functions#reload_reset)
+runs: [`reload_reset_exit("reload")`](https://github.com/Tomshiii/ahk/wiki/General-Functions#reload_reset_exit)
 
 ## `hardresetHotkey`
-runs: [`reload_Reset("reset")`](https://github.com/Tomshiii/ahk/wiki/General-Functions#reload_reset)
+runs: [`reload_reset_exit("reset")`](https://github.com/Tomshiii/ahk/wiki/General-Functions#reload_reset_exit)
+
+## `panicExitHotkey`
+runs: [`reload_reset_exit("exit")`](https://github.com/Tomshiii/ahk/wiki/General-Functions#reload_reset_exit)
+
+## `panicExitALLHotkey`
+runs: [`reload_reset_exit("exit", true)`](https://github.com/Tomshiii/ahk/wiki/General-Functions#reload_reset_exit)
 
 ## `settingsHotkey`
 runs: [`settingsGUI()`](https://github.com/Tomshiii/ahk/wiki/GUI)
@@ -73,7 +79,10 @@ If the active window is a youtube window, it will be slightly larger to give the
 This hotkey will check the state of the active window - if it is not currently fullscreen, it will maximise it, if it is, it will unmaximise it.
 
 ## `jump10charLeftHotkey` & `jump10charRightHotkey`
-These hotkeys will run: [`jumpChar()`](https://github.com/Tomshiii/ahk/wiki/Windows-Functions#jumpchar)
+These hotkeys will run: [`jumpChar()`](https://github.com/Tomshiii/ahk/wiki/Windows-Functions#jumpchar).
+
+## `refreshWinHotkey`
+runs [`refreshWin()`](https://github.com/Tomshiii/ahk/wiki/General-Functions#refreshwin) passing the active window as the desired target. If the target window is `Notepad.exe` or `explorer.exe` it is able to determine the filepath of the current window and reopen it.
 ***
 
 # Launch Programs

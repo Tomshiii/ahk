@@ -4,18 +4,36 @@ It starts off by defining;
 
 ## class tomshiBasic {
 `tomshiBasic` is a small class used to share a few settings across all GUIs in my scripts. This class helps me keep a relatively consistent GUI look across all my scripts, and in the event I want to ever change a setting it can be done here and be shared basically script wide.
+```
+MyGui := tomshiBasic( [{FontSize, FontWeight, options, title}] )
+```
+#### FontSize
+Type: Number
+> Allows you to pass in a custom default GUI font size. Defaults to 11, can be omitted.
+
+#### FontWeight
+Type: Integer
+> Allows you to pass in a custom default GUI font weight. Defaults to 11, can be omitted.
+
+#### options
+Type: String
+> Allows you to pass in all GUI options that you would normally pass to a GUI. Can be omitted.
+
+#### title
+Type: String
+> Allows you to pass in a title for the GUI. Can be omitted.
 ***
 
 ## `settingsGUI()`
 This GUI allows the user to adjust almost all user adjustable settings all within one place. It can be accessed by either pressing the activation hotkey (`#F1` by default) or by right clicking on the `My Scripts.ahk` tray icon in the task bar, then selecting `Settings`
 
-![image](https://user-images.githubusercontent.com/53557479/199130583-5d2ce688-ee2b-460e-a3b4-e887ace4dca6.png)
+![image](https://user-images.githubusercontent.com/53557479/201815307-d3f62dae-e52f-4f73-93fd-6f66fae2d97e.png)
 
-> **settingsGUI() as of v2.6.1pre2*
+> **settingsGUI() as of v2.7*
 
 ## class gameCheckGUI {
 
-Within `settingsGUI()` is the ability to call another GUI, `gameCheckGUI` which is defined in a class below `settingsGUI()` and can be accessed by pressing the `Add game to 'gameCheck.ahk'` button within `settingsGUI()` or by right clicking on the `gameCheck.ahk` tray icon in the taskbar (although accessing it this way cannot autofill the edit boxes). This GUI is designed to allow the user to quickly add games to the `Game List.ahk` file that is read by `gameCheck.ahk`. When the user opens `settingsGUI()` it grabs the `winTitle` and `winProcess` of the active window and stores that information, if the user then opens `gameCheckGUI()` that information is prefilled into the edit boxes so the user can edit it accordingly.
+Within `settingsGUI()` is the ability to call another GUI, `gameCheckGUI` which is defined in a class in `..\settingsGUI\gameCheckGUI.ahk` and can be accessed by pressing the `Add game to 'gameCheck.ahk'` button within `settingsGUI()` or by right clicking on the `gameCheck.ahk` tray icon in the taskbar (although accessing it this way cannot autofill the edit boxes). This GUI is designed to allow the user to quickly add games to the `Game List.ahk` file that is read by `gameCheck.ahk`. When the user opens `settingsGUI()` it grabs the `winTitle` and `winProcess` of the active window and stores that information, if the user then opens `gameCheckGUI()` that information is prefilled into the edit boxes so the user can edit it accordingly.
 
 ![image](https://user-images.githubusercontent.com/53557479/199131020-e705d0b8-0629-4391-8b1d-3540c4598b8f.png)
 

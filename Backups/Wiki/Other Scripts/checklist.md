@@ -1,7 +1,7 @@
 As a freelance video editor I constantly found myself running into two problems;
 
-- My adhd brain would forget to do basic things expected of me
-- Keeping track of my hours effeciently and confidently. Using excel is great and all but combersome and clunky at best
+1. My adhd brain would forget to do basic things expected of me
+1. Keeping track of my hours effeciently and confidently. Using excel is great and all but combersome and clunky at best
 
 `checklist.ahk` was a project I took on to fix those problems. It's a checklist/timer combo script that is designed to be as out of the way as possible while still offering as much functionality as I can squeeze in.
 

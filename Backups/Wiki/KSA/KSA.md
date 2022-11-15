@@ -12,9 +12,7 @@ Effect Controls="^+4"
 ```
 Then within the `Keyboard Shortcut Adjustments.ahk` file you'll see;
 ```autohotkey
-location := A_WorkingDir "\lib"
-
-effectControls := IniRead(location "\KSA\Keyboard Shortcuts.ini", "Premiere", "Effect Controls")
+effectControls := IniRead(ptf.files["KSAini"], "Premiere", "Effect Controls")
 ```
 which we can then call in other scripts like;
 ```autohotkey

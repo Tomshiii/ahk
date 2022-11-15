@@ -2,7 +2,7 @@ A list of `My Scripts.ahk` Startup Functions complete with definitions.
 
 These functions are run at the beginning of `My Scripts.ahk` and perform a bunch of tasks to either complete the experience of my scripts, or to perform some useful tasks.
 
-You will see `MyRelease` past into a lot of these functions - they require the latest version to perform their tasks/checks so we pass it into them so we don't need to manually change that code every release.
+You will see the variable `MyRelease` passed into a lot of these functions - they require the latest version to perform their tasks/checks so we pass it into them so we don't need to manually change that code every release.
 ***
 
 ## `generate()`
@@ -35,7 +35,7 @@ Type: VarRef
 ***
 
 ## `updateChecker()`
-This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the latest release on github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog.
+This function will (on script startup, NOT a reload of the script) check which version of the script you're running, cross reference that with the latest release on github and alert the user if there is a newer release available with a prompt to download it. The GUI will offer the user the ability to see the changelog for the latest release, if they chose to do so, the latest release page on github will be loaded in a [`WebView2`](https://github.com/thqby/ahk2_lib/tree/master/WebView2) window
 
 Which branch the user wishes to check for (either beta, or main releases) can be determined by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`).
 
@@ -59,15 +59,15 @@ Type: String/Variable
 ***
 
 ## `oldError()`
-This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days.
+This function will (on script startup, NOT a reload of the script) delete any `\ErrorLog` files older than 30 days.
 ***
 
 ## `adobeTemp()`
-This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
+This function will (on script startup, NOT a reload of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
 
 The minimum value for this function can be adjusted by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`).
 
-It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place.
+It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory within the function to the actual default or set the cache location within After Effects to the same place.
 ```
 adobeTemp( [MyRelease] )
 ```
@@ -86,3 +86,15 @@ This script will take note of the users A_WorkingDir and store it in `A_MyDocume
 
 ## `trayMen()`
 This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings.
+***
+
+## class libs {
+`libs` is a collection of information relating to external lib files used by my scripts. It contains; The name, url & script path for each file.
+
+This information is then looped through by `libUpdateCheck()`
+***
+
+## `libUpdateCheck()`
+This function will (on script startup, NOT a reload of the script) loop through `class libs {` and ensure that all listed libs are up to date.
+
+This function will first attempt to look for `@version` tags, but if none exist in the file it will simply compare the local file to the downloaded file.

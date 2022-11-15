@@ -1,5 +1,5 @@
 ;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.6.1"
+global MyRelease := "v2.7"
 
 #SingleInstance Force
 SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from

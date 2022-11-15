@@ -13,13 +13,14 @@ This repo is to maintain work on the `ahk v2.0` versions of my scripts. These sc
      - Then download and install the [ahk language for notepad++](https://www.autohotkey.com/boards/viewtopic.php?t=50)
    - [VSCode](https://code.visualstudio.com/)
      - Then install an AHK extension within the program for a more complete package.
-    ###### **_It is recommended you use VSCode as a lot of my variables have dynamic comments that can be viewed across the entire program that could help you understand what is going on._**
+    ###### **_It is recommended you use VSCode as a lot of my functions have dynamic comments that can be viewed across the entire program that could help you understand what is going on._**
 3. Download these scripts by either checking out the latest [release](https://github.com/tomshiii/ahk/releases/latest) or by cloning the repo (in either VSCode or your git manager of choice), then save them wherever you wish.
     ###### **_Although do note; some [`Streamdeck AHK`](https://github.com/Tomshiii/ahk/tree/main/Streamdeck%20AHK) scripts still have hard coded dir's as they are intended for my workflow and may error out if you try to run them from a different location._**
 4. Take a look at [Keyboard Shortcuts.ini](https://github.com/Tomshiii/ahk/tree/main/lib/KSA) to set your own keyboard shortcuts for programs as well as define some coordinates for a few remaining imagesearches that cannot use variables for various reason, these `KSA` values are used to allow for easy adjustments instead of needing to dig through scripts!
-5. Run `My Scripts.ahk` to get started! (it's the main "hub" script and handles changing the root directory)
-6. You can then edit and run any of the .ahk files to use to your liking!
-7. Adjust the `PC Startup.ahk` file ***or*** create shortcuts to individual scripts in your startup folder (which can be accessed by pressed `win + r` and then typing in `shell:startup`)
+5. Take a look at [General.ahk](https://github.com/Tomshiii/ahk/tree/main/lib/Functions/General.ahk) in the class `class ptf {` to adjust all assigned filepaths!
+6. Run `My Scripts.ahk` to get started! (it's the main "hub" script and handles changing the root directory)
+7. You can then edit and run any of the .ahk files to use to your liking!
+8. Adjust the `PC Startup.ahk` file ***or*** create shortcuts to individual scripts in your startup folder (which can be accessed by pressed `win + r` and then typing in `shell:startup`)
     - If you don't have a secondary keyboard, don't forget to take a look through QMK Keyboard.ahk to see what functions you can pull out and put on other keys!
 ***
 
