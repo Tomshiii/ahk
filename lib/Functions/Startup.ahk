@@ -178,7 +178,7 @@ updateChecker(MyRelease) {
                     return
                 }
         case "true":
-            if !VerCompare(MyRelease, version) > 0
+            if VerCompare(MyRelease, version) >= 0
                 return
             ;create gui
             MyGui := tomshiBasic(,, "+Resize +MaxSize600x400 AlwaysOnTop", "Scripts Release " version)
