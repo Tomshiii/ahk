@@ -7,7 +7,7 @@
 To call a dir;
 ```autohotkey
 ptf.VariableName
-eg. ptf.ImgSearch ; links to `A_WorkingDir "\ImageSearch"`
+eg. ptf.ImgSearch ; links to `A_WorkingDir "\Support Files\ImageSearch"`
 ```
 To call a file;
 ```autohotkey
@@ -74,6 +74,10 @@ eg. browser.class["firefox"] ; calls `ahk_class MozillaWindowClass`
 ## > Other Changes
 - Removed a lot of lingering `location` variables from `Streamdeck AHK` scripts
 - Removed reduntant version tracking of some scripts
+- Added external libs;
+    - `WebView2.ahk` - by thqby
+    - `SevenZip.ahk` - by thqby
+    - `_DLFile.ahk` - by TheArkive
 
 `checklist.ahk`
 - Will no longer pause/suspend `autosave.ahk` while waiting for a project to open, instead opting to pause/suspend itself and run `waitUntil.ahk` to wait until a project is open which will then close & rerun `checklist.ahk` to have it automatically open

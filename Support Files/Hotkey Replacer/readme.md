@@ -6,7 +6,7 @@ If you have downloaded my scripts before, run the installer script and point it 
 
 A backup of the original release versions of `My Scripts.ahk` & `Keyboard Shortcuts.ini` will be saved in `\releasefolder\Backups\` just incase something goes wrong.
 
-Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's simply my repo wrapped in a 7zip sfx archive. If you wish to be cautious, you can download the entire repo straight from github, or download the source code asset on the release page and compare the files to those extracted from the .exe file ^.^
+Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's a compiled version of my scripts, alongside the `SevenZip.ahk` lib by `thqby` to allow me to include the repo in a .zip file that then gets automatically extracted when you run the release .exe ^.^
 
 
 ⠀⠀⠀⠀⠀⠀⢀⣤⣚⣛⡶⣒⡁⠐⠦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀

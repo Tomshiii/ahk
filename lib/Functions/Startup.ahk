@@ -722,10 +722,14 @@ class libs {
         name: "ComVar",                                     url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/ComVar.ahk",
         scriptPos: ptf.lib "\Other"
     }
+    static SevenZip := {
+        name: "SevenZip",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/7Zip/SevenZip.ahk",
+        scriptPos: ptf.lib "\Other\7zip"
+    }
 
-    static name        := [this.webView2.name, this.comVar.name, ]
-    static url         := [this.webView2.url, this.comVar.url, ]
-    static scriptPos   := [this.webView2.scriptPos, this.comVar.scriptPos, ]
+    static name        := [this.webView2.name, this.comVar.name, this.SevenZip.name, ]
+    static url         := [this.webView2.url, this.comVar.url, this.SevenZip.url, ]
+    static scriptPos   := [this.webView2.scriptPos, this.comVar.scriptPos, this.SevenZip.scriptPos, ]
 }
 
 /**
