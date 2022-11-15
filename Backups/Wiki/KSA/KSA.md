@@ -16,7 +16,7 @@ effectControls := IniRead(ptf.files["KSAini"], "Premiere", "Effect Controls")
 ```
 which we can then call in other scripts like;
 ```autohotkey
-#Include "%A_ScriptDir%\lib\KSA\Keyboard Shortcut Adjustments.ahk"
+#Include "..\Keyboard Shortcut Adjustments.ahk"
 hotkey::
 {
     SendInput(effectControls)

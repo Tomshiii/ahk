@@ -106,21 +106,21 @@ GroupAdd("Editors", "ahk_exe Photoshop.exe")
  */
 class coord {
     /**
-     * This function is a part of the class `coordinates`
+     * This function is a part of the class `coord`
      * 
      * Sets coordmode to "screen"
      */
     static s() => (coordmode("pixel", "screen"), coordmode("mouse", "screen"))
 
     /**
-     * This function is a part of the class `coordinates`
+     * This function is a part of the class `coord`
      * 
      * Sets coordmode to "window"
      */
      static w() => (coordmode("pixel", "window"), coordmode("mouse", "window"))
     
     /**
-     * This function is a part of the class `coordinates`
+     * This function is a part of the class `coord`
      * 
      * sets coordmode to "caret"
      */
@@ -138,7 +138,7 @@ class coord {
  */
 class tool {
     /**
-     * This function is a part of the class `tooltips`
+     * This function is a part of the class `tool`
      * 
      * Create a tooltip with any message. This tooltip will then follow the cursor and only redraw itself if the user has moved the cursor.
      * 
@@ -186,9 +186,9 @@ class tool {
                 }
         }
     }
-    
+
     /**
-     * This function is a part of the class `tooltips`
+     * This function is a part of the class `tool`
      * 
      * This function will check to see if any tooltips are active before continuing
      * @param {Integer} timeout allows you to pass in a time value (in seconds) that you want WinWaitClose to wait before timing out. This value can be omitted and does not need to be set
@@ -213,14 +213,14 @@ class tool {
  */
 class block {
     /**
-     * This function is a part of the class `inputs`
+     * This function is a part of the class `block`
      * 
      * Blocks all user inputs [IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (CTRL + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]
      */
     static On() => (BlockInput("SendAndMouse"), BlockInput("MouseMove"), BlockInput("On")) ;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
 
     /**
-     * This function is a part of the class `inputs`
+     * This function is a part of the class `block`
      * 
      * turns off the blocks on user input
      */
@@ -245,10 +245,10 @@ mousedragNotPrem(tool, toolorig)
             return
         }
     click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-    SendInput tool "{LButton Down}"
+    SendInput(tool "{LButton Down}")
     KeyWait(A_ThisHotkey)
     SendInput("{LButton Up}")
-    SendInput toolorig
+    SendInput(toolorig)
 }
 
 ; ===========================================================================================================================================
