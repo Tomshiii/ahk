@@ -1,4 +1,4 @@
-# <> Release 2.7.x -
+# <> Release 2.7.0.1 - Hotfix
 
 ## > Functions
 - Fixed `errorLog()` erroring out if an object hasn't been passed to it
