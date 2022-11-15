@@ -6,7 +6,7 @@
 
 This repo is a combination of all the scripts I use almost daily to help with either making content (videos or streaming related), or just speeding up mundane and random interactions with a computer.
 
-- Video walking through [how to make sense of this repo](https://youtu.be/dSjpv_4bVCA)
+- Video walking through [how to make sense of this repo](https://youtu.be/4qakIF4Vins)
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
 
 <div align="center">
