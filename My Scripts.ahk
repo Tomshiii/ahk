@@ -15,7 +15,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.22
+;\\v2.22.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.11
 
@@ -698,8 +698,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	try {
 		if ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " ptf.Premiere "project2.png") ;searches for the project window to grab the track
 			goto move
-		else if ImageSearch(&prx, &pry, toolx, tooly, width, height, "*2 " ptf.Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
-			goto bin
+		/* else if ImageSearch(&prx, &pry, toolx, tooly, width, height, "*2 " ptf.Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
+			goto bin */
 		else
 			{
 				coord.s()
@@ -710,7 +710,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			}
 	} catch as e {
 		block.Off()
-		tool.Cust("Couldn't find the project window")
+		tool.Cust("Couldn't find the project window`nIf this happens consistently, it may be an issue with premiere")
 		errorLog(e, A_ThisHotkey "::")
 		return
 	}
@@ -729,16 +729,24 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			return
 		}
 	bin:
-	if WinExist("_Editing stuff")
+	if !WinExist("_Editing Stuff")
 		{
-			WinActivate("_Editing stuff")
-			SendInput("{Up}")
+			Run(ptf.EditingStuff)
+			if !WinWaitActive("_Editing Stuff",, 2) && WinExist("_Editing Stuff")
+				WinActivate("_Editing Stuff")
+			sleep 100
+			if !WinActive("_Editing Stuff")
+				{
+					block.Off()
+					tool.Cust("activating the editing folder failed", 2000, 1)
+					errorLog(, A_ThisHotkey "::", "activating the editing folder failed", A_LineFile, A_LineNumber)
+					return
+				}
 		}
 	else
 		{
-			Run(ptf.EditingStuff)
-			WinWait("_Editing stuff")
-			WinActivate("_Editing stuff")
+			WinActivate("_Editing Stuff")
+			SendInput("{Up}")
 		}
 	sleep 250
 	isFullscreen(&title, &full)
@@ -755,25 +763,27 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	sleep 250
 	coord.w()
 	MouseMove(0, 0)
-	if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Explorer "sfx.png")
-		{
-			MouseMove(foldx + "9", foldy + "5", 2)
-			SendInput("{Click Down}")
-			;sleep 2000
-			coord.s()
-			MouseMove(3240, 564, "2")
-			SendInput("{Click Up}")
-			switchToPremiere()
-			WinWaitClose("Import Files")
-			sleep 1000
-		}
-	else
-		{
-			block.Off()
-			tool.Cust("the sfx folder", 2000, 1)
-			errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
-			return
-		}
+	loop {
+		if ImageSearch(&foldx, &foldy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Explorer "sfx.png")
+			break
+		sleep 100
+		if A_Index > 50
+			{
+				block.Off()
+				tool.Cust("the sfx folder", 2000, 1)
+				errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
+				return
+			}
+	}
+	MouseMove(foldx + "9", foldy + "5", 2)
+	SendInput("{Click Down}")
+	;sleep 2000
+	coord.s()
+	MouseMove(3240, 564, "2")
+	SendInput("{Click Up}")
+	switchToPremiere()
+	WinWaitClose("Import Files")
+	sleep 1000
 	added:
 	coord.w()
 	WinActivate("ahk_exe Adobe Premiere Pro.exe")
@@ -783,19 +793,16 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			SendInput("{Click}")
 			sleep 100
 		}
-	if ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj.png") || ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj2.png")
-		{
-			MouseMove(fold2x + "5", fold2y + "2")
-			SendInput("{Click 2}")
-			sleep 100
-		}
-	else
+	if !ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj.png") && !ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj2.png")
 		{
 			block.Off()
 			tool.Cust("the sfx folder in premiere", 2000, 1)
 			errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
 			return
 		}
+	MouseMove(fold2x + "5", fold2y + "2")
+	SendInput("{Click 2}")
+	sleep 100
 	loop {
 		if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " ptf.Premiere "binsfx.png")
 			{
