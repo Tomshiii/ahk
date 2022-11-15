@@ -406,11 +406,13 @@ firstCheck(MyRelease) {
     check := IniRead(ptf.files["settings"], "Track", "first check")
     if check != "false" ;how the function tracks whether this is the first time the user is running the script or not
         return
-    firstCheckGUI := Gui("", "Scripts Release " MyRelease)
-    firstCheckGUI.SetFont("S11")
-    firstCheckGUI.Opt("-Resize AlwaysOnTop")
+    firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " MyRelease)
     ;set title
-    Title := firstCheckGUI.Add("Text", "H40 X8 W550", "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
+    titleWidth := 450 + (StrLen(MyRelease)*6)
+    Title := firstCheckGUI.Add("Text", "H40 X8 W" titleWidth, "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
+    title.GetPos(,, &width)
+    firstCheckGUI.GetPos(,, &guiWidth)
+    title.Move((guiWidth/4)+(width/(1+StrLen(MyRelease))))
     Title.SetFont("S15")
     ;text
     bodyText := firstCheckGUI.Add("Text", "W550 X8 Center", "
@@ -474,7 +476,7 @@ firstCheck(MyRelease) {
         buttonDarkMode(hotkeysButton.Hwnd)
         buttonDarkMode(closeButton.Hwnd)
     }
-    
+
     firstCheckGUI.Show("AutoSize")
 }
  

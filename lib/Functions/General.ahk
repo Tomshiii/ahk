@@ -302,7 +302,7 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?)
     start := ""
     text := ""
     beginning := ""
-    if !IsObject(err)
+    if !IsSet(err) || !IsObject(err) 
         {
             func := backupfunc
             error := backupErr
