@@ -29,6 +29,9 @@ This repo is to maintain work on the `ahk v2.0` versions of my scripts. These sc
 ## QMK Keyboard:
 My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) **OR** `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
 
+### Before Getting Started
+My scripts rely on a `SymLink` to be created in the `A_MyDocuments \AutoHotkey\` folder that links back to `..\lib`. The install `.exe` can do this automatically during the extraction process ***OR*** you can regenerate it manually (if you move my repo this also **MUST** be regenerated) by running [`..\Support Files\CreateSymLink.ahk`](https://github.com/Tomshiii/ahk/wiki/CreateSymLink.ahk). My scripts will fail to load if you do not do this.
+
 ## [Getting Started:](https://github.com/Tomshiii/ahk/wiki)
 Indepth instructions on how to get started, as well as complete definitions of everything can be found [over on the wiki page](https://github.com/Tomshiii/ahk/wiki).
 
@@ -63,9 +66,9 @@ A function is defined similar to;
  but also serve as general comments for anyone else
  * 
  * This function does something
- * @param variableX is a value you pass into the function
- * @param variableY is a variable who's value will be passed back once the function is complete
- * @param variableZ is a variable with a default value, it can be omitted
+ * @param {Any} variableX is a value you pass into the function
+ * @param {VarRef} variableY is a variable who's value will be passed back once the function is complete
+ * @param {String} variableZ is a variable with a default value, it can be omitted
  */
 func(variableX, &variableY, variableZ := "default")
 {

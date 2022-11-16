@@ -1,11 +1,11 @@
 SetTimer(waitUntil, -1000)
 #SingleInstance Force
-SetWorkingDir("..\..\")
-#Include "..\KSA\Keyboard Shortcut Adjustments.ahk" ;this is only added to prevent errors
-#Include "..\Functions\Windows.ahk" ;this is only added to prevent errors
-#Include "..\Functions\switchTo.ahk" ;this is only added to prevent errors
-#Include "..\Functions\Startup.ahk" ;this is only added to prevent errors
-#Include "..\Functions\General.ahk" ;this is added because we need it
+SetWorkingDir(ptf.lib)
+#Include <\KSA\Keyboard Shortcut Adjustments> ;this is only added to prevent errors
+#Include <\Functions\Windows> ;this is only added to prevent errors
+#Include <\Functions\switchTo> ;this is only added to prevent errors
+#Include <\Functions\Startup> ;this is only added to prevent errors
+#Include <\Functions\General> ;this is added because we need it
 TraySetIcon(ptf.Icons "\waitUntil.png")
 waitUntil()
 {

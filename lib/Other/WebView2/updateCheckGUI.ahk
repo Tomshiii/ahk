@@ -1,11 +1,11 @@
-#Include WebView2.ahk
+#Include <\Other\WebView2\WebView2>
 #SingleInstance Force
-SetWorkingDir("..\..\..\")
-#Include "..\..\..\lib\KSA\Keyboard Shortcut Adjustments.ahk" ;this is added because we need it
-#Include "..\..\..\lib\Functions\Windows.ahk" ;this is only added to prevent errors
-#Include "..\..\..\lib\Functions\switchTo.ahk" ;this is only added to prevent errors
-#Include "..\..\..\lib\Functions\Startup.ahk" ;this is only added to prevent errors
-#Include "..\..\..\lib\Functions\General.ahk" ;this is added because we need it
+SetWorkingDir(ptf.lib)
+#Include <\KSA\Keyboard Shortcut Adjustments> ;this is added because we need it
+#Include <\Functions\Windows> ;this is only added to prevent errors
+#Include <\Functions\switchTo> ;this is only added to prevent errors
+#Include <\Functions\Startup> ;this is only added to prevent errors
+#Include <\Functions\General> ;this is added because we need it
 
 TraySetIcon(ptf.Icons "\update.png")
 

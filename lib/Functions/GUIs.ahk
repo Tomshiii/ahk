@@ -1,4 +1,4 @@
-#Include General.ahk
+#Include <\Functions\General>
 
 /**
  * This class is to provide a basic template for all GUIs I create to maintain a consistent theme
@@ -16,8 +16,8 @@ class tomshiBasic extends Gui {
     }
 }
 
-#Include "..\settingsGUI\gameCheckGUI.ahk"
-#Include "..\settingsGUI\editValues.ahk"
+#Include <\settingsGUI\gameCheckGUI>
+#Include <\settingsGUI\editValues>
 /**
  * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
  */

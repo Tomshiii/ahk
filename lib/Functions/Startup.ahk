@@ -1,6 +1,6 @@
-#Include General.ahk
-#Include GUIs.ahk
-#Include "..\Other\IncludeLibs.ahk"
+#Include <\Functions\General>
+#Include <\Functions\GUIs>
+#Include <\Other\IncludeLibs>
 
 /**
  * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.

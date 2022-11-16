@@ -1,7 +1,7 @@
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.5
 #Include Functions.ahk
-#Include lib\checklist\include.ahk
+#Include <\checklist\include>
 TraySetIcon(ptf.Icons "\checklist.ico")
 
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
@@ -153,7 +153,7 @@ if FileExist(ptf.files["settings"])
             global globalDarkTool := 0
     }
 
-#Include lib\checklist\verCheck.ahk
+#Include <\checklist\verCheck>
 
 ;getting the title
 SplitPath(path, &name)
@@ -170,7 +170,7 @@ if !FileExist(logs)
 newDate(&today)
 
 ;constructing the GUI
-#Include lib\checklist\contruct.ahk
+#Include <\checklist\contruct>
 
 
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", logs)

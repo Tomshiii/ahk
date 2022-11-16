@@ -1,5 +1,5 @@
-#Include General.ahk
-#Include GUIs.ahk
+#Include <\Functions\General>
+#Include <\Functions\GUIs>
 
 /**
  * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one

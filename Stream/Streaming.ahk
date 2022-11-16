@@ -1,15 +1,15 @@
 #SingleInstance Force
-SetWorkingDir "..\"
+SetWorkingDir(ptf.rootDir)
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
 TraySetIcon(ptf.Icons "\streaming.ico") ;changes the icon this script uses in the taskbar
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 #SingleInstance Force
-#Include "..\lib\KSA\Keyboard Shortcut Adjustments.ahk" ;this is added because we need it
-#Include "..\lib\Functions\Windows.ahk" ;this is only added to prevent errors
-#Include "..\lib\Functions\switchTo.ahk" ;this is only added to prevent errors
-#Include "..\lib\Functions\Startup.ahk" ;this is only added to prevent errors
-#Include "..\lib\Functions\General.ahk" ;this is added because we need it
+#Include <\KSA\Keyboard Shortcut Adjustments> ;this is added because we need it
+#Include <\Functions\Windows> ;this is only added to prevent errors
+#Include <\Functions\switchTo> ;this is only added to prevent errors
+#Include <\Functions\Startup> ;this is only added to prevent errors
+#Include <\Functions\General> ;this is added because we need it
 
 IniWrite(0, ptf.files["StreamINI"], "Number", "Left")
 

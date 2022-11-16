@@ -3,13 +3,13 @@
 */
 class ptf {
     ;general
-    static rootDir           := A_WorkingDir
+    static SettingsLoc       := A_MyDocuments "\tomshi"
+    static rootDir           := IniRead(this.SettingsLoc "\settings.ini", "Track", "working dir", "E:\Github\ahk")
     static SupportFiles      := this.rootDir "\Support Files"
     static Shortcuts         := this.SupportFiles "\shortcuts"
     static Stream            := this.rootDir "\Stream"
     static ErrorLog          := this.rootDir "\Error Logs"
     static lib               := this.rootDir "\lib"
-    static SettingsLoc       := A_MyDocuments "\tomshi"
 
     ;My Stuff
     static MyDir             := "E:"

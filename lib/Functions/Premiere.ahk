@@ -1,4 +1,4 @@
-#Include General.ahk
+#Include <\Functions\General>
 
 /**
  * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.

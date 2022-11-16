@@ -1,15 +1,15 @@
-SetWorkingDir(A_ScriptDir)  ; Ensures a consistent starting directory.
+SetWorkingDir(ptf.rootDir)  ; Ensures a consistent starting directory.
 #SingleInstance Force
-#Include "%A_ScriptDir%\lib\KSA\Keyboard Shortcut Adjustments.ahk"
-#Include "%A_ScriptDir%\lib\Functions\Startup.ahk"
-#Include "%A_ScriptDir%\lib\Functions\After Effects.ahk"
-#Include "%A_ScriptDir%\lib\Functions\Photoshop.ahk"
-#Include "%A_ScriptDir%\lib\Functions\Premiere.ahk"
-#Include "%A_ScriptDir%\lib\Functions\Resolve.ahk"
-#Include "%A_ScriptDir%\lib\Functions\switchTo.ahk"
-#Include "%A_ScriptDir%\lib\Functions\Windows.ahk"
-#Include "%A_ScriptDir%\lib\Functions\GUIs.ahk"
-#Include "%A_ScriptDir%\lib\Other\IncludeLibs.ahk"
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\Startup>
+#Include <\Functions\After Effects>
+#Include <\Functions\Photoshop>
+#Include <\Functions\Premiere>
+#Include <\Functions\Resolve>
+#Include <\Functions\switchTo>
+#Include <\Functions\Windows>
+#Include <\Functions\GUIs>
+#Include <\Other\IncludeLibs>
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1

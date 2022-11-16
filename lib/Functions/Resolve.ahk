@@ -1,4 +1,4 @@
-#Include General.ahk
+#Include <\Functions\General>
 
 /**
  * A function to set the scale of a video within resolve

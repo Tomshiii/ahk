@@ -1,12 +1,12 @@
-SetWorkingDir("..\")
+SetWorkingDir(ptf.rootDir)
 
-#Include "..\lib\KSA\Keyboard Shortcut Adjustments.ahk"
-#Include "..\lib\Functions\Startup.ahk"
-#Include "..\lib\Functions\After Effects.ahk"
-#Include "..\lib\Functions\Photoshop.ahk"
-#Include "..\lib\Functions\Premiere.ahk"
-#Include "..\lib\Functions\Resolve.ahk"
-#Include "..\lib\Functions\switchTo.ahk"
-#Include "..\lib\Functions\Windows.ahk"
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\Startup>
+#Include <\Functions\After Effects>
+#Include <\Functions\Photoshop>
+#Include <\Functions\Premiere>
+#Include <\Functions\Resolve>
+#Include <\Functions\switchTo>
+#Include <\Functions\Windows>
 
 ;This script exists simply so the other scripts in this dir can include all function scripts

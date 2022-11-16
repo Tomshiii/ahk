@@ -1,4 +1,4 @@
-SetWorkingDir "..\"
+SetWorkingDir("..\")
 ;// This script is included more as a backup for myself and not really because it's helpful.
 
 Run(A_WorkingDir "\My Scripts.ahk")

@@ -1,4 +1,4 @@
-#Include General.ahk
+#Include <\Functions\General>
 
 /**
  * A function to warp to one of a photos values within Photoshop (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.

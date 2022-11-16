@@ -1,10 +1,10 @@
 ;These global variables will be used across some Streamdeck AHK scripts.
-SetWorkingDir("..\") ;this is required for KSA to work
-#Include "..\lib\KSA\Keyboard Shortcut Adjustments.ahk" ;this is added because we need it
-#Include "..\lib\Functions\Windows.ahk" ;this is only added to prevent errors
-#Include "..\lib\Functions\switchTo.ahk" ;this is only added to prevent errors
-#Include "..\lib\Functions\Startup.ahk" ;this is only added to prevent errors
-#Include "..\lib\Functions\General.ahk" ;this is added because we need it
+SetWorkingDir(ptf.rootDir) ;this is required for KSA to work
+#Include <\KSA\Keyboard Shortcut Adjustments> ;this is added because we need it
+#Include <\Functions\Windows> ;this is only added to prevent errors
+#Include <\Functions\switchTo> ;this is only added to prevent errors
+#Include <\Functions\Startup> ;this is only added to prevent errors
+#Include <\Functions\General> ;this is added because we need it
 
 ;went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()

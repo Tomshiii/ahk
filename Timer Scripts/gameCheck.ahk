@@ -2,12 +2,11 @@
 
 #SingleInstance Force
 #Include FuncRedirect.ahk
-SetWorkingDir A_ScriptDir ;sets the scripts working directory to the directory it's launched from
 TraySetIcon(ptf.Icons "\game.png")
 SetTitleMatchMode 2
 
 ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
-#Include "..\lib\gameCheck\Game List.ahk"
+#Include <\gameCheck\Game List>
 
 ;Set seconds delay here:
 sec := IniRead(ptf.files["settings"], "Adjust", "game SEC", 2.5)
