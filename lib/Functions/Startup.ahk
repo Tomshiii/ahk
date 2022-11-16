@@ -356,11 +356,11 @@ updateChecker(MyRelease) {
 
                         if DirExist(A_Temp "\" MyRelease)
                             DirDelete(A_Temp "\" MyRelease, 1)
-                        if DirExist(A_WorkingDir "\Backups\Script Backups\" MyRelease)
+                        if DirExist(ptf.rootDir "\Backups\Script Backups\" MyRelease)
                             {
                                 newbackup := MsgBox("You already have a backup of Release " MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
                                 if newbackup = "Yes"
-                                    DirDelete(A_WorkingDir "\Backups\Script Backups\" MyRelease, 1)
+                                    DirDelete(ptf.rootDir "\Backups\Script Backups\" MyRelease, 1)
                                 else
                                     {
                                         ToolTip("")
@@ -371,8 +371,8 @@ updateChecker(MyRelease) {
                         try {
                             TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
                             SetTimer(HideTrayTip, -5000)
-                            DirCopy(A_WorkingDir, A_Temp "\" MyRelease)
-                            DirMove(A_Temp "\" MyRelease, A_WorkingDir "\Backups\Script Backups\" MyRelease, "1")
+                            DirCopy(ptf.rootDir, A_Temp "\" MyRelease)
+                            DirMove(A_Temp "\" MyRelease, ptf.rootDir "\Backups\Script Backups\" MyRelease, "1")
                             if DirExist(A_Temp "\" MyRelease)
                                 DirDelete(A_Temp "\" MyRelease, 1)
                             tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
@@ -486,7 +486,7 @@ firstCheck(MyRelease) {
 oldError() {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
-    loop files, A_WorkingDir "\Error Logs\*.txt"
+    loop files, ptf.ErrorLog "\*.txt"
     if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
         FileDelete(A_LoopFileFullPath)
 }

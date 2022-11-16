@@ -1420,7 +1420,7 @@ gain(amount)
     else
         {
             try {
-                FileCopy(A_WorkingDir "\checklist.ahk", path)
+                FileCopy(ptf.files["checklist"], path)
                 Run(path "\checklist.ahk")
             } catch as e {
                 tool.Cust("File not found")

@@ -539,7 +539,7 @@ End:: ;search for checklist file
 {
 	detect()
 	if !WinExist("Editing Checklist") && !WinExist("Select commission folder") && !WinExist("checklist.ahk - AutoHotkey")
-		Run(A_WorkingDir "\checklist.ahk")
+		Run(ptf.files["checklist"])
 	else if WinExist("Editing Checklist")
 		WinMove(-345, -191,,, "Editing Checklist -")
 }

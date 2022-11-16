@@ -29,7 +29,7 @@ if !FileExist(ptf.files["settings"])
                 myrelease := getVer()
                 if myrelease = ""
                     myrelease := "v2.5" ;if you're not using `My Scripts.ahk` this line will just autopopulate a number to stop errors
-                FileAppend("[Settings]`nupdate check=true`ntooltip=true`n`n[Adjust]`nadobe GB=45`nadobe FS=5`nautosave MIN=5`nprem year=" A_Year "`nae year=" A_Year "`n`n[Track]`nadobe temp=`nworking dir=" A_WorkingDir "`nfirst check=true`nversion=" MyRelease, ptf.files["settings"])
+                FileAppend("[Settings]`nupdate check=true`ntooltip=true`n`n[Adjust]`nadobe GB=45`nadobe FS=5`nautosave MIN=5`nprem year=" A_Year "`nae year=" A_Year "`n`n[Track]`nadobe temp=`nworking dir=" ptf.rootDir "`nfirst check=true`nversion=" MyRelease, ptf.files["settings"])
             }
     }
 
@@ -147,7 +147,7 @@ check() {
             goto end3
         }
     if !WinExist("Select commission folder")
-        Run(A_WorkingDir "\checklist.ahk")
+        Run(ptf.files["checklist"])
     else
         WinWaitClose("Select commission folder")
     tool.Wait()

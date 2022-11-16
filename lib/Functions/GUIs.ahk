@@ -844,9 +844,9 @@ activeScripts(MyRelease)
                 return
             }
         if script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk"
-            Run(A_WorkingDir "\" script.text)
+            Run(ptf.rootDir "\" script.text)
         else
-            Run(A_WorkingDir "\Timer Scripts\" script.text)
+            Run(ptf.rootDir "\Timer Scripts\" script.text)
     }
 
     checkScripts(*)

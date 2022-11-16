@@ -49,6 +49,7 @@ class ptf {
         "settings",        this.SettingsLoc "\settings.ini",
         "KSAini",          this.lib "\KSA\Keyboard Shortcuts.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
+        "checklist",       this.rootDir "\checklist.ahk",
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",
