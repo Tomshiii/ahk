@@ -411,7 +411,7 @@ rotationProp := IniRead(ptf.files["KSAini"], "After Effects", "Rotation")
 
  Can be set within KSA.ahk/ini
  */
-resolveSelectPlayhead := IniRead(ptf.files["KSAini"], "Resolve", "Select at Playhead")
+resolveSelectPlayhead := IniRead(ptf.files["KSAini"], "Resolve", "Select at Playhead Resolve")
 
 /**
  * This value will send the keyboard shortcut you have set to deselect the clip at playhead within Resolve

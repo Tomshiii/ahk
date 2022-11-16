@@ -93,7 +93,7 @@ Type: String - Filename
 # Premiere
 
 ## `preset()`
-This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work. This function contains custom code if the preset is called `loremipsum` and is intended for creating a custom text label and then dragging your preset on top of it.
+This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work. This function contains custom code if the preset is called `loremipsum` and is intended for creating a custom text layer and then dragging your preset on top of it.
 
 Your preset must also be in it's own folder like so;
 
