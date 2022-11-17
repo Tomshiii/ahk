@@ -135,8 +135,13 @@ Rbutton::
 			if !GetKeyState("Rbutton", "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
 				{
 					SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
+					;The below checks are to ensure no buttons end up stuck
 					if GetKeyState("Lbutton")
 						SendInput("{Lbutton Up}")
+					if GetKeyState("XButton1")
+						SendInput("{XButton1 Up}")
+					if GetKeyState("XButton2")
+						SendInput("{XButton2 Up}")
 					return
 				}
 			while GetKeyState("Rbutton", "P")
@@ -170,7 +175,7 @@ Rbutton::
 					left := 0
 					xbutton := 0
 				}
-			return		
+			return
 		}
 	else
 		sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
@@ -200,3 +205,26 @@ checkStuck()
 
 	SetTimer(, 0)
 }
+
+;debugging
+/* checkXStuck()
+{
+	if !GetKeyState("XButton1") && !GetKeyState("XButton2")
+		return
+	key := ""
+	if GetKeyState("XButton1") && !GetKeyState("XButton2")
+		key := "XButton1"
+	if GetKeyState("XButton2") && !GetKeyState("XButton1")
+		key := "XButton2"
+	SendInput("{" key " Up}")
+	if GetKeyState("XButton1") && GetKeyState("XButton2")
+		{
+			SendInput("{XButton1 Up}")
+			SendInput("{XButton2 Up}")
+			key := "XButton1 & XButton2"
+		}
+	tool.Wait(1)
+	tool.Cust(key " key stuck, lifting", 2000)
+
+	SetTimer(, 0)
+} */
