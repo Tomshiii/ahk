@@ -3,6 +3,9 @@ All `lib`/`function` files now get included from the user library. This is accom
 
 ## > Other Changes
 - Fix double key name in `KSA.ini`
-- Fix `right click premiere.ahk` causing `XButton1/2` to get stuck
 - Changed `convert2x.ahk` scripts to function `convert2()`
     - Will now run `A_ComSpec` instead of calling cmd from the explorer window as doing so in win11 opens the new terminal which is incredibly difficult to detect with ahk
+
+`right click premiere.ahk`
+- Fixed bug that caused `XButton1/2` to get stuck
+- Fixed bug that would cause macro to lag & get stuck within a loop that constantly spammed `Move Playhead to Cursor`

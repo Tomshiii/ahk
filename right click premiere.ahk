@@ -105,7 +105,10 @@ Rbutton::
 	)
 		{ ;this block is if the colour at the cursor is one of the above in the `else if()`
 			colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
-			click("middle") ;sends the middle mouse button to BRING FOCUS TO the timelineCol, WITHOUT selecting any clips or empty spaces between clips. very nice!
+			; click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
+			;while as stated above, middle clicking the mouse does indeed bring focus to the timeline, for whatever reason having that line active made it so that
+			;if I ever clicking RButton and an XButton at the same time, the script would sorta lag and then get stuck in it's loop unable to tell that RButton isn't being held
+			SendInput(timelineWindow) ;so we'll do this instead
 			if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead
 			{
 				if (
@@ -136,8 +139,8 @@ Rbutton::
 				{
 					SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 					;The below checks are to ensure no buttons end up stuck
-					if GetKeyState("Lbutton")
-						SendInput("{Lbutton Up}")
+					if GetKeyState("LButton")
+						SendInput("{LButton Up}")
 					if GetKeyState("XButton1")
 						SendInput("{XButton1 Up}")
 					if GetKeyState("XButton2")
