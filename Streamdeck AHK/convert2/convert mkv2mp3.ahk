@@ -1,7 +1,4 @@
 #SingleInstance Force
-if WinActive("ahk_class CabinetWClass")
-    {
-        SendInput("{f4}" "^a" "+{BackSpace}" "cmd{Enter}") ;F4 highlights the path box, then opens cmd at the current directory
-        WinWaitActive("ahk_exe cmd.exe")
-        SendInput("for %i in (*.mkv) do ffmpeg -i " '"' "%i" '" ' '"' "%~ni.mp3" '"' "{Enter}") ;this requires you to have ffmpeg in your system path, otherwise this will do nothing
-    }
+#Include "..\SD_functions.ahk"
+convert2("for %i in (*.mkv) do ffmpeg -i " '"' "%i" '" ' '"' "%~ni.mp3" '"' "{Enter}")
+;for %i in (*.mkv) do ffmpeg -i "%i" "%~ni.mp3"
