@@ -1,5 +1,7 @@
 SetWorkingDir(A_ScriptDir)
 
+if !DirExist(A_MyDocuments "\AutoHotkey")
+    DirCreate(A_MyDocuments "\AutoHotkey")
 if DirExist(A_MyDocuments "\AutoHotkey\Lib")
     DirDelete(A_MyDocuments "\AutoHotkey\Lib")
 

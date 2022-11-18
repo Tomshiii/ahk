@@ -68,7 +68,7 @@ Rbutton::
                 static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
                 tool.Wait()
 				script := SplitPathObj(A_LineFile)
-                tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0)
+                tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 2.0)
             } catch as e {
                 tool.Wait()
                 tool.Cust("Couldn't find the ClassNN value")
@@ -192,19 +192,23 @@ Rbutton::
 checkStuck()
 {
 	key := ""
-	if GetKeyState("Ctrl") && !GetKeyState("Shift")
+	if GetKeyState("Ctrl") && !GetKeyState("Ctrl", "P") && !GetKeyState("Shift")
 		key := "ctrl"
-	if GetKeyState("Shift") && !GetKeyState("Ctrl")
+	if GetKeyState("Shift") && !GetKeyState("Shift", "P") && !GetKeyState("Ctrl")
 		key := "shift"
-	SendInput("{" key " Up}")
-	if GetKeyState("Ctrl") && GetKeyState("Shift")
+	if key != ""
+		SendInput("{" key " Up}")
+	if GetKeyState("Ctrl") && GetKeyState("Shift") && !GetKeyState("Shift", "P") && !GetKeyState("Ctrl", "P")
 		{
 			SendInput("{Ctrl Up}")
 			SendInput("{Shift Up}")
 			key := "ctrl & shift"
 		}
-	tool.Wait(1)
-	tool.Cust(key " key stuck, lifting", 2000)
+	if key != ""
+		{
+			tool.Wait(1)
+			tool.Cust(key " key stuck, lifting", 2000)
+		}
 
 	SetTimer(, 0)
 }
