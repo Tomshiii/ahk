@@ -19,7 +19,7 @@ if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
     ExitApp
 }
 
-path := '"' A_ScriptDir "\..\Lib" '"'
+path := '"' A_ScriptDir "\..\..\Lib" '"'
 
 cmdLine := 'mklink /D "' A_MyDocuments '\AutoHotkey\Lib" ' path '"'
 ;final command should look like;

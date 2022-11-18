@@ -11,8 +11,7 @@ if !IsSet(forRelease) || forRelease = ""
 if FileExist("..\Icons\myscript.png")
     TraySetIcon("..\Icons\myscript.png")
 ;defining the informational gui
-ReplacerGui := Gui("", "Tomshi Hotkey Replacer for " forRelease)
-ReplacerGui.Opt("+Resize +MinSize500x400 +MaxSize600x450 -MaximizeBox")
+ReplacerGui := Gui("-Resize +MinSize500x380 -MaximizeBox", "Tomshi Hotkey Replacer for " forRelease)
 ReplacerGui.SetFont("S11.5")
 ;nofocus
 removedefault := ReplacerGui.Add("Button", "Default X0 Y0 w0 h0", "_")
@@ -22,7 +21,7 @@ titleWidth := 350 + (StrLen(forRelease)*8.5)
 title := ReplacerGui.Add("Text", "X105 Y8 W" titleWidth " Center R1.5", "Welcome to Hotkey Replacer for " forRelease)
 ;logoImg := ReplacerGui.Add("Picture", "X246 Y+10", A_ScriptDir "\" forRelease "\Support Files\Icons\myscript.png")
 title.SetFont("S15 Bold")
-text := ReplacerGui.Add("Text", "X30 W530 Y+5 Center", "This script is only designed to be used if you already have a version of my scripts in use. If you don't, feel free to exit out of this script and simply place the release folder wherever you wish (and renaming it to whatever you wish). Then try running ``My Scripts.ahk`` to get started!`n`nThis script is designed to replace all of the hotkeys in the release version of ``My Scripts.ahk`` with the hotkeys you have in your own local copy.`n`nThis script works by detecting the ``;xHotkey;`` tag I have above every hotkey and doing some string replacement to replace the release version with any you've changed locally.`n`nPlease be aware that any hotkeys you've added yourself will not be transfered over and there may still be some manual adjustment needed in that case.")
+text := ReplacerGui.Add("Text", "X30 W530 Y+5 Center", "This script is only designed to be used if you already have a version of my scripts in use. If you don't, feel free to exit out of this script.`n`nThis script is designed to replace all of the hotkeys in the release version of ``My Scripts.ahk`` with the hotkeys you have in your own local copy.`n`nThis script works by detecting the ``;xHotkey;`` tag I have above every hotkey and doing some string replacement to replace the release version with any you've changed locally.`n`nPlease be aware that any hotkeys you've added yourself will not be transfered over and there may still be some manual adjustment needed in that case.")
 
 ;progress bar
 prog := ReplacerGui.Add("Progress", "X18 Y+20 w400 h20 cblue Smooth vMyProgress")
