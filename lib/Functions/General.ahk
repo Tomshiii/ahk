@@ -45,7 +45,7 @@ class ptf {
     static AEYear            := IniRead(this.SettingsLoc "\settings.ini", "adjust", "ae year", A_Year)
 
     ;complete file links
-    static files := Map(
+    static __Item := Map(
         "settings",        this.SettingsLoc "\settings.ini",
         "KSAini",          this.lib "\KSA\Keyboard Shortcuts.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
@@ -346,7 +346,7 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?)
                     Response2 := OperatingSystem.FreePhysicalMemory / "1048576"
                 Memory := Round(Response, 2)
                 FreePhysMem := Round(Response2, 2)
-                InstalledVersion := IniRead(ptf.files["settings"], "Track", "version")
+                InstalledVersion := IniRead(ptf["settings"], "Track", "version")
                 LatestReleaseBeta := getScriptRelease(True)
                 LatestReleaseMain := getScriptRelease()
                 if LatestReleaseBeta = LatestReleaseMain

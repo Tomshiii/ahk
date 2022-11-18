@@ -144,7 +144,7 @@ updateCheck(Item, *)
         tree := "main"
     if Item = "&Beta"
         tree := "dev"
-    if !FileExist(ptf.files["settings"])
+    if !FileExist(ptf["settings"])
         {
             try {
                 main := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -179,7 +179,7 @@ updateCheck(Item, *)
                 tool.Cust("You are up to date!")
             return
         }
-    currentVer := IniRead(ptf.files["settings"], "Track", "version")
+    currentVer := IniRead(ptf["settings"], "Track", "version")
     if tree = "main"
         latestVer := getScriptRelease()
     if tree = "dev"

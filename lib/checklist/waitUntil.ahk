@@ -61,6 +61,6 @@ waitUntil()
         }
     if WinExist("checklist.ahk",, "Visual Studio Code")
         ProcessClose(WinGetPID("checklist.ahk",, "Visual Studio Code"))
-    Run(ptf.files["checklist"])
+    Run(ptf["checklist"])
     SetTimer(, 0)
 }

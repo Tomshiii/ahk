@@ -53,9 +53,9 @@ generate(MyRelease)
     }
     if !DirExist(ptf.SettingsLoc)
         DirCreate(ptf.SettingsLoc)
-    if FileExist(ptf.files["settings"])
+    if FileExist(ptf["settings"])
         {
-            ver := IniRead(ptf.files["settings"], "Track", "version")
+            ver := IniRead(ptf["settings"], "Track", "version")
             if !VerCompare(MyRelease, ver) > 0 ;do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
                 return
 
@@ -67,26 +67,26 @@ generate(MyRelease)
         darkVerCheck := "disabled"
     else
         darkVerCheck := "true"
-    UPDATE := IniRead(ptf.files["settings"], "Settings", "update check", "true")
-    BETAUPDATE := IniRead(ptf.files["settings"], "Settings", "beta update check", "false")
-    FC := IniRead(ptf.files["settings"], "Track", "first check", "false")
-    ADOBE := IniRead(ptf.files["settings"], "Track", "adobe temp", "")
-    WORK := IniRead(ptf.files["settings"], "Track", "working dir", "E:\Github\ahk")
-    TOOLS := IniRead(ptf.files["settings"], "Settings", "tooltip", "true")
-    ADOBE_GB := IniRead(ptf.files["settings"], "Adjust", "adobe GB", 45)
-    ADOBE_FS := IniRead(ptf.files["settings"], "Adjust", "adobe FS", 5)
-    AUTOMIN := IniRead(ptf.files["settings"], "Adjust", "autosave MIN", 5)
-    CHECKTOOL := IniRead(ptf.files["settings"], "Settings", "checklist tooltip", "true")
-    GAMESEC := IniRead(ptf.files["settings"], "Adjust", "game SEC", 2.5)
-    DARK := IniRead(ptf.files["settings"], "Settings", "dark mode", darkVerCheck)
-    MULTI := IniRead(ptf.files["settings"], "Adjust", "multi SEC", 5)
-    WAIT := IniRead(ptf.files["settings"], "Settings", "checklist wait", "false")
-    PREMYEAR := IniRead(ptf.files["settings"], "Adjust", "prem year", A_Year)
-    AEYEAR := IniRead(ptf.files["settings"], "Adjust", "ae year", A_Year)
+    UPDATE := IniRead(ptf["settings"], "Settings", "update check", "true")
+    BETAUPDATE := IniRead(ptf["settings"], "Settings", "beta update check", "false")
+    FC := IniRead(ptf["settings"], "Track", "first check", "false")
+    ADOBE := IniRead(ptf["settings"], "Track", "adobe temp", "")
+    WORK := IniRead(ptf["settings"], "Track", "working dir", "E:\Github\ahk")
+    TOOLS := IniRead(ptf["settings"], "Settings", "tooltip", "true")
+    ADOBE_GB := IniRead(ptf["settings"], "Adjust", "adobe GB", 45)
+    ADOBE_FS := IniRead(ptf["settings"], "Adjust", "adobe FS", 5)
+    AUTOMIN := IniRead(ptf["settings"], "Adjust", "autosave MIN", 5)
+    CHECKTOOL := IniRead(ptf["settings"], "Settings", "checklist tooltip", "true")
+    GAMESEC := IniRead(ptf["settings"], "Adjust", "game SEC", 2.5)
+    DARK := IniRead(ptf["settings"], "Settings", "dark mode", darkVerCheck)
+    MULTI := IniRead(ptf["settings"], "Adjust", "multi SEC", 5)
+    WAIT := IniRead(ptf["settings"], "Settings", "checklist wait", "false")
+    PREMYEAR := IniRead(ptf["settings"], "Adjust", "prem year", A_Year)
+    AEYEAR := IniRead(ptf["settings"], "Adjust", "ae year", A_Year)
     deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
-    if FileExist(ptf.files["settings"])
-        FileDelete(ptf.files["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`nprem year=" PREMYEAR "`nae year=" AEYEAR "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, ptf.files["settings"])
+    if FileExist(ptf["settings"])
+        FileDelete(ptf["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
+    FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`nprem year=" PREMYEAR "`nae year=" AEYEAR "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, ptf["settings"])
 }
 
 
@@ -140,11 +140,11 @@ updateChecker(MyRelease) {
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
     ;checking to see if the user wishes to check for updates
-    check := IniRead(ptf.files["settings"], "Settings", "update check")
+    check := IniRead(ptf["settings"], "Settings", "update check")
     if check = "stop"
         return
     betaprep := 0
-    if IniRead(ptf.files["settings"], "Settings", "beta update check", "false") = "true"
+    if IniRead(ptf["settings"], "Settings", "beta update check", "false") = "true"
         { ;if the user wants to check for beta updates instead, this block will fire
             global version := getScriptRelease(true, &changeVer)
             betaprep := 1
@@ -194,7 +194,7 @@ updateChecker(MyRelease) {
             view.OnEvent("Click", viewClick)
             viewClick(*)
             {
-                Run(ptf.files["updateCheckGUI"])
+                Run(ptf["updateCheckGUI"])
                 WinSetAlwaysOnTop(0, "Scripts Release " version)
                 WinWait("updateCheckGUI")
                 WinActivate("updateCheckGUI")
@@ -211,13 +211,13 @@ updateChecker(MyRelease) {
             noprompt := MyGui.Add("Checkbox", "xs-175 Ys-10", "Don't prompt again")
             noprompt.OnEvent("Click", prompt)
             ;set beta checkbox
-            if IniRead(ptf.files["settings"], "Settings", "beta update check", "false") = "true"
+            if IniRead(ptf["settings"], "Settings", "beta update check", "false") = "true"
                 betaCheck := MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
             else
                 betaCheck := MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
             betaCheck.OnEvent("Click", prompt)
 
-            if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
+            if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
                 goDark()
             goDark()
             {
@@ -233,18 +233,18 @@ updateChecker(MyRelease) {
                     {
                         switch guiCtrl.Value {
                             case 0:
-                                IniWrite("true", ptf.files["settings"], "Settings", "update check")
+                                IniWrite("true", ptf["settings"], "Settings", "update check")
                             case 1:
-                                IniWrite("false", ptf.files["settings"], "Settings", "update check")
+                                IniWrite("false", ptf["settings"], "Settings", "update check")
                         }
                     }
                 if InStr(guiCtrl.Text, "beta")
                     {
                         switch guiCtrl.Value {
                             case 1:
-                                IniWrite("true", ptf.files["settings"], "Settings", "beta update check")
+                                IniWrite("true", ptf["settings"], "Settings", "beta update check")
                             case 0:
-                                IniWrite("false", ptf.files["settings"], "Settings", "beta update check")
+                                IniWrite("false", ptf["settings"], "Settings", "beta update check")
                         }
                         Run(A_ScriptFullPath)
                     }
@@ -403,7 +403,7 @@ firstCheck(MyRelease) {
         version := ""
     if WinExist("Scripts Release " version)
         WinWaitClose("Scripts Release " version)
-    check := IniRead(ptf.files["settings"], "Track", "first check")
+    check := IniRead(ptf["settings"], "Track", "first check")
     if check != "false" ;how the function tracks whether this is the first time the user is running the script or not
         return
     firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " MyRelease)
@@ -447,7 +447,7 @@ firstCheck(MyRelease) {
     firstCheckGUI.OnEvent("Escape", close)
     firstCheckGUI.OnEvent("Close", close)
     close(*) {
-        IniWrite("true", ptf.files["settings"], "Track", "first check") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
+        IniWrite("true", ptf["settings"], "Track", "first check") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
         firstCheckGUI.Destroy()
     }
     todoPage(*) {
@@ -466,7 +466,7 @@ firstCheck(MyRelease) {
         firstCheckGUI.Opt("-Disabled")
     }
 
-    if IniRead(ptf.files["settings"], "Settings", "dark mode") = "true"
+    if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
         goDark()
     goDark()
     {
@@ -502,12 +502,12 @@ adobeTemp(MyRelease) {
     tool.Wait()
     if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
         WinWaitClose("Scripts Release " MyRelease)
-    day := IniRead(ptf.files["settings"], "Track", "adobe temp")
+    day := IniRead(ptf["settings"], "Track", "adobe temp")
     if day = A_YDay ;checks to see if the function has already run today
         return
 
     ;SET HOW BIG YOU WANT IT TO WAIT FOR IN THE `settings.ini` FILE (IN GB) -- IT WILL DEFAULT TO 45GB
-    largestSize := IniRead(ptf.files["settings"], "Adjust", "adobe GB", 45)
+    largestSize := IniRead(ptf["settings"], "Adjust", "adobe GB", 45)
 
     ;first we set our counts to 0
     CacheSize := 0
@@ -564,7 +564,7 @@ adobeTemp(MyRelease) {
             ToolTip("")
         }
     end:
-    IniWrite(A_YDay, ptf.files["settings"], "Track", "adobe temp") ;tracks the day so it will not run again today
+    IniWrite(A_YDay, ptf["settings"], "Track", "adobe temp") ;tracks the day so it will not run again today
 }
  
 /**
@@ -627,7 +627,7 @@ locationReplace()
     if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
         return
     tool.Wait()
-    checkDir := IniRead(ptf.files["settings"], "Track", "working dir")
+    checkDir := IniRead(ptf["settings"], "Track", "working dir")
     if checkDir = A_WorkingDir
         return
 
@@ -683,7 +683,7 @@ locationReplace()
     end() {
         TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
     }
-    IniWrite(A_WorkingDir, ptf.files["settings"], "Track", "working dir")
+    IniWrite(A_WorkingDir, ptf["settings"], "Track", "working dir")
 }
  
 /**
@@ -691,7 +691,7 @@ locationReplace()
  */
 trayMen()
 {
-    check := IniRead(ptf.files["settings"], "Settings", "update check")
+    check := IniRead(ptf["settings"], "Settings", "update check")
     A_TrayMenu.Insert("7&") ;adds a divider bar
     A_TrayMenu.Insert("8&", "Settings", settings)
     A_TrayMenu.Insert("9&", "Check for Updates", checkUp)
@@ -699,13 +699,13 @@ trayMen()
         A_TrayMenu.Check("Check for Updates")
     checkUp(*)
     {
-        check := IniRead(ptf.files["settings"], "Settings", "update check") ;has to be checked everytime you wish to toggle
+        check := IniRead(ptf["settings"], "Settings", "update check") ;has to be checked everytime you wish to toggle
         switch check {
             case "true":
-                IniWrite("false", ptf.files["settings"], "Settings", "update check")
+                IniWrite("false", ptf["settings"], "Settings", "update check")
                 A_TrayMenu.Uncheck("Check for Updates")
             case "false":
-                IniWrite("true", ptf.files["settings"], "Settings", "update check")
+                IniWrite("true", ptf["settings"], "Settings", "update check")
                 A_TrayMenu.Check("Check for Updates")
         }
     }

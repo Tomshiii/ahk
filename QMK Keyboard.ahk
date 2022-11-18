@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11
+;\\v2.11.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
@@ -539,7 +539,7 @@ End:: ;search for checklist file
 {
 	detect()
 	if !WinExist("Editing Checklist") && !WinExist("Select commission folder") && !WinExist("checklist.ahk - AutoHotkey")
-		Run(ptf.files["checklist"])
+		Run(ptf["checklist"])
 	else if WinExist("Editing Checklist")
 		WinMove(-345, -191,,, "Editing Checklist -")
 }

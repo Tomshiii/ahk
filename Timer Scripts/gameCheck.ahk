@@ -9,11 +9,11 @@ SetTitleMatchMode 2
 #Include <\gameCheck\Game List>
 
 ;Set seconds delay here:
-sec := IniRead(ptf.files["settings"], "Adjust", "game SEC", 2.5)
+sec := IniRead(ptf["settings"], "Adjust", "game SEC", 2.5)
 secms := sec * 1000
 
-darkMode := IniRead(ptf.files["settings"], "Settings", "dark mode")
-version := IniRead(ptf.files["settings"], "Track", "version")
+darkMode := IniRead(ptf["settings"], "Settings", "dark mode")
+version := IniRead(ptf["settings"], "Track", "version")
 
 gameGUI := gameCheckGUI(darkMode, version, "", "", "AlwaysOnTop", "Add game to gameCheck.ahk")
 A_TrayMenu.Insert("7&") ;adds a divider bar

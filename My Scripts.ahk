@@ -15,9 +15,9 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.22.1
+;\\v2.22.2
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.11
+;\\v2.11.1
 
 ; ============================================================================================================================================
 ;
@@ -529,7 +529,7 @@ SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;thi
 SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;
 SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
-^+t::Run(ptf.Files["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
+^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 ;discserverHotkey;
 F1::discUnread() ;will click any unread servers

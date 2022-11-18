@@ -11,7 +11,7 @@ TraySetIcon(ptf.Icons "\streaming.ico") ;changes the icon this script uses in th
 #Include <\Functions\Startup> ;this is only added to prevent errors
 #Include <\Functions\General> ;this is added because we need it
 
-IniWrite(0, ptf.files["StreamINI"], "Number", "Left")
+IniWrite(0, ptf["StreamINI"], "Number", "Left")
 
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ;
@@ -21,7 +21,7 @@ IniWrite(0, ptf.files["StreamINI"], "Number", "Left")
 ;
 ;	//////////////////////////////////////////////////////////////////////////////////////////////
 ; This is just so I have a way to relaunch it manually as admin for debugging purposes
-F6::Run('*RunAs ' ptf.files["StreamAHK"])
+F6::Run('*RunAs ' ptf["StreamAHK"])
 
 ;===========================================================================================================================================================================
 ;
@@ -32,27 +32,27 @@ F6::Run('*RunAs ' ptf.files["StreamAHK"])
 
 F17:: ;lioranboard sends f17 when channel point reward comes through
 {
-	songs := IniRead(ptf.files["StreamINI"], "Number", "Left")
+	songs := IniRead(ptf["StreamINI"], "Number", "Left")
 	if songs = 1
 		{
 			KeyWait("F5", "D T105")
-			IniWrite(songs - 1, ptf.files["StreamINI"], "Number", "Left")
-			Run(ptf.files["SongQUEUE"])
+			IniWrite(songs - 1, ptf["StreamINI"], "Number", "Left")
+			Run(ptf["SongQUEUE"])
 			return
 		}
 	if songs = 0
-		Run(ptf.files["SongQUEUE"])
+		Run(ptf["SongQUEUE"])
 }
 
 F22::  ;temporary way to play full mii wii song using lioranboard
 {
-	songs := IniRead(ptf.files["StreamINI"], "Number", "Left")
-	IniWrite(songs + 1, ptf.files["StreamINI"], "Number", "Left")
-	Run(ptf.files["Wii Music"])
+	songs := IniRead(ptf["StreamINI"], "Number", "Left")
+	IniWrite(songs + 1, ptf["StreamINI"], "Number", "Left")
+	Run(ptf["Wii Music"])
 	sleep 105000
 	if WinExist("ahk_exe vlc.exe")
 		WinClose("ahk_exe vlc.exe")
-	IniWrite(0, ptf.files["StreamINI"], "Number", "Left")
+	IniWrite(0, ptf["StreamINI"], "Number", "Left")
 }
 
 

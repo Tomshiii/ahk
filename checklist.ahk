@@ -98,9 +98,9 @@ else
         if !IsSet(dashLocation) && !IsSet(dashLocationAE)
             {
                 detect()
-                if FileExist(ptf.files["settings"]) ;checks to see if the user wants to always wait until they open a project
+                if FileExist(ptf["settings"]) ;checks to see if the user wants to always wait until they open a project
                     {
-                        waitCheck := IniRead(ptf.files["settings"], "Settings", "checklist Wait", "false")
+                        waitCheck := IniRead(ptf["settings"], "Settings", "checklist Wait", "false")
                         if waitCheck = "true"
                             {
                                 WaitTrack := 1
@@ -137,16 +137,16 @@ else
 globalCheckTool := 1
 globalDarkTool := 1
 ;grabbing the location dir of the users copy of tomshi's scripts. This will allow any deployed checklist scripts to automatically update
-if FileExist(ptf.files["settings"])
+if FileExist(ptf["settings"])
     {
-        location := IniRead(ptf.files["settings"], "Track", "working dir")
-        tooltipSettings := IniRead(ptf.files["settings"], "Settings", "checklist tooltip", "true")
+        location := IniRead(ptf["settings"], "Track", "working dir")
+        tooltipSettings := IniRead(ptf["settings"], "Settings", "checklist tooltip", "true")
         if tooltipSettings = "true"
             global globalCheckTool := 1
         else
             global globalCheckTool := 0
 
-        darkSettings := IniRead(ptf.files["settings"], "Settings", "dark mode", "true")
+        darkSettings := IniRead(ptf["settings"], "Settings", "dark mode", "true")
         if darkSettings = "true"
             global globalDarkTool := 1
         else

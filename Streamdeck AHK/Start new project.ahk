@@ -18,7 +18,7 @@ if WinExist("Editing Checklist -")
         tool.Cust("You already have checklist.ahk open")
         goto end
     }
-Run(ptf.files["checklist"])
+Run(ptf["checklist"])
 
 end:
 ;; This part then just opens the project folder

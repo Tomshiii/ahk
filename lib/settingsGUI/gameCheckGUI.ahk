@@ -59,7 +59,7 @@
             if procVal != gameProcess.Value
                 procVal := gameProcess.Value
             ;check for game list file
-            rootDir := IniRead(ptf.files["settings"], "Track", "working dir")
+            rootDir := IniRead(ptf["settings"], "Track", "working dir")
             if !FileExist(rootDir "\lib\gameCheck\Game List.ahk")
                 {
                     MsgBox("``Game List.ahk`` not found in the proper directory")

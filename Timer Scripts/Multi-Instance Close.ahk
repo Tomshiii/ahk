@@ -7,8 +7,8 @@ TraySetIcon(ptf.Icons "\M-I_C.png")
 ;This script will not close multiple instances of `checklist.ahk`
 set:
 sec := 5
-if FileExist(ptf.files["settings"])
-    sec := IniRead(ptf.files["settings"], "Adjust", "multi SEC")
+if FileExist(ptf["settings"])
+    sec := IniRead(ptf["settings"], "Adjust", "multi SEC")
 global ms := sec * 1000
 
 if IsSet(ms) ;we don't want the timer starting before the ms variable has been set

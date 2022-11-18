@@ -157,7 +157,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
                         goto end
                     }
                 try {
-                    Run(ptf.files["checklist"])
+                    Run(ptf["checklist"])
                 } catch as e {
                     tool.Cust("File not found")
                 }

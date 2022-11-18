@@ -287,8 +287,8 @@ zoom()
     alexXYS := [2064, -26, 215]
     alexZoomXYS := [3467, 339, 390]
 
-    ;d0yle
-    d0yleXYS := [-57, -37, 210]
+    ;d0yle ;orig => [-57, -37, 210]
+    d0yleXYS := [-11, 457, 210]
 
     ;chloe
     chloeXYS := [-426, -238, 267]
@@ -1420,7 +1420,7 @@ gain(amount)
     else
         {
             try {
-                FileCopy(ptf.files["checklist"], path)
+                FileCopy(ptf["checklist"], path)
                 Run(path "\checklist.ahk")
             } catch as e {
                 tool.Cust("File not found")

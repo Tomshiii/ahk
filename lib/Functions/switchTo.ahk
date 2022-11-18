@@ -41,7 +41,7 @@ closeOtherWindow(program)
 switchToPremiere()
 {
     if !WinExist("ahk_class Premiere Pro")
-        Run(ptf.files["Premiere"])
+        Run(ptf["Premiere"])
     else if WinExist("ahk_class Premiere Pro")
         WinActivate("ahk_class Premiere Pro")
 }
@@ -53,7 +53,7 @@ switchToAE()
 {
     runae() ;cut repeat code
     {
-        Run(ptf.files["AE"])
+        Run(ptf["AE"])
         WinWait("ahk_exe AfterFX.exe")
         WinActivate("ahk_exe AfterFX.exe")
     }
@@ -147,7 +147,7 @@ switchToPhoto()
             WinActivate("ahk_exe Photoshop.exe")
             return
         }
-    Run(ptf.files["Photoshop"])
+    Run(ptf["Photoshop"])
     WinWait("ahk_exe Photoshop.exe")
     WinActivate("ahk_exe Photoshop.exe")
 }
@@ -323,7 +323,7 @@ switchToWindowSpy()
 switchToYourPhone()
 {
     if !WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
-        Run(ptf.files["YourPhone"])
+        Run(ptf["YourPhone"])
     GroupAdd("yourphone", "ahk_class ApplicationFrameWindow")
     if WinActive("Your Phone")
         GroupActivate("yourphone", "r")
