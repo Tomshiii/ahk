@@ -100,7 +100,7 @@ dele() ;this is here so manInput() can work, you can just ignore this
 	Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
 		if Result = "Yes"
 			{
-				if WinExist("ahk_exe Code.exe")
+				if WinExist(browser.winTitle["vscode"])
 						WinActivate
 				else
 					Run ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe"

@@ -15,7 +15,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.22.2
+;\\v2.22.3
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.11.1
 
@@ -367,7 +367,7 @@ F18:: ;open the "show more options" menu in win11
 		}
 }
 
-#HotIf WinActive("ahk_exe Code.exe")
+#HotIf WinActive(browser.winTitle["vscode"])
 ;vscodemsHotkey;
 !a::vscode(18) ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;

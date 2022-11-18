@@ -230,13 +230,13 @@ firefoxTap()
  */
 switchToVSC()
 {
-    if !WinExist("ahk_exe Code.exe")
+    if !WinExist(browser.winTitle["vscode"])
         Run(ptf.ProgFi "\Microsoft VS Code\Code.exe")
-        GroupAdd("Code", "ahk_class Chrome_WidgetWin_1")
-    if WinActive("ahk_exe Code.exe")
-        GroupActivate("Code", "r")
-    else if WinExist("ahk_exe Code.exe")
-        WinActivate("ahk_exe Code.exe") ;you have to use WinActivatebottom if you didn't create a window group.
+    GroupAdd("Code", browser.class["vscode"])
+    /* if WinActive(browser.winTitle["vscode"])
+        GroupActivate("Code", "r") */
+    if WinExist(browser.winTitle["vscode"])
+        WinActivate(browser.winTitle["vscode"]) ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
 /**
@@ -246,7 +246,7 @@ switchToGithub()
 {
     if !WinExist("ahk_exe GitHubDesktop.exe")
         Run(ptf.LocalAppData "\GitHubDesktop\GitHubDesktop.exe")
-        GroupAdd("git", "ahk_class Chrome_WidgetWin_1")
+    GroupAdd("git", "ahk_class Chrome_WidgetWin_1")
     if WinActive("ahk_exe GitHubDesktop.exe")
         GroupActivate("git", "r")
     else if WinExist("ahk_exe GitHubDesktop.exe")
@@ -260,7 +260,7 @@ switchToStreamdeck()
 {
     if !WinExist("ahk_exe StreamDeck.exe")
         Run(ptf.ProgFi "\Elgato\StreamDeck\StreamDeck.exe")
-        GroupAdd("stream", "ahk_class Qt5152QWindowIcon")
+    GroupAdd("stream", "ahk_class Qt5152QWindowIcon")
     if WinActive("ahk_exe StreamDeck.exe")
         GroupActivate("stream", "r")
     else if WinExist("ahk_exe Streamdeck.exe")

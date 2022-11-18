@@ -78,18 +78,20 @@ class browser {
         "firefox",        "ahk_exe firefox.exe",
         "chrome",         "ahk_exe chrome",
         "edge",           "ahk_exe msedge",
+        "vscode",         "ahk_exe Code.exe",
     )
     static class := Map(
         "firefox",        "ahk_class MozillaWindowClass",
         "chrome",         "ahk_class Chrome_WidgetWin_1",
         "edge",           "ahk_class Chrome_WidgetWin_1",
+        "vscode",         "ahk_class Chrome_WidgetWin_1",
     )
 }
 
 ;define browsers
 GroupAdd("Browsers", browser.winTitle["firefox"])
 GroupAdd("Browsers", browser.winTitle["chrome"])
-GroupAdd("Browsers", "ahk_exe Code.exe")
+GroupAdd("Browsers", browser.winTitle["vscode"])
 
 ;define editors
 GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
@@ -470,7 +472,7 @@ reload_reset_exit(which, includeChecklist?)
             Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
                 if Result = "Yes"
                     {
-                        if WinExist("ahk_exe Code.exe")
+                        if WinExist(browser.winTitle["vscode"])
                             WinActivate
                         else
                             Run(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
