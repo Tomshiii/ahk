@@ -17,7 +17,7 @@ class set_Edit_Val {
         control: "autoSave",                  EditPos: "xs Y+2",
         scriptText: "``autosave.ahk``",       textPos: "X+5 Y+-20",
         otherText: " save rate (min)",        otherTextPos: "X+1",
-        iniInput: "adobe FS",                 colour: "c4141d5",
+        iniInput: "autosave MIN",                 colour: "c4141d5",
         textControl: "autoSaveText",          Bind: "autosave.ahk"
     }
     static gameCk := {
@@ -28,7 +28,7 @@ class set_Edit_Val {
         textControl: "gameCheckText",          Bind: "gameCheck.ahk"
     }
     static MIC := {
-        control: "MIC",                                 EditPos: "xs Y+10",
+        control: "MIC",                                 EditPos: "xs Y+12",
         scriptText: "``Multi-Instance Close.ahk``",     textPos: "X+5 Y+-28",
         otherText: " check rate (sec)",                 otherTextPos: "Y+-1",
         iniInput: "multi SEC",                          colour: "c983d98",

@@ -277,7 +277,7 @@ settingsGUI()
     AEInitYear := IniRead(ptf["settings"], "Adjust", "ae year")
     ;this loop auto generates the edit boxes using "..\settingsGUI\maps.ahk"
     loop set_Edit_Val.Length {
-        if A_Index < set_Edit_Val.Length - 2
+        if A_Index <= set_Edit_Val.Length - 2
             {
                 initVal := IniRead(ptf["settings"], "Adjust", set_Edit_Val.iniInput[A_Index])
                 settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])

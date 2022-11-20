@@ -5,6 +5,10 @@
 ## > Functions
 - Add `vscode` to `class browser`
 
+`settingsGUI()`
+- Fixed not all options showing
+- Fixed `autosave save rate` changing `adobe fs check`
+
 ## > Other Changes
 - Fix double key name in `KSA.ini`
 - Changed `convert2x.ahk` scripts to function `convert2()`
