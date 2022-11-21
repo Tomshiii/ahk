@@ -365,7 +365,7 @@ settingsGUI()
         if WinExist("settings.ini") ;if ini already open, get pos, close, and then reopen to refresh
             refreshWin("settings.ini", ptf["settings"])
         else
-            Run('Notepad.exe  ' ptf["settings"] "'")
+            Run(ptf["settings"])
         WinWait("settings.ini")
         WinMove(x+width-8, y, 322, height-2,"settings.ini")
         SetTimer(iniWait, -100)
