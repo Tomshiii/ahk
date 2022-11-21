@@ -120,7 +120,7 @@ plusFive(*) {
  */
 reminder()
 {
-    if WinExist("ahk_exe Adobe Premiere Pro.exe")
+    if WinExist(editors.winTitle["premiere"])
         {
             switch settingsToolTrack {
                 case 1:

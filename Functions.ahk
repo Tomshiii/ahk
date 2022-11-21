@@ -8,6 +8,8 @@ SetWorkingDir(ptf.rootDir)  ; Ensures a consistent starting directory.
 #Include <\Functions\Resolve>
 #Include <\Functions\switchTo>
 #Include <\Functions\Windows>
+#Include <\Apps\Discord>
+#Include <\Apps\VSCode>
 #Include <\Functions\GUIs>
 #Include <\Other\IncludeLibs>
 

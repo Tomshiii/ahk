@@ -1,6 +1,6 @@
 /**
  * A class to define the gameCheck add GUI window
- * 
+ *
  * @param dark is passing in whether dark mode is enabled or not
  * @param version is passing in the current version number
  * @param wintitle is passing in the originally active winTitle when `settingsGUI()` was called

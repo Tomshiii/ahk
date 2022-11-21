@@ -153,8 +153,8 @@ if WinExist("ahk_exe obs64.exe")
 	;Run, ptf.ProgFi "\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run("chrome.exe https://www.twitch.tv/popout/tomshi/chat")
 	if WinExist("ahk_exe Discord.exe")
-		discordLocation()
-	SetWorkingDir(ptf.LioranBoardDir) 
+		discord.location()
+	SetWorkingDir(ptf.LioranBoardDir)
 	Run(ptf["LioranBoard"])
 	if WinExist("ahk_exe ApplicationDj.exe")
 		{

@@ -4,7 +4,7 @@
 
 /**
  * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
- * 
+ *
  * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
  */
 generate(MyRelease)
@@ -130,9 +130,9 @@ getScriptRelease(beta := false, &changeVer := "")
 
 /**
  * This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the latest release on github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog.
- * 
+ *
  * Which branch the user wishes to check for (either beta, or main releases) can be determined by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`)
- * 
+ *
  * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
  */
 updateChecker(MyRelease) {
@@ -391,7 +391,7 @@ updateChecker(MyRelease) {
             }
     }
 }
- 
+
 /**
  * This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
  */
@@ -424,7 +424,7 @@ firstCheck(MyRelease) {
         This script alone isn't everything my repo of scripts has to offer, heading into ``Handy Hotkeys`` below and finding the hotkey for the current active scripts will show you some of the other scripts available to you!
         Beyond those scripts there is also everything in the ``
     )" A_WorkingDir "
-    ( 
+    (
         \Streamdeck AHK\`` directory that provides even more functionality.
 
         The purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.
@@ -479,7 +479,7 @@ firstCheck(MyRelease) {
 
     firstCheckGUI.Show("AutoSize")
 }
- 
+
 /**
  * This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
  */
@@ -490,10 +490,10 @@ oldError() {
     if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
         FileDelete(A_LoopFileFullPath)
 }
- 
+
 /**
  * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
- * 
+ *
  * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
  */
 adobeTemp(MyRelease) {
@@ -566,7 +566,7 @@ adobeTemp(MyRelease) {
     end:
     IniWrite(A_YDay, ptf["settings"], "Track", "adobe temp") ;tracks the day so it will not run again today
 }
- 
+
 /**
  * This function checks the users local version of AHK and ensures it is greater than v2.0-beta12. If the user is running a version earlier than that, a prompt will pop up offering the user a convenient download
  * This function will also automatically close the script until the user updates
@@ -616,7 +616,7 @@ verCheck()
             ExitApp()
         }
 }
- 
+
 /**
  Within my scripts I have a few hard coded references to the directory location I have these scripts. That however would be useless to another user who places them in another location.
  To combat this scenario, this function on script startup will check the working directory and change all instances of MY hard coded dir to the users current working directory.
@@ -685,7 +685,7 @@ locationReplace()
     }
     IniWrite(A_WorkingDir, ptf["settings"], "Track", "working dir")
 }
- 
+
 /**
  * This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
  */

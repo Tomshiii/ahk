@@ -483,7 +483,7 @@ settingsGUI()
  * 
  * Currently offers AIMP, Foobar, WMP & VLC.
  * 
- * This function is also used within switchToMusic()
+ * This function is also used within switchTo.Music()
 */
 musicGUI()
 {

@@ -1,7 +1,7 @@
 #SingleInstance Force
 #Include SD_functions.ahk
 
-if WinActive("ahk_exe Adobe Premiere Pro.exe")
+if WinActive(editors.winTitle["premiere"])
     {
         coord.w()
         SendInput("!s" "q")

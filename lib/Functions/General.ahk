@@ -88,16 +88,32 @@ class browser {
     )
 }
 
+class Editors {
+    static winTitle := Map(
+        "premiere",         "ahk_exe Adobe Premiere Pro.exe",
+        "ae",               "ahk_exe AfterFX.exe",
+        "photoshop",        "ahk_exe Photoshop.exe",
+        "resolve",          "ahk_exe Resolve.exe",
+    )
+
+    static class := Map(
+        "premiere",         "ahk_class Premiere Pro",
+        "ae",               "ahk_class AE_CApplication_22.6",
+        "photoshop",        "ahk_class Photoshop",
+        "resolve",          "ahk_class Qt5152QWindowIcon",
+    )
+}
+
 ;define browsers
 GroupAdd("Browsers", browser.winTitle["firefox"])
 GroupAdd("Browsers", browser.winTitle["chrome"])
 GroupAdd("Browsers", browser.winTitle["vscode"])
 
 ;define editors
-GroupAdd("Editors", "ahk_exe Adobe Premiere Pro.exe")
-GroupAdd("Editors", "ahk_exe AfterFX.exe")
-GroupAdd("Editors", "ahk_exe Resolve.exe")
-GroupAdd("Editors", "ahk_exe Photoshop.exe")
+GroupAdd("Editors", editors.winTitle["premiere"])
+GroupAdd("Editors", editors.winTitle["ae"])
+GroupAdd("Editors", editors.winTitle["resolve"])
+GroupAdd("Editors", editors.winTitle["photoshop"])
 
 ; ===========================================================================================================================================
 ;
@@ -110,21 +126,21 @@ GroupAdd("Editors", "ahk_exe Photoshop.exe")
 class coord {
     /**
      * This function is a part of the class `coord`
-     * 
+     *
      * Sets coordmode to "screen"
      */
     static s() => (coordmode("pixel", "screen"), coordmode("mouse", "screen"))
 
     /**
      * This function is a part of the class `coord`
-     * 
+     *
      * Sets coordmode to "window"
      */
      static w() => (coordmode("pixel", "window"), coordmode("mouse", "window"))
-    
+
     /**
      * This function is a part of the class `coord`
-     * 
+     *
      * sets coordmode to "caret"
      */
      static c() => coordmode("caret", "window")
@@ -142,11 +158,11 @@ class coord {
 class tool {
     /**
      * This function is a part of the class `tool`
-     * 
+     *
      * Create a tooltip with any message. This tooltip will then follow the cursor and only redraw itself if the user has moved the cursor.
-     * 
+     *
      * If you wish for the tooltip to plant next to the mouse and not follow the cursor, similar to a normal tooltip, that can be achieved with something along the lines of;
-     * 
+     *
      * `tool.Cust("message",,, MouseGetPos(&x, &y) x + 15, y)`
      * @param {string} message is what you want the tooltip to say
      * @param {number} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a floating point number, ie; `1.0`, `2.5`, etc
@@ -192,7 +208,7 @@ class tool {
 
     /**
      * This function is a part of the class `tool`
-     * 
+     *
      * This function will check to see if any tooltips are active before continuing
      * @param {Integer} timeout allows you to pass in a time value (in seconds) that you want WinWaitClose to wait before timing out. This value can be omitted and does not need to be set
      */
@@ -200,7 +216,7 @@ class tool {
     {
         detectVal := A_DetectHiddenWindows
         DetectHiddenWindows(0) ;we need to ensure detecthiddenwindows is disabled before proceeding or this function may never stop waiting
-        if WinExist("ahk_class tooltips_class32") 
+        if WinExist("ahk_class tooltips_class32")
             WinWaitClose("ahk_class tooltips_class32",, timeout?)
         DetectHiddenWindows(detectVal)
     }
@@ -217,14 +233,14 @@ class tool {
 class block {
     /**
      * This function is a part of the class `block`
-     * 
+     *
      * Blocks all user inputs [IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (CTRL + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]
      */
     static On() => (BlockInput("SendAndMouse"), BlockInput("MouseMove"), BlockInput("On")) ;it has recently come to my attention that all 3 of these operate independantly and doing all 3 of them at once is no different to just using "BlockInput "on"" but uh. oops, too late now I guess
 
     /**
      * This function is a part of the class `block`
-     * 
+     *
      * turns off the blocks on user input
      */
     static Off() => (Blockinput("MouseMoveOff"), BlockInput("off"))
@@ -240,9 +256,9 @@ class block {
  * @param {String} tool is the hotkey you want the program to swap TO (ie, hand tool, zoom tool, etc). (consider using values in KSA)
  * @param {String} toolorig is the button you want the script to press to bring you back to your tool of choice. (consider using values in KSA)
 */
-mousedragNotPrem(tool, toolorig)
+mouseDrag(tool, toolorig)
 {
-    if WinActive("ahk_exe AfterFX.exe") && !InStr(WinGetTitle("A"), "Adobe After Effects " ptf.AEYear " -") || WinActive("Save As") || WinActive("Save a Copy") 
+    if WinActive(editors.winTitle["ae"]) && !InStr(WinGetTitle("A"), "Adobe After Effects " ptf.AEYear " -") || WinActive("Save As") || WinActive("Save a Copy")
         {
             SendInput("{" A_ThisHotkey "}")
             return
@@ -292,7 +308,7 @@ timeline(timeline, x1, x2, y1)
 ; ===========================================================================================================================================
 /**
  * A function designed to log errors in scripts if they occur. Simply pass in an error object and optionally pass a backup func/hotkey name.
- * 
+ *
  * If you wish to log an error without passing in a errorObj, you can pass manual information in as well.
  * @param {Object} err The error object you can simply pass in
  * @param {String} backupfunc Sometimes the error object doesn't pass through what func/hotkey has the issue - just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey "::"` if it's a hotkey
@@ -305,7 +321,7 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?)
     start := ""
     text := ""
     beginning := ""
-    if !IsSet(err) || !IsObject(err) 
+    if !IsSet(err) || !IsObject(err)
         {
             func := backupfunc
             error := backupErr
@@ -369,7 +385,7 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?)
 ; ===========================================================================================================================================
 /**
  * This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire.
- * 
+ *
  * If the hotkey used with this function is only 2 characters long, it will assign each of those to &first & &second respectively. If one of those characters is a special key (ie. ! or ^) it will return the virtual key so `KeyWait` will still work as expected
  * @param {var} first is the variable that will be filled with the first activation hotkey. Must be written as `&var`
  * @param {var} second is the variable that will be filled with the second activation hotkey. Must be written as `&var`
@@ -506,7 +522,7 @@ pauseautosave()
     ID_FILE_PAUSE := 65403
     PostMessage WM_COMMAND, ID_FILE_PAUSE,,, "\autosave.ahk ahk_class AutoHotkey"
 }
- 
+
  /**
   * This function toggles a pause on the premiere_fullscreen_check ahk script.
   */
@@ -623,7 +639,7 @@ refreshWin(window, runTarget)
 
 /**
  * This is a function designed to allow tooltips to appear while hovering over certain GUI elements. Use `OnMessage(0x0200, On_WM_MOUSEMOVE)` & `GuiCtrl.ToolTip := ""` to make this function work
- * 
+ *
  * code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
  */
 On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
@@ -647,16 +663,19 @@ On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
 
 /**
  * This function turns the inbuilt function `SplitPath` into a function that returns an object.
- * 
- * script.`Name`       ;returns `My Scripts.ahk`
- * 
- * script.`Dir`        ;returns `E:\Github\ahk`
- * 
- * script.`Ext`        ;returns `ahk`
- * 
- * script.`NameNoExt`  ;returns `My Scripts`
- * 
- * script.Drive      ;returns `E:`
+ *
+ * Example Dir;
+ * `E:\Github\ahk\My Scripts.ahk`
+ *
+ * script.`Name`       -- `My Scripts.ahk`
+ *
+ * script.`Dir`        -- `E:\Github\ahk`
+ *
+ * script.`Ext`        -- `ahk`
+ *
+ * script.`NameNoExt`  -- `My Scripts`
+ *
+ * script.`Drive`        -- `E:`
  * @param {any} Path is the input path that will be split
  * @returns {object} `x.path` - `x.name` - `x.dir` - `x.ext` - `x.namenoext` - `x.drive`
  */

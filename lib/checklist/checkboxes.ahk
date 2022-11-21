@@ -33,7 +33,7 @@ getCheckboxKeys(count)
         startpos := 1
     else
         startpos := InStr(var.list, "`n",, pos, -1) + 1
-    name := SubStr(var.list, startpos, pos - startpos) 
+    name := SubStr(var.list, startpos, pos - startpos)
     currentState := SubStr(var.list, pos + 1, 1)
     return {name: name, currentState: currentState}
 }

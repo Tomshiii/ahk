@@ -7,7 +7,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.9.1"
+version := "v2.9.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -35,7 +35,7 @@ if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist 
     }
 else
     {
-        if !WinExist("Adobe Premiere Pro") && !WinExist("ahk_exe AfterFX.exe")
+        if !WinExist("Adobe Premiere Pro") && !WinExist(editors.winTitle["ae"])
             {
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")
@@ -64,9 +64,9 @@ else
                 if dashLocation = 0
                     dashLocation := unset
             }
-        else if WinExist("ahk_exe AfterFX.exe")
+        else if WinExist(editors.winTitle["ae"])
             {
-                aeCheck := WinGetTitle("ahk_exe AfterFX.exe")
+                aeCheck := WinGetTitle(editors.winTitle["ae"])
                 if !IsSet(aeCheck) ;we ensure the title variable has been assigned before proceeding forward
                     {
                         block.Off()

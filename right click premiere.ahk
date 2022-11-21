@@ -37,7 +37,7 @@ timeline8 := 0x202020
 playhead := 0x2D8CEB ;the colour of the playhead
 timelineCol := [timeline1, timeline2, timeline3, timeline4, timeline5, timeline6, timeline7, timeline8] ;here we'll just create an array that encapsulates all of the above to make things a little easier to keep track of
 
-#HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
+#HotIf WinActive(editors.winTitle["premiere"])
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
 
 Rbutton::
@@ -82,7 +82,7 @@ Rbutton::
 			return
 		}
     skip:
-	
+
 	Color := PixelGetColor(xpos, ypos)
 	color2 := PixelGetColor(xpos + 1, ypos)
 	;now we begin checking colours

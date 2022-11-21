@@ -10,7 +10,7 @@ TraySetIcon(ptf.Icons "\waitUntil.png")
 waitUntil()
 {
     detect()
-    if !WinExist("Adobe Premiere Pro") && !WinExist("ahk_exe AfterFX.exe")
+    if !WinExist("Adobe Premiere Pro") && !WinExist(editors.winTitle["ae"])
         {
             if WinExist("checklist.ahk",, "Visual Studio Code")
                 ProcessClose(WinGetPID("checklist.ahk",, "Visual Studio Code"))
@@ -33,9 +33,9 @@ waitUntil()
             if dashLocationAgain = 0
                 dashLocationAgain := unset
         }
-    else if WinExist("ahk_exe AfterFX.exe")
+    else if WinExist(editors.winTitle["ae"])
         {
-            aeCheckagain := WinGetTitle("ahk_exe AfterFX.exe")
+            aeCheckagain := WinGetTitle(editors.winTitle["ae"])
             if !IsSet(aeCheckagain) ;we ensure the title variable has been assigned before proceeding forward
                 {
                     block.Off()

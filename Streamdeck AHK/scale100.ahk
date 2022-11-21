@@ -1,5 +1,5 @@
 ﻿SetDefaultMouseSpeed 0
 #Include SD_functions.ahk
 
-if WinActive("ahk_exe Adobe Premiere Pro.exe")
+if WinActive(editors.winTitle["premiere"])
 	scale("100")

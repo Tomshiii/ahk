@@ -104,7 +104,7 @@ StopWatch() {
 ;This next code starts the script
 
 start:
-if WinExist("ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_exe AfterFX.exe")
+if WinExist(editors.winTitle["premiere"]) || WinExist(editors.winTitle["ae"])
     {
         SetTimer(save, -ms)
         global StartTickCount := A_TickCount ;for tray function
@@ -122,7 +122,7 @@ else
  * This function is for the above SetTimer & is to check to make sure either of the editors are open & if the checklist is open
  */
 check() {
-    if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe AfterFX.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
+    if !WinExist(editors.winTitle["premiere"]) && !WinExist(editors.winTitle["ae"]) ;this is here so the script won't error out if you close Premiere while it is waiting
         {
             SetTimer(StopWatch, 0) ;for tray function
             timer := false
@@ -159,7 +159,7 @@ check() {
  */
 save()
 {
-    if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe AfterFX.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
+    if !WinExist(editors.winTitle["premiere"]) && !WinExist(editors.winTitle["ae"]) ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
     SetTimer(StopWatch, 0) ;this stops the timer from counting while the save function is occuring and proceeding into negative numbers
     timer := false
@@ -212,10 +212,10 @@ save()
      * If it does and isn't the active window, it will controlsend ^s
      * otherwise it will sendinput ^s (as using controlsend while active seems to not function properly)
      */
-    if WinExist("ahk_exe Adobe Premiere Pro.exe")
+    if WinExist(editors.winTitle["premiere"])
         {
             getPremName(&premCheck, &titleCheck, &saveCheck)
-            premWinCheck := WinGetTitle("ahk_exe Adobe Premiere Pro.exe")
+            premWinCheck := WinGetTitle(editors.winTitle["premiere"])
             premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             premTitleCheck2 := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;same as above except checking a different variable (depending on whether you check the ahk_exe or the ahk_class returns different results under different circumstances)
             if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
@@ -229,7 +229,7 @@ save()
                 }
             if premWinCheck = "" && premCheck = ""
                 {
-                    switchToPremiere()
+                    switchTo.Premiere()
                     premWinCheck := WinGetTitle("A")
                     premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                 }
@@ -250,7 +250,7 @@ save()
                 {
                     tool.Cust("Saving Premiere")
                     SendInput("{Ctrl Down}s{Ctrl Up}")
-                    premSaveTrack := 1 
+                    premSaveTrack := 1
                 }
             else if saveCheck = "*" && premWinCheck != ""
                 premSave(premWinCheck)
@@ -265,7 +265,7 @@ save()
      * This is to avoid after effects flashing on the screen as, when you save after effects, it FORCES itself to be in focus (typical adobe nonsense)
      * So this function will first make ae transparent, save, refocus the original window, then winmovebottom AE so it doesn't force itself to the top
      */
-    if WinExist("ahk_exe AfterFX.exe")
+    if WinExist(editors.winTitle["ae"])
         {
             getAEName(&aeCheck, &aeSaveCheck)
             if aeSaveCheck = "*" && origWind != aeCheck ;this variable will contain "*" if a save is required
@@ -279,19 +279,19 @@ save()
                             goto end
                         }
                     tool.Cust("Saving AE")
-                    WinSetTransparent(0, "ahk_exe AfterFX.exe")
+                    WinSetTransparent(0, editors.winTitle["ae"])
                     ControlSend("{Ctrl Down}s{Ctrl Up}",, aeCheck)
                     WinWaitClose("Save Project",, 3)
                     try {
                         if origWind = "ahk_class CabinetWClass"
                             WinActivate("ahk_class CabinetWClass")
                         else if origWind = "Adobe Premiere Pro.exe"
-                            switchToPremiere()
+                            switchTo.Premiere()
                         else
                             WinActivate("ahk_exe " origWind)
                     }
-                    WinMoveBottom("ahk_exe AfterFX.exe")
-                    WinSetTransparent(255, "ahk_exe AfterFX.exe")
+                    WinMoveBottom(editors.winTitle["ae"])
+                    WinSetTransparent(255, editors.winTitle["ae"])
                     aeSaveTrack := 1
                     goto end
                 }
@@ -342,7 +342,7 @@ save()
             if origWind = "ahk_class CabinetWClass"
                 WinActivate("ahk_class CabinetWClass")
             else if origWind = "Adobe Premiere Pro.exe"
-                switchToPremiere()
+                switchTo.Premiere()
             else
                 WinActivate("ahk_exe " origWind)
         } catch as e {
@@ -350,8 +350,8 @@ save()
             errorLog(e, A_ThisFunc "()")
         }
         ignore:
-        if WinExist("ahk_exe AfterFX.exe")
-            WinSetTransparent(255, "ahk_exe AfterFX.exe") ;just incase
+        if WinExist(editors.winTitle["ae"])
+            WinSetTransparent(255, editors.winTitle["ae"]) ;just incase
         block.Off()
         tool.Wait()
         ToolTip("")
@@ -359,8 +359,8 @@ save()
         SetTimer(, -ms) ;reset the timer
 
         theEnd:
-        if WinExist("ahk_exe AfterFX.exe")
-            WinSetTransparent(255, "ahk_exe AfterFX.exe") ;just incase
+        if WinExist(editors.winTitle["ae"])
+            WinSetTransparent(255, editors.winTitle["ae"]) ;just incase
         block.Off()
         tool.Wait()
         global ElapsedTime := 0

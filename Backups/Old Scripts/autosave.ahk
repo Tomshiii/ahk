@@ -1,4 +1,4 @@
-/* 
+/*
     This script has been replaced with a more efficient and less messy script.
     Enjoy a piece of this repo's history
  */
@@ -113,7 +113,7 @@ StopWatch() {
 ;This next code starts the script
 
 start:
-if WinExist("ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_exe AfterFX.exe")
+if WinExist(editors.winTitle["premiere"]) || WinExist(editors.winTitle["ae"])
     {
         SetTimer(save, -ms)
         global StartTickCount := A_TickCount ;for tray function
@@ -131,7 +131,7 @@ else
  * This function is for the above SetTimer & is to check to make sure either of the editors are open & if the checklist is open
  */
 check() {
-    if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe AfterFX.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
+    if !WinExist(editors.winTitle["premiere"]) && !WinExist(editors.winTitle["ae"]) ;this is here so the script won't error out if you close Premiere while it is waiting
         {
             SetTimer(StopWatch, 0) ;for tray function
             timer := false
@@ -168,7 +168,7 @@ check() {
  */
 save()
 {
-    if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe AfterFX.exe") ;this is here so the script won't error out if you close Premiere while it is waiting
+    if !WinExist(editors.winTitle["premiere"]) && !WinExist(editors.winTitle["ae"]) ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
     SetTimer(StopWatch, 0) ;this stops the timer from counting while the save function is occuring and proceeding into negative numbers
     timer := false
@@ -205,7 +205,7 @@ save()
             SetTimer(, -ms)
             goto end2
         }
-    if WinExist("ahk_exe Adobe Premiere Pro.exe")
+    if WinExist(editors.winTitle["premiere"])
         {
             if !titleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
@@ -229,7 +229,7 @@ save()
                 }
             if premWinCheck = ""
                 {
-                    switchToPremiere()
+                    switchTo.Premiere()
                     premWinCheck := WinGetTitle("A")
                     premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                 }
@@ -260,7 +260,7 @@ save()
                             goto end2
                         }
                     block.On()
-                    WinActivate("ahk_exe AfterFX.exe")
+                    WinActivate(editors.winTitle["ae"])
                     sleep 500
                     SendInput("^s")
                     sleep 250
@@ -273,7 +273,7 @@ save()
                 if origWind = "ahk_class CabinetWClass"
                     WinActivate("ahk_class CabinetWClass")
                 else if origWind = "Adobe Premiere Pro.exe"
-                    switchToPremiere()
+                    switchTo.Premiere()
                 else
                     WinActivate("ahk_exe " origWind)
             } catch as e {
@@ -286,7 +286,7 @@ save()
         }
 
     if origWind != "Adobe Premiere Pro.exe" ;will activate premiere if it wasn't the original window
-        WinActivate("ahk_exe Adobe Premiere Pro.exe")
+        WinActivate(editors.winTitle["premiere"])
     try {
         premWinCheck := WinGetTitle("A")
         premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
@@ -300,7 +300,7 @@ save()
             }
         if premWinCheck = ""
             {
-                switchToPremiere()
+                switchTo.Premiere()
                 premWinCheck := WinGetTitle("A")
                 premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             }
@@ -313,7 +313,7 @@ save()
                     if origWind = "ahk_class CabinetWClass"
                         WinActivate("ahk_class CabinetWClass")
                     else if origWind = "Adobe Premiere Pro.exe"
-                        switchToPremiere()
+                        switchTo.Premiere()
                     else
                         WinActivate("ahk_exe " origWind)
                 } catch as e {
@@ -359,7 +359,7 @@ save()
     ;\\ if ae is open we'll check to see if it needs saving, then save it too if required
     if aeSaveCheck = "*"
         {
-            WinActivate("ahk_exe AfterFX.exe")
+            WinActivate(editors.winTitle["ae"])
             sleep 500
             SendInput("^s")
             sleep 250
@@ -373,7 +373,7 @@ save()
     ;\\ if the orginally active window IS premiere, we now refocus premiere
     try {
         sleep 250
-        switchToPremiere()
+        switchTo.Premiere()
     } catch as e {
         tool.Cust("couldn't activate Premiere Pro")
         errorLog(e, A_ThisFunc "()")
@@ -400,7 +400,7 @@ save()
         if origWind = "ahk_class CabinetWClass"
             WinActivate("ahk_class CabinetWClass")
         else if origWind = "Adobe Premiere Pro.exe"
-            switchToPremiere()
+            switchTo.Premiere()
         else
             WinActivate("ahk_exe " origWind)
     } catch as e {

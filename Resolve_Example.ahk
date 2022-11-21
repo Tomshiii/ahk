@@ -8,7 +8,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 #Include Functions.ahk ;includes function definitions so they don't clog up this script. Functions.ahk must be in the same directory as this script
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.6.3
+;\\v2.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
@@ -25,7 +25,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ; Please give credit to the foundation if you build on top of it, otherwise you're free to do as you wish
 ;
 ; ==================================================================================================
-#HotIf ;WinNotActive("ahk_exe Resolve.exe")
+#HotIf ;WinNotActive(editors.winTitle["resolve"])
 
 ;any code you want to run all the time should go here
 
@@ -42,7 +42,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ;=========================================================
 ;		DAVINCI RESOLVE
 ;=========================================================
-#HotIf WinActive("ahk_exe Resolve.exe")
+#HotIf WinActive(editors.winTitle["resolve"])
 
 ;=========================================================
 ;		keyboard shortcut replacements (this is just to make things similar to how I use premiere. Realistically replacing their keybinds in Resolve itself is FAR better)
@@ -62,30 +62,30 @@ WheelLeft::Up
 ;=========================================================
 ;		hold and drag (or click)
 ;=========================================================
-F1::rvalhold("zoom", 60, 1) ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
-F2::rvalhold("position", 80, 1) ;press then hold F2 and drag to increase/decrese x position. Let go of F2 to confirm. Tap to reset
-F3::rvalhold("position", 210, 1) ;press then hold F3 and drag to increase/decrese y position. Let go of F3 to confirm. Tap to reset
-F4::rvalhold("rotation", 240, 0) ;press then hold F4 and drag to increase/decrese rotation. Let go of F4 to confirm. Tap to reset
+F1::resolve.valhold("zoom", 60, 1) ;press then hold F1 and drag to increase/decrese x position. Let go of F1 to confirm. Tap to reset
+F2::resolve.valhold("position", 80, 1) ;press then hold F2 and drag to increase/decrese x position. Let go of F2 to confirm. Tap to reset
+F3::resolve.valhold("position", 210, 1) ;press then hold F3 and drag to increase/decrese y position. Let go of F3 to confirm. Tap to reset
+F4::resolve.valhold("rotation", 240, 0) ;press then hold F4 and drag to increase/decrese rotation. Let go of F4 to confirm. Tap to reset
 
 ;=========================================================
 ;		flips
 ;=========================================================
-!h::rflip("horizontal") ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
-!v::rflip("vertical") ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
+!h::resolve.flip("horizontal") ;flip horizontally. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
+!v::resolve.flip("vertical") ;flip vertically. won't do anything if you're scrolled down in the "video" tab already. you could add a wheelup if you wanted
 
 ;=========================================================
 ;		Scale Adjustments
 ;=========================================================
-^1::Rscale(1, "zoom", 60) ;makes the scale of current selected clip 100
-^2::Rscale(2, "zoom", 60) ;makes the scale of current selected clip 200
-^3::Rscale(3, "zoom", 60) ;makes the scale of current selected clip 300
+^1::resolve.scale(1, "zoom", 60) ;makes the scale of current selected clip 100
+^2::resolve.scale(2, "zoom", 60) ;makes the scale of current selected clip 200
+^3::resolve.scale(3, "zoom", 60) ;makes the scale of current selected clip 300
 
 ;=========================================================
 ;
 ;		Drag and Drop Effect Presets
 ;
 ;=========================================================
-!g::REffect("openfx", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track.
+!g::resolve.effect("openfx", "gaussian blur") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags that "favourite" onto the hovered track.
 ; this is set up as a preset so you can easily add further hotkeys with 1 line and new defined coords.
 
 ;=========================================================
@@ -164,6 +164,6 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
 ;		gain
 ;
 ;=========================================================
-Numpad1::rgain(-2)
-Numpad2::rgain(2)
-Numpad3::rgain(6)
+Numpad1::resolve.gain(-2)
+Numpad2::resolve.gain(2)
+Numpad3::resolve.gain(6)

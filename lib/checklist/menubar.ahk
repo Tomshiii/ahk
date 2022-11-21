@@ -84,7 +84,7 @@ menuTooltips(*)
         MsgBox("checklist.ahk will need to be reloaded for changes to this setting to take effect", "Warning")
     }
 }
- 
+
 
 /**
  * The function that is called when either the new or open menu options are pressed
@@ -227,7 +227,7 @@ updateCheck(Item, *)
 
 /**
  * This function is called when the Hours Worked menu option is pressed. It handles doing some math to find the amount of hours worked in the current day/the amount of days worked on the current project/the average hours worked per day on the current project. It does this by looping through the checklist_logs.txt file for certain things.
- * 
+ *
  * It then handles generating a new gui to display this information. This newly generated gui is centered in the middle of the main checklist.ahk gui
  */
 hours(*)
@@ -319,7 +319,7 @@ goDark(*)
  */
 which(dark := true, DarkorLight := "Dark", menu := 1)
 {
-    
+
     menuDarkMode(menu)
     titleBarDarkMode(MyGui.Hwnd, dark)
     buttonDarkMode(startButton.Hwnd, DarkorLight)

@@ -15,9 +15,9 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.22.3
+;\\v2.23
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.11.1
+;\\v2.12
 
 ; ============================================================================================================================================
 ;
@@ -63,7 +63,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ;
 ; =======================================================================================================================================
 generate(MyRelease) ;generates/replaces the `settings.ini` file every release
-locationReplace() ;runs the location variable 
+locationReplace() ;runs the location variable
 trayMen() ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
 updateChecker(MyRelease) ;runs the update checker
 firstCheck(MyRelease) ;runs the firstCheck() function
@@ -241,15 +241,15 @@ SC03A & F5::refreshWin("A", WinGetProcessPath("A"))
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf not GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
 ;windowspyHotkey;
-Pause::switchToWindowSpy() ;run/swap to windowspy
+Pause::switchTo.WindowSpy() ;run/swap to windowspy
 ;vscodeHotkey;
-RWin::switchToVSC() ;run/swap to vscode
+RWin::switchTo.VSCode() ;run/swap to vscode
 ;streamdeckHotkey;
-ScrollLock::switchToStreamdeck() ;run/swap to the streamdeck program
+ScrollLock::switchTo.Streamdeck() ;run/swap to the streamdeck program
 ;taskmangerHotkey;
 PrintScreen::SendInput("^+{Esc}") ;open taskmanager
 ;excelHotkey;
-PgUp::switchToExcel() ;run/swap to excel
+PgUp::switchTo.Excel() ;run/swap to excel
 
 ;These two scripts are to open highlighted text in the ahk documentation
 ;akhdocuHotkey;
@@ -269,7 +269,7 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 	Run("https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm")
 	SetTimer(check.bind(A_Clipboard, A_TickCount), 250)
 	A_Clipboard := previous
-	
+
 	/**
 	 * Will check to see if the desired page has loaded or if an error page occured
 	 * @param {String} pass Passes in the clipboard, ie, what you're searching for
@@ -369,58 +369,19 @@ F18:: ;open the "show more options" menu in win11
 
 #HotIf WinActive(browser.winTitle["vscode"])
 ;vscodemsHotkey;
-!a::vscode(18) ;clicks on the `my scripts` script in vscode
+!a::VSCode.script(18) ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
-!f::vscode() ;clicks on my `functions` script in vscode
+!f::VSCode.script() ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::vscode(19) ;clicks on my `qmk` script in vscode
+!q::VSCode.script(19) ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
-!c::vscode(14) ;clicks on my `changelog` file in vscode
+!c::VSCode.script(14) ;clicks on my `changelog` file in vscode
 ;vscodesearchHotkey;
-$^f:: ;I have a habit of always trying to ^f in the explorer window instead of the code window
-{ ;This macro REQUIRES `editor.emptySelectionClipboard` to be set to false within VSCode (if you use vscode)
-	SendInput(focusCode)
-	orig := ClipboardAll()
-	A_Clipboard := ""
-	SendInput("^c")
-	if !ClipWait(0.1)
-		{
-			SendInput("^f")
-			SendInput("{BackSpace}")
-			A_Clipboard := orig
-			return
-		}
-	SendInput("^f")
-	A_Clipboard := orig
-}
+$^f::VSCode.search()
 ;vscodecutHotkey;
-$^x:: ;This macro is only REQUIRED because I have `editor.emptySelectionClipboard` set to false within VSCode because of the above macro.
-{ ;it recreates the usual ability to completely remove a line by pressed ^x
-	SendInput(focusCode)
-	orig := ClipboardAll()
-	A_Clipboard := ""
-	SendInput("^c")
-	if !ClipWait(0.1)
-		{
-			amount := 1
-			SendInput("{End}")
-			SendInput("{Shift Down}{Home}{Shift Up}" "^x")
-			sleep 50
-			store := A_Clipboard
-			sleep 50
-			A_Clipboard := ""
-			SendInput("{Shift Down}{Home}{Shift Up}" "^c")
-			sleep 50
-			if StrCompare(A_Clipboard, "", 1) 
-				amount := "2"
-			SendInput("{BackSpace " amount "}")
-			A_Clipboard := orig ;restore the original clipboard
-			A_Clipboard := store ;add the cut content to the clipboard
-			return
-		}
-	A_Clipboard := orig
-	SendInput("^x")
-}
+$^x::VSCode.cut()
+;vscodeCopyHotkey;
+$^c::VSCode.copy()
 
 #HotIf WinActive(browser.winTitle["firefox"])
 ;pauseyoutubeHotkey;
@@ -453,7 +414,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 				break
 			}
 		else
-			switchToOtherFirefoxWindow()
+			switchTo.OtherFirefoxWindow()
 		if A_Index > 5
 			{
 				tool.Cust("Couldn't find a youtube tab")
@@ -522,19 +483,19 @@ XButton1::moveTab()
 ;alright scancodes didn't fix it, idk why but sometimes this function won't work until you refresh the main script. Might have to do with where I have it located in this script, maybe pulling it out into it's own script would fix it, or maybe discord is just dumb, who knows.
 ;scratch that, figured out what it is, in my qmk keyboard script I also had setcapslock to off and for whatever reason if that script was reloaded, my main script would break
 ;disceditHotkey;
-SC03A & e::disc("DiscEdit.png") ;edit the message you're hovering over
+SC03A & e::discord.button("DiscEdit.png") ;edit the message you're hovering over
 ;discreplyHotkey;
-SC03A & r::disc("DiscReply.png") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+SC03A & r::discord.button("DiscReply.png") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 ;discreactHotkey;
-SC03A & a::disc("DiscReact.png") ;add a reaction to the message you're hovering over
+SC03A & a::discord.button("DiscReact.png") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;
-SC03A & d::disc("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
+SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 ;discserverHotkey;
-F1::discUnread() ;will click any unread servers
+F1::discord.Unread() ;will click any unread servers
 ;discmsgHotkey;
-F2::discUnread(2) ;will click any unread channels
+F2::discord.Unread(2) ;will click any unread channels
 ;discdmHotkey;
 F3:: ;this hotkey is to click the "discord" button in discord to access your dm's
 {
@@ -552,30 +513,30 @@ F3:: ;this hotkey is to click the "discord" button in discord to access your dm'
 ;		Photoshop
 ;
 ;=============================================================================================================================================
-#HotIf WinActive("ahk_exe Photoshop.exe")
+#HotIf WinActive(editors.winTitle["photoshop"])
 ;pngHotkey;
-^+p::psType("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
+^+p::ps.Type("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 ;jpgHotkey;
-^+j::psType("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
+^+j::ps.Type("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
 ;photopenHotkey;
-XButton1::mousedragNotPrem(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+XButton1::mouseDrag(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;photoselectHotkey;
-Xbutton2::mousedragNotPrem(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+Xbutton2::mouseDrag(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;photozoomHotkey;
-z::mousedragNotPrem(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
-;F1::psSave()
+z::mouseDrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+;F1::ps.Save()
 
 ;=============================================================================================================================================
 ;
 ;		After Effects
 ;
 ;=============================================================================================================================================
-#HotIf WinActive("ahk_exe AfterFX.exe")
+#HotIf WinActive(editors.winTitle["ae"])
 ;aetimelineHotkey;
-Xbutton1::aetimeline() ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton1::ae.timeline() ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aeselectionHotkey;
-Xbutton2::mousedragNotPrem(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton2::mouseDrag(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aepreviousframeHotkey;
 F21::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 ;aenextframeHotkey;
@@ -586,7 +547,7 @@ F23::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hot
 ;		Premiere
 ;
 ;=============================================================================================================================================
-#HotIf WinActive("ahk_exe Adobe Premiere Pro.exe")
+#HotIf WinActive(editors.winTitle["premiere"])
 ;There use to be a lot of macros about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
@@ -781,12 +742,12 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	coord.s()
 	MouseMove(3240, 564, "2")
 	SendInput("{Click Up}")
-	switchToPremiere()
+	switchTo.Premiere()
 	WinWaitClose("Import Files")
 	sleep 1000
 	added:
 	coord.w()
-	WinActivate("ahk_exe Adobe Premiere Pro.exe")
+	WinActivate(editors.winTitle["premiere"])
 	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " ptf.Premiere "list view.png")
 		{
 			MouseMove(listx, listy)
@@ -832,9 +793,9 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;previouseditHotkey;
-F21::wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
+F21::prem.wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
 ;nexteditHotkey;
-F23::wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
+F23::prem.wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
 ;playstopHotkey;
 F18::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse button
 ;nudgeupHotkey;
@@ -848,12 +809,12 @@ Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 ;mousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
-Xbutton2::mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+Xbutton2::prem.mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 ;bonkHotkey;
-F19::audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
+F19::prem.audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 ;bleepHotkey;
-F20::audioDrag("bleep")
+F20::prem.audioDrag("bleep")
 
 ;=============================================================================================================================================
 ;

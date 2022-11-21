@@ -19,7 +19,7 @@ chatterinoLocationTomshi() => WinMove(3648, -398, 832, 586)
 
 streamelementsLocation() => WinMove(3513,  -936, 974, 1047, "StreamElements - Activity feed")
 
-discordLocation() => WinMove(-1080,  -274, 1080, 1600)
+discord.location() => WinMove(-1080,  -274, 1080, 1600)
 
 /**
  * This function is to cut repeat code across scripts.

@@ -11,7 +11,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.11.1
+;\\v2.12
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
@@ -28,26 +28,6 @@ SetNumLockState "AlwaysOn"
  * This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet
  */
 unassigned() => tool.Cust(A_ThisHotkey " is unassigned") ;create a tooltip for unused keys
-
-/**
- * This function is specifically designed for this script as I have a button designed to be pressed alongside another just to open new windows
- * @param {String} classorexe is just defining if we're trying to grab the class or exe
- * @param {String} activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
- * @param {String} runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
- */
-newWin(classorexe, activate, runval)
-{
-	getHotkeys(&first, &second)
-	KeyWait(second) ;prevent spamming
-	if WinExist("ahk_" classorexe . activate)
-		{
-			Run(runval)
-			return
-		}
-	Run(runval)
-	WinWait("ahk_" classorexe . activate)
-	WinActivate("ahk_" classorexe . activate) ;in win11 running things won't always activate it and will open in the backround		
-}
 
 /**
  * A function to suppress multiple keystrokes or to do different things with multiple presses of the same key. This function is here for reference moreso than actual use
@@ -140,60 +120,60 @@ dele() ;this is here so manInput() can work, you can just ignore this
 
 ;===========================================================================
 ;
-#HotIf WinActive("ahk_exe Adobe Premiere Pro.exe") and getKeyState("F24", "P")
+#HotIf WinActive(editors.winTitle["premiere"]) and getKeyState("F24", "P")
 ;
 ;===========================================================================
 ;F24::return ;this line is mandatory for proper functionality
 
 
-BackSpace & SC027::keyframe("position")
-BackSpace & /::keyframe("position")
-BackSpace & l::keyframe("scale")
-BackSpace & t::keyframe("level")
-BackSpace & u::keyframe("rotation")
-BackSpace & y::keyframe("opacity")
-SC028 & SC027::manInput("position") ;manually input an x value
-SC028 & /::manInput("position", "60") ;manually input a y value
-SC028 & l::manInput("scale") ;manually input a scale value
-SC028 & u::manInput("rotation") ;manually input a rotation value
-SC028 & y::manInput("opacity") ;manually input an opacity value
-SC028 & t::manInput("level") ;manually input a level value
-Enter::reset()
-Enter & SC027::keyreset("position")
-Enter & /::keyreset("position")
-Enter & l::keyreset("scale")
-Enter & t::keyreset("level")
-Enter & u::keyreset("rotation")
-Enter & y::keyreset("opacity")
+BackSpace & SC027::prem.keyframe("position")
+BackSpace & /::prem.keyframe("position")
+BackSpace & l::prem.keyframe("scale")
+BackSpace & t::prem.keyframe("level")
+BackSpace & u::prem.keyframe("rotation")
+BackSpace & y::prem.keyframe("opacity")
+SC028 & SC027::prem.manInput("position") ;manually input an x value
+SC028 & /::prem.manInput("position", "60") ;manually input a y value
+SC028 & l::prem.manInput("scale") ;manually input a scale value
+SC028 & u::prem.manInput("rotation") ;manually input a rotation value
+SC028 & y::prem.manInput("opacity") ;manually input an opacity value
+SC028 & t::prem.manInput("level") ;manually input a level value
+Enter::prem.reset()
+Enter & SC027::prem.keyreset("position")
+Enter & /::prem.keyreset("position")
+Enter & l::prem.keyreset("scale")
+Enter & t::prem.keyreset("level")
+Enter & u::prem.keyreset("rotation")
+Enter & y::prem.keyreset("opacity")
 Right::unassigned()
 
-p::preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
-SC027::valuehold("position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-/::valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+p::prem.preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
+SC027::prem.valuehold("position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+/::prem.valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 
-o::preset("parametric")
-l::valuehold("scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+o::prem.preset("parametric")
+l::prem.valuehold("scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
-.::movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+.::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Down::unassigned()
 
-i::preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
-k::gain("-2") ;REDUCE GAIN BY -2db
-,::gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
+i::prem.preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your prem.preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+k::prem.gain("-2") ;REDUCE GAIN BY -2db
+,::prem.gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 ;Left::unassigned()
 
-u::valuehold("rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-j::gain("-6") ;REDUCE GAIN BY -6db
-m::gain("6") ;INCREASE GAIN BY 6db
+u::prem.valuehold("rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+j::prem.gain("-6") ;REDUCE GAIN BY -6db
+m::prem.gain("6") ;INCREASE GAIN BY 6db
 ;PgUp::unassigned()
 
-y::valuehold("opacity")
+y::prem.valuehold("opacity")
 ;h::unassigned()
-n::zoom()
+n::prem.zoom()
 ;Space::unassigned()
 
-t::valuehold("level") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+t::prem.valuehold("level") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 g:: ;this hotkey will fill the frame to fit the window
 {
 	SendInput(timelineWindow)
@@ -202,7 +182,7 @@ g:: ;this hotkey will fill the frame to fit the window
 }
 b::unassigned()
 
-r::preset("tint 100")
+r::prem.preset("tint 100")
 f:: ;this macro is to open the speed menu
 {
 	SendInput(timelineWindow)
@@ -248,14 +228,14 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 }
 ;PgDn::unassigned()
 
-e::preset("Highpass Me")
-d::preset("hflip")
-c::preset("vflip")
+e::prem.preset("Highpass Me")
+d::prem.preset("hflip")
+c::prem.preset("vflip")
 ;End::
 
 w::unassigned()
-s::preset("croptom")
-x::fxSearch()
+s::prem.preset("croptom")
+x::prem.fxSearch()
 ;F15::unassigned()
 
 q::unassigned()
@@ -270,7 +250,7 @@ Home::unassigned()
 
 ;===========================================================================
 ;
-#HotIf WinActive("ahk_exe AfterFX.exe") and getKeyState("F24", "P")
+#HotIf WinActive(editors.winTitle["ae"]) and getKeyState("F24", "P")
 ;
 ;===========================================================================
 ;F24::return ;this line is mandatory for proper functionality
@@ -280,13 +260,13 @@ SC028::unassigned()
 Enter::unassigned()
 ;Right::unassigned()
 
-p::motionBlur()
+p::ae.motionBlur()
 SC027::unassigned()
 /::unassigned()
 ;Up::unassigned()
 
 o::unassigned()
-l::aeScaleAndPos()
+l::ae.scaleAndPos()
 .::unassigned()
 ;Down::unassigned()
 
@@ -319,7 +299,7 @@ d::unassigned()
 c::unassigned()
 ;End::unassigned()
 
-w::aePreset("Drop Shadow")
+w::ae.preset("Drop Shadow")
 s::unassigned()
 x::unassigned()
 ;F15::unassigned()
@@ -337,7 +317,7 @@ Home::unassigned()
 
 ;=============================================================================================================================================
 ;
-#HotIf getKeyState("F24", "P") and WinActive("ahk_exe Photoshop.exe")
+#HotIf getKeyState("F24", "P") and WinActive(editors.winTitle["photoshop"])
 ;
 ;=============================================================================================================================================
 ;F24::return ;this line is mandatory for proper functionality
@@ -348,12 +328,12 @@ Enter::unassigned()
 ;Right::unassigned()
 
 p::SendInput("!t" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
-SC027::psProp("scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
+SC027::ps.Prop("scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
 /::unassigned()
 ;Up::unassigned()
 o::unassigned()
-l::psProp("x.png")
-.::psProp("y.png")
+l::ps.Prop("x.png")
+.::ps.Prop("y.png")
 ;Down::unassigned()
 
 i::unassigned()
@@ -361,7 +341,7 @@ k::unassigned()
 ,::unassigned()
 ;Left::unassigned()
 
-u::psProp("rotate.png")
+u::ps.Prop("rotate.png")
 j::unassigned()
 m::unassigned()
 ;PgUp::unassigned()
@@ -410,31 +390,31 @@ Home::unassigned()
 BackSpace::unassigned()
 SC028::unassigned() ; ' key
 Enter::unassigned()
-Enter & Up::closeOtherWindow("ahk_class CabinetWClass")
+Enter & Up::switchTo.closeOtherWindow("ahk_class CabinetWClass")
 Right::unassigned()
-Right & Up::newWin("class", "CabinetWClass", "explorer.exe")
+Right & Up::switchTo.newWin("class", "CabinetWClass", "explorer.exe")
 
 p::unassigned()
 SC027::unassigned()
 /::unassigned()
-Up::switchToExplorer()
+Up::switchTo.Explorer()
 
 o::unassigned()
 l::unassigned()
 .::unassigned()
-Down::switchToPremiere()
+Down::switchTo.Premiere()
 
 i::unassigned()
 k::unassigned()
 ,::unassigned()
-Left::switchToAE()
+Left::switchTo.AE()
 
 u::unassigned()
 j::unassigned()
 m::unassigned()
 SC149::firefoxTap()
-Enter & SC149::closeOtherWindow(browser.class["firefox"])
-Right & PgUp::newWin("exe", "firefox.exe", "firefox.exe")
+Enter & SC149::switchTo.closeOtherWindow(browser.class["firefox"])
+Right & PgUp::switchTo.newWin("exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
 h:: ;opens the directory for the current premiere project
@@ -487,9 +467,9 @@ h:: ;opens the directory for the current premiere project
 	WinActivate("ahk_class CabinetWClass", pathName, "Adobe")
 }
 n::unassigned()
-Space::switchToDisc()
-Right & Space::newWin("exe", "msedge.exe", "msedge.exe")
-Enter & Space::closeOtherWindow(browser.winTitle["edge"])
+Space::switchTo.Disc()
+Right & Space::switchTo.newWin("exe", "msedge.exe", "msedge.exe")
+Enter & Space::switchTo.closeOtherWindow(browser.winTitle["edge"])
 
 t::unassigned()
 g::unassigned()
@@ -529,7 +509,7 @@ b:: ;this macro is to find the difference between 2 24h timecodes
 r::unassigned()
 f::unassigned()
 v::unassigned()
-PgDn::switchToMusic()
+PgDn::switchTo.Music()
 Right & PgDn::musicGUI()
 
 e::unassigned()
@@ -547,12 +527,12 @@ End:: ;search for checklist file
 w::unassigned()
 s::unassigned()
 x::unassigned()
-F15::switchToPhoto()
+F15::switchTo.Photo()
 
 q::unassigned()
 a::unassigned()
 z::unassigned()
-F16::switchToEdge()
+F16::switchTo.Edge()
 
 ;Tab::unassigned()
 Esc::unassigned()

@@ -1,5 +1,5 @@
 ﻿#Include "SD_functions.ahk"
-if WinActive("ahk_exe Adobe Premiere Pro.exe")
+if WinActive(editors.winTitle["premiere"])
 	{
 		pauseautosave()
         pausewindowmax()
@@ -38,7 +38,7 @@ if WinActive("ahk_exe Adobe Premiere Pro.exe")
 		sleep 1000
 		block.Off()
 		WinMinimize("ahk_exe Adobe Audition.exe") ;minimises audition and reactivates premiere
-		WinActivate("ahk_exe Adobe Premiere Pro.exe")
+		WinActivate(editors.winTitle["premiere"])
 		pauseautosave()
         pausewindowmax()
 	}
