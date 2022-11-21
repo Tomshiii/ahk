@@ -8,6 +8,16 @@
 `settingsGUI()`
 - Fixed not all options showing
 - Fixed `autosave save rate` changing `adobe fs check`
+- Fixed scripts not reloading when their respective setting is changed
+- Opening the `settings.ini` will now move the notepad window right next to `settingsGUI()`
+
+## > My Scripts
+- `^SPACE:: ;alwaysontopHotkey;` will now attempt to produce a tooltip to tell the user which state the window is being changed too
+
+## autosave
+- Refactored entire script
+    - No longer needs to activate the window
+    - Uses `ControlSend()` if window isn't active
 
 ## > Other Changes
 - Fix double key name in `KSA.ini`
@@ -15,6 +25,7 @@
     - Will now run `A_ComSpec` instead of calling cmd from the explorer window as doing so in win11 opens the new terminal which is incredibly difficult to detect with ahk
 - Moved `HotkeyReplacer.ahk` & `Getting Started_readme.md` => `..\Support Files\Release Assets\`
     - Added `releaseGUI.ahk` to provide the user a few options after running the latest release `.exe`
+- Moved a few old scripts to => `..\Backups\Old Scripts\`
 
 `right click premiere.ahk`
 - Fixed bug that caused `XButton1/2` to get stuck

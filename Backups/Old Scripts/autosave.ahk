@@ -1,3 +1,9 @@
+/* 
+    This script has been replaced with a more efficient and less messy script.
+    Enjoy a piece of this repo's history
+ */
+
+
 #SingleInstance force ;only one instance of this script may run at a time!
 #Requires AutoHotkey v2.0-beta.12
 #Include FuncRedirect.ahk
@@ -49,6 +55,7 @@ global idle := secondsIdle * 1000
 secondsRetry := 2.5
 global retry := secondsRetry * 1000
 
+
 ;DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
 tools := IniRead(ptf["settings"], "Settings", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
 ;is the timer running?
@@ -75,10 +82,12 @@ tooltipCount(*)
         }
 }
 
+
 ;timer for tray function
 global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
 global ElapsedTime := 0
 forTray := "Timer not currently tracking"
+
 
 StopWatch() {
     timer := true
@@ -165,18 +174,7 @@ save()
     timer := false
 
     stop := ""
-    premSaveTrack := 0
-    aeSaveTrack := 0
-    avoid := 0
-
-    if A_TimeIdleKeyboard <= idle
-        {
-            tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
-            SetTimer(, -retry)
-            goto theEnd
-        }
-
-    block.On()
+    ToolTip("Your project is being saved!`nHold tight!`nThis function will timeout after 3s if it gets stuck")
 
     ;\\ first we grab information on the active window
     static origWind := unset
@@ -191,178 +189,232 @@ save()
                 errorLog(e, A_ThisFunc "()")
                 origWind := unset
                 SetTimer(, -ms)
-                goto theEnd
+                goto end2
             }
         }
+    ;\\ Then we grab the titles of both premiere and after effects so we can make sure to only fire parts of this script if a save is required
+    getPremName(&premCheck, &titleCheck, &saveCheck)
+    getAEName(&aeCheck, &aeSaveCheck)
 
-    ;\\ If premiere is the active window, we're checking to see if the user is playing back footage on the timeline
-    if origWind = "Adobe Premiere Pro.exe"
+    if !IsSet(origWind) || !IsSet(titleCheck) ;then we check to make sure all of those variables were assigned values
         {
-            if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
-            {
-                tool.Cust("If you were playing back anything, this function should resume it")
-                stop := "yes"
-            }
-        else
-            stop := "no"
-    }
-
-    /**
-     * This part of the script will check to see if Premiere requires a save
-     * If it does and isn't the active window, it will controlsend ^s
-     * otherwise it will sendinput ^s (as using controlsend while active seems to not function properly)
-     */
+            block.Off()
+            tool.Cust("A variable wasn't assigned a value")
+            errorLog(, A_ThisFunc "()", "A variable wasn't assigned a value", A_LineFile, A_LineNumber)
+            origWind := unset
+            SetTimer(, -ms)
+            goto end2
+        }
     if WinExist("ahk_exe Adobe Premiere Pro.exe")
         {
-            getPremName(&premCheck, &titleCheck, &saveCheck)
-            premWinCheck := WinGetTitle("ahk_exe Adobe Premiere Pro.exe")
+            if !titleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+                {
+                    block.Off()
+                    ;MsgBox("1") ;testing
+                    tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
+                    goto end
+                }
+        }
+    if origWind = "Adobe Premiere Pro.exe" ;this check is a final check to ensure the user doesn't have a menu window (or something similar) open that the first title check didn't grab (because we get the title of premiere in general and not the current active window)
+        {
+            premWinCheck := WinGetTitle("A")
             premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-            premTitleCheck2 := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;same as above except checking a different variable (depending on whether you check the ahk_exe or the ahk_class returns different results under different circumstances)
             if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
                 {
-                    avoid := 1
                     block.Off()
                     tool.Cust("A window is currently open that may alter the saving process")
                     errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                     SetTimer(, -ms)
                     goto end
                 }
-            if premWinCheck = "" && premCheck = ""
+            if premWinCheck = ""
                 {
                     switchToPremiere()
                     premWinCheck := WinGetTitle("A")
                     premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                 }
-            if !premTitleCheck && !premTitleCheck2 ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+            if !premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
-                    avoid := 1
                     block.Off()
+                    ;MsgBox("2") ;testing
                     tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
                     goto end
                 }
-
-            premSave(title) {
-                tool.Cust("Saving Premiere")
-                ControlSend("{Ctrl Down}s{Ctrl Up}",, title)
-                premSaveTrack := 1
-            }
-            if saveCheck = "*" && origWind = "Adobe Premiere Pro.exe"
-                {
-                    tool.Cust("Saving Premiere")
-                    SendInput("{Ctrl Down}s{Ctrl Up}")
-                    premSaveTrack := 1 
-                }
-            else if saveCheck = "*" && premWinCheck != ""
-                premSave(premWinCheck)
-            else if saveCheck = "*" && premCheck != ""
-                premSave(premCheck)
         }
-
-
-    /**
-     * This part of the script will check to see if after effects requires a save
-     * If you have AE in view (but not the active window) when this function attempts to save it, you may see it disappear from view -
-     * This is to avoid after effects flashing on the screen as, when you save after effects, it FORCES itself to be in focus (typical adobe nonsense)
-     * So this function will first make ae transparent, save, refocus the original window, then winmovebottom AE so it doesn't force itself to the top
-     */
-    if WinExist("ahk_exe AfterFX.exe")
+    if saveCheck != "*" ;will check to see if saving is necessary
         {
-            getAEName(&aeCheck, &aeSaveCheck)
-            if aeSaveCheck = "*" && origWind != aeCheck ;this variable will contain "*" if a save is required
+            if aeSaveCheck = "*" ;this variable will contain "*" if a save is required
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {
-                            avoid := 1
                             block.Off()
                             tool.Cust("A window is currently open that may alter the saving process")
                             errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                            SetTimer(, -ms)
                             goto end
                         }
-                    tool.Cust("Saving AE")
-                    WinSetTransparent(0, "ahk_exe AfterFX.exe")
-                    ControlSend("{Ctrl Down}s{Ctrl Up}",, aeCheck)
+                    if A_TimeIdleKeyboard <= idle
+                        {
+                            tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
+                            SetTimer(, -retry)
+                            goto end2
+                        }
+                    block.On()
+                    WinActivate("ahk_exe AfterFX.exe")
+                    sleep 500
+                    SendInput("^s")
+                    sleep 250
                     WinWaitClose("Save Project",, 3)
-                    try {
-                        if origWind = "ahk_class CabinetWClass"
-                            WinActivate("ahk_class CabinetWClass")
-                        else if origWind = "Adobe Premiere Pro.exe"
-                            switchToPremiere()
-                        else
-                            WinActivate("ahk_exe " origWind)
-                    }
-                    WinMoveBottom("ahk_exe AfterFX.exe")
-                    WinSetTransparent(255, "ahk_exe AfterFX.exe")
-                    aeSaveTrack := 1
                     goto end
                 }
-            else if aeSaveCheck= "*" && origWind = aeCheck ;this variable will contain "*" if a save is required
-                {
-                    if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
-                        {
-                            SetTimer(, -ms)
-                            block.Off()
-                            tool.Cust("A window is currently open that may alter the saving process")
-                            errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
-                            goto end
-                        }
-                    tool.Cust("Saving AE")
-                    SendInput("^s")
-                    WinWaitClose("Save Project",, 3)
-                }
+            block.Off()
+            tool.Cust("No save necessary", 2000)
+            try {
+                if origWind = "ahk_class CabinetWClass"
+                    WinActivate("ahk_class CabinetWClass")
+                else if origWind = "Adobe Premiere Pro.exe"
+                    switchToPremiere()
+                else
+                    WinActivate("ahk_exe " origWind)
+            } catch as e {
+                tool.Cust("couldn't activate original window")
+                errorLog(e, A_ThisFunc "()")
+            }
+            origWind := unset
+            SetTimer(, -ms)
+            goto end2
         }
 
+    if origWind != "Adobe Premiere Pro.exe" ;will activate premiere if it wasn't the original window
+        WinActivate("ahk_exe Adobe Premiere Pro.exe")
+    try {
+        premWinCheck := WinGetTitle("A")
+        premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+        if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
+            {
+                block.Off()
+                tool.Cust("A window is currently open that may alter the saving process")
+                errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                SetTimer(, -ms)
+                goto end
+            }
+        if premWinCheck = ""
+            {
+                switchToPremiere()
+                premWinCheck := WinGetTitle("A")
+                premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            }
+        if !premTitleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
+            {
+                block.Off()
+                ;MsgBox("3") ;testing
+                tool.Cust("You're currently doing something`nautosave has be cancelled", 2000)
+                try {
+                    if origWind = "ahk_class CabinetWClass"
+                        WinActivate("ahk_class CabinetWClass")
+                    else if origWind = "Adobe Premiere Pro.exe"
+                        switchToPremiere()
+                    else
+                        WinActivate("ahk_exe " origWind)
+                } catch as e {
+                    tool.Cust("couldn't activate original window")
+                    errorLog(e, A_ThisFunc "()")
+                }
+                origWind := unset
+                SetTimer(, -ms)
+                goto end2
+            }
+        if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
+            {
+                tool.Cust("If you were playing back anything, this function should resume it")
+                stop := "yes"
+            }
+        else
+            stop := "no"
+    } catch as er {
+        SendInput("^s") ;attempt a save just in case
+        block.Off() ;then bail
+        tool.Cust("failed to find play/stop button")
+        errorLog(er, A_ThisFunc "()")
+        origWind := unset
+        SetTimer(, -ms)
+        goto end2
+    }
 
-        replayPlayback(title) {
+    if A_TimeIdleKeyboard <= idle
+        {
+            SetTimer(, -retry)
+            tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
+            goto end2
+        }
+
+    ;\\ Now we begin
+    block.On()
+
+    ;\\ before finally saving
+    SendInput("^s")
+    WinWait("Save Project",, 3)
+    WinWaitClose("Save Project",, 3)
+
+    ;\\ if ae is open we'll check to see if it needs saving, then save it too if required
+    if aeSaveCheck = "*"
+        {
+            WinActivate("ahk_exe AfterFX.exe")
+            sleep 500
+            SendInput("^s")
             sleep 250
-            ControlSend(timelineWindow,, title)
-            ControlSend(timelineWindow,, title)
+            WinWaitClose("Save Project",, 3)
+        }
+
+    ;\\ if the originally active window isn't premiere, we don't want to refocus it so we'll jump straight to the end
+    if origWind != "Adobe Premiere Pro.exe"
+        goto end
+
+    ;\\ if the orginally active window IS premiere, we now refocus premiere
+    try {
+        sleep 250
+        switchToPremiere()
+    } catch as e {
+        tool.Cust("couldn't activate Premiere Pro")
+        errorLog(e, A_ThisFunc "()")
+    }
+
+    ;\\ if a video was playing, we now start it up again
+    if stop = "yes"
+        {
+            sleep 250
+            SendInput(timelineWindow)
+            SendInput(timelineWindow)
             sleep 100
-            ControlSend(playStop,, title)
+            SendInput("{Space}")
             block.Off()
             ToolTip("")
-            ControlSend(timelineWindow,, title)
+            SendInput(timelineWindow)
+            origWind := unset
+            SetTimer(, -ms) ;reset the timer
+            goto end2
         }
-        if stop = "yes" && premWinCheck != "" && premSaveTrack = 1
-            replayPlayback(premWinCheck)
-        else if stop = "yes" && premCheck != "" premSaveTrack = 1
-            replayPlayback(premCheck)
 
-
-        end:
-        tool.Wait()
-        if aeSaveTrack = 0 && premSaveTrack = 0 && avoid = 0
-            tool.Cust("No save necessary")
-        if !IsSet(origWind)
-            goto ignore
-        try { ;this is to restore the original active window
-            getID(&newid)
-            checkWin := newid
-            if origWind = newid
-                goto ignore
-            if origWind = "ahk_class CabinetWClass"
-                WinActivate("ahk_class CabinetWClass")
-            else if origWind = "Adobe Premiere Pro.exe"
-                switchToPremiere()
-            else
-                WinActivate("ahk_exe " origWind)
-        } catch as e {
-            tool.Cust("couldn't activate original window")
-            errorLog(e, A_ThisFunc "()")
-        }
-        ignore:
-        WinSetTransparent(255, "ahk_exe AfterFX.exe") ;just incase
-        block.Off()
-        tool.Wait()
-        ToolTip("")
-        origWind := unset
-        SetTimer(, -ms) ;reset the timer
-
-        theEnd:
-        WinSetTransparent(255, "ahk_exe AfterFX.exe") ;just incase
-        block.Off()
-        tool.Wait()
-        global ElapsedTime := 0
-        SetTimer(StopWatch, 10)
+    end:
+    try { ;this is to restore the original active window
+        if origWind = "ahk_class CabinetWClass"
+            WinActivate("ahk_class CabinetWClass")
+        else if origWind = "Adobe Premiere Pro.exe"
+            switchToPremiere()
+        else
+            WinActivate("ahk_exe " origWind)
+    } catch as e {
+        tool.Cust("couldn't activate original window")
+        errorLog(e, A_ThisFunc "()")
+    }
+    ToolTip("")
+    origWind := unset
+    block.Off()
+    SetTimer(, -ms) ;reset the timer
+    end2:
+    tool.Wait()
+    global ElapsedTime := 0
+    SetTimer(StopWatch, 10)
 }
 
 
