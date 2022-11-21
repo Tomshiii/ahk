@@ -872,7 +872,27 @@ XButton1::moveWin("#{Right}") ;snap right
 RButton::moveWin("") ;minimise
 
 ;alwaysontopHotkey;
-^SPACE::WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
+^SPACE::
+{
+	tooltipVal := isOnTop()
+	isOnTop() {
+		try {
+			title := WinGetTitle("A")
+			ExStyle := WinGetExStyle(title)
+			if(ExStyle & 0x8) ; 0x8 is WS_EX_TOPMOST.
+				return "Active window no longer on top`n" '"' title '"'
+			else
+				return "Active window now on top`n" '"' title '"'
+		} catch as e {
+			tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
+			errorLog(e, A_ThisFunc "()")
+			Exit()
+		}
+
+	}
+	tool.Cust(tooltipVal, 2.0)
+	WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
+}
 
 ;searchgoogleHotkey;
 ^+c:: ;runs a google search of highlighted text
