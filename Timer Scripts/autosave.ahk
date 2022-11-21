@@ -350,7 +350,8 @@ save()
             errorLog(e, A_ThisFunc "()")
         }
         ignore:
-        WinSetTransparent(255, "ahk_exe AfterFX.exe") ;just incase
+        if WinExist("ahk_exe AfterFX.exe")
+            WinSetTransparent(255, "ahk_exe AfterFX.exe") ;just incase
         block.Off()
         tool.Wait()
         ToolTip("")
@@ -358,7 +359,8 @@ save()
         SetTimer(, -ms) ;reset the timer
 
         theEnd:
-        WinSetTransparent(255, "ahk_exe AfterFX.exe") ;just incase
+        if WinExist("ahk_exe AfterFX.exe")
+            WinSetTransparent(255, "ahk_exe AfterFX.exe") ;just incase
         block.Off()
         tool.Wait()
         global ElapsedTime := 0
