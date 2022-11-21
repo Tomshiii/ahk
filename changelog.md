@@ -7,14 +7,14 @@
 
 `settingsGUI()`
 - Fixed not all options showing
-- Fixed `autosave save rate` changing `adobe fs check`
+- Fixed `autosave save rate` editbox changing `adobe fs check`
 - Fixed scripts not reloading when their respective setting is changed
 - Opening the `settings.ini` will now move the notepad window right next to `settingsGUI()`
 
 ## > My Scripts
 - `^SPACE:: ;alwaysontopHotkey;` will now attempt to produce a tooltip to tell the user which state the window is being changed too
 
-## autosave
+## > autosave
 - Refactored entire script
     - No longer needs to activate the window
     - Uses `ControlSend()` if window isn't active

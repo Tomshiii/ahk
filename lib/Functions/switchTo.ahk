@@ -308,12 +308,12 @@ switchToWord()
  */
 switchToWindowSpy()
 {
-    if !WinExist("WindowSpy.ahk")
+    if !WinExist("WindowSpy.ahk",, "Visual Studio Code")
         Run(ptf.ProgFi "\AutoHotkey\UX\WindowSpy.ahk")
     GroupAdd("winspy", "ahk_class AutoHotkeyGUI")
-    if WinActive("WindowSpy.ahk")
+    if WinActive("WindowSpy.ahk",, "Visual Studio Code")
         GroupActivate("winspy", "r")
-    else if WinExist("WindowSpy.ahk")
+    else if WinExist("WindowSpy.ahk",, "Visual Studio Code")
         WinActivate("WindowSpy.ahk") ;you have to use WinActivatebottom if you didn't create a window group.
 }
 
