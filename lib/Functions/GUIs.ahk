@@ -299,6 +299,7 @@ settingsGUI()
 
     editCtrl(script, ini, ctrl, *)
     {
+        detect()
         IniWrite(ctrl.value, ptf["settings"], "Adjust", ini)
         if WinExist(script " - AutoHotkey")
             PostMessage 0x0111, 65303,,, script " - AutoHotkey"
@@ -359,12 +360,14 @@ settingsGUI()
     iniLink.OnEvent("Click", ini)
     ini(*)
     {
+        settingsGUI.GetPos(&x, &y, &width, &height)
         settingsGUI.Opt("-AlwaysOnTop")
         if WinExist("settings.ini") ;if ini already open, get pos, close, and then reopen to refresh
             refreshWin("settings.ini", ptf["settings"])
         else
-            Run(ptf["settings"])
+            Run('Notepad.exe  ' ptf["settings"] "'")
         WinWait("settings.ini")
+        WinMove(x+width-8, y, 322, height-2,"settings.ini")
         SetTimer(iniWait, -100)
     }
     iniWait()

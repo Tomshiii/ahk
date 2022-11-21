@@ -523,7 +523,7 @@ getPremName(&premCheck, &titleCheck, &saveCheck)
     }
 }
  
- /**
+/**
   * This function will grab the title of after effects if it exists and check to see if a save is necessary
   * @param {var} aeCheck is the title of after effects, we want to pass this value back to the script
   * @param {var} aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
