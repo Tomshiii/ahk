@@ -1,0 +1,3 @@
+[submodule "Support Files/textreplace"]
+	path = Support Files/textreplace
+	url = https://github.com/Tomshiii/textreplace
