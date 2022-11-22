@@ -54,6 +54,7 @@
 - Moved `newWin()` from `QMK.ahk` => `Windows.ahk 'class switchTo {'`
 - Fixed `Start new project.ahk` running `checklist.ahk`
 - Moved `..\Changelogs` => `..\Backups\Changelogs`
+- Add symlink of [`textreplace`](https://github.com/Tomshiii/textreplace) repo to `..\Support Files\textreplace\`
 
 `right click premiere.ahk`
 - Fixed bug that caused `XButton1/2` to get stuck

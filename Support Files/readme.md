@@ -8,6 +8,7 @@ This directory is here simply to *assist* other scripts.
 - `\Release Assets` is a folder containing all scripts necessary for the user to have a clean installation experience of my repo
 - `\Secondary Keyboard Files` contains all files I need to make my secondary keyboard work within my workflow
 - `\shortcuts` contains all shortcut files I use within scripts
+- `\textreplace` is a symlink to my `textreplace` repo and will get updated periodically on new releases of this repo. If you want the most up to date version of this script, clone that repo instead
 - `Fkeys used.xlsx` is an excel file keeping track of where `Fkeys` beyond `F12` are being used
 - `mouse settings.png` is just a backup of my mouse settings
 

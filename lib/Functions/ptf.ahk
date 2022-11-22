@@ -10,6 +10,7 @@ class ptf {
     static Stream            := this.rootDir "\Stream"
     static ErrorLog          := this.rootDir "\Error Logs"
     static lib               := this.rootDir "\lib"
+    static textreplace       := this.SupportFiles "\textreplace"
 
     ;My Stuff
     static MyDir             := "E:"

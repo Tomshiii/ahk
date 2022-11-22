@@ -30,7 +30,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.2
+;\\v2.23.3
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.12.1
 
@@ -384,13 +384,13 @@ F18:: ;open the "show more options" menu in win11
 
 #HotIf WinActive(browser.winTitle["vscode"])
 ;vscodemsHotkey;
-!a::VSCode.script(16) ;clicks on the `my scripts` script in vscode
+!a::VSCode.script(17) ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
 !f::VSCode.script() ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::VSCode.script(17) ;clicks on my `qmk` script in vscode
+!q::VSCode.script(18) ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
-!c::VSCode.script(13) ;clicks on my `changelog` file in vscode
+!c::VSCode.script(14) ;clicks on my `changelog` file in vscode
 ;vscodesearchHotkey;
 $^f::VSCode.search()
 ;vscodecutHotkey;

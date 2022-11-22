@@ -752,9 +752,9 @@ todoGUI()
 activeScripts(MyRelease)
 {
     detect()
-    if WinExist("Tomshi Scripts Release " MyRelease)
+    if WinExist("Active Scripts " MyRelease)
         return
-    MyGui := tomshiBasic(,, "-Resize AlwaysOnTop", "Tomshi Scripts Release " MyRelease)
+    MyGui := tomshiBasic(,, "-Resize AlwaysOnTop", "Active Scripts " MyRelease)
     ;nofocus
     ;add an invisible button since removing the default off all the others did nothing
     removedefault := MyGui.Add("Button", "Default X0 Y0 w0 h0", "_")
@@ -762,7 +762,7 @@ activeScripts(MyRelease)
     text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
     text.SetFont("S13 Bold")
 
-    scripts := ["myscript", "error", "dismiss", "save", "fullscreen", "game", "M-I_C", "keyboard", "resolve"]
+    scripts := ["myscript", "error", "dismiss", "save", "fullscreen", "game", "M-I_C", "keyboard", "text", "resolve"]
     names := Map(
         scripts[1],      "My Scripts.ahk",
         scripts[2],      "Alt_menu_acceleration_DISABLER.ahk",
@@ -772,7 +772,8 @@ activeScripts(MyRelease)
         scripts[6],      "gameCheck.ahk",
         scripts[7],      "Multi-Instance Close.ahk",
         scripts[8],      "QMK Keyboard.ahk",
-        scripts[9],      "Resolve_Example.ahk",
+        scripts[9],      "textreplace.ahk",
+        scripts[10],      "Resolve_Example.ahk",
     )
     tooltiptext := Map(
         scripts[1],      "Clicking this checkbox will toggle suspend the script",
@@ -781,6 +782,7 @@ activeScripts(MyRelease)
 
     createCheck()
     {
+        moveOver := 6
         loop scripts.Length {
             if A_Index = 1
                 {
@@ -788,33 +790,64 @@ activeScripts(MyRelease)
                     MyGui[scripts[1]].OnEvent("Click", myClick)
                     MyGui[scripts[1]].ToolTip := tooltiptext[scripts[1]]
                 }
-            else
+            else if A_Index != scripts.Length && A_Index < moveOver
                 {
                     MyGui.Add("CheckBox", "xs Checked0 v" scripts[A_Index], names[scripts[A_Index]])
+                    MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
+                    MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
+                }
+            else if A_Index != scripts.Length && A_Index >= moveOver
+                {
+                    if A_Index = moveOver
+                        MyGui.Add("CheckBox", "x+120 ys Section Checked0 v" scripts[A_Index], names[scripts[A_Index]])
+                    else
+                        MyGui.Add("CheckBox", "xs Checked0 v" scripts[A_Index], names[scripts[A_Index]])
+                    MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
+                    MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
+                }
+            else ;for resolve
+                {
+                    MyGui.Add("CheckBox", "xs Checked0 Y+15 v" scripts[A_Index], names[scripts[A_Index]])
                     MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
                     MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
                 }
         }
         loop scripts.Length {
             if A_Index = 1
-                MyGui.Add("Picture", "w20 h-1 X275 Ys", ptf.Icons "\" scripts[A_Index] ".png")
-            else
+                MyGui.Add("Picture", "w18 h-1 X275 Ys", ptf.Icons "\" scripts[A_Index] ".png")
+            else if A_Index < moveOver
+                {
+                    switch scripts[A_Index] {
+                        case "dismiss":
+                            y := "+5"
+                        default:
+                            type := ".ico"
+                            y := "+7"
+                    }
+                    MyGui.Add("Picture", "w18 h-1 Y" y, ptf.Icons "\" scripts[A_Index] type)
+                }
+            else if A_Index >= moveOver
                 {
                     switch scripts[A_Index] {
                         case "game":
                             type := ".png"
-                        case "dismiss" :
-                            y := "+2"
                         case "M-I_C" :
                             type := ".png"
+                            y := "+5"
                         case "resolve":
                             type := ".png"
-                            y := "+2"
+                            y := "+11"
+                        case "text":
+                            type := ".png"
+                            y := "+4"
                         default:
                             type := ".ico"
-                            y := "+5"
+                            y := "+7"
                     }
-                    MyGui.Add("Picture", "w20 h-1 Y" y, ptf.Icons "\" scripts[A_Index] type)
+                    if A_Index = moveOver
+                        MyGui.Add("Picture", "xs+200 w18 h-1 Ys", ptf.Icons "\" scripts[A_Index] type)
+                    else
+                        MyGui.Add("Picture", "w18 h-1 Y" y, ptf.Icons "\" scripts[A_Index] type)
                 }
         }
     }
@@ -823,7 +856,7 @@ activeScripts(MyRelease)
     SetTimer(checkScripts, -100)
 
     ;close button
-    closeButton := MyGui.Add("Button", "X245", "Close")
+    closeButton := MyGui.Add("Button", "X482", "Close")
     closeButton.OnEvent("Click", escape)
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
@@ -851,6 +884,8 @@ activeScripts(MyRelease)
             }
         if script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk"
             Run(ptf.rootDir "\" script.text)
+        else if script.text = "textreplace.ahk"
+            Run(ptf.textreplace "\" script.text)
         else
             Run(ptf.rootDir "\Timer Scripts\" script.text)
     }
