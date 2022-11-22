@@ -1,10 +1,10 @@
 ;These global variables will be used across some Streamdeck AHK scripts.
 SetWorkingDir(ptf.rootDir) ;this is required for KSA to work
+
+; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments> ;this is added because we need it
-#Include <\Functions\Windows> ;this is only added to prevent errors
-#Include <\Functions\switchTo> ;this is only added to prevent errors
-#Include <\Functions\Startup> ;this is only added to prevent errors
 #Include <\Functions\General> ;this is added because we need it
+; }
 
 ;went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them
 obsLocation()
@@ -19,7 +19,7 @@ chatterinoLocationTomshi() => WinMove(3648, -398, 832, 586)
 
 streamelementsLocation() => WinMove(3513,  -936, 974, 1047, "StreamElements - Activity feed")
 
-discord.location() => WinMove(-1080,  -274, 1080, 1600)
+discordlocation() => WinMove(-1080,  -274, 1080, 1600)
 
 /**
  * This function is to cut repeat code across scripts.
