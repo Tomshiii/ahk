@@ -291,7 +291,7 @@ class Prem {
         alexZoomXYS := [3467, 339, 390]
 
         ;d0yle ;orig => [-57, -37, 210]
-        d0yleXYS := [-11, 457, 210]
+        d0yleXYS := [-78, -53, 210]
 
         ;chloe
         chloeXYS := [-426, -238, 267]
