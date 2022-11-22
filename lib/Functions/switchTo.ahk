@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <\Functions\General>
 #Include <\Functions\GUIs>
+#Include <\Functions\ptf>
 ; }
 
 class switchTo {

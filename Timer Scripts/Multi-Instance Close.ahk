@@ -2,6 +2,7 @@
 
 ; { \\ #Includes
 #Include <\Functions\General>
+#Include <\Functions\ptf>
 ; }
 
 TraySetIcon(ptf.Icons "\M-I_C.png")

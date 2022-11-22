@@ -13,6 +13,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\ptf>
 #Include <\Functions\Startup>
 #Include <\Functions\Editors\After Effects>
 #Include <\Functions\Editors\Photoshop>
@@ -29,9 +30,9 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23
+;\\v2.23.1
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.12
+;\\v2.12.1
 
 ; ============================================================================================================================================
 ;
@@ -485,6 +486,7 @@ RAlt & p:: ;This hotkey is to pin the first two tabs
 
 ;movetabHotkey;
 XButton2:: ;these two hotkeys are activated by right clicking on a tab then pressing either of the two side mouse buttons
+;movetab2Hotkey;
 XButton1::move.Tab()
 
 ;=============================================================================================================================================

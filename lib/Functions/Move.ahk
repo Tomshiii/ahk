@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <\Functions\General>
 #Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\ptf>
 ; }
 
 class Move {

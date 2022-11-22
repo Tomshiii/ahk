@@ -2,6 +2,7 @@ SetWorkingDir(ptf.rootDir)
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\ptf>
 #Include <\Functions\Editors\After Effects>
 #Include <\Functions\Editors\Photoshop>
 #Include <\Functions\Editors\Premiere>
@@ -23,7 +24,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12
+;\\v2.12.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1

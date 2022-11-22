@@ -4,6 +4,7 @@
 ; { \\ #Includes
 #Include <\Functions\General>
 #Include <\Functions\Windows>
+#Include <\Functions\ptf>
 ; }
 
 SetWorkingDir A_ScriptDir

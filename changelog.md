@@ -1,4 +1,4 @@
-# <> Release 2.7.x -
+# <> Release 2.8 - Refactoring
 - All `lib`/`function` files now get included from the user library. This is accomplished by creating a `SymLink` in `A_MyDocuments \AutoHotkey\` that links back to `..\lib`. This SymLink is created either during the release install process or by the user running `..\Support Files\Release Assets\CreateSymLink.ahk`
 - `ptf.files[]` changed to instead invoke the `__Item` meta function to simply become; `ptf[]`
 - All files now contain their required `#Includes` instead of using one script to include everything
@@ -22,10 +22,12 @@
 - Editor lib files moved from `..\lib\Functions\` to `..\lib\Functions\Editors\`
 
 ## > Functions
-- Add `vscode` to `class browser`
-- Add class `Editors` to contain `winTitle` and `class` information of `NLEs`
+- Moved `class ptf {`, `class browser {`, `class Editors {` & the group assignments from `General.ahk` => `ptf.ahk`
+    - Add `vscode` to `class browser`
+    - Add class `Editors` to contain `winTitle` and `class` information of `NLEs`
 - Moved `getScriptRelease()` from `Startup.ahk` => `General.ahk`
 - Moved `moveWin()`, `moveTab()` & `moveXorY()` from `Windows.ahk` => `Move.ahk` under class `Move {`
+- Moved `refreshWin()` from `General.ahk` => `Windows.ahk`
 
 `settingsGUI()`
 - Fixed not all options showing

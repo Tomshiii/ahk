@@ -4,6 +4,7 @@
 
 ; { \\ #Includes
 #Include <\Functions\General>
+#Include <\Functions\ptf>
 #Include <\Functions\GUIs>
 #Include <\gameCheck\Game List> ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
 ; }

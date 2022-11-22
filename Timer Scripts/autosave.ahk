@@ -5,6 +5,7 @@
 #Include <\Functions\General>
 #Include <\Functions\Windows>
 #Include <\Functions\switchTo>
+#Include <\Functions\ptf>
 ; }
 
 A_MaxHotkeysPerInterval := 2000

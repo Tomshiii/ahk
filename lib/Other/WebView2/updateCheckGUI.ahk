@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <\Other\WebView2\WebView2>
-#Include <\Functions\General> ;this is added because we need it
+#Include <\Functions\General>
+#Include <\Functions\ptf>
 ; }
 
 #SingleInstance Force

@@ -11,6 +11,7 @@ CoordMode("Pixel", "screen")
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
 #Include <\Functions\General>
+; #Include <\Functions\ptf> ; only need this if you run the script by itself
 ; }
 
 

@@ -10,6 +10,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 #Include <\KSA\Keyboard Shortcut Adjustments>
 #Include <\Functions\Editors\Resolve>
 #Include <\Functions\switchTo>
+#Include <\Functions\ptf>
 ; }
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version

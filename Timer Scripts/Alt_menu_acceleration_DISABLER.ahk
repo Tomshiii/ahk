@@ -2,7 +2,7 @@
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 
 ; { \\ #Includes
-#Include <\Functions\General>
+#Include <\Functions\ptf>
 ; }
 
 A_MaxHotkeysPerInterval := 2000

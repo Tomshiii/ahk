@@ -2,8 +2,9 @@
 SetWorkingDir(ptf.rootDir) ;this is required for KSA to work
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments> ;this is added because we need it
-#Include <\Functions\General> ;this is added because we need it
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\General>
+#Include <\Functions\ptf>
 ; }
 
 ;went through a lot of issues with my pc which basically messed my monitors locations up each time. So now these values are all here so I can easily change them

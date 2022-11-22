@@ -2,6 +2,7 @@
 #Include <\Functions\General>
 #Include <\settingsGUI\gameCheckGUI>
 #Include <\settingsGUI\editValues>
+#Include <\Functions\ptf>
 ; }
 
 /**
@@ -722,7 +723,7 @@ todoGUI()
 
         2. Take a look at ``Keyboard Shortcuts.ini`` to set your own keyboard shortcuts for programs as well as define coordinates for a few remaining ImageSearches that cannot use variables for various reasons. These ``KSA`` values are used to allow for easy adjustments instead of needing to dig through scripts!
 
-        3. Take a look at ``General.ahk`` in the class ``class ptf {`` to adjust all assigned filepaths!
+        3. Take a look at ``ptf.ahk`` in the class ``class ptf {`` to adjust all assigned filepaths!
 
         4. You can then edit and run any of the .ahk files to use to your liking!
     )")

@@ -38,7 +38,7 @@ Indepth instructions on how to get started, as well as complete definitions of e
 ## Short Explanation:
 
 #### [Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk](https://github.com/Tomshiii/ahk/tree/main/lib/KSA)
-An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses it. You do NOT need to run this ahk file, it is [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in `Functions.ahk`
+An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses it. You do NOT need to run this ahk file, it is [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in all scripts that require it.
 
 #### [My Scripts.ahk](https://github.com/Tomshiii/ahk/blob/main/My%20Scripts.ahk)
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
@@ -57,50 +57,13 @@ This script will also go through a lot of important functions on boot. Some go t
 A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.3+](https://github.com/Tomshiii/ahk/releases/tag/v2.3) I use a Planck Ez custom keyboard.
 Check out [\Secondary Keyboard Files](https://github.com/Tomshiii/ahk/tree/main/Support%20Files/Secondary%20Keyboard%20Files) for more information on how that works.
 
-#### [Functions.ahk](https://github.com/Tomshiii/ahk/blob/main/lib/Functions.ahk)
-A sort of "hub" script that includes all [individual function files](https://github.com/Tomshiii/ahk/tree/main/lib/Functions) into it so that ***it*** can then be [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in other scripts. You don't need to manually run this file.
-A function is defined similar to;
-```autohotkey
-/**
- * These are comments that dynamically display information when displayed in VSCode,
- but also serve as general comments for anyone else
- * 
- * This function does something
- * @param {Any} variableX is a value you pass into the function
- * @param {VarRef} variableY is a variable who's value will be passed back once the function is complete
- * @param {String} variableZ is a variable with a default value, it can be omitted
- */
-func(variableX, &variableY, variableZ := "default")
-{
-  if variableX = Y
-    return
-  ...
-  variableY := "value"
-  if variableZ != "default"
-    code(variableZ)
-}
-```
-We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) `Functions.ahk` in other scripts so we can achieve things like below;
-```autoit
-#Include Functions.ahk
-hotkey::
-{
-  func("variableValue", &variableYbutCalledAnything)
-  ...
-  MsgBox(variableYbutCalledAnything)
-}
-```
-Note:
-- `variableZ` doesn't have to be used and can be omitted from the function call
-- An example of a function in this repo that passes back a variable & also uses defaults is [`isFullscreen()`](https://github.com/Tomshiii/ahk/blob/main/lib/Functions/Windows.ahk)
-
 #### [gameCheck.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/gameCheck.ahk)
 A script that will automatically suspend `My Scripts.ahk` when a game is detected to be the active window & then unsuspend it when the game is no longer active.
 ```mermaid
   graph TD;
       A[gameCheck.ahk]-->B{Game List};
       B --> C[is a game in the list open?];
-      
+
       C -- yes --> D[Suspend `My Scripts.ahk`]
       C -- no --> E[Wait 2.5s] --> C
 

@@ -2,8 +2,7 @@
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
 
 ; { \\ #Includes
-#Include <\Functions\General>
-#Include <\Functions\Windows>
+#Include <\Functions\ptf>
 ; }
 
 TraySetIcon(ptf.Icons "\dismiss.ico")
