@@ -2,16 +2,22 @@ SetWorkingDir(ptf.rootDir)  ; Ensures a consistent starting directory.
 #SingleInstance Force
 #Include <\KSA\Keyboard Shortcut Adjustments>
 #Include <\Functions\Startup>
-#Include <\Functions\After Effects>
-#Include <\Functions\Photoshop>
-#Include <\Functions\Premiere>
-#Include <\Functions\Resolve>
+#Include <\Functions\Editors\After Effects>
+#Include <\Functions\Editors\Photoshop>
+#Include <\Functions\Editors\Premiere>
+#Include <\Functions\Editors\Resolve>
 #Include <\Functions\switchTo>
 #Include <\Functions\Windows>
 #Include <\Apps\Discord>
 #Include <\Apps\VSCode>
+#Include <\Functions\Move>
 #Include <\Functions\GUIs>
 #Include <\Other\IncludeLibs>
+
+; \\
+    ; This script use to be placed in the root directory, I have since changed the way my scripts are laid out so they include all the necessary files they require for proper function instead of using these bulk files to include everything
+; \\
+
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1

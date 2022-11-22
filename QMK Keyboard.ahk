@@ -1,5 +1,17 @@
 SetWorkingDir(ptf.rootDir)
-#Include Functions.ahk ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script
+
+; { \\ #Includes
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\Editors\After Effects>
+#Include <\Functions\Editors\Photoshop>
+#Include <\Functions\Editors\Premiere>
+#Include <\Functions\Editors\Resolve>
+#Include <\Functions\switchTo>
+#Include <\Functions\Windows>
+#Include <\Functions\GUIs>
+#Include <\Apps\Discord>
+; }
+
 #Requires AutoHotkey v2.0-beta.12
 SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay 0 ;sets default WinMove speed to 0 (instant)

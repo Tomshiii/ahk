@@ -1,11 +1,17 @@
-﻿;#SingleInstance force ; only 1 instance of this script may run at a time.
-/* InstallMouseHook
-InstallKeybdHook */
-;TraySetIcon(ptf.Icons "\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
-/* CoordMode "Mouse", "screen"
-CoordMode "Pixel", "screen" */
-
+﻿/*
+#SingleInstance force ; only 1 instance of this script may run at a time.
+InstallMouseHook
+InstallKeybdHook
+TraySetIcon(ptf.Icons "\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
+CoordMode("Mouse", "screen")
+CoordMode("Pixel", "screen")
+*/
 ; I NO LONGER RUN THIS SCRIPT SEPARATELY. I was running into issues with scripts loading after this one and it then breaking so to compensate I run it WITHIN the `My Scripts.ahk` so it never breaks -Tomshi
+
+; { \\ #Includes
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\General>
+; }
 
 
 ; Please note this script was originally written by taran in ahk v1.1 so any of his comment ramblings will go on about code that might not function in ahk v2.0 -Tomshi
@@ -46,7 +52,7 @@ Rbutton::
 		SetTimer(checkStuck, -1)
 	}
 	;getting base information
-	MouseGetPos &xpos, &ypos
+	MouseGetPos(&xpos, &ypos)
 	;this block until `skip:` is getting & storing the x/y values of the timeline
 	;we do this so we can check later if the playhead is currently on the screen - if it is we'll do a shuttle stop
 	;if it isn't we won't
@@ -92,18 +98,17 @@ Rbutton::
 		Color = timelineCol[7]
 	) ;these are the timelineCol colors of a selected clip or blank space, in or outside of in/out points.
 		sendinput "{ESC}" ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
-	else if (
-		Color = timelineCol[1] ||
-		Color = timelineCol[2] ||
-		Color = timelineCol[3] ||
-		Color = timelineCol[4] ||
-		Color = timelineCol[5] ||
-		Color = timelineCol[6] ||
-		Color = timelineCol[7] ||
-		Color = timelineCol[8] ||
-		Color = playhead
-	)
-		{ ;this block is if the colour at the cursor is one of the above in the `else if()`
+	else
+		{
+			loop { ;this loop is checking to see if `color` is one of the predetermined colours
+				if A_Index > 8
+					{
+						SendInput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
+						return
+					}
+				if Color = timelineCol[A_Index] || Color = playhead
+					break
+			}
 			colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
 			; click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
 			;while as stated above, middle clicking the mouse does indeed bring focus to the timeline, for whatever reason having that line active made it so that
@@ -180,8 +185,6 @@ Rbutton::
 				}
 			return
 		}
-	else
-		sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
 }
 
 /**

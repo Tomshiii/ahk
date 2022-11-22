@@ -3,15 +3,29 @@ global MyRelease := "v2.7.0.1"
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir) ;sets the scripts working directory to the directory it's launched from
-SetNumLockState "AlwaysOn" ;sets numlock to always on (you can still it for macros)
-SetCapsLockState "AlwaysOff" ;sets caps lock to always off (you can still it for macros)
-SetScrollLockState "AlwaysOff" ;sets scroll lock to always off (you can still it for macros)
-SetDefaultMouseSpeed 0 ;sets default MouseMove speed to 0 (instant)
-SetWinDelay 0 ;sets default WinMove speed to 0 (instant)
+SetNumLockState("AlwaysOn") ;sets numlock to always on (you can still it for macros)
+SetCapsLockState("AlwaysOff") ;sets caps lock to always off (you can still it for macros)
+SetScrollLockState("AlwaysOff") ;sets scroll lock to always off (you can still it for macros)
+SetDefaultMouseSpeed(0) ;sets default MouseMove speed to 0 (instant)
+SetWinDelay(0) ;sets default WinMove speed to 0 (instant)
 A_MaxHotkeysPerInterval := 400 ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
-#Include Functions.ahk ;includes function definitions so they don't clog up this script. MS_Functions must be in the same directory as this script otherwise you need a full filepath
+
+; { \\ #Includes
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\Startup>
+#Include <\Functions\Editors\After Effects>
+#Include <\Functions\Editors\Photoshop>
+#Include <\Functions\Editors\Premiere>
+#Include <\Functions\Editors\Resolve>
+#Include <\Functions\switchTo>
+#Include <\Functions\Windows>
+#Include <\Functions\GUIs>
+#Include <\Apps\Discord>
+#Include <\Apps\VSCode>
+#Include <\Functions\Move>
 #Include right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+; }
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
@@ -310,7 +324,7 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 ;moveXhotkey;
 SC03A & XButton2::
 ;moveYhotkey;
-SC03A & XButton1::moveXorY()
+SC03A & XButton1::move.XorY()
 
 #HotIf WinActive("ahk_class CabinetWClass") || WinActive("ahk_class #32770") ;windows explorer
 ;explorerbackHotkey;
@@ -471,7 +485,7 @@ RAlt & p:: ;This hotkey is to pin the first two tabs
 
 ;movetabHotkey;
 XButton2:: ;these two hotkeys are activated by right clicking on a tab then pressing either of the two side mouse buttons
-XButton1::moveTab()
+XButton1::move.Tab()
 
 ;=============================================================================================================================================
 ;
@@ -824,13 +838,13 @@ F20::prem.audioDrag("bleep")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 
 ;winmaxHotkey;
-F14::moveWin("") ;maximise
+F14::move.Window("") ;maximise
 ;winleftHotkey;
-XButton2::moveWin("#{Left}") ;snap left
+XButton2::move.Window("#{Left}") ;snap left
 ;winrightHotkey;
-XButton1::moveWin("#{Right}") ;snap right
+XButton1::move.Window("#{Right}") ;snap right
 ;winminHotkey;
-RButton::moveWin("") ;minimise
+RButton::move.Window("") ;minimise
 
 ;alwaysontopHotkey;
 ^SPACE::

@@ -1,5 +1,7 @@
+; { \\ #Includes
 #Include <\Functions\General>
 #Include <\Functions\GUIs>
+; }
 
 class switchTo {
     /**

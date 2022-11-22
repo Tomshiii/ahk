@@ -1,3 +1,8 @@
+; { \\ #Includes
+#Include <\Functions\Windows>
+#Include <\Functions\General>
+; }
+
 /**
  * A class to define the gameCheck add GUI window
  *

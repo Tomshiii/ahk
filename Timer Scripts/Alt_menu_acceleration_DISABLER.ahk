@@ -1,6 +1,10 @@
 #SingleInstance force
 #Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
-#Include FuncRedirect.ahk
+
+; { \\ #Includes
+#Include <\Functions\General>
+; }
+
 A_MaxHotkeysPerInterval := 2000
 ProcessSetPriority "H"
 InstallKeybdHook true

@@ -1,6 +1,11 @@
 #SingleInstance force
 #Requires AutoHotkey v2.0-beta.12
-#Include FuncRedirect.ahk
+
+; { \\ #Includes
+#Include <\Functions\General>
+#Include <\Functions\Windows>
+; }
+
 SetWorkingDir A_ScriptDir
 TraySetIcon(ptf.Icons "\fullscreen.ico") ;changes the icon this script uses in the taskbar
 InstallKeybdHook

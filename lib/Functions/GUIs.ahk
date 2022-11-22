@@ -1,8 +1,12 @@
+; { \\ #Includes
 #Include <\Functions\General>
+#Include <\settingsGUI\gameCheckGUI>
+#Include <\settingsGUI\editValues>
+; }
 
 /**
  * This class is to provide a basic template for all GUIs I create to maintain a consistent theme
- * 
+ *
  * @param FontSize allows you to pass in a custom default GUI font size. Defaults to 11, can be omitted
  * @param FontWeight allows you to pass in a custom default GUI font weight. Defaults to 11, can be omitted
  * @param options? allows you to pass in all GUI options that you would normally pass to a GUI. Can be omitted
@@ -16,8 +20,6 @@ class tomshiBasic extends Gui {
     }
 }
 
-#Include <\settingsGUI\gameCheckGUI>
-#Include <\settingsGUI\editValues>
 /**
  * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
  */
@@ -138,7 +140,7 @@ settingsGUI()
     switch darkINI {
         case "true":
             darkCheck.ToolTip := darkToolY
-        case "false":       
+        case "false":
             darkCheck.ToolTip := darkToolN
         case "Disabled":
             darkCheck.ToolTip := "The users OS version is too low for this feature"
@@ -436,7 +438,7 @@ settingsGUI()
         if !IsSet(butt) ;have to do it this way instead of using `butt.text` because hitting the X to close would cause an error doing that. Binding the function is the only way
             {
                 ;check
-                if betaStart = true 
+                if betaStart = true
                     Run(A_ScriptFullPath)
             }
         ;check to see if the user wants to reset adobeTemp()
@@ -480,9 +482,9 @@ settingsGUI()
 
 /**
  * This function creates a GUI for the user to select which media player they wish to open.
- * 
+ *
  * Currently offers AIMP, Foobar, WMP & VLC.
- * 
+ *
  * This function is also used within switchTo.Music()
 */
 musicGUI()
@@ -533,7 +535,7 @@ musicGUI()
         buttonDarkMode(VLC.Hwnd)
         buttonDarkMode(FOLDERGUI.Hwnd)
     }
-    
+
     MyGui.Show()
     ;below is what happens when you click on each button
     musicRun(button, *)
@@ -758,7 +760,7 @@ activeScripts(MyRelease)
     ;active scripts
     text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
     text.SetFont("S13 Bold")
-    
+
     scripts := ["myscript", "error", "dismiss", "save", "fullscreen", "game", "M-I_C", "keyboard", "resolve"]
     names := Map(
         scripts[1],      "My Scripts.ahk",

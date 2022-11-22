@@ -1,13 +1,12 @@
+; { \\ #Includes
 #Include <\Other\WebView2\WebView2>
+#Include <\Functions\General> ;this is added because we need it
+; }
+
 #SingleInstance Force
 SetWorkingDir(ptf.lib)
-#Include <\KSA\Keyboard Shortcut Adjustments> ;this is added because we need it
-#Include <\Functions\Windows> ;this is only added to prevent errors
-#Include <\Functions\switchTo> ;this is only added to prevent errors
-#Include <\Functions\Startup> ;this is only added to prevent errors
-#Include <\Functions\General> ;this is added because we need it
-
 TraySetIcon(ptf.Icons "\update.png")
+
 
 if IniRead(ptf["settings"], "Settings", "beta update check", "false") = "true"
 	{ ;if the user wants to check for beta updates instead, this block will fire

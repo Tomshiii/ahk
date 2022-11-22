@@ -5,7 +5,12 @@ SetDefaultMouseSpeed 0
 ; SetNumLockState "AlwaysOn" ;uncomment if you want numlock to always be ON. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 ; SetCapsLockState "AlwaysOff" ;uncomment if you want capslock to always be OFF. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 TraySetIcon(ptf.Icons "\resolve.png")
-#Include Functions.ahk ;includes function definitions so they don't clog up this script. Functions.ahk must be in the same directory as this script
+
+; { \\ #Includes
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\Editors\Resolve>
+#Include <\Functions\switchTo>
+; }
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.7

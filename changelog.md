@@ -1,6 +1,8 @@
 # <> Release 2.7.x -
 - All `lib`/`function` files now get included from the user library. This is accomplished by creating a `SymLink` in `A_MyDocuments \AutoHotkey\` that links back to `..\lib`. This SymLink is created either during the release install process or by the user running `..\Support Files\Release Assets\CreateSymLink.ahk`
 - `ptf.files[]` changed to instead invoke the `__Item` meta function to simply become; `ptf[]`
+- All files now contain their required `#Includes` instead of using one script to include everything
+    - This helps make it clear what scripts require what
 
 ### New Classes;
 
@@ -13,14 +15,17 @@
 - Discord class separated out into it's own file `..\lib\Apps\Discord.ahk`
 
 `switchTo {`
-- All switchToX() functions now a class
+- All `switchToX()` functions now a class
 
-`Prem {`, `AE {`, `PS {`
-- All Adobe functions turned into classes
+`Prem {`, `AE {`, `PS {`, `Resolve {`
+- All Editor functions turned into classes
+- Editor lib files moved from `..\lib\Functions\` to `..\lib\Functions\Editors\`
 
 ## > Functions
 - Add `vscode` to `class browser`
 - Add class `Editors` to contain `winTitle` and `class` information of `NLEs`
+- Moved `getScriptRelease()` from `Startup.ahk` => `General.ahk`
+- Moved `moveWin()`, `moveTab()` & `moveXorY()` from `Windows.ahk` => `Move.ahk` under class `Move {`
 
 `settingsGUI()`
 - Fixed not all options showing
@@ -44,6 +49,7 @@
     - Added `releaseGUI.ahk` to provide the user a few options after running the latest release `.exe`
 - Moved a few old scripts to => `..\Backups\Old Scripts\`
 - Moved `newWin()` from `QMK.ahk` => `Windows.ahk 'class switchTo {'`
+- Fixed `Start new project.ahk` running `checklist.ahk`
 
 `right click premiere.ahk`
 - Fixed bug that caused `XButton1/2` to get stuck

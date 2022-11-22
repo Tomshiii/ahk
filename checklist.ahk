@@ -1,7 +1,15 @@
 #SingleInstance Force
 #Requires AutoHotkey v2.0-beta.5
-#Include Functions.ahk
+
+; { \\ #Includes
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Functions\Editors\After Effects>
+#Include <\Functions\Editors\Premiere>
+#Include <\Functions\Windows>
+#Include <\Functions\GUIs>
 #Include <\checklist\include>
+; }
+
 TraySetIcon(ptf.Icons "\checklist.ico")
 
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
