@@ -20,9 +20,11 @@ class VSCode {
         sleep 50
         if A_ThisHotkey = functionHotkey ;this opens my \functions folder
             {
-                SendInput("{Down 4}{Enter}")
-                sleep 50
                 SendInput("{Down 3}{Enter}")
+                sleep 50
+                SendInput("{Down 1}{Enter}")
+                sleep 50
+                SendInput("{Down 4}{Enter}")
                 sleep 50
                 block.Off()
                 tool.Wait()
@@ -40,20 +42,41 @@ class VSCode {
 
     /**
      * A function to cut repeat code amongst functions below
+     *
+     * @param {VarRef} orig passes back the original clipboard
+     * @param {Boolean} focusFirst determines whether to focus the code window at the beginning or end of the function
+     * @param {String} copyOrCut determines whether to send ^c or ^x
      */
-    static getHighlightState(&orig) {
-        SendInput(focusCode)
+    static getHighlightState(&orig, focusFirst := true, copyOrCut := "^c") {
+        if copyOrCut !== "^c" && copyOrCut !== "^x"
+            {
+                tool.Cust("Invalid hotkey in function.`n`nFunc:   " A_ThisFunc "()`nFile:      " A_LineFile "`nLine #: " A_LineNumber, 3.0)
+                errorLog(, A_ThisFunc "()", "Invalid hotkey in function", A_LineFile, A_LineNumber)
+                Exit()
+            }
+        if focusFirst = true
+            SendInput(focusCode)
         orig := ClipboardAll()
         A_Clipboard := ""
-        SendInput("^c")
+        SendInput(copyOrCut)
+        if !ClipWait(0.1) && focusFirst = false
+            SendInput(focusCode)
     }
 
     /**
      * A function to cut repeat code amongst functions below
+     *
+     * @param {VarRef} store passes back the clipboard
+     * @param {String} which is to determine whether you wish to copy or cut the line. Defaults to copy and can be omitted
      */
-    static getLine(&store) {
+    static getLine(&store, which := "") {
         SendInput("{End}")
-        SendInput("{Shift Down}{Home}{Shift Up}" "^c" "{End}")
+        switch which {
+            case "cut":
+                SendInput("{Shift Down}{Home}{Shift Up}" "^x")
+            default:
+                SendInput("{Shift Down}{Home}{Shift Up}" "^c" "{End}")
+        }
         sleep 50
         store := A_Clipboard
         sleep 50
@@ -83,23 +106,21 @@ class VSCode {
      * It recreates the usual ability to completely remove a line by pressed ^x
      */
     static cut() {
-        this.getHighlightState(&orig)
+        this.getHighlightState(&orig, false, "^x")
         if !ClipWait(0.1)
             {
                 amount := 1
-                this.getLine(&store)
+                this.getLine(&store, "cut")
                 A_Clipboard := ""
                 SendInput("{Shift Down}{Home}{Shift Up}" "^c")
                 sleep 50
                 if StrCompare(A_Clipboard, "", 1)
                     amount := "2"
                 SendInput("{BackSpace " amount "}")
-                A_Clipboard := orig ;restore the original clipboard
+                A_Clipboard := orig ;restore the original clipboard - don't really know if this line makes a difference really
                 A_Clipboard := store ;add the cut content to the clipboard
                 return
             }
-        A_Clipboard := orig
-        SendInput("^x")
     }
 
     /**
@@ -108,16 +129,14 @@ class VSCode {
      * It recreates the usual ability to copy a line by pressed ^c
      */
     static copy() {
-        this.getHighlightState(&orig)
+        this.getHighlightState(&orig, false)
         if !ClipWait(0.1)
             {
                 this.getLine(&store)
-                A_Clipboard := orig ;restore the original clipboard
+                A_Clipboard := orig ;restore the original clipboard - don't really know if this line makes a difference really
                 A_Clipboard := store ;add the cut content to the clipboard
                 tool.Cust("Current line copied to clipboard")
                 return
             }
-        A_Clipboard := orig
-        SendInput("^c")
     }
 }

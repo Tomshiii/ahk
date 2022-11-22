@@ -9,6 +9,7 @@
 `VSCode {`
 - All VSCode functions now a class
 - VSCode class separated out into it's own file `..\lib\Apps\VSCode.ahk`
+- `VSCode.cut()` & `VSCode.copy()` functions will no longer attempt to fire if you're highlighting something not in the code window
 
 `Discord {`
 - All Discord functions now a class
