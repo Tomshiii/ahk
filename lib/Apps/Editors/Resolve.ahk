@@ -1,5 +1,12 @@
 ; { \\ #Includes
-#Include <\Functions\General>
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Classes\block>
+#Include <\Classes\coord>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\winget>
+#Include <\Functions\errorLog>
+#Include <\Functions\getHotkeys>
 ; }
 
 class Resolve {
@@ -83,7 +90,7 @@ class Resolve {
     {
         getHotkeys(&first, &second)
         KeyWait(second)
-        isFullscreen(&title, &full)
+        winget.isFullscreen(&title, &full)
         if full = 0
             {
                 SplitPath(A_LineFile, &filename)

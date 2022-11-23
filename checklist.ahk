@@ -3,11 +3,13 @@
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Functions\Editors\After Effects>
-#Include <\Functions\Editors\Premiere>
-#Include <\Functions\Windows>
-#Include <\Functions\GUIs>
-#Include <\Functions\ptf>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\block>
+#Include <\Functions\floorDecimal>
+#Include <\Functions\errorLog>
+#Include <\Functions\detect>
+#Include <\GUIs>
 #Include <\checklist\include>
 ; }
 
@@ -57,7 +59,7 @@ else
         dashLocationAE := unset
         if WinExist("Adobe Premiere Pro")
             {
-                getPremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
+                winget.PremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
                 if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
                     {
                         block.Off()

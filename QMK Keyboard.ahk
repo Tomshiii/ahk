@@ -2,15 +2,19 @@ SetWorkingDir(ptf.rootDir)
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Functions\ptf>
-#Include <\Functions\Editors\After Effects>
-#Include <\Functions\Editors\Photoshop>
-#Include <\Functions\Editors\Premiere>
-#Include <\Functions\Editors\Resolve>
-#Include <\Functions\switchTo>
-#Include <\Functions\Windows>
-#Include <\Functions\GUIs>
+#Include <\Apps\Editors\After Effects>
+#Include <\Apps\Editors\Photoshop>
+#Include <\Apps\Editors\Premiere>
+#Include <\Apps\Editors\Resolve>
 #Include <\Apps\Discord>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\block>
+#Include <\Classes\switchTo>
+#Include <\Functions\errorLog>
+#Include <\Functions\detect>
+; #Include <\Functions\Windows>
+#Include <\GUIs>
 ; }
 
 #Requires AutoHotkey v2.0-beta.12

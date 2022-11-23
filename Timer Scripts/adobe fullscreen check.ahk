@@ -2,9 +2,10 @@
 #Requires AutoHotkey v2.0-beta.12
 
 ; { \\ #Includes
-#Include <\Functions\General>
-#Include <\Functions\Windows>
-#Include <\Functions\ptf>
+#Include <\Functions\errorLog>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\winget>
 ; }
 
 SetWorkingDir A_ScriptDir
@@ -60,14 +61,14 @@ check()
                 {
                     if A_TimeIdleKeyboard > 1250 ;ensures this script doesn't try to fire while a hotkey is being used
                         {
-                            isFullscreen(&title, &full)
+                            winget.isFullscreen(&title, &full)
                             if full = 0
                                 WinMaximize(title)
                             SetTimer(, -fire) ;adds 5s to the timer and will check again after that time has elapsed
                         }
                     else
                         {
-                            isFullscreen(&title, &full)
+                            winget.isFullscreen(&title, &full)
                             if full = 0
                                 {
                                     fireRound := Round(fire/1000, 1)

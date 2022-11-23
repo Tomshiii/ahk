@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <\Classes\Dark>
+; }
+
 ;define menu
 ;file menus
 FileMenu := Menu()
@@ -320,12 +324,12 @@ goDark(*)
 which(dark := true, DarkorLight := "Dark", menu := 1)
 {
 
-    menuDarkMode(menu)
-    titleBarDarkMode(MyGui.Hwnd, dark)
-    buttonDarkMode(startButton.Hwnd, DarkorLight)
-    buttonDarkMode(stopButton.Hwnd, DarkorLight)
-    buttonDarkMode(minusButton.Hwnd, DarkorLight)
-    buttonDarkMode(plusButton.Hwnd, DarkorLight)
+    dark.menu(menu)
+    dark.titleBar(MyGui.Hwnd, dark)
+    dark.button(startButton.Hwnd, DarkorLight)
+    dark.button(stopButton.Hwnd, DarkorLight)
+    dark.button(minusButton.Hwnd, DarkorLight)
+    dark.button(plusButton.Hwnd, DarkorLight)
 }
 
 /**

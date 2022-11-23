@@ -1,10 +1,22 @@
 # <> Release 2.8 - Refactoring
-- All `lib`/`function` files now get included from the user library. This is accomplished by creating a `SymLink` in `A_MyDocuments \AutoHotkey\` that links back to `..\lib`. This SymLink is created either during the release install process or by the user running `..\Support Files\Release Assets\CreateSymLink.ahk`
+This release is a massive overhaul of how things are layed out and structured in my repo - I may not cover everything in this changelog as so many massive structural changes have happened it's hard to note down everything without it getting too confusing.
+
+The biggest changes;
+
+- All `lib`/`function` files now get `#Included` from the `user library` (`A_MyDocuments \AutoHotkey\lib\`). This is accomplished by creating a `SymLink` in `A_MyDocuments \AutoHotkey\lib\` that links back to `..\lib`. This SymLink is created either during the release install process or by the user running `..\Support Files\Release Assets\CreateSymLink.ahk`
 - `ptf.files[]` changed to instead invoke the `__Item` meta function to simply become; `ptf[]`
+- `..\lib\` folder completely overhauled
+    - `General.ahk` is removed and split apart
+        - Multiple classes are now their own ahk files
+        - A large chunk of functions are now their own ahk file
 - All files now contain their required `#Includes` instead of using one script to include everything
     - This helps make it clear what scripts require what
+    - Removes the need to include unnecessary scripts just because not doing so would generate an error
 
 ### New Classes;
+
+`tool {`, `coord {`, `block {`
+- All now their own respective class file
 
 `VSCode {`
 - All VSCode functions now a class
@@ -22,13 +34,14 @@
 - All Editor functions turned into classes
 - Editor lib files moved from `..\lib\Functions\` to `..\lib\Functions\Editors\`
 
+A few more functions have been broken out into their own class files, check out the `..\lib\Classes\` folder (or the wiki!) to check them out yourself!
+
 ## > Functions
 - Moved `class ptf {`, `class browser {`, `class Editors {` & the group assignments from `General.ahk` => `ptf.ahk`
     - Add `vscode` to `class browser`
     - Add class `Editors` to contain `winTitle` and `class` information of `NLEs`
-- Moved `getScriptRelease()` from `Startup.ahk` => `General.ahk`
-- Moved `moveWin()`, `moveTab()` & `moveXorY()` from `Windows.ahk` => `Move.ahk` under class `Move {`
 - Moved `refreshWin()` from `General.ahk` => `Windows.ahk`
+- `pauseautosave()` & `pausewindowmax()` combined into `pause.pause()`
 
 `settingsGUI()`
 - Fixed not all options showing
@@ -47,12 +60,12 @@
 ## > Other Changes
 - Fix double key name in `KSA.ini`
 - Changed `convert2x.ahk` scripts to function `convert2()`
-    - Will now run `A_ComSpec` instead of calling cmd from the explorer window as doing so in win11 opens the new terminal which is incredibly difficult to detect with ahk
+    - Will now run `A_ComSpec` instead of calling cmd from the explorer window as doing so in `win11` opens the new terminal which is incredibly difficult to detect with ahk
 - Moved `HotkeyReplacer.ahk` & `Getting Started_readme.md` => `..\Support Files\Release Assets\`
     - Added `releaseGUI.ahk` to provide the user a few options after running the latest release `.exe`
 - Moved a few old scripts to => `..\Backups\Old Scripts\`
-- Moved `newWin()` from `QMK.ahk` => `Windows.ahk 'class switchTo {'`
-- Fixed `Start new project.ahk` running `checklist.ahk`
+- Moved `newWin()` from `QMK.ahk` => `class switchTo {`
+- Fixed `Start new project.ahk` running `checklist.ahk` unnecessarily
 - Moved `..\Changelogs` => `..\Backups\Changelogs`
 - Add symlink of [`textreplace`](https://github.com/Tomshiii/textreplace) repo to `..\Support Files\textreplace\`
 

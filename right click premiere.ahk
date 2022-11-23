@@ -10,7 +10,9 @@ CoordMode("Pixel", "screen")
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Functions\General>
+#Include <\Classes\tool>
+#Include <\Functions\SplitPathObj>
+#Include <\Functions\errorLog>
 ; #Include <\Functions\ptf> ; only need this if you run the script by itself
 ; }
 

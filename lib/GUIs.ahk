@@ -1,8 +1,14 @@
 ; { \\ #Includes
-#Include <\Functions\General>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\Dark>
 #Include <\settingsGUI\gameCheckGUI>
 #Include <\settingsGUI\editValues>
-#Include <\Functions\ptf>
+#Include <\Functions\detect>
+#Include <\Functions\SplitPathObj>
+#Include <\Functions\On_WM_MOUSEMOVE>
+#Include <\Functions\reload_reset_exit>
+#Include <\Windows>
 ; }
 
 /**
@@ -467,15 +473,15 @@ settingsGUI()
     if darkMode = "true"
         goDark()
 
-    goDark(dark := true, DarkorLight := "Dark")
+    goDark(darkm := true, DarkorLight := "Dark")
     {
-            titleBarDarkMode(settingsGUI.Hwnd, dark)
-            buttonDarkMode(adobeToggle.Hwnd, DarkorLight)
-            buttonDarkMode(firstToggle.Hwnd, DarkorLight)
-            buttonDarkMode(gameAdd.Hwnd, DarkorLight)
-            buttonDarkMode(iniLink.Hwnd, DarkorLight)
-            buttonDarkMode(hardResetVar.Hwnd, DarkorLight)
-            buttonDarkMode(saveAndClose.Hwnd, DarkorLight)
+            dark.titleBar(settingsGUI.Hwnd, darkm)
+            dark.button(adobeToggle.Hwnd, DarkorLight)
+            dark.button(firstToggle.Hwnd, DarkorLight)
+            dark.button(gameAdd.Hwnd, DarkorLight)
+            dark.button(iniLink.Hwnd, DarkorLight)
+            dark.button(hardResetVar.Hwnd, DarkorLight)
+            dark.button(saveAndClose.Hwnd, DarkorLight)
     }
 
     settingsGUI.Show("Center AutoSize")
@@ -529,12 +535,12 @@ musicGUI()
         goDark()
     goDark()
     {
-        titleBarDarkMode(MyGui.Hwnd)
-        buttonDarkMode(AIMP.Hwnd)
-        buttonDarkMode(foobar.Hwnd)
-        buttonDarkMode(WMP.Hwnd)
-        buttonDarkMode(VLC.Hwnd)
-        buttonDarkMode(FOLDERGUI.Hwnd)
+        dark.titleBar(MyGui.Hwnd)
+        dark.button(AIMP.Hwnd)
+        dark.button(foobar.Hwnd)
+        dark.button(WMP.Hwnd)
+        dark.button(VLC.Hwnd)
+        dark.button(FOLDERGUI.Hwnd)
     }
 
     MyGui.Show()
@@ -692,10 +698,10 @@ hotkeysGUI() {
         goDark()
     goDark()
     {
-        titleBarDarkMode(hotGUI.Hwnd)
-        buttonDarkMode(closeButton.Hwnd)
-        buttonDarkMode(noDefault.Hwnd)
-        buttonDarkMode(selection.Hwnd)
+        dark.titleBar(hotGUI.Hwnd)
+        dark.button(closeButton.Hwnd)
+        dark.button(noDefault.Hwnd)
+        dark.button(selection.Hwnd)
     }
 
     ;Show the GUI
@@ -740,8 +746,8 @@ todoGUI()
         goDark()
     goDark()
     {
-        titleBarDarkMode(todoGUI.Hwnd)
-        buttonDarkMode(closeButton.Hwnd)
+        dark.titleBar(todoGUI.Hwnd)
+        dark.button(closeButton.Hwnd)
     }
     todoGUI.Show()
 }
@@ -773,7 +779,7 @@ activeScripts(MyRelease)
         scripts[7],      "Multi-Instance Close.ahk",
         scripts[8],      "QMK Keyboard.ahk",
         scripts[9],      "textreplace.ahk",
-        scripts[10],      "Resolve_Example.ahk",
+        scripts[10],     "Resolve_Example.ahk",
     )
     tooltiptext := Map(
         scripts[1],      "Clicking this checkbox will toggle suspend the script",
@@ -790,14 +796,23 @@ activeScripts(MyRelease)
                     MyGui[scripts[1]].OnEvent("Click", myClick)
                     MyGui[scripts[1]].ToolTip := tooltiptext[scripts[1]]
                 }
-            else if A_Index != scripts.Length && A_Index < moveOver
+            else if A_Index != scripts.Length && A_Index < moveOver ;first row
                 {
                     MyGui.Add("CheckBox", "xs Checked0 v" scripts[A_Index], names[scripts[A_Index]])
                     MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
                     MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
                 }
-            else if A_Index != scripts.Length && A_Index >= moveOver
+            else if A_Index >= moveOver ;second row
                 {
+                    if A_Index = scripts.Length ;for resolve
+                        {
+                            MyGui.Add("CheckBox", "xs Checked0 Y+15 v" scripts[A_Index], names[scripts[A_Index]])
+                            MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
+                            MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
+                            break
+                        }
+
+                    ;\\ otherwise
                     if A_Index = moveOver
                         MyGui.Add("CheckBox", "x+120 ys Section Checked0 v" scripts[A_Index], names[scripts[A_Index]])
                     else
@@ -805,17 +820,11 @@ activeScripts(MyRelease)
                     MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
                     MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
                 }
-            else ;for resolve
-                {
-                    MyGui.Add("CheckBox", "xs Checked0 Y+15 v" scripts[A_Index], names[scripts[A_Index]])
-                    MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
-                    MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
-                }
         }
         loop scripts.Length {
             if A_Index = 1
                 MyGui.Add("Picture", "w18 h-1 X275 Ys", ptf.Icons "\" scripts[A_Index] ".png")
-            else if A_Index < moveOver
+            else if A_Index < moveOver ;first row
                 {
                     switch scripts[A_Index] {
                         case "dismiss":
@@ -826,7 +835,7 @@ activeScripts(MyRelease)
                     }
                     MyGui.Add("Picture", "w18 h-1 Y" y, ptf.Icons "\" scripts[A_Index] type)
                 }
-            else if A_Index >= moveOver
+            else if A_Index >= moveOver ;second row
                 {
                     switch scripts[A_Index] {
                         case "game":
@@ -863,8 +872,8 @@ activeScripts(MyRelease)
         goDark()
     goDark()
     {
-        titleBarDarkMode(MyGui.Hwnd)
-        buttonDarkMode(closeButton.Hwnd)
+        dark.titleBar(MyGui.Hwnd)
+        dark.button(closeButton.Hwnd)
     }
 
     ;the below code allows for the tooltips on hover
@@ -887,7 +896,7 @@ activeScripts(MyRelease)
         else if script.text = "textreplace.ahk"
             Run(ptf.textreplace "\" script.text)
         else
-            Run(ptf.rootDir "\Timer Scripts\" script.text)
+            Run(ptf.TimerScripts "\" script.text)
     }
 
     checkScripts(*)

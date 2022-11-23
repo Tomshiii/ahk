@@ -1,5 +1,7 @@
 # Info
-This directory is to separate out all of the functions I use for various programs. All of these functions use to be in one big ahk file, but it was getting way too large for its own good and was becoming a bit too much of a hassle to work with and find what I was looking for.
+This directory is to separate out most of the functions I use for various things. All of these functions use to be in various bigger ahk files, but it was getting way too large for its own good and was becoming a bit too much of a hassle to work with and find what I was looking for.
+
+If one of these functions is needed within another script you will see `#Include <\Functions\func>` at the top of the script
 
 A function is defined similar to;
 ```autohotkey

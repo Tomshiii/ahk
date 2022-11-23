@@ -1,7 +1,10 @@
 ; { \\ #Includes
-#Include <\Functions\General>
-#Include <\Functions\GUIs>
-#Include <\Functions\ptf>
+#Include <\GUIs>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\switchTo>
+#Include <\Functions\getHotkeys>
+#Include <\Functions\errorLog>
 ; }
 
 class switchTo {

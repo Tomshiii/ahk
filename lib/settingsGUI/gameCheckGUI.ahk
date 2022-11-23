@@ -1,7 +1,7 @@
 ; { \\ #Includes
-#Include <\Functions\Windows>
-#Include <\Functions\General>
-#Include <\Functions\ptf>
+#Include <\Classes\ptf>
+#Include <\Classes\Dark>
+#Include <\Functions\detect>
 ; }
 
 /**
@@ -15,7 +15,7 @@
  * @param title is to set a title for the GUI
  */
  class gameCheckGUI extends Gui {
-    __new(dark, version, wintitle, process, options?, title:="") {
+    __new(darkmode, version, wintitle, process, options?, title:="") {
         super.__new(options?, title, this)
         this.BackColor := 0xF0F0F0
         this.SetFont("S11") ;Sets the size of the font
@@ -44,11 +44,11 @@
         cancelButton := this.Add("Button", "xs+175 ys", "cancel")
         cancelButton.OnEvent("Click", cancelButton_Click)
 
-        if dark = "true"
+        if darkmode = "true"
             {
-                titleBarDarkMode(this.Hwnd)
-                buttonDarkMode(addButton.Hwnd)
-                buttonDarkMode(cancelButton.Hwnd)
+                dark.titleBar(this.Hwnd)
+                dark.button(addButton.Hwnd)
+                dark.button(cancelButton.Hwnd)
             }
 
         /**
@@ -65,8 +65,7 @@
             if procVal != gameProcess.Value
                 procVal := gameProcess.Value
             ;check for game list file
-            rootDir := IniRead(ptf["settings"], "Track", "working dir")
-            if !FileExist(rootDir "\lib\gameCheck\Game List.ahk")
+            if !FileExist(ptf["Game List"])
                 {
                     MsgBox("``Game List.ahk`` not found in the proper directory")
                     this.Hide()
@@ -76,16 +75,16 @@
             ;create temp folders
             if !DirExist(A_Temp "\tomshi")
                 DirCreate(A_Temp "\tomshi")
-            readGameCheck := FileRead(rootDir "\lib\gameCheck\Game List.ahk")
+            readGameCheck := FileRead(ptf["Game List"])
             findEnd := InStr(readGameCheck, "; --", 1,, 1)
             addUserInput := StrReplace(readGameCheck, "; --", "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
             FileAppend(addUserInput, A_Temp "\tomshi\Game List.ahk")
-            FileMove(A_Temp "\tomshi\Game List.ahk", rootDir "\lib\gameCheck\Game List.ahk", 1)
+            FileMove(A_Temp "\tomshi\Game List.ahk", ptf["Game List"], 1)
             if WinExist("gameCheck.ahk - AutoHotkey")
                 PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
 
             ;check if worked
-            readAgain := FileRead(rootDir "\lib\gameCheck\Game List.ahk")
+            readAgain := FileRead(ptf["Game List"])
             if InStr(readAgain, "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
                 {
                     this.Hide()

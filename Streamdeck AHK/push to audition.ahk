@@ -1,8 +1,8 @@
 ﻿#Include SD_functions.ahk
 if WinActive(editors.winTitle["premiere"])
 	{
-		pauseautosave()
-        pausewindowmax()
+		pause.pause("autosave")
+        pause.pause("adobe fullscreen check")
 		;select the track you wish to push to audition then watch as it does it automatically
 		SendInput "{Click Right}"
 		sleep 200
@@ -39,6 +39,6 @@ if WinActive(editors.winTitle["premiere"])
 		block.Off()
 		WinMinimize("ahk_exe Adobe Audition.exe") ;minimises audition and reactivates premiere
 		WinActivate(editors.winTitle["premiere"])
-		pauseautosave()
-        pausewindowmax()
+		pause.pause("autosave")
+        pause.pause("adobe fullscreen check")
 	}

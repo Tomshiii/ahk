@@ -1,7 +1,11 @@
 ; { \\ #Includes
-#Include <\Functions\General>
 #Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Functions\ptf>
+#Include <\Classes\block>
+#Include <\Classes\coord>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\winGet>
+#Include <\Functions\errorLog>
 ; }
 
 class Move {
@@ -38,7 +42,7 @@ class Move {
                 WinMinimize(window)
             if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
                 {
-                    isFullscreen(&title, &full, window)
+                    winget.isFullscreen(&title, &full, window)
                     if full = 0
                         WinMaximize(window)
                     else
@@ -89,12 +93,12 @@ class Move {
             }
         coord.s()
         MouseGetPos(&initx, &inity) ;this is here so we can move the mouse back to the starting position even if you call the function multiple times without it completing
-        initMon := getMouseMonitor()
+        initMon := winget.MouseMonitor()
         start:
         MouseGetPos(&x, &y)
-        getTitle(&title) ;getting the window title
+        winget.Title(&title) ;getting the window title
         WinGetPos(&winX, &winY, &width,, title) ; getting the coords for the firefox window
-        monitor := getMouseMonitor() ;checking which monitor the mouse is within
+        monitor := winget.MouseMonitor() ;checking which monitor the mouse is within
         if !IsObject(initMon) || !IsObject(monitor)
             {
                 block.Off() ;to stop the user potentially getting stuck
@@ -189,18 +193,18 @@ class Move {
         if !WinActive(title) ;this codeblock will check to see if the originally active window is still active. This is useful as sometimes when you drag a tab that wasn't active, firefox will bring the tab next to it into focus, which might not really be what you want
             {
                 MouseGetPos(&finalX, &finalY)
-                getTitle(&currentActive)
+                winget.Title(&currentActive)
                 WinGetPos(&x2, &y2,,, currentActive)
                 MouseMove(x2 + 30, y2 + 30, 2)
-                check := getMouseMonitor()
+                check := winget.MouseMonitor()
                 if check.monitor = monitor.monitor && currentActive != title
                     {
                         switchTo.Firefox() ;activate the other firefox window
                         checkformon1() { ;a small check to make sure a sneaky window on the wrong monitor isn't causing issues
-                            getTitle(&currentActive)
+                            winget.Title(&currentActive)
                             WinGetPos(&x2, &y2,,, currentActive)
                             MouseMove(x2 + 30, y2 + 30, 2)
-                            check2 := getMouseMonitor()
+                            check2 := winget.MouseMonitor()
                             if check2.monitor != 4 && check2.monitor != 2
                                 switchTo.Firefox()
                         }
@@ -224,7 +228,7 @@ class Move {
         SetTimer(isfull, -1500)
         isfull() {
             try {
-                isFullscreen(&title, &full, title)
+                winget.isFullscreen(&title, &full, title)
                 if full = 0
                     WinMaximize(title)
             }

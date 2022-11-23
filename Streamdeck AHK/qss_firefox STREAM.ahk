@@ -8,8 +8,8 @@ SetDefaultMouseSpeed 0
 ;
 firetip() => tool.Cust("firefox",, 1)
 
-pauseautosave()
-pausewindowmax()
+pause.pause("autosave")
+pause.pause("adobe fullscreen check")
 coord.s()
 MouseGetPos(&sx, &sy)
 Run("ms-settings:apps-volume")
@@ -36,8 +36,8 @@ try {
         if A_Index > 5
             {
                 ToolTip("")
-                pauseautosave()
-                pausewindowmax()
+                pause.pause("autosave")
+                pause.pause("adobe fullscreen check")
                 firetip()
                 return
             }
@@ -56,8 +56,8 @@ try {
             ;SendInput("{Enter}")
         }
 } catch as e {
-    pauseautosave()
-    pausewindowmax()
+    pause.pause("autosave")
+    pause.pause("adobe fullscreen check")
     tool.Cust("Script couldn't activate the Settings Menu")
     return
 }
@@ -65,6 +65,6 @@ sleep 200
 WinClose("Settings")
 coord.s()
 MouseMove(sx, sy, 2)
-pauseautosave()
-pausewindowmax()
+pause.pause("autosave")
+pause.pause("adobe fullscreen check")
 ExitApp()

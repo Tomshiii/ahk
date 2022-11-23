@@ -2,10 +2,15 @@
 #Requires AutoHotkey v2.0-beta.12
 
 ; { \\ #Includes
-#Include <\Functions\General>
-#Include <\Functions\Windows>
-#Include <\Functions\switchTo>
-#Include <\Functions\ptf>
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Classes\switchTo>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\block>
+#Include <\Classes\winget>
+#Include <\Classes\switchTo>
+#Include <\Functions\detect>
+#Include <\Functions\errorLog>
 ; }
 
 A_MaxHotkeysPerInterval := 2000
@@ -190,7 +195,7 @@ save()
     if !IsSet(origWind)
         {
             try{
-                getID(&id)
+                winget.ID(&id)
                 origWind := id
             } catch as e {
                 block.Off()
@@ -221,7 +226,7 @@ save()
      */
     if WinExist(editors.winTitle["premiere"])
         {
-            getPremName(&premCheck, &titleCheck, &saveCheck)
+            winget.PremName(&premCheck, &titleCheck, &saveCheck)
             premWinCheck := WinGetTitle(editors.winTitle["premiere"])
             premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             premTitleCheck2 := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;same as above except checking a different variable (depending on whether you check the ahk_exe or the ahk_class returns different results under different circumstances)
@@ -274,7 +279,7 @@ save()
      */
     if WinExist(editors.winTitle["ae"])
         {
-            getAEName(&aeCheck, &aeSaveCheck)
+            winget.AEName(&aeCheck, &aeSaveCheck)
             if aeSaveCheck = "*" && origWind != aeCheck ;this variable will contain "*" if a save is required
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
@@ -342,7 +347,7 @@ save()
         if !IsSet(origWind)
             goto ignore
         try { ;this is to restore the original active window
-            getID(&newid)
+            winget.ID(&newid)
             checkWin := newid
             if origWind = newid
                 goto ignore

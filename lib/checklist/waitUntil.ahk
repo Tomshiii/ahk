@@ -1,11 +1,16 @@
+; { \\ #Includes
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Classes\ptf>
+#Include <\Classes\winGet>
+#Include <\Classes\tool>
+#Include <\Classes\block>
+#Include <\Functions\detect>
+#Include <\Functions\errorLog>
+; }
+
 SetTimer(waitUntil, -1000)
 #SingleInstance Force
 SetWorkingDir(ptf.lib)
-#Include <\KSA\Keyboard Shortcut Adjustments> ;this is only added to prevent errors
-#Include <\Functions\Windows> ;this is only added to prevent errors
-#Include <\Functions\switchTo> ;this is only added to prevent errors
-#Include <\Functions\Startup> ;this is only added to prevent errors
-#Include <\Functions\General> ;this is added because we need it
 TraySetIcon(ptf.Icons "\waitUntil.png")
 waitUntil()
 {
@@ -21,7 +26,7 @@ waitUntil()
     aeLocationAgain := unset
     if WinExist("Adobe Premiere Pro")
         {
-            getPremName(&Namepremdash, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
+            winget.PremName(&Namepremdash, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
             if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
                 {
                     block.Off()

@@ -1,5 +1,11 @@
 ; { \\ #Includes
-#Include <\Functions\General>
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Classes\block>
+#Include <\Classes\coord>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\winget>
+#Include <\Functions\errorLog>
 ; }
 
 class Prem {
@@ -1160,7 +1166,7 @@ class Prem {
             loop {
                 SendInput(effectControls)
                 SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-                getTitle(&check)
+                winget.Title(&check)
                 if check = "Audio Gain"
                     {
                         SendInput(amount "{Enter}")

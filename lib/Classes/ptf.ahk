@@ -11,6 +11,7 @@ class ptf {
     static ErrorLog          := this.rootDir "\Error Logs"
     static lib               := this.rootDir "\lib"
     static textreplace       := this.SupportFiles "\textreplace"
+    static TimerScripts      := this.rootDir "\Timer Scripts"
 
     ;My Stuff
     static MyDir             := "E:"
@@ -51,6 +52,7 @@ class ptf {
         "KSAini",          this.lib "\KSA\Keyboard Shortcuts.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
+        "Game List",       this.lib "\gameCheck\Game List.ahk",
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",

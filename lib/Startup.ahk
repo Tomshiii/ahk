@@ -1,8 +1,10 @@
 ; { \\ #Includes
-#Include <\Functions\General>
-#Include <\Functions\GUIs>
-#Include <\Functions\Windows>
-#Include <\Functions\ptf>
+#Include <\GUIs>
+; #Include <\Windows>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\Dark>
+#Include <\Functions\errorLog>
 ; // libs
 #Include <\Other\_DLFile>
 ; }
@@ -187,10 +189,10 @@ updateChecker(MyRelease) {
                 goDark()
             goDark()
             {
-                titleBarDarkMode(MyGui.Hwnd)
-                buttonDarkMode(gitButton.Hwnd)
-                buttonDarkMode(downloadbutt.Hwnd)
-                buttonDarkMode(cancelbutt.Hwnd)
+                dark.titleBar(MyGui.Hwnd)
+                dark.button(gitButton.Hwnd)
+                dark.button(downloadbutt.Hwnd)
+                dark.button(cancelbutt.Hwnd)
             }
 
             MyGui.Show()
@@ -436,11 +438,11 @@ firstCheck(MyRelease) {
         goDark()
     goDark()
     {
-        titleBarDarkMode(firstCheckGUI.Hwnd)
-        buttonDarkMode(settingsButton.Hwnd)
-        buttonDarkMode(todoButton.Hwnd)
-        buttonDarkMode(hotkeysButton.Hwnd)
-        buttonDarkMode(closeButton.Hwnd)
+        dark.titleBar(firstCheckGUI.Hwnd)
+        dark.button(settingsButton.Hwnd)
+        dark.button(todoButton.Hwnd)
+        dark.button(hotkeysButton.Hwnd)
+        dark.button(closeButton.Hwnd)
     }
 
     firstCheckGUI.Show("AutoSize")

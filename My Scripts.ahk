@@ -13,18 +13,24 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Functions\ptf>
-#Include <\Functions\Startup>
-#Include <\Functions\Editors\After Effects>
-#Include <\Functions\Editors\Photoshop>
-#Include <\Functions\Editors\Premiere>
-#Include <\Functions\Editors\Resolve>
-#Include <\Functions\switchTo>
-#Include <\Functions\Windows>
-#Include <\Functions\GUIs>
 #Include <\Apps\Discord>
 #Include <\Apps\VSCode>
-#Include <\Functions\Move>
+#Include <\Apps\Editors\After Effects>
+#Include <\Apps\Editors\Photoshop>
+#Include <\Apps\Editors\Premiere>
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\block>
+#Include <\Classes\coord>
+#Include <\Classes\switchTo>
+#Include <\Classes\Move>
+#Include <\Classes\winget>
+#Include <\Functions\reload_reset_exit>
+#Include <\Functions\errorLog>
+#Include <\Functions\mouseDrag>
+#Include <\Startup>
+#Include <\Windows>
+#Include <\GUIs>
 #Include right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 ; }
 #Requires AutoHotkey v2.0-beta.12
@@ -141,9 +147,9 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	 */
 	getMonitor()
 	{
-		getTitle(&title)
+		winget.Title(&title)
 		tryagain:
-		WinGetPos(&x, &y,,, title,, "Editing Checklist -")
+		wingetPos(&x, &y,,, title,, "Editing Checklist -")
 		x := x + 10 ;sometimes windows when fullscreened will be at -8, -8 and not 0, 0
 		y := y + 10 ;so we just add 10 pixels to both variables to ensure we're in the correct monitor
 		numberofMonitors := SysGet(80)
@@ -163,7 +169,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			}
 		}
 		try { ;if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
-			isFullscreen(&testWin, &full, title)
+			winget.isFullscreen(&testWin, &full, title)
 			if full = 0
 				{
 					WinMaximize(title,, "Editing Checklist -")
@@ -196,7 +202,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		case 1: ;first toggle
 			width := monitor.right - monitor.left ;determining the width of the current monitor
 			height := monitor.bottom - monitor.top ;determining the height of the current monitor
-			isFullscreen(&title2, &full, title) ;checking if the window is fullscreen
+			winget.isFullscreen(&title2, &full, title) ;checking if the window is fullscreen
 			if full = 1
 				WinRestore(title2,, "Editing Checklist -") ;winrestore will unmaximise it
 
@@ -234,7 +240,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 ;fullscreenHotkey;
 #f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
 {
-	isFullscreen(&title, &full)
+	winget.isFullscreen(&title, &full)
 	if full = 0
 		WinMaximize(title,, "Editing Checklist -") ;winrestore will unmaximise it
 	else
@@ -247,7 +253,7 @@ SC03A & Left::
 SC03A & Right::jumpChar()
 
 ;refreshWinHotkey;
-SC03A & F5::refreshWin("A", WinGetProcessPath("A"))
+SC03A & F5::refreshWin("A", wingetProcessPath("A"))
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
@@ -335,7 +341,7 @@ F18:: ;open the "show more options" menu in win11
 {
 	;Keep in mind I use dark mode on win11. Things will be different in light mode/other versions of windows
 	MouseGetPos(&mx, &my)
-	WinGetPos(,, &width, &height, "A")
+	wingetPos(,, &width, &height, "A")
 	colour1 := 0x4D4D4D ;when hovering a folder
 	colour2 := 0xFFDA70
 	colour3 := 0x353535 ;when already clicked on
@@ -407,7 +413,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 	coord.w()
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	getTitle(&title)
+	winget.Title(&title)
 	if InStr(title, needle)
 		{
 			if InStr(title, "Subscriptions - YouTube Mozilla Firefox", 1) || title = "YouTube Mozilla Firefox"
@@ -419,7 +425,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 			return
 		}
 	else loop {
-		WinGetPos(,, &width,, "A")
+		wingetPos(,, &width,, "A")
 		if ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " ptf.firefox "youtube1.png") || ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " ptf.firefox "youtube2.png")
 			{
 				MouseMove(xpos, ypos, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
@@ -461,7 +467,7 @@ Numpad9::
 {
 	SetTitleMatchMode 2
 	needle := "YouTube"
-	getTitle(&title)
+	winget.Title(&title)
 	if (InStr(title, needle))
 		return
 	else
@@ -649,7 +655,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	sleep 300
-	sanity := WinGetPos(&sanX, &sanY,,, "A") ;if you have this panel on a different monitor ahk won't be able to find it because of premiere weirdness so this value will be used in some fallback code down below
+	sanity := wingetPos(&sanX, &sanY,,, "A") ;if you have this panel on a different monitor ahk won't be able to find it because of premiere weirdness so this value will be used in some fallback code down below
 	coord.w()
 	try {
 		loop {
@@ -726,7 +732,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			SendInput("{Up}")
 		}
 	sleep 250
-	isFullscreen(&title, &full)
+	winget.isFullscreen(&title, &full)
 	if full = 1 ;a return value of 1 means it is maximised
 		WinRestore(title) ;winrestore will unmaximise it
 	newWidth := 1600
@@ -855,7 +861,7 @@ RButton::move.Window("") ;minimise
 	isOnTop() {
 		try {
 			title := WinGetTitle("A")
-			ExStyle := WinGetExStyle(title)
+			ExStyle := wingetExStyle(title)
 			if(ExStyle & 0x8) ; 0x8 is WS_EX_TOPMOST.
 				return "Active window no longer on top`n" '"' title '"'
 			else

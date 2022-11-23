@@ -12,8 +12,8 @@ if WinActive(editors.winTitle["premiere"])
         SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Select your desired Folder. This Script will create the necessary sub folders")
         if SelectedFolder = ""
             return
-        pauseautosave()
-        pausewindowmax()
+        pause.pause("autosave")
+        pause.pause("adobe fullscreen check")
         DirCreate(SelectedFolder "\videos") ;creates a video folder if there isn't one already
         DirCreate(SelectedFolder "\audio") ;creates an audio folder if there isn't one already
         DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
@@ -24,8 +24,8 @@ if WinActive(editors.winTitle["premiere"])
         IB := InputBox("Enter the name of your project", "Project", "w100 h100", default)
             if IB.Result = "Cancel"
                 {
-                    pauseautosave()
-                    pausewindowmax()
+                    pause.pause("autosave")
+                    pause.pause("adobe fullscreen check")
                     return
                 }
         WinActivate(editors.winTitle["premiere"])
@@ -44,8 +44,8 @@ if WinActive(editors.winTitle["premiere"])
                     if A_Index > 5
                         {
                             tool.Cust("Couldn't ensure the new project window opened", 2000)
-                            pauseautosave()
-                            pausewindowmax()
+                            pause.pause("autosave")
+                            pause.pause("adobe fullscreen check")
                             block.Off()
                             return
                         }
@@ -89,8 +89,8 @@ if WinActive(editors.winTitle["premiere"])
                     if A_Index > 5
                         {
                             tool.Cust("couldn't find the create button", 2000)
-                            pauseautosave()
-                            pausewindowmax()
+                            pause.pause("autosave")
+                            pause.pause("adobe fullscreen check")
                             block.Off()
                             return
                         }
@@ -162,14 +162,14 @@ if WinActive(editors.winTitle["premiere"])
                     tool.Cust("File not found")
                 }
                 end:
-                pauseautosave()
-                pausewindowmax()
+                pause.pause("autosave")
+                pause.pause("adobe fullscreen check")
                 return
             }
         else
             {
-                pauseautosave()
-                pausewindowmax()
+                pause.pause("autosave")
+                pause.pause("adobe fullscreen check")
                 block.Off()
                 tool.Cust("the new project button",, 1)
                 return
