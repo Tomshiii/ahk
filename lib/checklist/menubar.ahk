@@ -318,14 +318,15 @@ goDark(*)
 
 /**
  * This function is called by `goDark()` and handles toggling dark mode for checklist.ahk
- * @param {boolean} dark is a toggle that allows us to do the inverse and swap back to light mode. Pass false to do so
+ * @param {boolean} darkmode is a toggle that allows us to do the inverse and swap back to light mode. Pass false to do so
  * @param {string} DarkorLight is another toggle that allows us to do the inverse and swap back to light mode. Pass `"Light"` to do so
+ * @param {boolean} menu defines whether to turn the menu bar darkmode
  */
-which(dark := true, DarkorLight := "Dark", menu := 1)
+which(darkmode := true, DarkorLight := "Dark", menu := 1)
 {
 
     dark.menu(menu)
-    dark.titleBar(MyGui.Hwnd, dark)
+    dark.titleBar(MyGui.Hwnd, darkmode)
     dark.button(startButton.Hwnd, DarkorLight)
     dark.button(stopButton.Hwnd, DarkorLight)
     dark.button(minusButton.Hwnd, DarkorLight)

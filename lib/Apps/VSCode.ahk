@@ -32,8 +32,10 @@ class VSCode {
                 sleep 50
                 SendInput("{Down 1}{Enter}")
                 sleep 50
-                SendInput("{Down 4}{Enter}")
+                SendInput("{Down 6}{Enter}")
                 sleep 50
+                sleep 50
+                SendInput("{Up 1}{Enter}")
                 block.Off()
                 tool.Wait()
                 tool.Cust("The function folder has been expanded", 2.0)
