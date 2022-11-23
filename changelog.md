@@ -42,6 +42,7 @@ A few more functions have been broken out into their own class files, check out 
     - Add class `Editors` to contain `winTitle` and `class` information of `NLEs`
 - Moved `refreshWin()` from `General.ahk` => `Windows.ahk`
 - `pauseautosave()` & `pausewindowmax()` combined into `pause.pause()`
+- `fastWheel()` sends `PgUp/Dn` instead of `WheelUp/Down` because wheel events are laggy and dumb and I really hate them
 
 `settingsGUI()`
 - Fixed not all options showing

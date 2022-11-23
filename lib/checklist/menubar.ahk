@@ -115,7 +115,7 @@ aboutBox(*)
     aboutGUI.Move(x - (aboutwidth/2) + (width/2), y - (aboutheight/2) + (height/2))
 
     if darkToolTrack = 1
-        titleBarDarkMode(aboutGUI.Hwnd)
+        dark.titleBar(aboutGUI.Hwnd)
 
     aboutClose(*)
     {
@@ -288,7 +288,7 @@ hours(*)
     hoursGUI.Move(x - (hourswidth/2) + (width/2), y - (hoursheight/2) + (height/2))
 
     if darkToolTrack = 1
-        titleBarDarkMode(hoursGUI.Hwnd)
+        dark.titleBar(hoursGUI.Hwnd)
 
     hoursClose(*)
     {
@@ -382,7 +382,7 @@ addNew(*)
     addGUI.Move(x - (addwidth/2) + (width/2), y - (addheight/2) + (height/2))
 
     if darkToolTrack = 1
-        titleBarDarkMode(addGUI.Hwnd)
+        dark.titleBar(addGUI.Hwnd)
 
     addcheckbox(*)
     {
