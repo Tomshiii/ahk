@@ -894,7 +894,7 @@ activeScripts(MyRelease)
         if script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk"
             Run(ptf.rootDir "\" script.text)
         else if script.text = "textreplace.ahk"
-            Run(ptf.textreplace "\" script.text)
+            Run(ptf["textreplace"])
         else
             Run(ptf.TimerScripts "\" script.text)
     }

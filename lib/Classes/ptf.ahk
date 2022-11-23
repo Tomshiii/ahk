@@ -53,6 +53,7 @@ class ptf {
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
         "Game List",       this.lib "\gameCheck\Game List.ahk",
+        "textreplace",     this.rootDir "\..\textreplace\textreplace.ahk", ;I have this file in a different spot than you will - for you it'll be in this repo, but for me that's just a symlink
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",
