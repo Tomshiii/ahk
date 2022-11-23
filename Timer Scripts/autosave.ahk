@@ -280,7 +280,7 @@ save()
     if WinExist(editors.winTitle["ae"])
         {
             winget.AEName(&aeCheck, &aeSaveCheck)
-            if aeSaveCheck = "*" && origWind != aeCheck ;this variable will contain "*" if a save is required
+            if aeSaveCheck = "*" && origWind != WinGetProcessName(aeCheck) ;this variable will contain "*" if a save is required
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {
@@ -307,7 +307,7 @@ save()
                     aeSaveTrack := 1
                     goto end
                 }
-            else if aeSaveCheck= "*" && origWind = aeCheck ;this variable will contain "*" if a save is required
+            else if aeSaveCheck= "*" && origWind = WinGetProcessName(aeCheck) ;this variable will contain "*" if a save is required
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {
