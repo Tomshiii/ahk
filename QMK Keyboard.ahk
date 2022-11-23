@@ -28,7 +28,7 @@ SetNumLockState "AlwaysOn"
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.12.1
+;\\v2.12.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
@@ -283,7 +283,15 @@ SC027::unassigned()
 ;Up::unassigned()
 
 o::unassigned()
-l::ae.scaleAndPos()
+l::
+{
+	SendInput("
+		(
+			w = wiggle(1,10);
+			[w[0],w[0]]
+		)"
+	)
+}
 .::unassigned()
 ;Down::unassigned()
 
@@ -299,7 +307,7 @@ m::unassigned()
 
 y::unassigned()
 ;h::unassigned()
-n::unassigned()
+n::ae.scaleAndPos()
 ;Space::unassigned()
 
 t::unassigned()
