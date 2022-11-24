@@ -11,7 +11,7 @@ Run(ptf.TimerScripts "\autosave.ahk")
 Run(ptf.TimerScripts "\adobe fullscreen check.ahk")
 Run(ptf.TimerScripts "\gameCheck.ahk")
 Run(ptf.TimerScripts "\Multi-Instance Close.ahk")
-Run(ptf.textreplace "\textreplace.ahk")
+Run(ptf["textreplace"])
 
 if !WinExist("ahk_exe Creative Cloud.exe")
     Run("C:\Program Files\Adobe\Adobe Creative Cloud\ACC\Creative Cloud.exe")

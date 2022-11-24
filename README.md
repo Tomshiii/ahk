@@ -103,26 +103,17 @@ A script that allows me to keep informed about what I have left to do on a video
 #### [Multi-Instance Close.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/Multi-Instance%20Close.ahk)
 A script that will periodically check for duplicate instances of any autohotkey scripts and close one of them. Even if you use `#SingleInstance Force` reloading scripts can sometimes cause a second instance to slip open. This script will hopefully mitigate the odd behaviour that occurs when this happens by closing any duplicates.
 
-#### [adobe fullscreen check.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/adobe%20fullscreen%20check.ahk)
-A script that will restore Premiere back to its normal fullscreen mode if it gets stuck in a strange "further fullscreen" mode where you lose access to its window controls as well as ruining a lot of other coordinates for scripts.
-
-#### [Streaming.ahk](https://github.com/Tomshiii/ahk/tree/main/Stream)
-A script I run as Admin while streaming to allow me to interact with obs via ahk (both need to be on the same elevation to interact).
-
 #### [PC Startup.ahk](https://github.com/Tomshiii/ahk/blob/main/PC%20Startup.ahk)
 A script that is run on PC startup to launch all my AHK scripts, as well as deal with some programs I need.
 
-#### [Resolve_Example.ahk](https://github.com/Tomshiii/ahk/blob/main/Resolve_Example.ahk)
+#### [Resolve_Example.ahk](https://github.com/Tomshiii/ahk/blob/main/lib/Apps/Editors/Resolve.ahk)
 An example script for Davinci Resolve that has ported a few things from my premiere scripts to help you get started. This is very rough, thrown together and contains nowhere near the same amount of features.
 
 #### [Alt_menu_acceleration_DISABLER.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/Alt_menu_acceleration_DISABLER.ahk)
 A script from [Taran](https://github.com/TaranVH/) to disable the alt menu acceloration unless you _hold_ down the alt key.
 
-#### [autodismiss error.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/autodismiss%20error.ahk)
-A script from [Taran](https://github.com/TaranVH/) to remove an annoying dialogue box in premiere that treats you like a child.
-
 #### [right click premiere.ahk](https://github.com/Tomshiii/ahk/blob/main/right%20click%20premiere.ahk)
-A script originally from [Taran](https://github.com/TaranVH/) to [move the playhead](https://github.com/TaranVH/2nd-keyboard/blob/master/Taran's_Premiere_Mods/PREMIERE_MOD_Right_click_timeline_to_move_playhead.ahk) in premiere with the right mouse button. This script has been heavily altered and contains a large amount of my own code
+A script originally from [Taran](https://github.com/TaranVH/) to [move the playhead](https://github.com/TaranVH/2nd-keyboard/blob/master/Taran's_Premiere_Mods/PREMIERE_MOD_Right_click_timeline_to_move_playhead.ahk) in premiere with the right mouse button. This script has been heavily altered and contains a large amount of my own code.
 
 #### [\Error Logs](https://github.com/Tomshiii/ahk/tree/main/Error%20Logs)
 Anytime a macro/script encounters an error it will be logged in a txt file in this directory to help you catch anything that isn't working as intended so that in the event that the tooltip disappears too quickly, you can still dig in and see everything going on.
@@ -132,3 +123,5 @@ Eg.
 15:58:38.367 // `audioDrag()` encountered the following error: "User hasn't opened the required bin"
 // Script: `My Scripts.ahk`, Line: 643
 ```
+***
+Plenty more scripts can be found within this repo, feel free to check out the [wiki page](https://github.com/Tomshiii/ahk/wiki/Home) or just browse around for more!

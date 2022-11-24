@@ -99,6 +99,10 @@ libUpdateCheck() ;runs a loop to check for lib updates
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
+/*
+F11::ListLines() ;debugging
+F12::KeyHistory  ;debugging
+*/
 ;reloadHotkey;
 #+r::reload_reset_exit("reload") ;this reload script will attempt to reload all* active ahk scripts, not only this main script
 
@@ -139,7 +143,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 
 ;centreHotkey;
 #c:: ;this hotkey will center the active window in the middle of the active monitor
-{ ;this scripts math doesn't really work for vertical monitors
+{ ;this scripts math can act a bit funky with vertical monitors. Especially with with programs like discord that have a minimum width
 	mainMon := 1 ;set which monitor your main monitor is (usually 1, but can check in windows display settings)
 
 	/**

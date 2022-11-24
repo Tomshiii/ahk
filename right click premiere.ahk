@@ -11,6 +11,7 @@ CoordMode("Pixel", "screen")
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
 #Include <\Classes\tool>
+#Include <\Classes\block>
 #Include <\Functions\SplitPathObj>
 #Include <\Functions\errorLog>
 ; #Include <\Functions\ptf> ; only need this if you run the script by itself
@@ -48,6 +49,22 @@ timelineCol := [timeline1, timeline2, timeline3, timeline4, timeline5, timeline6
 
 #HotIf WinActive(editors.winTitle["premiere"])
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
+
+checkKey(key) {
+	if GetKeyState(key) && !GetKeyState(key, "P")
+		{
+			tool.Cust(key " was stuck")
+			SendInput("{" key " Up}")
+		}
+}
+while WinExist(editors.winTitle["premiere"])
+	{
+		sleep 100
+		checkKey("RButton")
+		;checkKey("LButton") ;don't do this, things break
+		checkKey("XButton2")
+		checkKey("\")
+	}
 
 Rbutton::
 {
@@ -100,7 +117,7 @@ Rbutton::
 		Color = timelineCol[6] ||
 		Color = timelineCol[7]
 	) ;these are the timelineCol colors of a selected clip or blank space, in or outside of in/out points.
-		sendinput "{ESC}" ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
+		SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
 	else
 		{
 			loop { ;this loop is checking to see if `color` is one of the predetermined colours
@@ -113,9 +130,11 @@ Rbutton::
 					break
 			}
 			colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
+			; //
 			; click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
 			;while as stated above, middle clicking the mouse does indeed bring focus to the timeline, for whatever reason having that line active made it so that
-			;if I ever clicking RButton and an XButton at the same time, the script would sorta lag and then get stuck in it's loop unable to tell that RButton isn't being held
+			;if I ever click RButton and an XButton at the same time, the script would sorta lag and then get stuck in it's loop unable to tell that RButton isn't being held
+			; //
 			SendInput(timelineWindow) ;so we'll do this instead
 			if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead
 			{
@@ -125,11 +144,10 @@ Rbutton::
 					color2 != timelineCol[3] &&
 					color2 != timelineCol[8] &&
 					color2 != timelineCol[4]
-				)
-					{
-						SendInput("{Rbutton}")
-						return
-					}
+				) {
+					SendInput("{Rbutton}")
+					return
+				}
 			}
 			if PixelSearch(&throwx, &throwy, xValue, ypos, xControl, ypos, playhead) ;checking to see if the playhead is on the screen
 				SendInput(shuttleStop) ;if it is, we input a shuttle stop
@@ -147,19 +165,20 @@ Rbutton::
 				{
 					SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 					;The below checks are to ensure no buttons end up stuck
-					if GetKeyState("LButton")
-						SendInput("{LButton Up}")
-					if GetKeyState("XButton1")
-						SendInput("{XButton1 Up}")
-					if GetKeyState("XButton2")
-						SendInput("{XButton2 Up}")
+					checkKey("LButton")
+					checkKey("XButton1")
+					checkKey("XButton2")
 					return
 				}
 			while GetKeyState("Rbutton", "P")
 				{
 					if GetKeyState("Ctrl") || GetKeyState("Shift") {
 							SetTimer(checkStuck, -1)
-							break
+							if GetKeyState("Ctrl", "P") ;you still want to be able to hold shift so you can cut all tracks on the timeline
+								{
+									tool.Cust("Holding control while scrubbing will cause Premiere to freak out")
+									break
+								}
 						}
 					static left := 0
 					static xbutton := 0

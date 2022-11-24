@@ -1241,6 +1241,15 @@ class Prem {
     {
         if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
             return
+        SetTimer(rdisable, -1)
+        rdisable() {
+            if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
+                {
+                    SetTimer(rdisable, 0)
+                    return
+                }
+            SetTimer(rdisable, -50)
+        }
         MouseGetPos(&x, &y) ;from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
         static xValue := 0
         static yValue := 0
@@ -1266,25 +1275,37 @@ class Prem {
                 }
             }
         if x > xValue || x < xControl || y < yValue || y > yControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
-            return
+            {
+                SetTimer(rdisable, 0)
+                return
+            }
         skip:
         again()
         {
             if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
                 {
                     if !GetKeyState(A_ThisHotkey, "P") ;this is here so it doesn't reactivate if you quickly let go before the timer comes back around
-                        return
+                        {
+                            SetTimer(rdisable, 0)
+                            return
+                        }
                 }
             else if !GetKeyState(DragKeywait, "P")
-                return
-            click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
+                {
+                    SetTimer(again, 0)
+                    SetTimer(rdisable, 0)
+                    Exit()
+                }
+            ; click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
+            SendInput(timelineWindow) ;don't use middle click, it causes lag and keys to get stuck
             SendInput(premtool "{LButton Down}")
-            if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
-                KeyWait(A_ThisHotkey)
-            else
-                KeyWait(DragKeywait) ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
+            if A_ThisHotkey = DragKeywait && GetKeyState(DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+                KeyWait(A_ThisHotkey, "T5")
+            else if A_ThisHotkey != DragKeywait && GetKeyState(DragKeywait, "P")
+                KeyWait(DragKeywait, "T5") ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
             SendInput("{LButton Up}")
             SendInput(toolorig)
+            SetTimer(rdisable, 0)
         }
         SetTimer(again, -400)
         again()
