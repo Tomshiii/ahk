@@ -1,4 +1,4 @@
-#Include <\Apps\Editors\After Effects>
+#Include <\Classes\Editors\After Effects>
 #Include <\QMK\unassigned>
 
 BackSpace::unassigned()

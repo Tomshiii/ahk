@@ -903,7 +903,12 @@ activeScripts(MyRelease)
         if script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk"
             Run(ptf.rootDir "\" script.text)
         else if script.text = "textreplace.ahk"
-            Run(ptf["textreplace"])
+            {
+                if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TOM" ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
+                    Run(ptf["textreplace"])
+                else
+                    Run(ptf["textreplaceUser"])
+            }
         else
             Run(ptf.TimerScripts "\" script.text)
     }

@@ -1,5 +1,5 @@
 #Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Apps\Editors\Premiere>
+#Include <\Classes\Editors\Premiere>
 #Include <\Classes\tool>
 #Include <\Classes\block>
 #Include <\Classes\ptf>

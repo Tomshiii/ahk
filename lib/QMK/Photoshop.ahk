@@ -1,4 +1,4 @@
-#Include <\Apps\Editors\Photoshop>
+#Include <\Classes\Editors\Photoshop>
 #Include <\QMK\unassigned>
 
 BackSpace::unassigned()

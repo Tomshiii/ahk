@@ -2,7 +2,7 @@
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
  * @date 2022/11/24
- * @version 1.0.0
+ * @version 1.0.1
  ***********************************************************************/
 
 class ptf {
@@ -57,7 +57,8 @@ class ptf {
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
         "Game List",       this.lib "\gameCheck\Game List.ahk",
-        "textreplace",     this.rootDir "\..\textreplace\textreplace.ahk", ;I have this file in a different spot than you will - for you it'll be in this repo, but for me that's just a symlink
+        "textreplace",     this.rootDir "\..\textreplace\textreplace.ahk",
+        "textreplaceUser", this.SupportFiles "\textreplace\textreplace.ahk",
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",

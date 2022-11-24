@@ -8,7 +8,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Apps\Editors\Resolve>
+#Include <\Classes\Editors\Resolve>
 #Include <\Classes\switchTo>
 #Include <\Classes\ptf>
 #Include <\Classes\coord>
@@ -17,7 +17,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ; }
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7
+;\\v2.7.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1

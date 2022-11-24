@@ -13,11 +13,11 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Apps\Discord>
-#Include <\Apps\VSCode>
-#Include <\Apps\Editors\After Effects>
-#Include <\Apps\Editors\Photoshop>
-#Include <\Apps\Editors\Premiere>
+#Include <\Classes\Apps\Discord>
+#Include <\Classes\Apps\VSCode>
+#Include <\Classes\Editors\After Effects>
+#Include <\Classes\Editors\Photoshop>
+#Include <\Classes\Editors\Premiere>
 #Include <\Classes\ptf>
 #Include <\Classes\tool>
 #Include <\Classes\block>
@@ -36,7 +36,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.4
+;\\v2.23.5
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.12.2
 
