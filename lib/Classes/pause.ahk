@@ -1,3 +1,10 @@
+/************************************************************************
+ * @description A class to contain functions that pause/suspend scripts.
+ * @author tomshi, Lexikos
+ * @date 2022/11/24
+ * @version 1.0.0
+ ***********************************************************************/
+
 #Include <\Functions\detect>
 #Include <\Classes\tool>
 

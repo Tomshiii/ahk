@@ -1,3 +1,11 @@
+/************************************************************************
+ * @description A library of useful Resolve functions to speed up common tasks
+ * Tested on and designed for v18.0.4 of Resolve
+ * @author tomshi
+ * @date 2022/11/24
+ * @version 1.0.0
+ ***********************************************************************/
+
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
 #Include <\Classes\block>

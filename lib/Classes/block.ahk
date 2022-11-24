@@ -1,7 +1,11 @@
-/**
- * A class to contain often used blockinput functions for easier coding.
- */
- class block {
+/************************************************************************
+ * @description A class to contain often used blockinput functions for easier coding.
+ * @author tomshi
+ * @date 2022/11/24
+ * @version 1.0.0
+ ***********************************************************************/
+
+class block {
     /**
      * This function is a part of the class `block`
      *

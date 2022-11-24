@@ -1,6 +1,10 @@
-/**
- * A class to contain often used coordmode settings for easier coding.
- */
+/************************************************************************
+ * @description A class to contain often used coordmode settings for easier coding.
+ * @author tomshi
+ * @date 2022/11/24
+ * @version 1.0.0
+ ***********************************************************************/
+
 class coord {
     /**
      * This function is a part of the class `coord`

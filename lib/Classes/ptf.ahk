@@ -1,6 +1,10 @@
-/**
- * A collection of file & directory paths. Stands for Point to File.
-*/
+/************************************************************************
+ * @description A collection of file & directory paths. Stands for Point to File.
+ * @author tomshi
+ * @date 2022/11/24
+ * @version 1.0.0
+ ***********************************************************************/
+
 class ptf {
     ;general
     static SettingsLoc       := A_MyDocuments "\tomshi"

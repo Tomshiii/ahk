@@ -1,3 +1,10 @@
+/************************************************************************
+ * @description A class to contain often used functions to open/cycle between windows of a certain type.
+ * @author tomshi
+ * @date 2022/11/24
+ * @version 1.0.0
+ ***********************************************************************/
+
 ; { \\ #Includes
 #Include <\GUIs>
 #Include <\Classes\ptf>

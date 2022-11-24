@@ -1,5 +1,3 @@
-;Adjust the location of your scripts by changing the value below. This folder should be the root folder and with NO trailing backslash
-
 ;{ \\ #Includes
 #Include <\Classes\ptf>
 ; }

@@ -1,3 +1,10 @@
+/************************************************************************
+ * @description A class to contain often used functions to turn GUI elements to a dark mode.
+ * @author tomshi, Lexikos, others
+ * @date 2022/11/24
+ * @version 1.0.0
+ ***********************************************************************/
+
 class Dark {
     /**
      * This function will convert GUI buttons to a dark/light theme.
