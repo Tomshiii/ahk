@@ -13,13 +13,13 @@ SetNumLockState("AlwaysOn")
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13
+;\\v2.13.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
 
 ; \\\\\\\\////////////
-; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE ADJUSTED IT TO WORK IN AHK v2.0 and to be for my workflow
+; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE REWORKED IT TO WORK IN AHK v2.0 and then completely changed it to be for my workflow
 ; ALSO I AM CURRENTLY USING A PLANCK EZ CUSTOM KEYBOARD WITH CUSTOM QMK FIRMWARE AND NOT USING THE HASU USB -> USB CONVERTER. Check Release v2.2.5.1 and below for a version of this script written for a small secondary numpad
 ; ANY OF THE MACROS/FUNCTIONS IN THIS FILE CAN BE PULLED OUT AND THEN REPLACED ON A NORMAL KEY ON YOUR NORMAL KEYBOARD
 ; This script looked very different when initially committed. Its messiness was too much of a pain for me so I've stripped a bunch of
@@ -58,6 +58,9 @@ SetNumLockState("AlwaysOn")
 ;===========================================================================
 #HotIf getKeyState("F24", "P") and WinActive(editors.winTitle["photoshop"])
 #Include <\QMK\Photoshop>
+;===========================================================================
+#HotIf getKeyState("F24", "P") and WinActive(browser.winTitle["vscode"])
+#Include <\QMK\VSCode>
 ;===========================================================================
 #HotIf getKeyState("F24", "P") ;these will work everywhere
 #Include <\QMK\Always>

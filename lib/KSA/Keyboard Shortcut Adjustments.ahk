@@ -469,46 +469,22 @@ screenshotOBS := IniRead(ptf["KSAini"], "OBS", "Screenshot")
 
 
 ;[Hotkeys]
-
+;prem
 /**
  * This value is a key or key combination that is being called upon within a function. These values will need to be adjusted within KSA.ini to fit however you choose to activate these functions
  */
 manInputEnd := IniRead(ptf["KSAini"], "Hotkeys", "manualInput End")
 
 /**
-  * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
-  */
-functionHotkey := IniRead(ptf["KSAini"], "Hotkeys", "VSCode Function")
-
-/**
- * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
- */
-minimiseHotkey := IniRead(ptf["KSAini"], "Hotkeys", "Minimise Hotkey")
-
-/**
- * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
- */
-maximiseHotkey := IniRead(ptf["KSAini"], "Hotkeys", "Maximise Hotkey")
-
-/**
- * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
- */
-;altKeywait := IniRead(ptf["KSAini"], "Hotkeys", "Alt Keywait")
-
-/**
- * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
- */
-DragKeywait := IniRead(ptf["KSAini"], "Hotkeys", "Mousedrag Keywait")
-
-/**
  * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
  */
 speedHotkey := IniRead(ptf["KSAini"], "Hotkeys", "Speed")
 
+;vscode
 /**
- * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
- */
-longSkip := IniRead(ptf["KSAini"], "Hotkeys", "10s skip")
+  * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+  */
+functionHotkey := IniRead(ptf["KSAini"], "Hotkeys", "VSCode Function")
 
 /**
  * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
@@ -529,6 +505,38 @@ collapseFold := IniRead(ptf["KSAini"], "Hotkeys", "collapse folders")
  * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
 */
 focusExplorerWin := IniRead(ptf["KSAini"], "Hotkeys", "focus explorer window")
+
+/**
+ * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+*/
+focusSourceWin := IniRead(ptf["KSAini"], "Hotkeys", "focus source window")
+
+;windows
+/**
+ * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+ */
+minimiseHotkey := IniRead(ptf["KSAini"], "Hotkeys", "Minimise Hotkey")
+
+/**
+ * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+ */
+maximiseHotkey := IniRead(ptf["KSAini"], "Hotkeys", "Maximise Hotkey")
+
+/**
+ * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+ */
+;altKeywait := IniRead(ptf["KSAini"], "Hotkeys", "Alt Keywait")
+
+/**
+ * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+ */
+DragKeywait := IniRead(ptf["KSAini"], "Hotkeys", "Mousedrag Keywait")
+
+
+/**
+ * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini to fit however you choose to activate these functions
+ */
+longSkip := IniRead(ptf["KSAini"], "Hotkeys", "10s skip")
 
 
 ;[ImageSearchCoords]

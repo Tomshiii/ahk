@@ -1,4 +1,3 @@
-
 /**
  * This function takes care of generating the required checklist.ini file
  * @param {any} filelocation is the dir location we pass in so the function knows where to generate the file

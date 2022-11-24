@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/11/25
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -17,7 +17,8 @@
 
 class VSCode {
     /**
-      * A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal")
+      * A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal"). This scripts is updated to navigate around the scripts in my repo only, it isn't super flexible and would need a bit of tinkering if you have anything else in your vscode workspace.
+      *
       * @param {Integer} script is the amount of down inputs the script needs to input to get to the required script. Will default to 0
      */
     static script(script := 0)
@@ -37,9 +38,9 @@ class VSCode {
             {
                 SendInput("{Down 3}{Enter}")
                 sleep 50
-                SendInput("{Down 1}{Enter}")
+                SendInput("{Down 2}{Enter}")
                 sleep 50
-                SendInput("{Down 6}{Enter}")
+                SendInput("{Down 2}{Enter}")
                 sleep 50
                 sleep 50
                 SendInput("{Up 1}{Enter}")
