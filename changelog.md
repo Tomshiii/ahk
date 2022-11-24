@@ -44,6 +44,10 @@ A few more functions have been broken out into their own class files, check out 
 - `pauseautosave()` & `pausewindowmax()` combined into `pause.pause()`
 - `fastWheel()` sends `PgUp/Dn` instead of `WheelUp/Down` because wheel events are laggy and dumb and I really hate them
 
+`activeScripts()`
+- Now includes `textreplace.ahk`
+- Now splits scripts into two columns
+
 `settingsGUI()`
 - Fixed not all options showing
 - Fixed `autosave save rate` editbox changing `adobe fs check`

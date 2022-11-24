@@ -760,12 +760,16 @@ activeScripts(MyRelease)
     detect()
     if WinExist("Active Scripts " MyRelease)
         return
+
+    buttonX := 482
+    margX := 8
+
     MyGui := tomshiBasic(,, "-Resize AlwaysOnTop", "Active Scripts " MyRelease)
     ;nofocus
     ;add an invisible button since removing the default off all the others did nothing
     removedefault := MyGui.Add("Button", "Default X0 Y0 w0 h0", "_")
     ;active scripts
-    text := MyGui.Add("Text", "X8 Y8 W300 H20", "Current active scripts are:")
+    text := MyGui.Add("Text", "X" margX " Y8 W300 H20", "Current active scripts are:")
     text.SetFont("S13 Bold")
 
     scripts := ["myscript", "error", "dismiss", "save", "fullscreen", "game", "M-I_C", "keyboard", "text", "resolve"]
@@ -804,26 +808,27 @@ activeScripts(MyRelease)
                 }
             else if A_Index >= moveOver ;second row
                 {
-                    if A_Index = scripts.Length ;for resolve
+                    if A_Index = scripts.Length ;for resolve (the last item)
                         {
-                            MyGui.Add("CheckBox", "xs Checked0 Y+15 v" scripts[A_Index], names[scripts[A_Index]])
+                            MyGui[scripts[moveOver-1]].GetPos(, &firstRowLastY) ;get ypos of the last checkbox in the first row
+                            resolveY := firstRowLastY + 35
+                            MyGui.Add("CheckBox", "x" margX " Checked0 Y" resolveY " v" scripts[A_Index], names[scripts[A_Index]])
                             MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
                             MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
-                            break
                         }
-
-                    ;\\ otherwise
-                    if A_Index = moveOver
+                    ;second row
+                    else if A_Index = moveOver
                         MyGui.Add("CheckBox", "x+120 ys Section Checked0 v" scripts[A_Index], names[scripts[A_Index]])
-                    else
+                    else ;everything else
                         MyGui.Add("CheckBox", "xs Checked0 v" scripts[A_Index], names[scripts[A_Index]])
                     MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
                     MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
                 }
         }
         loop scripts.Length {
+            pictureX := 275
             if A_Index = 1
-                MyGui.Add("Picture", "w18 h-1 X275 Ys", ptf.Icons "\" scripts[A_Index] ".png")
+                MyGui.Add("Picture", "w18 h-1 X" pictureX " Ys", ptf.Icons "\" scripts[A_Index] ".png")
             else if A_Index < moveOver ;first row
                 {
                     switch scripts[A_Index] {
@@ -853,9 +858,11 @@ activeScripts(MyRelease)
                             type := ".ico"
                             y := "+7"
                     }
-                    if A_Index = moveOver
+                    if A_Index = scripts.Length ;for resolve (the last item)
+                        MyGui.Add("Picture", "x" pictureX " w18 h-1 Y" resolveY, ptf.Icons "\" scripts[A_Index] type)
+                    else if A_Index = moveOver ;second row
                         MyGui.Add("Picture", "xs+200 w18 h-1 Ys", ptf.Icons "\" scripts[A_Index] type)
-                    else
+                    else ;everything else
                         MyGui.Add("Picture", "w18 h-1 Y" y, ptf.Icons "\" scripts[A_Index] type)
                 }
         }
@@ -865,7 +872,9 @@ activeScripts(MyRelease)
     SetTimer(checkScripts, -100)
 
     ;close button
-    closeButton := MyGui.Add("Button", "X482", "Close")
+    MyGui[scripts[scripts.Length]].GetPos(, &resolveHeight) ;get ypos of resolve checkbox (the last item)
+    buttonHeight := resolveHeight - 10
+    closeButton := MyGui.Add("Button", "X" buttonX " Y" buttonHeight, "Close")
     closeButton.OnEvent("Click", escape)
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
