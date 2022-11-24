@@ -36,9 +36,9 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.3
+;\\v2.23.4
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.12.1
+;\\v2.12.2
 
 ; ============================================================================================================================================
 ;
@@ -234,6 +234,11 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		{
 			newHeight := newHeight * 1.3
 			newY := newY / 2.25
+		}
+	if InStr(title, "VLC media player") && IsSet(newHeight) && monitor.monitor = mainMon ;I want vlc to be a size for 16:9 video to get rid of any letterboxing
+		{
+			newHeight := 900
+			newWidth := 1416
 		}
 	try{
 		WinMove(newX, newY, newWidth, newHeight, title,, "Editing Checklist -") ;then we attempt to move the window

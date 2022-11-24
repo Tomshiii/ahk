@@ -56,6 +56,7 @@ A few more functions have been broken out into their own class files, check out 
 
 ## > My Scripts
 - `^SPACE:: ;alwaysontopHotkey;` will now attempt to produce a tooltip to tell the user which state the window is being changed too
+- `#c:: ;centreHotkey;` will now resize VLC so that it shows 16:9 videos with no letterboxing
 
 ## > autosave
 - Refactored entire script

@@ -21,8 +21,8 @@ Will produce a GUI that will allow the user to replace any hotkeys and KSA.ini v
 ___
 
 If you choose to ignore this install step and wish to run these files at a later time, they can be located;
-Symlink: `..\Support Files\Release Assets\CreateSymLink.ahk`
-Hotkey Replacer: `..\Support Files\Release Assets\Hotkey Replacer\HotkeyReplacer.ahk`
+Symlink:            `..\Support Files\Release Assets\CreateSymLink.ahk`
+Hotkey Replacer:    `..\Support Files\Release Assets\HotkeyReplacer.ahk`
 
 A backup of the original release versions of `My Scripts.ahk` & `Keyboard Shortcuts.ini` will be saved in `\Backups\` just incase something goes wrong.
 
