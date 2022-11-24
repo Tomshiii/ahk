@@ -58,6 +58,10 @@ A few more functions have been broken out into their own class files, check out 
 - `^SPACE:: ;alwaysontopHotkey;` will now attempt to produce a tooltip to tell the user which state the window is being changed too
 - `#c:: ;centreHotkey;` will now resize VLC so that it shows 16:9 videos with no letterboxing
 
+## > QMK
+- Cleaned up entire script
+- Separated out all program key definitions to separate `.ahk` files and placed in `..\lib\QMK\` to help readability & maintainability
+
 ## > autosave
 - Refactored entire script
     - No longer needs to activate the window

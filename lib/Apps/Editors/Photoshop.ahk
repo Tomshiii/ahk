@@ -1,9 +1,11 @@
 /************************************************************************
  * @description A library of useful Photoshop functions to speed up common tasks
+ * Last tested in v24.0.1 of Photoshop
  * @author tomshi
  * @date 2022/11/24
- * @version 1.0.0
+ * @version 1.0.1
  ***********************************************************************/
+
 
 ; { \\ #Includes
 ; #Include <\KSA\Keyboard Shortcut Adjustments>
@@ -29,16 +31,12 @@ class PS {
             SendInput("^{Enter}")
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "text.png") ;checks to see if you're in the text tool
             SendInput("v") ;if you are, it'll press v to go to the selection tool
-        if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "InTransform.png") ;checks to see if you're already in the free transform window
+        if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "InTransform.png") && !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " ptf.Photoshop image) ;checks to see if you're already in the free transform window
             {
-                if !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " ptf.Photoshop image) ;if you are, it'll then search for your button of choice
-                    {
-                        block.Off()
-                        tool.Cust("the value you wish`nto adjust_1",, 1)
-                        errorLog(, A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
-                        return
-                    }
-                MouseMove(x, y) ;then move to it
+                block.Off()
+                tool.Cust("the value you wish`nto adjust_1",, 1)
+                errorLog(, A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
+                return
             }
         else
             {
@@ -54,26 +52,22 @@ class PS {
                         errorLog(, A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
                         return
                     }
-                MouseMove(x, y) ;moves to the position variable
             }
+        MouseMove(x, y) ;moves to the position variable
         sleep 100 ;this sleep is necessary for the "tap" functionality below (in the 'else') to work
         SendInput("{Click Down}")
-        if GetKeyState(A_ThisHotkey, "P")
-            {
-                block.Off()
-                KeyWait(A_ThisHotkey)
-                SendInput("{Click Up}")
-                MouseMove(xpos, ypos)
-            }
-        else ;since we're in photoshop here, we'll simply make the "tap" functionality have ahk hit enter twice so it exits out of the free transform
+        if !GetKeyState(A_ThisHotkey, "P") ;since we're in photoshop here, we'll simply make the "tap" functionality have ahk hit enter twice so it exits out of the free transform
             {
                 Click("{Click Up}")
-                ;fElse(data) ;check the various Functions scripts for the code to this preset
                 MouseMove(xpos, ypos)
                 SendInput("{Enter 2}")
                 block.Off()
                 return
             }
+        block.Off()
+        KeyWait(A_ThisHotkey)
+        SendInput("{Click Up}")
+        MouseMove(xpos, ypos)
     }
 
     /**
