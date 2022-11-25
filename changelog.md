@@ -66,6 +66,7 @@ A few more functions have been broken out into their own class files, check out 
 - Refactored entire script
     - No longer needs to activate the window
     - Uses `ControlSend()` if window isn't active
+    - Fix tooltips glitching out
 
 ## > Other Changes
 - Fix double key name in `KSA.ini`

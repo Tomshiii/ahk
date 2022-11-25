@@ -11,6 +11,7 @@
 #Include <\Classes\switchTo>
 #Include <\Functions\detect>
 #Include <\Functions\errorLog>
+#Include <\Startup>
 ; }
 
 A_MaxHotkeysPerInterval := 2000
@@ -32,18 +33,6 @@ timeRemain(*)
 
 ;This script will autosave your premire pro project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 ;It will also ensure you have the checklist script for the current project open. If it can find the file, it will open it automatically
-
-if !FileExist(ptf["settings"])
-    {
-        sleep 5000 ;just incase this script loads before `My Scripts.ahk`
-        if !FileExist(ptf["settings"])
-            {
-                myrelease := getVer()
-                if myrelease = ""
-                    myrelease := "v2.5" ;if you're not using `My Scripts.ahk` this line will just autopopulate a number to stop errors
-                FileAppend("[Settings]`nupdate check=true`ntooltip=true`n`n[Adjust]`nadobe GB=45`nadobe FS=5`nautosave MIN=5`nprem year=" A_Year "`nae year=" A_Year "`n`n[Track]`nadobe temp=`nworking dir=" ptf.rootDir "`nfirst check=true`nversion=" MyRelease, ptf["settings"])
-            }
-    }
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tools that appear every minute towards a save attempt)
 minutes := IniRead(ptf["settings"], "Adjust", "autosave MIN")
@@ -101,15 +90,20 @@ StopWatch() {
         }
     if tools = "true"
         {
+            toolFunc(min) {
+                tool.Wait()
+                tool.Cust(min "min until a save attempt", 2.0)
+                tool.Wait()
+            }
             x := Round((minutes * 60) - ElapsedTime)/ 60
             if x < 4 && x > 3.98
-                tool.Cust("4min until a save attempt", 50)
+                toolFunc(4)
             if x < 3 && x > 2.98
-                tool.Cust("3min until a save attempt", 50)
+                toolFunc(3)
             if x < 2 && x > 1.98
-                tool.Cust("2min until a save attempt", 50)
+                toolFunc(2)
             if x < 1 && x > 0.98
-                tool.Cust("1min until a save attempt", 50)
+                toolFunc(1)
         }
 }
 
@@ -379,33 +373,6 @@ save()
         SetTimer(StopWatch, 10)
 }
 
-
-/**
- * This function will grab the release version from the `My Scripts.ahk` file itself. This function makes it so I don't have to change this variable manually every release
- */
-getVer()
-{
-    loop files A_ScriptDir "\*.ahk", "R" ;this loop searches the current script directory for the `My Scripts.ahk` script
-        {
-            if A_LoopFileName = "My Scripts.ahk"
-                {
-                    myScriptDir := A_LoopFileFullPath
-                    break
-                }
-            else
-                continue
-        }
-    try {
-        releaseString := FileRead(myScriptDir) ;then we're putting the script into memory
-    } catch as e {
-        return
-    } ;then the below block is doing some string manipulation to grab the release version from it
-    foundpos := InStr(releaseString, 'v',,,2)
-    endpos := InStr(releaseString, '"', , foundpos, 1)
-    end := endpos - foundpos
-    version := SubStr(releaseString, foundpos, end)
-    return version ;before returning the version back to the function
-}
 
 ;defining what happens if the script is somehow opened a second time and the function is forced to close
 OnExit(ExitFunc)
