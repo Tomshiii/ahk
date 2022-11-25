@@ -1,5 +1,12 @@
 ﻿#SingleInstance Force
-#Include SD_functions.ahk
+
+; { \\ #Includes
+#Include <\Functions\detect>
+#Include <\Classes\coord>
+#Include <\Classes\ptf>
+#Include <Functions\SD Functions\win_locations>
+; }
+
 detect()
 if WinExist("Streaming.ahk")
 	WinClose(,,1)
@@ -34,7 +41,7 @@ if WinExist("ahk_exe LioranBoard Receiver.exe")
 if WinExist("ahk_exe ApplicationDj.exe")
 	ProcessClose("ApplicationDj.exe")
 if WinExist("ahk_exe Discord.exe")
-	discord.location()
+	discordlocation()
 if WinExist("ahk_exe Docker Desktop.exe")
 	ProcessClose("Docker Desktop.exe")
 if WinExist("ahk_exe Streamlabs Chatbot.exe")

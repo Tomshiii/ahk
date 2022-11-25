@@ -1,7 +1,14 @@
 #SingleInstance Force
 SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0
-#Include SD_functions.ahk
+
+; { \\ #Includes
+#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <\Classes\ptf>
+#Include <\Classes\pause>
+#Include <\Classes\coord>
+#Include <\Classes\block>
+; }
 
 ;This version of the script (from 5th May, 2022) is designed for Premiere v22.3.1 (and beyond)
 ;Previous versions compatible with Premiere v22.3 can be found in previous releases of this repo (v2.3.3 and below)

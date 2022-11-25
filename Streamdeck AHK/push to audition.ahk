@@ -1,4 +1,10 @@
-﻿#Include SD_functions.ahk
+﻿; { \\ #Includes
+#Include <\Classes\ptf>
+#Include <\Classes\coord>
+#Include <\Classes\block>
+#Include <\Classes\pause>
+; }
+
 if WinActive(editors.winTitle["premiere"])
 	{
 		pause.pause("autosave")

@@ -1,5 +1,7 @@
 #SingleInstance Force
-#Include SD_functions.ahk
+; { \\ #Includes
+#Include <\Classes\ptf>
+; }
 
 ;This script by itself will do nothing but shutdown your pc. The reason I have it is so that I can launch it via a streamdeck multi action that also puts my goxlr into a sleep mode that turns off its rgb
 

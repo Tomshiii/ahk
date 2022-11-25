@@ -1,7 +1,13 @@
 #SingleInstance Force
 SetDefaultMouseSpeed 0
-#Include SD_functions.ahk
 #WinActivateForce
+
+; { \\ #Includes
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\pause>
+#Include <\Classes\coord>
+; }
 
 ;
 ; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder.

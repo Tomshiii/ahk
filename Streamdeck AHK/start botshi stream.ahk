@@ -1,4 +1,9 @@
-﻿#Include SD_functions.ahk
+﻿; { \\ #Includes
+#Include <\Classes\ptf>
+#Include <\Classes\coord>
+#Include <\Classes\block>
+#Include <Functions\SD Functions\win_locations>
+; }
 if !WinExist("ahk_exe obs64.exe")
 	{
 		Run(ptf["StreamAHK"])

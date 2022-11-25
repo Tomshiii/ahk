@@ -1,5 +1,7 @@
 #SingleInstance Force
-#Include SD_functions.ahk
+; { \\ #Includes
+#Include <\Classes\ptf>
+; }
 
 ;This script is designed to use the tiktok text to speech tool found : https://github.com/oscie57/tiktok-voice
 ;If you're having issues with command prompt when using this script it might have something to do with where your command prompt is initially opening to. Because I launch this script from the same drive (in my case E:) as the folder where the voice tool is contained it functions as intended. But if you had this script launching from your C: drive and the tool in E: it might error out. To fix this add `SendInput("c:")` (or whatever drive letter) above `SendInput("cd " folder "{Enter}")`

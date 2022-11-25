@@ -1,3 +1,8 @@
+; { \\ #Includes
+#Include <\Classes\tool>
+#Include <\Functions\errorLog>
+; }
+
 /**
  * A function to return the most recent version of my scripts on github
  * @param {Boolean} beta A `true/false` to determine if you want this function to check for a full release, or a prerelease. Can be omitted

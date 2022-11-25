@@ -1,5 +1,7 @@
 #SingleInstance Force
-#Include SD_functions.ahk
+; { \\ #Includes
+#Include <\Classes\ptf>
+; }
 
 ;; This part makes you select the folder you wish to create the nested folders in
 SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Create your desired folder then select it.")

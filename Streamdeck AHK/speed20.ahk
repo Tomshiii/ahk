@@ -1,4 +1,7 @@
-﻿#Include SD_functions.ahk
+﻿; { \\ #Includes
+#Include <\Classes\ptf>
+#Include <Functions\SD Functions\speed>
+; }
 
 if WinActive(editors.winTitle["premiere"])
-    speed("20")
+    speed(20)

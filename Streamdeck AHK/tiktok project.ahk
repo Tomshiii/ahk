@@ -1,5 +1,9 @@
 #SingleInstance Force
-#Include SD_functions.ahk
+; { \\ #Includes
+#Include <\Classes\ptf>
+#Include <\Classes\tool>
+#Include <\Classes\coord>
+; }
 
 if WinActive(editors.winTitle["premiere"])
     {

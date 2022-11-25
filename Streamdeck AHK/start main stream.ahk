@@ -1,4 +1,9 @@
-﻿#Include SD_functions.ahk
+﻿; { \\ #Includes
+#Include <\Classes\ptf>
+#Include <\Classes\coord>
+#Include <\Classes\block>
+#Include <Functions\SD Functions\win_locations>
+; }
 
 if WinExist("ahk_exe obs64.exe")
 {
@@ -153,7 +158,7 @@ if WinExist("ahk_exe obs64.exe")
 	;Run, ptf.ProgFi "\Elgato\GameCapture\GameCapture.exe // replaced by source record plugin
 	Run("chrome.exe https://www.twitch.tv/popout/tomshi/chat")
 	if WinExist("ahk_exe Discord.exe")
-		discord.location()
+		discordlocation()
 	SetWorkingDir(ptf.LioranBoardDir)
 	Run(ptf["LioranBoard"])
 	if WinExist("ahk_exe ApplicationDj.exe")

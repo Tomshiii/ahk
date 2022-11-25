@@ -34,7 +34,7 @@ The biggest changes;
 - All Editor functions turned into classes
 - Editor lib files moved from `..\lib\Functions\` to `..\lib\Functions\Editors\`
 
-A few more functions have been broken out into their own class files, check out the `..\lib\Classes\` folder (or the wiki!) to check them out yourself!
+This changelog doesn't cover everything + a few functions have been broken out into their own class files, check out the `..\lib\Classes\` folder (or the wiki!) to check them out yourself!
 
 ## > Functions
 - Moved `class ptf {`, `class browser {`, `class Editors {` & the group assignments from `General.ahk` => `ptf.ahk`

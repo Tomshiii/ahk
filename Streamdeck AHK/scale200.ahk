@@ -1,5 +1,8 @@
 ﻿SetDefaultMouseSpeed 0
-#Include SD_functions.ahk
+; { \\ #Includes
+#Include <\Classes\ptf>
+#Include <Functions\SD Functions\scale>
+; }
 
 if WinActive(editors.winTitle["premiere"])
 	scale("200")
