@@ -85,8 +85,8 @@ class ptf {
 class browser {
     static winTitle := Map(
         "firefox",        "ahk_exe firefox.exe",
-        "chrome",         "ahk_exe chrome",
-        "edge",           "ahk_exe msedge",
+        "chrome",         "ahk_exe chrome.exe",
+        "edge",           "ahk_exe msedge.exe",
         "vscode",         "ahk_exe Code.exe",
     )
     static class := Map(

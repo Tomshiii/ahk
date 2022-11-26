@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/11/26
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,24 @@
 ; }
 
 class switchTo {
+
+    static Win(winExistVar, runVar, groupVar, addClass?, ignore?) {
+        if !IsSet(addClass)
+            addClass := winExistVar
+        if !WinExist(winExistVar)
+            {
+                Run(runVar)
+                if WinWait(winExistVar,, 2)
+                    WinActivate(winExistVar)
+                return
+            }
+        GroupAdd(groupVar, addClass)
+        if WinActive(winExistVar,, ignore?)
+            GroupActivate(groupVar, "r")
+        else if WinExist(winExistVar,, ignore?)
+            WinActivate(winExistVar)
+    }
+
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
@@ -23,15 +41,16 @@ class switchTo {
         if !WinExist("ahk_class CabinetWClass") && !WinExist("ahk_class #32770")
             {
                 Run("explorer.exe")
-                WinWait("ahk_class CabinetWClass")
-                WinActivate("ahk_class CabinetWClass") ;in win11 running explorer won't always activate it, so it'll open in the backround
+                if WinWait("ahk_class CabinetWClass",, 2)
+                    WinActivate("ahk_class CabinetWClass") ;in win11 running explorer won't always activate it, so it'll open in the backround
+                return
             }
         GroupAdd("explorers", "ahk_class CabinetWClass")
         GroupAdd("explorers", "ahk_class #32770") ;these are save dialoge windows from any program
         if WinActive("ahk_exe explorer.exe")
             GroupActivate("explorers", "r")
         else if WinExist("ahk_class CabinetWClass") || WinExist("ahk_class #32770")
-            WinActivate ;you have to use WinActivatebottom if you didn't create a window group.
+            WinActivate
     }
 
     /**
@@ -45,7 +64,7 @@ class switchTo {
         for this_value in value
             {
                 if A_Index > 1 ;closes all windows that AREN'T the last active window
-                    WinClose this_value
+                    WinClose(this_value)
             }
     }
 
@@ -59,14 +78,14 @@ class switchTo {
     {
         getHotkeys(&first, &second)
         KeyWait(second) ;prevent spamming
-        if WinExist("ahk_" classorexe . activate)
+        if !WinExist("ahk_" classorexe . activate)
             {
                 Run(runval)
+                WinWait("ahk_" classorexe . activate)
+                WinActivate("ahk_" classorexe . activate) ;in win11 running things won't always activate it and will open in the backround
                 return
             }
         Run(runval)
-        WinWait("ahk_" classorexe . activate)
-        WinActivate("ahk_" classorexe . activate) ;in win11 running things won't always activate it and will open in the backround
     }
 
     /**
@@ -152,38 +171,26 @@ class switchTo {
     static Disc()
     {
         move() => WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe") ;creating a function out of the winmove so you can easily adjust the value
-        if !WinExist("ahk_exe Discord.exe")
-            {
-                Run(ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe")
-                WinWait("ahk_exe Discord.exe")
-                if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
-                    WinRestore() ;winrestore will unmaximise it
-                move() ;moves it into position after opening
-            }
-        else
+        if WinExist("ahk_exe Discord.exe")
             {
                 WinActivate("ahk_exe Discord.exe")
                 if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
                     WinRestore() ;winrestore will unmaximise it
                 move() ; just incase it isn't in the right spot/fullscreened for some reason
                 tool.Cust("Discord is now active", 500) ;this is simply because it's difficult to tell when discord has focus if it was already open
+                return
             }
+        Run(ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe")
+        WinWait("ahk_exe Discord.exe")
+        if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
+            WinRestore() ;winrestore will unmaximise it
+        move() ;moves it into position after opening
     }
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Photo()
-    {
-        if WinExist(editors.winTitle["photoshop"])
-            {
-                WinActivate(editors.winTitle["photoshop"])
-                return
-            }
-        Run(ptf["Photoshop"])
-        WinWait(editors.winTitle["photoshop"])
-        WinActivate(editors.winTitle["photoshop"])
-    }
+    static Photo() => this.Win(editors.winTitle["photoshop"], ptf["Photoshop"], "photoshop")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
@@ -192,10 +199,9 @@ class switchTo {
     {
         if !WinExist(browser.class["firefox"])
             Run("firefox.exe")
-        if WinActive(browser.winTitle["firefox"])
+        else if WinActive(browser.winTitle["firefox"])
             this.OtherFirefoxWindow()
-        else if WinExist(browser.winTitle["firefox"])
-            ;WinRestore ahk_exe firefox.exe
+        else
             WinActivate(browser.winTitle["firefox"])
     }
 
@@ -221,126 +227,42 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static VSCode()
-    {
-        if !WinExist(browser.winTitle["vscode"])
-            Run(ptf.ProgFi "\Microsoft VS Code\Code.exe")
-        GroupAdd("Code", browser.class["vscode"])
-        /* if WinActive(browser.winTitle["vscode"])
-            GroupActivate("Code", "r") */
-        if WinExist(browser.winTitle["vscode"])
-            WinActivate(browser.winTitle["vscode"]) ;you have to use WinActivatebottom if you didn't create a window group.
-    }
+    static VSCode() => this.Win(browser.winTitle["vscode"], ptf.ProgFi "\Microsoft VS Code\Code.exe", "code")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Github()
-    {
-        if !WinExist("ahk_exe GitHubDesktop.exe")
-            Run(ptf.LocalAppData "\GitHubDesktop\GitHubDesktop.exe")
-        GroupAdd("git", "ahk_class Chrome_WidgetWin_1")
-        if WinActive("ahk_exe GitHubDesktop.exe")
-            GroupActivate("git", "r")
-        else if WinExist("ahk_exe GitHubDesktop.exe")
-            WinActivate("ahk_exe GitHubDesktop.exe") ;you have to use WinActivatebottom if you didn't create a window group.
-    }
+    static Github() => this.Win("ahk_exe GitHubDesktop.exe", ptf.LocalAppData "\GitHubDesktop\GitHubDesktop.exe", "git")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Streamdeck()
-    {
-        if !WinExist("ahk_exe StreamDeck.exe")
-            Run(ptf.ProgFi "\Elgato\StreamDeck\StreamDeck.exe")
-        GroupAdd("stream", "ahk_class Qt5152QWindowIcon")
-        if WinActive("ahk_exe StreamDeck.exe")
-            GroupActivate("stream", "r")
-        else if WinExist("ahk_exe Streamdeck.exe")
-            WinActivate("ahk_exe StreamDeck.exe") ;you have to use WinActivatebottom if you didn't create a window group.
-    }
+    static Streamdeck() => this.Win("ahk_exe StreamDeck.exe", ptf.ProgFi "\Elgato\StreamDeck\StreamDeck.exe", "stream", "ahk_class Qt5152QWindowIcon")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Excel()
-    {
-        if !WinExist("ahk_exe EXCEL.EXE")
-            {
-                Run(ptf.ProgFi "\Microsoft Office\root\Office16\EXCEL.EXE")
-                WinWait("ahk_exe EXCEL.EXE")
-                WinActivate("ahk_exe EXCEL.EXE")
-            }
-        GroupAdd("xlmain", "ahk_class XLMAIN")
-        if WinActive("ahk_exe EXCEL.EXE")
-            GroupActivate("xlmain", "r")
-        else if WinExist("ahk_exe EXCEL.EXE")
-            WinActivate("ahk_exe EXCEL.EXE")
-    }
+    static Excel() => this.Win("ahk_exe EXCEL.EXE", ptf.ProgFi "\Microsoft Office\root\Office16\EXCEL.EXE", "xlmain", "ahk_class XLMAIN")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Word()
-    {
-        if !WinExist("ahk_exe WINWORD.EXE")
-            {
-                Run(ptf.ProgFi "\Microsoft Office\root\Office16\WINWORD.EXE")
-                WinWait("ahk_exe WINWORD.EXE")
-                WinActivate("ahk_exe WINWORD.EXE")
-            }
-        GroupAdd("wordgroup", "ahk_class wordgroup")
-        if WinActive("ahk_exe WINWORD.EXE")
-            GroupActivate("wordgroup", "r")
-        else if WinExist("ahk_exe WINWORD.EXE")
-            WinActivate("ahk_exe WINWORD.EXE")
-    }
+    static Word() => this.Win("ahk_exe WINWORD.EXE", ptf.ProgFi "\Microsoft Office\root\Office16\WINWORD.EXE", "wordgroup", "ahk_class wordgroup")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static WindowSpy()
-    {
-        if !WinExist("WindowSpy.ahk",, "Visual Studio Code")
-            Run(ptf.ProgFi "\AutoHotkey\UX\WindowSpy.ahk")
-        GroupAdd("winspy", "ahk_class AutoHotkeyGUI")
-        if WinActive("WindowSpy.ahk",, "Visual Studio Code")
-            GroupActivate("winspy", "r")
-        else if WinExist("WindowSpy.ahk",, "Visual Studio Code")
-            WinActivate("WindowSpy.ahk") ;you have to use WinActivatebottom if you didn't create a window group.
-    }
+    static WindowSpy() => this.Win("WindowSpy.ahk", ptf.ProgFi "\AutoHotkey\UX\WindowSpy.ahk", "winspy", "ahk_class AutoHotkeyGUI", "Visual Studio Code")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static YourPhone()
-    {
-        if !WinExist("ahk_pid 13884") ;this process id may need to be changed for you. I also have no idea if it will stay the same
-            Run(ptf["YourPhone"])
-        GroupAdd("yourphone", "ahk_class ApplicationFrameWindow")
-        if WinActive("Your Phone")
-            GroupActivate("yourphone", "r")
-        else if WinExist("Your Phone")
-            WinActivate("Your Phone") ;you have to use WinActivatebottom if you didn't create a window group.
-    }
+    static YourPhone() => this.Win("ahk_pid 5252", ptf["YourPhone"], "yourphone", "ahk_class WinUIDesktopWin32WindowClass")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Edge()
-    {
-        if !WinExist(browser.winTitle["edge"])
-            {
-                Run("msedge.exe")
-                WinWait(browser.winTitle["edge"])
-                WinActivate(browser.winTitle["edge"])
-            }
-        GroupAdd("git", browser.winTitle["edge"])
-        if WinActive(browser.winTitle["edge"])
-            GroupActivate("git", "r")
-        else if WinExist(browser.winTitle["edge"])
-            WinActivate(browser.winTitle["edge"]) ;you have to use WinActivatebottom if you didn't create a window group.
-    }
+    static Edge() => this.Win(browser.winTitle["edge"], "msedge.exe", "edge")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one

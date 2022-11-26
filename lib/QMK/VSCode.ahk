@@ -29,7 +29,7 @@ m::unassigned()
 ;PgUp::unassigned()
 
 y::unassigned()
-h::unassigned()
+; h::unassigned()
 n::unassigned()
 ;Space::unassigned()
 
@@ -55,7 +55,7 @@ w::unassigned()
 q::unassigned()
 a::unassigned()
 z::unassigned()
-F16::unassigned()
+;F16::unassigned()
 
 ;Tab::unassigned()
 Esc::unassigned()

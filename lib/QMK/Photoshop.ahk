@@ -52,7 +52,7 @@ x::unassigned()
 q::unassigned()
 a::unassigned()
 z::unassigned()
-F16::unassigned()
+;F16::unassigned()
 
 ;Tab::unassigned()
 Esc::unassigned()

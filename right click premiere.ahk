@@ -12,9 +12,9 @@ CoordMode("Pixel", "screen")
 #Include <\KSA\Keyboard Shortcut Adjustments>
 #Include <\Classes\tool>
 #Include <\Classes\block>
+#Include <\Classes\ptf>
 #Include <\Functions\SplitPathObj>
 #Include <\Functions\errorLog>
-; #Include <\Functions\ptf> ; only need this if you run the script by itself
 ; }
 
 
@@ -36,16 +36,22 @@ CoordMode("Pixel", "screen")
 ;First, we define all the timeline's DEFAULT possible colors.
 ;(Note that your colors will be different if you changed the UI brightness inside preferences > appearance > brightness.)
 ;I used Window Spy (it comes with AHK) to detect the exact colors onscreen.
-timeline1 := 0x414141 ;timeline color inside the in/out points ON a targeted track
-timeline2 := 0x313131 ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
-timeline3 := 0x1b1b1b ;the timeline color inside in/out points on a NON targeted track
-timeline4 := 0x212121 ;the color of the bare timeline NOT inside the in out points
-timeline5 := 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
-timeline6 := 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
-timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
-timeline8 := 0x202020
+;these values need to be quotes for the below loop to function correctly
+timeline1 := "0x414141" ;timeline color inside the in/out points ON a targeted track
+timeline2 := "0x313131" ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
+timeline3 := "0x1b1b1b" ;the timeline color inside in/out points on a NON targeted track
+timeline4 := "0x212121" ;the color of the bare timeline NOT inside the in out points
+timeline5 := "0xDFDFDF" ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
+timeline6 := "0xE4E4E4" ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+timeline7 := "0xBEBEBE" ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+timeline8 := "0x202020"
 playhead := 0x2D8CEB ;the colour of the playhead
-timelineCol := [timeline1, timeline2, timeline3, timeline4, timeline5, timeline6, timeline7, timeline8] ;here we'll just create an array that encapsulates all of the above to make things a little easier to keep track of
+
+timelineCol := [] ;here we'll just create an array that encapsulates all of the above timeline colours to make things a little easier to keep track of
+loop {
+	if timeVal := IsSet(%"timeline" A_Index%)
+		timelineCol.Push(timeVal)
+} until !IsSet(%"timeline" A_Index%)
 
 #HotIf WinActive(editors.winTitle["premiere"])
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
@@ -121,9 +127,9 @@ Rbutton::
 	else
 		{
 			loop { ;this loop is checking to see if `color` is one of the predetermined colours
-				if A_Index > 8
+				if A_Index > timelineCol.Length
 					{
-						SendInput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
+						SendInput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
 						return
 					}
 				if Color = timelineCol[A_Index] || Color = playhead
@@ -132,8 +138,8 @@ Rbutton::
 			colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
 			; //
 			; click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
-			;while as stated above, middle clicking the mouse does indeed bring focus to the timeline, for whatever reason having that line active made it so that
-			;if I ever click RButton and an XButton at the same time, the script would sorta lag and then get stuck in it's loop unable to tell that RButton isn't being held
+			;   -- while as stated above, middle clicking the mouse does indeed bring focus to the timeline, for whatever reason having that line active made it so that
+			;   -- if I ever click RButton and an XButton at the same time, the script would sorta lag and then get stuck in it's loop unable to tell that RButton isn't being held
 			; //
 			SendInput(timelineWindow) ;so we'll do this instead
 			if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead

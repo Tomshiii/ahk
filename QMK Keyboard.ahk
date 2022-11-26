@@ -13,7 +13,7 @@ SetNumLockState("AlwaysOn")
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.1
+;\\v2.13.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
@@ -98,7 +98,7 @@ m::unassigned()
 ;PgUp::unassigned()
 
 y::unassigned()
-h::unassigned()
+; h::unassigned()
 n::unassigned()
 ;Space::unassigned()
 
@@ -124,7 +124,7 @@ w::unassigned()
 q::unassigned()
 a::unassigned()
 z::unassigned()
-F16::unassigned()
+; F16::unassigned()
 
 ;Tab::unassigned()
 Esc::unassigned()

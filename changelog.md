@@ -29,6 +29,7 @@ The biggest changes;
 
 `switchTo {`
 - All `switchToX()` functions now a class
+- Created self contained function `Win()` to cut repeat code
 
 `Prem {`, `AE {`, `PS {`, `Resolve {`
 - All Editor functions turned into classes
@@ -40,6 +41,7 @@ This changelog doesn't cover everything + a few functions have been broken out i
 - Moved `class ptf {`, `class browser {`, `class Editors {` & the group assignments from `General.ahk` => `ptf.ahk`
     - Add `vscode` to `class browser`
     - Add class `Editors` to contain `winTitle` and `class` information of `NLEs`
+    - Fix `chrome` & `edge` having incorrect `winTitle` values
 - Moved `refreshWin()` from `General.ahk` => `Windows.ahk`
 - `pauseautosave()` & `pausewindowmax()` combined into `pause.pause()`
 - `fastWheel()` sends `PgUp/Dn` instead of `WheelUp/Down` because wheel events are laggy and dumb and I really hate them

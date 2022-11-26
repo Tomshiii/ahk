@@ -34,7 +34,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ; Please give credit to the foundation if you build on top of it, otherwise you're free to do as you wish
 ;
 ; ==================================================================================================
-#HotIf ;WinNotActive(editors.winTitle["resolve"])
+#HotIf
 
 ;any code you want to run all the time should go here
 
@@ -103,17 +103,26 @@ F4::resolve.valhold("rotation", 240, 0) ;press then hold F4 and drag to increase
 ;
 ;=========================================================
 ;set colours
-timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
-timeline2 := 0x39393E ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
-timeline3 := 0x28282E ;the timeline color inside in/out points on a NON targeted track
-timeline4 := 0x1E1E22 ;the color of the bare timeline NOT inside the in out points
-timeline5 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
-timeline6 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
-timeline7 := 0x28282E ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
-playhead1 := 0x572523
-playhead2 := 0xE64B3D
-timelineVal := [timeline1, timeline2, timeline3, timeline4, timeline5, timeline6, timeline7]
-playheadVal := [playhead1, playhead2]
+;these values need to be quotes for the below loop to function correctly
+timeline1 := "0x3E3E42" ;timeline color inside the in/out points ON a targeted track
+timeline2 := "0x39393E" ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
+timeline3 := "0x28282E" ;the timeline color inside in/out points on a NON targeted track
+timeline4 := "0x1E1E22" ;the color of the bare timeline NOT inside the in out points
+timeline5 := "0x3E3E42" ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
+timeline6 := "0x3E3E42" ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+timeline7 := "0x28282E" ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+playhead1 := "0x572523"
+playhead2 := "0xE64B3D"
+timelineVal := []
+playheadVal := []
+loop {
+    if IsSet(%"timeline" A_Index%)
+        timelineVal.Push(%"timeline" A_Index%)
+    ;//
+    if IsSet(%"playhead" A_Index%)
+        playheadVal.Push(%"playhead" A_Index%)
+} until !IsSet(%"timeline" A_Index%) && !IsSet(%"playhead" A_Index%)
+
 Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible.
 {
     static scrub := unset
