@@ -16,6 +16,7 @@ class ptf {
     static lib               := this.rootDir "\lib"
     static textreplace       := this.SupportFiles "\textreplace"
     static TimerScripts      := this.rootDir "\Timer Scripts"
+    static Checklist         := this.lib "\checklist"
 
     ;My Stuff
     static MyDir             := "E:"

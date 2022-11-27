@@ -63,7 +63,7 @@ settingsGUI()
     SetTimer(resize, -10)
     resize() => settingsGUI.Opt("-Resize")
 
-    noDefault := settingsGUI.Add("Button", "Default W0 H0", "_")
+    settingsGUI.AddButton("Default W0 H0", "_")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;Top Titles
@@ -617,7 +617,7 @@ hotkeysGUI() {
 	closeButton := hotGUI.Add("Button", "X8 Y+10", "Close")
 	closeButton.OnEvent("Click", close)
     ;remove the default
-	noDefault := hotGUI.Add("Button", "X0 Y0 W0 H0", "")
+	hotGUI.AddButton("X0 Y0 W0 H0", "")
 
     selectionText := hotGUI.Add("Text", "W240 X180 Y80 H100", "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!")
     text(*) {
@@ -700,7 +700,6 @@ hotkeysGUI() {
     {
         dark.titleBar(hotGUI.Hwnd)
         dark.button(closeButton.Hwnd)
-        dark.button(noDefault.Hwnd)
         dark.button(selection.Hwnd)
     }
 

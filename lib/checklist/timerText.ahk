@@ -18,19 +18,15 @@ if lengthCheck < 6
 else
     width := 70 + ((lengthCheck-6)*12)
 
-timerHoursText := MyGui.Add("Text", "X8 " timeHeights["default"] " W18", "H: ") ;defining the hours text
-timerHoursText.SetFont("S14")
+MyGui.AddText("X8 " timeHeights["default"] " W18", "H: ").SetFont("S14") ;defining the hours text
 timerText := MyGui.Add("Text", "X+5 w" width, startHoursRounded) ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
 
-timerMinutesText := MyGui.Add("Text", "X+12 W22", "M: ") ;defining the minutes text
-timerMinutesText.SetFont("S14")
-
+MyGui.AddText("X+12 W22", "M: ").SetFont("S14") ;defining the minutes text
 timerMinutes := MyGui.Add("Text", "X+4 w30", startMinutesRounded) ;setting the text that will contain the numbers
 timerMinutes.SetFont("S16 cRed")
 
-timerSecondsText := MyGui.Add("Text", "X+10 W18", "S: ") ;defining the minutes text
-timerSecondsText.SetFont("S14")
+MyGui.AddText("X+10 W18", "S: ").SetFont("S14") ;defining the minutes text
 
 minutesForSeconds := Floor(startValue/60)
 Seconds := Round((((startValue/60) - minutesForSeconds) * 60), 0)

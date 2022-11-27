@@ -360,8 +360,8 @@ openProj(*)
     else
         {
             Run(projDir)
-            WinWait(projDir)
-            WinActivate(projDir)
+            if WinWait(projDir,, 2)
+                WinActivate(projDir)
         }
 }
 
@@ -394,7 +394,7 @@ addNew(*)
                 return
             }
         IniWrite("0", checklist, "Checkboxes", addcheck.Value)
-        Run(A_ScriptDir "\lib\checklist\destroy&open.ahk")
+        Run(ptf.Checklist "\destroy&open.ahk")
     }
 
     addClose(*)

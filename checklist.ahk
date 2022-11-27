@@ -10,7 +10,17 @@
 #Include <\Functions\errorLog>
 #Include <\Functions\detect>
 #Include <\GUIs>
-#Include <\checklist\include>
+; <checklist funcs> ;everything in <\lib\checklist\> is needed for this script
+                    ;but these are just the ones that can be defined anywhere
+#Include <\checklist\generateIni>
+#Include <\checklist\premNotOpen>
+#Include <\checklist\problemDir>
+#Include <\checklist\trythenDel>
+#Include <\checklist\timers>
+#Include <\checklist\log>
+#Include <\checklist\close>
+#Include <\checklist\getPath>
+#Include <\checklist\haltChecklist>
 ; }
 
 TraySetIcon(ptf.Icons "\checklist.ico")
@@ -18,7 +28,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.9.3"
+version := "v2.9.4"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 

@@ -1,6 +1,9 @@
-DetectHiddenWindows(1)
-SetTitleMatchMode(2)
+; { \\ #Includes
+#Include <Functions\detect>
+#Include <\Classes\ptf>
+; }
 
+detect()
 if WinExist("checklist.ahk - AutoHotkey")
     WinClose("checklist.ahk - AutoHotkey")
-Run("..\..\checklist.ahk")
+Run(ptf["checklist"])
