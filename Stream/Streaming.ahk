@@ -28,7 +28,7 @@ F6::Run('*RunAs ' ptf["StreamAHK"])
 ;		Stream
 ;
 ;===========================================================================================================================================================================
-#HotIf !WinActive(editors.winTitle["premiere"])
+#HotIf !WinActive(editors.Premiere.winTitle)
 
 F17:: ;lioranboard sends f17 when channel point reward comes through
 {

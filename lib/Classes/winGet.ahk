@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/11/28
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -107,9 +107,9 @@ class WinGet {
     static PremName(&premCheck, &titleCheck, &saveCheck)
     {
         try {
-            if WinExist(editors.winTitle["premiere"])
+            if WinExist(editors.Premiere.winTitle)
                 {
-                    premCheck := WinGetTitle(editors.class["premiere"])
+                    premCheck := WinGetTitle(editors.Premiere.class)
                     titleCheck := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                     saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
                 }
@@ -134,9 +134,9 @@ class WinGet {
     static AEName(&aeCheck, &aeSaveCheck)
     {
         try {
-            if WinExist(editors.winTitle["ae"])
+            if WinExist(editors.AE.winTitle)
                 {
-                    aeCheck := WinGetTitle(editors.winTitle["ae"])
+                    aeCheck := WinGetTitle(editors.AE.winTitle)
                     aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
                 }
             else

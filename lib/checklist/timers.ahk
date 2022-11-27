@@ -120,7 +120,7 @@ plusFive(*) {
  */
 reminder()
 {
-    if WinExist(editors.winTitle["premiere"])
+    if WinExist(editors.Premiere.winTitle)
         {
             switch settingsToolTrack {
                 case 1:

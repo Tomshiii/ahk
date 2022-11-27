@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.1
+ * @date 2022/11/28
+ * @version 1.0.2
  ***********************************************************************/
 
 class ptf {
@@ -99,19 +99,18 @@ class browser {
 }
 
 class Editors {
-    static winTitle := Map(
-        "premiere",         "ahk_exe Adobe Premiere Pro.exe",
-        "ae",               "ahk_exe AfterFX.exe",
-        "photoshop",        "ahk_exe Photoshop.exe",
-        "resolve",          "ahk_exe Resolve.exe",
-    )
-
-    static class := Map(
-        "premiere",         "ahk_class Premiere Pro",
-        "ae",               "ahk_class AE_CApplication_22.6",
-        "photoshop",        "ahk_class Photoshop",
-        "resolve",          "ahk_class Qt5152QWindowIcon",
-    )
+    static Premiere := {
+        winTitle: "ahk_exe Adobe Premiere Pro.exe",   class: "ahk_class Premiere Pro"
+    }
+    static AE := {
+        winTitle: "ahk_exe AfterFX.exe",              class: "ahk_class AE_CApplication_22.6"
+    }
+    static Photoshop := {
+        winTitle: "ahk_exe Photoshop.exe",            class: "ahk_class Photoshop"
+    }
+    static Resolve := {
+        winTitle: "ahk_exe Resolve.exe",              class: "ahk_class Qt5152QWindowIcon"
+    }
 }
 
 ;define browsers
@@ -120,7 +119,7 @@ GroupAdd("Browsers", browser.winTitle["chrome"])
 GroupAdd("Browsers", browser.winTitle["vscode"])
 
 ;define editors
-GroupAdd("Editors", editors.winTitle["premiere"])
-GroupAdd("Editors", editors.winTitle["ae"])
-GroupAdd("Editors", editors.winTitle["resolve"])
-GroupAdd("Editors", editors.winTitle["photoshop"])
+GroupAdd("Editors", editors.Premiere.winTitle)
+GroupAdd("Editors", editors.AE.winTitle)
+GroupAdd("Editors", editors.Resolve.winTitle)
+GroupAdd("Editors", editors.Photoshop.winTitle)

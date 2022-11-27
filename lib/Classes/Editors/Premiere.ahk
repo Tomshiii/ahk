@@ -2,10 +2,9 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/11/28
+ * @version 1.0.1
  ***********************************************************************/
-
 
 ; { \\ #Includes
 #Include <\KSA\Keyboard Shortcut Adjustments>
@@ -324,7 +323,7 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        WinActivate(editors.winTitle["premiere"])
+        WinActivate(editors.Premiere.winTitle)
         sleep 50
         SendInput(effectControls)
         SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
@@ -339,7 +338,7 @@ class Prem {
             return
         }
         ;get title
-        premCheck := WinGetTitle(editors.class["premiere"])
+        premCheck := WinGetTitle(editors.Premiere.class)
 
         ;any zooms with NO toggle
         d0yle := InStr(premCheck, "d0yle")

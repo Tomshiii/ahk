@@ -113,7 +113,7 @@ StopWatch() {
 ;This next code starts the script
 
 start:
-if WinExist(editors.winTitle["premiere"]) || WinExist(editors.winTitle["ae"])
+if WinExist(editors.Premiere.winTitle) || WinExist(editors.AE.winTitle)
     {
         SetTimer(save, -ms)
         global StartTickCount := A_TickCount ;for tray function
@@ -131,7 +131,7 @@ else
  * This function is for the above SetTimer & is to check to make sure either of the editors are open & if the checklist is open
  */
 check() {
-    if !WinExist(editors.winTitle["premiere"]) && !WinExist(editors.winTitle["ae"]) ;this is here so the script won't error out if you close Premiere while it is waiting
+    if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) ;this is here so the script won't error out if you close Premiere while it is waiting
         {
             SetTimer(StopWatch, 0) ;for tray function
             timer := false
@@ -168,7 +168,7 @@ check() {
  */
 save()
 {
-    if !WinExist(editors.winTitle["premiere"]) && !WinExist(editors.winTitle["ae"]) ;this is here so the script won't error out if you close Premiere while it is waiting
+    if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
     SetTimer(StopWatch, 0) ;this stops the timer from counting while the save function is occuring and proceeding into negative numbers
     timer := false
@@ -205,7 +205,7 @@ save()
             SetTimer(, -ms)
             goto end2
         }
-    if WinExist(editors.winTitle["premiere"])
+    if WinExist(editors.Premiere.winTitle)
         {
             if !titleCheck ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
@@ -260,7 +260,7 @@ save()
                             goto end2
                         }
                     block.On()
-                    WinActivate(editors.winTitle["ae"])
+                    WinActivate(editors.AE.winTitle)
                     sleep 500
                     SendInput("^s")
                     sleep 250
@@ -286,7 +286,7 @@ save()
         }
 
     if origWind != "Adobe Premiere Pro.exe" ;will activate premiere if it wasn't the original window
-        WinActivate(editors.winTitle["premiere"])
+        WinActivate(editors.Premiere.winTitle)
     try {
         premWinCheck := WinGetTitle("A")
         premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
@@ -359,7 +359,7 @@ save()
     ;\\ if ae is open we'll check to see if it needs saving, then save it too if required
     if aeSaveCheck = "*"
         {
-            WinActivate(editors.winTitle["ae"])
+            WinActivate(editors.AE.winTitle)
             sleep 500
             SendInput("^s")
             sleep 250

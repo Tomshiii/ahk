@@ -5,7 +5,7 @@
 #Include <\Classes\pause>
 ; }
 
-if WinActive(editors.winTitle["premiere"])
+if WinActive(editors.Premiere.winTitle)
 	{
 		pause.pause("autosave")
         pause.pause("adobe fullscreen check")
@@ -44,7 +44,7 @@ if WinActive(editors.winTitle["premiere"])
 		sleep 1000
 		block.Off()
 		WinMinimize("ahk_exe Adobe Audition.exe") ;minimises audition and reactivates premiere
-		WinActivate(editors.winTitle["premiere"])
+		WinActivate(editors.Premiere.winTitle)
 		pause.pause("autosave")
         pause.pause("adobe fullscreen check")
 	}

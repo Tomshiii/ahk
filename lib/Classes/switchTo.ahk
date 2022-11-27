@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2022/11/26
- * @version 1.0.1
+ * @date 2022/11/28
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -93,10 +93,10 @@ class switchTo {
      */
     static Premiere()
     {
-        if !WinExist(editors.class["premiere"])
+        if !WinExist(editors.Premiere.class)
             Run(ptf["Premiere"])
-        else if WinExist(editors.class["premiere"])
-            WinActivate(editors.class["premiere"])
+        else if WinExist(editors.Premiere.class)
+            WinActivate(editors.Premiere.class)
     }
 
     /**
@@ -107,8 +107,8 @@ class switchTo {
         runae() ;cut repeat code
         {
             Run(ptf["AE"])
-            WinWait(editors.winTitle["ae"])
-            WinActivate(editors.winTitle["ae"])
+            WinWait(editors.AE.winTitle)
+            WinActivate(editors.AE.winTitle)
         }
         premTitle() ;pulls dir url from prem title and runs ae project in that dir
         {
@@ -135,8 +135,8 @@ class switchTo {
                     {
                         Run(A_LoopFileFullPath)
                         tool.Cust("Running AE file for this project")
-                        WinWait(editors.winTitle["ae"])
-                        WinActivate(editors.winTitle["ae"])
+                        WinWait(editors.AE.winTitle)
+                        WinActivate(editors.AE.winTitle)
                         return
                     }
             } catch as e {
@@ -146,21 +146,21 @@ class switchTo {
                 return
             }
         }
-        if !WinExist(editors.winTitle["ae"]) && WinExist(editors.winTitle["premiere"]) ;if prem is open but AE isn't
+        if !WinExist(editors.AE.winTitle) && WinExist(editors.Premiere.winTitle) ;if prem is open but AE isn't
             premTitle()
-        else if WinExist(editors.winTitle["ae"]) && WinExist(editors.winTitle["premiere"]) ;if both are open
+        else if WinExist(editors.AE.winTitle) && WinExist(editors.Premiere.winTitle) ;if both are open
             {
                 try {
                     Name := WinGetTitle("Adobe After Effects")
                     titlecheck := InStr(Name, "Adobe After Effects " ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
                     if slash := InStr(Name, "\",, -1) ;if there's a slash in the title, it means a project is open
-                        WinActivate(editors.winTitle["ae"])
+                        WinActivate(editors.AE.winTitle)
                     else
                         premTitle()
                 }
             }
-        else if WinExist(editors.winTitle["ae"]) && !WinExist(editors.winTitle["premiere"])
-            WinActivate(editors.winTitle["ae"])
+        else if WinExist(editors.AE.winTitle) && !WinExist(editors.Premiere.winTitle)
+            WinActivate(editors.AE.winTitle)
         else
             runae()
     }
@@ -190,7 +190,7 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Photo() => this.Win(editors.winTitle["photoshop"], ptf["Photoshop"], "photoshop")
+    static Photo() => this.Win(editors.Photoshop.winTitle, ptf["Photoshop"], "photoshop")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one

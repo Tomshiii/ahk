@@ -12,9 +12,9 @@ SetWorkingDir A_ScriptDir
 TraySetIcon(ptf.Icons "\fullscreen.ico") ;changes the icon this script uses in the taskbar
 InstallKeybdHook
 
-GroupAdd("adobe", editors.winTitle["premiere"])
-GroupAdd("adobe", editors.winTitle["ae"])
-;GroupAdd("adobe", editors.winTitle["photoshop"]) ;photoshop changes it's window title to the name of the file you're working on and omits "Adobe Photoshop [A_Year]" unlike premiere and ae. Typical
+GroupAdd("adobe", editors.Premiere.winTitle)
+GroupAdd("adobe", editors.AE.winTitle)
+;GroupAdd("adobe", editors.Photoshop.winTitle) ;photoshop changes it's window title to the name of the file you're working on and omits "Adobe Photoshop [A_Year]" unlike premiere and ae. Typical
 
 /*
 There are sometimes where Premiere Pro will put itself in an even more "fullscreen" mode when you lose access to the window controls and all your coordinates get messed up.

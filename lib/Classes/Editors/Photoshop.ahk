@@ -2,10 +2,9 @@
  * @description A library of useful Photoshop functions to speed up common tasks
  * Last tested in v24.0.1 of Photoshop
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.1
+ * @date 2022/11/28
+ * @version 1.0.2
  ***********************************************************************/
-
 
 ; { \\ #Includes
 ; #Include <\KSA\Keyboard Shortcut Adjustments>
@@ -80,7 +79,7 @@ class PS {
     {
         save(size)
         {
-            WinActivate(editors.winTitle["photoshop"])
+            WinActivate(editors.Photoshop.winTitle)
             block.On()
             SendInput(imageSize) ;check the keyboard shortcut ini file
             WinWait("Image Size")

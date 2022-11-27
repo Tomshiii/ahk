@@ -110,7 +110,7 @@ StopWatch() {
 ;This next code starts the script
 
 start:
-if WinExist(editors.winTitle["premiere"]) || WinExist(editors.winTitle["ae"])
+if WinExist(editors.Premiere.winTitle) || WinExist(editors.AE.winTitle)
     {
         SetTimer(save, -ms)
         global StartTickCount := A_TickCount ;for tray function
@@ -128,7 +128,7 @@ else
  * This function is for the above SetTimer & is to check to make sure either of the editors are open & if the checklist is open
  */
 check() {
-    if !WinExist(editors.winTitle["premiere"]) && !WinExist(editors.winTitle["ae"]) ;this is here so the script won't error out if you close Premiere while it is waiting
+    if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) ;this is here so the script won't error out if you close Premiere while it is waiting
         {
             SetTimer(StopWatch, 0) ;for tray function
             timer := false
@@ -165,7 +165,7 @@ check() {
  */
 save()
 {
-    if !WinExist(editors.winTitle["premiere"]) && !WinExist(editors.winTitle["ae"]) ;this is here so the script won't error out if you close Premiere while it is waiting
+    if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
     SetTimer(StopWatch, 0) ;this stops the timer from counting while the save function is occuring and proceeding into negative numbers
     timer := false
@@ -174,6 +174,17 @@ save()
     premSaveTrack := 0
     aeSaveTrack := 0
     avoid := 0
+
+    ;checking to see if a save is necessary
+    saveCheck := WinExist(editors.Premiere.winTitle) ? winget.PremName(&premCheck, &titleCheck, &saveCheck) : ""
+    if !saveCheck
+    saveCheck := InStr(SubStr(WinGetTitle(editors.Premiere.winTitle), -1, 1), "*",) ? "*" : ""
+    aeSaveCheck := WinExist(editors.AE.winTitle) ? winget.AEName(&aeCheck, &aeSaveCheck) : ""
+    if saveCheck = "" && aeSaveCheck = ""
+        {
+            tool.Cust("No save necessary")
+            goto ignore
+        }
 
     if A_TimeIdleKeyboard <= idle
         {
@@ -218,10 +229,9 @@ save()
      * If it does and isn't the active window, it will controlsend ^s
      * otherwise it will sendinput ^s (as using controlsend while active seems to not function properly)
      */
-    if WinExist(editors.winTitle["premiere"])
+    if WinExist(editors.Premiere.winTitle) && saveCheck != ""
         {
-            winget.PremName(&premCheck, &titleCheck, &saveCheck)
-            premWinCheck := WinGetTitle(editors.winTitle["premiere"])
+            premWinCheck := WinGetTitle(editors.Premiere.winTitle)
             premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             premTitleCheck2 := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;same as above except checking a different variable (depending on whether you check the ahk_exe or the ahk_class returns different results under different circumstances)
             if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
@@ -271,9 +281,8 @@ save()
      * This is to avoid after effects flashing on the screen as, when you save after effects, it FORCES itself to be in focus (typical adobe nonsense)
      * So this function will first make ae transparent, save, refocus the original window, then winmovebottom AE so it doesn't force itself to the top
      */
-    if WinExist(editors.winTitle["ae"])
+    if WinExist(editors.AE.winTitle) && aeSaveCheck != ""
         {
-            winget.AEName(&aeCheck, &aeSaveCheck)
             if aeSaveCheck = "*" && origWind != WinGetProcessName(aeCheck) ;this variable will contain "*" if a save is required
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
@@ -285,7 +294,7 @@ save()
                             goto end
                         }
                     tool.Cust("Saving AE")
-                    WinSetTransparent(0, editors.winTitle["ae"])
+                    WinSetTransparent(0, editors.AE.winTitle)
                     ControlSend("{Ctrl Down}s{Ctrl Up}",, aeCheck)
                     WinWaitClose("Save Project",, 3)
                     try {
@@ -296,8 +305,8 @@ save()
                         else
                             WinActivate("ahk_exe " origWind)
                     }
-                    WinMoveBottom(editors.winTitle["ae"])
-                    WinSetTransparent(255, editors.winTitle["ae"])
+                    WinMoveBottom(editors.AE.winTitle)
+                    WinSetTransparent(255, editors.AE.winTitle)
                     aeSaveTrack := 1
                     goto end
                 }
@@ -356,8 +365,8 @@ save()
             errorLog(e, A_ThisFunc "()")
         }
         ignore:
-        if WinExist(editors.winTitle["ae"])
-            WinSetTransparent(255, editors.winTitle["ae"]) ;just incase
+        if WinExist(editors.AE.winTitle)
+            WinSetTransparent(255, editors.AE.winTitle) ;just incase
         block.Off()
         tool.Wait()
         ToolTip("")
@@ -365,8 +374,8 @@ save()
         SetTimer(, -ms) ;reset the timer
 
         theEnd:
-        if WinExist(editors.winTitle["ae"])
-            WinSetTransparent(255, editors.winTitle["ae"]) ;just incase
+        if WinExist(editors.AE.winTitle)
+            WinSetTransparent(255, editors.AE.winTitle) ;just incase
         block.Off()
         tool.Wait()
         global ElapsedTime := 0

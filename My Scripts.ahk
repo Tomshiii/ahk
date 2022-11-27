@@ -36,9 +36,9 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.5
+;\\v2.23.6
 ;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.12.2
+;\\v2.13.4
 
 ; ============================================================================================================================================
 ;
@@ -544,7 +544,7 @@ F3:: ;this hotkey is to click the "discord" button in discord to access your dm'
 ;		Photoshop
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.winTitle["photoshop"])
+#HotIf WinActive(editors.Photoshop.winTitle)
 ;pngHotkey;
 ^+p::ps.Type("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 ;jpgHotkey;
@@ -563,7 +563,7 @@ z::mouseDrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z
 ;		After Effects
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.winTitle["ae"])
+#HotIf WinActive(editors.AE.winTitle)
 ;aetimelineHotkey;
 Xbutton1::ae.timeline() ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aeselectionHotkey;
@@ -578,7 +578,7 @@ F23::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hot
 ;		Premiere
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.winTitle["premiere"])
+#HotIf WinActive(editors.Premiere.winTitle)
 ;There use to be a lot of macros about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
@@ -778,7 +778,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	sleep 1000
 	added:
 	coord.w()
-	WinActivate(editors.winTitle["premiere"])
+	WinActivate(editors.Premiere.winTitle)
 	if ImageSearch(&listx, &listy, 10, 3, 1038, 1072, "*2 " ptf.Premiere "list view.png")
 		{
 			MouseMove(listx, listy)

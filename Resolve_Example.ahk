@@ -17,7 +17,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ; }
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.2
+;\\v2.7.3
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
@@ -51,7 +51,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ;=========================================================
 ;		DAVINCI RESOLVE
 ;=========================================================
-#HotIf WinActive(editors.winTitle["resolve"])
+#HotIf WinActive(editors.Resolve.winTitle)
 
 ;=========================================================
 ;		keyboard shortcut replacements (this is just to make things similar to how I use premiere. Realistically replacing their keybinds in Resolve itself is FAR better)

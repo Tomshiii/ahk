@@ -13,7 +13,7 @@ SetDefaultMouseSpeed 0
 ;This version of the script (from 5th May, 2022) is designed for Premiere v22.3.1 (and beyond)
 ;Previous versions compatible with Premiere v22.3 can be found in previous releases of this repo (v2.3.3 and below)
 
-if WinActive(editors.winTitle["premiere"])
+if WinActive(editors.Premiere.winTitle)
     {
         ;; This part makes you select the folder you wish to create the project in
         SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Select your desired Folder. This Script will create the necessary sub folders")
@@ -35,7 +35,7 @@ if WinActive(editors.winTitle["premiere"])
                     pause.pause("adobe fullscreen check")
                     return
                 }
-        WinActivate(editors.winTitle["premiere"])
+        WinActivate(editors.Premiere.winTitle)
         coord.w()
         block.On()
         sleep 200
@@ -58,7 +58,7 @@ if WinActive(editors.winTitle["premiere"])
                         }
                 }
                 sleep 1000
-                WinActivate(editors.winTitle["premiere"])
+                WinActivate(editors.Premiere.winTitle)
                 SendInput(IB.Value) ;INSERT PROJECT NAME HERE
                 sleep 100
                 SendInput("{Tab}")
@@ -109,7 +109,7 @@ if WinActive(editors.winTitle["premiere"])
                 else
                     {
                         sleep 1000
-                        WinActivate(editors.winTitle["premiere"])
+                        WinActivate(editors.Premiere.winTitle)
                         SendInput("^n")
                     }
                 proceed:
@@ -120,7 +120,7 @@ if WinActive(editors.winTitle["premiere"])
                 else
                     {
                         sleep 1000
-                        WinActivate(editors.winTitle["premiere"])
+                        WinActivate(editors.Premiere.winTitle)
                         SendInput(premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
                     }
                 proceed2: ;this section is to set the proxy

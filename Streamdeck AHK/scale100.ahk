@@ -4,5 +4,5 @@
 #Include <Functions\SD Functions\scale>
 ; }
 
-if WinActive(editors.winTitle["premiere"])
+if WinActive(editors.Premiere.winTitle)
 	scale(100)

@@ -13,7 +13,7 @@ SetNumLockState("AlwaysOn")
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.3
+;\\v2.13.4
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
@@ -50,13 +50,13 @@ SetNumLockState("AlwaysOn")
 ;DEFINE SEPARATE PROGRAMS FIRST, THEN ANYTHING YOU WANT WHEN NO PROGRAM IS ACTIVE ->
 
 ;===========================================================================
-#HotIf WinActive(editors.winTitle["premiere"]) and getKeyState("F24", "P")
+#HotIf WinActive(editors.Premiere.winTitle) and getKeyState("F24", "P")
 #Include <\QMK\Prem>
 ;===========================================================================
-#HotIf WinActive(editors.winTitle["ae"]) and getKeyState("F24", "P")
+#HotIf WinActive(editors.AE.winTitle) and getKeyState("F24", "P")
 #Include <\QMK\AE>
 ;===========================================================================
-#HotIf getKeyState("F24", "P") and WinActive(editors.winTitle["photoshop"])
+#HotIf getKeyState("F24", "P") and WinActive(editors.Photoshop.winTitle)
 #Include <\QMK\Photoshop>
 ;===========================================================================
 #HotIf getKeyState("F24", "P") and WinActive(browser.winTitle["vscode"])

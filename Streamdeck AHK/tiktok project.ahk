@@ -5,7 +5,7 @@
 #Include <\Classes\coord>
 ; }
 
-if WinActive(editors.winTitle["premiere"])
+if WinActive(editors.Premiere.winTitle)
     {
         coord.w()
         SendInput("!s" "q")

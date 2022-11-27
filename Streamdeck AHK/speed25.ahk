@@ -3,5 +3,5 @@
 #Include <Functions\SD Functions\speed>
 ; }
 
-if WinActive(editors.winTitle["premiere"])
+if WinActive(editors.Premiere.winTitle)
     speed("25")

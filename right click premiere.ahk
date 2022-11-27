@@ -52,7 +52,7 @@ loop {
 	timelineCol.Push(Format("{:#x}", %"timeline" A_Index%))
 }
 
-#HotIf WinActive(editors.winTitle["premiere"])
+#HotIf WinActive(editors.Premiere.winTitle)
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
 
 checkKey(key) {
@@ -62,7 +62,7 @@ checkKey(key) {
 			SendInput("{" key " Up}")
 		}
 }
-while WinExist(editors.winTitle["premiere"])
+while WinExist(editors.Premiere.winTitle)
 	{
 		sleep 100
 		checkKey("RButton")
