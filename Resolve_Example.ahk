@@ -17,7 +17,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ; }
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.7.1
+;\\v2.7.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.7.0.1
@@ -103,33 +103,33 @@ F4::resolve.valhold("rotation", 240, 0) ;press then hold F4 and drag to increase
 ;
 ;=========================================================
 ;set colours
-;these values need to be quotes for the below loop to function correctly
-timeline1 := "0x3E3E42" ;timeline color inside the in/out points ON a targeted track
-timeline2 := "0x39393E" ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
-timeline3 := "0x28282E" ;the timeline color inside in/out points on a NON targeted track
-timeline4 := "0x1E1E22" ;the color of the bare timeline NOT inside the in out points
-timeline5 := "0x3E3E42" ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
-timeline6 := "0x3E3E42" ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
-timeline7 := "0x28282E" ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
-playhead1 := "0x572523"
-playhead2 := "0xE64B3D"
+timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
+timeline2 := 0x39393E ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
+timeline3 := 0x28282E ;the timeline color inside in/out points on a NON targeted track
+timeline4 := 0x1E1E22 ;the color of the bare timeline NOT inside the in out points
+timeline5 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
+timeline6 := 0x3E3E42 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+timeline7 := 0x28282E ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+playhead1 := 0x572523
+playhead2 := 0xE64B3D
 timelineVal := []
 playheadVal := []
 loop {
+    if !IsSet(%"timeline" A_Index%) && !IsSet(%"playhead" A_Index%)
+        break
     if IsSet(%"timeline" A_Index%)
-        timelineVal.Push(%"timeline" A_Index%)
+        timelineVal.Push(Format("{:#x}", %"timeline" A_Index%))
     ;//
     if IsSet(%"playhead" A_Index%)
-        playheadVal.Push(%"playhead" A_Index%)
-} until !IsSet(%"timeline" A_Index%) && !IsSet(%"playhead" A_Index%)
-
+        playheadVal.Push(Format("{:#x}", %"playhead" A_Index%))
+}
 Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible.
 {
     static scrub := unset
     coord.w()
     block.On()
     MouseGetPos &xpos, &ypos
-    if !ImageSearch(&editx, &editY, A_ScreenWidth / 3, A_ScreenHeight - 150, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "edit.png")
+    if !ImageSearch(&editx, &editY, A_ScreenWidth / 3, A_ScreenHeight - 150, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Resolve "edit.png")
         {
             SendInput("{RButton}")
             block.Off()
@@ -137,7 +137,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
         }
     if !IsSet(scrub)
         {
-            if !ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker1.png") && !ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " Resolve "speaker2.png")
+            if !ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Resolve "speaker1.png") && !ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Resolve "speaker2.png")
                 {
                     block.Off()
                     tool.Cust("Couldn't find reference point for scrub bar", 2000)

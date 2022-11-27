@@ -36,22 +36,21 @@ CoordMode("Pixel", "screen")
 ;First, we define all the timeline's DEFAULT possible colors.
 ;(Note that your colors will be different if you changed the UI brightness inside preferences > appearance > brightness.)
 ;I used Window Spy (it comes with AHK) to detect the exact colors onscreen.
-;these values need to be quotes for the below loop to function correctly
-timeline1 := "0x414141" ;timeline color inside the in/out points ON a targeted track
-timeline2 := "0x313131" ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
-timeline3 := "0x1b1b1b" ;the timeline color inside in/out points on a NON targeted track
-timeline4 := "0x212121" ;the color of the bare timeline NOT inside the in out points
-timeline5 := "0xDFDFDF" ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
-timeline6 := "0xE4E4E4" ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
-timeline7 := "0xBEBEBE" ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
-timeline8 := "0x202020"
+timeline1 := 0x414141 ;timeline color inside the in/out points ON a targeted track
+timeline2 := 0x313131 ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
+timeline3 := 0x1b1b1b ;the timeline color inside in/out points on a NON targeted track
+timeline4 := 0x212121 ;the color of the bare timeline NOT inside the in out points
+timeline5 := 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
+timeline6 := 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+timeline8 := 0x202020
 playhead := 0x2D8CEB ;the colour of the playhead
-
 timelineCol := [] ;here we'll just create an array that encapsulates all of the above timeline colours to make things a little easier to keep track of
 loop {
-	if timeVal := IsSet(%"timeline" A_Index%)
-		timelineCol.Push(timeVal)
-} until !IsSet(%"timeline" A_Index%)
+	if !IsSet(%"timeline" A_Index%)
+		break
+	timelineCol.Push(Format("{:#x}", %"timeline" A_Index%))
+}
 
 #HotIf WinActive(editors.winTitle["premiere"])
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
