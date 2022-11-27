@@ -1,5 +1,6 @@
 ; { \\ #Includes
 #Include <\Classes\Dark>
+#Include <Functions\getScriptRelease>
 ; }
 
 ;define menu
@@ -188,6 +189,11 @@ updateCheck(Item, *)
         latestVer := getScriptRelease()
     if tree = "dev"
         latestVer := getScriptRelease(true)
+    if latestVer = 0
+        {
+            tool.Cust("You are up to date!") ;if getScriptRelease fails, default to being up to date
+            return
+        }
     if VerCompare(latestVer, currentVer) > 0
         {
             Run("https://github.com/Tomshiii/ahk/releases")

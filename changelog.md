@@ -45,6 +45,7 @@ This changelog doesn't cover everything + a few functions have been broken out i
 - Moved `refreshWin()` from `General.ahk` => `Windows.ahk`
 - `pauseautosave()` & `pausewindowmax()` combined into `pause.pause()`
 - `fastWheel()` sends `PgUp/Dn` instead of `WheelUp/Down` because wheel events are laggy and dumb and I really hate them
+- `getScriptRelease()` will now omit spaces/`<> html` tags in the event it returns more than just the version
 
 `activeScripts()`
 - Now includes `textreplace.ahk`
