@@ -28,7 +28,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <\Functions\reload_reset_exit>
 #Include <\Functions\errorLog>
 #Include <\Functions\mouseDrag>
-#Include <\Startup>
+#Include <\Classes\Startup>
 #Include <\Windows>
 #Include <\GUIs>
 ;#Include right click premiere.ahk ; this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
@@ -36,7 +36,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.7
+;\\v2.23.8
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -83,14 +83,15 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ;				STARTUP
 ;
 ; =======================================================================================================================================
-generate(MyRelease) ;generates/replaces the `settings.ini` file every release
-locationReplace() ;runs the location variable
-trayMen() ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
-updateChecker(MyRelease) ;runs the update checker
-firstCheck(MyRelease) ;runs the firstCheck() function
-oldError() ;runs the loop to delete old log files
-adobeTemp(MyRelease) ;runs the loop to delete cache files
-libUpdateCheck() ;runs a loop to check for lib updates
+startup.generate(MyRelease) ;generates/replaces the `settings.ini` file every release
+startup.locationReplace() ;runs the location variable
+startup.updateChecker(MyRelease) ;runs the update checker
+startup.trayMen() ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
+MsgBox()
+startup.firstCheck(MyRelease) ;runs the firstCheck() function
+startup.oldError() ;runs the loop to delete old log files
+startup.adobeTemp(MyRelease) ;runs the loop to delete cache files
+startup.libUpdateCheck() ;runs a loop to check for lib updates
 
 ;=============================================================================================================================================
 ;

@@ -38,16 +38,9 @@ settingsGUI()
     try { ;attempting to grab window information on the active window for `gameAddButt()`
         winProcc := WinGetProcessName("A")
         winTitle := WinGetTitle("A")
-        if !InStr(winTitle, " ",,, 1)
-            titleBlank := winTitle
-        else
-            {
-                getBlank := InStr(winTitle, " ",,, 1)
-                titleBlank := SubStr(winTitle, 1, getBlank -1)
-            }
     } catch {
         winProcc := ""
-        titleBlank := ""
+        winTitle := ""
     }
 
     darkMode := IniRead(ptf["settings"], "Settings", "dark mode")

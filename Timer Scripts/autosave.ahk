@@ -11,7 +11,7 @@
 #Include <\Classes\switchTo>
 #Include <\Functions\detect>
 #Include <\Functions\errorLog>
-#Include <\Startup>
+#Include <\Classes\Startup>
 ; }
 
 A_MaxHotkeysPerInterval := 2000
