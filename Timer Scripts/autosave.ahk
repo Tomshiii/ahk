@@ -174,13 +174,15 @@ save()
     premSaveTrack := 0
     aeSaveTrack := 0
     avoid := 0
+    saveCheck := ""
+    aeSaveCheck := ""
 
     ;checking to see if a save is necessary
-    saveCheck := WinExist(editors.Premiere.winTitle) ? winget.PremName(&premCheck, &titleCheck, &saveCheck) : ""
-    if !saveCheck
-    saveCheck := InStr(SubStr(WinGetTitle(editors.Premiere.winTitle), -1, 1), "*",) ? "*" : ""
-    aeSaveCheck := WinExist(editors.AE.winTitle) ? winget.AEName(&aeCheck, &aeSaveCheck) : ""
-    if saveCheck = "" && aeSaveCheck = ""
+    if WinExist(editors.Premiere.winTitle)
+        winget.PremName(&premCheck, &titleCheck, &saveCheck)
+    if WinExist(editors.AE.winTitle)
+        winget.AEName(&aeCheck, &aeSaveCheck)
+    if saveCheck != "*" && aeSaveCheck != "*"
         {
             tool.Cust("No save necessary")
             goto ignore
@@ -229,7 +231,7 @@ save()
      * If it does and isn't the active window, it will controlsend ^s
      * otherwise it will sendinput ^s (as using controlsend while active seems to not function properly)
      */
-    if WinExist(editors.Premiere.winTitle) && saveCheck != ""
+    if WinExist(editors.Premiere.winTitle) && saveCheck = "*"
         {
             premWinCheck := WinGetTitle(editors.Premiere.winTitle)
             premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
@@ -281,7 +283,7 @@ save()
      * This is to avoid after effects flashing on the screen as, when you save after effects, it FORCES itself to be in focus (typical adobe nonsense)
      * So this function will first make ae transparent, save, refocus the original window, then winmovebottom AE so it doesn't force itself to the top
      */
-    if WinExist(editors.AE.winTitle) && aeSaveCheck != ""
+    if WinExist(editors.AE.winTitle) && aeSaveCheck = "*"
         {
             if aeSaveCheck = "*" && origWind != WinGetProcessName(aeCheck) ;this variable will contain "*" if a save is required
                 {
