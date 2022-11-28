@@ -720,7 +720,7 @@ libUpdateCheck()
         if getVerPos = 0 ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
             return {version: "", script: script}
         endPos := InStr(script, "*",, getVerPos, 1) - 2
-        localVerStr := SubStr(script, getVerPos + 9, endPos-(getVerPos + 9))
+        localVerStr := Trim(SubStr(script, getVerPos + 9, endPos-(getVerPos + 9)))
         return {version: localVerStr, script: script}
     }
     /**
@@ -738,7 +738,7 @@ libUpdateCheck()
         }  catch as e {
             tool.Cust("Couldn't get version info`nYou may not be connected to the internet or lib url may be incorrect")
             errorLog(e, A_ThisFunc "()")
-            return 0
+            return {version: 0}
         }
         if InStr(string, "﻿") ;removes zero width no-break space
             string := StrReplace(string, "﻿", "")
@@ -746,7 +746,7 @@ libUpdateCheck()
         if getVerPos = 0
             return {version: "", script: string}
         endPos := InStr(string, "*",, getVerPos, 1) - 2
-        ver := SubStr(string, getVerPos + 9, endPos-(getVerPos + 9))
+        ver := Trim(SubStr(string, getVerPos + 9, endPos-(getVerPos + 9)))
         return {version: ver, script: string}
     }
     ;begin loop
@@ -763,7 +763,7 @@ libUpdateCheck()
                     }
                 continue
             }
-        if latestVer = 0
+        if latestVer.version = 0
             continue
         if VerCompare(latestVer.version, localVersion.version) > 0
             {

@@ -31,12 +31,11 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <\Startup>
 #Include <\Windows>
 #Include <\GUIs>
-#Include right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 ; }
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.6
+;\\v2.23.7
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -841,6 +840,8 @@ Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
 Xbutton2::prem.mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+
+#Include right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;bonkHotkey;
 F19::prem.audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20

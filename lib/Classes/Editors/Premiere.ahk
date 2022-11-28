@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
  * @date 2022/11/28
- * @version 1.0.1
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,6 +14,7 @@
 #Include <\Classes\tool>
 #Include <\Classes\winget>
 #Include <\Functions\errorLog>
+#Include <\Functions\getHotkeys>
 ; }
 
 class Prem {

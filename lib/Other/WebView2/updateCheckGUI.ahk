@@ -1,7 +1,9 @@
 ; { \\ #Includes
 #Include <\Other\WebView2\WebView2>
-#Include <\Functions\General>
-#Include <\Functions\ptf>
+#Include <\Classes\ptf>
+#Include <\Functions\getScriptRelease>
+#Include <\GUIs>
+
 ; }
 
 #SingleInstance Force
@@ -11,11 +13,12 @@ TraySetIcon(ptf.Icons "\update.png")
 
 if IniRead(ptf["settings"], "Settings", "beta update check", "false") = "true"
 	{ ;if the user wants to check for beta updates instead, this block will fire
-		global version := getScriptRelease(true, &changeVer)
+		version := getScriptRelease(true, &changeVer)
 		betaprep := 1
 	}
 else
-	global version := getScriptRelease(, &changeVer) ;getting non beta latest release
+	version := getScriptRelease(, &changeVer) ;getting non beta latest release
+
 
 main := tomshiBasic(,, "-Resize", "Latest Update - " version)
 main.OnEvent("Close", closeit)
