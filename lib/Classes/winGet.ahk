@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2022/11/28
- * @version 1.0.1
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -110,6 +110,8 @@ class WinGet {
             if WinExist(editors.Premiere.winTitle)
                 {
                     premCheck := WinGetTitle(editors.Premiere.class)
+                    if premCheck = ""
+                        premCheck := WinGetTitle(editors.Premiere.winTitle)
                     titleCheck := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                     saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
                 }
@@ -168,7 +170,7 @@ class WinGet {
     /**
      * A function that returns the path of an open explorer window
      *
-     * Original code found here: https://www.autohotkey.com/boards/viewtopic.php?p=422751#p387113
+     * Original code found here by svArtist: https://www.autohotkey.com/boards/viewtopic.php?p=422751#p387113
      * @param {number} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
      * @returns {String} the directory path of the explorer window
      */

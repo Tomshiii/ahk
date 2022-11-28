@@ -31,6 +31,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <\Startup>
 #Include <\Windows>
 #Include <\GUIs>
+;#Include right click premiere.ahk ; this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 #Requires AutoHotkey v2.0-beta.12
 

@@ -47,6 +47,8 @@ This changelog doesn't cover everything + a few functions have been broken out i
 - `fastWheel()` sends `PgUp/Dn` instead of `WheelUp/Down` because wheel events are laggy and dumb and I really hate them
 - `getScriptRelease()` will now omit spaces/`<> html` tags in the event it returns more than just the version
 - Fix `libUpdateCheck()` incorrectly comparing versions
+- `tool.Cust()` now sets tooltip coordmode to `screen` so custom passed `x/y` values don't default to window
+- `winget.PremName()` will now check both the Premiere `winTitle` and `class` values as depending on the situation could yeild a blank string for either
 
 `activeScripts()`
 - Now includes `textreplace.ahk`

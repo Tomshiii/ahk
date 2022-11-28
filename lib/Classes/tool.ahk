@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/11/28
+ * @version 1.0.1
  ***********************************************************************/
 
 class tool {
@@ -22,6 +22,7 @@ class tool {
      */
     static Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     {
+        CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
         if !IsInteger(timeout) && IsFloat(timeout) ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
             timeout := timeout * 1000
         if IsSet(WhichToolTip)
