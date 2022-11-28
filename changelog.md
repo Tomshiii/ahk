@@ -3,7 +3,7 @@ This release is a massive overhaul of how things are layed out and structured in
 
 The biggest changes;
 
-- All `lib`/`function` files now get `#Included` from the `user library` (`A_MyDocuments \AutoHotkey\lib\`). This is accomplished by creating a `SymLink` in `A_MyDocuments \AutoHotkey\lib\` that links back to `..\lib`. This SymLink is created either during the release install process or by the user running `..\Support Files\Release Assets\CreateSymLink.ahk`
+- All `lib`/`function` files now get `#Included` from the `user library` (`A_MyDocuments \AutoHotkey\lib\`). This is accomplished by creating a `SymLink` in `A_MyDocuments \AutoHotkey\lib\` that links back to `..\lib` in this repo. This SymLink is created either during the release install process or by the user running `..\Support Files\Release Assets\CreateSymLink.ahk`
 - `ptf.files[]` changed to instead invoke the `__Item` meta function to simply become; `ptf[]`
 - `..\lib\` folder completely overhauled
     - `General.ahk` is removed and split apart
@@ -21,7 +21,6 @@ The biggest changes;
 `VSCode {`
 - All VSCode functions now a class
 - VSCode class separated out into it's own file `..\lib\Classes\Apps\VSCode.ahk`
-- `VSCode.cut()` & `VSCode.copy()` functions will no longer attempt to fire if you're highlighting something not in the code window
 
 `Discord {`
 - All Discord functions now a class
@@ -33,7 +32,7 @@ The biggest changes;
 
 `Prem {`, `AE {`, `PS {`, `Resolve {`
 - All Editor functions turned into classes
-- Editor lib files moved from `..\lib\Functions\` to `..\lib\Functions\Editors\`
+- Editor lib files moved from `..\lib\Functions\` to `..\lib\Classes\Editors\`
 
 This changelog doesn't cover everything + a few functions have been broken out into their own class files, check out the `..\lib\Classes\` folder (or the wiki!) to check them out yourself!
 
@@ -45,10 +44,11 @@ This changelog doesn't cover everything + a few functions have been broken out i
 - Moved `refreshWin()` from `General.ahk` => `Windows.ahk`
 - `pauseautosave()` & `pausewindowmax()` combined into `pause.pause()`
 - `fastWheel()` sends `PgUp/Dn` instead of `WheelUp/Down` because wheel events are laggy and dumb and I really hate them
-- `getScriptRelease()` will now omit spaces/`<> html` tags in the event it returns more than just the version
+- `getScriptRelease()` will now omit `spaces` & `<> html` tags in the event it returns more than just the version number
 - Fix `libUpdateCheck()` incorrectly comparing versions
 - `tool.Cust()` now sets tooltip coordmode to `screen` so custom passed `x/y` values don't default to window
 - `winget.PremName()` will now check both the Premiere `winTitle` and `class` values as depending on the situation could yeild a blank string for either
+- `VSCode.cut()` & `VSCode.copy()` functions will no longer attempt to fire if you're highlighting something not in the code window
 
 `activeScripts()`
 - Now includes `textreplace.ahk`
@@ -77,14 +77,18 @@ This changelog doesn't cover everything + a few functions have been broken out i
 ## > Other Changes
 - Fix double key name in `KSA.ini`
 - Changed `convert2x.ahk` scripts to function `convert2()`
+- Fixed `Start new project.ahk` running `checklist.ahk` unnecessarily
     - Will now run `A_ComSpec` instead of calling cmd from the explorer window as doing so in `win11` opens the new terminal which is incredibly difficult to detect with ahk
 - Moved `HotkeyReplacer.ahk` & `Getting Started_readme.md` => `..\Support Files\Release Assets\`
     - Added `releaseGUI.ahk` to provide the user a few options after running the latest release `.exe`
-- Moved a few old scripts to => `..\Backups\Old Scripts\`
+    - Added `generateUpdate.ahk` which is the script I use to generate the release `.exe`
+- Moved a few old scripts to => `..\Backups\Old Code\`
 - Moved `newWin()` from `QMK.ahk` => `class switchTo {`
-- Fixed `Start new project.ahk` running `checklist.ahk` unnecessarily
 - Moved `..\Changelogs` => `..\Backups\Changelogs`
-- Add symlink of [`textreplace`](https://github.com/Tomshiii/textreplace) repo to `..\Support Files\textreplace\`
+
+`submodules`
+- Add submodule of [`textreplace`](https://github.com/Tomshiii/textreplace) repo to `..\Support Files\textreplace\`
+- Backup of the Wiki moved out of this repo => [`ahk_wiki`](https://github.com/Tomshiii/ahk_wiki) and then included via a submodule in `..\Backups\Wiki\`
 
 `right click premiere.ahk`
 - Fixed bug that caused `XButton1/2` to get stuck

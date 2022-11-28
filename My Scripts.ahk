@@ -87,7 +87,6 @@ startup.generate(MyRelease) ;generates/replaces the `settings.ini` file every re
 startup.locationReplace() ;runs the location variable
 startup.updateChecker(MyRelease) ;runs the update checker
 startup.trayMen() ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
-MsgBox()
 startup.firstCheck(MyRelease) ;runs the firstCheck() function
 startup.oldError() ;runs the loop to delete old log files
 startup.adobeTemp(MyRelease) ;runs the loop to delete cache files
