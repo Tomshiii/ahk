@@ -1,3 +1,6 @@
 [submodule "Support Files/textreplace"]
 	path = Support Files/textreplace
 	url = https://github.com/Tomshiii/textreplace
+[submodule "Backups/Wiki/Wiki"]
+	path = Backups/Wiki/Wiki
+	url = https://github.com/Tomshiii/ahk_wiki
