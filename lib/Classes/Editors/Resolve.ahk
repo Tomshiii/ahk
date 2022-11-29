@@ -18,6 +18,12 @@
 ; }
 
 class Resolve {
+
+    static exeTitle := Editors.Resolve.winTitle
+    static winTitle := this.exeTitle
+    static class := Editors.Resolve.class
+    static path := ptf.ProgFi "\Blackmagic Design\DaVinci Resolve\Resolve.exe"
+
     /**
      * A function to set the scale of a video within resolve
      * @param {Integer} value is the number you want to type into the text field (100% in reslove requires a 1 here for example)

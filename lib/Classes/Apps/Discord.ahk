@@ -15,6 +15,12 @@
 ; }
 
 class discord {
+
+    static exeTitle := "ahk_exe Discord.exe"
+    static winTitle := this.exeTitle
+    static class := "ahk_class Chrome_WidgetWin_1"
+    static path := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
+
     /**
      * This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \Support Files\ImageSearch\disc[button].png
      *

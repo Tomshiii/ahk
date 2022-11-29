@@ -16,6 +16,12 @@
 ; }
 
 class VSCode {
+
+    static exeTitle := browser.vscode.winTitle
+    static winTitle := "Visual Studio Code " this.exeTitle
+    static class := browser.vscode.class
+    static path := ptf.ProgFi "\Microsoft VS Code\Code.exe"
+
     /**
       * A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal"). This scripts is updated to navigate around the scripts in my repo only, it isn't super flexible and would need a bit of tinkering if you have anything else in your vscode workspace.
       *

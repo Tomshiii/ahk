@@ -18,6 +18,12 @@
 ; }
 
 class Prem {
+
+    static exeTitle := Editors.Premiere.winTitle
+    static winTitle := this.exeTitle
+    static class := Editors.Premiere.class
+    static path := ptf["Premiere"]
+
     /**
      * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
      * @param {String} item in this function defines what it will type into the search box (the name of your preset within premiere)
@@ -324,7 +330,7 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        WinActivate(editors.Premiere.winTitle)
+        WinActivate(this.winTitle)
         sleep 50
         SendInput(effectControls)
         SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
@@ -339,7 +345,7 @@ class Prem {
             return
         }
         ;get title
-        premCheck := WinGetTitle(editors.Premiere.class)
+        premCheck := WinGetTitle(this.class)
 
         ;any zooms with NO toggle
         d0yle := InStr(premCheck, "d0yle")

@@ -31,7 +31,7 @@ u::unassigned()
 j::unassigned()
 m::unassigned()
 SC149::firefoxTap()
-Enter & SC149::switchTo.closeOtherWindow(browser.class["firefox"])
+Enter & SC149::switchTo.closeOtherWindow(browser.firefox.class)
 Right & PgUp::switchTo.newWin("exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
@@ -87,7 +87,7 @@ h:: ;opens the directory for the current premiere project
 n::unassigned()
 Space::switchTo.Disc()
 Right & Space::switchTo.newWin("exe", "msedge.exe", "msedge.exe")
-Enter & Space::switchTo.closeOtherWindow(browser.winTitle["edge"])
+Enter & Space::switchTo.closeOtherWindow(browser.edge.winTitle)
 
 t::unassigned()
 g::unassigned()

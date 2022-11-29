@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2022/11/28
- * @version 1.0.2
+ * @date 2022/11/29
+ * @version 1.0.3
  ***********************************************************************/
 
 class ptf {
@@ -84,18 +84,18 @@ class ptf {
 }
 
 class browser {
-    static winTitle := Map(
-        "firefox",        "ahk_exe firefox.exe",
-        "chrome",         "ahk_exe chrome.exe",
-        "edge",           "ahk_exe msedge.exe",
-        "vscode",         "ahk_exe Code.exe",
-    )
-    static class := Map(
-        "firefox",        "ahk_class MozillaWindowClass",
-        "chrome",         "ahk_class Chrome_WidgetWin_1",
-        "edge",           "ahk_class Chrome_WidgetWin_1",
-        "vscode",         "ahk_class Chrome_WidgetWin_1",
-    )
+    static VSCode := {
+        winTitle: "ahk_exe Code.exe",   class: "ahk_class Chrome_WidgetWin_1"
+    }
+    static Firefox := {
+        winTitle: "ahk_exe firefox.exe",   class: "ahk_class MozillaWindowClass"
+    }
+    static Chrome := {
+        winTitle: "ahk_exe chrome.exe",   class: "ahk_class Chrome_WidgetWin_1"
+    }
+    static Edge := {
+        winTitle: "ahk_exe msedge.exe",   class: "ahk_class Chrome_WidgetWin_1"
+    }
 }
 
 class Editors {
@@ -114,9 +114,9 @@ class Editors {
 }
 
 ;define browsers
-GroupAdd("Browsers", browser.winTitle["firefox"])
-GroupAdd("Browsers", browser.winTitle["chrome"])
-GroupAdd("Browsers", browser.winTitle["vscode"])
+GroupAdd("Browsers", browser.firefox.winTitle)
+GroupAdd("Browsers", browser.chrome.winTitle)
+GroupAdd("Browsers", browser.VSCode.winTitle)
 
 ;define editors
 GroupAdd("Editors", editors.Premiere.winTitle)

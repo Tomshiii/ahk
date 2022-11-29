@@ -20,6 +20,8 @@ l::
 			[w[0],w[0]]
 		)"
 	)
+	sleep 500
+	SendInput("{Del}")
 }
 .::unassigned()
 ;Down::unassigned()

@@ -167,7 +167,7 @@ A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
 
 
 ;the below firefox snippet is by tomshi to disable firefox's annoying alt menu that is bound to f10 for whatever
-#HotIf WinActive(browser.winTitle["firefox"])
+#HotIf WinActive(browser.firefox.winTitle)
 F10::
 {
 	Sendinput("{Blind}{sc0E9}")

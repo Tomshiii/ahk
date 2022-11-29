@@ -18,6 +18,11 @@
 
 class Startup {
     /**
+     * Checks to see if the script was reloaded
+     */
+    static isReload() => DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
+
+    /**
      * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
      *
      * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
@@ -25,7 +30,7 @@ class Startup {
     static generate(MyRelease)
     {
         ;checks if script was reloaded
-        if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+        if this.isReload()
             return
         deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS)
         {
@@ -113,7 +118,7 @@ class Startup {
      */
     static updateChecker(MyRelease) {
         ;checks if script was reloaded
-        if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+        if this.isReload()
             return
         ;checking to see if the user wishes to check for updates
         check := IniRead(ptf["settings"], "Settings", "update check")
@@ -373,7 +378,7 @@ class Startup {
      */
     static firstCheck(MyRelease) {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
-        if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+        if this.isReload()
             return
         if !IsSet(version) ;if the user has no internet, "version" will not have been assigned a value in `updateChecker()` - this checks to see if `version` has been assigned a value
             version := ""
@@ -460,7 +465,7 @@ class Startup {
      * This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
      */
     static oldError() {
-        if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+        if this.isReload()
             return
         loop files, ptf.ErrorLog "\*.txt"
         if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
@@ -473,7 +478,7 @@ class Startup {
      * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
      */
     static adobeTemp(MyRelease) {
-        if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+        if this.isReload()
             return
         tool.Wait()
         if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
@@ -552,7 +557,7 @@ class Startup {
     */
     static locationReplace()
     {
-        if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+        if this.isReload()
             return
         tool.Wait()
         checkDir := IniRead(ptf["settings"], "Track", "working dir")
@@ -667,7 +672,7 @@ class Startup {
      */
     static libUpdateCheck()
     {
-        if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;this makes it so this function doesn't run on a refresh of the script, only on first startup
+        if this.isReload()
             return
         /**
          * This function get's the local version of the requested lib

@@ -16,6 +16,12 @@
 ; }
 
 class PS {
+
+    static exeTitle := Editors.Photoshop.winTitle
+    static winTitle := this.exeTitle
+    static class := Editors.Photoshop.class
+    static path := ptf["Photoshop"]
+
     /**
      * A function to warp to one of a photos values within Photoshop (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.
      * @param {String} image is the png name of the image that imagesearch will use

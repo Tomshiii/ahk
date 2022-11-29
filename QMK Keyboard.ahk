@@ -1,5 +1,6 @@
 ; { \\ #Includes
 #Include <\Classes\ptf>
+;there are more includes down below
 ; }
 
 #Requires AutoHotkey v2.0-beta.12
@@ -59,7 +60,7 @@ SetNumLockState("AlwaysOn")
 #HotIf getKeyState("F24", "P") and WinActive(editors.Photoshop.winTitle)
 #Include <\QMK\Photoshop>
 ;===========================================================================
-#HotIf getKeyState("F24", "P") and WinActive(browser.winTitle["vscode"])
+#HotIf getKeyState("F24", "P") and WinActive(editors.vscode.winTitle)
 #Include <\QMK\VSCode>
 ;===========================================================================
 #HotIf getKeyState("F24", "P") ;these will work everywhere

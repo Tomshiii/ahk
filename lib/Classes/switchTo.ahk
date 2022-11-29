@@ -10,12 +10,26 @@
 #Include <\Classes\ptf>
 #Include <\Classes\tool>
 #Include <\Classes\switchTo>
+;programs
+#Include <Classes\Apps\VSCode>
+#Include <Classes\Apps\Discord>
+#Include <Classes\Editors\After Effects>
+#Include <Classes\Editors\Premiere>
+#Include <Classes\Editors\Photoshop>
+;funcs
 #Include <\Functions\getHotkeys>
 #Include <\Functions\errorLog>
 ; }
 
 class switchTo {
-
+    /**
+     *
+     * @param {String} winExistVar is the winTitle you wish to pass into `winWait`
+     * @param {String} runVar is the program/path you wish to pass into `Run`
+     * @param {String} groupVar is the name you wish to pass into `GroupAdd`
+     * @param {String} addClass is the class name you wish to pass into `GroupAdd` if it's different to `winExistVar`
+     * @param {String} ignore is the winTitle you wish to pass into the `ignore` parameter of `WinActive`
+     */
     static Win(winExistVar, runVar, groupVar, addClass?, ignore?) {
         if !IsSet(addClass)
             addClass := winExistVar
@@ -93,10 +107,10 @@ class switchTo {
      */
     static Premiere()
     {
-        if !WinExist(editors.Premiere.class)
+        if !WinExist(prem.class)
             Run(ptf["Premiere"])
-        else if WinExist(editors.Premiere.class)
-            WinActivate(editors.Premiere.class)
+        else if WinExist(prem.class)
+            WinActivate(prem.class)
     }
 
     /**
@@ -106,9 +120,9 @@ class switchTo {
     {
         runae() ;cut repeat code
         {
-            Run(ptf["AE"])
-            WinWait(editors.AE.winTitle)
-            WinActivate(editors.AE.winTitle)
+            Run(AE.path)
+            WinWait(AE.winTitle)
+            WinActivate(AE.winTitle)
         }
         premTitle() ;pulls dir url from prem title and runs ae project in that dir
         {
@@ -135,8 +149,8 @@ class switchTo {
                     {
                         Run(A_LoopFileFullPath)
                         tool.Cust("Running AE file for this project")
-                        WinWait(editors.AE.winTitle)
-                        WinActivate(editors.AE.winTitle)
+                        WinWait(AE.winTitle)
+                        WinActivate(AE.winTitle)
                         return
                     }
             } catch as e {
@@ -146,21 +160,21 @@ class switchTo {
                 return
             }
         }
-        if !WinExist(editors.AE.winTitle) && WinExist(editors.Premiere.winTitle) ;if prem is open but AE isn't
+        if !WinExist(AE.winTitle) && WinExist(prem.winTitle) ;if prem is open but AE isn't
             premTitle()
-        else if WinExist(editors.AE.winTitle) && WinExist(editors.Premiere.winTitle) ;if both are open
+        else if WinExist(AE.winTitle) && WinExist(prem.winTitle) ;if both are open
             {
                 try {
                     Name := WinGetTitle("Adobe After Effects")
                     titlecheck := InStr(Name, "Adobe After Effects " ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
                     if slash := InStr(Name, "\",, -1) ;if there's a slash in the title, it means a project is open
-                        WinActivate(editors.AE.winTitle)
+                        WinActivate(AE.winTitle)
                     else
                         premTitle()
                 }
             }
-        else if WinExist(editors.AE.winTitle) && !WinExist(editors.Premiere.winTitle)
-            WinActivate(editors.AE.winTitle)
+        else if WinExist(AE.winTitle) && !WinExist(prem.winTitle)
+            WinActivate(AE.winTitle)
         else
             runae()
     }
@@ -170,19 +184,19 @@ class switchTo {
      */
     static Disc()
     {
-        move() => WinMove(-1080, -274, 1080, 1600, "ahk_exe Discord.exe") ;creating a function out of the winmove so you can easily adjust the value
-        if WinExist("ahk_exe Discord.exe")
+        move() => WinMove(-1080, -274, 1080, 1600, discord.winTitle) ;creating a function out of the winmove so you can easily adjust the value
+        if WinExist(discord)
             {
-                WinActivate("ahk_exe Discord.exe")
-                if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
+                WinActivate(discord)
+                if WinGetMinMax(discord) = 1 ;a return value of 1 means it is maximised
                     WinRestore() ;winrestore will unmaximise it
                 move() ; just incase it isn't in the right spot/fullscreened for some reason
                 tool.Cust("Discord is now active", 500) ;this is simply because it's difficult to tell when discord has focus if it was already open
                 return
             }
-        Run(ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe")
-        WinWait("ahk_exe Discord.exe")
-        if WinGetMinMax("ahk_exe Discord.exe") = 1 ;a return value of 1 means it is maximised
+        Run(discord.path)
+        WinWait(discord)
+        if WinGetMinMax(discord) = 1 ;a return value of 1 means it is maximised
             WinRestore() ;winrestore will unmaximise it
         move() ;moves it into position after opening
     }
@@ -190,19 +204,19 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Photo() => this.Win(editors.Photoshop.winTitle, ptf["Photoshop"], "photoshop")
+    static Photo() => this.Win(PS.winTitle, PS.path, "photoshop")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
     static Firefox()
     {
-        if !WinExist(browser.class["firefox"])
+        if !WinExist(browser.firefox.class)
             Run("firefox.exe")
-        else if WinActive(browser.winTitle["firefox"])
+        else if WinActive(browser.firefox.winTitle)
             this.OtherFirefoxWindow()
         else
-            WinActivate(browser.winTitle["firefox"])
+            WinActivate(browser.firefox.winTitle)
     }
 
     /**
@@ -210,24 +224,24 @@ class switchTo {
      */
     static OtherFirefoxWindow() ;I use this as a nested function below in firefoxTap(), you can just use this separately
     {
-        if !WinExist(browser.winTitle["firefox"])
+        if !WinExist(browser.firefox.winTitle)
             {
                 Run("firefox.exe")
                 return
             }
-        if WinActive(browser.class["firefox"])
+        if WinActive(browser.firefox.class)
             {
-                GroupAdd("firefoxes", browser.class["firefox"])
+                GroupAdd("firefoxes", browser.firefox.class)
                 GroupActivate("firefoxes", "r")
                 return
             }
-        WinActivate(browser.class["firefox"])
+        WinActivate(browser.firefox.class)
     }
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static VSCode() => this.Win(browser.winTitle["vscode"], ptf.ProgFi "\Microsoft VS Code\Code.exe", "code")
+    static VSCode() => this.Win(VSCode.winTitle, VSCode.path, "code")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
@@ -262,7 +276,7 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Edge() => this.Win(browser.winTitle["edge"], "msedge.exe", "edge")
+    static Edge() => this.Win(browser.edge.winTitle, "msedge.exe", "edge")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one

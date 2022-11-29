@@ -36,7 +36,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.8
+;\\v2.23.9
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -307,9 +307,9 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 	 */
 	check(pass, tick) {
 		timepass := A_TickCount-tick
-		if !WinExist(browser.winTitle["firefox"])
-			WinWait(browser.winTitle["firefox"])
-		title := WinGetTitle(browser.winTitle["firefox"])
+		if !WinExist(browser.firefox.winTitle)
+			WinWait(browser.firefox.winTitle)
+		title := WinGetTitle(browser.firefox.winTitle)
 		if InStr(title, pass)
 			{
 				SetTimer(, 0)
@@ -317,7 +317,7 @@ AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk doc
 			}
 		if InStr(title, "Error!") || timepass >= 5000
 			{
-				WinActivate(browser.winTitle["firefox"])
+				WinActivate(browser.firefox.winTitle)
 				SendInput("^w")
 				Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm")
 				SetTimer(, 0)
@@ -397,7 +397,7 @@ F18:: ;open the "show more options" menu in win11
 		}
 }
 
-#HotIf WinActive(browser.winTitle["vscode"])
+#HotIf WinActive(vscode.winTitle)
 ;vscodemsHotkey;
 !a::VSCode.script(17) ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
@@ -413,7 +413,7 @@ $^x::VSCode.cut()
 ;vscodeCopyHotkey;
 $^c::VSCode.copy()
 
-#HotIf WinActive(browser.winTitle["firefox"])
+#HotIf WinActive(browser.firefox.winTitle)
 ;pauseyoutubeHotkey;
 Media_Play_Pause:: ;pauses youtube video if there is one.
 {
