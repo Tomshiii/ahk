@@ -61,15 +61,13 @@ check()
                 {
                     if A_TimeIdleKeyboard > 1250 ;ensures this script doesn't try to fire while a hotkey is being used
                         {
-                            winget.isFullscreen(&title, &full)
-                            if full = 0
+                            if !winget.isFullscreen(&title)
                                 WinMaximize(title)
                             SetTimer(, -fire) ;adds 5s to the timer and will check again after that time has elapsed
                         }
                     else
                         {
-                            winget.isFullscreen(&title, &full)
-                            if full = 0
+                            if !winget.isFullscreen(&title)
                                 {
                                     fireRound := Round(fire/1000, 1)
                                     tool.Cust(A_ScriptName " attempted to reset the fullscreen of " getProgram " but was reset due to interactions with a keyboard`nIt will attempt again in " fireRound "s", 2000)

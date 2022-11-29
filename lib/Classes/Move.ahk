@@ -49,8 +49,7 @@ class Move {
                 WinMinimize(window)
             if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
                 {
-                    winget.isFullscreen(&title, &full, window)
-                    if full = 0
+                    if !winget.isFullscreen(&title, window)
                         WinMaximize(window)
                     else
                         WinRestore(window)
@@ -235,8 +234,7 @@ class Move {
         SetTimer(isfull, -1500)
         isfull() {
             try {
-                winget.isFullscreen(&title, &full, title)
-                if full = 0
+                if !winget.isFullscreen(&title, title)
                     WinMaximize(title)
             }
             SetTimer(, 0)

@@ -36,7 +36,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.9
+;\\v2.23.10
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -173,8 +173,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			}
 		}
 		try { ;if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
-			winget.isFullscreen(&testWin, &full, title)
-			if full = 0
+			winget.isFullscreen(&testWin, title)
 				{
 					WinMaximize(title,, "Editing Checklist -")
 					goto tryagain
@@ -206,8 +205,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		case 1: ;first toggle
 			width := monitor.right - monitor.left ;determining the width of the current monitor
 			height := monitor.bottom - monitor.top ;determining the height of the current monitor
-			winget.isFullscreen(&title2, &full, title) ;checking if the window is fullscreen
-			if full = 1
+			if winget.isFullscreen(&title2, title) ;checking if the window is fullscreen
 				WinRestore(title2,, "Editing Checklist -") ;winrestore will unmaximise it
 
 			newWidth := width / 1.6 ;determining our new width
@@ -249,11 +247,10 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 ;fullscreenHotkey;
 #f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
 {
-	winget.isFullscreen(&title, &full)
-	if full = 0
-		WinMaximize(title,, "Editing Checklist -") ;winrestore will unmaximise it
+	if !winget.isFullscreen(&title)
+		WinMaximize(title)
 	else
-		WinRestore(title,, "Editing Checklist -")
+		WinRestore(title) ;winrestore will unmaximise it
 }
 
 ;jump10charLeftHotkey;
@@ -741,8 +738,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			SendInput("{Up}")
 		}
 	sleep 250
-	winget.isFullscreen(&title, &full)
-	if full = 1 ;a return value of 1 means it is maximised
+	if winget.isFullscreen(&title)
 		WinRestore(title) ;winrestore will unmaximise it
 	newWidth := 1600
 	newHeight := 900
@@ -843,6 +839,8 @@ LAlt & Xbutton2:: ;this is necessary for the below function to work
 Xbutton2::prem.mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 #Include right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+
+;auto excecuting stuff will no longer function below this^ include
 
 ;bonkHotkey;
 F19::prem.audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20

@@ -71,10 +71,9 @@ class WinGet {
     /**
      * This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
      * @param {var} title is the active window, this function will populate the `title` variable with the active window
-     * @param {var} full is representing if the active window is fullscreen or not. If it is, it will return 1, else it will return 0
      * @param {String} window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
      */
-    static isFullscreen(&title, &full, window := false)
+    static isFullscreen(&title, window := false)
     {
         if window != false
             {
@@ -86,10 +85,7 @@ class WinGet {
         if title = "Program Manager" ;this is the desktop. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
             title := ""
         try {
-            if WinGetMinMax(title,, "Editing Checklist -") = 1 ;a return value of 1 means it is maximised
-                full := 1
-            else
-                full := 0
+            return WinGetMinMax(title,, "Editing Checklist -") = 1 ;a return value of 1 means it is maximised
         } catch as e {
             tool.Cust(A_ThisFunc "() couldn't determine the active window")
             errorLog(e, A_ThisFunc "()")

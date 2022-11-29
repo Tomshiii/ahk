@@ -36,7 +36,7 @@ hotkey::
 ```
 Note:
 - `variableZ` doesn't have to be used and can be omitted from the function call
-- An example of a function in this repo that passes back a variable & also uses defaults is [`isFullscreen()`](https://github.com/Tomshiii/ahk/blob/main/lib/Functions/Windows.ahk)
+- An example of a function in this repo that passes back a variable & also uses defaults is [`isFullscreen()`](https://github.com/Tomshiii/ahk/blob/main/lib/Classes/winGet.ahk)
 
 Functions can also be definied within a `class` and are called differently depending on how that class is structured. Most of the functions within my classes are defined as `static` functions which means we call the function like so;
 ```c++

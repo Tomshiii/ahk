@@ -49,6 +49,7 @@ This changelog doesn't cover everything + a few functions have been broken out i
 - `tool.Cust()` now sets tooltip coordmode to `screen` so custom passed `x/y` values don't default to window
 - `winget.PremName()` will now check both the Premiere `winTitle` and `class` values as depending on the situation could yeild a blank string for either
 - `VSCode.cut()` & `VSCode.copy()` functions will no longer attempt to fire if you're highlighting something not in the code window
+- `winget.isFullscreen()` now returns `true/false` if the window is fullscreen or not instead of filling a variable
 
 `activeScripts()`
 - Now includes `textreplace.ahk`
