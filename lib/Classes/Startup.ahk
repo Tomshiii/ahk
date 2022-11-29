@@ -674,6 +674,9 @@ class Startup {
     {
         if this.isReload()
             return
+        check := IniRead(ptf["settings"], "Settings", "update check")
+        if check = "stop"
+            return
         /**
          * This function get's the local version of the requested lib
          * @param {any} path is the local path the lib is located
