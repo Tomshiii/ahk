@@ -23,7 +23,7 @@ reload_reset_exit(which, includeChecklist?) {
     value := WinGetList("ahk_class AutoHotkey")
     for this_value in value
         {
-            name := WinGettitle(this_value,, "Visual Studio Code")
+            name := WinGettitle(this_value,, browser.vscode.winTitle)
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
             script := SplitPathObj(path)
             if all != true && (script.Name = "checklist.ahk" || script.Name = "My Scripts.ahk" || script.Name = "launcher.ahk")
@@ -60,6 +60,6 @@ reload_reset_exit(which, includeChecklist?) {
         case "exit":
             detect()
             if WinExist("My Scripts.ahk")
-                ProcessClose(WinGetPID("My Scripts.ahk",, "Visual Studio Code"))
+                ProcessClose(WinGetPID("My Scripts.ahk",, browser.vscode.winTitle))
     }
 }

@@ -29,7 +29,7 @@ closeWaitUntil()
 {
     detect()
     if WinExist("waitUntil.ahk")
-        ProcessClose(WinGetPID("waitUntil.ahk",, "Visual Studio Code"))
+        ProcessClose(WinGetPID("waitUntil.ahk",, browser.vscode.winTitle))
 }
 
 ;defining what happens if the script is somehow opened a second time and the function is forced to close

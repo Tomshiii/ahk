@@ -17,8 +17,8 @@ waitUntil()
     detect()
     if !WinExist("Adobe Premiere Pro") && !WinExist(editors.AE.winTitle)
         {
-            if WinExist("checklist.ahk",, "Visual Studio Code")
-                ProcessClose(WinGetPID("checklist.ahk",, "Visual Studio Code"))
+            if WinExist("checklist.ahk",, browser.vscode.winTitle)
+                ProcessClose(WinGetPID("checklist.ahk",, browser.vscode.winTitle))
             SetTimer(, 0)
             return
         }
@@ -64,8 +64,8 @@ waitUntil()
             SetTimer(, -1000)
             return
         }
-    if WinExist("checklist.ahk",, "Visual Studio Code")
-        ProcessClose(WinGetPID("checklist.ahk",, "Visual Studio Code"))
+    if WinExist("checklist.ahk",, browser.vscode.winTitle)
+        ProcessClose(WinGetPID("checklist.ahk",, browser.vscode.winTitle))
     Run(ptf["checklist"])
     SetTimer(, 0)
 }

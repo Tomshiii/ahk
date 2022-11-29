@@ -84,7 +84,7 @@ fastWheel()
 		WinActivate(titleUnder)
     WinWaitActive(titleUnder)
     proc := WinGetProcessName(titleUnder)
-    if InStr(WinGetTitle(titleUnder), "Visual Studio Code") && proc = "Code.exe" && !InStr(WinGetTitle(titleUnder), "Preview")
+    if InStr(WinGetTitle(titleUnder), browser.vscode.winTitle) && proc = "Code.exe" && !InStr(WinGetTitle(titleUnder), "Preview")
         SendInput(focusCode)
 	SendInput("{Pg" type "}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
 	/* SendInput("{" second " 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
