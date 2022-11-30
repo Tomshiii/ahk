@@ -1,15 +1,23 @@
 ; { \\ #Includes
 #Include <Classes\Dark>
+#Include <Classes\winGet>
 #Include <Functions\getScriptRelease>
 ; }
 
 ;define menu
 ;file menus
 FileMenu := Menu()
-FileMenu.Add("&Add Checkbox`tCtrl+A", addNew)
-FileMenu.Add("&New`tCtrl+N", fileNewandOpen)
-FileMenu.Add("&Open`tCtrl+O", fileNewandOpen)
-FileMenu.Add("&Open Project Folder`tCtrl+P", openProj)
+newSub := Menu()
+FileMenu.Add("&New", newSub)
+newSub.Add("&New Project`tCtrl+N", fileNewandOpen)
+newSub.Add("&Add Checkbox`tCtrl+A", addNew)
+openSub := Menu()
+FileMenu.Add("&Open", openSub)
+openSub.Add("&Project`tCtrl+O", fileNewandOpen)
+openSub.Add("&Current Project Folder`tCtrl+P", openProj)
+openSub.Add("&Logs`tCtrl+L", openLog)
+openSub.Add("&ini`tCtrl+I", openini)
+
 FileMenu.Add("E&xit", close)
 ;settings menu
 SettingsMenu := Menu()
@@ -52,7 +60,6 @@ updateSub.Add("&Stable", updateCheck)
 updateSub.Add("&Beta", updateCheck)
 HelpMenu.Add("&Github", github)
 HelpMenu.Add("&Hours Worked", hours)
-HelpMenu.Add("&Open Logs`tCtrl+L", openLog)
 ;define the entire menubar
 bar := MenuBar()
 bar.Add("&File", FileMenu)
@@ -361,27 +368,39 @@ openLog(*)
 openProj(*)
 {
     SplitPath(checklist,, &projDir)
-    if WinExist(projDir)
-        WinActivate(projDir)
+    WinGet.PremName(&premCheck, &titleCheck, &saveCheck)
+    if WinExist(projDir,, premCheck)
+        WinActivate(projDir,, premCheck)
     else
         {
-            Run(projDir)
-            if WinWait(projDir,, 2)
-                WinActivate(projDir)
+            Run("explore " projDir)
+            if WinWait(projDir,, 2, premCheck)
+                WinActivate(projDir,, premCheck)
         }
+}
+
+openini(*) {
+    MyGui.GetPos(&x, &y, &width, &height)
+    if WinExist("checklist.ini") ;if ini already open, get pos, close, and then reopen to refresh
+        refreshWin("checklist.ini", checklist)
+    else
+        Run("Notepad.exe " checklist)
+    WinWait("checklist.ini")
+    WinMove(x-322, y, 322, height-2, "checklist.ini")
 }
 
 addNew(*)
 {
     MyGui.GetPos(&x, &y, &width, &height)
-    addGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Hours Worked")
+    addGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Add Checkbox")
     addGUI.Opt("+Owner" MyGui.Hwnd)
     MyGui.Opt("+Disabled")
 
-    addGUI.Add("Text", "W150", "Add Checkbox")
-    addcheck := addGUI.Add("Edit", "r1 W150 y+10")
-    submitbut := addGUI.Add("Button", "", "add")
+    addGUI.Add("Text", "Section W150", "Add New Checkbox:")
+    addcheck := addGUI.Add("Edit", "r1 W150 xs y+10 Limit15")
+    submitbut := addGUI.Add("Button", "Default", "add")
     submitbut.OnEvent("Click", addcheckbox)
+    addGUI.AddButton("x+10", "cancel").OnEvent("Click", addClose)
 
     addGUI.OnEvent("Close", addClose)
     addGUI.Show("AutoSize")

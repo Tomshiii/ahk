@@ -94,3 +94,8 @@ This changelog doesn't cover everything + a few functions have been broken out i
 `right click premiere.ahk`
 - Fixed bug that caused `XButton1/2` to get stuck
 - Fixed bug that would cause macro to lag & get stuck within a loop that constantly spammed `Move Playhead to Cursor`
+
+`checklist.ahk`
+- Fixed `open project` activating premiere window instead of opening windows explorer
+- Added menu button to open `checklist.ini` for current project
+- Tidied up menus
