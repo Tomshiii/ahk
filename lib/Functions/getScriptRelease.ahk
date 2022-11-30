@@ -1,6 +1,6 @@
 ; { \\ #Includes
-#Include <\Classes\tool>
-#Include <\Functions\errorLog>
+#Include <Classes\tool>
+#Include <Functions\errorLog>
 ; }
 
 /**

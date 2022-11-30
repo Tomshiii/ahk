@@ -1,7 +1,7 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\tool>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\tool>
 ; }
 
 ;this is a script to just activate the window any route documents are on then progress it forward. I have a habit of clicking off it and scrambling to move it along

@@ -1,10 +1,10 @@
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\Editors\Premiere>
-#Include <\Classes\tool>
-#Include <\Classes\block>
-#Include <\Classes\ptf>
-#Include <\Functions\errorLog>
-#Include <\QMK\unassigned>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\Editors\Premiere>
+#Include <Classes\tool>
+#Include <Classes\block>
+#Include <Classes\ptf>
+#Include <Functions\errorLog>
+#Include <QMK\unassigned>
 
 BackSpace & SC027::prem.keyframe("position")
 BackSpace & /::prem.keyframe("position")

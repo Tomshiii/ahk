@@ -1,5 +1,5 @@
-#Include <\Classes\Editors\After Effects>
-#Include <\QMK\unassigned>
+#Include <Classes\Editors\After Effects>
+#Include <QMK\unassigned>
 
 BackSpace::unassigned()
 SC028::unassigned()

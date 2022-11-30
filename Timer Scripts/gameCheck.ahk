@@ -3,10 +3,10 @@
 #SingleInstance Force
 
 ; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\pause>
-#Include <\GUIs>
-#Include <\gameCheck\Game List> ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
+#Include <Classes\ptf>
+#Include <Classes\pause>
+#Include <GUIs>
+#Include <gameCheck\Game List> ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
 ; }
 
 TraySetIcon(ptf.Icons "\game.png")

@@ -1,7 +1,7 @@
 ; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Other\7zip\SevenZip>
-#Include <\Classes\tool>
+#Include <Classes\ptf>
+#Include <Other\7zip\SevenZip>
+#Include <Classes\tool>
 ; }
 
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release

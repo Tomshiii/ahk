@@ -1,6 +1,6 @@
 ; { \\ #Includes
-#Include <\Classes\coord>
-#Include <\Classes\block>
+#Include <Classes\coord>
+#Include <Classes\block>
 ; }
 
 /**

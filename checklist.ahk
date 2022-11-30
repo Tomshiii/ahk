@@ -2,25 +2,25 @@
 #Requires AutoHotkey v2.0-beta.5
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\block>
-#Include <\Functions\floorDecimal>
-#Include <\Functions\errorLog>
-#Include <\Functions\detect>
-#Include <\GUIs>
-; <checklist funcs> ;everything in <\lib\checklist\> is needed for this script
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\block>
+#Include <Functions\floorDecimal>
+#Include <Functions\errorLog>
+#Include <Functions\detect>
+#Include <GUIs>
+; <checklist funcs> ;everything in <lib\checklist\> is needed for this script
                     ;but these are just the ones that can be defined anywhere
-#Include <\checklist\generateIni>
-#Include <\checklist\premNotOpen>
-#Include <\checklist\problemDir>
-#Include <\checklist\trythenDel>
-#Include <\checklist\timers>
-#Include <\checklist\log>
-#Include <\checklist\close>
-#Include <\checklist\getPath>
-#Include <\checklist\haltChecklist>
+#Include <checklist\generateIni>
+#Include <checklist\premNotOpen>
+#Include <checklist\problemDir>
+#Include <checklist\trythenDel>
+#Include <checklist\timers>
+#Include <checklist\log>
+#Include <checklist\close>
+#Include <checklist\getPath>
+#Include <checklist\haltChecklist>
 ; }
 
 TraySetIcon(ptf.Icons "\checklist.ico")
@@ -174,7 +174,7 @@ if FileExist(ptf["settings"])
             global globalDarkTool := 0
     }
 
-#Include <\checklist\verCheck>
+#Include <checklist\verCheck>
 
 ;getting the title
 SplitPath(path, &name)
@@ -191,7 +191,7 @@ if !FileExist(logs)
 newDate(&today)
 
 ;constructing the GUI
-#Include <\checklist\contruct>
+#Include <checklist\contruct>
 
 
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", logs)

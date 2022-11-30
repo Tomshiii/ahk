@@ -7,14 +7,14 @@
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\block>
-#Include <\Classes\coord>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\winget>
-#Include <\Functions\errorLog>
-#Include <\Functions\getHotkeys>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\block>
+#Include <Classes\coord>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\winget>
+#Include <Functions\errorLog>
+#Include <Functions\getHotkeys>
 ; }
 
 class Prem {

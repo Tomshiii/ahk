@@ -1,11 +1,11 @@
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\ptf>
-#Include <\Classes\winGet>
-#Include <\Classes\tool>
-#Include <\Classes\block>
-#Include <\Functions\detect>
-#Include <\Functions\errorLog>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\ptf>
+#Include <Classes\winGet>
+#Include <Classes\tool>
+#Include <Classes\block>
+#Include <Functions\detect>
+#Include <Functions\errorLog>
 ; }
 
 SetTimer(waitUntil, -1000)

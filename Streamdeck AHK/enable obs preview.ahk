@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
+#Include <KSA\Keyboard Shortcut Adjustments>
 ; }
 
 if WinExist("ahk_exe obs64.exe")

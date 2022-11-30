@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include <\Classes\Dark>
+#Include <Classes\Dark>
 #Include <Functions\getScriptRelease>
 ; }
 

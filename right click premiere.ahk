@@ -9,12 +9,12 @@ CoordMode("Pixel", "screen")
 ; I NO LONGER RUN THIS SCRIPT SEPARATELY. I was running into issues with scripts loading after this one and it then breaking so to compensate I run it WITHIN the `My Scripts.ahk` so it never breaks -Tomshi
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\tool>
-#Include <\Classes\block>
-#Include <\Classes\ptf>
-#Include <\Functions\SplitPathObj>
-#Include <\Functions\errorLog>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\tool>
+#Include <Classes\block>
+#Include <Classes\ptf>
+#Include <Functions\SplitPathObj>
+#Include <Functions\errorLog>
 ; }
 
 

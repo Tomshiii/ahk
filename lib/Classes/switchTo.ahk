@@ -6,18 +6,18 @@
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <\GUIs>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
+#Include <GUIs>
+#Include <Classes\ptf>
+#Include <Classes\tool>
 ;programs
-#Include <\Classes\Apps\VSCode>
-#Include <\Classes\Apps\Discord>
-#Include <\Classes\Editors\After Effects>
-#Include <\Classes\Editors\Premiere>
-#Include <\Classes\Editors\Photoshop>
+#Include <Classes\Apps\VSCode>
+#Include <Classes\Apps\Discord>
+#Include <Classes\Editors\After Effects>
+#Include <Classes\Editors\Premiere>
+#Include <Classes\Editors\Photoshop>
 ;funcs
-#Include <\Functions\getHotkeys>
-#Include <\Functions\errorLog>
+#Include <Functions\getHotkeys>
+#Include <Functions\errorLog>
 ; }
 
 class switchTo {

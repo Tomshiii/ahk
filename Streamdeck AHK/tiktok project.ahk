@@ -1,8 +1,8 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\coord>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\coord>
 ; }
 
 if WinActive(editors.Premiere.winTitle)

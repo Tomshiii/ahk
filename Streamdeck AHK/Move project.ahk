@@ -1,6 +1,6 @@
 ;#SingleInstance Force ;don't want to accidentally start a second instance while it's mid move
 ; { \\ #Includes
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 ; }
 
 ;; This part makes you select the folder you wish to move

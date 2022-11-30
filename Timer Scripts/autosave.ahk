@@ -2,16 +2,16 @@
 #Requires AutoHotkey v2.0-beta.12
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\switchTo>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\block>
-#Include <\Classes\winget>
-#Include <\Classes\switchTo>
-#Include <\Functions\detect>
-#Include <\Functions\errorLog>
-#Include <\Classes\Startup>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\switchTo>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\block>
+#Include <Classes\winget>
+#Include <Classes\switchTo>
+#Include <Functions\detect>
+#Include <Functions\errorLog>
+#Include <Classes\Startup>
 ; }
 
 A_MaxHotkeysPerInterval := 2000

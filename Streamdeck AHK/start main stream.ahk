@@ -1,7 +1,7 @@
 ﻿; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\coord>
-#Include <\Classes\block>
+#Include <Classes\ptf>
+#Include <Classes\coord>
+#Include <Classes\block>
 #Include <Functions\SD Functions\win_locations>
 ; }
 

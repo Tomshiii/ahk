@@ -1,6 +1,6 @@
 ; { \\ #Includes
-#Include <\checklist\menubar>
-#Include <\checklist\checkboxes>
+#Include <checklist\menubar>
+#Include <checklist\checkboxes>
 ; }
 
 ; MyGui will be the actual Gui instance.
@@ -15,8 +15,8 @@ titleText.SetFont("bold")
 checkboxes.gatherCheckboxes()
 
 ;creating buttons
-#Include <\checklist\buttons>
+#Include <checklist\buttons>
 
 ;creating timer text
-#Include <\checklist\timerText>
+#Include <checklist\timerText>
 MyGui.AddButton("Default X0 Y0 W0 H0", ".")

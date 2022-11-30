@@ -1,5 +1,5 @@
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\QMK\unassigned>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <QMK\unassigned>
 
 BackSpace::unassigned()
 SC028::unassigned() ; ' key

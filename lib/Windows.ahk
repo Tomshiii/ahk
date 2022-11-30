@@ -1,11 +1,11 @@
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\coord>
-#Include <\Classes\winGet>
-#Include <\Functions\errorLog>
-#Include <\Functions\getHotkeys>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\coord>
+#Include <Classes\winGet>
+#Include <Functions\errorLog>
+#Include <Functions\getHotkeys>
 ; }
 
 /**

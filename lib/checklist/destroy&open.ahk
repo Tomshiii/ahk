@@ -1,6 +1,6 @@
 ; { \\ #Includes
 #Include <Functions\detect>
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 ; }
 
 detect()

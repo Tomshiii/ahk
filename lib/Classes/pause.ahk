@@ -5,8 +5,8 @@
  * @version 1.0.0
  ***********************************************************************/
 
-#Include <\Functions\detect>
-#Include <\Classes\tool>
+#Include <Functions\detect>
+#Include <Classes\tool>
 
 class Pause {
     /**

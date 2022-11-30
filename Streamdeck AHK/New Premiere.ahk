@@ -3,11 +3,11 @@ SetWorkingDir A_ScriptDir
 SetDefaultMouseSpeed 0
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\ptf>
-#Include <\Classes\pause>
-#Include <\Classes\coord>
-#Include <\Classes\block>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\ptf>
+#Include <Classes\pause>
+#Include <Classes\coord>
+#Include <Classes\block>
 ; }
 
 ;This version of the script (from 5th May, 2022) is designed for Premiere v22.3.1 (and beyond)

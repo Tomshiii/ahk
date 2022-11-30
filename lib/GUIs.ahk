@@ -1,14 +1,14 @@
 ; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\Dark>
-#Include <\settingsGUI\gameCheckGUI>
-#Include <\settingsGUI\editValues>
-#Include <\Functions\detect>
-#Include <\Functions\SplitPathObj>
-#Include <\Functions\On_WM_MOUSEMOVE>
-#Include <\Functions\reload_reset_exit>
-#Include <\Windows>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\Dark>
+#Include <settingsGUI\gameCheckGUI>
+#Include <settingsGUI\editValues>
+#Include <Functions\detect>
+#Include <Functions\SplitPathObj>
+#Include <Functions\On_WM_MOUSEMOVE>
+#Include <Functions\reload_reset_exit>
+#Include <Windows>
 ; }
 
 /**

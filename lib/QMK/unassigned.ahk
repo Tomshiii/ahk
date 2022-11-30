@@ -1,4 +1,4 @@
-#Include <\Classes\tool>
+#Include <Classes\tool>
 
 /**
  * This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet

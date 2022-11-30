@@ -12,25 +12,25 @@ A_MaxHotkeysPerInterval := 400 ;BE VERY CAREFUL WITH THIS SETTING. If you make t
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\Apps\Discord>
-#Include <\Classes\Apps\VSCode>
-#Include <\Classes\Editors\After Effects>
-#Include <\Classes\Editors\Photoshop>
-#Include <\Classes\Editors\Premiere>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\block>
-#Include <\Classes\coord>
-#Include <\Classes\switchTo>
-#Include <\Classes\Move>
-#Include <\Classes\winget>
-#Include <\Functions\reload_reset_exit>
-#Include <\Functions\errorLog>
-#Include <\Functions\mouseDrag>
-#Include <\Classes\Startup>
-#Include <\Windows>
-#Include <\GUIs>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\Apps\Discord>
+#Include <Classes\Apps\VSCode>
+#Include <Classes\Editors\After Effects>
+#Include <Classes\Editors\Photoshop>
+#Include <Classes\Editors\Premiere>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\block>
+#Include <Classes\coord>
+#Include <Classes\switchTo>
+#Include <Classes\Move>
+#Include <Classes\winget>
+#Include <Functions\reload_reset_exit>
+#Include <Functions\errorLog>
+#Include <Functions\mouseDrag>
+#Include <Classes\Startup>
+#Include <Windows>
+#Include <GUIs>
 ;#Include right click premiere.ahk ; this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 #Requires AutoHotkey v2.0-beta.12

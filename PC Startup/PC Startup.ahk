@@ -1,4 +1,4 @@
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 SetWorkingDir(ptf.rootDir)
 ;// This script is included more as a backup for myself and not really because it's helpful.
 

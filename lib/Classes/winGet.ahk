@@ -6,11 +6,11 @@
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\block>
-#Include <\Classes\coord>
-#Include <\Functions\errorLog>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\block>
+#Include <Classes\coord>
+#Include <Functions\errorLog>
 ; }
 
 class WinGet {

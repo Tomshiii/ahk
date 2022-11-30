@@ -7,13 +7,13 @@
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <\GUIs>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\Dark>
-#Include <\Functions\errorLog>
+#Include <GUIs>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\Dark>
+#Include <Functions\errorLog>
 ; // libs
-#Include <\Other\_DLFile>
+#Include <Other\_DLFile>
 ; }
 
 class Startup {

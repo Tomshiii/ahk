@@ -1,7 +1,7 @@
 ; { \\ #Includes
-#Include <\Functions\SplitPathObj>
-#Include <\Functions\getScriptRelease>
-#Include <\Classes\ptf>
+#Include <Functions\SplitPathObj>
+#Include <Functions\getScriptRelease>
+#Include <Classes\ptf>
 ; }
 
 /**

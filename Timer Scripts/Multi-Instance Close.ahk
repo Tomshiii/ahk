@@ -1,10 +1,10 @@
 #SingleInstance Force
 
 ; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Functions\detect>
-#Include <\Functions\SplitPathObj>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Functions\detect>
+#Include <Functions\SplitPathObj>
 ; }
 
 TraySetIcon(ptf.Icons "\M-I_C.png")

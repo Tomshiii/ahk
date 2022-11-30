@@ -1,9 +1,9 @@
 ﻿#SingleInstance Force
 
 ; { \\ #Includes
-#Include <\Functions\detect>
-#Include <\Classes\coord>
-#Include <\Classes\ptf>
+#Include <Functions\detect>
+#Include <Classes\coord>
+#Include <Classes\ptf>
 #Include <Functions\SD Functions\win_locations>
 ; }
 

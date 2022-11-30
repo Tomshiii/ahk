@@ -1,8 +1,8 @@
 ﻿; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\coord>
-#Include <\Classes\block>
-#Include <\Classes\pause>
+#Include <Classes\ptf>
+#Include <Classes\coord>
+#Include <Classes\block>
+#Include <Classes\pause>
 ; }
 
 if WinActive(editors.Premiere.winTitle)

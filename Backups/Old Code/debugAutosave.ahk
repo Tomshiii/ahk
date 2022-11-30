@@ -1,6 +1,6 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\coord>
 ; }

@@ -7,8 +7,8 @@ TraySetIcon(ptf.Icons "\streaming.ico") ;changes the icon this script uses in th
 #SingleInstance Force
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Functions\ptf>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Functions\ptf>
 ; }
 
 IniWrite(0, ptf["StreamINI"], "Number", "Left")

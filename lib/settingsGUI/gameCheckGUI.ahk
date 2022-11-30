@@ -1,7 +1,7 @@
 ; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\Dark>
-#Include <\Functions\detect>
+#Include <Classes\ptf>
+#Include <Classes\Dark>
+#Include <Functions\detect>
 ; }
 
 /**

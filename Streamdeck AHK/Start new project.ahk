@@ -1,6 +1,6 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 ; }
 
 ;; This part makes you select the folder you wish to create the nested folders in

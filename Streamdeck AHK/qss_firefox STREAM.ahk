@@ -3,10 +3,10 @@ SetDefaultMouseSpeed 0
 #WinActivateForce
 
 ; { \\ #Includes
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\pause>
-#Include <\Classes\coord>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\pause>
+#Include <Classes\coord>
 ; }
 
 ;

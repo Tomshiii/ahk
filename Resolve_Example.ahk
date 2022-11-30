@@ -7,13 +7,13 @@ SetDefaultMouseSpeed 0
 TraySetIcon(ptf.Icons "\resolve.png")
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\Editors\Resolve>
-#Include <\Classes\switchTo>
-#Include <\Classes\ptf>
-#Include <\Classes\coord>
-#Include <\Classes\block>
-#Include <\Classes\tool>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\Editors\Resolve>
+#Include <Classes\switchTo>
+#Include <Classes\ptf>
+#Include <Classes\coord>
+#Include <Classes\block>
+#Include <Classes\tool>
 ; }
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version

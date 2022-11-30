@@ -1,6 +1,6 @@
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\ptf>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\ptf>
 ; }
 
 /**

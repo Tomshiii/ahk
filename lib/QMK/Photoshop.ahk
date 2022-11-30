@@ -1,5 +1,5 @@
-#Include <\Classes\Editors\Photoshop>
-#Include <\QMK\unassigned>
+#Include <Classes\Editors\Photoshop>
+#Include <QMK\unassigned>
 
 BackSpace::unassigned()
 SC028::unassigned()

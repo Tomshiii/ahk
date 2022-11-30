@@ -6,13 +6,13 @@
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <\KSA\Keyboard Shortcut Adjustments>
-#Include <\Classes\block>
-#Include <\Classes\coord>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\winGet>
-#Include <\Functions\errorLog>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\block>
+#Include <Classes\coord>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\winGet>
+#Include <Functions\errorLog>
 ; }
 
 class Move {

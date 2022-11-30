@@ -1,9 +1,9 @@
-#Include <\QMK\unassigned>
-#Include <\Classes\switchTo>
-#Include <\Classes\ptf>
-#Include <\Functions\errorLog>
-#Include <\Functions\detect>
-#Include <\GUIs>
+#Include <QMK\unassigned>
+#Include <Classes\switchTo>
+#Include <Classes\ptf>
+#Include <Functions\errorLog>
+#Include <Functions\detect>
+#Include <GUIs>
 
 BackSpace::unassigned()
 SC028::unassigned() ; ' key

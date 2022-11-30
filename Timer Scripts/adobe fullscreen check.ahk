@@ -2,10 +2,10 @@
 #Requires AutoHotkey v2.0-beta.12
 
 ; { \\ #Includes
-#Include <\Functions\errorLog>
-#Include <\Classes\ptf>
-#Include <\Classes\tool>
-#Include <\Classes\winget>
+#Include <Functions\errorLog>
+#Include <Classes\ptf>
+#Include <Classes\tool>
+#Include <Classes\winget>
 ; }
 
 SetWorkingDir A_ScriptDir

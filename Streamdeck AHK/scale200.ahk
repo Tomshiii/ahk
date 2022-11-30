@@ -1,6 +1,6 @@
 ﻿SetDefaultMouseSpeed 0
 ; { \\ #Includes
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 #Include <Functions\SD Functions\scale>
 ; }
 

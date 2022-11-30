@@ -1,4 +1,4 @@
-#Include <\Classes\tool>
+#Include <Classes\tool>
 #Include <Functions\SplitPathObj>
 
 ; // not necessarily an "old" script, just one I used to clean up some directories on my NAS

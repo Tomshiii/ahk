@@ -1,7 +1,7 @@
 # Info
 This directory is to separate out most of the functions I use for various things. All of these functions use to be in various bigger ahk files, but it was getting way too large for its own good and was becoming a bit too much of a hassle to work with and find what I was looking for.
 
-If one of these functions is needed within another script you will see `#Include <\Functions\func>` at the top of the script
+If one of these functions is needed within another script you will see `#Include <Functions\func>` at the top of the script
 
 A function is defined similar to;
 ```autohotkey
@@ -26,7 +26,7 @@ func(variableX, &variableY, variableZ := "default")
 ```
 We then [`#Include`](https://lexikos.github.io/v2/docs/commands/_Include.htm) the function file in other scripts so we can achieve things like below;
 ```autoit
-#Include <\Functions\func>
+#Include <Functions\func>
 hotkey::
 {
   func("variableValue", &variableYbutCalledAnything)

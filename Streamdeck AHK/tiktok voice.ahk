@@ -1,6 +1,6 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 ; }
 
 ;This script is designed to use the tiktok text to speech tool found : https://github.com/oscie57/tiktok-voice

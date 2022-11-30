@@ -1,5 +1,5 @@
 ﻿; { \\ #Includes
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 ; }
 
 Run(ptf["SongDJ"]) ;runs the queue program incase it opened too late

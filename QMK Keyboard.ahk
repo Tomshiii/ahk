@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include <\Classes\ptf>
+#Include <Classes\ptf>
 ;there are more includes down below
 ; }
 
@@ -52,19 +52,19 @@ SetNumLockState("AlwaysOn")
 
 ;===========================================================================
 #HotIf WinActive(editors.Premiere.winTitle) and getKeyState("F24", "P")
-#Include <\QMK\Prem>
+#Include <QMK\Prem>
 ;===========================================================================
 #HotIf WinActive(editors.AE.winTitle) and getKeyState("F24", "P")
-#Include <\QMK\AE>
+#Include <QMK\AE>
 ;===========================================================================
 #HotIf getKeyState("F24", "P") and WinActive(editors.Photoshop.winTitle)
-#Include <\QMK\Photoshop>
+#Include <QMK\Photoshop>
 ;===========================================================================
 #HotIf getKeyState("F24", "P") and WinActive(browser.vscode.winTitle)
-#Include <\QMK\VSCode>
+#Include <QMK\VSCode>
 ;===========================================================================
 #HotIf getKeyState("F24", "P") ;these will work everywhere
-#Include <\QMK\Always>
+#Include <QMK\Always>
 ;===========================================================================
 
 
