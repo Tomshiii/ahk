@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/11/28
- * @version 1.0.2
+ * @date 2022/11/30
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -73,7 +73,7 @@ class WinGet {
      * @param {var} title is the active window, this function will populate the `title` variable with the active window
      * @param {String} window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
      */
-    static isFullscreen(&title, window := false)
+    static isFullscreen(&title?, window := false)
     {
         if window != false
             {
@@ -85,7 +85,7 @@ class WinGet {
         if title = "Program Manager" ;this is the desktop. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
             title := ""
         try {
-            return WinGetMinMax(title,, "Editing Checklist -") = 1 ;a return value of 1 means it is maximised
+            return WinGetMinMax(title,, "Editing Checklist -") ;a return value of 1 means it is maximised
         } catch as e {
             tool.Cust(A_ThisFunc "() couldn't determine the active window")
             errorLog(e, A_ThisFunc "()")

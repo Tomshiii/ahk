@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/11/30
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,13 @@
 
 class discord {
 
+    ;position you keep it
+    static x := -1080
+    static y := -274
+    static width := 1080
+    static height := 1600
+
+    ;other
     static exeTitle := "ahk_exe Discord.exe"
     static winTitle := this.exeTitle
     static class := "ahk_class Chrome_WidgetWin_1"

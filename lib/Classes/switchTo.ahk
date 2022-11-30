@@ -1,21 +1,20 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2022/11/28
- * @version 1.0.2
+ * @date 2022/11/29
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <\GUIs>
 #Include <\Classes\ptf>
 #Include <\Classes\tool>
-#Include <\Classes\switchTo>
 ;programs
-#Include <Classes\Apps\VSCode>
-#Include <Classes\Apps\Discord>
-#Include <Classes\Editors\After Effects>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\Editors\Photoshop>
+#Include <\Classes\Apps\VSCode>
+#Include <\Classes\Apps\Discord>
+#Include <\Classes\Editors\After Effects>
+#Include <\Classes\Editors\Premiere>
+#Include <\Classes\Editors\Photoshop>
 ;funcs
 #Include <\Functions\getHotkeys>
 #Include <\Functions\errorLog>
@@ -184,19 +183,19 @@ class switchTo {
      */
     static Disc()
     {
-        move() => WinMove(-1080, -274, 1080, 1600, discord.winTitle) ;creating a function out of the winmove so you can easily adjust the value
-        if WinExist(discord)
+        move() => WinMove(discord.x, discord.y, discord.width, discord.height, discord.winTitle) ;cut repeat visual clutter. Values assigned in discord class
+        if WinExist(discord.winTitle)
             {
-                WinActivate(discord)
-                if WinGetMinMax(discord) = 1 ;a return value of 1 means it is maximised
+                WinActivate(discord.winTitle)
+                if WinGet.isFullscreen(, discord.winTitle) ;a return value of 1 means it is maximised
                     WinRestore() ;winrestore will unmaximise it
                 move() ; just incase it isn't in the right spot/fullscreened for some reason
                 tool.Cust("Discord is now active", 500) ;this is simply because it's difficult to tell when discord has focus if it was already open
                 return
             }
         Run(discord.path)
-        WinWait(discord)
-        if WinGetMinMax(discord) = 1 ;a return value of 1 means it is maximised
+        WinWait(discord.winTitle)
+        if WinGet.isFullscreen(, discord.winTitle) ;a return value of 1 means it is maximised
             WinRestore() ;winrestore will unmaximise it
         move() ;moves it into position after opening
     }
@@ -266,7 +265,7 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static WindowSpy() => this.Win("WindowSpy.ahk", ptf.ProgFi "\AutoHotkey\UX\WindowSpy.ahk", "winspy", "ahk_class AutoHotkeyGUI", browser.vscode.winTitle)
+    static WindowSpy() => this.Win("WindowSpy.ahk", ptf.ProgFi "\AutoHotkey\UX\WindowSpy.ahk", "winspy", "ahk_class AutoHotkeyGUI", VSCode.winTitle)
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
