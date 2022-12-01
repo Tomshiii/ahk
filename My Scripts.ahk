@@ -1,5 +1,5 @@
 ;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.7.0.1"
+global MyRelease := "v2.8"
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir) ;sets the scripts working directory to the directory it's launched from
