@@ -36,7 +36,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.10
+;\\v2.23.11
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -661,7 +661,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	SendInput(projectsWindow) ;adjust this shortcut in the ini file
 	sleep 300
-	sanity := wingetPos(&sanX, &sanY,,, "A") ;if you have this panel on a different monitor ahk won't be able to find it because of premiere weirdness so this value will be used in some fallback code down below
+	WinGetPos(&sanX, &sanY,,, "A")
+	;if you have this panel on a different monitor ahk won't be able to find it because of premiere weirdness so this value will be used in some fallback code down below
 	coord.w()
 	try {
 		loop {

@@ -22,6 +22,7 @@
 
 class switchTo {
     /**
+     * This function cuts a lot of repeat code in other functions in this class. It's main goal is to provide the ability to swap between windows of the desired type or open one if there are none already.
      *
      * @param {String} winExistVar is the winTitle you wish to pass into `winWait`
      * @param {String} runVar is the program/path you wish to pass into `Run`

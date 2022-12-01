@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain functions that pause/suspend scripts.
  * @author tomshi, Lexikos
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/12/01
+ * @version 1.0.1
  ***********************************************************************/
 
 #Include <Functions\detect>
@@ -20,7 +20,7 @@ class Pause {
         if !WinExist(scriptName ".ahk")
             {
                 tool.Cust(scriptName ".ahk script isn't open")
-                ExitApp()
+                return
             }
         WM_COMMAND := 0x0111
         ID_FILE_PAUSE := 65403

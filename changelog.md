@@ -1,4 +1,6 @@
 # <> Release 2.8 - Refactoring
+Welcome to the 50th release of this repo! 🎉🎉
+
 This release is a massive overhaul of how things are layed out and structured in my repo - I may not cover everything in this changelog as so many massive structural changes have happened it's hard to note down everything without it getting too confusing.
 
 The biggest changes;
@@ -28,13 +30,12 @@ The biggest changes;
 
 `switchTo {`
 - All `switchToX()` functions now a class
-- Created self contained function `Win()` to cut repeat code
 
 `Prem {`, `AE {`, `PS {`, `Resolve {`
 - All Editor functions turned into classes
 - Editor lib files moved from `..\lib\Functions\` to `..\lib\Classes\Editors\`
 
-This changelog doesn't cover everything + a few functions have been broken out into their own class files, check out the `..\lib\Classes\` folder (or the wiki!) to check them out yourself!
+This changelog doesn't cover everything + a few functions have been broken out into their own class files (and some others into their own individual function files), check out the `..\lib\` & `..\lib\Classes` folder (or the wiki!) to check them out for yourself!
 
 ## > Functions
 - Moved `class ptf {`, `class browser {`, `class Editors {` & the group assignments from `General.ahk` => `ptf.ahk`

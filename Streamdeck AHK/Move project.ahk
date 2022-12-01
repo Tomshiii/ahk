@@ -1,6 +1,7 @@
 ;#SingleInstance Force ;don't want to accidentally start a second instance while it's mid move
 ; { \\ #Includes
 #Include <Classes\ptf>
+#Include <Functions\SplitPathObj>
 ; }
 
 ;; This part makes you select the folder you wish to move
@@ -9,12 +10,11 @@ if SelectedFolder = ""
     return
 
 ;;this part takes that folder directory and splits it out to just grab the final folder in the path as we need it below
-FullFileName := SelectedFolder
-SplitPath FullFileName, &name
+splitSelected := SplitPathObj(SelectedFolder)
 
 ;;this part makes you select the destination folder
 move:
-Move := FileSelect("D2", "A:\_RC\Tomshi\2022", "Pick the destination folder you wish everything to move to.")
+Move := FileSelect("D2", "N:\_RC\Tomshi\2022", "Pick the destination folder you wish everything to move to.")
 if Move = ""
     return
 if Move = SelectedFolder
@@ -49,8 +49,8 @@ FileDelete(SelectedFolder "\*.pek")
 ;delete any mkv files I might still have lying around in the videos folder (premiere can't use mkv files anyway so there's a 0% changce I haven't remuxed them into mp4's)
 FileDelete(SelectedFolder "\videos\*.mkv")
 
-;the below loop will go through and delete any files that are larger than 5GB (default) as I don't need to store anything larger than that
-maxFileSizeGB := 5
+;the below loop will go through and delete any files that are larger than 2GB (default) as I don't need to store anything larger than that
+maxFileSizeGB := 2
 loop files SelectedFolder "\videos\*.*", "R"
     {
         if A_LoopFileSize/1073741824 > maxFileSizeGB
@@ -59,21 +59,8 @@ loop files SelectedFolder "\videos\*.*", "R"
             continue
     }
 
-;;this part will delete any cache files buried within premiere's appdata folder because its settings to do so automatically literally never work. this will only happen if the folder is larger than you set below (in GB)
-
-/* ;SET HOW BIG YOU WANT IT TO WAIT FOR HERE (IN GB)
-largestSize := 15
-;then below checks the size and deletes if too large
-FolderSize := 0
-WhichFolder := A_AppData "\Adobe\Common\Media Cache Files\"
-Loop Files, WhichFolder "\*.*", "R"
-    FolderSize += A_LoopFileSize
-convert := FolderSize/"1073741824"
-if convert >= largestSize
-    FileDelete(A_AppData "\Adobe\Common\Media Cache Files\*.ims") */
-
 ;;this part then moves your selected folder to the selected destination folder
-DirMove(SelectedFolder, Move "\" name)
+DirMove(SelectedFolder, Move "\" splitSelected.name)
 
 ;;this part just opens the final directory
-Run(Move "\" name)
+Run(Move "\" splitSelected.name)
