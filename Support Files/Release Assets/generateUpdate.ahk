@@ -81,6 +81,8 @@ verNew := SubStr(yes.value, 1, 4)
 
 if !InStr(yes.value, "pre")
     {
+        if IsSet(name) && (SubStr(name, 1, StrLen(name)-3) = yes.value) ;if inputbox ver is the same as the current changelog, ignore
+            return
         if verChangeLog = verNew
             {
                 FileAppend(changelog "`n`n.`n`n.`n`n.`n`n", loopDir)
@@ -91,6 +93,10 @@ if !InStr(yes.value, "pre")
     }
 
 sleep 100
+;// checking values for testing
+/* versions := "verChangeLog: " verChangeLog "`n" "verNew: " verNew "`n" "name: " name "`n" "yes.value: " yes.value "`n"
+MsgBox(versions)
+ExitApp() */
 
 ;// copying over the repo to a temp folder
 loop files ptf.rootDir "\*", "D"
@@ -113,9 +119,12 @@ loop files ptf.rootDir "\*", "F"
             continue
         if A_LoopFileName = ".gitmodules"
             continue
-        if A_LoopFileName = "repo_social.psd"
-            continue
         FileCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value, 1)
+    }
+loop files A_WorkingDir "\release\" yes.Value, "F R"
+    {
+        if A_LoopFileExt = "psd" ;they're large and unnecessary to include
+            FileDelete(A_LoopFileFullPath)
     }
 
 ;// copying over thqby's 7zip lib as we require it
@@ -285,8 +294,8 @@ switch preCheck {
 
 ;// closing any uneeded programs ready for completion
 sleep 500
-if WinExist("release")
-    WinClose("release")
+if WinExist("release",, browser.Firefox.winTitle)
+    WinClose("release",, browser.Firefox.winTitle)
 Run(currentDir)
 WinWait(verNum ".x",, 3)
 if DirExist(A_WorkingDir "\release")
