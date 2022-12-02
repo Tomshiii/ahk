@@ -1,5 +1,15 @@
+/************************************************************************
+ * @description The central "hub" script for my entire repo. Handles most windows scripts + some editing scripts.
+ * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
+ * @file My Scripts.ahk
+ * @author Tomshi
+ * @date 2022/12/01
+ * @version v2.8
+ * @ahk_ver 2.0-rc.1
+ ***********************************************************************/
+
 ;\\CURRENT RELEASE VERSION
-global MyRelease := "v2.8"
+global MyRelease := getLocalVer()
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir) ;sets the scripts working directory to the directory it's launched from
@@ -28,6 +38,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Functions\reload_reset_exit>
 #Include <Functions\errorLog>
 #Include <Functions\mouseDrag>
+#Include <Functions\getLocalVer>
 #Include <Classes\Startup>
 #Include <Windows>
 #Include <GUIs>
@@ -36,7 +47,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.11
+;\\v2.23.12
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 

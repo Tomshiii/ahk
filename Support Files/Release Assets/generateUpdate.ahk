@@ -1,7 +1,8 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
-#Include <Other\7zip\SevenZip>
 #Include <Classes\tool>
+#Include <Functions\getLocalVer>
+#Include <Other\7zip\SevenZip>
 ; }
 
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release
@@ -38,12 +39,18 @@ if !DirExist(A_WorkingDir "\release\" yes.Value)
 getVer(&oldVer)
 {
     ;// replace the old version number in My Scripts.ahk
-    releaseString := FileRead(ptf.rootDir "\My Scripts.ahk")
-    foundpos := InStr(releaseString, 'v',,,2)
-    endpos := InStr(releaseString, '"',, foundpos, 1)
-    end := endpos - foundpos
-    lastVer := SubStr(releaseString, foundpos, end)
-    newFile := StrReplace(releaseString, lastVer, yes.Value, 1,, 1)
+    lastVer := getLocalVer()
+    newFile := StrReplace(releaseString, lastVer, noV, 1,, 1)
+
+    ;// update ahk_ver
+    ahkVer := getLocalVer(newFile,, "@ahk_ver")
+    if VerCompare(A_AhkVersion, ahkVer) > 0
+        newFile := StrReplace(newFile, ahkVer, A_AhkVersion, 1,, 1)
+
+    ;// update date
+    date := getLocalVer(newFile,, "@date")
+    newFile := StrReplace(newFile, date, A_YYYY "/" A_MM "/" A_DD, 1,, 1)
+
     FileAppend(newFile, A_WorkingDir "\My Scripts.ahk")
     FileMove(A_WorkingDir "\My Scripts.ahk", ptf.rootDir "\My Scripts.ahk", 1)
 
