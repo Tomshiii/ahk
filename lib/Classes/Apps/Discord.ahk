@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord
  * @author tomshi
- * @date 2022/11/30
- * @version 1.0.1
+ * @date 2022/12/02
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,89 +95,6 @@ class discord {
         end:
         MouseMove(x, y) ;moves the mouse back to the original coords
         block.Off()
-    }
-
-    /**
-     * This function will toggle the location of discord's window position
-     */
-    static location()
-    {
-        position0 := [4480, -123, 1081, 1537] ;we use position0 as a reference later to compare against another value.
-        position1 := [-1080, 75, 1080, 1537] ;we use position1 as a reference later to compare against another value.
-        disc0() { ;define your first (defult) position here
-            WinMove(position0[1], position0[2], position0[3], position0[4], "ahk_exe Discord.exe")
-        }
-        disc1() { ;define your second position here
-            WinMove(position1[1], position1[2], position1[3], position1[4], "ahk_exe Discord.exe")
-        }
-        try { ;this try is here as if you close a window, then immediately try to fire this function there is no "original" window
-            original := WinGetID("A")
-        } catch as e {
-            tool.Cust("you tried to assign a closed`n window as the last active", 4000)
-            errorLog(e, A_ThisFunc "()")
-            SendInput("{Click}")
-            return
-        }
-        static toggle := 0 ;this is what allows us to toggle discords position
-        if !WinExist("ahk_exe Discord.exe")
-            {
-                run(ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe") ;this will run discord
-                WinWait("ahk_exe Discord.exe")
-                sleep 1000
-                WinActivate("ahk_exe Discord.exe")
-                result := WinGetPos(&X, &Y, &width, &height, "A") ;this will grab the x/y and width/height values of discord
-                if result = position0 ;here we are comparing discords current position to one of the values we defined above
-                    {
-                        toggle := 0
-                        return
-                    }
-                if result = position1 ;here we are comparing discords current position to one of the values we defined above
-                    {
-                        toggle := 1
-                        return
-                    }
-                if !(result = position0 or result = position1) ;here we're saying if it isn't in EITHER position we defined above, move it into a position
-                    {
-                        toggle := 0
-                        disc0()
-                        return
-                    }
-                return
-            }
-        WinActivate("ahk_exe Discord.exe")
-        startLocation := WinGetPos(&X, &Y, &width, &height, "A") ;this will grab the x/y and width/height values of discord
-        if toggle < 1
-            {
-                toggle += 1
-                disc0()
-                newPos := WinGetPos(&X, &Y, &width, &height, "A") ;this will grab the x/y and width/height values of discord AGAIN
-                if newPos = startLocation ;so we can compare and ensure it has moved
-                    disc1()
-                return
-            }
-        if toggle = 1
-            {
-                toggle -= 1
-                disc1()
-                newPos := WinGetPos(&X, &Y, &width, &height, "A") ;this will grab the x/y and width/height values of discord AGAIN
-                if newPos = startLocation ;so we can compare and ensure it has moved
-                    disc0()
-                return
-            }
-        if toggle > 1 or toggle < 0 ;this is here just incase the value ever ends up bigger/smaller than it's supposed to
-            {
-                toggle := 0
-                tool.Cust("stop spamming the function please`nthe functions value was too large/small")
-                errorLog(, A_ThisFunc "()", "Function hit an unexpected toggle number", A_LineFile, A_LineNumber)
-                return
-            }
-        try { ;this is here once again to ensure ahk doesn't crash if the original window doesn't actual exist anymore
-            WinActivate(original)
-        } catch as e {
-            tool.Cust("couldn't find original window", 2000)
-            errorLog(e, A_ThisFunc "()")
-            return
-        }
     }
 
     /**

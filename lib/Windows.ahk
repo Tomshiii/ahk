@@ -120,7 +120,7 @@ refreshWin(window, runTarget)
                     runTarget := path
                 }
         }
-    getpos := WinGetPos(&x, &y, &width, &height, window)
+    WinGetPos(&x, &y, &width, &height, window)
     WinClose(window)
     if !WinWaitClose(window,, 1.5)
         {
