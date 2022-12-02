@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/11/28
- * @version 1.0.0
+ * @date 2022/12/02
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,14 +26,18 @@ class Startup {
      * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
      *
      * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
+     *
+     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
-    static generate(MyRelease)
-    {
-        ;checks if script was reloaded
-        if this.isReload()
+    static generate(MyRelease) {
+        if this.isReload() ;checks if script was reloaded
             return
-        deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS)
-        {
+
+        /**
+         * This function is designed to transition an install of my scripts from before I had `settings.ini` => a version that does.
+         * This function likely no longer needs to exist but is kept here for the sake of history.
+         */
+        deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) {
             if DirExist(A_MyDocuments "\tomshi\adobe")
                 {
                     try {
@@ -71,6 +75,8 @@ class Startup {
                     FileDelete(A_MyDocuments "\tomshi\first")
                 }
         }
+
+        ;//
         if !DirExist(ptf.SettingsLoc)
             DirCreate(ptf.SettingsLoc)
         if FileExist(ptf["settings"])
@@ -115,10 +121,10 @@ class Startup {
      * Which branch the user wishes to check for (either beta, or main releases) can be determined by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`)
      *
      * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
+    * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static updateChecker(MyRelease) {
-        ;checks if script was reloaded
-        if this.isReload()
+        if this.isReload() ;checks if script was reloaded
             return
         ;checking to see if the user wishes to check for updates
         check := IniRead(ptf["settings"], "Settings", "update check")
@@ -375,10 +381,11 @@ class Startup {
 
     /**
      * This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
+     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static firstCheck(MyRelease) {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
-        if this.isReload()
+        if this.isReload() ;checks if script was reloaded
             return
         if !IsSet(version) ;if the user has no internet, "version" will not have been assigned a value in `updateChecker()` - this checks to see if `version` has been assigned a value
             version := ""
@@ -389,11 +396,10 @@ class Startup {
             return
         firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " MyRelease)
         ;set title
-        titleWidth := 450 + (StrLen(MyRelease)*6)
-        Title := firstCheckGUI.Add("Text", "H40 X8 W" titleWidth, "Welcome to Tomshi's AHK Scripts : Release " MyRelease)
-        title.GetPos(,, &width)
-        firstCheckGUI.GetPos(,, &guiWidth)
-        title.Move((guiWidth/4)+(width/(1+StrLen(MyRelease))))
+        MyRelease := MyRelease
+        titleText := "Welcome to Tomshi's AHK Scripts : Release " MyRelease
+        titleWidth := 430 + ((StrLen(MyRelease)-4)*8)
+        Title := firstCheckGUI.Add("Text", "X8 R1.5 W" titleWidth, titleText)
         Title.SetFont("S15")
         ;text
         bodyText := firstCheckGUI.Add("Text", "W550 X8 Center", "
@@ -459,6 +465,16 @@ class Startup {
         }
 
         firstCheckGUI.Show("AutoSize")
+
+        ;centering the title
+        title.GetPos(,, &width)
+        firstCheckGUI.GetClientPos(,, &guiWidth)
+        title.Move((guiWidth-width)/2)
+        /*MsgBox(
+            "titleWidth: " width "`n"
+            "guiClientWidth: " guiWidth "`n"
+            "newPos: " (guiWidth/4) - (width/4) "`n"
+        ) */
     }
 
     /**
@@ -476,6 +492,7 @@ class Startup {
      * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
      *
      * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
+     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static adobeTemp(MyRelease) {
         if this.isReload()
@@ -555,8 +572,7 @@ class Startup {
      *
      * This script will take note of the users A_WorkingDir and store it in `A_MyDocuments \tomshi\settings.ini` and will check it every launch to ensure location variables are always updated and accurate
     */
-    static locationReplace()
-    {
+    static locationReplace() {
         if this.isReload()
             return
         tool.Wait()
@@ -622,8 +638,7 @@ class Startup {
     /**
      * This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
      */
-    static trayMen()
-    {
+    static trayMen() {
         check := IniRead(ptf["settings"], "Settings", "update check")
         A_TrayMenu.Insert("7&") ;adds a divider bar
         A_TrayMenu.Insert("8&", "Settings", settings)
@@ -670,8 +685,7 @@ class Startup {
     /**
      * This function will loop through `class libs {` and ensure that all libs are up to date. This function will not fire on a reload
      */
-    static libUpdateCheck()
-    {
+    static libUpdateCheck() {
         if this.isReload()
             return
         check := IniRead(ptf["settings"], "Settings", "update check")

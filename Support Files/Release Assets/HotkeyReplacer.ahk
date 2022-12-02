@@ -1,4 +1,9 @@
-forRelease := getVer()
+; { \\ #Includes
+#Include "%A_ScriptDir%"
+#Include "..\..\lib\Classes\dark.ahk"
+; }
+
+forRelease := getLocalVer()
 
 ;the below block makes sure the `forRelease` variable is set before contiuning as if it isn't the script will run into errors
 if !IsSet(forRelease) || forRelease = ""
@@ -7,18 +12,19 @@ if !IsSet(forRelease) || forRelease = ""
         return
     }
 
-;localVer // v2.7
+;localVer // v2.8
 if FileExist("..\Icons\myscript.png")
     TraySetIcon("..\Icons\myscript.png")
 ;defining the informational gui
 ReplacerGui := Gui("-Resize +MinSize500x380 -MaximizeBox", "Tomshi Hotkey Replacer for " forRelease)
 ReplacerGui.SetFont("S11.5")
 ;nofocus
-removedefault := ReplacerGui.Add("Button", "Default X0 Y0 w0 h0", "_")
+ReplacerGui.AddButton("Default X0 Y0 w0 h0", "_")
 
 ;title and text
-titleWidth := 350 + (StrLen(forRelease)*8.5)
-title := ReplacerGui.Add("Text", "X105 Y8 W" titleWidth " Center R1.5", "Welcome to Hotkey Replacer for " forRelease)
+titletext := "Welcome to Hotkey Replacer for " forRelease
+titleWidth := 362 + ((StrLen(forRelease)-4)*8)
+title := ReplacerGui.Add("Text", "X105 Y8 W" titleWidth " Center R1.5", titletext)
 ;logoImg := ReplacerGui.Add("Picture", "X246 Y+10", A_ScriptDir "\" forRelease "\Support Files\Icons\myscript.png")
 title.SetFont("S15 Bold")
 text := ReplacerGui.Add("Text", "X30 W530 Y+5 Center", "This script is only designed to be used if you already have a version of my scripts in use. If you don't, feel free to exit out of this script.`n`nThis script is designed to replace all of the hotkeys in the release version of ``My Scripts.ahk`` with the hotkeys you have in your own local copy.`n`nThis script works by detecting the ``;xHotkey;`` tag I have above every hotkey and doing some string replacement to replace the release version with any you've changed locally.`n`nPlease be aware that any hotkeys you've added yourself will not be transfered over and there may still be some manual adjustment needed in that case.")
@@ -40,8 +46,7 @@ cancelButton.OnEvent("Click", cancel)
 
 if FileExist(A_MyDocuments "\tomshi\settings.ini") ;the user has run my scripts before and a settings menu exists
     {
-        darkMode := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") ;then we check if the user wants dark mode
-        if darkMode = "true"
+        if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true" ;then we check if the user wants dark mode
             goDark()
     }
 else
@@ -49,8 +54,9 @@ else
 
 ;show gui
 ReplacerGui.Show("Center")
-ReplacerGui.GetPos(,, &width, &height)
-title.Move(((width/4) - StrLen(title.Text) - StrLen(forRelease)*3))
+ReplacerGui.GetClientPos(,, &guiwidth, &height)
+title.GetPos(,, &width)
+title.Move((guiWidth-width)/2)
 
 
 ; ==============================================================================
@@ -243,7 +249,7 @@ replace(*)
         FileDelete(A_ScriptDir "\ksahotkeys.ini")
     if FileExist(A_ScriptDir "\ksahotkeynames.ini")
         FileDelete(A_ScriptDir "\ksahotkeynames.ini")
-    
+
     SB.SetText("  creating baseline ini files")
     ;create baseline ini files
     if !FileExist(A_ScriptDir "\ksahotkeys.ini")
@@ -332,60 +338,35 @@ replace(*)
 
 cancel(*) => ReplacerGui.Destroy()
 
+goDark(darkmode := true, DarkorLight := "Dark")
+{
+        dark.titleBar(ReplacerGui.Hwnd, darkmode)
+        dark.button(replaceButton.Hwnd, DarkorLight)
+        dark.button(cancelButton.Hwnd, DarkorLight)
+}
 
-
+;// the below function can't get "included" because the main version requires <Classes/ptf> and that'll cause a whole slew of issues for users that haven't generated a symlink yet
 /**
- * This function will grab the release version from the `My Scripts.ahk` file itself. This function makes it so I don't have to change this variable manually every release
+ * This function retrieves the local version (or the string after a specified tag) and then returns it.
+ *
+ * This script will trim whitespace, tabs, newlines & carriage return
+ * @param {any} varRead If this variable is populated, it will read from that string instead of filereading a new variable.
+ * @param {string} script is the name of the script you wish to read (if in the root dir, otherwise the remaining filepath to it)
+ * @param {string} searchTag is what you want the function to search for
+ * @param {string} endField is what you want "InStr" to search for to be the end of your string
+ * @returns {string}
  */
-getVer()
-{
-    loop files A_ScriptDir "..\..\..\*.ahk", "R" ;this loop searches the current script directory for the `My Scripts.ahk` script
-        {
-            if A_LoopFileName != "My Scripts.ahk"
-                continue
-            myScriptDir := A_LoopFileFullPath
-            break
-        }
-    try {
-        releaseString := FileRead(myScriptDir) ;then we're putting the script into memory
-    } catch as e {
-        return
-    } ;then the below block is doing some string manipulation to grab the release version from it
-    foundpos := InStr(releaseString, 'v',,,2)
-    endpos := InStr(releaseString, '"', , foundpos, 1)
-    end := endpos - foundpos
-    version := SubStr(releaseString, foundpos, end)
-    return version ;before returning the version back to the function
-}
- 
- /**
-  * This function will convert a windows title bar to a dark theme if possible.
-  * @param {String} hwnd is the hwnd value of the window you wish to alter
-  * @param {boolean} dark is a toggle that allows you to call the inverse of this function and return the title bar to light mode. This parameter can be omitted otherwise pass false
-  * https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
-  */
-titleBarDarkMode(hwnd, dark := true)
-{
-    if VerCompare(A_OSVersion, "10.0.17763") >= 0 {
-        attr := 19
-        if VerCompare(A_OSVersion, "10.0.18985") >= 0 {
-            attr := 20
-        }
-        DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "int", attr, "int*", dark, "int", 4)
-    }
-}
-  
-  /**
-   * This function will convert GUI buttons to a dark theme.
-   * @param {String} ctrl_hwnd is the hwnd value of the control you wish to alter
-   * @param {boolean} DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light" 
-   https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
-   */
-buttonDarkMode(ctrl_hwnd, DarkorLight := "Dark") => DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
- 
-goDark(dark := true, DarkorLight := "Dark")
-{
-        titleBarDarkMode(ReplacerGui.Hwnd, dark)
-        buttonDarkMode(replaceButton.Hwnd, DarkorLight)
-        buttonDarkMode(cancelButton.Hwnd, DarkorLight)
+ getLocalVer(varRead?, script := "My Scripts.ahk", searchTag := "@version", endField := "*") {
+    if IsSet(varRead)
+        read := varRead
+    else
+        read := FileRead("..\..\" script)
+    ver := Trim(
+        SubStr(read
+              , verFind := InStr(read, searchTag,, 1, 1) + (StrLen(searchTag)+1)
+              , InStr(read, endField,, verFind, 1)-verFind
+            )
+        , " `t`n`r"
+    )
+    return ver
 }

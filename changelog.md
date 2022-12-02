@@ -2,6 +2,7 @@
 
 ## > Functions
 - Added `getLocalVer()`
+- `firstCheck()` & `HotkeyReplacer.ahk` better center their titles
 
 `Discord.ahk`
 - Update `discord.Button()` images for new discord font
