@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2022/12/04
- * @version 1.0.2
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -97,24 +97,25 @@ class Startup {
             darkVerCheck := "true"
         UPDATE := IniRead(ptf["settings"], "Settings", "update check", "true")
         BETAUPDATE := IniRead(ptf["settings"], "Settings", "beta update check", "false")
-        FC := IniRead(ptf["settings"], "Track", "first check", "false")
-        ADOBE := IniRead(ptf["settings"], "Track", "adobe temp", "")
-        WORK := IniRead(ptf["settings"], "Track", "working dir", "E:\Github\ahk")
+        DARK := IniRead(ptf["settings"], "Settings", "dark mode", darkVerCheck)
+        CHECKCHECK := IniRead(ptf["settings"], "Settings", "autosave check checklist", "true")
         TOOLS := IniRead(ptf["settings"], "Settings", "tooltip", "true")
+        CHECKTOOL := IniRead(ptf["settings"], "Settings", "checklist tooltip", "true")
+        WAIT := IniRead(ptf["settings"], "Settings", "checklist wait", "false")
         ADOBE_GB := IniRead(ptf["settings"], "Adjust", "adobe GB", 45)
         ADOBE_FS := IniRead(ptf["settings"], "Adjust", "adobe FS", 5)
         AUTOMIN := IniRead(ptf["settings"], "Adjust", "autosave MIN", 5)
-        CHECKTOOL := IniRead(ptf["settings"], "Settings", "checklist tooltip", "true")
         GAMESEC := IniRead(ptf["settings"], "Adjust", "game SEC", 2.5)
-        DARK := IniRead(ptf["settings"], "Settings", "dark mode", darkVerCheck)
         MULTI := IniRead(ptf["settings"], "Adjust", "multi SEC", 5)
-        WAIT := IniRead(ptf["settings"], "Settings", "checklist wait", "false")
         PREMYEAR := IniRead(ptf["settings"], "Adjust", "prem year", A_Year)
         AEYEAR := IniRead(ptf["settings"], "Adjust", "ae year", A_Year)
+        ADOBE := IniRead(ptf["settings"], "Track", "adobe temp", "")
+        WORK := IniRead(ptf["settings"], "Track", "working dir", "E:\Github\ahk")
+        FC := IniRead(ptf["settings"], "Track", "first check", "false")
         deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
         if FileExist(ptf["settings"])
             FileDelete(ptf["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-        FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`nprem year=" PREMYEAR "`nae year=" AEYEAR "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, ptf["settings"])
+        FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`nautosave check checklist=" CHECKCHECK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`nprem year=" PREMYEAR "`nae year=" AEYEAR "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, ptf["settings"])
     }
 
     /**

@@ -20,3 +20,4 @@
 
 ## > Other Changes
 - Releases will no longer include any `.psd` files (this is to help save on filesize)
+- `autosave.ahk` checking for `checklist.ahk` being open can now be toggled in `settingsGUI()`

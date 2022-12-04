@@ -168,8 +168,24 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;script checkboxes
 
+    ;//
+    ascheckCheck := IniRead(ptf["settings"], "Settings", "autosave check checklist")
+    ascheckCheckTitle := "``autosave.ahk`` check for`n ``checklist.ahk``"
+    ascheckToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(ascheckCheck) " Y+20", ascheckCheckTitle)
+    ascheckCheckY := "``autosave.ahk`` will check to ensure you have ``checklist.ahk`` open"
+    ascheckCheckN := "``autosave.ahk`` will no longer check to ensure you have ``checklist.ahk`` open"
+    switch ascheckCheck {
+        case "true":
+            ascheckToggle.ToolTip := ascheckCheckY
+        case "false":
+            ascheckToggle.ToolTip := ascheckCheckN
+    }
+    ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist"))
+
+    ;//
     tooltipCheck := IniRead(ptf["settings"], "Settings", "tooltip")
-    toggleToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(tooltipCheck) " Y+15", "``autosave.ahk`` tooltips")
+    tooltipCheckTitle := "``autosave.ahk`` tooltips"
+    toggleToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(tooltipCheck) " Y+5", tooltipCheckTitle)
     toggleToolY := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
     toggleToolN := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
     switch tooltipCheck {
@@ -178,28 +194,39 @@ settingsGUI()
         case "false":
             toggleToggle.ToolTip := toggleToolN
     }
-    toggleToggle.OnEvent("Click", toggle)
-    toggle(*)
+    toggleToggle.OnEvent("Click", toggle.Bind("tooltip"))
+    toggle(ini, script, unneeded)
     {
         detect()
         ToolTip("")
-        toggleVal := toggleToggle.Value
+        switch script.text {
+            case tooltipCheckTitle:
+                toolTrue := toggleToolY
+                toolFalse := toggleToolN
+            case ascheckCheckTitle:
+                toolTrue := ascheckCheckY
+                toolFalse := ascheckCheckN
+        }
+
+        toggleVal := script.Value
         switch toggleVal {
             case 1:
-                IniWrite("true", ptf["settings"], "Settings", "tooltip")
-                toggleToggle.ToolTip := toggleToolY
-                tool.Cust(toggleToolY, 2000)
+                IniWrite("true", ptf["settings"], "Settings", ini)
+                script.ToolTip := toolTrue
+                tool.Cust(toolTrue, 2000)
             case 0:
-                IniWrite("false", ptf["settings"], "Settings", "tooltip")
-                toggleToggle.ToolTip := toggleToolN
-                tool.Cust(toggleToolN, 2000)
+                IniWrite("false", ptf["settings"], "Settings", ini)
+                script.ToolTip := toolFalse
+                tool.Cust(toolFalse, 2000)
         }
         if WinExist("autosave.ahk - AutoHotkey")
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
     }
 
+    ;//
     checklistTooltip := IniRead(ptf["settings"], "Settings", "checklist tooltip")
-    checkTool := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistTooltip) " Y+5", "``checklist.ahk`` tooltips")
+    checklistTooltipTitle := "``checklist.ahk`` tooltips"
+    checkTool := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistTooltip) " Y+5", checklistTooltipTitle)
     checkToolY := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
     checkToolN := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
     switch checklistTooltip {
@@ -208,32 +235,12 @@ settingsGUI()
         case "false":
             checkTool.ToolTip := checkToolN
     }
-    checkTool.OnEvent("Click", checkToggle)
-    checkToggle(*)
-    {
-        detect()
-        ToolTip("")
-        msgboxtext := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
-        checkToggleVal := checkTool.Value
-        switch checkToggleVal {
-            case 1:
-                IniWrite("true", ptf["settings"], "Settings", "checklist tooltip")
-                checkTool.ToolTip := checkToolY
-                tool.Cust(checkToolY, 2000)
-                if WinExist("checklist.ahk - AutoHotkey")
-                    MsgBox(msgboxtext,, "48 4096")
-            case 0:
-                ifDisabled := "`n`nThis setting will override the local setting for your current checklist"
-                IniWrite("false", ptf["settings"], "Settings", "checklist tooltip")
-                checkTool.ToolTip := checkToolN
-                tool.Cust(checkToolN, 2000)
-                if WinExist("checklist.ahk - AutoHotkey")
-                    MsgBox(msgboxtext ifDisabled,, "48 4096")
-        }
-    }
+    checkTool.OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
 
+    ;//
     checklistWait := IniRead(ptf["settings"], "Settings", "checklist wait")
-    checkWait := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistWait) " Y+5", "``checklist.ahk`` always wait")
+    checklistWaitTitle := "``checklist.ahk`` always wait"
+    checkWait := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistWait) " Y+5", checklistWaitTitle)
     waitToolY := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
     waitToolN := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
     switch checklistWait {
@@ -242,24 +249,33 @@ settingsGUI()
         case "false":
             checkWait.ToolTip := waitToolN
     }
-    checkWait.OnEvent("Click", waitToggle)
-    waitToggle(*)
+    checkWait.OnEvent("Click", msgboxToggle.Bind("checklist wait"))
+
+    msgboxToggle(ini, script, other)
     {
         detect()
         ToolTip("")
-        msgboxtext := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
-        checkWaitVal := checkWait.Value
+        switch script.text {
+            case checklistWaitTitle:
+                toolTrue := waitToolY
+                toolFalse := waitToolN
+            case checklistTooltipTitle:
+                toolTrue := checkToolY
+                toolFalse := checkToolN
+            }
+        msgboxText := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
+        checkWaitVal := script.Value
         switch checkWaitVal {
             case 1:
-                IniWrite("true", ptf["settings"], "Settings", "checklist wait")
-                checkWait.ToolTip := waitToolY
-                tool.Cust(waitToolY, 2.0)
+                IniWrite("true", ptf["settings"], "Settings", ini)
+                checkWait.ToolTip := toolTrue
+                tool.Cust(toolTrue, 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
             case 0:
-                IniWrite("false", ptf["settings"], "Settings", "checklist wait")
-                checkWait.ToolTip := waitToolN
-                tool.Cust(waitToolN, 2.0)
+                IniWrite("false", ptf["settings"], "Settings", ini)
+                checkWait.ToolTip := toolFalse
+                tool.Cust(toolFalse, 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
         }
@@ -501,23 +517,23 @@ musicGUI()
     MyGui := tomshiBasic(10, 600, "AlwaysOnTop -Resize +MinSize260x120 +MaxSize260x120", "Music to open?") ;creates our GUI window
     ;#now we define the elements of the GUI window
     ;defining AIMP
-    aimplogo := MyGui.Add("Picture", "w25 h-1 Y9", ptf.guiIMG "\aimp.png")
+    aimplogo := MyGui.AddPicture("w25 h-1 Y9", ptf.guiIMG "\aimp.png")
     AIMP := MyGui.Add("Button", "X40 Y7", "AIMP")
     AIMP.OnEvent("Click", musicRun)
     ;defining Foobar
-    foobarlogo := MyGui.Add("Picture", "w20 h-1 X14 Y40", ptf.guiIMG "\foobar.png")
+    foobarlogo := MyGui.AddPicture("w20 h-1 X14 Y40", ptf.guiIMG "\foobar.png")
     foobar := MyGui.Add("Button", "X40 Y40", "Foobar")
     foobar.OnEvent("Click", musicRun)
     ;defining Windows Media Player
-    wmplogo := MyGui.Add("Picture", "w25 h-1 X140 Y9", ptf.guiIMG "\wmp.png")
+    wmplogo := MyGui.AddPicture("w25 h-1 X140 Y9", ptf.guiIMG "\wmp.png")
     WMP := MyGui.Add("Button", "X170 Y7", "WMP")
     WMP.OnEvent("Click", musicRun)
     ;defining VLC
-    vlclogo := MyGui.Add("Picture", "w28 h-1 X138 Y42", ptf.guiIMG "\vlc.png")
+    vlclogo := MyGui.AddPicture("w28 h-1 X138 Y42", ptf.guiIMG "\vlc.png")
     VLC := MyGui.Add("Button", "X170 Y40", "VLC")
     VLC.OnEvent("Click", musicRun)
     ;defining music folder
-    folderlogo := MyGui.Add("Picture", "w25 h-1  X14 Y86", ptf.guiIMG "\explorer.png")
+    folderlogo := MyGui.AddPicture("w25 h-1  X14 Y86", ptf.guiIMG "\explorer.png")
     FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
     FOLDERGUI.OnEvent("Click", MUSICFOLDER)
     ;add an invisible button since removing the default off all the others did nothing

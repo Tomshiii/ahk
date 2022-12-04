@@ -316,7 +316,7 @@ if WinExist(verNum ".x")
 
 
 ;// backing up repo/wiki
-;// these need to be hardcoded dirs, dirdelete, dircopy don't work with relative paths
+;// these need to be hardcoded dirs, dirdelete/dircopy don't work with relative paths
 ahkBackup     := "E:\Github\Non Github Backups\ahkBackup"
 ahkWiki       := "E:\Github\ahk_wiki"
 ahkWikiBackup := "E:\Github\Non Github Backups\ahkWikiBackup"

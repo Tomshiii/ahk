@@ -116,7 +116,8 @@ if WinExist(editors.Premiere.winTitle) || WinExist(editors.AE.winTitle)
         global StartTickCount := A_TickCount ;for tray function
         SetTimer(StopWatch, 10) ;for tray function
         timer := true
-        SetTimer(check, -msChecklist) ;if you do not wish to use the checklist script, simply comment out this timer
+        if IniRead(ptf["settings"], "Settings", "autosave check checklist") = "true"
+            SetTimer(check, -msChecklist) ;if you do not wish to use the checklist script, simply comment out this timer
     }
 else
     {
