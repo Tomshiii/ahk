@@ -158,17 +158,8 @@ updateCheck(Item, *)
         tree := "dev"
     if !FileExist(ptf["settings"])
         {
-            try {
-                main := ComObject("WinHttp.WinHttpRequest.5.1")
-                main.Open("GET", "https://raw.githubusercontent.com/Tomshiii/ahk/" tree "/checklist.ahk")
-                main.Send()
-                main.WaitForResponse()
-                string := main.ResponseText
-            }  catch as e {
-                tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
-                return
-            }
-            if !IsSet(string)
+            string := getHTML("https://raw.githubusercontent.com/Tomshiii/ahk/" tree "/checklist.ahk")
+            if string = 0
                 return
             startPos := InStr(string, "version := ", 1, 1, 1)
             endpos := InStr(string, '"',, startPos, 2)

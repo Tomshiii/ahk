@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <Functions\SplitPathObj>
 #Include <Functions\getScriptRelease>
+#Include <Functions\checkInternet>
 #Include <Classes\ptf>
 ; }
 
@@ -29,7 +30,9 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?) {
     func := err.what
     if func = "" && IsSet(backupfunc?)
         func := backupfunc
-    error := type(err) ": " err.Message
+    err.Message := StrReplace(err.Message, "`n`n", "- ")
+    err.Message := StrReplace(err.Message, "`r`r", "- ")
+    error := type(err) ": " Trim(err.Message, "`n`r`t`v")
     lineFile := err.File
     lineNumber := err.Line
     extra := err.Extra
@@ -62,10 +65,22 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?) {
                 Memory := Round(Response, 2)
                 FreePhysMem := Round(Response2, 2)
                 InstalledVersion := IniRead(ptf["settings"], "Track", "version")
-                LatestReleaseBeta := getScriptRelease(True)
-                LatestReleaseMain := getScriptRelease()
-                if LatestReleaseBeta = LatestReleaseMain
-                    LatestReleaseBeta := ""
+                if checkInternet() {
+                    try {
+                        LatestReleaseBeta := getScriptRelease(True)
+                        LatestReleaseMain := getScriptRelease()
+                    } catch as e {
+                        LatestReleaseBeta := ""
+                        LatestReleaseMain := ""
+                    }
+                    if LatestReleaseBeta = LatestReleaseMain
+                        LatestReleaseBeta := ""
+                }
+                else
+                    {
+                        LatestReleaseBeta := ""
+                        LatestReleaseMain := ""
+                    }
                 time := A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "." A_MSec
                 start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ Tomshi's Scripts" "`n`t\\ Installed Version - " InstalledVersion "`n`t\\ Latest Version Released`n`t`t\\ main - " LatestReleaseMain "`n`t`t\\ beta - " LatestReleaseBeta "`n\\ OS`n`t\\ " OSName "`n`t\\ " A_OSVersion "`n`t\\ " OSArch "`n\\ CPU`n`t\\ " RTrim(CPU) "`n`t\\ Logical Processors - " Logical "`n\\ RAM`n`t\\ Total Physical Memory - " Memory "GB`n`t\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
             }

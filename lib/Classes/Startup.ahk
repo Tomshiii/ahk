@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/02
- * @version 1.0.1
+ * @date 2022/12/04
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,6 +12,8 @@
 #Include <Classes\tool>
 #Include <Classes\Dark>
 #Include <Functions\errorLog>
+#Include <Functions\getScriptRelease>
+#Include <Functions\getHTML>
 ; // libs
 #Include <Other\_DLFile>
 ; }
@@ -256,121 +258,118 @@ class Startup {
                     downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
                     if downloadLocation = ""
                         return
-                    else
+                    ;ToolTip("Updated scripts are downloading")
+                    TrayTip("Updated scripts are downloading", "Downloading...", 17)
+                    SetTimer(HideTrayTip, -5000)
+                    HideTrayTip() {
+                        TrayTip()
+                    }
+                    type := ""
+                    exeOrzip(filetype, &found)
+                    {
+                        whr := ComObject("WinHttp.WinHttpRequest.5.1")
+                        whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." filetype, true)
+                        whr.Send()
+                        ; Using 'true' above and the call below allows the script to remain responsive.
+                        whr.WaitForResponse()
+                        found := whr.ResponseText
+                    }
+                    exeOrzip("exe", &found)
+                    if found = "Not found"
                         {
-                            ;ToolTip("Updated scripts are downloading")
-                            TrayTip("Updated scripts are downloading", "Downloading...", 17)
-                            SetTimer(HideTrayTip, -5000)
-                            HideTrayTip() {
-                                TrayTip()
-                            }
-                            type := ""
-                            exeOrzip(filetype, &found)
-                            {
-                                whr := ComObject("WinHttp.WinHttpRequest.5.1")
-                                whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." filetype, true)
-                                whr.Send()
-                                ; Using 'true' above and the call below allows the script to remain responsive.
-                                whr.WaitForResponse()
-                                found := whr.ResponseText
-                            }
-                            exeOrzip("exe", &found)
+                            exeOrzip("zip", &found)
                             if found = "Not found"
                                 {
-                                    exeOrzip("zip", &found)
-                                    if found = "Not found"
-                                        {
-                                            ToolTip("")
-                                            MsgBox("Couldn't find the latest release to download")
-                                            return
-                                        }
-                                    else
-                                        type := "zip"
+                                    ToolTip("")
+                                    MsgBox("Couldn't find the latest release to download")
+                                    return
                                 }
                             else
-                                type := "exe"
-
-                            ; #Start DLFile
-
-                            url := "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type
-                            dest := downloadLocation "\"
-
-                            DL := DLFile(url,dest,callback)
-
-                            g := Gui("+AlwaysOnTop -MaximizeBox -MinimizeBox", "Download Progress")
-                            g.OnEvent("close",(*)=>g.Hide())
-                            g.OnEvent("escape",(*)=>g.Hide())
-                            g.SetFont(,"Consolas")
-                            g.Add("Text","w300 vText1 -Wrap")
-                            g.Add("Progress","w300 vProg",0)
-                            g.Add("Text","w300 vText2 -Wrap")
-                            g.Add("Button","x255 w75 vCancel","Cancel").OnEvent("click",events)
-                            g.Add("Button","x255 yp w75 vResume Hidden","Resume").OnEvent("click",events)
-                            g.Show()
-
-                            DL.Start()
-
-                            events(ctl,info) {
-                                If (ctl.name = "Cancel") {
-                                    If ctl.text = "Exit" {
-                                        g.Hide()
-                                    } Else {
-                                        DL.cancel := true
-                                        g["Text2"].Text := "Download Cancelled! / Percent: " DL.perc "% / Exit = ESC"
-                                        g["Resume"].Visible := true
-                                        g["Cancel"].Visible := false
-                                    }
-                                } Else if (ctl.name = "Resume") {
-                                    g["Resume"].Visible := false
-                                    g["Cancel"].Visible := true
-                                    DL.Start() ; note that execution stops here until download is finished or DL.cancel is set to TRUE.
-                                }
-                            }
-
-                            callback(o:="") { ; g is global in this case
-                                g["Text1"].Text := o.file
-                                g["Text2"].Text := Round(o.bps/1024) " KBps   /   Percent: " o.perc "%"
-                                g["Prog"].Value := o.perc
-
-                                If o.perc = 100
-                                    {
-                                        g["Cancel"].Text := "Exit"
-                                        Run(dest)
-                                        g.Hide()
-                                    }
-                            }
-                            ; #end DLFile
-
-                            if DirExist(A_Temp "\" MyRelease)
-                                DirDelete(A_Temp "\" MyRelease, 1)
-                            if DirExist(ptf.rootDir "\Backups\Script Backups\" MyRelease)
-                                {
-                                    newbackup := MsgBox("You already have a backup of Release " MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
-                                    if newbackup = "Yes"
-                                        DirDelete(ptf.rootDir "\Backups\Script Backups\" MyRelease, 1)
-                                    else
-                                        {
-                                            ToolTip("")
-                                            TrayTip()
-                                            return
-                                        }
-                                }
-                            try {
-                                TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
-                                SetTimer(HideTrayTip, -5000)
-                                DirCopy(ptf.rootDir, A_Temp "\" MyRelease)
-                                DirMove(A_Temp "\" MyRelease, ptf.rootDir "\Backups\Script Backups\" MyRelease, "1")
-                                if DirExist(A_Temp "\" MyRelease)
-                                    DirDelete(A_Temp "\" MyRelease, 1)
-                                tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
-                                if WinExist("Download Progress") && g["Cancel"].Text := "Exit"
-                                    g.Destroy()
-                            } catch as e {
-                                tool.Cust("There was an error trying to backup your current scripts", 2000)
-                                errorLog(e, A_ThisFunc "()")
-                            }
-                            return
+                                type := "zip"
                         }
+                    else
+                        type := "exe"
+
+                    ; #Start DLFile
+
+                    url := "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type
+                    dest := downloadLocation "\"
+
+                    DL := DLFile(url,dest,callback)
+
+                    g := Gui("+AlwaysOnTop -MaximizeBox -MinimizeBox", "Download Progress")
+                    g.OnEvent("close",(*)=>g.Hide())
+                    g.OnEvent("escape",(*)=>g.Hide())
+                    g.SetFont(,"Consolas")
+                    g.Add("Text","w300 vText1 -Wrap")
+                    g.Add("Progress","w300 vProg",0)
+                    g.Add("Text","w300 vText2 -Wrap")
+                    g.Add("Button","x255 w75 vCancel","Cancel").OnEvent("click",events)
+                    g.Add("Button","x255 yp w75 vResume Hidden","Resume").OnEvent("click",events)
+                    g.Show()
+
+                    DL.Start()
+
+                    events(ctl,info) {
+                        If (ctl.name = "Cancel") {
+                            If ctl.text = "Exit" {
+                                g.Hide()
+                            } Else {
+                                DL.cancel := true
+                                g["Text2"].Text := "Download Cancelled! / Percent: " DL.perc "% / Exit = ESC"
+                                g["Resume"].Visible := true
+                                g["Cancel"].Visible := false
+                            }
+                        } Else if (ctl.name = "Resume") {
+                            g["Resume"].Visible := false
+                            g["Cancel"].Visible := true
+                            DL.Start() ; note that execution stops here until download is finished or DL.cancel is set to TRUE.
+                        }
+                    }
+
+                    callback(o:="") { ; g is global in this case
+                        g["Text1"].Text := o.file
+                        g["Text2"].Text := Round(o.bps/1024) " KBps   /   Percent: " o.perc "%"
+                        g["Prog"].Value := o.perc
+
+                        If o.perc = 100
+                            {
+                                g["Cancel"].Text := "Exit"
+                                Run(dest)
+                                g.Hide()
+                            }
+                    }
+                    ; #end DLFile
+
+                    if DirExist(A_Temp "\" MyRelease)
+                        DirDelete(A_Temp "\" MyRelease, 1)
+                    if DirExist(ptf.rootDir "\Backups\Script Backups\" MyRelease)
+                        {
+                            newbackup := MsgBox("You already have a backup of Release " MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
+                            if newbackup = "Yes"
+                                DirDelete(ptf.rootDir "\Backups\Script Backups\" MyRelease, 1)
+                            else
+                                {
+                                    ToolTip("")
+                                    TrayTip()
+                                    return
+                                }
+                        }
+                    try {
+                        TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
+                        SetTimer(HideTrayTip, -5000)
+                        DirCopy(ptf.rootDir, A_Temp "\" MyRelease)
+                        DirMove(A_Temp "\" MyRelease, ptf.rootDir "\Backups\Script Backups\" MyRelease, "1")
+                        if DirExist(A_Temp "\" MyRelease)
+                            DirDelete(A_Temp "\" MyRelease, 1)
+                        tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
+                        if WinExist("Download Progress") && g["Cancel"].Text := "Exit"
+                            g.Destroy()
+                    } catch as e {
+                        tool.Cust("There was an error trying to backup your current scripts", 2000)
+                        errorLog(e, A_ThisFunc "()")
+                    }
+                    return
                 }
                 closegui(*) {
                     MyGui.Destroy()
@@ -711,17 +710,9 @@ class Startup {
          * @returns {string} returns the latest lib version number
          */
         getString(url) {
-            try {
-                main := ComObject("WinHttp.WinHttpRequest.5.1")
-                main.Open("GET", url)
-                main.Send()
-                main.WaitForResponse()
-                string := main.ResponseText
-            }  catch as e {
-                tool.Cust("Couldn't get version info`nYou may not be connected to the internet or lib url may be incorrect")
-                errorLog(e, A_ThisFunc "()")
+            string := getHTML(url)
+            if string = 0
                 return {version: 0}
-            }
             if InStr(string, "﻿") ;removes zero width no-break space
                 string := StrReplace(string, "﻿", "")
             getVerPos := InStr(string, "@version")
@@ -757,5 +748,37 @@ class Startup {
         }
         tool.Wait()
         tool.Cust("libs up to date")
+    }
+
+    static updateAHK() {
+        if this.isReload() ;checks if script was reloaded
+            return
+        settingsCheck := IniRead(ptf["settings"], "Settings", "update check")
+        if settingsCheck = "stop"
+            return
+        latestVer := getHTML("https://www.autohotkey.com/download/2.0/version.txt")
+        if latestVer = 0
+            return
+        if VerCompare(latestVer, A_AhkVersion) <= 0
+            {
+                tool.Wait()
+                tool.Cust("AHK up to date")
+                return
+            }
+        if settingsCheck = "false"
+            {
+                tool.Wait()
+                tool.Cust("A new version of AHK is available")
+                return
+            }
+        check := MsgBox("A new version of AHK is available`n`nDo you wish to download it?", "AHK - v" latestVer, "4 32 4096")
+        if check = "No"
+            return
+        downloadLocation := FileSelect("D", , "Where do you wish to download the latest AHK release")
+        if downloadLocation = ""
+            return
+        tool.Cust("Latest version of AHK is downloading", 2.0)
+        Download("https://www.autohotkey.com/download/ahk-v2.exe", downloadLocation "\ahk-v2.exe")
+        Run(downloadLocation)
     }
 }

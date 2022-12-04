@@ -1,6 +1,8 @@
 ; { \\ #Includes
 #Include <Classes\tool>
 #Include <Functions\errorLog>
+#Include <Functions\getHTML>
+#Include <Functions\checkInternet>
 ; }
 
 /**
@@ -13,22 +15,18 @@
  */
 getScriptRelease(beta := false, &changeVer := "", user := "Tomshiii", repo := "ahk")
 {
-    try {
-        main := ComObject("WinHttp.WinHttpRequest.5.1")
-        main.Open("GET", "https://github.com/" user "/" repo "/releases.atom")
-        main.Send()
-        main.WaitForResponse()
-        string := main.ResponseText
-    }  catch as e {
-        tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
-        errorLog(e, A_ThisFunc "()")
+    if !checkInternet()
+        {
+            errorLog(, A_ThisFunc "()", "Couldn't connect to the internet", A_LineFile, A_LineNumber)
+            return 0
+        }
+    if !ver := getHTML("https://github.com/" user "/" repo "/releases.atom")
         return 0
-    }
     loop {
-        getrightURL := InStr(string, 'href="https://github.com/' user '/' repo '/releases/tag/', 1, 1, A_Index)
-        foundpos := InStr(string, 'v2', 1, getrightURL, 1)
-        endpos := InStr(string, '"', , foundpos, 1)
-        ver := Trim(SubStr(string, foundpos, endpos - foundpos))
+        getrightURL := InStr(ver, 'href="https://github.com/' user '/' repo '/releases/tag/', 1, 1, A_Index)
+        foundpos := InStr(ver, 'v2', 1, getrightURL, 1)
+        endpos := InStr(ver, '"', , foundpos, 1)
+        ver := Trim(SubStr(ver, foundpos, endpos - foundpos))
         if InStr(ver, "<",, 1, 1)
             ver := SubStr(ver, 1, InStr(ver, "<",, 1, 1)-1)
         if !InStr(ver, "pre") && !InStr(ver, "beta")

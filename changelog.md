@@ -1,8 +1,15 @@
 # <> Release 2.8.x -
 
 ## > Functions
-- Added `getLocalVer()`
+- Added `getLocalVer()` to grab the local version of a script
+- Added `checkInternet()` to check if the user has a connection to the internet
+- Added `getHTML()` to cut repeat code
+- Added `startup.updateAHK()` to check if there is an ahk update and prompt the user to download
 - `firstCheck()` & `HotkeyReplacer.ahk` better center their titles
+
+`errorLog`
+- Will now check for an internet connection before attempting to get latest release information to stop it causing an infinite loop
+- Will now trim any `newlines` or `returns`
 
 `Discord.ahk`
 - Update `discord.Button()` images for new discord font
