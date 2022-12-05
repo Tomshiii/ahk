@@ -1,13 +1,13 @@
 SetWorkingDir(ptf.rootDir)
 
-#Include <\KSA\Keyboard Shortcut Adjustments>
+/* #Include <\KSA\Keyboard Shortcut Adjustments>
 #Include <\Functions\Startup>
 #Include <\Functions\Editors\After Effects>
 #Include <\Functions\Editors\Photoshop>
 #Include <\Functions\Editors\Premiere>
 #Include <\Functions\Editors\Resolve>
 #Include <\Functions\switchTo>
-#Include <\Functions\Windows>
+#Include <\Functions\Windows> */ ;these are commented out to stop VSCode giving me errors
 
 ;This script exists simply so the other scripts in this dir can include all function scripts
 

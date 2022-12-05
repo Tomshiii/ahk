@@ -1,6 +1,6 @@
 SetWorkingDir(ptf.rootDir)  ; Ensures a consistent starting directory.
 #SingleInstance Force
-#Include <\KSA\Keyboard Shortcut Adjustments>
+/* #Include <\KSA\Keyboard Shortcut Adjustments>
 #Include <\Functions\Startup>
 #Include <\Functions\Editors\After Effects>
 #Include <\Functions\Editors\Photoshop>
@@ -12,7 +12,8 @@ SetWorkingDir(ptf.rootDir)  ; Ensures a consistent starting directory.
 #Include <\Apps\VSCode>
 #Include <\Functions\Move>
 #Include <\Functions\GUIs>
-#Include <\Other\IncludeLibs>
+#Include <\Other\IncludeLibs> */
+;these are commented out to stop VSCode giving me errors
 
 ; \\
     ; This script use to be placed in the root directory, I have since changed the way my scripts are laid out so they include all the necessary files they require for proper function instead of using these bulk files to include everything

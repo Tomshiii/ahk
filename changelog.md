@@ -6,6 +6,7 @@
 - Added `getHTML()` to cut repeat code
 - Added `startup.updateAHK()` to check if there is an ahk update and prompt the user to download
 - `firstCheck()` & `HotkeyReplacer.ahk` better center their titles
+- Setting *either* the `x` or `y` values in `tool.Cust()` (but not both) will now offset the tooltip by that value from the current cursor position
 
 `errorLog`
 - Will now check for an internet connection before attempting to get latest release information to stop it causing an infinite loop
@@ -21,3 +22,4 @@
 ## > Other Changes
 - Releases will no longer include any `.psd` files (this is to help save on filesize)
 - `autosave.ahk` checking for `checklist.ahk` being open can now be toggled in `settingsGUI()`
+- Fix `Streaming.ahk` having an incorrect `#Include`

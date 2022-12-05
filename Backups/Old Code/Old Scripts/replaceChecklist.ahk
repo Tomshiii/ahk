@@ -29,11 +29,12 @@ if !DirExist(location)
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir) ;this is required for KSA to work
-#Include <\KSA\Keyboard Shortcut Adjustments> ;this is added because we need it
+/* #Include <\KSA\Keyboard Shortcut Adjustments> ;this is added because we need it
 #Include <\Functions\Windows> ;this is only added to prevent errors
 #Include <\Functions\switchTo> ;this is only added to prevent errors
 #Include <\Functions\Startup> ;this is only added to prevent errors
-#Include <\Functions\General> ;this is added because we need it
+#Include <\Functions\General> ;this is added because we need it */
+ ;these are commented out to stop VSCode giving me errors
 
 localVer(dirLoc)
 {
@@ -61,7 +62,7 @@ loop files, location "*.ahk", "R"
                     continue
                 inUseVer := localVer(A_LoopFileFullPath)
                 ;now we check for problem versions
-                
+
                 /* newIni()
                  This function will facilitate the creation of new .ini files for new releases of `checklist.ahk`. It will allow me to easily add new .ini values without the user needing to do anything
                  @param boxOrlist is a required variable to due a typo on local versions of `checklist.ahk` below v2.3
