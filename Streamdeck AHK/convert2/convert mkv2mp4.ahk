@@ -1,5 +1,8 @@
 #SingleInstance Force
-#Include "..\SD_functions.ahk"
+; { \\ #Includes
+#Include <Functions\SD Functions\convert2>
+; }
+
 convert2('for /R %f IN (*.mkv) DO ffmpeg -i "%f" -codec copy -map 0:a -map 0:v "%~nf.mp4"' "{Enter}")
 ;for /R %f IN (*.mkv) DO ffmpeg -i "%f" -codec copy -map 0:a -map 0:v "%~nf.mp4"
 

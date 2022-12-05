@@ -513,6 +513,16 @@ XButton2:: ;these two hotkeys are activated by right clicking on a tab then pres
 ;movetab2Hotkey;
 XButton1::move.Tab()
 
+^+d::
+{
+	if !WinActive("Google Sheets")
+		{
+			SendInput(A_ThisHotkey)
+			return
+		}
+	SendInput(A_DDD " - " FormatTime(A_Now, "d") "/" A_MM)
+}
+
 ;=============================================================================================================================================
 ;
 ;		Discord
