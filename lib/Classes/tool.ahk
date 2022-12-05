@@ -2,7 +2,7 @@
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
  * @date 2022/12/05
- * @version 1.0.2
+ * @version 1.0.2.1
  ***********************************************************************/
 
 class tool {
@@ -28,7 +28,7 @@ class tool {
         if (IsSet(x) || IsSet(y)) && !(IsSet(x) && IsSet(y))
             {
                 one := true
-                x := !IsSet(x) ? 12 : x
+                x := !IsSet(x) ? 20 : x
                 y := !IsSet(y) ? -6 : y
             }
         else if (IsSet(x) && IsSet(y))
@@ -36,10 +36,11 @@ class tool {
         else
             {
                 none := true
-                x := 12
+                x := 20
                 y := -6
             }
         CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
+        CoordMode("Mouse", "Screen") ;this ensures the initial tooltip generates in the correct position if cursor isn't on the main display
         if !IsInteger(timeout) && IsFloat(timeout) ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
             timeout := timeout * 1000
         if IsSet(WhichToolTip)
