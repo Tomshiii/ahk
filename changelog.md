@@ -7,6 +7,8 @@
 - Added `startup.updateAHK()` to check if there is an ahk update and prompt the user to download
 - `firstCheck()` & `HotkeyReplacer.ahk` better center their titles
 - Setting *either* the `x` or `y` values in `tool.Cust()` (but not both) will now offset the tooltip by that value from the current cursor position
+- `zoom()` now resets toggles from `10s` => `5s`
+    - Can now manually reset toggles by pressing `F5`
 
 `errorLog`
 - Will now check for an internet connection before attempting to get latest release information to stop it causing an infinite loop
@@ -23,3 +25,5 @@
 - Releases will no longer include any `.psd` files (this is to help save on filesize)
 - `autosave.ahk` checking for `checklist.ahk` being open can now be toggled in `settingsGUI()`
 - Fix `Streaming.ahk` having an incorrect `#Include`
+- Fix `convert2` scripts having incorrect `#Include`
+    - Now uses `Run(, dir)` to open cmd in the current directory

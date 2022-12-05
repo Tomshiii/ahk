@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/11/28
- * @version 1.0.2
+ * @date 2022/12/05
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -300,10 +300,15 @@ class Prem {
      */
     static zoom()
     {
-        reset() { ;this function is for a timer we activate anytime a clients zoom has a toggle
-            tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.945, A_ScreenHeight*0.3575, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
-            alexTog := 0
-            chloeTog := 0
+        resetTime := 5 * 1000 ;convert ms to s
+        reset(time) { ;this function is for a timer we activate anytime a clients zoom has a toggle
+            if ((A_TickCount - time) >= resetTime) || GetKeyState("F5", "P")
+                {
+                    tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.375, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
+                    alexTog := 0
+                    chloeTog := 0
+                    SetTimer(, 0)
+                }
         }
 
         ;we'll put all our values at the top so they can be easily changed. First value is your X coord, second value is your Y coord, third value is your Scale value
@@ -360,7 +365,7 @@ class Prem {
         chloe := InStr(premCheck, "chloe")
         if chloe != 0
             {
-                SetTimer(reset, -10000) ;reset toggle values after x seconds
+                SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
                 tool.Cust("zoom " chloeTog+1 "/3")
                 if chloeTog = 0
                     {
@@ -388,7 +393,7 @@ class Prem {
         alex := InStr(premCheck, "alex")
         if alex != 0
             {
-                SetTimer(reset, -10000) ;reset toggle values after x seconds
+                SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
                 tool.Cust("zoom " alexTog+1 "/2")
                 if alexTog = 0
                     {
