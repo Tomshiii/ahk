@@ -2,7 +2,7 @@
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
  * @date 2022/12/05
- * @version 1.0.2.1
+ * @version 1.0.2.2
  ***********************************************************************/
 
 class tool {
@@ -29,7 +29,7 @@ class tool {
             {
                 one := true
                 x := !IsSet(x) ? 20 : x
-                y := !IsSet(y) ? -6 : y
+                y := !IsSet(y) ? 0 : y
             }
         else if (IsSet(x) && IsSet(y))
             both := true
@@ -37,7 +37,7 @@ class tool {
             {
                 none := true
                 x := 20
-                y := -6
+                y := 0
             }
         CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
         CoordMode("Mouse", "Screen") ;this ensures the initial tooltip generates in the correct position if cursor isn't on the main display

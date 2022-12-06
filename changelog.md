@@ -25,5 +25,6 @@
 - Releases will no longer include any `.psd` files (this is to help save on filesize)
 - `autosave.ahk` checking for `checklist.ahk` being open can now be toggled in `settingsGUI()`
 - Fix `Streaming.ahk` having an incorrect `#Include`
+- All scripts that use the command line now send their commands directly using `RunWait()` instead of opening `A_ComSpec` and using `SendInput`
 - Fix `convert2` scripts having incorrect `#Include`
-    - Now uses `Run(, dir)` to open cmd in the current directory
+    - Now uses `winget.ExplorerPath()` to grab the path of the current window without needing to highlight the url bar

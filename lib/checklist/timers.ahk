@@ -92,7 +92,7 @@ minusOrAdd(sign)
         }
     if newValue < 0
         newValue := 0
-    change := IniWrite(newValue, checklist, "Info", "time")
+    IniWrite(newValue, checklist, "Info", "time")
     SetTimer(StopWatch, -1000)
     timerText.SetFont("cRed")
     timerMinutes.SetFont("cRed")
@@ -124,7 +124,7 @@ reminder()
         {
             switch settingsToolTrack {
                 case 1:
-                    tool.Cust("Don't forget you have the timer stopped!", "2000")
+                    tool.Cust("Don't forget you have the timer stopped!", "2000",,, 30, 20)
                     SetTimer(, -ms)
                 case 0:
                     SetTimer(, 0)

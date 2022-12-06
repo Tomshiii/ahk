@@ -189,9 +189,9 @@ save()
             goto ignore
         }
 
-    if A_TimeIdleKeyboard <= idle
+    if (A_TimeIdleKeyboard <= idle) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton") && A_TimeIdleMouse <= idle)
         {
-            tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
+            tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
             SetTimer(, -retry)
             goto theEnd
         }
@@ -292,10 +292,12 @@ save()
                         {
                             avoid := 1
                             block.Off()
+                            tool.Wait()
                             tool.Cust("A window is currently open that may alter the saving process")
                             errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                             goto end
                         }
+                    tool.Wait()
                     tool.Cust("Saving AE")
                     WinSetTransparent(0, editors.AE.winTitle)
                     ControlSend("{Ctrl Down}s{Ctrl Up}",, aeCheck)
@@ -319,10 +321,12 @@ save()
                         {
                             SetTimer(, -ms)
                             block.Off()
+                            tool.Wait()
                             tool.Cust("A window is currently open that may alter the saving process")
                             errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
                             goto end
                         }
+                    tool.Wait()
                     tool.Cust("Saving AE")
                     SendInput("^s")
                     WinWaitClose("Save Project",, 3)
