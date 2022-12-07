@@ -129,7 +129,7 @@ loop files ptf.rootDir "\*", "F"
             continue
         FileCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value, 1)
     }
-loop files A_WorkingDir "\release\" yes.Value, "F R"
+loop files A_WorkingDir "\release\" yes.Value "\*", "F R"
     {
         if A_LoopFileExt = "psd" ;they're large and unnecessary to include
             FileDelete(A_LoopFileFullPath)

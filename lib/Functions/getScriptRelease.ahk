@@ -20,13 +20,13 @@ getScriptRelease(beta := false, &changeVer := "", user := "Tomshiii", repo := "a
             errorLog(, A_ThisFunc "()", "Couldn't connect to the internet", A_LineFile, A_LineNumber)
             return 0
         }
-    if !ver := getHTML("https://github.com/" user "/" repo "/releases.atom")
+    if !html := getHTML("https://github.com/" user "/" repo "/releases.atom")
         return 0
     loop {
-        getrightURL := InStr(ver, 'href="https://github.com/' user '/' repo '/releases/tag/', 1, 1, A_Index)
-        foundpos := InStr(ver, 'v2', 1, getrightURL, 1)
-        endpos := InStr(ver, '"', , foundpos, 1)
-        ver := Trim(SubStr(ver, foundpos, endpos - foundpos))
+        getrightURL := InStr(html, 'href="https://github.com/' user '/' repo '/releases/tag/', 1, 1, A_Index)
+        foundpos := InStr(html, 'v2', 1, getrightURL, 1)
+        endpos := InStr(html, '"', , foundpos, 1)
+        ver := Trim(SubStr(html, foundpos, endpos - foundpos))
         if InStr(ver, "<",, 1, 1)
             ver := SubStr(ver, 1, InStr(ver, "<",, 1, 1)-1)
         if !InStr(ver, "pre") && !InStr(ver, "beta")

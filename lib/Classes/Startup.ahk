@@ -751,6 +751,9 @@ class Startup {
         tool.Cust("libs up to date")
     }
 
+    /**
+     * This function will check for a new version of AHK by comparing the latest version to the users currently running version. If a newer version is available, it will prompt the user.
+     */
     static updateAHK() {
         if this.isReload() ;checks if script was reloaded
             return
