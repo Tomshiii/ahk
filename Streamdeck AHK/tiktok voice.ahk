@@ -6,6 +6,7 @@
 ;This script is designed to use the tiktok text to speech tool found : https://github.com/oscie57/tiktok-voice
 ;If you want a more robust option set for this script (choosing different voices) you would need to look into creating a Gui instead of just using an input box. That would be a lot more complicated to code and generally just isn't worth the effort for what I'm doing
 
+; ////////////////////////////////////////////
 ;I have been unable to get this tool to work since needing a sessionid but as I don't use it I can't be bothered spending the time to fix it
 
 ;set the folder you have this tool downloaded

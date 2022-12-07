@@ -1,8 +1,10 @@
 ; { \\ #Includes
+#Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\ptf>
 #Include <Classes\block>
 #Include <Classes\coord>
 #Include <Classes\tool>
+#Include <Functions\errorLog>
 ; }
 
 /**
@@ -11,23 +13,88 @@
  */
 scale(amount)
 {
+    ;// This function borrows code from `prem.valuehold()`
+
+    ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
+    ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
+    ;You can plug your own x distance in by changing the value below
+    xdist := 210
     coord.s()
+    MouseGetPos(&xpos, &ypos)
     block.On()
-    MouseGetPos &xpos, &ypos
-    if ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " ptf.Premiere "scale.png") || ImageSearch(&x, &y, 0, 911,705, 1354, "*2 " ptf.Premiere "scale2.png") ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        {
-            if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x288ccf, 3) ;searches for the blue text to the right of the scale value
+    SendInput(effectControls)
+    SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+    try {
+        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+    } catch as e {
+        block.Off() ;just incase
+        tool.Cust("Couldn't get the ClassNN of the desired panel")
+        errorLog(e, A_ThisFunc "()")
+        return
+    }
+    SendInput(timelineWindow) ;focuses the timeline
+    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
+            SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+            sleep 50
+            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
+                    tool.Cust("The wrong clips are selected")
+                    errorLog(, A_ThisFunc "()", "The wrong clips are selected", A_LineFile, A_LineNumber)
                     block.Off()
-                    tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                     return
                 }
-            MouseMove(xcol, ycol)
         }
+    loop {
+        if A_Index > 1
+            {
+                ToolTip(A_Index)
+                SendInput(effectControls)
+                SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                try {
+                    ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+                    ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+                } catch as e {
+                    tool.Cust("Couldn't get the ClassNN of the Effects Controls panel")
+                    errorLog(e, A_ThisFunc "()")
+                    MouseMove(xpos, ypos)
+                    return
+                }
+            }
+        if ( ;finds the value you want to adjust, then finds the value adjustment to the right of it
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "scale.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "scale2.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "scale3.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "scale4.png")
+        )
+            break
+        if A_Index > 3
+            {
+                block.Off()
+                tool.Cust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, 5000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                errorLog(, A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
+                KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                MouseMove(xpos, ypos)
+                return
+            }
+        sleep 50
+    }
+    colour:
+    if !PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
+        {
+            block.Off()
+            tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+            errorLog(, A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
+            KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+            MouseMove(xpos, ypos)
+            return
+        }
+    MouseMove(xcol, ycol)
     SendInput "{Click}"
     SendInput(amount)
     SendInput("{Enter}")
     MouseMove xpos, ypos
-    Click("middle")
+    SendInput(timelineWindow)
     block.Off()
 }

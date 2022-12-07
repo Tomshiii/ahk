@@ -29,3 +29,4 @@ The installation process will now check to ensure the user has 7zip installed be
 - All scripts that use the command line now send their commands directly using `RunWait()` instead of opening `A_ComSpec` and using `SendInput`
 - Fix `convert2` scripts having incorrect `#Include`
     - Now uses `winget.ExplorerPath()` to grab the path of the current window without needing to highlight the url bar
+- Made `Streamdeck AHK` functions `speed` & `scale` more universal by borrowing code from `prem.valuehold()`
