@@ -2,7 +2,7 @@
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
  * @date 2022/12/05
- * @version 1.0.2.2
+ * @version 1.0.3
  ***********************************************************************/
 
 class tool {
@@ -22,28 +22,30 @@ class tool {
      */
     static Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     {
-        one := false
-        both := false
-        none := false
-        if (IsSet(x) || IsSet(y)) && !(IsSet(x) && IsSet(y))
+        one := false ;this variable will be used to determine if only x or only y has been assigned a value
+        both := false ;this variable will be used to determine if both x and y have been assigned a value
+        none := false ;this variable will be used to determine if neither x or y have been assigned a value
+        xDef := 20 ;the default value for x
+        yDef := 1 ;the default value for y
+        if (IsSet(x) || IsSet(y)) && !(IsSet(x) && IsSet(y)) ; checking if one value has been assigned but not both
             {
                 one := true
-                x := !IsSet(x) ? 20 : x
-                y := !IsSet(y) ? 0 : y
+                x := !IsSet(x) ? xDef : x
+                y := !IsSet(y) ? yDef : y
             }
-        else if (IsSet(x) && IsSet(y))
+        else if (IsSet(x) && IsSet(y)) ;checking if both have been assigned
             both := true
-        else
+        else ;otherwise none have been assigned
             {
                 none := true
-                x := 20
-                y := 0
+                x := xDef
+                y := yDef
             }
         CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
         CoordMode("Mouse", "Screen") ;this ensures the initial tooltip generates in the correct position if cursor isn't on the main display
         if !IsInteger(timeout) && IsFloat(timeout) ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
             timeout := timeout * 1000
-        if IsSet(WhichToolTip)
+        if IsSet(WhichToolTip) ;doing some checks for the whichtooltip variable
             {
                 if !IsInteger(WhichToolTip)
                     WhichToolTip := 1
@@ -53,12 +55,12 @@ class tool {
         MouseGetPos(&xpos, &ypos) ;log our starting mouse coords
         time := A_TickCount ;log our starting time
         messageFind := find = 1 ? "Couldn't find " : "" ;this is essentially saying: if find = 1 then messageFind := "Couldn't find " else messageFind := ""
-        if both = false || none = true
+        if both = false || none = true ;what happens when neither x or y has been assigned a value
             {
                 ToolTip(messageFind message, xpos + x, ypos + y, WhichToolTip?) ;produce the initial tooltip
                 SetTimer(moveWithMouse.Bind(x, y), 15)
             }
-        else
+        else ;what happens otherwise
             {
                 ToolTip(messageFind message, x, y, WhichToolTip?) ;produce the initial tooltip
                 SetTimer(() => ToolTip("",,, WhichToolTip?), - timeout) ;otherwise we create a timer to remove the cursor after the timout period

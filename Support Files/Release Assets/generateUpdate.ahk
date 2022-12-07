@@ -39,8 +39,9 @@ if !DirExist(A_WorkingDir "\release\" yes.Value)
 getVer(&oldVer)
 {
     ;// replace the old version number in My Scripts.ahk
+    releaseString := FileRead(ptf.rootDir "\My Scripts.ahk")
     lastVer := getLocalVer()
-    newFile := StrReplace(releaseString, lastVer, noV, 1,, 1)
+    newFile := StrReplace(releaseString, lastVer, yes.value, 1,, 1)
 
     ;// update ahk_ver
     ahkVer := getLocalVer(newFile,, "@ahk_ver")
@@ -134,7 +135,10 @@ loop files A_WorkingDir "\release\" yes.Value, "F R"
             FileDelete(A_LoopFileFullPath)
     }
 
-;// copying over thqby's 7zip lib as we require it
+;// copying over a script that will be used to extract the .zip file
+FileCopy(ptf.SupportFiles "\Release Assets\Extract.ahk", A_WorkingDir "\release")
+
+;// copying over thqby's 7zip lib in case it's useful
 FileCopy(ptf.lib "\Other\7zip\7-zip32.dll", A_WorkingDir "\release")
 FileCopy(ptf.lib "\Other\7zip\7-zip64.dll", A_WorkingDir "\release")
 FileCopy(ptf.lib "\Other\7zip\SevenZip.ahk", A_WorkingDir "\release")
@@ -143,26 +147,28 @@ zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 
 ;// generating a file that will get compiled into the release exe
 ;// this generated script deals with extracting all the files from the exe itself
-;// as well as calling thqby's 7zip lib so we can extract my repo from the zip we created earlier
 ;// it will then run `releaseGUI.ahk` to provide the user with some install options
 FileAppend "
 (
+    alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell and .Net4.5 (or greater)`n`nIf you do not have either installed, this installer will step you through obtaining PowerShell and .Net4.X", "Notice", "1 64 256 4096")
+    if alert = "Cancel"
+        return
     check := MsgBox("This install process will dump my entire repo in the current directory.``n``nDo you wish to continue?", "Do you wish to continue?", "4 32 256 4096")
     if check = "No"
         return
     FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
+    FileInstall("E:\Github\ahk\releases\release\Extract.ahk", A_WorkingDir "\Extract.ahk", 1)
     FileInstall("E:\Github\ahk\releases\release\SevenZip.ahk", A_WorkingDir "\SevenZip.ahk", 1)
     FileInstall("E:\Github\ahk\releases\release\7-zip32.dll", A_WorkingDir "\7-zip32.dll", 1)
     FileInstall("E:\Github\ahk\releases\release\7-zip64.dll", A_WorkingDir "\7-zip64.dll", 1)
 
-    #Include SevenZip.ahk
-    sleep 1000
-    zip := SevenZip(, A_WorkingDir '\7-zip' (A_PtrSize * 8) '.dll').Extract(A_WorkingDir '\yes.value.zip', A_WorkingDir '\')
-    WinWaitClose('Extracting')
+    RunWait(A_WorkingDir '\Extract.ahk')
+
     FileDelete(A_WorkingDir '\7-zip32.dll')
     FileDelete(A_WorkingDir '\7-zip64.dll')
-    FileDelete(A_WorkingDir '\yes.value.zip')
     FileDelete(A_WorkingDir '\SevenZip.ahk')
+    FileDelete(A_WorkingDir '\Extract.ahk')
+    FileDelete(A_WorkingDir '\yes.value.zip')
     Run(A_ScriptDir "\Support Files\Release Assets\releaseGUI.ahk")
     WinWait("Select Install Options")
     WinGetPos(&x, &y, &width,, "Select Install Options")
@@ -177,6 +183,12 @@ readFi := FileRead(A_WorkingDir "\release\" yes.value ".ahk")
 replaceYes := StrReplace(readFi, "yes.value", yes.value, 1)
 FileDelete(A_WorkingDir "\release\" yes.value ".ahk")
 FileAppend(replaceYes, A_WorkingDir "\release\" yes.value ".ahk")
+
+;// doing the same as above but for extract.ahk
+readFi2 := FileRead(A_WorkingDir "\release\Extract.ahk")
+replaceYes2 := StrReplace(readFi2, "yes.value", yes.value, 1)
+FileDelete(A_WorkingDir "\release\Extract.ahk")
+FileAppend(replaceYes2, A_WorkingDir "\release\Extract.ahk")
 
 ;// opening & using the compiler
 Run(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe")
