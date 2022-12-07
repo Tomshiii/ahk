@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
- * @date 2022/12/05
- * @version 1.0.3
+ * @date 2022/12/07
+ * @version 1.0.4
  ***********************************************************************/
 
 class tool {
@@ -22,6 +22,7 @@ class tool {
      */
     static Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     {
+        ;// doing some setup
         one := false ;this variable will be used to determine if only x or only y has been assigned a value
         both := false ;this variable will be used to determine if both x and y have been assigned a value
         none := false ;this variable will be used to determine if neither x or y have been assigned a value
@@ -41,8 +42,6 @@ class tool {
                 x := xDef
                 y := yDef
             }
-        CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
-        CoordMode("Mouse", "Screen") ;this ensures the initial tooltip generates in the correct position if cursor isn't on the main display
         if !IsInteger(timeout) && IsFloat(timeout) ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
             timeout := timeout * 1000
         if IsSet(WhichToolTip) ;doing some checks for the whichtooltip variable
@@ -52,6 +51,19 @@ class tool {
                 if WhichToolTip > 20 || WhichToolTip < 1
                     WhichToolTip := 1
             }
+
+        ;// saving the previous coordmode states
+        priorTooltip := A_CoordModeToolTip
+        priorMouse   := A_CoordModeMouse
+        ;// this function will return the coordmodes to their previous state
+        returnCoord() {
+            A_CoordModeToolTip := priorTooltip
+            A_CoordModeMouse   := priorMouse
+        }
+        CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
+        CoordMode("Mouse", "Screen") ;this ensures the initial tooltip generates in the correct position if cursor isn't on the main display
+
+        ;// starting the tooltip logic
         MouseGetPos(&xpos, &ypos) ;log our starting mouse coords
         time := A_TickCount ;log our starting time
         messageFind := find = 1 ? "Couldn't find " : "" ;this is essentially saying: if find = 1 then messageFind := "Couldn't find " else messageFind := ""
@@ -64,13 +76,17 @@ class tool {
             {
                 ToolTip(messageFind message, x, y, WhichToolTip?) ;produce the initial tooltip
                 SetTimer(() => ToolTip("",,, WhichToolTip?), - timeout) ;otherwise we create a timer to remove the cursor after the timout period
+                returnCoord()
             }
-        moveWithMouse(x, y) ;this timer is what allows the tooltip to follow the cursor
+
+        ;// this timer is what allows the tooltip to follow the cursor
+        moveWithMouse(x, y)
         {
             if (A_TickCount - time) >= timeout ;here we compare the current time, minus the original time and see if it's been longer than the timeout time
                 {
                     SetTimer(, 0) ;if it has we kill the timer
                     ToolTip("",,, WhichToolTip?) ;and kill the tooltip
+                    returnCoord()
                     return ;then kill the function
                 }
             MouseGetPos(&newX, &newY) ;here we're grabbing new mouse coords
