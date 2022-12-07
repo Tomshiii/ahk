@@ -22,6 +22,10 @@ The installation process will now check to ensure the user has 7zip installed be
 ## > My Scripts
 - Added an `Author` section at the top of the script
 
+## > Streamdeck AHK
+- Added `sfx.ahk` and `vfx.ahk` to use `yt-dlp` to quickly download youtube videos
+- Made `Streamdeck AHK` functions `speed` & `scale` more universal by borrowing code from `prem.valuehold()`
+
 ## > Other Changes
 - Releases will no longer include any `.psd` files (this is to help save on filesize)
 - `autosave.ahk` checking for `checklist.ahk` being open can now be toggled in `settingsGUI()`
@@ -29,4 +33,3 @@ The installation process will now check to ensure the user has 7zip installed be
 - All scripts that use the command line now send their commands directly using `RunWait()` instead of opening `A_ComSpec` and using `SendInput`
 - Fix `convert2` scripts having incorrect `#Include`
     - Now uses `winget.ExplorerPath()` to grab the path of the current window without needing to highlight the url bar
-- Made `Streamdeck AHK` functions `speed` & `scale` more universal by borrowing code from `prem.valuehold()`
