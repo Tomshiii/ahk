@@ -150,7 +150,7 @@ zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 ;// it will then run `releaseGUI.ahk` to provide the user with some install options
 FileAppend "
 (
-    alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell and .Net4.5 (or greater)`n`nIf you do not have either installed, this installer will step you through obtaining PowerShell and .Net4.X", "Notice", "1 64 256 4096")
+    alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell and .Net4.5 (or greater)``n``nIf you do not have either installed, this installer will step you through obtaining PowerShell and .Net4.X", "Notice", "1 64 256 4096")
     if alert = "Cancel"
         return
     check := MsgBox("This install process will dump my entire repo in the current directory.``n``nDo you wish to continue?", "Do you wish to continue?", "4 32 256 4096")
@@ -301,24 +301,32 @@ if !DirExist(A_WorkingDir "\" verNum ".x")
     DirCreate(A_WorkingDir "\" verNum ".x")
 if InStr(yes.value, "pre") && !DirExist(A_WorkingDir "\" verNum ".x\pre")
     DirCreate(A_WorkingDir "\" verNum ".x\pre")
-preCheck := InStr(yes.value, "pre")
+preCheck := InStr(yes.value, "pre",)
 switch preCheck {
-    case 1:
-        FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\pre\" yes.value ".exe", 1)
-        currentDir := A_WorkingDir "\" verNum ".x\pre\"
     case 0:
         FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\" yes.value ".exe", 1)
         currentDir := A_WorkingDir "\" verNum ".x\"
+    default:
+        FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\pre\" yes.value ".exe", 1)
+        currentDir := A_WorkingDir "\" verNum ".x\pre\"
 }
 
 ;// closing any uneeded programs ready for completion
 sleep 500
-if WinExist("release",, browser.Firefox.winTitle)
-    WinClose("release",, browser.Firefox.winTitle)
-Run(currentDir)
+if WinExist(currentDir,, "ahk_group Browsers")
+    WinActivate(currentDir,, "ahk_group Browsers")
+else
+    Run("explore " currentDir)
 WinWait(verNum ".x",, 3)
-if DirExist(A_WorkingDir "\release")
+if DirExist(A_WorkingDir "\release") && FileExist(currentDir yes.value ".exe")
     DirDelete(A_WorkingDir "\release", 1)
+else
+    {
+        if WinExist(A_WorkingDir "\release")
+            WinActivate(A_WorkingDir "\release")
+        else
+            Run("explore " A_WorkingDir "\release")
+    }
 
 if WinExist("Ahk2Exe for AutoHotkey")
     WinClose()
