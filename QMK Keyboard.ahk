@@ -17,7 +17,7 @@ SetNumLockState("AlwaysOn")
 ;\\v2.13.4
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.8
+;\\v2.8.1
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE REWORKED IT TO WORK IN AHK v2.0 and then completely changed it to be for my workflow

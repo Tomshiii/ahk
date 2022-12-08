@@ -1,4 +1,4 @@
-# <> Release 2.8.1 -
+# <> Release 2.8.1 - Additions & Fixes
 The installation process will now check to ensure the user has 7zip installed before attempting to use `thqby's` 7zip lib. If the user does not have 7zip installed they will be stepped through installing `PowerShell` & `.Net4.X` (if not already installed) to complete the process.
 
 ## > Functions

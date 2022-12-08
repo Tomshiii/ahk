@@ -240,7 +240,7 @@
 	"StretchLayerToFitVertical" = "(Ctrl+Alt+Shift+G)"
 
 ["CCompCompCmd"]
-	"CompOpenCompStuff" = "(Backslash)(Yen)"
+	"CompOpenCompStuff" = "(Backslash)()()"
 	"CompScollSelectedLayerToTop" = "(X)"
 	"CompScrollToCurrentTime" = "(D)"
 	"CompSelectLayer1" = "(Pad1)"
@@ -432,7 +432,7 @@
 	"BrowseInBridge" = "(Ctrl+Alt+Shift+O)"
 	"CancelAllPreviews" = "(Esc)"
 	"New" = "(Ctrl+Alt+N)"
-	"OpenComp" = "(Backslash)(Yen)"
+	"OpenComp" = "(Yen)"
 	"OpenMRUContext" = "(Shift+Esc)"
 	"PreviewAudio" = "(PadDecimal)(PadComma)(PadDelete)"
 	"PreviewAudioWorkArea" = "(Alt+PadDecimal)(Alt+PadComma)(Alt+PadDelete)"
@@ -512,7 +512,7 @@
 
 ["CPanoECOutline"]
 	"NOP" = "()"
-	"OpenComp" = "(Backslash)(Yen)"
+	"OpenComp" = "(Yen)"
 	"SelectNext" = "(DownArrow)"
 	"SelectNextAdd" = "(Shift+DownArrow)"
 	"SelectPrevious" = "(UpArrow)"
@@ -544,7 +544,7 @@
 ["CPanoProjLayer"]
 	"Clear" = "(Delete)(FwdDel)"
 	"ClearMask" = "(Alt+Delete)(Alt+FwdDel)"
-	"OpenComp" = "(Backslash)(Yen)"
+	"OpenComp" = "(Yen)"
 	"TimeSetIn" = "([)"
 	"TimeSetOut" = "(])"
 	"TimeStretchIn" = "(Ctrl+Shift+Comma)"
@@ -760,7 +760,7 @@
 ["FloPano"]
 	"Clear" = "(Delete)(FwdDel)"
 	"ClearWithoutWarning" = "(Ctrl+Delete)"
-	"OpenComp" = "(Backslash)(Yen)"
+	"OpenComp" = "(Yen)"
 	"Zoom100Percent" = "(/)"
 	"ZoomIn" = "(.)"
 	"ZoomOut" = "(Comma)"
