@@ -1,4 +1,4 @@
-# <> Release 2.8.x -
+# <> Release 2.8.1 -
 The installation process will now check to ensure the user has 7zip installed before attempting to use `thqby's` 7zip lib. If the user does not have 7zip installed they will be stepped through installing `PowerShell` & `.Net4.X` (if not already installed) to complete the process.
 
 ## > Functions
@@ -28,8 +28,11 @@ The installation process will now check to ensure the user has 7zip installed be
 
 ## > Other Changes
 - Releases will no longer include any `.psd` files (this is to help save on filesize)
-- `autosave.ahk` checking for `checklist.ahk` being open can now be toggled in `settingsGUI()`
 - Fix `Streaming.ahk` having an incorrect `#Include`
 - All scripts that use the command line now send their commands directly using `RunWait()` instead of opening `A_ComSpec` and using `SendInput`
 - Fix `convert2` scripts having incorrect `#Include`
     - Now uses `winget.ExplorerPath()` to grab the path of the current window without needing to highlight the url bar
+
+`autosave.ahk`
+- Checking for `checklist.ahk` being open can now be toggled in `settingsGUI()`
+- Will now check (up to 3 times) to ensure the save actually happened

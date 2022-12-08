@@ -31,8 +31,10 @@ timeRemain(*)
     MsgBox(forTray)
 }
 
-;This script will autosave your premire pro project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
+;This script will autosave your premire pro/after effects project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 ;It will also ensure you have the checklist script for the current project open. If it can find the file, it will open it automatically
+
+;This file requires you to properly set the "year" value for both programs in `settings.ini` (or in settingsGUI() #F1 by default). This value is whatever year appears in the title of the respectiveprogram
 
 ;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tools that appear every minute towards a save attempt)
 minutes := IniRead(ptf["settings"], "Adjust", "autosave MIN")
@@ -197,6 +199,9 @@ save()
         }
 
     block.On()
+    attempt := 0
+    attempt:
+    attempt++
 
     ;\\ first we grab information on the active window
     static origWind := unset
@@ -262,13 +267,17 @@ save()
 
             premSave(title) {
                 tool.Cust("Saving Premiere")
-                ControlSend("{Ctrl Down}s{Ctrl Up}",, title)
+                ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, title)
+                if WinWait("Save Project",, 2)
+                    WinWaitClose("Save Project",, 2)
                 premSaveTrack := 1
             }
             if saveCheck = "*" && origWind = "Adobe Premiere Pro.exe"
                 {
                     tool.Cust("Saving Premiere")
-                    SendInput("{Ctrl Down}s{Ctrl Up}")
+                    SendInput("{Ctrl Down}{s Down}{s Up}{Ctrl Up}")
+                    if WinWait("Save Project",, 2)
+                        WinWaitClose("Save Project",, 2)
                     premSaveTrack := 1
                 }
             else if saveCheck = "*" && premWinCheck != ""
@@ -333,6 +342,15 @@ save()
                 }
         }
 
+        ;double checking to see if the saves worked
+        if WinExist(editors.Premiere.winTitle)
+            winget.PremName(&premCheck, &titleCheck, &saveCheck)
+        if WinExist(editors.AE.winTitle)
+            winget.AEName(&aeCheck, &aeSaveCheck)
+        if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt <= 3
+            goto attempt
+        else if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt >= 3
+            tool.Cust("Couldn't properly save after " attempt " attempts", 2.0)
 
         replayPlayback(title) {
             sleep 250
