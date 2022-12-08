@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/12/05
- * @version 1.0.3
+ * @date 2022/12/08
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -492,7 +492,7 @@ class Prem {
      * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
      * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
      */
-    static valuehold(filepath, optional := 0)
+    static valuehold(filepath, optional := 0, blendMode := "")
     {
         ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
         ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
@@ -550,14 +550,26 @@ class Prem {
                         tool.Cust("Couldn't get the ClassNN of the Effects Controls panel")
                         errorLog(e, A_ThisFunc "()")
                         MouseMove(xpos, ypos)
+                        block.Off()
                         return
                     }
                 }
+            checkImg(checkfilepath) {
+                blendheight := filepath = "blend\blendmode" ? 50 : 0
+                if FileExist(checkfilepath)
+                    {
+                        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height + blendheight, "*2 " checkfilepath)
+                            return true
+                        else
+                            return false
+                    }
+                return false
+            }
             if ( ;finds the value you want to adjust, then finds the value adjustment to the right of it
-                    ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath ".png") ||
-                    ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") ||
-                    ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "3.png") ||
-                    ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
+                checkImg(ptf.Premiere filepath ".png") ||
+                checkImg(ptf.Premiere filepath "2.png") ||
+                checkImg(ptf.Premiere filepath "3.png") ||
+                checkImg(ptf.Premiere filepath "4.png")
             )
                 break
             if A_Index > 3
@@ -565,12 +577,43 @@ class Prem {
                     block.Off()
                     tool.Cust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, 5000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                     errorLog(, A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
-                    KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                    if A_ThisHotkey != ""
+                        KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
+                    block.Off()
                     return
                 }
             sleep 50
         }
+        if filepath = "blend\blendmode"
+            {
+                if !ImageSearch(&arrX, &arrY, x, y, x+400, y+40, "*2 " ptf.Premiere filepath "arrow.png")
+                    {
+                        tool.Cust("the arrow to open the blend mode menu",, 1)
+                        errorLog(, A_ThisFunc "()", "Couldn't find the arrow to open the blend mode menu", A_LineFile, A_LineNumber)
+                        ; KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                        MouseMove(xpos, ypos)
+                        block.Off()
+                        return
+                    }
+                MouseMove(arrx, arrY)
+                SendInput("{Click}")
+                sleep 500
+                if !ImageSearch(&modeX, &modeY, arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode "2.png")
+                    {
+                        tool.Cust("the desired blend mode",, 1)
+                        errorLog(, A_ThisFunc "()", "Couldn't find the desired blend mode", A_LineFile, A_LineNumber)
+                        ; KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                        MouseMove(xpos, ypos)
+                        block.Off()
+                        return
+                    }
+                MouseMove(modeX, modeY)
+                SendInput("{Click}")
+                MouseMove(xpos, ypos)
+                block.Off()
+                return
+            }
         colour:
         if !PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
             {

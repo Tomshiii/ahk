@@ -2,8 +2,8 @@
  * @description A library of useful After Effects functions to speed up common tasks
  * Tested on and designed for v22.6 of After Effects
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/12/08
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -388,6 +388,30 @@ class AE {
                 block.Off()
                 KeyWait(A_ThisHotkey)
                 SendInput("{Click Up}")
+            }
+    }
+
+    /**
+     * This function will ensure you're in the right mode to adjust blend modes
+     */
+    static blendMode()
+    {
+        if A_ThisHotkey != ""
+            KeyWait(A_ThisHotkey)
+        coord.s()
+        MouseGetPos(&x, &y) ;gets the coordinates of the mouse to return it at the end/after an error
+        coord.w()
+        if !ImageSearch(&modex, &modey, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "mode.png")
+            {
+                if !ImageSearch(&togx, &togy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "toggle.png")
+                    {
+                        tool.Cust("Couldn't Toggle switches/modes")
+                        errorLog(, A_ThisFunc "()", "couldn't toggle switches/modes", A_LineFile, A_LineFile)
+                        return
+                    }
+                MouseMove(togx, togy)
+                SendInput("{Click}")
+                sleep 250
             }
     }
 }
