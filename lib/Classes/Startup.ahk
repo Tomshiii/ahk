@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/04
- * @version 1.0.3
+ * @date 2022/12/08
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -171,7 +171,7 @@ class Startup {
                 if VerCompare(MyRelease, version) >= 0
                     return
                 ;create gui
-                MyGui := tomshiBasic(,, "+Resize +MaxSize600x400 AlwaysOnTop", "Scripts Release " version)
+                MyGui := tomshiBasic(,, "-Resize +MaxSize600x400 AlwaysOnTop", "Scripts Release " version)
                 ;set title
                 Title := MyGui.Add("Text", "Section H40 W350", "New Scripts - Release " version)
                 Title.SetFont("S15")
@@ -186,8 +186,12 @@ class Startup {
                 {
                     Run(ptf["updateCheckGUI"])
                     WinSetAlwaysOnTop(0, "Scripts Release " version)
-                    if WinWait("updateCheckGUI",, 3)
-                        WinActivate("updateCheckGUI")
+                    if WinWait("Latest Update - " version,, 3)
+                        {
+                            WinActivate("Latest Update - ")
+                            WinGetPos(&updx, &updy, &updwidth,, "Latest Update - " version)
+                            MyGui.Move(updx+updwidth+10, updy)
+                        }
                 }
 
                 ;set download button

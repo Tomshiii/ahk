@@ -38,6 +38,8 @@ NewWindowRequestedHandler(handler, wv2, arg) {
 
 
 closeit(*) {
+	if !WinExist("Scripts Release " version)
+		return
 	WinSetAlwaysOnTop(1, "Scripts Release " version)
 	ProcessClose(WinGetPID(main.Hwnd))
 }

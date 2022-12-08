@@ -173,9 +173,8 @@ FileAppend "
     WinWait("Select Install Options")
     WinGetPos(&x, &y, &width,, "Select Install Options")
     Run("Notepad.exe " A_ScriptDir "\Support Files\Release Assets\Getting Started_readme.md")
-    WinWait("Getting Started_readme.md - Notepad")
-    sleep 1000
-    WinMove(x+width+15, y,,, "Getting Started_readme.md - Notepad")
+    if WinWait("Getting Started_readme.md - Notepad",, 3)
+        WinMove(x+width+15, y, A_ScreenWidth/3,, "Getting Started_readme.md - Notepad")
 )", A_WorkingDir "\release\" yes.value ".ahk"
 
 ;// doing string manipulation to replace some values in the above generated script with the actual release ver

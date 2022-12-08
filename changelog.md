@@ -10,6 +10,7 @@ The installation process will now check to ensure the user has 7zip installed be
 - Setting *either* the `x` or `y` values in `tool.Cust()` (but not both) will now offset the tooltip by that value from the current cursor position
 - `zoom()` now resets toggles from `10s` => `5s`
     - Can now manually reset toggles by pressing `F5`
+- `startup.updateChecker()` will now move the main GUI next to the changelog webview once selected
 
 `errorLog`
 - Will now check for an internet connection before attempting to get latest release information to stop it causing an infinite loop
@@ -23,7 +24,7 @@ The installation process will now check to ensure the user has 7zip installed be
 - Added an `Author` section at the top of the script
 
 ## > Streamdeck AHK
-- Added `sfx.ahk` and `vfx.ahk` to use `yt-dlp` to quickly download youtube/twitch videos
+- Added `sfx.ahk`, `vfx.ahk` & `video.ahk` to use `yt-dlp` to quickly download youtube/twitch videos
 - Added `adjustment.ahk` to create a new adjustment layer in `Premiere/AE`
 - Added `blend` scripts to adjust the blend mode in `Premiere/AE`
 - Made `Streamdeck AHK` functions `speed` & `scale` more universal by borrowing code from `prem.valuehold()`
