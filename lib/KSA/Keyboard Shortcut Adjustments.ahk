@@ -214,6 +214,13 @@ premIngest := IniRead(ptf["KSAini"], "Premiere", "ingest")
  */
 shuttleStop := IniRead(ptf["KSAini"], "Premiere", "shuttle stop")
 
+/**
+ * This value will send the keyboard shortcut you have set to open the ingest settings menu within Premiere
+
+ Can be set within KSA.ahk/ini
+ */
+adjustmentPrem := IniRead(ptf["KSAini"], "Premiere", "adjustment")
+
 ;==Labels==
 labelViolet := IniRead(ptf["KSAini"], "Premiere", "Violet")
 labelIris := IniRead(ptf["KSAini"], "Premiere", "Iris")
@@ -399,7 +406,14 @@ rotationProp := IniRead(ptf["KSAini"], "After Effects", "Rotation")
 
  Can be set within KSA.ahk/ini
  */
- compSettings := IniRead(ptf["KSAini"], "After Effects", "comp")
+compSettings := IniRead(ptf["KSAini"], "After Effects", "comp")
+
+/**
+ * This value will send the keyboard shortcut you have set to open the composition settings within After Effects
+
+ Can be set within KSA.ahk/ini
+ */
+adjustmentAE := IniRead(ptf["KSAini"], "After Effects", "adjustment")
 
 
 

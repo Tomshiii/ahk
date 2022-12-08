@@ -24,6 +24,7 @@ The installation process will now check to ensure the user has 7zip installed be
 
 ## > Streamdeck AHK
 - Added `sfx.ahk` and `vfx.ahk` to use `yt-dlp` to quickly download youtube videos
+- Added `adjustment.ahk` to create a new adjustment layer in `Premiere/AE`
 - Made `Streamdeck AHK` functions `speed` & `scale` more universal by borrowing code from `prem.valuehold()`
 
 ## > Other Changes
