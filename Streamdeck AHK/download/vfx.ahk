@@ -5,4 +5,4 @@
 vfxFolder := "E:\_Editing stuff\videos"
 ;yt-dlp -P "link\to\path" "URL"
 
-ytDownload(, vfxFolder)
+ytDownload("-S res,ext:mp4:m4a --recode mp4", vfxFolder)
