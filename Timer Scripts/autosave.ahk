@@ -347,7 +347,7 @@ save()
             winget.PremName(&premCheck, &titleCheck, &saveCheck)
         if WinExist(editors.AE.winTitle)
             winget.AEName(&aeCheck, &aeSaveCheck)
-        if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt <= 3
+        if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt < 3
             goto attempt
         else if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt >= 3
             tool.Cust("Couldn't properly save after " attempt " attempts", 2.0)
