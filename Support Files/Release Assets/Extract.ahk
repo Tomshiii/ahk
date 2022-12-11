@@ -14,6 +14,17 @@ try {
                     DirCreate(A_ScriptDir "\yes.value")
                     zip := SevenZip(, A_WorkingDir '\7-zip' (A_PtrSize * 8) '.dll').Extract(A_WorkingDir '\yes.value.zip', A_WorkingDir '\')
                     WinWaitClose('Extracting')
+                    if DirExist(A_WorkingDir '\yes.value') ;// checking to see if a trailing dir is left behind
+                        {
+                            ;// then we're checking to see if it's empty
+                            size := 0
+                            loop files, A_WorkingDir '\yes.value\*.*', "R"
+                                {
+                                    size += A_LoopFileSize
+                                }
+                            if size = 0 ;// so that we can delete it if it is
+                                DirDelete(A_WorkingDir '\yes.value')
+                        }
                     return
                 }
         }

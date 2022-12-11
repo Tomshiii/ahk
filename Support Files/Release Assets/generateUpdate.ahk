@@ -150,6 +150,8 @@ zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 ;// it will then run `releaseGUI.ahk` to provide the user with some install options
 FileAppend "
 (
+    SetWorkingDir(A_ScriptDir)
+    A_ScriptName := yes.value
     alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell and .Net4.5 (or greater)``n``nIf you do not have either installed, this installer will step you through obtaining PowerShell and .Net4.X", "Notice", "1 64 256 4096")
     if alert = "Cancel"
         return
@@ -169,10 +171,24 @@ FileAppend "
     FileDelete(A_WorkingDir '\SevenZip.ahk')
     FileDelete(A_WorkingDir '\Extract.ahk')
     FileDelete(A_WorkingDir '\yes.value.zip')
-    Run(A_ScriptDir "\Support Files\Release Assets\releaseGUI.ahk")
+    sleep 100
+    if !FileExist(A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
+        {
+            loop {
+                if A_Inded > 10
+                    {
+                        MsgBox("The installer file couldn't find ``releaseGUI.ahk``, it should be in:`n" A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk`n`nIf that file is there and there is a problem with this installer, simply run that script and read the readme found here:`n A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk"")
+                        return
+                    }
+                sleep 250
+                if FileExist(A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
+                    break
+            }
+        }
+    Run(A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
     WinWait("Select Install Options")
     WinGetPos(&x, &y, &width,, "Select Install Options")
-    Run("Notepad.exe " A_ScriptDir "\Support Files\Release Assets\Getting Started_readme.md")
+    Run("Notepad.exe " A_WorkingDir "\Support Files\Release Assets\Getting Started_readme.md")
     if WinWait("Getting Started_readme.md - Notepad",, 3)
         WinMove(x+width+15, y, A_ScreenWidth/3,, "Getting Started_readme.md - Notepad")
 )", A_WorkingDir "\release\" yes.value ".ahk"
