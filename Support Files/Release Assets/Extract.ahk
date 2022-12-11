@@ -18,10 +18,12 @@ try {
                         {
                             ;// then we're checking to see if it's empty
                             size := 0
-                            loop files, A_WorkingDir '\yes.value\*.*', "R"
-                                {
-                                    size += A_LoopFileSize
-                                }
+                            try {
+                                loop files, A_WorkingDir '\yes.value\*.*', "R"
+                                    {
+                                        size += A_LoopFileSize
+                                    }
+                            }
                             if size = 0 ;// so that we can delete it if it is
                                 DirDelete(A_WorkingDir '\yes.value')
                         }

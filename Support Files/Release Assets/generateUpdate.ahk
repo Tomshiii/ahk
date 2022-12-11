@@ -151,7 +151,7 @@ zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 FileAppend "
 (
     SetWorkingDir(A_ScriptDir)
-    A_ScriptName := yes.value
+    A_ScriptName := "yes.value"
     alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell and .Net4.5 (or greater)``n``nIf you do not have either installed, this installer will step you through obtaining PowerShell and .Net4.X", "Notice", "1 64 256 4096")
     if alert = "Cancel"
         return
@@ -175,9 +175,9 @@ FileAppend "
     if !FileExist(A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
         {
             loop {
-                if A_Inded > 10
+                if A_Index > 10
                     {
-                        MsgBox("The installer file couldn't find ``releaseGUI.ahk``, it should be in:`n" A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk`n`nIf that file is there and there is a problem with this installer, simply run that script and read the readme found here:`n A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk"")
+                        MsgBox("The installer file couldn't find " "'" "releaseGUI.ahk" "'" ", it should be in:``n" A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk``n``nIf that file is there and there is a problem with this installer, simply run that script and read the readme found here:``n" A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
                         return
                     }
                 sleep 250
@@ -303,7 +303,7 @@ if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
         WinWaitActive("Ahk2Exe for AutoHotkey")
     }
 SendInput("{Tab 2}")
-SendInput("{Down 20}")
+SendInput("{Down 20}" "{Up}")
 SendInput("{Enter}")
 WinWait("Ahk2Exe", "Successfully compiled as")
 SendInput("{Enter}")
