@@ -2,6 +2,7 @@
 
 ## Functions
 - Fix `fastWheel()` not focusing code window in `VSCode`
+- `monitorWarp()` stores and returns coordmode
 
 ## > QMK
 - `AE.ahk - l::` will now ensure the caret is active before attempting to send text
