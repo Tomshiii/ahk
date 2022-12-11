@@ -1,5 +1,8 @@
 # <> Release 2.8.x -
 
+## Functions
+- Fix `fastWheel()` not focusing code window in `VSCode`
+
 ## > QMK
 - `AE.ahk - l::` will now ensure the caret is active before attempting to send text
 
