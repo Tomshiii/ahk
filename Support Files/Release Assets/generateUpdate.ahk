@@ -150,47 +150,67 @@ zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 ;// it will then run `releaseGUI.ahk` to provide the user with some install options
 FileAppend "
 (
+    ;// setting up
     SetWorkingDir(A_ScriptDir)
     A_ScriptName := "yes.value"
+    ;// alerting the user before starting
     alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell and .Net4.5 (or greater)``n``nIf you do not have either installed, this installer will step you through obtaining PowerShell and .Net4.X", "Notice", "1 64 256 4096")
     if alert = "Cancel"
         return
     check := MsgBox("This install process will dump my entire repo in the current directory.``n``nDo you wish to continue?", "Do you wish to continue?", "4 32 256 4096")
     if check = "No"
         return
+    ;// dumping all required files
     FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
     FileInstall("E:\Github\ahk\releases\release\Extract.ahk", A_WorkingDir "\Extract.ahk", 1)
     FileInstall("E:\Github\ahk\releases\release\SevenZip.ahk", A_WorkingDir "\SevenZip.ahk", 1)
     FileInstall("E:\Github\ahk\releases\release\7-zip32.dll", A_WorkingDir "\7-zip32.dll", 1)
     FileInstall("E:\Github\ahk\releases\release\7-zip64.dll", A_WorkingDir "\7-zip64.dll", 1)
 
+    ;// setting location vars
+    releaseGUILoc := A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk"
+    readmeLoc     := A_WorkingDir "\Support Files\Release Assets\Getting Started_readme.md"
+
+    ;// running extract script
     RunWait(A_WorkingDir '\Extract.ahk')
 
+    ;// cleaning up files that are no longer needed
     FileDelete(A_WorkingDir '\7-zip32.dll')
     FileDelete(A_WorkingDir '\7-zip64.dll')
     FileDelete(A_WorkingDir '\SevenZip.ahk')
     FileDelete(A_WorkingDir '\Extract.ahk')
     FileDelete(A_WorkingDir '\yes.value.zip')
     sleep 100
-    if !FileExist(A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
+
+    ;// checking if releaseGUI.ahk doesn't exist/can't be found
+    if !FileExist(releaseGUILoc)
         {
             loop {
                 if A_Index > 10
                     {
-                        MsgBox("The installer file couldn't find " "'" "releaseGUI.ahk" "'" ", it should be in:``n" A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk``n``nIf that file is there and there is a problem with this installer, simply run that script and read the readme found here:``n" A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
+                        MsgBox("The installer file couldn't find " "'" "releaseGUI.ahk" "'" ", it should be in:``n" releaseGUILoc "``n``nIf that file is there and there is a problem with this installer, simply run that script and read the readme.md found here:``n" readmeLoc)
                         return
                     }
                 sleep 250
-                if FileExist(A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
+                if FileExist(releaseGUILoc)
                     break
             }
         }
-    Run(A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk")
-    WinWait("Select Install Options")
-    WinGetPos(&x, &y, &width,, "Select Install Options")
-    Run("Notepad.exe " A_WorkingDir "\Support Files\Release Assets\Getting Started_readme.md")
-    if WinWait("Getting Started_readme.md - Notepad",, 3)
-        WinMove(x+width+15, y, A_ScreenWidth/3,, "Getting Started_readme.md - Notepad")
+    ;// if it can be found, run it
+    Run(releaseGUILoc,, &guiID)
+    if !WinWait(guiID,, 5)
+        {
+            MsgBox("Waiting for releaseGUI.ahk timed out``nYou can run this file manually to get started:``n" releaseGUILoc "``n``nThen checkout the readme.md file found in the same directory:``n" readmeLoc)
+        }
+    WinGetPos(&x, &y, &width,, guiID)
+
+    ;// checking to see if the readme.md file can be found
+    if FileExist(readmeLoc)
+    {
+        Run("Notepad.exe " readmeLoc,, &readmeID)
+        if WinWait(readmeID,, 3)
+            WinMove(x+width+15, y, A_ScreenWidth/3,, readmeID)
+    }
 )", A_WorkingDir "\release\" yes.value ".ahk"
 
 ;// doing string manipulation to replace some values in the above generated script with the actual release ver
