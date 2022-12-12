@@ -76,7 +76,7 @@ A script that will automatically suspend `My Scripts.ahk` when a game is detecte
       C -- no --> E[Wait 2.5s] --> C
 
       D --> H --> F[is game still active?]
-      F -- yes --> H[Wait 2.5s] --> F
+      F -- yes --> H[Wait 2.5s]
       F -- no --> G[Unsuspend `My Scripts.ahk`]
       G --> C
 ```
@@ -85,24 +85,23 @@ A script that will automatically suspend `My Scripts.ahk` when a game is detecte
 A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.
 ```mermaid
   graph TD;
-      A[autosave.ahk]-->B[is Adobe Premiere or Adobe After Effects open?];
-      B -- yes --> C[is checklist open?];
-      B -- yes --> D[do they have unsaved changes?];
+      B[while Adobe Premiere/Adobe After Effects is open];
 
-      D -- yes -->E[get active window];
-      E -->F[save unsaved work];
-      F -->G[reactivate original active window];
-      G -->Y;
+      B-->|checklist.ahk|E[is checklist open?]
+      E-- yes --> H[wait 30sec]
+      E-- no --> G[open checklist for project]
+      G-->H
+      H-->E
 
-      C -- yes -->H[wait 30s];
-      C -- no -->I[open checklist for project];
-      I-->H;
-      H-->C;
 
-      D-- no --> Y[wait 5min];
-
-      B -- no --> Y[wait 5min];
-      Y -->B;
+      B-->|autosave.ahk|F[do they have unsaved changes?]
+      F-- yes -->J[get active window]
+      F-- no -->I[wait 2.5min]
+      I-->F
+      J-->K[save unsaved work]
+      K-->L[reactivate original window]
+      L-->M[wait 5min]
+      M-->F
 ```
 
 #### [checklist.ahk](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk)

@@ -38,6 +38,8 @@ if DirExist(SelectedFolder "\Adobe After Effects Auto-Save")
     DirDelete(SelectedFolder "\Adobe After Effects Auto-Save", 1)
 if DirExist(SelectedFolder "\Adobe Premiere Pro Audio Previews")
     DirDelete(SelectedFolder "\Adobe Premiere Pro Audio Previews", 1)
+if DirExist(SelectedFolder "\Premiere Composer Files")
+    DirDelete(SelectedFolder "\Premiere Composer Files", 1)
 
 ;;this part deletes any temp files if you have premiere/after effects set to save them next to their media
 FileDelete(SelectedFolder "\videos\*.pek")
