@@ -17,5 +17,12 @@
 
 ## > Other Changes
 
+`autosave.ahk`
+- If no save is necessary, the next save attempt will be made in `1/2` the usual time.
+    - eg. If autosave is set to save every `5min` and no save is necessary, the next attempt will happen in `2.5min`
+- Fix sometimes failing to save
+- Fix sometimes cutting on the timeline
+- Fix variables not actually updating
+
 `checklist.ahk`
 - `openProj()` will now double check that either premiere/ae is open
