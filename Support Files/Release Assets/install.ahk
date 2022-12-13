@@ -26,8 +26,8 @@ FileInstall("E:\Github\ahk\releases\release\7-zip32.dll", A_WorkingDir "\7-zip32
 FileInstall("E:\Github\ahk\releases\release\7-zip64.dll", A_WorkingDir "\7-zip64.dll", 1)
 
 ;// setting location vars
-releaseGUILoc := A_WorkingDir "\releaseGUI.ahk"
-readmeLoc     := A_WorkingDir "\Getting Started_readme.md"
+releaseGUILoc := A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk"
+readmeLoc     := A_WorkingDir "\Support Files\Release Assets\Getting Started_readme.md"
 
 ;// running extract script
 RunWait(A_WorkingDir '\Extract.ahk')
