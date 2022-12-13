@@ -79,8 +79,5 @@ if FileExist(readmeLoc)
 {
     Run("Notepad.exe " readmeLoc,,, &readmeID)
     if WinWait("ahk_pid " readmeID,, 3)
-        {
-            WinMove(x+width+15, y, A_ScreenWidth/3, A_ScreenHeight/3, notepadName := WinGetTitle("ahk_pid " readmeID))
-            MsgBox()
-        }
+        WinMove(x+width+15, y, A_ScreenWidth/3, A_ScreenHeight/3, notepadName := WinGetTitle("ahk_pid " readmeID))
 }
