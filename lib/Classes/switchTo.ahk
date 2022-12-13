@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2022/11/29
- * @version 1.0.3
+ * @date 2022/12/13
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,8 +95,8 @@ class switchTo {
         if !WinExist("ahk_" classorexe . activate)
             {
                 Run(runval)
-                WinWait("ahk_" classorexe . activate)
-                WinActivate("ahk_" classorexe . activate) ;in win11 running things won't always activate it and will open in the backround
+                if WinWait("ahk_" classorexe . activate,, 2)
+                    WinActivate("ahk_" classorexe . activate) ;in win11 running things won't always activate it and will open in the backround
                 return
             }
         Run(runval)
@@ -121,8 +121,8 @@ class switchTo {
         runae() ;cut repeat code
         {
             Run(AE.path)
-            WinWait(AE.winTitle)
-            WinActivate(AE.winTitle)
+            if WinWait(AE.winTitle,, 2)
+                WinActivate(AE.winTitle)
         }
         premTitle() ;pulls dir url from prem title and runs ae project in that dir
         {
@@ -149,8 +149,8 @@ class switchTo {
                     {
                         Run(A_LoopFileFullPath)
                         tool.Cust("Running AE file for this project")
-                        WinWait(AE.winTitle)
-                        WinActivate(AE.winTitle)
+                        if WinWait(AE.winTitle,, 2)
+                            WinActivate(AE.winTitle)
                         return
                     }
             } catch as e {
@@ -195,7 +195,8 @@ class switchTo {
                 return
             }
         Run(discord.path)
-        WinWait(discord.winTitle)
+        if !WinWait(discord.winTitle,, 2)
+            return
         if WinGet.isFullscreen(, discord.winTitle) ;a return value of 1 means it is maximised
             WinRestore() ;winrestore will unmaximise it
         move() ;moves it into position after opening
