@@ -1,6 +1,6 @@
 /**
  * Getting the path of the project using the title of Premiere Pro/After Effects
- * @param {string} name is the title of the program you have to pass into the funtion
+ * @param {String} name is the title of the program you have to pass into the funtion
  * @param {Integer} dashPos is the position of the - that you have to pass into the function
  * @param {VarRef} checklist is a variable we have to pass back out of the function, it MUST be called checklist
  * @param {VarRef} logs is a variable we have to pass back out of the function, it MUST be called logs

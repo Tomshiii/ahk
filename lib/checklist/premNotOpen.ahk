@@ -1,8 +1,8 @@
 /**
  * This function handles what thhe script should do if Premiere Pro isn't currently open
- * @param {var} checklist is a variable we pass back to the main script as it allows us to update the variable
- * @param {var} logs is a variable we pass back to the main script as it allows us to update the variable
- * @param {var} path is a variable we pass back to the main script as it allows us to update the variable
+ * @param {VarRef} checklist is a variable we pass back to the main script as it allows us to update the variable
+ * @param {VarRef} logs is a variable we pass back to the main script as it allows us to update the variable
+ * @param {VarRef} path is a variable we pass back to the main script as it allows us to update the variable
  */
 premNotOpen(&checklist, &logs, &path)
 {

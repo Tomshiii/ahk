@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/08
- * @version 1.0.4
+ * @date 2022/12/14
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -589,7 +589,7 @@ class Startup {
         tomshiOrUser := "t"
         loop files, A_WorkingDir "\*.ahk", "R"
             {
-                if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
+                if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "GUIs.ahk" || A_LoopFileName = "Startup.ahk"
                     continue
                 read := FileRead(A_LoopFileFullPath)
                 if InStr(read, "E:\Github\ahk", 1)
@@ -602,7 +602,7 @@ class Startup {
             {
                 loop files, A_WorkingDir "\*.ahk", "R"
                     {
-                        if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
+                        if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "GUIs.ahk" || A_LoopFileName = "Startup.ahk"
                             continue
                         read := FileRead(A_LoopFileFullPath)
                         if InStr(read, checkDir, 1)
@@ -623,7 +623,7 @@ class Startup {
             dir := checkDir
         loop files, A_WorkingDir "\*.ahk", "R"
             {
-                if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "General.ahk"
+                if A_LoopFileName = "switchTo.ahk" || A_LoopFileName = "GUIs.ahk" || A_LoopFileName = "Startup.ahk"
                     continue
                 read := FileRead(A_LoopFileFullPath)
                 if InStr(read, dir, 1)

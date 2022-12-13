@@ -149,7 +149,7 @@ github(*)
 
 /**
  * The function that is called when either of the update check menu options are pressed. It will what the latest version of checklist.ahk is on github and crossreference that with your local version
- * @param {any} Item is the menu object name that we pass into the function so we can save code and know which option the user pressed
+ * @param {guiObj} Item is the menu object name that we pass into the function so we can save code and know which option the user pressed
  */
 updateCheck(Item, *)
 {

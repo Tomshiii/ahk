@@ -70,7 +70,7 @@ stop(*) {
 
 /**
  * This function is to reduce copy/paste code in some .OnEvent return functions
- * @param {any} sign is if it's the minus key or plus key
+ * @param {String} sign is if it's the minus key or plus key
  */
 minusOrAdd(sign)
 {
