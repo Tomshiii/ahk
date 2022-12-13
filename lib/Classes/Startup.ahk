@@ -520,7 +520,7 @@ class Startup {
         ;AGAIN ~~ for the above AE folder to exist you have to set it WITHIN THE AE CACHE SETTINGS, it IS NOT THE DEFAULT
 
         ;now we check the listed directories and add up the size of all the files
-        Loop Files, MediaCache "\*.*", "R"
+        loop files, MediaCache "\*.*", "R"
             {
                 cacheround := Round(CacheSize / 1073741824, 2)
                 ToolTip(A_LoopFileShortName " - " cacheround "/" largestSize "GB")

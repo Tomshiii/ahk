@@ -145,39 +145,13 @@ FileCopy(ptf.lib "\Other\7zip\SevenZip.ahk", A_WorkingDir "\release")
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 
-;// generating a file that will get compiled into the release exe
-;// this generated script deals with extracting all the files from the exe itself
+;// copying a file that will get compiled into the release exe
+;// this copied script deals with extracting all the files from the exe itself
 ;// it will then run `releaseGUI.ahk` to provide the user with some install options
-FileAppend "
-(
-    alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell and .Net4.5 (or greater)``n``nIf you do not have either installed, this installer will step you through obtaining PowerShell and .Net4.X", "Notice", "1 64 256 4096")
-    if alert = "Cancel"
-        return
-    check := MsgBox("This install process will dump my entire repo in the current directory.``n``nDo you wish to continue?", "Do you wish to continue?", "4 32 256 4096")
-    if check = "No"
-        return
-    FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
-    FileInstall("E:\Github\ahk\releases\release\Extract.ahk", A_WorkingDir "\Extract.ahk", 1)
-    FileInstall("E:\Github\ahk\releases\release\SevenZip.ahk", A_WorkingDir "\SevenZip.ahk", 1)
-    FileInstall("E:\Github\ahk\releases\release\7-zip32.dll", A_WorkingDir "\7-zip32.dll", 1)
-    FileInstall("E:\Github\ahk\releases\release\7-zip64.dll", A_WorkingDir "\7-zip64.dll", 1)
+;//! checkout the code in this script if you're cautious/curious about the release.exe
+FileCopy(ptf.SupportFiles "\Release Assets\install.ahk", A_WorkingDir "\release\" yes.value ".ahk")
 
-    RunWait(A_WorkingDir '\Extract.ahk')
-
-    FileDelete(A_WorkingDir '\7-zip32.dll')
-    FileDelete(A_WorkingDir '\7-zip64.dll')
-    FileDelete(A_WorkingDir '\SevenZip.ahk')
-    FileDelete(A_WorkingDir '\Extract.ahk')
-    FileDelete(A_WorkingDir '\yes.value.zip')
-    Run(A_ScriptDir "\Support Files\Release Assets\releaseGUI.ahk")
-    WinWait("Select Install Options")
-    WinGetPos(&x, &y, &width,, "Select Install Options")
-    Run("Notepad.exe " A_ScriptDir "\Support Files\Release Assets\Getting Started_readme.md")
-    if WinWait("Getting Started_readme.md - Notepad",, 3)
-        WinMove(x+width+15, y, A_ScreenWidth/3,, "Getting Started_readme.md - Notepad")
-)", A_WorkingDir "\release\" yes.value ".ahk"
-
-;// doing string manipulation to replace some values in the above generated script with the actual release ver
+;// doing string manipulation to replace some values in the above script with the actual release ver
 readFi := FileRead(A_WorkingDir "\release\" yes.value ".ahk")
 replaceYes := StrReplace(readFi, "yes.value", yes.value, 1)
 FileDelete(A_WorkingDir "\release\" yes.value ".ahk")
@@ -287,7 +261,7 @@ if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
         WinWaitActive("Ahk2Exe for AutoHotkey")
     }
 SendInput("{Tab 2}")
-SendInput("{Down 20}")
+SendInput("{Down 20}" "{Up}")
 SendInput("{Enter}")
 WinWait("Ahk2Exe", "Successfully compiled as")
 SendInput("{Enter}")
