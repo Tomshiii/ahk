@@ -62,22 +62,50 @@ if psver != 0 && netver != 0
     goto com
 
 inputNeeded := true
+;// if the user doesn't have .Net4.5 or above installed they will be prompted
+if (VerCompare(netver, "4.5") < 0 || netver = 0) && psver != 0
+    {
+        check := MsgBox("A newer version of .Net4.5+ is required`nOn install, ensure you allow the option to add to path variable`n`nWould you like to install it now?", ".Net 4.5 or more required", "4 32 256 4096")
+        if check = "No"
+            return
+        pick := FileSelect("D S 2",, "Save Location")
+        TrayTip("Downloading .Net")
+        Download("https://go.microsoft.com/fwlink/?LinkId=2085155", pick "\ndp48-web.exe")
+        TrayTip()
+        Run(pick "\ndp48-web.exe")
+        if !WinWait("Microsoft .NET Framework",, 5)
+            {
+                MsgBox("Waiting for the .NET install timed out.`nFeel free to run the .NET installer manually or the installer for Tomshi's scripts again to proceed", "Timed Out")
+                return
+            }
+        WinWaitClose("Microsoft .NET Framework")
+        sleep 500
+        goto com
+    }
+
 ;// if the user doesn't have powershell installed they will be prompted to install powershell 7
 if psver = 0
     {
         ;// setting the command type we'll need later
         psType := "pwsh.exe"
-        ;// alerting the user an install will be required
-        check2 := MsgBox("PowerShell 7 is required for this install..`n`nWould you like to download and install it now?", "PowerShell required", "4 32 256 4096")
-        if check2 = "No"
-            return
+        ;// checking if the user has PowerShell 7 Installed
+        downpwsh := FileExist(A_ProgramFiles "\PowerShell\7\pwsh.exe") ? false : true
         ;// setting the required exe type
         bit := (A_PtrSize = 8) ? 64 : 86
+
+        if !downpwsh
+            goto net7
+        ;// alerting the user an install will be required
+        check2 := MsgBox("PowerShell 5+ wasn't found on this system so PowerShell 7 is required for this install..`n`nWould you like to download and install it now?", "PowerShell required", "4 32 256 4096")
+        if check2 = "No"
+            return
         ;// download and installing
         pick2 := FileSelect("D S 2",, "Save Location")
         if pick2 = ""
             return
+        TrayTip("Downloading PowerShell 7.3.0")
         Download("https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/PowerShell-7.3.0-win-x" bit ".msi", pick2 "\PowerShell-7.3.0-win-x" bit ".msi")
+        TrayTip()
         Run(pick2 "\PowerShell-7.3.0-win-x" bit ".msi")
         if !WinWait("PowerShell 7-x" bit " Setup",, 5)
         {
@@ -85,26 +113,22 @@ if psver = 0
             return
         }
         WinWaitClose("PowerShell 7-x" bit " Setup")
-        if !FileExist(A_ProgramFiles "\PowerShell\7\pwsh.exe")
+        if !WinWait("PowerShell 7-x" bit " Setup",, 5) ;UAC prompt might cause this script to lose track of the window, so we'll give the user another 5s to dismiss it
             {
-                MsgBox("Something went wrong during the PowerShell 7 install process`n`nTry install again")
-                Run("https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3#dotnet")
-                return
+                if !FileExist(A_ProgramFiles "\PowerShell\7\pwsh.exe")
+                    {
+                        MsgBox("Something went wrong during the PowerShell 7 install process or UAC appeared and this script lost track of the install window`n`nTry installing PowerShell 7 manually or finish the PowerShell 7 install then rerun the Tomshi Script installer")
+                        Run("https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3#dotnet")
+                        return
+                    }
             }
+        WinWaitClose("PowerShell 7-x" bit " Setup")
         sleep 500
 
         ;// .Net7
-        /**
-         * This function sends commands to the commandline and returns the result
-         * func found here: https://lexikos.github.io/v2/docs/commands/Run.htm#Examples
-         */
-        getdotnet(command) {
-            shell := ComObject("WScript.Shell")
-            exec := shell.Exec(A_ComSpec " /C " command)
-            return exec.StdOut.ReadAll()
-        }
+        net7:
         ;// retrieve installed versions of .net sdk
-        dotnetvers := getdotnet("dotnet --list-sdks")
+        dotnetvers := getcmd("dotnet --list-sdks")
         loop {
             if !InStr(dotnetvers, "[",,, 1)
                 break
@@ -131,7 +155,9 @@ if psver = 0
         if check7 = "No"
             return
         pick3 := FileSelect("D S 2",, "Save Location")
+        TrayTip("Downloading .Net7")
         Download("https://download.visualstudio.microsoft.com/download/pr/5b9d1f0d-9c56-4bef-b950-c1b439489b27/b4aa387715207faa618a99e9b2dd4e35/dotnet-sdk-7.0.100-win-x" bit ".exe", pick3 "\dotnet-sdk-7.0.100-win-x" bit ".exe")
+        TrayTip()
         Run(pick3 "\dotnet-sdk-7.0.100-win-x" bit ".exe")
         if !WinWait("Microsoft .NET SDK 7.0.100 (x" bit ") Installer",, 5)
             {
@@ -141,24 +167,6 @@ if psver = 0
         WinWaitClose("Microsoft .NET SDK 7.0.100 (x" bit ") Installer")
         sleep 500
         goto com2
-    }
-
-;// if the user doesn't have .Net4.5 or above installed they will be prompted
-if VerCompare(netver, "4.5") < 0 || netver = 0
-    {
-        check := MsgBox("A newer version of .Net4.5+ is required`nOn install, ensure you allow the option to add to path variable`n`nWould you like to install it now?", ".Net 4.5 or more required", "4 32 256 4096")
-        if check = "No"
-            return
-        pick := FileSelect("D S 2",, "Save Location")
-        Download("https://go.microsoft.com/fwlink/?LinkId=2085155", pick "\ndp48-web.exe")
-        Run(pick "\ndp48-web.exe")
-        if !WinWait("Microsoft .NET Framework",, 5)
-            {
-                MsgBox("Waiting for the .NET install timed out.`nFeel free to run the .NET installer manually or the installer for Tomshi's scripts again to proceed", "Timed Out")
-                return
-            }
-        WinWaitClose("Microsoft .NET Framework")
-        sleep 500
     }
 
 com:
@@ -172,3 +180,14 @@ RunWait(A_ComSpec " /c " command, dirDir, "Hide")
 TrayTip()
 if inputNeeded = true
     MsgBox("Extraction complete!", "Install Complete")
+
+
+/**
+ * This function sends commands to the commandline and returns the result
+ * func found here: https://lexikos.github.io/v2/docs/commands/Run.htm#Examples
+ */
+getcmd(command) {
+    shell := ComObject("WScript.Shell")
+    exec := shell.Exec(A_ComSpec " /C " command)
+    return exec.StdOut.ReadAll()
+}

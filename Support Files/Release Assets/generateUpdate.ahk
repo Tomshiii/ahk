@@ -153,8 +153,16 @@ FileAppend "
     ;// setting up
     SetWorkingDir(A_ScriptDir)
     A_ScriptName := "yes.value"
+
+    ;// making sure files haven't already been extracted
+    if FileExist(A_WorkingDir "\My Scripts.ahk") || FileExist(A_WorkingDir "\right click premiere.ahk") || FileExist(A_WorkingDir "\checklist.ahk") || FileExist(A_WorkingDir "\yes.value.zip")
+        {
+            MsgBox("There appears to already be extracted files in this directory, remove them before running this file or you may enounter issues")
+            return
+        }
+
     ;// alerting the user before starting
-    alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell and .Net4.5 (or greater)``n``nIf you do not have either installed, this installer will step you through obtaining PowerShell and .Net4.X", "Notice", "1 64 256 4096")
+    alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell 5+ and .Net4.5 (or greater)``n``nIf you do not have either installed, this installer will step you through obtaining PowerShell 7 and .Net7", "Notice", "1 64 256 4096")
     if alert = "Cancel"
         return
     check := MsgBox("This install process will dump my entire repo in the current directory.``n``nDo you wish to continue?", "Do you wish to continue?", "4 32 256 4096")
@@ -197,19 +205,20 @@ FileAppend "
             }
         }
     ;// if it can be found, run it
-    Run(releaseGUILoc,, &guiID)
-    if !WinWait(guiID,, 5)
+    Run(releaseGUILoc,,, &guiID)
+    DetectHiddenWindows(true), SetTitleMatchMode(2)
+    if !WinWait("ahk_pid " guiID,, 5)
         {
             MsgBox("Waiting for releaseGUI.ahk timed out``nYou can run this file manually to get started:``n" releaseGUILoc "``n``nThen checkout the readme.md file found in the same directory:``n" readmeLoc)
         }
-    WinGetPos(&x, &y, &width,, guiID)
+    WinGetPos(&x, &y, &width,, "ahk_pid " guiID)
 
     ;// checking to see if the readme.md file can be found
     if FileExist(readmeLoc)
     {
-        Run("Notepad.exe " readmeLoc,, &readmeID)
-        if WinWait(readmeID,, 3)
-            WinMove(x+width+15, y, A_ScreenWidth/3,, readmeID)
+        Run("Notepad.exe " readmeLoc,,, &readmeID)
+        if WinWait("ahk_pid " readmeID,, 3)
+            WinMove(x+width+15, y, A_ScreenWidth/3,, "ahk_pid " readmeID)
     }
 )", A_WorkingDir "\release\" yes.value ".ahk"
 
