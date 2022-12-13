@@ -27,8 +27,8 @@ timeRemain(*)
     if timer = false
         forTray := "Timer not currently tracking"
     else
-        forTray := Round(((minutes * 60) - ElapsedTime)/ 60, 2) "min"
-    MsgBox(forTray)
+        forTray := half ? "Will retry in: " Round((((minutes * 60)/2) - ElapsedTime)/ 60, 2) "min" : "Will save in: " Round(((minutes * 60) - ElapsedTime)/ 60, 2) "min"
+    MsgBox(forTray, "Next Save - " A_ScriptName)
 }
 
 ;This script will autosave your premire pro/after effects project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
@@ -36,7 +36,8 @@ timeRemain(*)
 
 ;This file requires you to properly set the "year" value for both programs in `settings.ini` (or in settingsGUI() #F1 by default). This value is whatever year appears in the title of the respectiveprogram
 
-;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tools that appear every minute towards a save attempt)
+;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
+;// if a save attempt occurs and is deemed not necessary, the following attempt will happen in 1/2 the amount of time set below. Once a save happens, the script will return to this value
 minutes := IniRead(ptf["settings"], "Adjust", "autosave MIN")
 global ms := minutes * 60000
 
@@ -56,6 +57,7 @@ global retry := secondsRetry * 1000
 tools := IniRead(ptf["settings"], "Settings", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
 ;is the timer running?
 timer := false
+half := false
 
 A_TrayMenu.Insert("9&", "Tooltip Countdown", tooltipCount)
 if tools = "true"
@@ -84,7 +86,7 @@ global ElapsedTime := 0
 forTray := "Timer not currently tracking"
 
 StopWatch() {
-    timer := true
+    global timer := true
     if ((A_TickCount - StartTickCount) >= 1000) ;how we determine once more than 1s has passed
         {
             global StartTickCount += 1000
@@ -94,10 +96,11 @@ StopWatch() {
         {
             toolFunc(min) {
                 tool.Wait()
-                tool.Cust(min "min until a save attempt", 2.0)
+                tool.Cust(min "min until a save attempt", 2.0,,, -30, 3)
                 tool.Wait()
             }
-            x := Round((minutes * 60) - ElapsedTime)/ 60
+            ;// turn this into a func to do it automatically instead of hard coding values
+            x := half ? Round(((minutes * 60)/2) - ElapsedTime)/60 : Round((minutes * 60) - ElapsedTime)/ 60
             if x < 4 && x > 3.98
                 toolFunc(4)
             if x < 3 && x > 2.98
@@ -106,6 +109,8 @@ StopWatch() {
                 toolFunc(2)
             if x < 1 && x > 0.98
                 toolFunc(1)
+            if x < 0.5 && x > 0.48
+                toolFunc(0.5)
         }
 }
 
@@ -117,7 +122,7 @@ if WinExist(editors.Premiere.winTitle) || WinExist(editors.AE.winTitle)
         SetTimer(save, -ms)
         global StartTickCount := A_TickCount ;for tray function
         SetTimer(StopWatch, 10) ;for tray function
-        timer := true
+        global timer := true
         if IniRead(ptf["settings"], "Settings", "autosave check checklist") = "true"
             SetTimer(check, -msChecklist) ;if you do not wish to use the checklist script, simply comment out this timer
     }
@@ -134,7 +139,7 @@ check() {
     if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) ;this is here so the script won't error out if you close Premiere while it is waiting
         {
             SetTimer(StopWatch, 0) ;for tray function
-            timer := false
+            global timer := false
             SetTimer(, -msChecklist)
             goto end3
         }
@@ -171,7 +176,8 @@ save()
     if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) ;this is here so the script won't error out if you close Premiere while it is waiting
         reload
     SetTimer(StopWatch, 0) ;this stops the timer from counting while the save function is occuring and proceeding into negative numbers
-    timer := false
+    global timer := false
+    global half := false
 
     stop := ""
     premSaveTrack := 0
@@ -186,10 +192,7 @@ save()
     if WinExist(editors.AE.winTitle)
         winget.AEName(&aeCheck, &aeSaveCheck)
     if saveCheck != "*" && aeSaveCheck != "*"
-        {
-            tool.Cust("No save necessary")
-            goto ignore
-        }
+        goto end
 
     if (A_TimeIdleKeyboard <= idle) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton") && A_TimeIdleMouse <= idle)
         {
@@ -201,6 +204,11 @@ save()
     block.On()
     attempt := 0
     attempt:
+    if attempt = 3
+        {
+            switchTo.Premiere() ; last ditch effort to get a save off properly
+            SendInput(timelineWindow)
+        }
     attempt++
 
     ;\\ first we grab information on the active window
@@ -251,11 +259,17 @@ save()
                     SetTimer(, -ms)
                     goto end
                 }
+            ;// debugging
+            ; appendCheck(checkNum, premTitleCheck, premTitleCheck2, premWinCheck, premCheck, whichNum) => FileAppend("check" checkNum "`ntitle: " premTitleCheck "`n" "title2: " premTitleCheck2 "`npremWinCheck: " premWinCheck "`npremcheck: " premCheck "`nwhich: " whichNum "`n---------------`n", "test.txt")
+            ; appendCheck(1, premTitleCheck, premTitleCheck2, premWinCheck, premCheck, 0)
+
             if premWinCheck = "" && premCheck = ""
                 {
                     switchTo.Premiere()
                     premWinCheck := WinGetTitle("A")
                     premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+
+                    ; appendCheck(2, premTitleCheck, premTitleCheck2, premWinCheck, premCheck, "0_2") ;// debugging
                 }
             if !premTitleCheck && !premTitleCheck2 ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
@@ -265,24 +279,34 @@ save()
                     goto end
                 }
 
-            premSave(title) {
+            premSave(title?, variation := "default", swap := false) {
                 tool.Cust("Saving Premiere")
-                ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, title)
+                switch variation {
+                    case "focus":
+                        if swap
+                            switchTo.Premiere()
+                        SendInput(timelineWindow)
+                        SendInput(timelineWindow)
+                        SendInput("{Ctrl Down}s{Ctrl Up}")
+                        ; appendCheck("3_focus", premTitleCheck, premTitleCheck2, premWinCheck, premCheck, "premsave() swap: " swap) ;// debugging
+                    default:
+                        ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, title)
+                        ; appendCheck("3_bg", premTitleCheck, premTitleCheck2, premWinCheck, premCheck, "premsave() bg") ;// debugging
+                }
                 if WinWait("Save Project",, 2)
                     WinWaitClose("Save Project",, 2)
                 premSaveTrack := 1
             }
             if saveCheck = "*" && origWind = "Adobe Premiere Pro.exe"
                 {
-                    tool.Cust("Saving Premiere")
-                    SendInput("{Ctrl Down}{s Down}{s Up}{Ctrl Up}")
-                    if WinWait("Save Project",, 2)
-                        WinWaitClose("Save Project",, 2)
-                    premSaveTrack := 1
+                    if premWinCheck != ""
+                        premSave(, "focus")
+                    else if premCheck != ""
+                        premSave(, "focus", 1)
                 }
-            else if saveCheck = "*" && premWinCheck != ""
+            else if saveCheck = "*" && premWinCheck != 0
                 premSave(premWinCheck)
-            else if saveCheck = "*" && premCheck != ""
+            else if saveCheck = "*" && premCheck != 0
                 premSave(premCheck)
         }
 
@@ -347,7 +371,7 @@ save()
             winget.PremName(&premCheck, &titleCheck, &saveCheck)
         if WinExist(editors.AE.winTitle)
             winget.AEName(&aeCheck, &aeSaveCheck)
-        if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt <= 3
+        if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt < 3
             goto attempt
         else if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt >= 3
             tool.Cust("Couldn't properly save after " attempt " attempts", 2.0)
@@ -371,7 +395,10 @@ save()
         end:
         tool.Wait()
         if aeSaveTrack = 0 && premSaveTrack = 0 && avoid = 0
-            tool.Cust("No save necessary")
+            {
+                global half := true
+                tool.Cust("No save necessary")
+            }
         if !IsSet(origWind)
             goto ignore
         try { ;this is to restore the original active window
@@ -396,7 +423,11 @@ save()
         tool.Wait()
         ToolTip("")
         origWind := unset
-        SetTimer(, -ms) ;reset the timer
+        ; SetTimer(StopWatch, 10)
+        if aeSaveTrack = 0 && premSaveTrack = 0 && avoid = 0
+            SetTimer(, -(ms/2)) ;reset the timer
+        else
+            SetTimer(, -ms) ;reset the timer
 
         theEnd:
         if WinExist(editors.AE.winTitle)

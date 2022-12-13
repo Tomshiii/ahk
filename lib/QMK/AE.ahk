@@ -14,6 +14,14 @@ SC027::unassigned()
 o::unassigned()
 l::
 {
+	CaretGetPos(&findx)
+	if findx = ""
+		{
+			tool.Cust("the caret which indicates you aren't ready to type something`nTo prevent any unintended inputs being sent to AE none will be sent", 3.0, 1)
+			errorLog(, A_ThisHotkey "::", "User wasn't in a typing field, caret couldn't be found", A_LineFile, A_LineNumber)
+			return
+		}
+	SendInput("^a" "{BackSpace}")
 	SendInput("
 		(
 			w = wiggle(1,10);
@@ -21,7 +29,7 @@ l::
 		)"
 	)
 	sleep 500
-	SendInput("{Del}")
+	SendInput("{Del}" "{NumpadEnter}")
 }
 .::unassigned()
 ;Down::unassigned()

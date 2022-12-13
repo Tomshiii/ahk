@@ -43,8 +43,10 @@ youMouse(tenS, fiveS)
  */
 monitorWarp(x, y)
 {
+    priorPix := A_CoordModePixel, priorMouse := A_CoordModeMouse
     coord.s()
     MouseMove(x, y, 2) ;I need the 2 here as I have multiple monitors and things can be funky moving that far that fast. random ahk problems. Change this if you only have 1/2 monitors and see if it works fine for you
+    A_CoordModePixel := priorPix, A_CoordModeMouse := priorMouse
 }
 
 /**
@@ -84,9 +86,9 @@ fastWheel()
 		WinActivate(titleUnder)
     WinWaitActive(titleUnder)
     proc := WinGetProcessName(titleUnder)
-    if InStr(WinGetTitle(titleUnder), browser.vscode.winTitle) && proc = "Code.exe" && !InStr(WinGetTitle(titleUnder), "Preview")
+    if ((InStr(titleUnder, "Visual Studio Code") && proc = "Code.exe") && !InStr(titleUnder, "Preview"))
         SendInput(focusCode)
-	SendInput("{Pg" type "}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
+	SendInput("{Pg" type "}")
 	/* SendInput("{" second " 10}") ;I have one of my mouse buttons set to F14, so this is an easy way to accelerate scrolling. These scripts might do too much/little depending on what you have your windows mouse scroll settings set to.
     */
 }

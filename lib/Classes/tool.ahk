@@ -53,13 +53,10 @@ class tool {
             }
 
         ;// saving the previous coordmode states
-        priorTooltip := A_CoordModeToolTip
-        priorMouse   := A_CoordModeMouse
+        priorTooltip := A_CoordModeToolTip, priorMouse := A_CoordModeMouse
         ;// this function will return the coordmodes to their previous state
-        returnCoord() {
-            A_CoordModeToolTip := priorTooltip
-            A_CoordModeMouse   := priorMouse
-        }
+        returnCoord() => (A_CoordModeToolTip := priorTooltip, A_CoordModeMouse   := priorMouse)
+
         CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
         CoordMode("Mouse", "Screen") ;this ensures the initial tooltip generates in the correct position if cursor isn't on the main display
 

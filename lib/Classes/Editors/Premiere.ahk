@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/12/08
- * @version 1.0.4
+ * @date 2022/12/12
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1249,6 +1249,12 @@ class Prem {
                 if ClassNN != "DroverLord - Window Class3" || ClassNN != "DroverLord - Window Class1"
                     break
                 sleep 30
+                if A_Index != 100
+                    {
+                        tool.Cust("Waiting for gain window timed out")
+                        block.Off()
+                        return
+                    }
             }
         }
         if ClassNN = ""
@@ -1284,7 +1290,12 @@ class Prem {
             }
             inputs:
             SendInput("g")
-            WinWait("Audio Gain")
+            if !WinWait("Audio Gain",, 3)
+                {
+                    tool.Cust("Waiting for gain window timed out")
+                    block.Off()
+                    return
+                }
             SendInput("+{Tab}{UP 3}{DOWN}{TAB}" amount "{ENTER}")
             WinWaitClose("Audio Gain")
             block.Off()

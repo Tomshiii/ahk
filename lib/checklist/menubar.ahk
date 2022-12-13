@@ -1,6 +1,8 @@
 ; { \\ #Includes
 #Include <Classes\Dark>
 #Include <Classes\winGet>
+#Include <Classes\tool>
+#Include <Classes\ptf>
 #Include <Functions\getScriptRelease>
 ; }
 
@@ -359,7 +361,18 @@ openLog(*)
 openProj(*)
 {
     SplitPath(checklist,, &projDir)
-    WinGet.PremName(&premCheck, &titleCheck, &saveCheck)
+    if !WinExist(editors.Premiere.winTitle) && !WinExist(Editors.AE.winTitle)
+        {
+            tool.Cust("Adobe project not open")
+            return
+        }
+    if WinExist(editors.Premiere.winTitle)
+        WinGet.PremName(&premCheck, &titleCheck, &saveCheck)
+    else if WinExist(Editors.AE.winTitle)
+        {
+            WinGet.AEName(&aeCheck, &aeSaveCheck)
+            premCheck := aeCheck
+        }
     if WinExist(projDir,, premCheck)
         WinActivate(projDir,, premCheck)
     else
