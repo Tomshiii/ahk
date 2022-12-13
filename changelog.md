@@ -1,9 +1,11 @@
 # <> Release 2.8.x -
+- Broke apart `Windows.ahk` into individual function files
 
 ## Functions
 - Fix `fastWheel()` not focusing code window in `VSCode`
 - `monitorWarp()` stores and returns coordmode
 - `prem.gain()` will now properly timeout if gain window never appears
+- All `switchTo` functions that use `WinWait` now timeout after `2s`
 
 ## > QMK
 - `AE.ahk - l::` will now ensure the caret is active before attempting to send text

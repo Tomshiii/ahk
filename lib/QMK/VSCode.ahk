@@ -9,8 +9,6 @@ Enter::unassigned()
 p::unassigned()
 SC027::unassigned()
 /::unassigned()
-Enter & Up::SendInput(focusSourceWin) ;get to source control tab
-Right & Up::SendInput(focusExplorerWin) ;get to the explorer tab
 ;Up::unassigned()
 
 o::unassigned()

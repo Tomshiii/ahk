@@ -1,4 +1,6 @@
-;what happens when you close the checklist
+/**
+ * This function contains the logic on what to do when the checklist is closed
+ */
 close(*) {
     if !IsSet(ElapsedTime)
         {
@@ -25,15 +27,21 @@ close(*) {
     return
 }
 
+/**
+ * This function will check for `waitUntil.ahk` and close it if it's open
+ */
 closeWaitUntil()
 {
     detect()
-    if WinExist("waitUntil.ahk")
+    if WinExist("waitUntil.ahk",, browser.vscode.winTitle)
         ProcessClose(WinGetPID("waitUntil.ahk",, browser.vscode.winTitle))
 }
 
-;defining what happens if the script is somehow opened a second time and the function is forced to close
 OnExit(ExitFunc)
+
+/**
+ * This function determines what the script will do if it's forced to exit - ie. a second instance is forced open
+ */
 ExitFunc(ExitReason, ExitCode)
 {
     if ExitReason = "Single"

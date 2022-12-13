@@ -1,6 +1,6 @@
 /**
  * This function is called anytime the user needs to be alerted about a checklist.ini change that will break the script
- * @param {any} version is the version passed in that is going to be compared against the current version
+ * @param {String} version is the version passed in that is going to be compared against the current version
  */
 problemDir(version)
 {
