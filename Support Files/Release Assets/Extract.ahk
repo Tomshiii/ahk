@@ -1,5 +1,7 @@
 #Include *i SevenZip.ahk
 
+;// all references to `yes (dot) value` get automatically replaced with the latest version number by `generateUpdate.ahk` - this saves me from needing to manually change it each release
+
 ;// doing some setup
 SetWorkingDir(A_ScriptDir)
 path := A_WorkingDir "\yes.value.zip"

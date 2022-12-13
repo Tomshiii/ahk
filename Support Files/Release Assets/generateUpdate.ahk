@@ -196,6 +196,15 @@ FileAppend "
             loop {
                 if A_Index > 10
                     {
+                        ;// last ditch effort to find the gui file
+                        loop files A_WorkingDir "\*.ahk", "F R"
+                            {
+                                if A_LoopFileName != "releaseGUI.ahk"
+                                    continue
+                                releaseGUILoc := A_LoopFileFullPath
+                                break
+                            }
+                        ;// if the file still can't be found, we'll back out
                         MsgBox("The installer file couldn't find " "'" "releaseGUI.ahk" "'" ", it should be in:``n" releaseGUILoc "``n``nIf that file is there and there is a problem with this installer, simply run that script and read the readme.md found here:``n" readmeLoc)
                         return
                     }
@@ -210,6 +219,7 @@ FileAppend "
     if !WinWait("ahk_pid " guiID,, 5)
         {
             MsgBox("Waiting for releaseGUI.ahk timed out``nYou can run this file manually to get started:``n" releaseGUILoc "``n``nThen checkout the readme.md file found in the same directory:``n" readmeLoc)
+            return
         }
     WinGetPos(&x, &y, &width,, "ahk_pid " guiID)
 
