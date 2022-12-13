@@ -1,4 +1,5 @@
 # <> Release 2.8.x -
+- Broke apart `Windows.ahk` into individual function files
 
 ## Functions
 - Fix `fastWheel()` not focusing code window in `VSCode`

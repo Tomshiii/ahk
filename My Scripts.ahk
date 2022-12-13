@@ -35,19 +35,22 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Classes\switchTo>
 #Include <Classes\Move>
 #Include <Classes\winget>
+#Include <Classes\Startup>
 #Include <Functions\reload_reset_exit>
 #Include <Functions\errorLog>
 #Include <Functions\mouseDrag>
 #Include <Functions\getLocalVer>
-#Include <Classes\Startup>
-#Include <Windows>
+#Include <Functions\fastWheel>
+#Include <Functions\youMouse>
+#Include <Functions\jumpChar>
+#Include <Functions\refreshWin>
 #Include <GUIs>
 ;#Include right click premiere.ahk ; this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.23.13
+;\\v2.24
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 

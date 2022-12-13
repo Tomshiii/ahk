@@ -8,7 +8,7 @@
 #Include <Functions\SplitPathObj>
 #Include <Functions\On_WM_MOUSEMOVE>
 #Include <Functions\reload_reset_exit>
-#Include <Windows>
+#Include <Functions\refreshWin>
 ; }
 
 /**
