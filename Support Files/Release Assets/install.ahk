@@ -72,12 +72,15 @@ if !WinWait("Select Install Options",, 5)
         return
     }
 sleep(500)
-WinGetPos(&x, &y, &width,, "Select Install Options")
+WinGetPos(&x, &y, &width, &height, "Select Install Options")
 
 ;// checking to see if the readme.md file can be found
 if FileExist(readmeLoc)
-{
-    Run("Notepad.exe " readmeLoc,,, &readmeID)
-    if WinWait("ahk_pid " readmeID,, 3)
-        WinMove(x+width+15, y, A_ScreenWidth/3, A_ScreenHeight/3, notepadName := WinGetTitle("ahk_pid " readmeID))
-}
+    {
+        Run("Notepad.exe " readmeLoc,,, &readmeID)
+        if WinWait("ahk_pid " readmeID,, 3)
+            {
+                WinGetPos(,,, &noteHeight, notepadName := WinGetTitle("ahk_pid " readmeID))
+                WinMove(x+width+15, (y+(height/2))-((noteHeight/2)), A_ScreenWidth/2.5, A_ScreenHeight/2.5, notepadName)
+            }
+    }

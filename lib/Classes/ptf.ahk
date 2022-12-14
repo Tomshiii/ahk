@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2022/11/29
- * @version 1.0.3
+ * @date 2022/12/14
+ * @version 1.0.4
  ***********************************************************************/
 
 class ptf {
@@ -10,12 +10,14 @@ class ptf {
     static SettingsLoc       := A_MyDocuments "\tomshi"
     static rootDir           := IniRead(this.SettingsLoc "\settings.ini", "Track", "working dir", "E:\Github\ahk")
     static SupportFiles      := this.rootDir "\Support Files"
-    static Shortcuts         := this.SupportFiles "\shortcuts"
+    static Backups           := this.rootDir "\Backups"
     static Stream            := this.rootDir "\Stream"
     static ErrorLog          := this.rootDir "\Error Logs"
     static lib               := this.rootDir "\lib"
-    static textreplace       := this.SupportFiles "\textreplace"
     static TimerScripts      := this.rootDir "\Timer Scripts"
+    static Shortcuts         := this.SupportFiles "\shortcuts"
+    static textreplace       := this.SupportFiles "\textreplace"
+    static Wiki              := this.Backups "\Wiki"
     static Checklist         := this.lib "\checklist"
 
     ;My Stuff

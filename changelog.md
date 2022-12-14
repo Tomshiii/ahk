@@ -1,11 +1,23 @@
-# <> Release 2.8.x -
+# <> Release 2.8.2 -
 - Broke apart `Windows.ahk` into individual function files
+- `generateUpdate` no longer uses `FileAppend` to create the install `.exe` and instead copies `install.ahk` and renames it. This is functionally identical but easier to maintain
+
+#### (#7) Attempt to fix issue #6 (couldn't reproduce the issue)
+`Extract.ahk`
+- Added more logic to check whether the user needs additional tools to unzip
+- Fixed script still attempting to use `PowerShell` even if the script had prompted them to install `PowerShell 7`
 
 ## Functions
+- `gameCheckGUI()` will now alert the user if the input window is already in the list
 - Fix `fastWheel()` not focusing code window in `VSCode`
 - `monitorWarp()` stores and returns coordmode
 - `prem.gain()` will now properly timeout if gain window never appears
 - All `switchTo` functions that use `WinWait` now timeout after `2s`
+
+`settingsGUI()`
+- Added a menubar
+    - Moved `add game to 'gamecheck.ahk'` & `open settings.ini` into the menu bar
+    - Added ability to open the wiki of this repo (both the local copy & web)
 
 ## > QMK
 - `AE.ahk - l::` will now ensure the caret is active before attempting to send text

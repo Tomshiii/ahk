@@ -76,6 +76,21 @@
             if !DirExist(A_Temp "\tomshi")
                 DirCreate(A_Temp "\tomshi")
             readGameCheck := FileRead(ptf["Game List"])
+            if InStr(readGameCheck, "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
+                {
+                    this.Hide()
+                    setWinExist := WinExist("Settings " version) ? 1 : 0
+                    if setWinExist
+                        WinActivate("Settings " version)
+                    MsgBox("The desired window is already in the list!")
+                    if setWinExist
+                        {
+                            WinSetAlwaysOnTop(1, "Settings " version)
+                            if !WinActive("Settings " version)
+                                WinActivate("Settings " version)
+                        }
+                    return
+                }
             findEnd := InStr(readGameCheck, "; --", 1,, 1)
             addUserInput := StrReplace(readGameCheck, "; --", "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
             FileAppend(addUserInput, A_Temp "\tomshi\Game List.ahk")
@@ -88,21 +103,29 @@
             if InStr(readAgain, "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
                 {
                     this.Hide()
+                    setWinExist := WinExist("Settings " version) ? 1 : 0
+                    if setWinExist && !WinActive("Settings " version)
+                        WinActivate("Settings " version)
                     MsgBox("Game added succesfully!")
-                    if WinExist("Settings " version)
+                    if setWinExist
                         {
                             WinSetAlwaysOnTop(1, "Settings " version)
-                            WinActivate("Settings " version)
+                            if !WinActive("Settings " version)
+                                WinActivate("Settings " version)
                         }
                 }
             else
                 {
                     this.Hide()
+                    setWinExist := WinExist("Settings " version) ? 1 : 0
+                    if setWinExist
+                        WinActivate("Settings " version)
                     MsgBox("Game added unsuccesfully :(")
-                    if WinExist("Settings " version)
+                    if setWinExist
                         {
                             WinSetAlwaysOnTop(1, "Settings " version)
-                            WinActivate("Settings " version)
+                            if !WinActive("Settings " version)
+                                WinActivate("Settings " version)
                         }
                 }
         }

@@ -14,7 +14,9 @@ ___
 
 **Hotkey Replacer:**
 
-Will produce a GUI that will allow the user to replace any hotkeys and KSA.ini values in this release with their own.
+Will produce a GUI that will allow the user to replace any hotkeys (in `My Scripts.ahk`) and KSA.ini values in this release with their own.
+
+A backup of the original release versions of `My Scripts.ahk` & `Keyboard Shortcuts.ini` will be saved in `\Backups\` just incase something goes wrong.
 
 **note: selecting this option is only necessary if the user has an older version of my scripts already in use*
 
@@ -23,8 +25,6 @@ ___
 If you choose to ignore this install step and wish to run these files at a later time, they can be located;
 Symlink:            `..\Support Files\Release Assets\CreateSymLink.ahk`
 Hotkey Replacer:    `..\Support Files\Release Assets\HotkeyReplacer.ahk`
-
-A backup of the original release versions of `My Scripts.ahk` & `Keyboard Shortcuts.ini` will be saved in `\Backups\` just incase something goes wrong.
 
 Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's a compiled version of my scripts, alongside the `SevenZip.ahk` lib by `thqby` to allow me to include the repo in a .zip file that then gets automatically extracted when you run the release .exe ^.^
 

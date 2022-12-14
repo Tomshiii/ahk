@@ -9,6 +9,7 @@
 #Include <Functions\On_WM_MOUSEMOVE>
 #Include <Functions\reload_reset_exit>
 #Include <Functions\refreshWin>
+#Include <Functions\checkInternet>
 ; }
 
 /**
@@ -35,7 +36,42 @@ settingsGUI()
     ;this function is needed to reload some scripts
     detect()
 
-    try { ;attempting to grab window information on the active window for `gameAddButt()`
+    ;// menubar
+    FileMenu := Menu()
+    FileMenu.Add("&Add Game to ``gameCheck.ahk```tCtrl+A", menu_AddGame)
+    openSub := Menu()
+    FileMenu.Add("&Open", openSub)
+    openSub.Add("&settings.ini`tCtrl+S", menu_Openini)
+    openSub.Add("&Wiki", (*) => MsgBox("Not implemented"))
+    openSub.Disable("&Wiki")
+    openSub.Add("&Wiki Dir`tCtrl+O", openWiki.Bind("local"))
+    openSub.Add("&Wiki Web`tCtrl+W", openWiki.Bind("web"))
+    ;// define the entire menubar
+    bar := MenuBar()
+    bar.Add("&File", FileMenu)
+
+    openWiki(which, *) {
+        switch which {
+            case "local":
+                if WinExist("Wiki explorer.exe")
+                    WinActivate("Wiki explorer.exe")
+                else
+                    Run(ptf.Wiki "\Latest")
+            case "web":
+                checkInt := checkInternet()
+                if !checkInt
+                    {
+                        tool.Cust("It doesn't appear like you have an active internet connection", 2.0)
+                        tool.Cust("The page will run just incase", 2.0,,, 20, 2)
+                    }
+                if WinExist("Home · Tomshiii/ahk Wik")
+                    WinActivate("Home · Tomshiii/ahk Wik")
+                else
+                    Run("https://github.com/Tomshiii/ahk/wiki")
+        }
+    }
+
+    try { ;attempting to grab window information on the active window for `menu_AddGame()`
         winProcc := WinGetProcessName("A")
         winTitle := WinGetTitle("A")
     } catch {
@@ -60,10 +96,10 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;Top Titles
-    titleText := settingsGUI.Add("Text", "section W100 H25 X9 Y7", "Settings")
-    titleText.SetFont("S15 Bold Underline")
+   /*  titleText := settingsGUI.Add("Text", "section W100 H25 X9 Y7", "Settings")
+    titleText.SetFont("S15 Bold Underline") */
 
-    toggleText := settingsGUI.Add("Text", "W100 H20 xs Y+5", "Toggle")
+    toggleText := settingsGUI.Add("Text", "W100 H20 xs Y7", "Toggle")
     toggleText.SetFont("S13 Bold")
 
     adjustText := settingsGUI.Add("Text", "W100 H20 x+125", "Adjust")
@@ -350,61 +386,6 @@ settingsGUI()
                 button.Text := buttonTitle
         }
     }
-    ;----------------------------------------------------------------------------------------------------------------------------------
-    ;OTHER BUTTONS
-
-    gameAdd := settingsGUI.Add("Button", "W120 H40 xs Y+20", "Add game to ``gameCheck.ahk``")
-    gameAdd.OnEvent("Click", gameAddButt)
-    gameAddButt(*)
-    {
-        gameCheckSettingGUI.Show("AutoSize")
-        gameCheckSettingGUI.OnEvent("Close", Gui_Close)
-        Gui_Close(*) {
-            if WinExist("Settings " version)
-                {
-                    WinSetAlwaysOnTop(1, "Settings " version)
-                    WinActivate("Settings " version)
-                }
-            gameCheckSettingGUI.Hide()
-        }
-        WinSetAlwaysOnTop(0, "Settings " version)
-        settingsGUI.Opt("+Disabled")
-        WinWaitClose(gameTitle)
-        if WinExist("Settings " version)
-            settingsGUI.Opt("-Disabled")
-    }
-
-    iniLink := settingsGUI.Add("Button", "section X+10 Y+-35", "open settings.ini")
-    iniLink.OnEvent("Click", ini)
-    ini(*)
-    {
-        settingsGUI.GetPos(&x, &y, &width, &height)
-        settingsGUI.Opt("-AlwaysOnTop")
-        if WinExist("settings.ini") ;if ini already open, get pos, close, and then reopen to refresh
-            refreshWin("settings.ini", ptf["settings"])
-        else
-            Run("Notepad.exe " ptf["settings"])
-        WinWait("settings.ini")
-        WinMove(x+width-8, y, 322, height-2,"settings.ini")
-        SetTimer(iniWait, -100)
-    }
-    iniWait()
-    {
-        if !WinExist("Settings " version)
-            {
-                SetTimer(, 0)
-                goto end
-            }
-        if WinExist("settings.ini")
-            {
-                SetTimer(, -1000)
-                goto end
-            }
-        if !WinExist("settings.ini") && WinExist("Settings " version)
-            settingsGUI.Opt("+AlwaysOnTop")
-        SetTimer(, 0)
-        end:
-    }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;STATUS BAR
@@ -438,11 +419,11 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;GROUP EXIT BUTTONS
 
-    group := settingsGUI.Add("GroupBox", "W101 H95 xs+227 ys-60", "Exit")
-    hardResetVar := settingsGUI.Add("Button", "W85 H30 x+-93 y+-75", "Hard Reset")
+    group := settingsGUI.Add("GroupBox", "W201 H58 xs+270 ys+5", "Exit")
+    hardResetVar := settingsGUI.Add("Button", "W85 H30 x+-190 y+-40", "Hard Reset")
     hardResetVar.OnEvent("Click", close.bind("hard"))
 
-    saveAndClose := settingsGUI.Add("Button", "W85 H30 y+5", "Save && Exit")
+    saveAndClose := settingsGUI.Add("Button", "W85 H30 x+10", "Save && Exit")
     saveAndClose.OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
@@ -487,13 +468,71 @@ settingsGUI()
             dark.titleBar(settingsGUI.Hwnd, darkm)
             dark.button(adobeToggle.Hwnd, DarkorLight)
             dark.button(firstToggle.Hwnd, DarkorLight)
-            dark.button(gameAdd.Hwnd, DarkorLight)
-            dark.button(iniLink.Hwnd, DarkorLight)
             dark.button(hardResetVar.Hwnd, DarkorLight)
             dark.button(saveAndClose.Hwnd, DarkorLight)
     }
 
     settingsGUI.Show("Center AutoSize")
+    settingsGUI.MenuBar := bar
+    ;// we have to increase the size of the gui to compensate for the menubar
+    settingsGUI.GetPos(,,, &height)
+    settingsGUI.Move(,,, height +20)
+
+    ;----------------------------------------------------------------------------------------------------------------------------------
+    ;MENU BAR FUNCS
+
+    menu_AddGame(*)
+    {
+        gameCheckSettingGUI.Show("AutoSize")
+        gameCheckSettingGUI.OnEvent("Close", Gui_Close)
+        Gui_Close(*) {
+            if WinExist("Settings " version)
+                {
+                    ExStyle := wingetExStyle("Settings " version)
+			        if(ExStyle & !0x8) ; 0x8 is WS_EX_TOPMOST.
+                        WinSetAlwaysOnTop(1, "Settings " version)
+                    if !WinActive("Settings " version)
+                        WinActivate("Settings " version)
+                }
+            gameCheckSettingGUI.Hide()
+        }
+        WinSetAlwaysOnTop(0, "Settings " version)
+        settingsGUI.Opt("+Disabled")
+        WinWaitClose(gameTitle)
+        if WinExist("Settings " version)
+            settingsGUI.Opt("-Disabled")
+    }
+
+    menu_Openini(*)
+    {
+        settingsGUI.GetPos(&x, &y, &width, &height)
+        settingsGUI.Opt("-AlwaysOnTop")
+        if WinExist("settings.ini") ;if ini already open, get pos, close, and then reopen to refresh
+            refreshWin("settings.ini", ptf["settings"])
+        else
+            Run("Notepad.exe " ptf["settings"])
+        WinWait("settings.ini")
+        WinMove(x+width-8, y, 322, height-2,"settings.ini")
+        SetTimer(iniWait, -100)
+    }
+    iniWait()
+    {
+        if !WinExist("Settings " version)
+            {
+                SetTimer(, 0)
+                goto end
+            }
+        if WinExist("settings.ini")
+            {
+                SetTimer(, -1000)
+                goto end
+            }
+        if !WinExist("settings.ini") && WinExist("Settings " version)
+            settingsGUI.Opt("+AlwaysOnTop")
+        SetTimer(, 0)
+        end:
+    }
+
 }
 
 /**
