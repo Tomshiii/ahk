@@ -14,11 +14,12 @@ close(*) {
     if ElapsedTime != checkHours
         IniWrite(ElapsedTime, checklist, "Info", "time")
     newDate(&today)
+    timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
 
     if ElapsedTime = checkHours
-        FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "`n", logs)
+        FileAppend("\\ The checklist was closed : " timeStr "`n", logs)
     else
-        FileAppend("\\ The checklist was closed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", logs)
+        FileAppend("\\ The checklist was closed : " timeStr " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", logs)
     SetTimer(StopWatch, 0)
     SetTimer(reminder, 0)
     if logElapse = true

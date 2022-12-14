@@ -36,6 +36,7 @@
 - Will attempt to open/activate the destination folder after download is complete
 
 ## > Other Changes
+- Used `Format()` in a lot of longer strings that contain variables to make them more readable
 
 `autosave.ahk`
 - If no save is necessary, the next save attempt will be made in `1/2` the usual time.

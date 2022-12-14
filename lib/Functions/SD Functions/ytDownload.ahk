@@ -10,8 +10,6 @@
  * @param folder is the folder you wish the files to save. By default it's this scripts directory
  */
 ytDownload(args := "", folder := A_ScriptDir) {
-    folderCode := "-P " '"' folder '" '
-
     if !DirExist(folder) ;saftey check
         folder := A_ScriptDir
     oldClip := A_ClipBoard
@@ -21,7 +19,9 @@ ytDownload(args := "", folder := A_ScriptDir) {
         {
             if !InStr(A_Clipboard, "https://www.youtube.com/") && !InStr(A_Clipboard, "https://www.twitch.tv/")
                 goto attempt
-            command := "yt-dlp " args A_Space folderCode '"' A_ClipBoard '"'
+            command := Format('yt-dlp {} -P `"{}`" `"{}`"'
+                     , args, folder, A_Clipboard
+                    )
             goto run
         }
     attempt:
@@ -30,7 +30,9 @@ ytDownload(args := "", folder := A_ScriptDir) {
             tool.Cust("Clipboard doesn't contain a youtube link")
             return
         }
-    command := "yt-dlp " args A_Space folderCode '"' oldClip '"'
+    command := Format("yt-dlp {} {} `"{}`""
+                     , args, folderCode, oldClip
+                    )
     run:
     RunWait(A_ComSpec " /c " command)
     SplitPath(folder, &name)

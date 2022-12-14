@@ -50,7 +50,12 @@ check()
         {
             if pause.suspend("My Scripts.ahk", false) = 1
                 {
-                    checkMsg := MsgBox("You have ``My Scripts.ahk`` suspended, do you wish to unsuspend it?`n`nIf this is not an accident, press " '"' "No" '"' " and you will not be asked again this session.", "My Scripts.ahk is Suspended", "4 32 4096") ;prompt the user with a msgbox
+                    checkMsg := MsgBox("
+                    (
+                        You have ``My Scripts.ahk`` suspended, do you wish to unsuspend it?
+
+                        If this is not an accident, press "No" and you will not be asked again this session.
+                    )", "My Scripts.ahk is Suspended", "4 32 4096") ;prompt the user with a msgbox
                     if checkMsg = "No"
                         {
                             ask := 0

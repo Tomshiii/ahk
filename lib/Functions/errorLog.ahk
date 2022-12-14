@@ -81,11 +81,38 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?) {
                         LatestReleaseBeta := ""
                         LatestReleaseMain := ""
                     }
-                time := A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec "." A_MSec
-                start := "\\ ErrorLogs`n\\ AutoHotkey v" A_AhkVersion "`n\\ Tomshi's Scripts" "`n`t\\ Installed Version - " InstalledVersion "`n`t\\ Latest Version Released`n`t`t\\ main - " LatestReleaseMain "`n`t`t\\ beta - " LatestReleaseBeta "`n\\ OS`n`t\\ " OSName "`n`t\\ " A_OSVersion "`n`t\\ " OSArch "`n\\ CPU`n`t\\ " RTrim(CPU) "`n`t\\ Logical Processors - " Logical "`n\\ RAM`n`t\\ Total Physical Memory - " Memory "GB`n`t\\ Free Physical Memory - " FreePhysMem "GB`n\\ Current DateTime - " time "`n\\ Ahk Install Path - " A_AhkPath "`n`n"
+                time := Format("{}_{}_, {}:{}:{}.{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec, A_MSec)
+                start := Format("
+                (
+                    \\ ErrorLogs
+                    \\ AutoHotkey v{}
+                    \\ Tomshi's Scripts
+                        \\ Installed Version - {}
+                        \\ Latest Version Released
+                            \\ main - {}
+                            \\ beta - {}
+                    \\ OS
+                        \\ {}
+                        \\ {}
+                        \\ {}
+                    \\ CPU
+                        \\ {}
+                        \\ Logical Processors - {}
+                    \\ RAM
+                        \\ Total Physical Memory - {}GB
+                        \\ Free Physical Memory - {}GB
+                    \\ Current DateTime - {}
+                    \\ Ahk Install Path - {}`n`n
+                )"
+                    , A_AhkVersion, InstalledVersion, LatestReleaseMain, LatestReleaseBeta, OSName, A_OSVersion, OSArch, RTrim(CPU), Logical, Memory, FreePhysMem, time, A_AhkPath
+                )
             }
         }
     scriptPath := lineFile ;this is taking the path given from A_LineFile
     script := SplitPathObj(scriptPath) ;and splitting it out into just the .ahk filename
-    FileAppend(start A_Hour ":" A_Min ":" A_Sec "." A_MSec " // ``" func "`` encountered the following error: " beginning '"' error '"' " // Script: ``" script.Name "``, Line Number: " lineNumber "`n", ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    FileAppend(
+        Format("{}{}:{}:{}.{} // ``{}`` encountered the following error: `"{}{}`" // Script: ``{}``, Line Number: {}`n",
+        start, A_Hour, A_Min, A_Sec, A_MSec, func, beginning, error, script.Name, lineNumber
+    )
+    , ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
 }

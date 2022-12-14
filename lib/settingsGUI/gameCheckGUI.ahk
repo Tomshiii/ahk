@@ -76,7 +76,12 @@
             if !DirExist(A_Temp "\tomshi")
                 DirCreate(A_Temp "\tomshi")
             readGameCheck := FileRead(ptf["Game List"])
-            if InStr(readGameCheck, "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
+
+            ;//! what to search for
+            listFormat := Format('GroupAdd(`"games`", `"{} {}`")`n; --', titleVal, procVal)
+
+            ;// searching for the input value in the list to check for dupes
+            if InStr(readGameCheck, listFormat, 1,, 1)
                 {
                     this.Hide()
                     setWinExist := WinExist("Settings " version) ? 1 : 0
@@ -91,30 +96,21 @@
                         }
                     return
                 }
+
+            ;// finding the end of the string
             findEnd := InStr(readGameCheck, "; --", 1,, 1)
-            addUserInput := StrReplace(readGameCheck, "; --", "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
+            ;// adding the user input to the end of the string
+            addUserInput := StrReplace(readGameCheck, "; --", listFormat, 1,, 1)
+            ;// replacing the list
             FileAppend(addUserInput, A_Temp "\tomshi\Game List.ahk")
             FileMove(A_Temp "\tomshi\Game List.ahk", ptf["Game List"], 1)
+            ;// reloading the script
             if WinExist("gameCheck.ahk - AutoHotkey")
                 PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
 
-            ;check if worked
+            ;// checking if it worked
             readAgain := FileRead(ptf["Game List"])
-            if InStr(readAgain, "GroupAdd(" '"' "games" '"' ", " '"' titleVal " " procVal '"' ")`n; --", 1,, 1)
-                {
-                    this.Hide()
-                    setWinExist := WinExist("Settings " version) ? 1 : 0
-                    if setWinExist && !WinActive("Settings " version)
-                        WinActivate("Settings " version)
-                    MsgBox("Game added succesfully!")
-                    if setWinExist
-                        {
-                            WinSetAlwaysOnTop(1, "Settings " version)
-                            if !WinActive("Settings " version)
-                                WinActivate("Settings " version)
-                        }
-                }
-            else
+            if !InStr(readAgain, listFormat, 1,, 1)
                 {
                     this.Hide()
                     setWinExist := WinExist("Settings " version) ? 1 : 0
@@ -127,6 +123,18 @@
                             if !WinActive("Settings " version)
                                 WinActivate("Settings " version)
                         }
+                    return
+                }
+            this.Hide()
+            setWinExist := WinExist("Settings " version) ? 1 : 0
+            if setWinExist && !WinActive("Settings " version)
+                WinActivate("Settings " version)
+            MsgBox("Game added succesfully!")
+            if setWinExist
+                {
+                    WinSetAlwaysOnTop(1, "Settings " version)
+                    if !WinActive("Settings " version)
+                        WinActivate("Settings " version)
                 }
         }
 

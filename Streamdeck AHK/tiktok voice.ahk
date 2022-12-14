@@ -27,7 +27,9 @@ if FileExist(folder "\" output.Value ".mp3") ;checks to see if a file has alread
         if check = "Cancel"
             return
     }
-command := "py main.py -v " voice " -t " '"' tts.Value '"' " -n " output.Value ".mp3 --session --"
+command := Format('py main.py -v {} -t `"{}`" -n {}.mp3 --session --'
+                 , voice, tts.value, output.value
+                )
 RunWait(A_ComSpec " /c " command, folder)
 
 Run(folder)

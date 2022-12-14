@@ -3,13 +3,15 @@ SetWorkingDir(A_ScriptDir)
 if !DirExist(A_MyDocuments "\AutoHotkey")
     DirCreate(A_MyDocuments "\AutoHotkey")
 
-path := '"' A_ScriptDir "\..\..\Lib" '"'
+ahklib := A_MyDocuments '\AutoHotkey\Lib'
+path := A_ScriptDir '\..\..\Lib'
 
-cmdLine := 'mklink /D "' A_MyDocuments '\AutoHotkey\Lib" ' path '"'
+cmdLine := Format('mklink /D `"{}`" `"{}`"'
+                  , ahklib, path)
 ;final command should look like;
 ; mklink /D "mydocumentspathhere\AutoHotkey\Lib" "rootrepopath\lib"
 
-if DirExist(A_MyDocuments "\AutoHotkey\Lib")
+if DirExist(ahklib)
     {
         SetTimer(change_buttonNames, 15)
         change_buttonNames() {
@@ -22,7 +24,7 @@ if DirExist(A_MyDocuments "\AutoHotkey\Lib")
         warn := MsgBox("This script will delete your entire lib folder found here:`n" A_MyDocuments "\AutoHotkey\Lib`n`nIf you use files other than mine, please back them up before continuing or they will be lost.", "Backup lib files", "1 48 256 4096")
         if warn = "Cancel"
             return
-        DirDelete(A_MyDocuments "\AutoHotkey\Lib", 1)
+        DirDelete(ahklib, 1)
     }
 
 RunWait("*RunAs " A_ComSpec " /c " cmdLine)

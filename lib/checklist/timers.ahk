@@ -9,7 +9,8 @@ start(*) {
     timerSeconds.SetFont("cGreen")
     forFile := Round(ElapsedTime / 3600, 3)
     newDate(&today)
-    FileAppend("\\ The timer was started : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Starting Hours = " forFile " -- seconds at start = " ElapsedTime "`n", logs)
+    timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
+    FileAppend("\\ The timer was started : " timeStr " -- Starting Hours = " forFile " -- seconds at start = " ElapsedTime "`n", logs)
     global StartTickCount := A_TickCount ;This allows us to use your computer to determine how much time has past by doing some simple math below
     SetTimer(StopWatch, 10) ;start the timer and loop it as often as possible
     SetTimer(logElapse, -ms10)
@@ -55,7 +56,8 @@ stop(*) {
     if ElapsedTime != checkHours
         IniWrite(ElapsedTime, checklist, "Info", "time") ;once the timer is stopped it will write the elapsed time to the ini file
     newDate(&today)
-    FileAppend("\\ The timer was stopped : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Stopping Hours = " forFile " -- seconds at stop = " ElapsedTime "`n", logs)
+    timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
+    FileAppend("\\ The timer was stopped : " timeStr " -- Stopping Hours = " forFile " -- seconds at stop = " ElapsedTime "`n", logs)
     SetTimer(StopWatch, 0) ;then stop the timer
     startButton.Move(,, 50, 30) ;then show the start button
     stopButton.Move(,, 0, 0) ;and hide the stop button
@@ -106,7 +108,8 @@ minusOrAdd(sign)
     global ElapsedTime := 0 + startValue
     global StartTickCount := A_TickCount
     newDate(&today)
-    FileAppend("\\ The timer was stopped and " List.Text "min " word " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after stopping = " forFile " -- seconds after stopping = " ElapsedTime "`n", logs)
+    timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
+    FileAppend("\\ The timer was stopped and " List.Text "min " word " : " timeStr " -- Hours after stopping = " forFile " -- seconds after stopping = " ElapsedTime "`n", logs)
 }
 minusFive(*) {
     minusOrAdd("-")

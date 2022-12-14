@@ -5,7 +5,8 @@ logElapse() {
     global logActive := true
     forFile := Round(ElapsedTime / 3600, 3)
     newDate(&today)
-    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- current hours = " forFile " -- current seconds = " ElapsedTime "`n", logs)
+    timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
+    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " timeStr " -- current hours = " forFile " -- current seconds = " ElapsedTime "`n", logs)
     SetTimer(, -ms10)
 }
 
@@ -49,7 +50,8 @@ logCheckbox(*) {
                             logCheck := "disabling"
                         }
                     newDate(&today)
-                    FileAppend("\\ ``" name "`` was " logState " : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", logs)
+                    timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
+                    FileAppend("\\ ``" name "`` was " logState " : " timeStr " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", logs)
                 }
         }
 }
