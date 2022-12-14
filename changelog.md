@@ -13,11 +13,16 @@
 - `monitorWarp()` stores and returns coordmode
 - `prem.gain()` will now properly timeout if gain window never appears
 - All `switchTo` functions that use `WinWait` now timeout after `2s`
+- Add `checkImg()` to check for a file and perform an `ImageSearch`
 
 `settingsGUI()`
 - Added a menubar
     - Moved `add game to 'gamecheck.ahk'` & `open settings.ini` into the menu bar
     - Added ability to open the wiki of this repo (both the local copy & web)
+
+`discord.Unread()`
+- Fix functon sometimes moving mouse to the incorrect position
+- Will check (for `1.5s`) for the `Mark as Read` button
 
 ## > QMK
 - `AE.ahk - l::` will now ensure the caret is active before attempting to send text

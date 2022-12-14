@@ -50,7 +50,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.24
+;\\v2.24.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -411,13 +411,13 @@ F18:: ;open the "show more options" menu in win11
 
 #HotIf WinActive(vscode.winTitle)
 ;vscodemsHotkey;
-!a::VSCode.script(17) ;clicks on the `my scripts` script in vscode
+!a::VSCode.script(15) ;clicks on the `my scripts` script in vscode
 ;vscodefuncHotkey;
 !f::VSCode.script() ;clicks on my `functions` script in vscode
 ;vscodeqmkHotkey;
-!q::VSCode.script(18) ;clicks on my `qmk` script in vscode
+!q::VSCode.script(16) ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
-!c::VSCode.script(14) ;clicks on my `changelog` file in vscode
+!c::VSCode.script(12) ;clicks on my `changelog` file in vscode
 ;vscodesearchHotkey;
 $^f::VSCode.search()
 ;vscodecutHotkey;
@@ -531,7 +531,7 @@ XButton1::move.Tab()
 ;		Discord
 ;
 ;=============================================================================================================================================
-#HotIf WinActive("ahk_exe Discord.exe") ;some scripts to speed up discord interactions
+#HotIf WinActive(discord.winTitle) ;some scripts to speed up discord interactions
 ;SCO3A is the scancode for the CapsLock button. Had issues with using "CapsLock" as it would require a refresh every now and then before these discord scripts would work. Currently testing using the scancodes to see if that fixes it.
 ;alright scancodes didn't fix it, idk why but sometimes this function won't work until you refresh the main script. Might have to do with where I have it located in this script, maybe pulling it out into it's own script would fix it, or maybe discord is just dumb, who knows.
 ;scratch that, figured out what it is, in my qmk keyboard script I also had setcapslock to off and for whatever reason if that script was reloaded, my main script would break
@@ -552,7 +552,7 @@ F2::discord.Unread(2) ;will click any unread channels
 ;discdmHotkey;
 F3:: ;this hotkey is to click the "discord" button in discord to access your dm's
 {
-	WinActivate("ahk_exe Discord.exe")
+	WinActivate(discord.winTitle)
 	block.On()
 	MouseGetPos(&origx, &origy)
 	MouseMove(34, 52, 2)

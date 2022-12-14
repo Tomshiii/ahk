@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord
  * @author tomshi
- * @date 2022/12/02
- * @version 1.0.2
+ * @date 2022/12/14
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,6 +12,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Functions\errorLog>
+#Include <Functions\checkImg>
 ; }
 
 class discord {
@@ -107,6 +108,23 @@ class discord {
         end(var := 20) {
             MouseMove(x + var, y, 2)
             SendInput("{Click}")
+            if which = 2
+                {
+                    loop { ;// this loop will attempt to mark the channel as read
+                        if A_Index > 15 ;1.5s
+                            {
+                                MouseGetPos(&checkX, &checkY)
+                                if (checkX = x + var) && (checkY = y)
+                                    MouseMove(xPos, yPos, 2)
+                                Exit()
+                            }
+                        sleep 100
+                        if ImageSearch(&x2, &y2, 0, 0, width, height/3, "*2 " ptf.Discord "\markread.png")
+                            break
+                    }
+                    MouseMove(x2, y2, 2)
+                    SendInput("{Click}")
+                }
             MouseMove(xPos, yPos, 2)
             Exit()
         }
@@ -121,13 +139,18 @@ class discord {
                 message := "channels"
         }
         MouseGetPos(&xPos, &yPos)
-        WinGetPos(,,, &height)
+        WinGetPos(,, &width, &height, this.winTitle)
         if which = ""
             {
                 if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " ptf.Discord "\unread3.png")
                     end(-20)
             }
-        if !ImageSearch(&x, &y, 0 + x2, 0, 50 + y2, height, "*2 " ptf.Discord "\unread" which ".png") || !IsSet(x)
+        if (
+            (
+                !checkImg(ptf.Discord "\unread" which "_1.png", &x, &y, 0 + x2, 0, 50 + y2, height) &&
+                !checkImg(ptf.Discord "\unread" which "_2.png", &x, &y, 0 + x2, 0, 50 + y2, height)
+            )
+        )
             {
                 tool.Cust("any unread " message,, 1)
                 return
