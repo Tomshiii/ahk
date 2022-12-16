@@ -115,8 +115,6 @@ loop files ptf.rootDir "\*", "D"
             continue
         if A_LoopFileName = "Sounds"
             continue
-        if A_LoopFileName = "TomSongQueueue"
-            continue
         DirCreate(A_WorkingDir "\release\" yes.Value "\" A_LoopFileName)
         DirCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value "\" A_LoopFileName, 1)
         ;MsgBox(A_LoopFileFullPath)
@@ -129,11 +127,15 @@ loop files ptf.rootDir "\*", "F"
             continue
         FileCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value, 1)
     }
+;// deleting psd files
 loop files A_WorkingDir "\release\" yes.Value "\*", "F R"
     {
         if A_LoopFileExt = "psd" ;they're large and unnecessary to include
             FileDelete(A_LoopFileFullPath)
     }
+;// deleting remaining folders I store in repo that aren't needed
+if DirExist(A_WorkingDir "\release\" yes.Value "\Stream\TomSongQueueue")
+    DirDelete(A_WorkingDir "\release\" yes.Value "\Stream\TomSongQueueue", 1)
 
 ;// copying over a script that will be used to extract the .zip file
 FileCopy(ptf.SupportFiles "\Release Assets\Extract.ahk", A_WorkingDir "\release")
@@ -166,6 +168,7 @@ FileAppend(replaceYes2, A_WorkingDir "\release\Extract.ahk")
 ;// opening & using the compiler
 Run(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe")
 WinWait("Ahk2Exe for AutoHotkey")
+;// open script
 if !WinActive("Ahk2Exe for AutoHotkey")
     {
         WinActivate("Ahk2Exe for AutoHotkey")
@@ -196,6 +199,7 @@ SendInput(yes.value ".ahk")
 sleep 250
 SendInput("!o")
 sleep 250
+;// save exe
 if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
     {
         WinActivate("Ahk2Exe for AutoHotkey")
@@ -225,46 +229,18 @@ SendInput(yes.value ".exe")
 sleep 250
 SendInput("!s")
 sleep 250
+;// change ahk ver
 if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
     {
         WinActivate("Ahk2Exe for AutoHotkey")
         WinWaitActive("Ahk2Exe for AutoHotkey")
     }
-SendInput("{Tab 3}")
-SendInput("{Space}")
-WinWait("Open Custom Icon")
-if !WinActive("Open Custom Icon")
-    {
-        WinActivate("Open Custom Icon")
-        WinWaitActive("Open Custom Icon")
-    }
-sleep 1000
-SendInput("{F4}")
-sleep 1000
-SendInput("^a")
-SendInput("{BackSpace}")
-SendInput(ptf.Icons)
-sleep 1000
-SendInput("{Enter}")
-sleep 1000
-SendInput("+{Tab 6}")
-sleep 1000
-SendInput("!n")
-sleep 1000
-SendInput("myscript.ico")
-sleep 1000
-SendInput("!o")
-sleep 250
-if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
-    {
-        WinActivate("Ahk2Exe for AutoHotkey")
-        WinWaitActive("Ahk2Exe for AutoHotkey")
-    }
-SendInput("{Tab 2}")
+SendInput("{Tab 5}")
 SendInput("{Down 20}" "{Up}")
 SendInput("{Enter}")
 WinWait("Ahk2Exe", "Successfully compiled as")
 SendInput("{Enter}")
+
 
 currentDir := ""
 verNum := SubStr(yes.value, 2, 3)

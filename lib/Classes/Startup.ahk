@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/14
- * @version 1.0.5
+ * @date 2022/12/16
+ * @version 1.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,6 +11,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\Dark>
+#Include <Classes\winget>
 #Include <Functions\errorLog>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
@@ -513,57 +514,36 @@ class Startup {
 
         ;first we set our counts to 0
         CacheSize := 0
-        ;then we define some filepaths, MediaCahce & PeakFiles are Adobe defaults, AEFiles has to be set within after effects' cache settings
-        MediaCache := A_AppData "\Adobe\Common\Media Cache Files"
-        PeakFiles := A_AppData "\Adobe\Common\Peak Files"
-        AEFiles := A_AppData "\Adobe\Common\AE"
-        ;AGAIN ~~ for the above AE folder to exist you have to set it WITHIN THE AE CACHE SETTINGS, it IS NOT THE DEFAULT
-
-        ;now we check the listed directories and add up the size of all the files
-        loop files, MediaCache "\*.*", "R"
+        ;then we define some filepaths, MediaCache & PeakFiles are Adobe defaults, AEFiles has to be set within after effects' cache settings
+        cacheFolders := Map(
+            "MediaCache", A_AppData "\Adobe\Common\Media Cache Files",
+            "PeakFiles", A_AppData "\Adobe\Common\Peak Files",
+            "AEFiles", A_AppData "\Adobe\Common\AE", ;AGAIN ~~ THIS AE folder to exist you have to set it WITHIN THE AE CACHE SETTINGS, it IS NOT THE DEFAULT
+        )
+        ;// adding up the total size of the above listed filepaths
+        for v, p in cacheFolders
             {
-                cacheround := Round(CacheSize / 1073741824, 2)
-                ToolTip(A_LoopFileShortName " - " cacheround "/" largestSize "GB")
-                CacheSize += A_LoopFileSize
+                CacheSize := CacheSize + winget.FolderSize(p)
             }
-        loop files, PeakFiles "\*.*", "R"
+        if CacheSize = 0
             {
-                cacheround := Round(CacheSize / 1073741824, 2)
-                ToolTip(A_LoopFileShortName " - " cacheround "/" largestSize "GB")
-                CacheSize += A_LoopFileSize
-            }
-        loop files, AEFiles "\*.*", "R"
-            {
-                cacheround := Round(CacheSize / 1073741824, 2)
-                ToolTip(A_LoopFileShortName " - " cacheround "/" largestSize "GB")
-                CacheSize += A_LoopFileSize
-            }
-        if CacheSize > 0
-            tool.Cust("Total Adobe cache size - " cacheround "/" largestSize "GB", 1500)
-        else
-            {
-                tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 1500)
+                tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0)
                 goto end
             }
-        ;then we convert that byte total to GB
-        convert := CacheSize/"1073741824"
-        ;now if the total is bigger than the set number, we loop those directories and delete all the files
-        if convert >= largestSize
+        ;// dividing by 1073741824 converts our return value from bytes to GB
+        tool.Cust("Total Adobe cache size - " Round(CacheSize / 1073741824, 2) "/" largestSize "GB", 3.0)
+
+        ;// if the total is bigger than the set number, we loop those directories and delete all the files
+        if (CacheSize/"1073741824") >= largestSize
             {
-                ToolTip(A_ThisFunc " is currently deleting temp files")
+                tool.Cust(A_ThisFunc " is currently deleting temp files", 2.0)
                 try {
-                    loop files, MediaCache "\*.*", "R"
-                        FileDelete(A_LoopFileFullPath)
+                    for v, p in cacheFolders
+                        {
+                            loop files, p "\*.*", "R"
+                                FileDelete(A_LoopFileFullPath)
+                        }
                 }
-                try {
-                    loop files, PeakFiles "\*.*", "R"
-                        FileDelete(A_LoopFileFullPath)
-                }
-                try {
-                    loop files, AEFiles "\*.*", "R"
-                        FileDelete(A_LoopFileFullPath)
-                }
-                ToolTip("")
             }
         end:
         IniWrite(A_YDay, ptf["settings"], "Track", "adobe temp") ;tracks the day so it will not run again today

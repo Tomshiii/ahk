@@ -8,12 +8,14 @@
 - Fixed script still attempting to use `PowerShell` even if the script had prompted them to install `PowerShell 7`
 
 ## Functions
+- Add `checkImg()` to check for a file and perform an `ImageSearch`
+- Add `winget.FolderSize()` to return the size of a dir in `bytes`
+    - `startup.adobeTemp()` now uses `winget.FolderSize()` to instantlly get the size of all cache directories instead of looping through them all
 - `gameCheckGUI()` will now alert the user if the input window is already in the list
 - Fix `fastWheel()` not focusing code window in `VSCode`
 - `monitorWarp()` stores and returns coordmode
 - `prem.gain()` will now properly timeout if gain window never appears
 - All `switchTo` functions that use `WinWait` now timeout after `2s`
-- Add `checkImg()` to check for a file and perform an `ImageSearch`
 
 `settingsGUI()`
 - Added a menubar

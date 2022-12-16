@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/11/30
- * @version 1.0.3
+ * @date 2022/12/16
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -189,5 +189,15 @@ class WinGet {
             }
         }
         return false
+    }
+
+    /**
+     * A function to return the size of a path in `bytes`
+     *
+     * @param {String} path is the filepath you wish to check
+     * @returns {Integer} the filesize in `bytes`
+     */
+    static FolderSize(path) {
+        return ComObject("Scripting.FileSystemObject").GetFolder(path).Size
     }
 }

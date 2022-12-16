@@ -3,6 +3,15 @@
 ;// setting up
 SetWorkingDir(A_ScriptDir) ;! A_ScriptDir in this case is the users install location
 A_ScriptName := "yes.value"
+;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
+;@Ahk2Exe-SetCompanyName Tomshi
+;@Ahk2Exe-SetCopyright Copyright (C) 2022
+;@Ahk2Exe-SetDescription Installer file for Tomshi's ahk github repo
+
+;// setting version
+;@Ahk2Exe-FileVersion yes.value
+;@Ahk2Exe-ProductVersion yes.value
+;@Ahk2Exe-SetVersion yes.value
 
 ;// making sure files haven't already been extracted
 if FileExist(A_WorkingDir "\My Scripts.ahk") || FileExist(A_WorkingDir "\right click premiere.ahk") || FileExist(A_WorkingDir "\checklist.ahk") || FileExist(A_WorkingDir "\yes.value.zip")
