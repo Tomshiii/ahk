@@ -10,40 +10,48 @@
 ; }
 
 TraySetIcon(ptf.Icons "\game.png")
-SetTitleMatchMode(2)
+SetTitleMatchMode(2) ;this is necessary to detect open .ahk scripts
 
 
-;Set seconds delay here:
+;// Set seconds delay
 sec := IniRead(ptf["settings"], "Adjust", "game SEC", 2.5)
 secms := sec * 1000
 
+;// getting info from settings
 darkMode := IniRead(ptf["settings"], "Settings", "dark mode")
 version := IniRead(ptf["settings"], "Track", "version")
 
+;// defining a GUI the user can access by right clicking the script
 gameGUI := gameCheckGUI(darkMode, version, "", "", "AlwaysOnTop", "Add game to gameCheck.ahk")
 A_TrayMenu.Insert("7&") ;adds a divider bar
 A_TrayMenu.Insert("8&", "Add Game", gameAdd)
 gameAdd(*) => gameGUI.Show("AutoSize")
 
-SetTimer(check, -secms)
-notActive() ;this timer will then start checking to see if the game is still active
+SetTimer(check, secms)
+
+/**
+ * This timer is called by `check()` to periodically check if a game window is still active
+ */
+notActive()
 {
     if !WinActive("ahk_group games")
         {
             pause.suspend("My Scripts.ahk", false) ;unsuspend
             SetTimer(, 0) ;stop this timer
-            SetTimer(check, -secms)
+            SetTimer(check, secms)
         }
-    else if WinActive("ahk_group games")
-        SetTimer(, -secms)
 }
+
+/**
+ * This function is called by a timer to determine
+ */
 check()
 {
     static ask := 1
     if WinActive("ahk_group games") ;if a game is active and My Scripts.ahk isn't suspended
         {
             pause.suspend("My Scripts.ahk", true) ;suspend
-            SetTimer(notActive, -secms)
+            SetTimer(notActive, secms)
             SetTimer(, 0)
         }
     else if !WinActive("ahk_group games") && ask = 1 ;if the user has suspended My Scripts.ahk manually outisde of a game, this block will fire and will prompt the user asking if they wish to unsuspend the scripts
@@ -59,17 +67,10 @@ check()
                     if checkMsg = "No"
                         {
                             ask := 0
-                            SetTimer(, -secms)
                             pause.suspend("My Scripts.ahk", true)
                         }
-                    else
-                        SetTimer(, -secms)
                 }
-            else
-                SetTimer(, -secms)
         }
-    else
-        SetTimer(, -secms)
 }
 
 
@@ -78,7 +79,7 @@ check()
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode)
 {
-    if ExitReason = "Single" || "Close" || "Reload" || "Error"
+    if ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error"
         {
             pause.suspend("My Scripts.ahk", false)
             SetTimer(check, 0)

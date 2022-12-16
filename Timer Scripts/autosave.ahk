@@ -19,7 +19,7 @@ TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the tas
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 #WinActivateForce
 
-;right clicking on the tray icon for this script will offer you a button to show you how much time is remaining until the next save attempt
+;! right clicking on the tray icon for this script will offer you a button to show you how much time is remaining until the next save attempt
 A_TrayMenu.Insert("7&")
 A_TrayMenu.Insert("8&", "Time Remaining", timeRemain)
 timeRemain(*)
@@ -31,31 +31,33 @@ timeRemain(*)
     MsgBox(forTray, "Next Save - " A_ScriptName)
 }
 
-;This script will autosave your premire pro/after effects project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
-;It will also ensure you have the checklist script for the current project open. If it can find the file, it will open it automatically
+;// This script will autosave your premire pro/after effects project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
+;// It can also ensure you have the checklist script for the current project open. This can be disabled in `settingsGUI()`
 
-;This file requires you to properly set the "year" value for both programs in `settings.ini` (or in settingsGUI() #F1 by default). This value is whatever year appears in the title of the respectiveprogram
+;! This file requires you to properly set the "year" value for both programs in `settings.ini` (or in settingsGUI() #F1 by default). This value is whatever year appears in the title of the respectiveprogram
 
-;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
+;// SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
+
 ;// if a save attempt occurs and is deemed not necessary, the following attempt will happen in 1/2 the amount of time set below. Once a save happens, the script will return to this value
 minutes := IniRead(ptf["settings"], "Adjust", "autosave MIN")
 global ms := minutes * 60000
 
-;SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE REMINDING YOU TO OPEN THE CHECKLIST HERE
+;// SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE REMINDING YOU TO OPEN THE CHECKLIST HERE
 minutesChecklist := 0.5
 global msChecklist := minutesChecklist * 60000
 
-;SET THE AMOUNT OF SECONDS OF PRIOR KEYBOARD ACTIVITY YOU WANT THE SCRIPT TO USE TO STOP ITSELF FROM FIRING
+;// SET THE AMOUNT OF SECONDS OF PRIOR KEYBOARD ACTIVITY YOU WANT THE SCRIPT TO USE TO STOP ITSELF FROM FIRING
 secondsIdle := 0.5
 global idle := secondsIdle * 1000
 
-;SET THE AMOUNT OF SECONDS YOU WANT THE SCRIPT TO WAIT BEFORE RETRYING TO SAVE AFTER THE ABOVE IDLE ACTIVITY STOP OCCURS
+;// SET THE AMOUNT OF SECONDS YOU WANT THE SCRIPT TO WAIT BEFORE RETRYING TO SAVE AFTER THE ABOVE IDLE ACTIVITY STOP OCCURS
 secondsRetry := 2.5
 global retry := secondsRetry * 1000
 
-;DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
+;// DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
 tools := IniRead(ptf["settings"], "Settings", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
-;is the timer running?
+
+;// setting some defaul values
 timer := false
 half := false
 
@@ -80,7 +82,7 @@ tooltipCount(*)
         }
 }
 
-;timer for tray function
+;// timer for tray function
 global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
 global ElapsedTime := 0
 forTray := "Timer not currently tracking"
@@ -114,7 +116,7 @@ StopWatch() {
         }
 }
 
-;This next code starts the script
+;// starting the main part of the script
 
 start:
 if WinExist(editors.Premiere.winTitle) || WinExist(editors.AE.winTitle)
@@ -186,7 +188,7 @@ save()
     saveCheck := ""
     aeSaveCheck := ""
 
-    ;checking to see if a save is necessary
+    ;// checking to see if a save is necessary
     if WinExist(editors.Premiere.winTitle)
         winget.PremName(&premCheck, &titleCheck, &saveCheck)
     if WinExist(editors.AE.winTitle)
@@ -202,6 +204,7 @@ save()
         }
 
     block.On()
+    ;// keeping track of save attempts
     attempt := 0
     attempt:
     if attempt = 3
@@ -211,7 +214,7 @@ save()
         }
     attempt++
 
-    ;\\ first we grab information on the active window
+    ;// first we grab information on the active window
     static origWind := unset
     if !IsSet(origWind)
         {
@@ -228,7 +231,7 @@ save()
             }
         }
 
-    ;\\ If premiere is the active window, we're checking to see if the user is playing back footage on the timeline
+    ;// If premiere is the active window, we're checking to see if the user is playing back footage on the timeline
     if origWind = "Adobe Premiere Pro.exe"
         {
             if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
@@ -366,7 +369,7 @@ save()
                 }
         }
 
-        ;double checking to see if the saves worked
+        ;// double checking to see if the saves worked
         if WinExist(editors.Premiere.winTitle)
             winget.PremName(&premCheck, &titleCheck, &saveCheck)
         if WinExist(editors.AE.winTitle)
@@ -376,6 +379,7 @@ save()
         else if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt >= 3
             tool.Cust("Couldn't properly save after " attempt " attempts", 2.0)
 
+        ;// replaying playback if necessary
         replayPlayback(title) {
             sleep 250
             ControlSend(timelineWindow,, title)
@@ -394,14 +398,17 @@ save()
 
         end:
         tool.Wait()
+        ;// if a save isn't necessary, the next save will happen in half the time
         if aeSaveTrack = 0 && premSaveTrack = 0 && avoid = 0
             {
                 global half := true
                 tool.Cust("No save necessary")
             }
+
+        ;// reactivating the original window if necessary
         if !IsSet(origWind)
             goto ignore
-        try { ;this is to restore the original active window
+        try {
             winget.ID(&newid)
             checkWin := newid
             if origWind = newid
@@ -416,14 +423,15 @@ save()
             tool.Cust("couldn't activate original window")
             errorLog(e, A_ThisFunc "()")
         }
+
         ignore:
+        ;// resetting values and windows
         if WinExist(editors.AE.winTitle)
             WinSetTransparent(255, editors.AE.winTitle) ;just incase
         block.Off()
         tool.Wait()
         ToolTip("")
         origWind := unset
-        ; SetTimer(StopWatch, 10)
         if aeSaveTrack = 0 && premSaveTrack = 0 && avoid = 0
             SetTimer(, -(ms/2)) ;reset the timer
         else
@@ -439,11 +447,11 @@ save()
 }
 
 
-;defining what happens if the script is somehow opened a second time and the function is forced to close
+;// defining what happens if the script is somehow opened a second time and the function is forced to close
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode)
 {
-    if ExitReason = "Single" || "Close" || "Reload" || "Error"
+    if ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error"
         {
             SetTimer(check, 0)
             SetTimer(StopWatch, 0)

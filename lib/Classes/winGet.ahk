@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2022/12/16
- * @version 1.0.4
+ * @version 1.0.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -103,19 +103,18 @@ class WinGet {
     static PremName(&premCheck, &titleCheck, &saveCheck)
     {
         try {
-            if WinExist(editors.Premiere.winTitle)
+            if !WinExist(editors.Premiere.winTitle)
                 {
-                    premCheck := WinGetTitle(editors.Premiere.class)
-                    if premCheck = ""
-                        premCheck := WinGetTitle(editors.Premiere.winTitle)
-                    titleCheck := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-                    saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
-                }
-            else
-                {
+                    premCheck := false
                     titleCheck := ""
                     saveCheck := ""
+                    return
                 }
+            premCheck := WinGetTitle(editors.Premiere.class)
+            if premCheck = ""
+                premCheck := WinGetTitle(editors.Premiere.winTitle)
+            titleCheck := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
@@ -132,13 +131,14 @@ class WinGet {
     static AEName(&aeCheck, &aeSaveCheck)
     {
         try {
-            if WinExist(editors.AE.winTitle)
+            if !WinExist(editors.AE.winTitle)
                 {
-                    aeCheck := WinGetTitle(editors.AE.winTitle)
-                    aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
+                    aeCheck := false
+                    aeSaveCheck := ""
+                    return
                 }
-            else
-                aeSaveCheck := ""
+            aeCheck := WinGetTitle(editors.AE.winTitle)
+            aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
@@ -148,7 +148,7 @@ class WinGet {
     }
 
     /**
-     * This function will grab the initial active window
+     * This function will grab the proccess ID of the current active window
      * @param {var} id is the processname of the active window, we want to pass this value back to the script
      */
     static ID(&id)
@@ -192,7 +192,8 @@ class WinGet {
     }
 
     /**
-     * A function to return the size of a path in `bytes`
+     * A function to return the size of a path in `bytes`.
+     * Code from: `DepthTrawler` : https://discord.com/channels/115993023636176902/734109033832906874/1053085736196382771 (ahk discord)
      *
      * @param {String} path is the filepath you wish to check
      * @returns {Integer} the filesize in `bytes`

@@ -83,8 +83,6 @@ check()
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode)
 {
-    if ExitReason = "Single" || "Close" || "Reload" || "Error"
-        {
-            SetTimer(check, 0)
-        }
+    if ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error"
+        SetTimer(check, 0)
 }

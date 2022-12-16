@@ -5,23 +5,11 @@
 #Include <Classes\ptf>
 ; }
 
-A_MaxHotkeysPerInterval := 2000
-ProcessSetPriority "H"
 InstallKeybdHook true
 TraySetIcon(ptf.Icons "\error.ico") ;changes the icon this script uses in the taskbar
 
 ;These next two lines are very important. You have to change the "menu mask key" away from being CTRL, to something that won't result in cross-talk. Read this thread to learn the details: https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
 A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
-#UseHook
-
-;; take this tutorial if you don't know how AHK works. https://www.autohotkey.com/docs/Tutorial.htm
-
-
-;; If this script isn't working for you, try Alt_menu_acceleration_DISABLER_using_F13.ahk
-
-
-;;;; THE READ ME IS BELOW. TRUST ME, YOU SHOULD READ IT. BUT FIRST... ;;;;
-
 
 ; *********** IS THE WINDOWS / XBOX GAME BAR GETTING IN YOUR WAY? ************
 ; ****************** OR MAYBE IT'S THE NVIDIA SHARE OVERLAY! *****************
@@ -35,59 +23,12 @@ A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
 
 ;EXPLANATION: For some reason, any scan code above SC07F, or any unused virtual key, when preceeded with ALT, acts as the shortcut to enable the game bar or Broadcast Live overlay. I have no idea why this is. It's very frustrating. Those shortcuts cannot be disabled or changed. So you have to disable the thing that it triggers, instead. If you want to use the game bar, AND you want to use the ALT nullifier, you're out of luck. I have no way to do it. Let me know if you figure it out!
 
-; =============================================================================
 
-
-;-------------------------------  READ ME  ------------------------------------
-
-;TO RUN THIS SCRIPT:
-
-
-;IF YOU DON'T WANT TO INSTALL AUTOHOTKEY
-
-;You merely need to download the .exe from here:  https://github.com/TaranVH/2nd-keyboard/raw/master/Taran's_Windows_Mods/Alt_menu_acceleration_DISABLER.exe
-
-;Now double click on that file to run it.
-
-
-
-;ALTERNATIVELY, IF YOU DO WANT TO INSTALL AUTOHOTKEY:
-
-;Download and install autohotkey from here: https://www.autohotkey.com/
-
-;You don't need to download the .exe of this script.
-
-; Instead, go to this exact page https://raw.githubusercontent.com/TaranVH/2nd-keyboard/master/Taran's_Windows_Mods/Alt_menu_acceleration_DISABLER.ahk
-
-;...and hit CTRL S to save it somewhere. Make sure it is saved as a .ahk file, not a .txt file!
-
-;Double click on the file to run it.
-
-
-
-
-; ===== TO USE THE SCRIPT: ===== (This applies to the .exe and .ahk -- they are exactly the same.)
-
+; ===== TO USE THE SCRIPT: =====
 
 ; Note that the script will add a little red 🚫 to your taskbar, which can be right clicked to be disabled or exited from the menu.
-
 ; You can hold down both ALT keys whenever you want to easily toggle this script on and off. This is useful for things like Premiere's keyboard shortcuts menu, which has ALT-nullification of its own.
-
-
-
-;TO AUTO-START THIS SCRIPT WHEN WINDOWS STARTS:
-
-; Once you've chosen a good folder location for the script, right click on it and choose "create shortcut." Then drag that shortcut into your startup folder! KEEP IN MIND that there are TWO startup folders - one for your user account, and one for ALL users. you can use either one. Here they are:
-
-;  C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp
-
-;  C:\Users\Taran\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
-
-
 ;Here's a video about this script: https://www.youtube.com/watch?v=vRld4bVFrpU
-
-
-
 
 ;========================== RAMBLINGS ====================================
 
@@ -208,105 +149,3 @@ sendinput, {SC0E9 up}
 return
 
 */
-
-;;;;;;;alternatively, it might be as just 2 lines:
-
-
-
-
-
-Lalt & Ralt::suspend ;hit both ALT keys simultaneously to toggle the functonality of this script. The tray icon will also change visually, so you will always know. You might want to delete this line if it's messing you up!
-
-
-
-;;comment in the code below if you wish to reassign alt modifier combinations:
-
-
-
-;!f::msgbox,,,To block modifier key use of alt you can do it like this,0.7
-;!e::msgbox,,,replace msgbox with whatever code you want,0.7
-;!w::msgbox,,,horray for having control of your own computer,0.7
-;#ifWinActive ahk_exe Adobe Premiere Pro.exe
-
-
-; ~!f::f
-; !e::e
-; !c::c
-; !s::s
-; !m::m
-; !g::g
-; !v::v
-; !w::w
-; !h::h
-
-;or you could just use RETURN to block the key combo completely.
-
-;I have done all this in ALL_MULTIPLE_KEYBOARD_ASSIGNMENTS.ahk
-;It's on line 1726 at the time of this writring, but that will change.
-;To find that, search for: !f::return
-
-
-
-;uh ignore this.
-;this resulted in the error noise...
-
-; 7B  058	#	d	0.64	F12
-; 7B  058	 	u	0.08	F12
-; 7B  058	#	d	0.41	F12
-; 7B  058	 	u	0.08	F12
-; A4  038	 	d	0.77	LAlt
-; 07  000	i	d	0.00	not found
-; 07  000	i	u	0.00	not found
-; A4  038	i	u	0.00	LAlt
-; 00  0E9	i	d	0.00	not found
-; 07  000	i	d	0.00	not found
-; A4  038	i	d	0.00	LAlt
-; 07  000	i	u	0.00	not found
-; A4  038	 	d	0.50	LAlt
-; A4  038	 	d	0.03	LAlt
-; A4  038	 	d	0.03	LAlt
-; A4  038	 	d	0.03	LAlt
-; A4  038	 	d	0.03	LAlt
-; A4  038	 	u	0.03	LAlt
-; 00  0E9	i	u	0.00	not found
-; 35  006	#	d	2.48	5
-; 35  006	 	u	0.06	5
-; 13  045	h	d	1.72	Pause
-; 13  045	s	u	0.06	Pause
-
-; with the new alt killer code that is only 2 lines... it doens't even show up in here...
-   	; ;no noise:
-; 81  069	h	d	0.08	F18
-; A4  038	i	d	0.00	LAlt
-; A0  02A	i	d	0.00	LShift
-; 35  006	i	d	0.00	5
-; 35  006	i	u	0.00	5
-; A4  038	i	u	0.00	LAlt
-; A0  02A	i	u	0.00	LShift
-; 1B  001	#	d	0.09	Escape
-; 81  069	s	u	0.01	F18
-; 1B  001	 	u	0.06	Escape
-; 1B  001	#	d	0.06	Escape
-; 1B  001	 	u	0.08	Escape
-; 1B  001	#	d	0.06	Escape
-
-; ;;;and YES a noise:
-; 1B  001	 	u	0.09	Escape
-; 1B  001	#	d	0.06	Escape
-; 1B  001	 	u	0.06	Escape
-; 1B  001	#	d	0.05	Escape
-; 1B  001	 	u	0.08	Escape
-; 81  069	h	d	0.09	F18
-; A4  038	i	d	0.00	LAlt
-; A0  02A	i	d	0.00	LShift
-; 35  006	i	d	0.00	5
-; 35  006	i	u	0.00	5
-; A4  038	i	u	0.00	LAlt
-; A0  02A	i	u	0.00	LShift
-; 81  069	s	u	0.09	F18
-; 13  045	h	d	1.64	Pause
-; 13  045	s	u	0.08	Pause
-; Press [F5] to refresh.
-
-;;biggest differeence is that the firs tone has an escape down event still inside the F18 events. idk why.
-;also the 2nd one has more milliseconds on the f18 up event. that's pretty much it.
