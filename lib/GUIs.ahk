@@ -39,16 +39,16 @@ settingsGUI()
     ;// menubar
     FileMenu := Menu()
     FileMenu.Add("&Add Game to ``gameCheck.ahk```tCtrl+A", menu_AddGame)
-    openSub := Menu()
-    FileMenu.Add("&Open", openSub)
-    openSub.Add("&settings.ini`tCtrl+S", menu_Openini)
-    openSub.Add("&Wiki", (*) => MsgBox("Not implemented"))
-    openSub.Disable("&Wiki")
-    openSub.Add("&Wiki Dir`tCtrl+O", openWiki.Bind("local"))
-    openSub.Add("&Wiki Web`tCtrl+W", openWiki.Bind("web"))
+    openMenu := Menu()
+    openMenu.Add("&settings.ini`tCtrl+S", menu_Openini)
+    openMenu.Add("&Wiki", (*) => MsgBox("Not implemented"))
+    openMenu.Disable("&Wiki")
+    openMenu.Add("&Wiki Dir`tCtrl+O", openWiki.Bind("local"))
+    openMenu.Add("&Wiki Web`tCtrl+W", openWiki.Bind("web"))
     ;// define the entire menubar
     bar := MenuBar()
     bar.Add("&File", FileMenu)
+    bar.Add("&Open", openMenu)
 
     openWiki(which, *) {
         switch which {
