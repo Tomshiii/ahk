@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord
  * @author tomshi
- * @date 2022/12/14
- * @version 1.0.3
+ * @date 2022/12/16
+ * @version 1.0.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -138,6 +138,8 @@ class discord {
                 y2 := 30
                 message := "channels"
         }
+        if !WinActive(this.winTitle)
+            WinActivate(this.winTitle)
         MouseGetPos(&xPos, &yPos)
         WinGetPos(,, &width, &height, this.winTitle)
         if which = ""
