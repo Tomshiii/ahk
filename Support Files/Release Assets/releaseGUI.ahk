@@ -13,20 +13,23 @@ TotalWidth := 280
 releaseGUI.AddText('x0 y0 w' TotalWidth ' h60 ' TitleBack)
 
 
-;text
+;// text
 text    := releaseGUI.Add("Text", "X35 y16 " TitleFore " " TitleBack " Section W200 H35 Center", "Please select any install options you wish these scripts to take;`n")
 
 releaseGUI.AddText('x-4 y60 w' TotalWidth+4 ' h90 0x1000 -Background Section')
 
-;checkboxes
-sym     := releaseGUI.Add("CheckBox", "xs+32 ys+20", "Symlink")
+;// checkboxes
+sym     := releaseGUI.Add("CheckBox", "Section xs+32 ys+20", "Symlink")
 replace := releaseGUI.Add("CheckBox", "x+33", "Hotkey Replacer")
-;checkbox onevents
+startup := releaseGUI.Add("CheckBox", "xs ys+25", "Run at Startup")
+;// checkbox onevents
 sym.OnEvent("Click", checkbox)
 replace.OnEvent("Click", checkbox)
+startup.OnEvent("Click", checkbox)
 
-;buttons
-close_Install := releaseGUI.Add("Button", "x+-73 Y+10 w70", "Close")
+;// buttons
+replace.GetPos(&rightX)
+close_Install := releaseGUI.Add("Button", "x" rightX+50 " Y+-10 w70", "Close")
 close_Install.OnEvent("Click", buttonWhich)
 releaseGUI.MarginY := -1
 releaseGUI.Show('w' TotalWidth)
@@ -37,7 +40,7 @@ releaseGUI.Show('w' TotalWidth)
  * This function handles the logic when a checkbox is selected. All it's doing is changing the text of the button
  */
 checkbox(guiCtrl, other) {
-    if sym.Value = 1 || replace.Value = 1
+    if sym.Value = 1 || replace.Value = 1 || startup.Value = 1
         dont_change := 1
     else
         dont_change := 0
@@ -74,6 +77,11 @@ buttonWhich(guiCtrl, other) {
                 }
             if replace.Value = 1
                 Run(A_ScriptDir "\HotkeyReplacer.ahk")
+            if startup.Value = 1
+                {
+                    startupScript := A_ScriptDir "..\..\PC Startup\PC Startup.ahk"
+                    FileCreateShortcut(startupScript, A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\PC Startup.ahk - Shortcut.lnk")
+                }
             ;//
             releaseGUI.Destroy()
     }

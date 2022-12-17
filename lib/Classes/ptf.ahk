@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2022/12/14
- * @version 1.0.4
+ * @date 2022/12/17
+ * @version 1.0.5
  ***********************************************************************/
 
 class ptf {
@@ -12,6 +12,7 @@ class ptf {
     static SupportFiles      := this.rootDir "\Support Files"
     static Backups           := this.rootDir "\Backups"
     static Stream            := this.rootDir "\Stream"
+    static SongQueue         := this.Stream "\TomSongQueueue"
     static ErrorLog          := this.rootDir "\Error Logs"
     static lib               := this.rootDir "\lib"
     static TimerScripts      := this.rootDir "\Timer Scripts"
@@ -28,12 +29,16 @@ class ptf {
     static musicDir          := "S:\Program Files\User\Music\"
 
     ;ImageSearch
+    static premIMGver        := IniRead(this.SettingsLoc "\settings.ini", "Adjust", "premVer", "v22.3.1")
+    static aeIMGver          := IniRead(this.SettingsLoc "\settings.ini", "Adjust", "aeVer", "v22.6")
+    static psIMGver          := IniRead(this.SettingsLoc "\settings.ini", "Adjust", "psVer", "v24.0.1")
+    static resolveIMGver     := IniRead(this.SettingsLoc "\settings.ini", "Adjust", "resolveVer", "v18.0.4")
     static ImgSearch         := this.SupportFiles "\ImageSearch"
     static Discord           := this.ImgSearch "\Discord\"
-    static Premiere          := this.ImgSearch "\Premiere\"
-    static AE                := this.ImgSearch "\AE\"
-    static Photoshop         := this.ImgSearch "\Photoshop\"
-    static Resolve           := this.ImgSearch "\Resolve\"
+    static Premiere          := this.ImgSearch "\Premiere\" this.premIMGver "\"
+    static AE                := this.ImgSearch "\AE\" this.aeIMGver "\"
+    static Photoshop         := this.ImgSearch "\Photoshop\" this.psIMGver "\"
+    static Resolve           := this.ImgSearch "\Resolve\" this.resolveIMGver "\"
     static VSCodeImage       := this.ImgSearch "\VSCode\"
     static Explorer          := this.ImgSearch "\Windows\Win11\Explorer\"
     static Firefox           := this.ImgSearch "\Firefox\"
@@ -71,6 +76,7 @@ class ptf {
         "Photoshop",       this.Shortcuts "\Photoshop.exe.lnk",
         "SL_Chatbot",      this.Shortcuts "\Streamlabs Chatbot.lnk",
         "YourPhone",       this.Shortcuts "\Your Phone.lnk",
+        "scriptStartup",   A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\PC Startup.ahk - Shortcut.lnk",
 
         ;programs
         "LiveSplit",       "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe",
@@ -79,9 +85,9 @@ class ptf {
         ;stream
         "StreamINI",       this.Stream "\Streaming.ini",
         "StreamAHK",       this.Stream "\Streaming.ahk",
-        "SongQUEUE",       this.rootDir "\TomSongQueueue\Builds\SongQueuer.exe",
-        "SongDJ",          this.rootDir "\TomSongQueueue\Builds\ApplicationDj.exe",
-        "Wii Music",       this.rootDir "\Sounds\Wii Music.mp3"
+        "SongQUEUE",       this.Stream "\TomSongQueueue\Builds\SongQueuer.exe",
+        "SongDJ",          this.Stream "\TomSongQueueue\Builds\ApplicationDj.exe",
+        "Wii Music",       this.Stream "\TomSongQueueue\Sounds\Wii Music.mp3"
     )
 }
 

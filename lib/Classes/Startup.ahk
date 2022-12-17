@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/16
- * @version 1.0.6
+ * @date 2022/12/17
+ * @version 1.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -96,27 +96,63 @@ class Startup {
             darkVerCheck := "disabled"
         else
             darkVerCheck := "true"
-        UPDATE := IniRead(ptf["settings"], "Settings", "update check", "true")
-        BETAUPDATE := IniRead(ptf["settings"], "Settings", "beta update check", "false")
-        DARK := IniRead(ptf["settings"], "Settings", "dark mode", darkVerCheck)
-        CHECKCHECK := IniRead(ptf["settings"], "Settings", "autosave check checklist", "true")
-        TOOLS := IniRead(ptf["settings"], "Settings", "tooltip", "true")
-        CHECKTOOL := IniRead(ptf["settings"], "Settings", "checklist tooltip", "true")
-        WAIT := IniRead(ptf["settings"], "Settings", "checklist wait", "false")
-        ADOBE_GB := IniRead(ptf["settings"], "Adjust", "adobe GB", 45)
-        ADOBE_FS := IniRead(ptf["settings"], "Adjust", "adobe FS", 5)
-        AUTOMIN := IniRead(ptf["settings"], "Adjust", "autosave MIN", 5)
-        GAMESEC := IniRead(ptf["settings"], "Adjust", "game SEC", 2.5)
-        MULTI := IniRead(ptf["settings"], "Adjust", "multi SEC", 5)
-        PREMYEAR := IniRead(ptf["settings"], "Adjust", "prem year", A_Year)
-        AEYEAR := IniRead(ptf["settings"], "Adjust", "ae year", A_Year)
-        ADOBE := IniRead(ptf["settings"], "Track", "adobe temp", "")
-        WORK := IniRead(ptf["settings"], "Track", "working dir", "E:\Github\ahk")
-        FC := IniRead(ptf["settings"], "Track", "first check", "false")
+        UPDATE          := IniRead(ptf["settings"], "Settings", "update check"             , "true")
+        BETAUPDATE      := IniRead(ptf["settings"], "Settings", "beta update check"        , "false")
+        DARK            := IniRead(ptf["settings"], "Settings", "dark mode"                , darkVerCheck)
+        RUNSTARTUP      := IniRead(ptf["settings"], "Settings", "run at startup"           , "true")
+        CHECKCHECK      := IniRead(ptf["settings"], "Settings", "autosave check checklist" , "true")
+        TOOLS           := IniRead(ptf["settings"], "Settings", "tooltip"                  , "true")
+        CHECKTOOL       := IniRead(ptf["settings"], "Settings", "checklist tooltip"        , "true")
+        WAIT            := IniRead(ptf["settings"], "Settings", "checklist wait"           , "false")
+        ADOBE_GB        := IniRead(ptf["settings"], "Adjust",   "adobe GB"                 , 45)
+        ADOBE_FS        := IniRead(ptf["settings"], "Adjust",   "adobe FS"                 , 5)
+        AUTOMIN         := IniRead(ptf["settings"], "Adjust",   "autosave MIN"             , 5)
+        GAMESEC         := IniRead(ptf["settings"], "Adjust",   "game SEC"                 , 2.5)
+        MULTI           := IniRead(ptf["settings"], "Adjust",   "multi SEC"                , 5)
+        PREMYEAR        := IniRead(ptf["settings"], "Adjust",   "prem year"                , A_Year)
+        AEYEAR          := IniRead(ptf["settings"], "Adjust",   "ae year"                  , A_Year)
+        premVer         := IniRead(ptf["settings"], "Adjust",   "premVer"                  , "v22.3.1")
+        aeVer           := IniRead(ptf["settings"], "Adjust",   "aeVer"                    , "v22.6")
+        psVer           := IniRead(ptf["settings"], "Adjust",   "psVer"                    , "v24.0.1")
+        resolveVer      := IniRead(ptf["settings"], "Adjust",   "resolveVer"               , "v18.0.4")
+        ADOBE           := IniRead(ptf["settings"], "Track",    "adobe temp"               , "")
+        WORK            := IniRead(ptf["settings"], "Track",    "working dir"              , "E:\Github\ahk")
+        FC              := IniRead(ptf["settings"], "Track",    "first check"              , "false")
         deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
         if FileExist(ptf["settings"])
             FileDelete(ptf["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-        FileAppend("[Settings]`nupdate check=" UPDATE "`nbeta update check=" BETAUPDATE "`ndark mode=" DARK "`nautosave check checklist=" CHECKCHECK "`ntooltip=" TOOLS "`nchecklist tooltip=" CHECKTOOL "`nchecklist wait=" WAIT "`n`n[Adjust]`nadobe GB=" ADOBE_GB "`nadobe FS=" ADOBE_FS "`nautosave MIN=" AUTOMIN "`ngame SEC=" GAMESEC "`nmulti SEC=" MULTI "`nprem year=" PREMYEAR "`nae year=" AEYEAR "`n`n[Track]`nadobe temp=" ADOBE "`nworking dir=" WORK "`nfirst check=" FC "`nversion=" MyRelease, ptf["settings"])
+        FileAppend(Format("
+        (
+            [Settings]
+            update check={}
+            beta update check={}
+            dark mode={}
+            run at startup={}
+            autosave check checklist={}
+            tooltip={}
+            checklist tooltip={}
+            checklist wait={}
+
+            [Adjust]
+            adobe GB={}
+            adobe FS={}
+            autosave MIN={}
+            game SEC={}
+            multi SEC={}
+            prem year={}
+            ae year={}
+            premVer={}
+            aeVer={}
+            psVer={}
+            resolveVer={}
+
+            [Track]
+            adobe temp={}
+            working dir={}
+            first check={}
+            version={}
+        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEAR, AEYEAR, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, MyRelease)
+        , ptf["settings"])
     }
 
     /**

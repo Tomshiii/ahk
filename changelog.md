@@ -1,6 +1,9 @@
 # <> Release 2.8.2 -
 - Broke apart `Windows.ahk` into individual function files
 - `generateUpdate` no longer uses `FileAppend` to create the install `.exe` and instead copies `install.ahk` and renames it. This is functionally identical but easier to maintain
+- `releaseGUI.ahk` now offers the user a one click solution to starting my scripts at PC Startup
+- All `Editor` `ImageSearch` files placed in version folders
+    - `settings.ini` now has entries for versions incase I ever choose to support more
 
 #### (#7) Attempt to fix issue #6 (couldn't reproduce the issue)
 `Extract.ahk`
@@ -21,6 +24,8 @@
 - Added a menubar
     - Moved `add game to 'gamecheck.ahk'` & `open settings.ini` into the menu bar
     - Added ability to open the wiki of this repo (both the local copy & web)
+- New option to toggle my scripts running at startup
+    - `PC Startup.ahk` adjusted for this change
 
 `discord.Unread()`
 - Fix functon sometimes moving mouse to the incorrect position

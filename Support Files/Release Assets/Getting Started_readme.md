@@ -22,9 +22,15 @@ A backup of the original release versions of `My Scripts.ahk` & `Keyboard Shortc
 
 ___
 
+**Run at Startup:**
+Will create a shortcut of `PC Startup.ahk` (`..\PC Startup\PC Startup.ahk`) in the user's startup folder `C:\Users\A_UserName\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`. This can be disabled/reenabled later in `settingsGUI()` (`#F1` by default)
+
+___
+
 If you choose to ignore this install step and wish to run these files at a later time, they can be located;
 Symlink:            `..\Support Files\Release Assets\CreateSymLink.ahk`
 Hotkey Replacer:    `..\Support Files\Release Assets\HotkeyReplacer.ahk`
+PC Startup:         `..\PC Startup\PC Startup.ahk`
 
 Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's a compiled version of my scripts, alongside the `SevenZip.ahk` lib by `thqby` to allow me to include the repo in a .zip file that then gets automatically extracted when you run the release .exe ^.^
 

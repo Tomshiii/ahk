@@ -95,7 +95,7 @@ settingsGUI()
     settingsGUI.AddButton("Default W0 H0", "_")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;Top Titles
+    ;//! Top Titles
    /*  titleText := settingsGUI.Add("Text", "section W100 H25 X9 Y7", "Settings")
     titleText.SetFont("S15 Bold Underline") */
 
@@ -108,8 +108,9 @@ settingsGUI()
 
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;checkboxes
+    ;//! checkboxes
 
+    ;// update check
     checkVal := IniRead(ptf["settings"], "Settings", "update check", "true")
     switch checkVal {
         case "true":
@@ -146,6 +147,7 @@ settingsGUI()
         }
     }
 
+    ;// check for beta updates
     betaStart := false ;if the user enables the check for beta updates, we want my main script to reload on exit.
     if IniRead(ptf["settings"], "Settings", "beta update check") = "true" && updateCheckToggle.Value != 0
         betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 xs Y+5", "Check for Beta Updates")
@@ -169,6 +171,7 @@ settingsGUI()
             }
     }
 
+    ;// dark mode toggle
     darkINI := IniRead(ptf["settings"], "Settings", "dark mode")
     darkCheck := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(darkINI) " Y+5", "Dark Mode")
     darkToolY := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
@@ -201,10 +204,24 @@ settingsGUI()
         }
     }
 
-    ;----------------------------------------------------------------------------------------------------------------------------------
-    ;script checkboxes
+    ;// run at startup
+    runStartupINI := IniRead(ptf["settings"], "Settings", "run at startup")
+    StartupCheckTitle := "Run at Startup"
+    StartupCheck := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(runStartupINI) " Y+5", StartupCheckTitle)
+    startToolY := "My scripts will automatically run at PC startup"
+    startToolN := "My scripts will no longer run at PC startup"
+    switch runStartupINI {
+        case "true":
+            StartupCheck.ToolTip := startToolY
+        case "false":
+            StartupCheck.ToolTip := startToolN
+    }
+    StartupCheck.OnEvent("Click", toggle.Bind("run at startup"))
 
-    ;//
+    ;----------------------------------------------------------------------------------------------------------------------------------
+    ;//! script checkboxes
+
+    ;// autosave check checklist
     ascheckCheck := IniRead(ptf["settings"], "Settings", "autosave check checklist")
     ascheckCheckTitle := "``autosave.ahk`` check for`n ``checklist.ahk``"
     ascheckToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(ascheckCheck) " Y+20", ascheckCheckTitle)
@@ -218,7 +235,7 @@ settingsGUI()
     }
     ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist"))
 
-    ;//
+    ;// autosave tooltips
     tooltipCheck := IniRead(ptf["settings"], "Settings", "tooltip")
     tooltipCheckTitle := "``autosave.ahk`` tooltips"
     toggleToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(tooltipCheck) " Y+5", tooltipCheckTitle)
@@ -231,10 +248,18 @@ settingsGUI()
             toggleToggle.ToolTip := toggleToolN
     }
     toggleToggle.OnEvent("Click", toggle.Bind("tooltip"))
+
+
+    /**
+     * This function handles the logic for a few checkboxes
+     * @param {any} ini is the name of the ini `Key` you wish to be toggles
+     * @param {any} script the name of the guiCtrl obj that gets auto fed into this function
+     */
     toggle(ini, script, unneeded)
     {
         detect()
         ToolTip("")
+        ;// each switch here goes off the TITLE variable we created
         switch script.text {
             case tooltipCheckTitle:
                 toolTrue := toggleToolY
@@ -242,8 +267,12 @@ settingsGUI()
             case ascheckCheckTitle:
                 toolTrue := ascheckCheckY
                 toolFalse := ascheckCheckN
+            case StartupCheckTitle:
+                toolTrue := startToolY
+                toolFalse := startToolN
         }
 
+        ;// toggling the checkboxes
         toggleVal := script.Value
         switch toggleVal {
             case 1:
@@ -255,11 +284,25 @@ settingsGUI()
                 script.ToolTip := toolFalse
                 tool.Cust(toolFalse, 2000)
         }
+        ;// custom logic for the run at startup option
+        if ini = "run at startup"
+            {
+                switch toggleVal {
+                    case 1:
+                        startupScript := ptf.rootDir "\PC Startup\PC Startup.ahk"
+                        FileCreateShortcut(startupScript, ptf["scriptStartup"])
+                    case 0:
+                        if FileExist(ptf["scriptStartup"])
+                            FileDelete(ptf["scriptStartup"])
+                }
+                return
+            }
+        ;// reloading autosave
         if WinExist("autosave.ahk - AutoHotkey")
             PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
     }
 
-    ;//
+    ;// checklist tooltip
     checklistTooltip := IniRead(ptf["settings"], "Settings", "checklist tooltip")
     checklistTooltipTitle := "``checklist.ahk`` tooltips"
     checkTool := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistTooltip) " Y+5", checklistTooltipTitle)
@@ -273,7 +316,7 @@ settingsGUI()
     }
     checkTool.OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
 
-    ;//
+    ;// checklist wait
     checklistWait := IniRead(ptf["settings"], "Settings", "checklist wait")
     checklistWaitTitle := "``checklist.ahk`` always wait"
     checkWait := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistWait) " Y+5", checklistWaitTitle)
@@ -287,6 +330,12 @@ settingsGUI()
     }
     checkWait.OnEvent("Click", msgboxToggle.Bind("checklist wait"))
 
+
+    /**
+     * This function handles logic for checkboxes that need to pop up a msgbox to alert the user that they need to reload `checklist.ahk`
+     * @param {any} ini is the name of the ini `Key` you wish to be toggles
+     * @param {any} script the name of the guiCtrl obj that gets auto fed into this function
+     */
     msgboxToggle(ini, script, other)
     {
         detect()
@@ -317,6 +366,13 @@ settingsGUI()
         }
     }
 
+    /**
+     * This function turns a literal string "true" into 1
+     * else returns 0
+     * This is to turn ini values into proper boolean values
+     * @param {String} var
+     * @returns {Boolean}
+     */
     trueOrfalse(var)
     {
         if var = "true"
@@ -326,10 +382,10 @@ settingsGUI()
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;EDIT BOXES
+    ;//! EDIT BOXES
     premInitYear := IniRead(ptf["settings"], "Adjust", "prem year")
     AEInitYear := IniRead(ptf["settings"], "Adjust", "ae year")
-    ;this loop auto generates the edit boxes using "..\settingsGUI\maps.ahk"
+    ;this loop auto generates the edit boxes using "..\settingsGUI\editValues.ahk"
     loop set_Edit_Val.Length {
         if A_Index <= set_Edit_Val.Length - 2
             {
@@ -360,12 +416,12 @@ settingsGUI()
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;BOTTOM TEXT
+    ;//! BOTTOM TEXT
     resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+20", "Reset")
     resetText.SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;BUTTON TOGGLES
+    ;//! BUTTON TOGGLES
 
     adobeToggle := settingsGUI.Add("Button", "w100 h30 Y+5", "adobeTemp()")
     adobeToggle.OnEvent("Click", buttons.bind("adobe"))
@@ -388,7 +444,7 @@ settingsGUI()
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;STATUS BAR
+    ;//! STATUS BAR
 
     workDir := IniRead(ptf["settings"], "Track", "working dir")
     SB := settingsGUI.Add("StatusBar")
@@ -417,7 +473,7 @@ settingsGUI()
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;GROUP EXIT BUTTONS
+    ;//! GROUP EXIT BUTTONS
 
     group := settingsGUI.Add("GroupBox", "W201 H58 xs+270 ys+5", "Exit")
     hardResetVar := settingsGUI.Add("Button", "W85 H30 x+-190 y+-40", "Hard Reset")
@@ -479,7 +535,7 @@ settingsGUI()
     settingsGUI.Move(,,, height +20)
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;MENU BAR FUNCS
+    ;//! MENU BAR FUNCS
 
     menu_AddGame(*)
     {
@@ -948,7 +1004,7 @@ activeScripts(MyRelease)
             Run(ptf.rootDir "\" script.text)
         else if script.text = "textreplace.ahk"
             {
-                if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TOM" ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
+                if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TOM" && DirExist(ptf.SongQueue) ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
                     Run(ptf["textreplace"])
                 else
                     Run(ptf["textreplaceUser"])
