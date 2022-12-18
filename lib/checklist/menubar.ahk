@@ -4,6 +4,7 @@
 #Include <Classes\tool>
 #Include <Classes\ptf>
 #Include <Functions\getScriptRelease>
+#Include <Functions\refreshWin>
 ; }
 
 ;define menu

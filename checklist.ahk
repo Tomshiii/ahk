@@ -9,7 +9,7 @@
 #Include <Functions\floorDecimal>
 #Include <Functions\errorLog>
 #Include <Functions\detect>
-#Include <GUIs>
+#Include <GUIs\tomshiBasic>
 ; <checklist funcs> ;everything in <lib\checklist\> is needed for this script
                     ;but these are just the ones that can be defined anywhere
 #Include <checklist\generateIni>
@@ -28,7 +28,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.10.0.2"
+version := "v2.10.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -55,7 +55,7 @@ if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist 
     }
 else
     {
-        if !WinExist("Adobe Premiere Pro") && !WinExist(editors.AE.winTitle)
+        if !WinExist(Editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle)
             {
                 premNotOpen(&checklist, &logs, &path)
                 if WinExist("Select commission folder")
@@ -66,7 +66,7 @@ else
             }
         dashLocation := unset
         dashLocationAE := unset
-        if WinExist("Adobe Premiere Pro")
+        if WinExist(Editors.Premiere.winTitle)
             {
                 winget.PremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
                 if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward

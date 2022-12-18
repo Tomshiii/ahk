@@ -1,4 +1,4 @@
-# <> Release 2.8.2 -
+# <> Release 2.8.2 - Additions & Fixes
 - Broke apart `Windows.ahk` into individual function files
 - Broke apart `GUI.ahk` into individual files
 - `generateUpdate` no longer uses `FileAppend` to create the install `.exe` and instead copies `install.ahk` and renames it. This is functionally identical but easier to maintain

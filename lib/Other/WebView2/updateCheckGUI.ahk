@@ -1,8 +1,8 @@
 ; { \\ #Includes
+#Include <GUIs\tomshiBasic>
 #Include <Other\WebView2\WebView2>
 #Include <Classes\ptf>
 #Include <Functions\getScriptRelease>
-#Include <GUIs>
 
 ; }
 
