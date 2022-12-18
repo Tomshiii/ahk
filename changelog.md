@@ -26,6 +26,7 @@
     - Added ability to open the wiki of this repo (both the local copy & web)
 - New option to toggle my scripts running at startup
     - `PC Startup.ahk` adjusted for this change
+- Moved `trueOrfalse()` out and made into its own function
 
 `discord.Unread()`
 - Fix functon sometimes moving mouse to the incorrect position
@@ -44,6 +45,7 @@
 
 ## > Other Changes
 - Used `Format()` in a lot of longer strings that contain variables to make them more readable
+- `checklist.ahk - openProj()` will now double check that either Premiere or AE is open
 
 `autosave.ahk`
 - If no save is necessary, the next save attempt will be made in `1/2` the usual time.
@@ -51,6 +53,3 @@
 - Fix sometimes failing to save
 - Fix sometimes cutting on the timeline
 - Fix variables not actually updating
-
-`checklist.ahk`
-- `openProj()` will now double check that either premiere/ae is open

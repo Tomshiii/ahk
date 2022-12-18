@@ -110,7 +110,7 @@ A script that allows me to keep informed about what I have left to do on a video
 #### [Multi-Instance Close.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/Multi-Instance%20Close.ahk)
 A script that will periodically check for duplicate instances of any autohotkey scripts and close one of them. Even if you use `#SingleInstance Force` reloading scripts can sometimes cause a second instance to slip open. This script will hopefully mitigate the odd behaviour that occurs when this happens by closing any duplicates.
 
-#### [PC Startup.ahk](https://github.com/Tomshiii/ahk/blob/main/PC%20Startup.ahk)
+#### [PC Startup.ahk](https://github.com/Tomshiii/ahk/blob/main/PC%20Startup/PC%20Startup.ahk)
 A script that is run on PC startup to launch all my AHK scripts, as well as deal with some programs I need.
 
 #### [Resolve_Example.ahk](https://github.com/Tomshiii/ahk/blob/main/lib/Apps/Editors/Resolve.ahk)

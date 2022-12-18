@@ -10,6 +10,7 @@
 #Include <Functions\reload_reset_exit>
 #Include <Functions\refreshWin>
 #Include <Functions\checkInternet>
+#Include <Functions\trueOrfalse>
 ; }
 
 /**
@@ -364,21 +365,6 @@ settingsGUI()
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
         }
-    }
-
-    /**
-     * This function turns a literal string "true" into 1
-     * else returns 0
-     * This is to turn ini values into proper boolean values
-     * @param {String} var
-     * @returns {Boolean}
-     */
-    trueOrfalse(var)
-    {
-        if var = "true"
-            return 1
-        else
-            return 0
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
