@@ -9,8 +9,6 @@ A_ScriptName := "yes.value"
 ;@Ahk2Exe-SetDescription Installer file for Tomshi's ahk github repo
 
 ;// setting version
-;@Ahk2Exe-FileVersion yes.value
-;@Ahk2Exe-ProductVersion yes.value
 ;@Ahk2Exe-SetVersion yes.value
 
 ;// making sure files haven't already been extracted

@@ -155,7 +155,8 @@ FileCopy(ptf.SupportFiles "\Release Assets\install.ahk", A_WorkingDir "\release\
 
 ;// doing string manipulation to replace some values in the above script with the actual release ver
 readFi := FileRead(A_WorkingDir "\release\" yes.value ".ahk")
-replaceYes := StrReplace(readFi, "yes.value", yes.value, 1)
+replaceFileVer := StrReplace(readFi, "Version yes.value", "Version " Trim(yes.value, "v"))
+replaceYes := StrReplace(replaceFileVer, "yes.value", yes.value, 1)
 FileDelete(A_WorkingDir "\release\" yes.value ".ahk")
 FileAppend(replaceYes, A_WorkingDir "\release\" yes.value ".ahk")
 
