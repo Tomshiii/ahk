@@ -87,7 +87,7 @@ loop files ptf.rootDir "\Backups\Changelogs\*", "F"
 verChangeLog := SubStr(name, 1, 4)
 verNew := SubStr(yes.value, 1, 4)
 
-if !InStr(yes.value, "pre")
+if !InStr(yes.value, "pre") && !InStr(yes.value, "alpha") && !InStr(yes.value, "beta")
     {
         if IsSet(name) && (SubStr(name, 1, StrLen(name)-3) = yes.value) ;if inputbox ver is the same as the current changelog, ignore
             return
