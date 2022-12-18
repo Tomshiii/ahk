@@ -2,12 +2,14 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/17
- * @version 1.0.7
+ * @date 2022/12/18
+ * @version 1.0.8
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <GUIs>
+#Include <GUIs\todoGUI>
+#Include <GUIs\hotkeysGUI>
+#Include <GUIs\settingsGUI\settingsGUI>
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\Dark>

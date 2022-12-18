@@ -44,13 +44,15 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Functions\youMouse>
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
-#Include <GUIs>
+#Include <GUIs\settingsGUI\settingsGUI>
+#Include <GUIs\activeScripts>
+#Include <GUIs\hotkeysGUI>
 ;#Include right click premiere.ahk ; this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.24.1
+;\\v2.25
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 

@@ -1,5 +1,6 @@
 # <> Release 2.8.2 -
 - Broke apart `Windows.ahk` into individual function files
+- Broke apart `GUI.ahk` into individual files
 - `generateUpdate` no longer uses `FileAppend` to create the install `.exe` and instead copies `install.ahk` and renames it. This is functionally identical but easier to maintain
 - `releaseGUI.ahk` now offers the user a one click solution to starting my scripts at PC Startup
 - All `Editor` `ImageSearch` files placed in version folders
@@ -46,6 +47,7 @@
 ## > Other Changes
 - Used `Format()` in a lot of longer strings that contain variables to make them more readable
 - `checklist.ahk - openProj()` will now double check that either Premiere or AE is open
+- `gameCheck.ahk` can now autofill the information when `gameCheckGUI` is called via the tray icon
 
 `autosave.ahk`
 - If no save is necessary, the next save attempt will be made in `1/2` the usual time.

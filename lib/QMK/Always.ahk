@@ -3,7 +3,7 @@
 #Include <Classes\ptf>
 #Include <Functions\errorLog>
 #Include <Functions\detect>
-#Include <GUIs>
+#Include <GUIs\musicGUI>
 
 BackSpace::unassigned()
 SC028::unassigned() ; ' key

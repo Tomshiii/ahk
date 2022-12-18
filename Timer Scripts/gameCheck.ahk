@@ -5,7 +5,8 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\pause>
-#Include <GUIs>
+#Include <Classes\winget>
+#Include <GUIs\gameCheckGUI>
 #Include <gameCheck\Game List> ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
 ; }
 
@@ -22,10 +23,28 @@ darkMode := IniRead(ptf["settings"], "Settings", "dark mode")
 version := IniRead(ptf["settings"], "Track", "version")
 
 ;// defining a GUI the user can access by right clicking the script
-gameGUI := gameCheckGUI(darkMode, version, "", "", "AlwaysOnTop", "Add game to gameCheck.ahk")
 A_TrayMenu.Insert("7&") ;adds a divider bar
 A_TrayMenu.Insert("8&", "Add Game", gameAdd)
-gameAdd(*) => gameGUI.Show("AutoSize")
+gameAdd(*) {
+    value := WinGetList()
+    for this_value in value
+        {
+            proc := WinGetProcessName(this_value)
+            class := WinGetClass(this_value)
+            if proc = "explorer.exe" && (
+                class = "Button"                   || class = "Shell_TrayWnd"          ||
+                class = "NotifyIconOverflowWindow" || class = "Shell_SecondaryTrayWnd" ||
+                class = "Progman"
+            )
+                continue
+            else
+                {
+                    gameGUI := gameCheckGUI(darkMode, version, WinGetTitle(this_value), WinGetProcessName(this_value), "AlwaysOnTop", "Add game to gameCheck.ahk")
+                    gameGUI.Show("AutoSize")
+                    break
+                }
+        }
+}
 
 SetTimer(check, secms)
 
@@ -73,7 +92,12 @@ check()
         }
 }
 
-
+gameClose(*) {
+    if IsSet(varTitle)
+        varTitle := ""
+    if IsSet(varProc)
+        varProc := ""
+}
 
 ;defining what happens if the script is somehow opened a second time and the function is forced to close
 OnExit(ExitFunc)

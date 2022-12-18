@@ -1,12 +1,12 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2022/12/13
- * @version 1.0.4
+ * @date 2022/12/18
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <GUIs>
+#Include <GUIs\musicGUI>
 #Include <Classes\ptf>
 #Include <Classes\tool>
 ;programs

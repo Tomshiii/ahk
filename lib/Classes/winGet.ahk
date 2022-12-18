@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/12/16
- * @version 1.0.4.1
+ * @date 2022/12/18
+ * @version 1.0.4.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -48,7 +48,7 @@ class WinGet {
      * This function gets and returns the title for the current active window, autopopulating the `title` variable
      * @param {VarRef} title populates with the active window
      */
-    static Title(&title)
+    static Title(&title?)
     {
         try {
             check := WinGetProcessName("A")

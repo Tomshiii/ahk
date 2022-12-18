@@ -149,6 +149,8 @@
                     WinSetAlwaysOnTop(1, "Settings " version)
                     WinActivate("Settings " version)
                 }
+            wintitle := ""
+            process := ""
             this.Hide()
         }
     }
