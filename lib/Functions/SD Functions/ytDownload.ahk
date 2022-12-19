@@ -1,5 +1,7 @@
 ; { \\ #Includes
 #Include <Classes\tool>
+#Include <Functions\getHTMLTitle>
+#Include <Functions\SD Functions\convert2>
 ; }
 
 /**
@@ -31,15 +33,27 @@ ytDownload(args := "", folder := A_ScriptDir) {
             return
         }
     command := Format("yt-dlp {} {} `"{}`""
-                     , args, folderCode, oldClip
+                     , args, folder, oldClip
                     )
+    A_Clipboard := oldClip
     run:
     RunWait(A_ComSpec " /c " command)
     SplitPath(folder, &name)
-    if WinExist(folder)
-        WinActivate(folder)
+    if WinExist(folder " ahk_exe explorer.exe")
+        WinActivate(folder " ahk_exe explorer.exe")
     else if WinExist(name " ahk_exe explorer.exe")
         WinActivate(name " ahk_exe explorer.exe")
     else
         Run("explore " folder)
+    ;// convert mkv to mp4
+    expPath := WinGet.ExplorerPath(WinActive("A"))
+    URLTitle := RTrim(getHTMLTitle(A_Clipboard), " - YouTube")
+    fileTitle := URLTitle " [" SubStr(A_Clipboard, InStr(A_Clipboard, "=",, 1, 1) + 1) "]"
+    if FileExist(expPath "\" fileTitle ".mkv")
+        {
+            convert2(Format('ffmpeg -i `"{}.mkv`" -codec copy `"{}.mp4`"', fileTitle, URLTitle,))
+            sleep 1000
+            FileDelete(expPath "\" fileTitle ".mkv")
+        }
+    A_Clipboard := oldClip
 }

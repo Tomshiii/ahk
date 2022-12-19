@@ -67,6 +67,7 @@ class ptf {
         "Game List",       this.lib "\gameCheck\Game List.ahk",
         "textreplace",     this.rootDir "\..\textreplace\textreplace.ahk",
         "textreplaceUser", this.SupportFiles "\textreplace\textreplace.ahk",
+        "premTemp",        this.Backups "\Adobe Backups\Premiere\Template\temp.prproj",
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",

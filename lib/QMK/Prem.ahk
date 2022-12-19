@@ -60,7 +60,7 @@ g:: ;this hotkey will fill the frame to fit the window
 	;SendInput(selectAtPlayhead)
 	SendInput(scaleFrameSize)
 }
-b::unassigned()
+b::prem.preset("transform_MINE")
 
 r::prem.preset("tint 100")
 f:: ;this macro is to open the speed menu

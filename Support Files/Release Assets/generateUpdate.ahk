@@ -87,7 +87,7 @@ loop files ptf.rootDir "\Backups\Changelogs\*", "F"
 verChangeLog := SubStr(name, 1, 4)
 verNew := SubStr(yes.value, 1, 4)
 
-if !InStr(yes.value, "pre") && !InStr(yes.value, "alpha") && !InStr(yes.value, "beta")
+if !InStr(yes.value, "pre") && !InStr(yes.value, "alpha") && !InStr(yes.value, "beta") && !InStr(name, Trim(yes.value, "v"), 1, 1, 1)
     {
         if IsSet(name) && (SubStr(name, 1, StrLen(name)-3) = yes.value) ;if inputbox ver is the same as the current changelog, ignore
             return
@@ -103,8 +103,7 @@ if !InStr(yes.value, "pre") && !InStr(yes.value, "alpha") && !InStr(yes.value, "
 sleep 100
 ;// checking values for testing
 /* versions := "verChangeLog: " verChangeLog "`n" "verNew: " verNew "`n" "name: " name "`n" "yes.value: " yes.value "`n"
-MsgBox(versions)
-ExitApp() */
+MsgBox(versions) */
 
 ;// copying over the repo to a temp folder
 loop files ptf.rootDir "\*", "D"
@@ -112,8 +111,6 @@ loop files ptf.rootDir "\*", "D"
         if A_LoopFileName = ".git"
             continue
         if A_LoopFileName = "releases"
-            continue
-        if A_LoopFileName = "Sounds"
             continue
         DirCreate(A_WorkingDir "\release\" yes.Value "\" A_LoopFileName)
         DirCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value "\" A_LoopFileName, 1)

@@ -5,7 +5,7 @@
 
 /**
  * This function is to cut repeat code across scripts. It grabs the path of the active win explorer window, runs cmd at that path and then sends whatever command you pass into it
- * @param {any} command the command you wish ahk to send into cmd
+ * @param {String} command the command you wish ahk to send into cmd
  */
 convert2(command)
 {
