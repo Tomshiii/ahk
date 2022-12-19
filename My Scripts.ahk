@@ -52,7 +52,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0-beta.12
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25
+;\\v2.25.1
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -612,6 +612,7 @@ SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk
 ;premselecttoolHotkey;
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
+	coord.s()
 	MouseGetPos(&xpos, &ypos)
 	SendInput(toolsWindow)
 	SendInput(toolsWindow)
@@ -661,7 +662,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 				return
 			}
 	}
-	click
+	SendInput("{Click}")
 	MouseMove(xpos, ypos)
 }
 

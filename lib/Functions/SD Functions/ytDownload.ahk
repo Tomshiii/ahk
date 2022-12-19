@@ -53,7 +53,8 @@ ytDownload(args := "", folder := A_ScriptDir) {
         {
             convert2(Format('ffmpeg -i `"{}.mkv`" -codec copy `"{}.mp4`"', fileTitle, URLTitle,))
             sleep 1000
-            FileDelete(expPath "\" fileTitle ".mkv")
+            if FileExist(expPath "\" fileTitle ".mp4") ;// ensure the conver2() worked before deleting
+                FileDelete(expPath "\" fileTitle ".mkv")
         }
     A_Clipboard := oldClip
 }
