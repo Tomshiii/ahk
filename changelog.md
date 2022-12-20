@@ -4,6 +4,7 @@
 - Added `getHTMLTitle.ahk` to return the title of a passed html object
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
+- 2nd and 3rd `VarRefs` in `winget.Prem/AEName()` are no longer required
 
 ## Streamdeck AHK
 - `New Premiere.ahk` now copies a template `.prproj` file instead of manually creating one

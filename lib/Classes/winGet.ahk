@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/12/18
- * @version 1.0.4.2
+ * @date 2022/12/20
+ * @version 1.0.4.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -100,7 +100,7 @@ class WinGet {
      * @param {var} titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
      * @param {var} saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
      */
-    static PremName(&premCheck, &titleCheck, &saveCheck)
+    static PremName(&premCheck, &titleCheck?, &saveCheck?)
     {
         try {
             if !WinExist(editors.Premiere.winTitle)
@@ -128,7 +128,7 @@ class WinGet {
      * @param {var} aeCheck is the title of after effects, we want to pass this value back to the script
      * @param {var} aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
      */
-    static AEName(&aeCheck, &aeSaveCheck)
+    static AEName(&aeCheck, &aeSaveCheck?)
     {
         try {
             if !WinExist(editors.AE.winTitle)
