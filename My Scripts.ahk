@@ -52,7 +52,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.1
+;\\v2.25.2
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -295,54 +295,78 @@ PrintScreen::SendInput("^+{Esc}") ;open taskmanager
 ;excelHotkey;
 PgUp::switchTo.Excel() ;run/swap to excel
 
-;These two scripts are to open highlighted text in the ahk documentation
+;This script is to open the ahk documentation. If ctrl is held, highlighted text will be searched
 ;akhdocuHotkey;
-AppsKey:: Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm") ;opens ahk documentation
+AppsKey::
+;// both are needed here otherwise using ctrl+appskey might fail to work if the active window grabs it first
 ;ahksearchHotkey;
-^AppsKey:: ;opens highlighted ahk command in the documentation
+^AppsKey::
 {
+	;// logic if ctrl isn't being held
+	if !GetKeyState("Ctrl", "P")
+		{
+			LinkClicked("", false)
+			return
+		}
 	previous := ClipboardAll()
 	A_Clipboard := "" ;clears the clipboard
 	Send("^c")
-	if !ClipWait(1) ;waits for the clipboard to contain data
+	if !ClipWait(1) ;if the clipboard doesn't contain data after 1s this block fires
 		{
-			tool.Cust("Couldn't copy data to clipboard")
-			errorLog(, A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			LinkClicked("", false)
+			A_Clipboard := previous
 			return
 		}
-	Run("https://lexikos.github.io/v2/docs/commands/" A_Clipboard ".htm")
-	SetTimer(check.bind(A_Clipboard, A_TickCount), 250)
+	LinkClicked(A_Clipboard)
 	A_Clipboard := previous
 
 	/**
-	 * Will check to see if the desired page has loaded or if an error page occured
-	 * @param {String} pass Passes in the clipboard, ie, what you're searching for
-	 * @param {Integer} tick Passes in the original tickcount so this timer can time out after 5s
+	 * Open the local ahk documentation if it can be found
+	 * else open the online documentation
+	 *
+	 * This function originated in `ui-dash.ahk` found in `C:\Program Files\AutoHotkey\UX`
+	 * @param {String} command is what you want to search for in the docs
 	 */
-	check(pass, tick) {
-		timepass := A_TickCount-tick
-		if !WinExist(browser.firefox.winTitle)
-			WinWait(browser.firefox.winTitle)
-		title := WinGetTitle(browser.firefox.winTitle)
-		if InStr(title, pass)
+	LinkClicked(command, search := true) {
+		path := SplitPathObj(A_AhkPath)
+		;// hopefully this never has to fire as browsers are unpredictable and there's no easy way to wait for things to load
+        if !FileExist(chm := path.dir '\AutoHotkey.chm')
 			{
-				SetTimer(, 0)
-				return
+				if !WinExist("AutoHotkey v2")
+					RunWait("https://www.autohotkey.com/docs/v2/index.htm")
+				else
+					{
+						WinActivate("AutoHotkey v2")
+						goto find
+					}
+				sleep 1500
+				if !WinExist("Quick Reference | AutoHotkey v2")
+					{
+						tool.Cust("something went wrong")
+						return
+					}
+				if WinExist("Quick Reference | AutoHotkey v2") && !WinActive("Quick Reference | AutoHotkey v2")
+					WinActivate("Quick Reference | AutoHotkey v2")
+				goto find
 			}
-		if InStr(title, "Error!") || timepass >= 5000
+		if !WinExist("AutoHotkey v2 Help ahk_class HH Parent")
 			{
-				WinActivate(browser.firefox.winTitle)
-				SendInput("^w")
-				Run("https://lexikos.github.io/v2/docs/AutoHotkey.htm")
-				SetTimer(, 0)
-				return
+				Run('hh.exe "ms-its:' chm '::docs/"Program.htm">How to use the program',,, &id)
+				WinWait("ahk_pid " id)
 			}
-		if InStr(title, "Quick Reference") || timepass >= 5000
-			{
-				SetTimer(, 0)
-				return
-			}
-	}
+		if !WinActive("AutoHotkey v2 Help ahk_class HH Parent")
+			WinActivate()
+		find:
+		if search = false
+			return
+		SendInput("!s")
+		SendInput("^a")
+		SendInput("{BackSpace}")
+		if command = ""
+			return
+		SendInput(command)
+		SendInput("{Enter}")
+    }
 }
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------

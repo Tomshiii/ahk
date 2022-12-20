@@ -4,15 +4,15 @@ Congratulations to ahk for `v2.0.0` hitting a full release! 🎉🎉
 All scripts have been updated to require `v2.0` as a minimum!
 
 ## > Functions
-- Added `getHTMLTitle.ahk` to return the title of a passed html object
+- Added `getHTMLTitle.ahk` to return the title of a passed url
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
-- `prem.zoom()` now uses `winget.ProjClient()` and references that value instead of hard coding for every client
 
 `winget {`
 - Added `ProjClient()` to retrieve the name of the client the current project is for by stripping the directory path in the title
+    - `prem.zoom()` now uses `winget.ProjClient()` and references that value instead of hard coding for every client
 
-`PremName()/AEName()`
+`.PremName()/.AEName()`
 - 2nd and 3rd `VarRefs` are now optional and no longer required
 - All return paths that indicate an error/fail now pass back `false` so `if !winget.PremName()` works as expected
 
@@ -27,3 +27,4 @@ All scripts have been updated to require `v2.0` as a minimum!
 
 ## > Other Changes
 - `autosave.ahk` will now check if `Premiere/AE` is not responding and will reset the timer if true
+- `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
