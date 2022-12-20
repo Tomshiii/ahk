@@ -3,7 +3,7 @@ Congratulations to ahk for `v2.0.0` hitting a full release! 🎉🎉
 
 All scripts have been updated to require `v2.0` as a minimum!
 
-## Functions
+## > Functions
 - Added `getHTMLTitle.ahk` to return the title of a passed html object
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
@@ -16,7 +16,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 - 2nd and 3rd `VarRefs` are now optional and no longer required
 - All return paths that indicate an error/fail now pass back `false` so `if !winget.PremName()` works as expected
 
-## Streamdeck AHK
+## > Streamdeck AHK
 - `New Premiere.ahk` now copies a template `.prproj` file instead of manually creating one
 
 `ytDownload()`
@@ -24,3 +24,6 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Fix function activating premiere instead of explorer
 - Will now automatically convert downloaded mkv to mp4 files using `convert2`
     - Changed args for `video.ahk` and `vfx.ahk`
+
+## > Other Changes
+- `autosave.ahk` will now check if `Premiere/AE` is not responding and will reset the timer if true
