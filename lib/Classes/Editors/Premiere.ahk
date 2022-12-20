@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/12/12
- * @version 1.0.5
+ * @date 2022/12/20
+ * @version 1.0.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -301,10 +301,10 @@ class Prem {
     static zoom()
     {
         resetTime := 5 * 1000 ;convert ms to s
-        reset(time) { ;this function is for a timer we activate anytime a clients zoom has a toggle
+        reset(time) { ;this function is for a timer we activate anytime a client's zoom has a toggle
             if ((A_TickCount - time) >= resetTime) || GetKeyState("F5", "P")
                 {
-                    tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.375, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
+                    tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.355, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
                     alexTog := 0
                     chloeTog := 0
                     SetTimer(, 0)
@@ -312,24 +312,24 @@ class Prem {
         }
 
         ;we'll put all our values at the top so they can be easily changed. First value is your X coord, second value is your Y coord, third value is your Scale value
-        ;alex
+        ;// alex
         alexXYS := [2064, -26, 215]
         alexZoomXYS := [3467, 339, 390]
 
-        ;d0yle ;orig => [-57, -37, 210]
+        ;// d0yle
         d0yleXYS := [-78, -53, 210]
+        d0yleZoomXYS := [-833, -462, 288]
 
-        ;chloe
+        ;// chloe
         chloeXYS := [-426, -238, 267]
         chloeZoomXYS := [-1679, -854, 486]
-        chloetemp := [632, 278, 292]
+        chloeExtraZoom := [632, 278, 292]
 
         ;then we'll define the values that will allow us to change things depending on the project
         static x := 0
         static y := 0
         static scale := 0
-        static alexTog := 0
-        static chloeTog := 0
+        static Tog := 0
 
         KeyWait(A_ThisHotkey)
         coord.s()
@@ -349,77 +349,49 @@ class Prem {
             errorLog(e, A_ThisFunc "()")
             return
         }
-        ;get title
-        WinGet.PremName(&premCheck)
 
-        ;any zooms with NO toggle
-        d0yle := InStr(premCheck, "d0yle")
-        if d0yle != 0
+        ;//get client name
+        ClientName := WinGet.ProjClient()
+        if !ClientName
             {
-                x := d0yleXYS[1]
-                y := d0yleXYS[2]
-                scale := d0yleXYS[3]
+                block.Off()
+                tool.Wait()
+                tool.Cust("Couldn't get the client name")
+                errorLog(, A_ThisFunc "()", "Couldn't get the client name", A_LineFile, A_LineNumber)
+                return
             }
 
-        ;any zooms WITH a toggle
-        chloe := InStr(premCheck, "chloe")
-        if chloe != 0
+        x := %ClientName%XYS[1]
+        y := %ClientName%XYS[2]
+        scale := %ClientName%XYS[3]
+        if IsSet(%ClientName%ZoomXYS)
             {
                 SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
-                tool.Cust("zoom " chloeTog+1 "/3")
-                if chloeTog = 0
-                    {
-                        x := chloeXYS[1]
-                        y := chloeXYS[2]
-                        scale := chloeXYS[3]
-                    }
-                if chloeTog = 1
-                    {
-                        x := chloeZoomXYS[1]
-                        y := chloeZoomXYS[2]
-                        scale := chloeZoomXYS[3]
-                    }
-                if chloeTog = 2
-                    {
-                        x := chloetemp[1]
-                        y := chloetemp[2]
-                        scale := chloetemp[3]
-                    }
-                chloeTog += 1
-                if chloeTog > 2
-                    chloeTog := 0
-                goto endPeople
+                if IsSet(%ClientName%ExtraZoom)
+                    tool.Cust("zoom " Tog+1 "/3")
+                else
+                    tool.Cust("zoom " Tog+1 "/2")
+                switch Tog {
+                    case 0:
+                        x := %ClientName%XYS[1]
+                        y := %ClientName%XYS[2]
+                        scale := %ClientName%XYS[3]
+                    case 1:
+                        x := %ClientName%ZoomXYS[1]
+                        y := %ClientName%ZoomXYS[2]
+                        scale := %ClientName%ZoomXYS[3]
+                        ;// if there isn't a 3rd zoom for the current client, reset toggle
+                        if !IsSet(%ClientName%ExtraZoom)
+                            tog := -1
+                    case 2:
+                        x := %ClientName%ExtraZoom[1]
+                        y := %ClientName%ExtraZoom[2]
+                        scale := %ClientName%ExtraZoom[3]
+                }
+                Tog++
+                if Tog > 2
+                    Tog := 0
             }
-        alex := InStr(premCheck, "alex")
-        if alex != 0
-            {
-                SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
-                tool.Cust("zoom " alexTog+1 "/2")
-                if alexTog = 0
-                    {
-                        x := alexXYS[1]
-                        y := alexXYS[2]
-                        scale := alexXYS[3]
-                    }
-                if alexTog = 1
-                    {
-                        x := alexZoomXYS[1]
-                        y := alexZoomXYS[2]
-                        scale := alexZoomXYS[3]
-                    }
-                alexTog += 1
-                if alexTog > 1
-                    alexTog := 0
-                goto endPeople
-            }
-        /* dangers := InStr(premCheck, "dangers") ;dangers is a video by video basis
-        if dangers != 0
-            {
-                x := 1
-                y := 1
-                scale := 1
-            } */
-        endPeople:
         if scale = 0
             {
                 block.Off()
@@ -452,6 +424,7 @@ class Prem {
         SendInput("{Click}")
         MouseMove(xpos, ypos)
         SendInput("{Tab 2}")
+        ;// the user hasn't set a zoom for the current client
         if x = 0
             {
                 cleanCopy()
@@ -474,17 +447,14 @@ class Prem {
                 tool.Cust("Setting up your zoom has completed")
                 return
             }
-        else
-            {
-                SendInput(x)
-                SendInput("{Tab}")
-                SendInput(y)
-                SendInput("{Tab}")
-                SendInput(scale)
-                SendInput("{Enter}")
-                block.Off()
-                return
-            }
+        ;// the user HAS set up zooms for the current client
+        SendInput(x)
+        SendInput("{Tab}")
+        SendInput(y)
+        SendInput("{Tab}")
+        SendInput(scale)
+        SendInput("{Enter}")
+        block.Off()
     }
 
     /**

@@ -7,6 +7,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Added `getHTMLTitle.ahk` to return the title of a passed html object
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
+- `prem.zoom()` now uses `winget.ProjClient()` and references that value instead of hard coding for every client
 
 `winget {`
 - Added `ProjClient()` to retrieve the name of the client the current project is for by stripping the directory path in the title
