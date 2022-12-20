@@ -193,11 +193,13 @@ save()
         winget.PremName(&premCheck, &titleCheck, &saveCheck)
     if WinExist(editors.AE.winTitle)
         winget.AEName(&aeCheck, &aeSaveCheck)
-    if InStr(premCheck, "(Not Responding)") || InStr(aeCheck, "(Not Responding)")
+    ;// if the program is not responding, we'll reset the timer and cancel the attempted save
+    if InStr(premCheck ?? 0, "(Not Responding)") || InStr(aeCheck ?? 0, "(Not Responding)")
         {
             SetTimer(, -retry)
             goto theEnd
         }
+    ;// if a save isn't necessary, we'll simply skip the save attempt
     if saveCheck != "*" && aeSaveCheck != "*"
         goto end
 
