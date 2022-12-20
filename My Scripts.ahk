@@ -49,7 +49,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <GUIs\hotkeysGUI>
 ;#Include right click premiere.ahk ; this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
-#Requires AutoHotkey v2.0-beta.12
+#Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.25.1
@@ -58,15 +58,15 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 
 ; ============================================================================================================================================
 ;
-; 														  THIS SCRIPT IS FOR v2.0+ OF AUTOHOTKEY
+; 													 THIS SCRIPT IS DESIGNED FOR v2.0 OF AUTOHOTKEY
 ;				 											   IT WILL NOT RUN IN v1.1
 ;									--------------------------------------------------------------------------------
 ;										           Everything in this script is functional within v2.0
 ;									   any code like `errorLog()` or `hardReset()` etc are all functions and defined
-;										in the various Functions.ahk scripts. Look there for specific code to edit.
+;										in the various `..\lib\` scripts. Look there for specific code to edit.
 ;
 ;                                       any code like `block.On()` or `tool.Cust()` etc are functions within a class
-;										       and also defined within the various Functions.ahk scripts.
+;										       and also defined within the various `..\lib\` scripts.
 ;
 ; ============================================================================================================================================
 ;
@@ -91,7 +91,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ; I now use VSCode which can be found here: https://code.visualstudio.com/
 ; AHK (and v2.0) syntax highlighting can be installed within the program itself.
 
-; If you EVER get stuck in some code within any of these scripts REFRESH THE SCRIPT - by default I have it set to win + shift + r - and it will work anywhere (unless you're clicked on a program run as admin) if refreshing doesn't work open up task manager with ctrl + shift + esc and use your keyboard to find all instances of autohotkey and force close them
+; If you EVER get stuck in some code within any of these scripts REFRESH THE SCRIPT - by default I have it set to win + shift + r - and it will work anywhere (unless you're clicked on a program run as admin) if refreshing doesn't work open up task manager with ctrl + shift + esc and use your keyboard to find all instances of autohotkey and force close them.
 
 ; =======================================================================================================================================
 ;
@@ -107,7 +107,7 @@ startup.firstCheck(MyRelease) ;runs the firstCheck() function
 startup.oldError() ;runs the loop to delete old log files
 startup.adobeTemp(MyRelease) ;runs the loop to delete cache files
 startup.libUpdateCheck() ;runs a loop to check for lib updates
-startup.updateAHK()
+startup.updateAHK() ;checks for a newer version of ahk and alerts the user asking if they wish to download it
 
 ;=============================================================================================================================================
 ;

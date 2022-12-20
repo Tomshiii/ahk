@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2022/12/20
- * @version 1.0.4.3
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -108,18 +108,19 @@ class WinGet {
                     premCheck := false
                     titleCheck := ""
                     saveCheck := ""
-                    return
+                    return false
                 }
             premCheck := WinGetTitle(editors.Premiere.class)
             if premCheck = ""
                 premCheck := WinGetTitle(editors.Premiere.winTitle)
             titleCheck := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
+            return true
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e, A_ThisFunc "()")
-            return
+            return false
         }
     }
 
@@ -135,16 +136,53 @@ class WinGet {
                 {
                     aeCheck := false
                     aeSaveCheck := ""
-                    return
+                    return false
                 }
             aeCheck := WinGetTitle(editors.AE.winTitle)
             aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
+            return true
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e, A_ThisFunc "()")
-            return
+            return false
         }
+    }
+
+    /**
+     * This function is designed to retrieve the name of the client using some string manipulation of the dir path within Premiere's title. It uses `ptf.comms` as the "root" dir and expects the next folder in the path to be the client name.
+     * @return {String} The clients name
+     */
+    static ProjClient()
+    {
+        /**
+         * cutting repeat code
+         */
+        err(Err) {
+            tool.Cust(Err, 2.0)
+            errorLog(, A_ThisFunc "()", Err, A_LineFile, A_LineNumber)
+        }
+        ;// if the user doesn't have either editors active
+        if !WinActive(editors.Premiere.winTitle) && !WinActive(editors.AE.winTitle) {
+                err("editors aren't active")
+                return false
+            }
+        ;// if PremName fails to grab the title
+        if !this.PremName(&premCheck, &titleCheck) {
+                err("Unable to perform action as title is unable to be obtained")
+                return false
+            }
+        path := SplitPathObj(premCheck)
+        ;// if the comms folder isn't in the title path
+        if !InStr(path.dir, ptf.comms) {
+                err("``ptf.comms`` folder not found in Premiere title")
+                return false
+            }
+        return ClientName := SubStr(
+            premCheck,                                                      ;// string
+            start := (InStr(premCheck, ptf.comms) + StrLen(ptf.comms) + 1), ;// starting pos
+            InStr(premCheck, "\",, start, 1) - start                        ;// length
+        )
     }
 
     /**
@@ -157,9 +195,11 @@ class WinGet {
             id := WinGetProcessName("A")
             if WinActive("ahk_exe explorer.exe")
                 id := "ahk_class CabinetWClass"
+            return true
         } catch as e {
             tool.Cust("couldn't grab active window")
             errorLog(e, A_ThisFunc "()")
+            return false
         }
     }
 

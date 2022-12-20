@@ -1,5 +1,5 @@
 #SingleInstance force ;only one instance of this script may run at a time!
-#Requires AutoHotkey v2.0-beta.12
+#Requires AutoHotkey v2.0
 
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>

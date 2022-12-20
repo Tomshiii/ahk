@@ -51,9 +51,9 @@ ytDownload(args := "", folder := A_ScriptDir) {
     fileTitle := URLTitle " [" SubStr(A_Clipboard, InStr(A_Clipboard, "=",, 1, 1) + 1) "]"
     if FileExist(expPath "\" fileTitle ".mkv")
         {
-            convert2(Format('ffmpeg -i `"{}.mkv`" -codec copy `"{}.mp4`"', fileTitle, URLTitle,))
+            convert2(Format('ffmpeg -i `"{}.mkv`" -codec copy `"{}.mp4`"', fileTitle, URLTitle))
             sleep 1000
-            if FileExist(expPath "\" fileTitle ".mp4") ;// ensure the conver2() worked before deleting
+            if FileExist(expPath "\" fileTitle ".mp4") || FileExist(expPath "\" URLTitle ".mp4") ;// ensure the conver2() worked before deleting
                 FileDelete(expPath "\" fileTitle ".mkv")
         }
     A_Clipboard := oldClip

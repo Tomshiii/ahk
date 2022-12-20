@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2022/12/17
- * @version 1.0.5
+ * @date 2022/12/20
+ * @version 1.0.6
  ***********************************************************************/
 
 class ptf {
@@ -58,6 +58,18 @@ class ptf {
     static PremYear          := IniRead(this.SettingsLoc "\settings.ini", "adjust", "prem year", A_Year)
     static AEYear            := IniRead(this.SettingsLoc "\settings.ini", "adjust", "ae year", A_Year)
 
+    /**
+     * A little function to return the proper folder for the version of premiere/ae the user is using.
+     */
+    static trimAdobeYear(which) {
+        switch which {
+            case "premiere":
+                return subVer := SubStr(this.PremYear, -2) ".0"
+            case "ae":
+                return trimVer := LTrim(this.aeIMGver, "v")
+        }
+    }
+
     ;complete file links
     static __Item := Map(
         "settings",        this.SettingsLoc "\settings.ini",
@@ -67,7 +79,10 @@ class ptf {
         "Game List",       this.lib "\gameCheck\Game List.ahk",
         "textreplace",     this.rootDir "\..\textreplace\textreplace.ahk",
         "textreplaceUser", this.SupportFiles "\textreplace\textreplace.ahk",
+
+        ;adobe stuff
         "premTemp",        this.Backups "\Adobe Backups\Premiere\Template\temp.prproj",
+        "PremPresets",     A_MyDocuments "\Adobe\Premiere Pro\" this.trimAdobeYear("premiere") "\Profile-" A_UserName "\Effect Presets and Custom Items.prfpset", ;this could be named different for you depending on what your adobe username is!!
 
         ;shortcuts
         "Premiere",        this.Shortcuts "\Adobe Premiere Pro.exe.lnk",

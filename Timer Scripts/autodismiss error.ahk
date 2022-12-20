@@ -1,5 +1,5 @@
 ﻿#SingleInstance force ;only one instance of this script may run at a time!
-#Requires AutoHotkey v2.0-beta.5 ;this script requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0 ;this script requires AutoHotkey v2.0
 
 ; { \\ #Includes
 #Include <Classes\ptf>

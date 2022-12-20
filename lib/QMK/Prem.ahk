@@ -3,6 +3,7 @@
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\ptf>
+#Include <Classes\winget>
 #Include <Functions\errorLog>
 #Include <QMK\unassigned>
 
@@ -53,7 +54,26 @@ y::prem.valuehold("opacity")
 n::prem.zoom()
 ;Space::unassigned()
 
-t::prem.valuehold("level") ;press then hold this hotkey and drag to increase/decrese level volume. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+t:: ;preset for applying an eq effect to lessen harshness of clipping
+{
+	;// attempt to grab client name from the title dir path
+	ClientName := WinGet.ProjClient()
+	if !ClientName
+		{
+			tool.Cust(A_ThisHotkey ":: failed", 2.0)
+			errorLog(, A_ThisHotkey "::", A_ThisHotkey ":: failed", A_LineFile, A_LineNumber)
+			return
+		}
+	;// read the preset file
+	preset := FileRead(ptf["PremPresets"])
+	SendInput(effectControls)
+	SendInput(effectControls)
+	;// check if preset for current proj exists
+	if InStr(preset, "fix clipping_" ClientName)
+		prem.preset("fix clipping_" ClientName)
+	else
+		prem.preset("fix clipping_default")
+}
 g:: ;this hotkey will fill the frame to fit the window
 {
 	SendInput(timelineWindow)

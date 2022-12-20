@@ -3,7 +3,7 @@
 ;there are more includes down below
 ; }
 
-#Requires AutoHotkey v2.0-beta.12
+#Requires AutoHotkey v2.0
 SetWorkingDir(ptf.rootDir)
 SetDefaultMouseSpeed(0) ;sets default MouseMove speed to 0 (instant)
 SetWinDelay(0) ;sets default WinMove speed to 0 (instant)

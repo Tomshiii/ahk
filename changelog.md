@@ -1,10 +1,19 @@
 # <> Release 2.8.x -
+Congratulations to ahk for `v2.0.0` hitting a full release! 🎉🎉
+
+All scripts have been updated to require `v2.0` as a minimum!
 
 ## Functions
 - Added `getHTMLTitle.ahk` to return the title of a passed html object
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
-- 2nd and 3rd `VarRefs` in `winget.Prem/AEName()` are no longer required
+
+`winget {`
+- Added `ProjClient()` to retrieve the name of the client the current project is for by stripping the directory path in the title
+
+`PremName()/AEName()`
+- 2nd and 3rd `VarRefs` are now optional and no longer required
+- All return paths that indicate an error/fail now pass back `false` so `if !winget.PremName()` works as expected
 
 ## Streamdeck AHK
 - `New Premiere.ahk` now copies a template `.prproj` file instead of manually creating one

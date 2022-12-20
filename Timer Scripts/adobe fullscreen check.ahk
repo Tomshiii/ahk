@@ -1,5 +1,5 @@
 #SingleInstance force
-#Requires AutoHotkey v2.0-beta.12
+#Requires AutoHotkey v2.0
 
 ; { \\ #Includes
 #Include <Functions\errorLog>
