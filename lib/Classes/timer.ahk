@@ -1,4 +1,3 @@
-#Include <Classes\tool>
 ;// based on code found: https://www.autohotkey.com/docs/v2/lib/SetTimer.htm#ExampleClass
 
 class count {
@@ -16,18 +15,23 @@ class count {
         this.timer := ObjBindMethod(this, "Tick")
     }
 
+    /**
+     * This function starts the timer
+     */
     start() {
         SetTimer(this.timer, this.interval)
-        ; tool.Cust("Counter started")
     }
 
+    /**
+     * This function stops the timer
+     */
     stop() {
-        ; To turn off the timer, we must pass the same object as before:
         SetTimer(this.timer, 0)
-        ; tool.Cust("Counter stopped at " this.count)
     }
 
-    ; In this example, the timer calls this method:
+    /**
+     * This function is called by the timer and updates the instance var `count`
+     */
     Tick() {
         ++this.count
     }
