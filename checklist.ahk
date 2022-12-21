@@ -6,23 +6,23 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\block>
-#Include <Classes\checklist\timers>
 #Include <Functions\floorDecimal>
 #Include <Functions\errorLog>
 #Include <Functions\detect>
 #Include <GUIs\tomshiBasic>
 ; <checklist funcs> ;everything in <lib\checklist\> is needed for this script
-                    ;but these are just the ones that can be defined anywhere
+;but these are just the ones that can be defined anywhere
+#Include <checklist\timers>
 #Include <checklist\generateIni>
 #Include <checklist\premNotOpen>
 #Include <checklist\problemDir>
 #Include <checklist\trythenDel>
 #Include <checklist\timers>
 #Include <checklist\log>
-#Include <checklist\close>
 #Include <checklist\getPath>
 #Include <checklist\haltChecklist>
 #Include <checklist\checkSettings>
+#Include <checklist\msgButton>
 ; }
 
 TraySetIcon(ptf.Icons "\checklist.ico")
@@ -47,6 +47,7 @@ checklist := ""
 global WaitTrack := 0
 global morethannine := unset
 global morethan11 := unset
+
 if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist is reloaded, we don't want it to automatically attempt to grab the title of the currently open premiere project - this allows us to open/create new projects while premiere is open
     {
         premNotOpen(&checklist, &logs, &path)
@@ -179,13 +180,7 @@ newDate(&today)
 ;constructing the GUI
 #Include <checklist\contruct>
 
-
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", logs)
-SetTimer(reminder, -ms)
-
-;timer
-timer := checklistTimer(1000)
-global timer.Count := timer.Count + startValue
 
 if darkToolTrack = 1
     which()
@@ -193,3 +188,4 @@ MyGui.OnEvent("Close", ExitFunc.Bind("", ""))
 MyGui.Show("AutoSize NoActivate")
 MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;finish defining GUI
+#Include <checklist\close>

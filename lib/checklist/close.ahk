@@ -2,13 +2,6 @@
  * This function contains the logic on what to do when the checklist is closed
  */
 close(*) {
-    if !IsSet(timer.count)
-        {
-            if !WinExist("Editing Checklist - ")
-                Run(A_ScriptFullPath)
-            else
-                ExitApp()
-        }
     forFile := Round(timer.count / 3600, 3)
     checkHours := IniRead(checklist, "Info", "time")
     if timer.count != checkHours
@@ -20,9 +13,9 @@ close(*) {
         FileAppend("\\ The checklist was closed : " timeStr "`n", logs)
     else
         FileAppend("\\ The checklist was closed : " timeStr " -- Hours after closing = " forFile " -- seconds at close = " timer.count "`n", logs)
-    SetTimer(reminder, 0)
-    if log.logElapse = true
-        log.timeStop()
+    timer.reminder.stop()
+    if timer.logger.logActive = true
+        timer.logger.timeStop()
     ;MyGui.Destroy()
     return
 }

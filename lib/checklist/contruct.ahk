@@ -14,9 +14,16 @@ titleText.SetFont("bold")
 ;// creating checkboxes
 checkboxes.gatherCheckboxes()
 
+;// initiate timer
+timer  := checklistTimer()
+timer.reminder.start()
+
 ;// creating buttons
 #Include <checklist\buttons>
 
 ;// creating timer text
 #Include <checklist\timerText>
 MyGui.AddButton("Default X0 Y0 W0 H0", ".")
+
+;// set startvalue
+timer.Count := timer.Count + startValue
