@@ -30,6 +30,8 @@ Cleaned up the entire class.
 ## > Streamdeck AHK
 - `New Premiere.ahk` now copies a template `.prproj` file instead of manually creating one
 - Added `thumbnail.ahk` that uses `ytDownload()` to download a videos thumbnail
+- Moved `speed` & `scale` scripts into their own folders
+    - `scale` scripts now work in `Resolve` as well as `Premiere`
 
 `ytDownload()`
 - Fixed bug relating to incorrect filepath variable

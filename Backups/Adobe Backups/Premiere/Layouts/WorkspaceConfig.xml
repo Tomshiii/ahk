@@ -67,8 +67,8 @@
 <key>MinPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-1</int>
-<int type='signed' size='32'>-1</int>
+<int type='signed' size='32'>-32000</int>
+<int type='signed' size='32'>-32000</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -92,10 +92,10 @@
 <array>
 <array.type><string/></array.type>
 <string>20220102T043215.207365</string>
-<string>20221208T063315.867151</string>
+<string>20221220T034048.234154</string>
 <string>20201116T003810</string>
 <string>20221115T041925.642035</string>
-<string>20221208T063315.837149</string>
+<string>20221221T003205.087785</string>
 <string>20211129T055027.354664</string>
 <string>20220614T030634.122250</string>
 <string>20200630T070242</string>

@@ -1,0 +1,1 @@
+These scripts are to adjust the speed of a clip within Adobe Premiere
