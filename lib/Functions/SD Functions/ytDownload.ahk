@@ -32,7 +32,7 @@ ytDownload(args := "", folder := A_ScriptDir) {
             tool.Cust("Clipboard doesn't contain a youtube link")
             return
         }
-    command := Format("yt-dlp {} {} `"{}`""
+    command := Format('yt-dlp {} -P `"{}`" `"{}`"'
                      , args, folder, oldClip
                     )
     A_Clipboard := oldClip

@@ -25,8 +25,9 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Added `thumbnail.ahk` that uses `ytDownload()` to download a videos thumbnail
 
 `ytDownload()`
-- Fix bug relating to incorrect filepath variable
-- Fix function activating premiere instead of explorer
+- Fixed bug relating to incorrect filepath variable
+- Fixed bug causing function to activate premiere instead of explorer
+- Fixed bug causing download to fail if attempting to set the download url from the old clipboard
 - Will now automatically convert downloaded mkv to mp4 files using `convert2`
     - Changed args for `video.ahk` and `vfx.ahk`
 
