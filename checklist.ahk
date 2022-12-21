@@ -6,6 +6,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\block>
+#Include <Classes\checklist\timers>
 #Include <Functions\floorDecimal>
 #Include <Functions\errorLog>
 #Include <Functions\detect>
@@ -21,6 +22,7 @@
 #Include <checklist\close>
 #Include <checklist\getPath>
 #Include <checklist\haltChecklist>
+#Include <checklist\checkSettings>
 ; }
 
 TraySetIcon(ptf.Icons "\checklist.ico")
@@ -28,7 +30,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.10.1"
+version := "v2.11-alpha.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -154,24 +156,9 @@ else
         end:
     }
 
-globalCheckTool := 1
-globalDarkTool := 1
-;grabbing the location dir of the users copy of tomshi's scripts. This will allow any deployed checklist scripts to automatically update
-if FileExist(ptf["settings"])
-    {
-        location := IniRead(ptf["settings"], "Track", "working dir")
-        tooltipSettings := IniRead(ptf["settings"], "Settings", "checklist tooltip", "true")
-        if tooltipSettings = "true"
-            global globalCheckTool := 1
-        else
-            global globalCheckTool := 0
-
-        darkSettings := IniRead(ptf["settings"], "Settings", "dark mode", "true")
-        if darkSettings = "true"
-            global globalDarkTool := 1
-        else
-            global globalDarkTool := 0
-    }
+;// setting default settings for GUI
+global globalCheckTool := checkTooltips()
+global globalDarkTool := checkDark()
 
 #Include <checklist\verCheck>
 
@@ -197,9 +184,8 @@ FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour
 SetTimer(reminder, -ms)
 
 ;timer
-global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
-global ElapsedTime := 0 + startValue ;a starting value for the timer
-global logActive := false
+timer := checklistTimer(1000)
+global timer.Count := timer.Count + startValue
 
 if darkToolTrack = 1
     which()

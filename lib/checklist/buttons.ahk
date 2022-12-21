@@ -18,6 +18,7 @@ plusButton := MyGui.Add("Button","X+15 w50 h30", "+add") ;defining the + button
 plusButton.OnEvent("Click", plusFive) ;what happens when you click the + button
 
 startButton := MyGui.Add("Button","X+-185 w50 h30", "start") ;defining the start button
-startButton.OnEvent("Click", start) ;what happens when you click the start button
+;//! I don't these will work, might have to do the objbind thing from timer class
+startButton.OnEvent("Click", timer.start()) ;what happens when you click the start button
 stopButton := MyGui.Add("Button", "y+-30 w0 h0", "stop") ;defining the stop button and making it invisible for now
-stopButton.OnEvent("Click", stop) ;what happens when you click the stop button
+stopButton.OnEvent("Click", timer.stop()) ;what happens when you click the stop button

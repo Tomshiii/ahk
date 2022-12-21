@@ -1,21 +1,21 @@
 /**
  * The function that is called when the neccesary amount of minutes have passed and information needs to be logged
  */
-logElapse() {
+/* logElapse() {
     global logActive := true
-    forFile := Round(ElapsedTime / 3600, 3)
+    forFile := Round(timer.count / 3600, 3)
     newDate(&today)
     timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
-    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " timeStr " -- current hours = " forFile " -- current seconds = " ElapsedTime "`n", logs)
+    FileAppend(A_Tab "\\ " minutes2 "min has passed since last log : " timeStr " -- current hours = " forFile " -- current seconds = " timer.count "`n", logs)
     SetTimer(, -ms10)
-}
+} */
 
 
 /**
  * This function is called when a checkbox is ticked and handles writing the state of any changed checkboxes to the checklist.ini file and then logging that information in the checklist_logs.txt file
  */
 logCheckbox(*) {
-    forFile := Round(ElapsedTime / 3600, 3)
+    forFile := Round(timer.count / 3600, 3)
     logState := "enabled"
     logCheck := "enabling"
     Saved := MyGui.Submit(0)  ; Save the contents of named controls into an object.
@@ -51,7 +51,7 @@ logCheckbox(*) {
                         }
                     newDate(&today)
                     timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
-                    FileAppend("\\ ``" name "`` was " logState " : " timeStr " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " ElapsedTime "`n", logs)
+                    FileAppend("\\ ``" name "`` was " logState " : " timeStr " -- Hours after " logCheck "  = " forFile " -- seconds after " logCheck " = " timer.count "`n", logs)
                 }
         }
 }

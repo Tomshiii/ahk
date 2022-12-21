@@ -2,28 +2,27 @@
  * This function contains the logic on what to do when the checklist is closed
  */
 close(*) {
-    if !IsSet(ElapsedTime)
+    if !IsSet(timer.count)
         {
             if !WinExist("Editing Checklist - ")
                 Run(A_ScriptFullPath)
             else
                 ExitApp()
         }
-    forFile := Round(ElapsedTime / 3600, 3)
+    forFile := Round(timer.count / 3600, 3)
     checkHours := IniRead(checklist, "Info", "time")
-    if ElapsedTime != checkHours
-        IniWrite(ElapsedTime, checklist, "Info", "time")
+    if timer.count != checkHours
+        IniWrite(timer.count, checklist, "Info", "time")
     newDate(&today)
     timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
 
-    if ElapsedTime = checkHours
+    if timer.count = checkHours
         FileAppend("\\ The checklist was closed : " timeStr "`n", logs)
     else
-        FileAppend("\\ The checklist was closed : " timeStr " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", logs)
-    SetTimer(StopWatch, 0)
+        FileAppend("\\ The checklist was closed : " timeStr " -- Hours after closing = " forFile " -- seconds at close = " timer.count "`n", logs)
     SetTimer(reminder, 0)
-    if logElapse = true
-        SetTimer(logElapse, 0)
+    if log.logElapse = true
+        log.timeStop()
     ;MyGui.Destroy()
     return
 }
@@ -51,7 +50,7 @@ ExitFunc(ExitReason, ExitCode)
             SetTimer(change_msgButton, 0)
             if WinExist("Select commission folder")
                 return
-            stop()
+            timer.stop()
             close()
         }
     else
