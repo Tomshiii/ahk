@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/12/20
- * @version 1.0.5
+ * @date 2022/12/21
+ * @version 1.0.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -163,16 +163,16 @@ class WinGet {
             errorLog(, A_ThisFunc "()", Err, A_LineFile, A_LineNumber)
         }
         ;// if the user doesn't have either editors active
-        if !WinActive(editors.Premiere.winTitle) && !WinActive(editors.AE.winTitle) {
-                err("editors aren't active")
+        if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) {
+                err("Editors aren't open")
                 return false
             }
         ;// if PremName fails to grab the title
-        if !this.PremName(&premCheck, &titleCheck) {
+        if !this.PremName(&premCheck, &titleCheck) && !this.AEName(&aeCheck) {
                 err("Unable to perform action as title is unable to be obtained")
                 return false
             }
-        path := SplitPathObj(premCheck)
+        path := IsSet(premCheck) ? SplitPathObj(premCheck) : SplitPathObj(aeCheck)
         ;// if the comms folder isn't in the title path
         if !InStr(path.dir, ptf.comms) {
                 err("``ptf.comms`` folder not found in Premiere title")
