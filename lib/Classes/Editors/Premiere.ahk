@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/12/20
- * @version 1.0.5.1
+ * @date 2022/12/21
+ * @version 1.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,6 +24,9 @@ class Prem {
     static class := Editors.Premiere.class
     static path := ptf["Premiere"]
 
+    ;// variables used in functions
+    static timer := false
+
     /**
      * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
      * @param {String} item in this function defines what it will type into the search box (the name of your preset within premiere)
@@ -38,8 +41,14 @@ class Prem {
         SendInput(effectControls) ;highlights the effect controls panel
         SendInput(effectControls) ;premiere is dumb, focus things twice
         try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+            loop {
+                if A_Index > 3 && (!IsSet(classX) || width = 0)
+                    throw e
+                ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+                if IsSet(width) && width != 0
+                    break
+            }
         } catch as e {
             block.Off() ;just incase
             tool.Cust("Couldn't get the ClassNN of the desired panel")
@@ -301,13 +310,26 @@ class Prem {
     static zoom()
     {
         resetTime := 5 * 1000 ;convert ms to s
-        reset(time) { ;this function is for a timer we activate anytime a client's zoom has a toggle
+        /**
+         * This function is for a timer we activate anytime a client's zoom has a toggle
+         * @param {Integer} time the current tick count that gets passed in as `A_TickCount`
+         */
+        reset(time) {
+            ;// if the user activates this function before the timer finishes, due to some code below
+            ;// this variable will be set to false. The timer will then see this change and cancel
+            ;// itself so it can be later reset
+            if !this.timer
+                {
+                    SetTimer(, 0)
+                    return
+                }
             if ((A_TickCount - time) >= resetTime) || GetKeyState("F5", "P")
                 {
-                    tool.Cust("zoom toggles reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.355, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
-                    alexTog := 0
-                    chloeTog := 0
+                    tool.Cust("zoom toggle reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.355, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
+                    this.timer := false
+                    Tog := 0
                     SetTimer(, 0)
+                    return
                 }
         }
 
@@ -366,7 +388,23 @@ class Prem {
         scale := %ClientName%XYS[3]
         if IsSet(%ClientName%ZoomXYS)
             {
-                SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
+                if !this.timer
+                    {
+                        this.timer := true
+                        SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
+                    }
+                else
+                    {
+                        ;// if the timer is already active, we first have to stop it before restarting it
+                        ;// since the timer checks the state of `this.timer` which is a variable at the top of this class, we simply set that variable to false
+                        ;// sleep for a fraction of a second so the timer has time to notice the change
+                        ;// then reset the value and reset the timer
+                        ;// otherwise you end up with multiple tooltip stating that toggles have been reset
+                        this.timer := false
+                        sleep 50
+                        this.timer := true
+                        SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
+                    }
                 if IsSet(%ClientName%ExtraZoom)
                     tool.Cust("zoom " Tog+1 "/3")
                 else

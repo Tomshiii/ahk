@@ -8,6 +8,10 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
 
+`prem {`
+- `prem.zoom()` will no longer produce multiple tooltips to alert the user that toggles are being reset
+- `preset()` will now loop attempting to get the `classNN` value in an attempt to fix it constantly failing
+
 `winget {`
 - Added `ProjClient()` to retrieve the name of the client the current project is for by stripping the directory path in the title
     - `prem.zoom()` now uses `winget.ProjClient()` and references that value instead of hard coding for every client
@@ -18,6 +22,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 
 ## > Streamdeck AHK
 - `New Premiere.ahk` now copies a template `.prproj` file instead of manually creating one
+- Added `thumbnail.ahk` that uses `ytDownload()` to download a videos thumbnail
 
 `ytDownload()`
 - Fix bug relating to incorrect filepath variable
