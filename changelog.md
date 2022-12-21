@@ -8,6 +8,13 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
 
+`resolve {`
+
+Cleaned up the entire class.
+
+- Cut a lot of repeat code by feeding it through a function
+- Removed KSA values relating to `ImageSearch` coordinates and replaced with class objects containing coordinates
+
 `prem {`
 - `prem.zoom()` will no longer produce multiple tooltips to alert the user that toggles are being reset
 - `preset()` will now loop attempting to get the `classNN` value in an attempt to fix it constantly failing

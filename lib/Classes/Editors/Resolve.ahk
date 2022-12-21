@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2022/12/21
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,39 +24,91 @@ class Resolve {
     static class := Editors.Resolve.class
     static path := ptf.ProgFi "\Blackmagic Design\DaVinci Resolve\Resolve.exe"
 
+    class open {
+        ;// setting imagesearch coordinates
+
+        ;// for the inspector button
+        static inspect := {
+            x1: A_ScreenWidth*0.8,   y1: 0,
+            x2: A_ScreenWidth,       y2: A_ScreenHeight*0.08
+        }
+        ;// for the effects button
+        static effects := {
+            x1: 0,                   y1: 0,
+            x2: A_ScreenWidth*0.2,   y2: this.inspect.y2
+        }
+        ;// for the video effects panel on the top right of the screen
+        static vid := {
+            x1: this.inspect.x1,   y1: this.inspect.y1,
+            x2: this.inspect.x2,   y2: A_ScreenHeight*0.15
+        }
+        ;// for the properties in the video effects panel
+        static prop := {
+            x1: this.vid.x1,   y1: this.inspect.y1,
+            x2: this.inspect.x2,   y2: A_ScreenHeight*0.53
+        }
+        ;// for the open/close button on the top left of the screen
+        static opnCls := {
+            x1: this.effects.x1,   y1: 300,
+            x2: A_ScreenWidth/2,   y2: A_ScreenHeight
+        }
+        ;// for the fx
+        static fx := {
+            x1: this.effects.x1,   y1: this.opnCls.y1,
+            x2: this.opnCls.x2,   y2: A_ScreenHeight
+        }
+
+        /**
+         * This function cuts massive amounts of repeat code. It handles checking if a certain UI element is selected or not.
+         * @param {any} objCoords the object of coordinates you wish to pass into the function
+         * @param {any} pngName1 the name of the first image
+         * @param {any} pngName2 the name of the second image
+         * @param {string} errorMsg the error message you wish for the tooltip to use
+         * @returns {number}
+         */
+        static open(objCoords, pngName1, pngName2, errorMsg := "") {
+            try {
+                ;// they NEED to be ordered this way so the values don't get overridden
+                img1 := ImageSearch(&xi, &yi, objCoords.x1, objCoords.y1, objCoords.x2, objCoords.y2, "*2 " ptf.Resolve pngName1 ".png")
+                img2 := ImageSearch(&xi, &yi, objCoords.x1, objCoords.y1, objCoords.x2, objCoords.y2, "*2 " ptf.Resolve pngName2 ".png")
+                if !img1 && !img2
+                    throw Error e
+                if img1
+                    return true
+                MouseMove(xi, yi)
+                SendInput("{Click}") ;this opens the inspector tab
+                sleep 100
+                return true
+            } catch as e {
+                block.Off() ;// just incase
+                tool.Cust(errorMsg, 1,, 2)
+                errorLog(e, A_ThisFunc "()")
+                Exit()
+            }
+        }
+
+    }
+
     /**
      * A function to set the scale of a video within resolve
      * @param {Integer} value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
      * @param {String} property is the property you want this function to type a value into (eg. zoom)
      * @param {Integer} plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
      */
-    static scale(value, property, plus)
+    static scale(value, property, plus := 0)
     {
-        getHotkeys(&first, &second)
-        KeyWait(second)
+        if (A_ThisHotkey != "") && (InStr(A_ThisHotkey, "&") || StrLen(A_ThisHotkey) = 2)
+            {
+                getHotkeys(&first, &second)
+                KeyWait(second)
+            }
         coord.w()
         block.On()
         SendInput(resolveSelectPlayhead)
         MouseGetPos(&xpos, &ypos)
-        if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " ptf.Resolve "inspector2.png")
-            {
-                MouseMove(xi, yi)
-                click ;this opens the inspector tab
-            }
-        if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "video.png")
-            {
-                block.Off()
-                MouseMove(xpos, ypos)
-                tool.Cust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
-                return
-            }
-        if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png")
-            {
-                MouseMove(xn, yn)
-                click ;"2196 139" ;this highlights the video tab
-            }
-        if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve property "2.png")
+        this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        this.open.open(this.open.vid, "video", "videoN", "video tab")
+        if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property "2.png")
             {
                 block.Off()
                 tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
@@ -104,68 +156,36 @@ class Resolve {
     {
         getHotkeys(&first, &second)
         KeyWait(second)
-        winget.isFullscreen(&title, &full)
-        if full = 0
-            {
-                SplitPath(A_LineFile, &filename)
-                tool.Cust("This function ``" A_ThisFunc "()`` may not work properly if the window isn't maximised`nFile: " filename "`nLine number: " A_LineNumber-14, 5.0)
-                return
-            }
+        if !winget.isFullscreen(&title, this.winTitle)
+        {
+            SplitPath(A_LineFile, &filename)
+            tool.Cust("This function ``" A_ThisFunc "()`` may not work properly if the window isn't maximised`nFile: " filename "`nLine number: " A_LineNumber-14, 5.0)
+            return
+        }
         coord.w()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        if !ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " ptf.Resolve "effects.png") && !ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " ptf.Resolve "effects2.png")
-            {
-                block.Off()
-                tool.Cust("the effects button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the effects button", A_LineFile, A_LineNumber)
-                return
-            }
-        else if ImageSearch(&xe, &ye, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*1 " ptf.Resolve "effects.png") ;checks to see if the effects button is deactivated
-            {
-                MouseMove(xe, ye)
-                SendInput("{Click}")
-            }
-        if !ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "closed.png") && !ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "open.png")
-            {
-                block.Off()
-                tool.Cust("open/close button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the open/close button", A_LineFile, A_LineNumber)
-                return
-            }
-        else if ImageSearch(&xclosed, &yclosed, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "closed.png") ;checks to see if the effects window sidebar is opened
-            {
-                MouseMove(xclosed, yclosed)
-                SendInput("{Click}")
-            }
-        if !ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve folder ".png") && !ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve folder "2.png")
-            {
-                block.Off()
-                tool.Cust("the fxfolder",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the fxfolder", A_LineFile, A_LineNumber)
-                return
-            }
-        else if ImageSearch(&xfx, &yfx, 8, 8, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve folder "2.png") ;checks to see if the drop down option you want is activated
-            {
-                MouseMove(xfx, yfx)
-                SendInput("{Click}")
-            }
-        if ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search2.png") ;checks to see if the search icon is deactivated
-            {
-                MouseMove(xs, ys)
-                SendInput("{Click}")
-            }
-        else if ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search3.png") ;checks to see if the search icon is activated
-            {
-                MouseMove(xs, ys)
-                SendInput("{Click 2}")
-            }
-        else ;if everything fails, this else will trigger
+        this.open.open(this.open.effects, "effects2", "effects", "the effects button")
+        this.open.open(this.open.opnCls, "open", "closed", "the open/close button")
+        this.open.open(this.open.fx, folder, folder "2", "the fxfolder")
+        srch2 := ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search2.png")
+        srch3 := ImageSearch(&xs2, &ys2, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search3.png")
+        if !srch2 && !srch3
             {
                 block.Off()
                 tool.Cust("the search button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(, A_ThisFunc "()", "Was unable to find the search button", A_LineFile, A_LineNumber)
                 return
+            }
+        if srch2
+            {
+                MouseMove(xs, ys)
+                SendInput("{Click}")
+            }
+        else
+            {
+                MouseMove(xs2, ys2)
+                SendInput("{Click 2}")
             }
         sleep 50
         SendInput(effect)
@@ -201,25 +221,9 @@ class Resolve {
         block.On()
         SendInput(resolveSelectPlayhead)
         MouseGetPos(&xpos, &ypos)
-        if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " ptf.Resolve "inspector2.png")
-            {
-                MouseMove(xi, yi)
-                click ;this opens the inspector tab
-            }
-        if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "video.png")
-            {
-                block.Off()
-                MouseMove(xpos, ypos)
-                tool.Cust("video tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the video tab", A_LineFile, A_LineNumber)
-                return
-            }
-        if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png")
-            {
-                MouseMove(xn, yn)
-                click ;"2196 139" ;this highlights the video tab
-            }
-        if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve property "2.png")
+        this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        this.open.open(this.open.vid, "video", "videoN", "video tab")
+        if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property "2.png")
             {
                 block.Off()
                 tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
@@ -252,17 +256,9 @@ class Resolve {
         coord.w()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "videoN.png") ;makes sure the video tab is selected
-            {
-                MouseMove(xn, yn)
-                click
-            }
-        if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*5 " ptf.Resolve "inspector2.png")
-            {
-                MouseMove(xi, yi)
-                click
-            }
-        if !ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve button ".png") && !ImageSearch(&xh, &yh, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve button "2.png")
+        this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        this.open.open(this.open.vid, "video", "videoN", "video tab")
+        if !ImageSearch(&xh, &yh, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve button ".png") && !ImageSearch(&xh, &yh, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve button "2.png")
             {
                 block.Off()
                 MouseMove(xpos, ypos)
@@ -291,25 +287,9 @@ class Resolve {
         block.On()
         SendInput(resolveSelectPlayhead)
         MouseGetPos(&xpos, &ypos)
-        if ImageSearch(&xi, &yi, inspectx1, inspecty1, inspectx2, inspecty2, "*2 " ptf.Resolve "inspector2.png")
-            {
-                MouseMove(xi, yi)
-                click ;this opens the inspector tab
-            }
-        if !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "audio.png") && !ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "audio2.png")
-            {
-                block.Off()
-                MouseMove(xpos, ypos)
-                tool.Cust("audio tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the audio tab", A_LineFile, A_LineNumber)
-                return
-            }
-        if ImageSearch(&xn, &yn, vidx1, vidy1, vidx2, vidy2, "*5 " ptf.Resolve "audio.png")
-            {
-                MouseMove(xn, yn)
-                click ;"2196 139" ;this highlights the video tab
-            }
-        if !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve "volume.png") && !ImageSearch(&xz, &yz, propx1, propy1, propx2, propy2, "*5 " ptf.Resolve "volume2.png") ;searches for the volume property
+        this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        this.open.open(this.open.vid, "audio2", "audio", "audio tab")
+        if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve "volume.png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve "volume2.png") ;searches for the volume property
             {
                 block.Off()
                 tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
