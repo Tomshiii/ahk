@@ -6,6 +6,7 @@
 
 /**
  * A function to loop through and either reload or hard reset all* active ahk scripts
+ * If this function attempts a reload and fails, it will attempt to read a registry value that contains the users default editor. This value "should" be set after installing ahk. If it isn't, this function will default to VSCode
  */
 reload_reset_exit(which, includeChecklist?) {
     all := false
@@ -50,13 +51,45 @@ reload_reset_exit(which, includeChecklist?) {
             Reload()
             Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
             Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
-                if Result = "Yes"
+            if Result = "No"
+                return
+            /**
+             * Cut repeat code
+             */
+            fallback() {
+                if WinExist(browser.vscode.winTitle)
                     {
-                        if WinExist(browser.vscode.winTitle)
-                            WinActivate
-                        else
-                            Run(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
+                        WinActivate
+                        return
                     }
+                if FileExist(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
+                    {
+                        Run(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
+                        return
+                    }
+                editor:= MsgBox("The users default editor could not be determined, would you like to set an editor now?", "Invalid default Editor", "4 32 4096")
+                if editor = "No"
+                    return
+                if !FileExist(A_AhkPath "..\UX\ui-editor.ahk")
+                    {
+                        path := SplitPathObj(A_AhkPath)
+                        MsgBox("Couldn't find the ``ui-editor.ahk`` script, it's usually found here:`n" path.dir "\ui-editor.ahk")
+                        return
+                    }
+                Run(A_AhkPath "..\UX\ui-editor.ahk")
+            }
+            defaultEditor := RegRead("HKCR\AutoHotkeyScript\shell\edit\command", "(Default)")
+            if !IsSet(defaultEditor) || !defaultEditor
+                {
+                    fallback()
+                    return
+                }
+            Run(defaultEditor,,, &pid)
+            if !WinWait("ahk_pid " PID,, 5)
+                {
+                    fallback()
+                    return
+                }
         case "exit":
             detect()
             if WinExist("My Scripts.ahk")
