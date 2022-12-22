@@ -7,6 +7,8 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Added `getHTMLTitle.ahk` to return the title of a passed url
 - Added `ae.wiggle()`
 - Fixed `getHTML.ahk` not including proper `#Includes`
+- Added `openSocials()` to open the youtube/twitch of the current project client
+    - Added `openYoutube.ahk` & `openTwitch.ahk` as streamdeck scripts
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
 - `getHotkeys()` `VarRefs` are now optional
 - If `reload_reset_exit()` fails to reload, it will now read a registry value set during the ahk install process that contains the users default editor. If this value is for some reason **not** set, the function will default to VSCode before futher falling back to asking the user to select a new default editor.
