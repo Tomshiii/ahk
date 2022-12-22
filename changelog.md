@@ -49,6 +49,7 @@ Cleaned up the entire class.
 
 ## > Other Changes
 - `prem.mouseDrag()` & `right click premiere` no longer stop each other with their tooltip
+- `CreateSymLink.ahk` now attempts to backup the lib folder if it already exists
 
 `autosave.ahk`
 - Will now check if `Premiere/AE` is not responding and will reset the timer if true
