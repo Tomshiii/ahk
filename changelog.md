@@ -47,5 +47,8 @@ Cleaned up the entire class.
     - Changed args for `video.ahk` and `vfx.ahk`
 
 ## > Other Changes
-- `autosave.ahk` will now check if `Premiere/AE` is not responding and will reset the timer if true
 - `prem.mouseDrag()` & `right click premiere` no longer stop each other with their tooltip
+
+`autosave.ahk`
+- Will now check if `Premiere/AE` is not responding and will reset the timer if true
+- Will now check to ensure that `{RButton}` & `\` aren't being held down before performing a save attempt
