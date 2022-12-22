@@ -7,6 +7,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Added `getHTMLTitle.ahk` to return the title of a passed url
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
+- `getHotkeys()` `VarRefs` are now optional
 
 `resolve {`
 

@@ -5,7 +5,7 @@
  * @param {var} first is the variable that will be filled with the first activation hotkey. Must be written as `&var`
  * @param {var} second is the variable that will be filled with the second activation hotkey. Must be written as `&var`
 */
-getHotkeys(&first, &second) {
+getHotkeys(&first?, &second?) {
     getHotkey := A_ThisHotkey
     length := StrLen(getHotkey)
     if length = 2
