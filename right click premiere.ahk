@@ -97,9 +97,12 @@ Rbutton::
                 static yValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
                 static xControl := x + 238 ;accounting for the column to the left of the timeline
                 static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
-                tool.Wait()
-				script := SplitPathObj(A_LineFile)
-                tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 2.0)
+				SetTimer(tools, -100)
+				tools() {
+					tool.Wait()
+					script := SplitPathObj(A_LineFile)
+					tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 2.0)
+				}
             } catch as e {
                 tool.Wait()
                 tool.Cust("Couldn't find the ClassNN value")

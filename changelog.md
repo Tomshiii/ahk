@@ -44,3 +44,4 @@ Cleaned up the entire class.
 ## > Other Changes
 - `autosave.ahk` will now check if `Premiere/AE` is not responding and will reset the timer if true
 - `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
+- `prem.mouseDrag()` & `right click premiere` no longer stop each other with their tooltip
