@@ -44,6 +44,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Functions\youMouse>
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
+#Include <Functions\getHotkeys>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
@@ -52,7 +53,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.2
+;\\v2.25.3
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -630,6 +631,49 @@ F23::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hot
 ;There use to be a lot of macros about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
+
+;stopTabHotkey;
+Tab::return
+
+;prem^DeleteHotkey;
+Ctrl & BackSpace::
+{
+	;// Premiere is really dumb and doesn't let you ctrl + backspace
+	;// this hotkey is to return  that functionality
+	SendMode("Event")
+	SetKeyDelay(15)
+	sendLeft() {
+		Send("{Ctrl Down}{Shift Down}")
+		Send("{Left}")
+		Send("{Shift Up}{Ctrl Up}")
+	}
+	getHotkeys(, &second)
+	KeyWait(second)
+	sendLeft()
+	storeClip := ClipboardAll()
+	A_Clipboard := ""
+	Send("^c")
+	if !ClipWait(0.1) || check := (StrLen(A_Clipboard) = 1) ? 1 : 0
+		{
+			additional := true
+			if IsSet(check) && check = 1
+				Send("{Right}")
+			else if A_Clipboard = A_Space
+				{
+					Send("{Right}")
+					Send("{BackSpace}")
+					additional := false
+				}
+			Send("{Space}")
+			Send("{Left}")
+			sendLeft()
+			Send("{BackSpace}")
+			if additional
+				Send("{Delete}")
+		}
+	Send("{BackSpace}")
+	A_Clipboard := storeClip
+}
 
 ;premzoomoutHotkey;
 SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere

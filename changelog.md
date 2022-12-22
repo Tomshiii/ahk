@@ -28,6 +28,11 @@ Cleaned up the entire class.
 - 2nd and 3rd `VarRefs` are now optional and no longer required
 - All return paths that indicate an error/fail now pass back `false` so `if !winget.PremName()` works as expected
 
+## > My Scripts
+- Added a hotkey to disable `Tab` in `Premiere`
+- Added a hotkey to return `Ctrl + BackSpace` to `Premiere` as adobe doesn't let you do so
+- `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
+
 ## > Streamdeck AHK
 - `New Premiere.ahk` now copies a template `.prproj` file instead of manually creating one
 - Added `thumbnail.ahk` that uses `ytDownload()` to download a videos thumbnail
@@ -43,5 +48,4 @@ Cleaned up the entire class.
 
 ## > Other Changes
 - `autosave.ahk` will now check if `Premiere/AE` is not responding and will reset the timer if true
-- `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
 - `prem.mouseDrag()` & `right click premiere` no longer stop each other with their tooltip
