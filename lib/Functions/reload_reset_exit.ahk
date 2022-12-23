@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\tool>
+#Include <Classes\Apps\VSCode> ;// only to easy grab the path/wintitle information
 #Include <Functions\detect>
 ; }
 
@@ -47,6 +48,10 @@ reload_reset_exit(which, includeChecklist?) {
     switch which {
         case "reset":
             Run(A_ScriptFullPath) ;run this current script last so all of the rest actually happen
+        case "exit":
+            detect()
+            if WinExist("My Scripts.ahk")
+                ProcessClose(WinGetPID("My Scripts.ahk",, browser.vscode.winTitle))
         case "reload":
             Reload()
             Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
@@ -62,37 +67,49 @@ reload_reset_exit(which, includeChecklist?) {
                         WinActivate
                         return
                     }
-                if FileExist(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
+                if FileExist(VSCode.path)
                     {
-                        Run(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
+                        RunWait(VSCode.path)
+                        sleep 1000
+                        Run(A_ScriptFullPath)
                         return
                     }
                 editor:= MsgBox("The users default editor could not be determined, would you like to set an editor now?", "Invalid default Editor", "4 32 4096")
                 if editor = "No"
                     return
-                if !FileExist(A_AhkPath "..\UX\ui-editor.ahk")
+                installDir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey", "InstallDir", 0)
+                if !installDir || !FileExist(installDir "\UX\ui-editor.ahk")
                     {
-                        path := SplitPathObj(A_AhkPath)
-                        MsgBox("Couldn't find the ``ui-editor.ahk`` script, it's usually found here:`n" path.dir "\ui-editor.ahk")
+                        path := "C:\Program Files\AutoHotkey\ui-editor.ahk"
+                        MsgBox("Couldn't find the ``ui-editor.ahk`` script, Unless ahk was installed elsewhere, it's usually found here:`n" path)
                         return
                     }
-                Run(A_AhkPath "..\UX\ui-editor.ahk")
+                Run(installDir "\UX\ui-editor.ahk")
             }
-            defaultEditor := RegRead("HKCR\AutoHotkeyScript\shell\edit\command", "(Default)")
+            set := false
+            defaultEditor := RegRead("HKEY_CLASSES_ROOT\AutoHotkeyScript\shell\edit\command",, 0)
+            if checkQuote := InStr(defaultEditor, '"',,, 2)
+                defaultEditor := SubStr(defaultEditor, 2, checkQuote-2)
             if !IsSet(defaultEditor) || !defaultEditor
                 {
                     fallback()
                     return
                 }
-            Run(defaultEditor,,, &pid)
-            if !WinWait("ahk_pid " PID,, 5)
+            ;// if the default editor is VSC and it's not already open, we want to open it FIRST, then open the script
+            ;// otherwise vsc will create a whole new workspace for no reason
+            if defaultEditor = VSCode.path && !WinExist(browser.vscode.winTitle)
+                {
+                    set := true
+                    Run(VSCode.path,,, &pid2)
+                    if !WinWait("ahk_pid " pid2)
+                        Run(defaultEditor)
+                    sleep 1000
+                }
+            Run(defaultEditor A_Space '"' A_ScriptFullPath '"',,, &pid)
+            if !WinWait("ahk_pid " PID,, 5) && !set
                 {
                     fallback()
                     return
                 }
-        case "exit":
-            detect()
-            if WinExist("My Scripts.ahk")
-                ProcessClose(WinGetPID("My Scripts.ahk",, browser.vscode.winTitle))
     }
 }
