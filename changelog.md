@@ -8,6 +8,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Added `ae.wiggle()`
 - Added `startup.monitorAlert()` which will log the user's monitor setup and check for any changes so the user can be alerted as scripts may break due to changed pixel coordinates
 - Fixed `getHTML.ahk` not including proper `#Includes`
+- `fastWheel()` will now only attempt to send the `focusCode` hotkey once every `5s` instead of every activation.
 - Added `openSocials()` to open the youtube/twitch of the current project client
     - Added `openYoutube.ahk` & `openTwitch.ahk` as streamdeck scripts
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
