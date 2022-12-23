@@ -53,7 +53,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.4
+;\\v2.25.6
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -351,13 +351,22 @@ AppsKey::
 					WinActivate("Quick Reference | AutoHotkey v2")
 				goto find
 			}
-		if !WinExist("AutoHotkey v2 Help ahk_class HH Parent")
+		if !WinExist("AutoHotkey v2 Help")
 			{
 				Run('hh.exe "ms-its:' chm '::docs/"Program.htm">How to use the program',,, &id)
 				WinWait("ahk_pid " id)
+				sleep 200
 			}
-		if !WinActive("AutoHotkey v2 Help ahk_class HH Parent")
-			WinActivate()
+		if !WinActive("AutoHotkey v2 Help")
+			{
+				WinActivate()
+				if !WinWaitActive(,, 1)
+					WinActivate()
+				;// if the window is minimised, then activated, chances are it won't actually accept any inputs
+				;// so we simulate a click on the window to alert it we want to input commands
+				ControlClick("X216 Y72")
+				sleep 200
+			}
 		find:
 		if search = false
 			return
