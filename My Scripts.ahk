@@ -53,7 +53,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.6
+;\\v2.25.7
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -735,6 +735,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		if A_Index > 3
 			{
 				SendInput(selectionPrem)
+				SendInput(programMonitor)
 				tool.Cust("selection tool`nUsed the selection hotkey instead", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 				errorLog(, A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 				return
@@ -742,6 +743,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	}
 	SendInput("{Click}")
 	MouseMove(xpos, ypos)
+	SendInput(programMonitor)
 }
 
 ;premprojectHotkey;

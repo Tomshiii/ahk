@@ -40,6 +40,8 @@ Cleaned up the entire class.
 - Added a hotkey to return `Ctrl + BackSpace` functionality to `Premiere` as adobe doesn't let you do so
 - Added hotkeys to quickly move `12 frames` in either direction in `Premiere`
 - `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
+- `SC03A & v:: ;premselecttoolHotkey;` will now activate the `program monitor` after the activating selection tool
+
 
 ## > Streamdeck AHK
 - `New Premiere.ahk` now copies a template `.prproj` file instead of manually creating one
