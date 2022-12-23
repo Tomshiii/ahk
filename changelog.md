@@ -12,6 +12,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 - `fastWheel()` will now check for the state of `LButton` to allow for bulk highlighting
 - `getHotkeys()` `VarRefs` are now optional
 - If `reload_reset_exit()` fails to reload, it will now read a registry value set during the ahk install process that contains the users default editor. If this value is for some reason **not** set, the function will default to VSCode before futher falling back to asking the user to select a new default editor.
+- `errorLog()` will now additionally send the error to `OutputDebug()`
 
 `resolve {`
 
@@ -34,7 +35,7 @@ Cleaned up the entire class.
 
 ## > My Scripts
 - Added a hotkey to disable `Tab` in `Premiere`
-- Added a hotkey to return `Ctrl + BackSpace` to `Premiere` as adobe doesn't let you do so
+- Added a hotkey to return `Ctrl + BackSpace` functionality to `Premiere` as adobe doesn't let you do so
 - `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
 
 ## > Streamdeck AHK
