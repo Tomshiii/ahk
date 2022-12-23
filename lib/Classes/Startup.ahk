@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2022/12/18
- * @version 1.0.8
+ * @version 1.0.8.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -328,14 +328,20 @@ class Startup {
                                     MsgBox("Couldn't find the latest release to download")
                                     return
                                 }
-                            else
-                                type := "zip"
+                            type := "zip"
                         }
                     else
                         type := "exe"
 
-                    ; #Start DLFile
+                    if FileExist(downloadLocation "\" version "." type)
+                        {
+                            file := MsgBox("File already exists.`n`nDo you want to override it?", "File already exists", "4 32 4096")
+                            if file = "No"
+                                return
+                            FileDelete(downloadLocation "\" version "." type)
+                        }
 
+                    ; #Start DLFile
                     url := "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type
                     dest := downloadLocation "\"
 
@@ -355,16 +361,16 @@ class Startup {
                     DL.Start()
 
                     events(ctl,info) {
-                        If (ctl.name = "Cancel") {
-                            If ctl.text = "Exit" {
+                        if (ctl.name = "Cancel") {
+                            if ctl.text = "Exit" {
                                 g.Hide()
-                            } Else {
+                            } else {
                                 DL.cancel := true
                                 g["Text2"].Text := "Download Cancelled! / Percent: " DL.perc "% / Exit = ESC"
                                 g["Resume"].Visible := true
                                 g["Cancel"].Visible := false
                             }
-                        } Else if (ctl.name = "Resume") {
+                        } else if (ctl.name = "Resume") {
                             g["Resume"].Visible := false
                             g["Cancel"].Visible := true
                             DL.Start() ; note that execution stops here until download is finished or DL.cancel is set to TRUE.
@@ -800,12 +806,89 @@ class Startup {
         check := MsgBox("A new version of AHK is available`n`nDo you wish to download it?", "AHK - v" latestVer, "4 32 4096")
         if check = "No"
             return
-        downloadLocation := FileSelect("D", , "Where do you wish to download the latest AHK release")
-        if downloadLocation = ""
-            return
-        tool.Cust("Latest version of AHK is downloading", 2.0)
-        Download("https://www.autohotkey.com/download/ahk-v2.exe", downloadLocation "\ahk-v2.exe")
-        Run(downloadLocation)
+        mygui := tomshiBasic(,,, "AHK v" latestVer " available")
+        mygui.AddText(, "A newer version of AHK (v" latestVer ") is available`nDo you wish to download it?")
+
+        runafter := mygui.Add("Checkbox",, "Run installer after download?")
+        checkboxValue := 0
+        runafter.OnEvent("Click", checkVal)
+        yesButt := mygui.Add("Button",, "Yes")
+        yesButt.OnEvent("Click", downahk)
+        nobutt := mygui.Add("Button", "x+15", "No")
+        nobutt.OnEvent("Click", noclick)
+
+        mygui.Show()
+        noclick(*) => mygui.Destroy()
+        checkVal(*) => checkboxValue := runafter.Value
+        downahk(*) {
+            downloadLocation := FileSelect("D", , "Where do you wish to download the latest AHK release")
+            if downloadLocation = ""
+                return
+            if FileExist(downloadLocation "\ahk-v2.exe")
+                {
+                    file := MsgBox("File already exists.`n`nDo you want to override it?", "File already exists", "4 32 4096")
+                    if file = "No"
+                        return
+                    FileDelete(downloadLocation "\ahk-v2.exe")
+                }
+            mygui.Destroy()
+            ; #Start DLFile
+            url := "https://www.autohotkey.com/download/ahk-v2.exe"
+            dest := downloadLocation "\"
+
+            DL := DLFile(url,dest,callback)
+
+            g := Gui("+AlwaysOnTop -MaximizeBox -MinimizeBox", "Download Progress")
+            g.OnEvent("close",(*)=>g.Hide())
+            g.OnEvent("escape",(*)=>g.Hide())
+            g.SetFont(,"Consolas")
+            g.Add("Text","w300 vText1 -Wrap")
+            g.Add("Progress","w300 vProg",0)
+            g.Add("Text","w300 vText2 -Wrap")
+            g.Add("Button","x255 w75 vCancel","Cancel").OnEvent("click",events)
+            g.Add("Button","x255 yp w75 vResume Hidden","Resume").OnEvent("click",events)
+            g.Show()
+
+            DL.Start()
+
+            events(ctl,info) {
+                if (ctl.name = "Cancel") {
+                    if ctl.text = "Exit" {
+                        g.Hide()
+                    } else {
+                        DL.cancel := true
+                        g["Text2"].Text := "Download Cancelled! / Percent: " DL.perc "% / Exit = ESC"
+                        g["Resume"].Visible := true
+                        g["Cancel"].Visible := false
+                    }
+                } else if (ctl.name = "Resume") {
+                    g["Resume"].Visible := false
+                    g["Cancel"].Visible := true
+                    DL.Start() ; note that execution stops here until download is finished or DL.cancel is set to TRUE.
+                }
+            }
+
+            callback(o:="") { ; g is global in this case
+                g["Text1"].Text := o.file
+                g["Text2"].Text := Round(o.bps/1024) " KBps   /   Percent: " o.perc "%"
+                g["Prog"].Value := o.perc
+
+                If o.perc = 100
+                    {
+                        g["Cancel"].Text := "Exit"
+                        Run(dest)
+                        g.Hide()
+                    }
+            }
+            ; #end DLFile
+
+            switch checkboxValue {
+                case 1:
+                    Run(downloadLocation "\ahk-v2.exe")
+                default:
+                    Run(downloadLocation)
+            }
+        }
     }
 
     /**

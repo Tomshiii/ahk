@@ -16,6 +16,10 @@ All scripts have been updated to require `v2.0` as a minimum!
 - If `reload_reset_exit()` fails to reload, it will now read a registry value set during the ahk install process that contains the users default editor. If this value is for some reason **not** set, the function will default to VSCode before futher falling back to asking the user to select a new default editor.
 - `errorLog()` will now additionally send the error to `OutputDebug()`
 
+`updateAHK()`
+- Now offers the user the ability to run the installer after download
+- Now uses the `_DLFile.ahk` lib so the user knows a download is taking place
+
 `resolve {`
 
 Cleaned up the entire class.
@@ -31,7 +35,7 @@ Cleaned up the entire class.
 - Added `ProjClient()` to retrieve the name of the client the current project is for by stripping the directory path in the title
     - `prem.zoom()` now uses `winget.ProjClient()` and references that value instead of hard coding for every client
 
-`.PremName()/.AEName()`
+> `.PremName()/.AEName()`
 - 2nd and 3rd `VarRefs` are now optional and no longer required
 - All return paths that indicate an error/fail now pass back `false` so `if !winget.PremName()` works as expected
 
@@ -57,7 +61,7 @@ Cleaned up the entire class.
     - Changed args for `video.ahk` and `vfx.ahk`
 
 ## > Other Changes
-- `prem.mouseDrag()` & `right click premiere` no longer stop each other with their tooltip
+- `prem.mouseDrag()` & `right click premiere` no longer stop each other with their tooltips
 - `CreateSymLink.ahk` now attempts to backup the lib folder if it already exists
 
 `autosave.ahk`
