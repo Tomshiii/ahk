@@ -807,4 +807,74 @@ class Startup {
         Download("https://www.autohotkey.com/download/ahk-v2.exe", downloadLocation "\ahk-v2.exe")
         Run(downloadLocation)
     }
+
+    /**
+     * This function alerts the user when their monitor layout has changed.
+     * This is important as it can seriously mess up any scripts that contain hard coded pixel coords
+     */
+    static monitorAlert() {
+        save := false
+
+        ;// get initial values
+        MonitorCount := MonitorGetCount()
+        MonitorPrimary := MonitorGetPrimary()
+        /**
+         * this function is to cut repeat code
+         */
+        write(WL, WT, WR, WB) {
+            IniWrite(WL, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Left")
+            IniWrite(WT, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Top")
+            IniWrite(WR, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Right")
+            IniWrite(WB, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Bottom")
+        }
+        ;// what to do if the ini file doesn't yet exist
+        if !FileExist(A_MyDocuments "\tomshi\monitors.ini")
+            {
+                IniWrite(MonitorCount, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
+                IniWrite(MonitorPrimary, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+                loop MonitorCount {
+                    ;// log initial data
+                    MonitorGetWorkArea A_Index, &WL, &WT, &WR, &WB
+                    write(WL, WT, WR, WB)
+                }
+                return
+            }
+        ;// if the file does exist, we cross reference it
+        readCount := IniRead(A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
+        readPrimary := IniRead(A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+        ;// if something has changed alert the user
+        if (readCount != MonitorCount) || (readPrimary != MonitorPrimary)
+            {
+                check := MsgBox("It appears like your monitor layout has changed, either by your own doing, or windows`nThis may mess with any pixel coordinates you use for scripts.`n`nDo you want your current layout to be remembered instead?", "Monitor layout changed", "4 32 4096")
+                if check = "No"
+                    return
+                save := true
+                ;// log new values
+                IniWrite(MonitorCount, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
+                IniWrite(MonitorPrimary, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+            }
+        loop MonitorCount {
+            ;// this loop is cross referencing the rest of the data
+            MonitorGetWorkArea A_Index, &WL, &WT, &WR, &WB
+            left := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Left")
+            top := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Top")
+            right := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Right")
+            bottom := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Bottom")
+            if( ;// if nothing has changed, continue
+                left = WL &&
+                top = WT &&
+                right = WR &&
+                bottom = WB )
+                continue
+            ;// if the user hasn't been alerted yet, they will be alerted now
+            if !save {
+                check := MsgBox(A_index "It appears like your monitor layout has changed, either by your own doing, or windows`nThis may mess with any pixel coordinates you use for scripts.`n`nDo you want your current layout to be remembered instead?", "Monitor layout changed", "4 32 4096")
+                if check = "No"
+                    return
+                save := true
+            }
+            ;// log new values
+            write(WL, WT, WR, WB)
+        }
+    }
 }

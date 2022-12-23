@@ -6,6 +6,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 ## > Functions
 - Added `getHTMLTitle.ahk` to return the title of a passed url
 - Added `ae.wiggle()`
+- Added `startup.monitorAlert()` which will log the user's monitor setup and check for any changes so the user can be alerted as scripts may break due to changed pixel coordinates
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - Added `openSocials()` to open the youtube/twitch of the current project client
     - Added `openYoutube.ahk` & `openTwitch.ahk` as streamdeck scripts
@@ -36,6 +37,7 @@ Cleaned up the entire class.
 ## > My Scripts
 - Added a hotkey to disable `Tab` in `Premiere`
 - Added a hotkey to return `Ctrl + BackSpace` functionality to `Premiere` as adobe doesn't let you do so
+- Added hotkeys to quickly move `12 frames` in either direction in `Premiere`
 - `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
 
 ## > Streamdeck AHK

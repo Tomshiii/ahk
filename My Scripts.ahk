@@ -53,7 +53,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.3
+;\\v2.25.4
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -100,15 +100,16 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ;				STARTUP
 ;
 ; =======================================================================================================================================
-startup.generate(MyRelease) ;generates/replaces the `settings.ini` file every release
-startup.locationReplace() ;runs the location variable
+startup.generate(MyRelease)      ;generates/replaces the `settings.ini` file every release
+startup.locationReplace()        ;runs the location variable
 startup.updateChecker(MyRelease) ;runs the update checker
-startup.trayMen() ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
-startup.firstCheck(MyRelease) ;runs the firstCheck() function
-startup.oldError() ;runs the loop to delete old log files
-startup.adobeTemp(MyRelease) ;runs the loop to delete cache files
-startup.libUpdateCheck() ;runs a loop to check for lib updates
-startup.updateAHK() ;checks for a newer version of ahk and alerts the user asking if they wish to download it
+startup.trayMen()                ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
+startup.firstCheck(MyRelease)    ;runs the firstCheck() function
+startup.oldError()               ;runs the loop to delete old log files
+startup.adobeTemp(MyRelease)     ;runs the loop to delete cache files
+startup.libUpdateCheck()         ;runs a loop to check for lib updates
+startup.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
+startup.monitorAlert()           ;checks the users monitor work area for any changes
 
 ;=============================================================================================================================================
 ;
@@ -911,6 +912,20 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	block.Off()
 }
 
+;12forwardHotkey;
+PgDn::
+{
+	SendInput(effectControls)
+	SendInput(effectControls)
+	SendInput("{Right 12}")
+}
+;12backHotkey;
+PgUp::
+{
+	SendInput(effectControls)
+	SendInput(effectControls)
+	SendInput("{Left 12}")
+}
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
