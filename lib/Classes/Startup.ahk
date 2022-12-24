@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/18
- * @version 1.0.8.1
+ * @date 2022/12/24
+ * @version 1.0.8.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -567,18 +567,18 @@ class Startup {
         ;// adding up the total size of the above listed filepaths
         for v, p in cacheFolders
             {
-                CacheSize := CacheSize + winget.FolderSize(p)
+                CacheSize := CacheSize + winget.FolderSize(p, 2)
             }
         if CacheSize = 0
             {
                 tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0)
                 goto end
             }
-        ;// dividing by 1073741824 converts our return value from bytes to GB
-        tool.Cust("Total Adobe cache size - " Round(CacheSize / 1073741824, 2) "/" largestSize "GB", 3.0)
+        ;// `winget.FolderSize()` returns it's value in GB, we simply want to round it to 2dp
+        tool.Cust("Total Adobe cache size - " Round(CacheSize, 2) "/" largestSize "GB", 3.0)
 
         ;// if the total is bigger than the set number, we loop those directories and delete all the files
-        if (CacheSize/"1073741824") >= largestSize
+        if CacheSize >= largestSize
             {
                 tool.Cust(A_ThisFunc " is currently deleting temp files", 2.0)
                 try {
