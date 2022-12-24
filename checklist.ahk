@@ -30,7 +30,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.11-alpha.1"
+version := "v2.11-alpha.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 

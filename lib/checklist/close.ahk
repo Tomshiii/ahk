@@ -14,10 +14,11 @@ close(*) {
     else
         FileAppend("\\ The checklist was closed : " timeStr " -- Hours after closing = " forFile " -- seconds at close = " timer.count "`n", logs)
     timer.reminder.stop()
+    timer.stop()
     if timer.logger.logActive = true
         timer.logger.timeStop()
     ;MyGui.Destroy()
-    return
+    ExitApp()
 }
 
 /**

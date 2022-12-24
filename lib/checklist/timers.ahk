@@ -36,7 +36,7 @@ class checklistTimer extends count {
      * This function handles updating the text and is called by `tick()`
      */
     StopWatch() {
-        displayHours := floorDecimal(this.count/3600, 3)
+        displayHours := Format("{:.3f}", floorDecimal(this.count/3600, 3)) ;
         timerText.Text := displayHours
         displayMinutes := Floor(((this.count/3600) - floor(this.count/3600))*60)
         timerMinutes.Text := displayMinutes
