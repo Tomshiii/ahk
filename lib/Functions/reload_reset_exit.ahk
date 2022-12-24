@@ -1,11 +1,13 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\tool>
+#Include <Classes\Apps\VSCode> ;// only to easy grab the path/wintitle information
 #Include <Functions\detect>
 ; }
 
 /**
  * A function to loop through and either reload or hard reset all* active ahk scripts
+ * If this function attempts a reload and fails, it will attempt to read a registry value that contains the users default editor. This value "should" be set after installing ahk. If it isn't, this function will default to VSCode
  */
 reload_reset_exit(which, includeChecklist?) {
     all := false
@@ -46,20 +48,68 @@ reload_reset_exit(which, includeChecklist?) {
     switch which {
         case "reset":
             Run(A_ScriptFullPath) ;run this current script last so all of the rest actually happen
-        case "reload":
-            Reload()
-            Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-            Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
-                if Result = "Yes"
-                    {
-                        if WinExist(browser.vscode.winTitle)
-                            WinActivate
-                        else
-                            Run(ptf.LocalAppData "\Programs\Microsoft VS Code\Code.exe")
-                    }
         case "exit":
             detect()
             if WinExist("My Scripts.ahk")
                 ProcessClose(WinGetPID("My Scripts.ahk",, browser.vscode.winTitle))
+        case "reload":
+            Reload()
+            Sleep 1000 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
+            Result := MsgBox("The script could not be reloaded. Would you like to open it for editing?",, 4)
+            if Result = "No"
+                return
+            /**
+             * Cut repeat code
+             */
+            fallback() {
+                if WinExist(browser.vscode.winTitle)
+                    {
+                        WinActivate
+                        return
+                    }
+                if FileExist(VSCode.path)
+                    {
+                        RunWait(VSCode.path)
+                        sleep 1000
+                        Run(A_ScriptFullPath)
+                        return
+                    }
+                editor:= MsgBox("The users default editor could not be determined, would you like to set an editor now?", "Invalid default Editor", "4 32 4096")
+                if editor = "No"
+                    return
+                installDir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey", "InstallDir", 0)
+                if !installDir || !FileExist(installDir "\UX\ui-editor.ahk")
+                    {
+                        path := "C:\Program Files\AutoHotkey\ui-editor.ahk"
+                        MsgBox("Couldn't find the ``ui-editor.ahk`` script, Unless ahk was installed elsewhere, it's usually found here:`n" path)
+                        return
+                    }
+                Run(installDir "\UX\ui-editor.ahk")
+            }
+            set := false
+            defaultEditor := RegRead("HKEY_CLASSES_ROOT\AutoHotkeyScript\shell\edit\command",, 0)
+            if checkQuote := InStr(defaultEditor, '"',,, 2)
+                defaultEditor := SubStr(defaultEditor, 2, checkQuote-2)
+            if !IsSet(defaultEditor) || !defaultEditor
+                {
+                    fallback()
+                    return
+                }
+            ;// if the default editor is VSC and it's not already open, we want to open it FIRST, then open the script
+            ;// otherwise vsc will create a whole new workspace for no reason
+            if defaultEditor = VSCode.path && !WinExist(browser.vscode.winTitle)
+                {
+                    set := true
+                    Run(VSCode.path,,, &pid2)
+                    if !WinWait("ahk_pid " pid2)
+                        Run(defaultEditor)
+                    sleep 1000
+                }
+            Run(defaultEditor A_Space '"' A_ScriptFullPath '"',,, &pid)
+            if !WinWait("ahk_pid " PID,, 5) && !set
+                {
+                    fallback()
+                    return
+                }
     }
 }

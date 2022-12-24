@@ -42,10 +42,14 @@ class Prem {
         SendInput(effectControls) ;premiere is dumb, focus things twice
         try {
             loop {
-                if A_Index > 3 && (!IsSet(classX) || width = 0)
+                if (A_Index > 3 && (!IsSet(classX) || width = 0))
                     throw e
                 ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+                try {
+                    ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+                } catch as f {
+                    ControlGetPos(&classX, &classY, &width, &height, ControlGetFocus("A")) ;gets the x/y value and width/height value
+                }
                 if IsSet(width) && width != 0
                     break
             }
@@ -1313,11 +1317,11 @@ class Prem {
     /**
      * Press a button(ideally a mouse button), this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
 
-    * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
+     * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
 
-    * This version is specifically for Premiere Pro
-    * @param {String} tool is the hotkey you want the script to input to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
-    * @param {String} toolorig is the hotkey you want the script to input to bring you back to your tool of choice (consider using KSA values)
+     * This version is specifically for Premiere Pro
+     * @param {String} tool is the hotkey you want the script to input to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
+     * @param {String} toolorig is the hotkey you want the script to input to bring you back to your tool of choice (consider using KSA values)
     */
     static mousedrag(premtool, toolorig)
     {
@@ -1347,8 +1351,11 @@ class Prem {
                     static yValue := ypos + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
                     static xControl := xpos + 238 ;accounting for the column to the left of the timeline
                     static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
-                    tool.Wait()
-                    tool.Cust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh")
+                    SetTimer(tools, -100)
+                    tools() {
+                        tool.Wait()
+                        tool.Cust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh")
+                    }
                 } catch as e {
                     tool.Wait()
                     tool.Cust("Couldn't find the ClassNN value")

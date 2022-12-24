@@ -19,7 +19,7 @@ class discord {
 
     ;position you keep it
     static x := -1080
-    static y := -274
+    static y := -270
     static width := 1080
     static height := 1600
 

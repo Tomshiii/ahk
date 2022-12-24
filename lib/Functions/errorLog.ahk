@@ -110,9 +110,9 @@ errorLog(err?, backupfunc?, backupErr?, backupLineFile?, backupLineNumber?) {
         }
     scriptPath := lineFile ;this is taking the path given from A_LineFile
     script := SplitPathObj(scriptPath) ;and splitting it out into just the .ahk filename
-    FileAppend(
-        Format("{}{}:{}:{}.{} // ``{}`` encountered the following error: `"{}{}`" // Script: ``{}``, Line Number: {}`n",
-        start, A_Hour, A_Min, A_Sec, A_MSec, func, beginning, error, script.Name, lineNumber
-    )
-    , ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    append := Format("{}{}:{}:{}.{} // ``{}`` encountered the following error: `"{}{}`" // Script: ``{}``, Line Number: {}`n"
+                        ,start, A_Hour, A_Min, A_Sec, A_MSec, func, beginning, error, script.Name, lineNumber
+                )
+    FileAppend(append, ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+    OutputDebug(append)
 }

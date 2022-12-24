@@ -14,6 +14,7 @@ fastWheel()
         type := "Up"
     else
         type := "Dn"
+    static time := 0
 	MouseGetPos(,, &UnderCursor)
 	orig := WinGetTitle(WinActive("A"))
 	titleUnder := WinGetTitle("ahk_id " UnderCursor)
@@ -22,8 +23,19 @@ fastWheel()
 		WinActivate(titleUnder)
     WinWaitActive(titleUnder)
     proc := WinGetProcessName(titleUnder)
-    if ((InStr(titleUnder, "Visual Studio Code") && proc = "Code.exe") && !InStr(titleUnder, "Preview"))
-        SendInput(focusCode)
+    ;// This block is to ensure the code window in vscode is highlighted if the cursor is hovering over it
+    ;// but we don't want it to trigger every single time as this hotkey is one that is likely to get spammed a lot
+    ;// so we code in a psudo 5s break between each possible activation
+    if ((A_TickCount - time) >= 5000) || time = 0
+        {
+            if ((InStr(titleUnder, "Visual Studio Code") && proc = "Code.exe") && !InStr(titleUnder, "Preview"))
+                {
+                    block.On()
+                    SendInput(focusCode)
+                    block.Off()
+                    time := A_TickCount
+                }
+        }
     if GetKeyState("LButton", "P") && !GetKeyState("Shift")
         {
             SendInput("{Shift Down}")

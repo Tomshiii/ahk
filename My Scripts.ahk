@@ -44,6 +44,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Functions\youMouse>
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
+#Include <Functions\getHotkeys>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
@@ -52,7 +53,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.2
+;\\v2.25.7
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -99,15 +100,16 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ;				STARTUP
 ;
 ; =======================================================================================================================================
-startup.generate(MyRelease) ;generates/replaces the `settings.ini` file every release
-startup.locationReplace() ;runs the location variable
+startup.generate(MyRelease)      ;generates/replaces the `settings.ini` file every release
+startup.locationReplace()        ;runs the location variable
 startup.updateChecker(MyRelease) ;runs the update checker
-startup.trayMen() ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
-startup.firstCheck(MyRelease) ;runs the firstCheck() function
-startup.oldError() ;runs the loop to delete old log files
-startup.adobeTemp(MyRelease) ;runs the loop to delete cache files
-startup.libUpdateCheck() ;runs a loop to check for lib updates
-startup.updateAHK() ;checks for a newer version of ahk and alerts the user asking if they wish to download it
+startup.trayMen()                ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
+startup.firstCheck(MyRelease)    ;runs the firstCheck() function
+startup.oldError()               ;runs the loop to delete old log files
+startup.adobeTemp(MyRelease)     ;runs the loop to delete cache files
+startup.libUpdateCheck()         ;runs a loop to check for lib updates
+startup.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
+startup.monitorAlert()           ;checks the users monitor work area for any changes
 
 ;=============================================================================================================================================
 ;
@@ -349,13 +351,22 @@ AppsKey::
 					WinActivate("Quick Reference | AutoHotkey v2")
 				goto find
 			}
-		if !WinExist("AutoHotkey v2 Help ahk_class HH Parent")
+		if !WinExist("AutoHotkey v2 Help")
 			{
 				Run('hh.exe "ms-its:' chm '::docs/"Program.htm">How to use the program',,, &id)
 				WinWait("ahk_pid " id)
+				sleep 200
 			}
-		if !WinActive("AutoHotkey v2 Help ahk_class HH Parent")
-			WinActivate()
+		if !WinActive("AutoHotkey v2 Help")
+			{
+				WinActivate()
+				if !WinWaitActive(,, 1)
+					WinActivate()
+				;// if the window is minimised, then activated, chances are it won't actually accept any inputs
+				;// so we simulate a click on the window to alert it we want to input commands
+				ControlClick("X216 Y72")
+				sleep 200
+			}
 		find:
 		if search = false
 			return
@@ -631,6 +642,49 @@ F23::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hot
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
 
+;stopTabHotkey;
+Tab::return
+
+;prem^DeleteHotkey;
+Ctrl & BackSpace::
+{
+	;// Premiere is really dumb and doesn't let you ctrl + backspace
+	;// this hotkey is to return  that functionality
+	SendMode("Event")
+	SetKeyDelay(15)
+	sendLeft() {
+		Send("{Ctrl Down}{Shift Down}")
+		Send("{Left}")
+		Send("{Shift Up}{Ctrl Up}")
+	}
+	getHotkeys(, &second)
+	KeyWait(second)
+	sendLeft()
+	storeClip := ClipboardAll()
+	A_Clipboard := ""
+	Send("^c")
+	if !ClipWait(0.1) || check := (StrLen(A_Clipboard) = 1) ? 1 : 0
+		{
+			additional := true
+			if IsSet(check) && check = 1
+				Send("{Right}")
+			else if A_Clipboard = A_Space
+				{
+					Send("{Right}")
+					Send("{BackSpace}")
+					additional := false
+				}
+			Send("{Space}")
+			Send("{Left}")
+			sendLeft()
+			Send("{BackSpace}")
+			if additional
+				Send("{Delete}")
+		}
+	Send("{BackSpace}")
+	A_Clipboard := storeClip
+}
+
 ;premzoomoutHotkey;
 SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
 ;premselecttoolHotkey;
@@ -681,6 +735,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		if A_Index > 3
 			{
 				SendInput(selectionPrem)
+				SendInput(programMonitor)
 				tool.Cust("selection tool`nUsed the selection hotkey instead", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
 				errorLog(, A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
 				return
@@ -688,6 +743,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	}
 	SendInput("{Click}")
 	MouseMove(xpos, ypos)
+	SendInput(programMonitor)
 }
 
 ;premprojectHotkey;
@@ -867,6 +923,20 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	block.Off()
 }
 
+;12forwardHotkey;
+PgDn::
+{
+	SendInput(effectControls)
+	SendInput(effectControls)
+	SendInput("{Right 12}")
+}
+;12backHotkey;
+PgUp::
+{
+	SendInput(effectControls)
+	SendInput(effectControls)
+	SendInput("{Left 12}")
+}
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
