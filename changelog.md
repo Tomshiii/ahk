@@ -15,6 +15,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 - If `reload_reset_exit()` fails to reload, it will now read a registry value set during the ahk install process that contains the users default editor. If this value is for some reason **not** set, the function will default to VSCode before futher falling back to asking the user to select a new default editor.
 - `errorLog()` will now additionally send the error to `OutputDebug()`
 - `winget.FolderSize()` can now optionally return it's value in `MB`, `GB` & `TB`
+- `block.On()`/`block.Off()` can now simply act as wrapper functions and normal `BlockInput` parameters can be passed into either of them. Otherwise they will still perform their old default behaviour
 
 `fastWheel()`
 - Will now check for the state of `LButton` to allow for bulk highlighting
