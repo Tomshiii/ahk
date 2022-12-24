@@ -1,4 +1,4 @@
-# <> Release 2.8.x -
+# <> Release 2.8.3 - Additions & Fixes
 Congratulations to ahk for `v2.0.0` hitting a full release! 🎉🎉
 
 All scripts have been updated to require `v2.0` as a minimum!
@@ -47,6 +47,7 @@ Cleaned up the entire class.
 - Added a hotkey to return `Ctrl + BackSpace` functionality to `Premiere` as adobe doesn't let you do so
 - Added a hotkey to make `+*` remap to `^i` in `Discord`
 - Added hotkeys to quickly move `12 frames` in either direction in `Premiere`
+- Added `&& !GetKeyState("F24")` to all Adobe `#HotIf` declarations as some hotkeys were stopping `QMK` hotkeys from firing
 - `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
 - `SC03A & v:: ;premselecttoolHotkey;` will now activate the `program monitor` after the activating selection tool
 

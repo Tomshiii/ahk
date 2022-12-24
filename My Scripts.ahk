@@ -606,7 +606,7 @@ F3:: ;this hotkey is to click the "discord" button in discord to access your dm'
 ;		Photoshop
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.Photoshop.winTitle)
+#HotIf WinActive(editors.Photoshop.winTitle) && !GetKeyState("F24")
 ;pngHotkey;
 ^+p::ps.Type("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 ;jpgHotkey;
@@ -625,7 +625,7 @@ z::mouseDrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z
 ;		After Effects
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.AE.winTitle)
+#HotIf WinActive(editors.AE.winTitle) && !GetKeyState("F24")
 ;aetimelineHotkey;
 Xbutton1::ae.timeline() ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aeselectionHotkey;
@@ -640,7 +640,7 @@ F23::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hot
 ;		Premiere
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.Premiere.winTitle)
+#HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 ;There use to be a lot of macros about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
