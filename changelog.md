@@ -10,6 +10,7 @@ All scripts have been updated to require `v2.0` as a minimum!
 - Fixed `getHTML.ahk` not including proper `#Includes`
 - Added `openSocials()` to open the youtube/twitch of the current project client
     - Added `openYoutube.ahk` & `openTwitch.ahk` as streamdeck scripts
+- Added `getMousePos()` to return `MouseGetPos()` VarRefs as an object
 - `getHotkeys()` `VarRefs` are now optional
     - Also now returns an object
 - If `reload_reset_exit()` fails to reload, it will now read a registry value set during the ahk install process that contains the users default editor. If this value is for some reason **not** set, the function will default to VSCode before futher falling back to asking the user to select a new default editor.
