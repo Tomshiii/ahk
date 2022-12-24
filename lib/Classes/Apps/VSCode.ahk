@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2022/11/25
- * @version 1.0.1
+ * @date 2022/12/25
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -74,9 +74,9 @@ class VSCode {
     static getHighlightState(&orig, focusFirst := true, copyOrCut := "^c") {
         if copyOrCut !== "^c" && copyOrCut !== "^x"
             {
-                tool.Cust("Invalid hotkey in function.`n`nFunc:   " A_ThisFunc "()`nFile:      " A_LineFile "`nLine #: " A_LineNumber, 3.0)
-                errorLog(, A_ThisFunc "()", "Invalid hotkey in function", A_LineFile, A_LineNumber)
-                Exit()
+                invalid := ValueError("Invalid hotkey in Parameter #3", -1, copyOrCut)
+                errorLog(invalid, A_ThisFunc "()",, 1)
+                throw invalid
             }
         if focusFirst = true
             SendInput(focusCode)

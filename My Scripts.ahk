@@ -53,7 +53,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.7
+;\\v2.26
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -205,8 +205,10 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	monitor := getMonitor() ;now we run the above function we created
 	if !IsObject(monitor) || !IsSet(monitor)
 		{
-			tool.Cust("Failed to get information about the window/monitor relationship`nThe window may be overlapping monitors")
-			errorLog(, A_ThisHotkey "::", "Failed to get information about the window/monitor relationship", A_LineFile, A_LineNumber)
+			errorLog(
+				UnsetError("Failed to get information about the window/monitor relationship", -1, monitor)
+				, A_ThisHotkey "::", "The window may be overlapping monitors", 1
+			)
 			return
 		}
 	if win = "" ;if our win variable doesn't have a title yet we run this code block
@@ -711,8 +713,10 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 				if A_Index > 3
 					{
 						SendInput(selectionPrem)
-						tool.Cust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", 2000)
-						errorLog(, A_ThisHotkey "::", "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
+						errorLog(
+							UnsetError("Couldn't get dimensions of the class window", -1),
+							A_ThisHotkey "::", "Used the selection hotkey instead", 1
+						)
 						return
 					}
 				sleep 100
@@ -736,8 +740,9 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			{
 				SendInput(selectionPrem)
 				SendInput(programMonitor)
-				tool.Cust("selection tool`nUsed the selection hotkey instead", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-				errorLog(, A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
+				errorLog(
+					Error("Couldn't find the selection tool", -1),
+					A_ThisHotkey "::", "Used the selection hotkey instead", 1)
 				return
 			}
 	}
@@ -782,7 +787,6 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			if A_Index > 5
 				{
 					;tool.Cust("Function failed to find project window")
-					;errorLog(, A_ThisHotkey "::", "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 					break
 				}
 		}
@@ -804,12 +808,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				if ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
 					goto move
 				else
-					throw Error e
+					throw Error("Couldn't find the project window", -1)
 			}
-	} catch as e {
+	} catch Error as e {
 		block.Off()
-		tool.Cust("Couldn't find the project window`nIf this happens consistently, it may be an issue with premiere")
-		errorLog(e, A_ThisHotkey "::")
+		errorLog(e, A_ThisHotkey "::", "If this happens consistently, it may be an issue with premiere", 1)
 		return
 	}
 	move:
@@ -836,8 +839,10 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			if !WinActive("_Editing Stuff")
 				{
 					block.Off()
-					tool.Cust("activating the editing folder failed", 2000, 1)
-					errorLog(, A_ThisHotkey "::", "activating the editing folder failed", A_LineFile, A_LineNumber)
+					errorLog(
+						Error("Activating the editing folder failed", -1),
+						A_ThisHotkey "::",, 1
+					)
 					return
 				}
 		}
@@ -867,8 +872,10 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		if A_Index > 50
 			{
 				block.Off()
-				tool.Cust("the sfx folder", 2000, 1)
-				errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
+				errorLog(
+					Error("Couldn't find the sfx folder in Windows Explorer", -1),
+					A_ThisHotkey "::",, 1
+				)
 				return
 			}
 	}
@@ -893,8 +900,10 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	if !ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj.png") && !ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj2.png")
 		{
 			block.Off()
-			tool.Cust("the sfx folder in premiere", 2000, 1)
-			errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
+			errorLog(
+				Error("Couldn't find the sfx folder in Premiere Pro", -1),
+				A_ThisHotkey "::",, 1
+			)
 			return
 		}
 	MouseMove(fold2x + "5", fold2y + "2")
@@ -913,8 +922,10 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		if A_Index > 5
 			{
 				block.Off()
-				tool.Cust("the bin", 2000, 1)
-				errorLog(, A_ThisHotkey "::", "Couldn't find the bin", A_LineFile, A_LineNumber)
+				errorLog(
+					Error("Couldn't find the bin", -1),
+					A_ThisHotkey "::", 1
+				)
 				return
 			}
 	}
@@ -1017,8 +1028,11 @@ RButton::move.Window("") ;minimise
 	Send("^c")
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
-			tool.Cust("Couldn't copy data to clipboard")
-			errorLog(, A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			A_Clipboard := previous
+			errorLog(
+				UnsetError("Couldn't copy data to clipboard"),
+				A_ThisHotkey "::", 1
+			)
 			return
 		}
 	Run("https://www.google.com/search?d&q=" A_Clipboard)
@@ -1034,8 +1048,10 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 	if !ClipWait(1) ;waits for the clipboard to contain data
 		{
 			A_Clipboard := previous
-			tool.Cust("Couldn't copy data to clipboard")
-			errorLog(, A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
+			errorLog(
+				UnsetError("Couldn't copy data to clipboard"),
+				A_ThisHotkey "::", 1
+			)
 			return
 		}
 	length := StrLen(A_Clipboard)

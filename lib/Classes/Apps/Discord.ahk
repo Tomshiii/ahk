@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord
  * @author tomshi
- * @date 2022/12/16
- * @version 1.0.3.1
+ * @date 2022/12/25
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,7 +69,10 @@ class discord {
                     MouseMove(x, y) ;moves the mouse back to the original coords
                     block.Off()
                     tool.Cust("the requested button after " A_Index " attempts", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(, A_ThisFunc "()", "Was unable to find the requested button", A_LineFile, A_LineNumber)
+                    errorLog(
+                        IndexError("Was unable to find the requested button", -1, button)
+                        , A_ThisFunc "()"
+                    )
                     return
                 }
         }
@@ -89,7 +92,10 @@ class discord {
                 if A_Index > 10
                     {
                         tool.Cust("the @ ping button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                        errorLog(, A_ThisFunc "()", "Was unable to find the @ reply ping button", A_LineFile, A_LineNumber)
+                        errorLog(
+                            IndexError("Was unable to find the @ reply ping button", -1, button)
+                            , A_ThisFunc "()"
+                        )
                         break
                     }
             }

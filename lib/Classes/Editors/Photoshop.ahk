@@ -2,8 +2,8 @@
  * @description A library of useful Photoshop functions to speed up common tasks
  * Last tested in v24.0.1 of Photoshop
  * @author tomshi
- * @date 2022/11/28
- * @version 1.0.2
+ * @date 2022/12/25
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -39,8 +39,10 @@ class PS {
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "InTransform.png") && !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " ptf.Photoshop image) ;checks to see if you're already in the free transform window
             {
                 block.Off()
-                tool.Cust("the value you wish`nto adjust_1",, 1)
-                errorLog(, A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
+                errorLog(
+                    Error("Was unable to find the value the user wished to adjust")
+                    , A_ThisFunc "()",, 1
+                )
                 return
             }
         else
@@ -53,8 +55,10 @@ class PS {
                     {
                         MouseMove(xpos, ypos)
                         block.Off()
-                        tool.Cust("the value you wish`nto adjust_2",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                        errorLog(, A_ThisFunc "()", "Was unable to find the value the user wished to adjust", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("Was unable to find the value the user wished to adjust")
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
             }
@@ -100,30 +104,27 @@ class PS {
             Send("{TAB}{RIGHT}")
             coord.w()
             sleep 1000
-            if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop "png.png")
+            if !ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop "png.png")
                 {
-                    MouseMove(0, 0)
-                    SendInput("{Enter 2}")
-                }
-            else
-                {
-                    if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop "png2.png")
-                        {
-                            MouseMove(xpng, ypng)
-                            SendInput("{Click}")
-                            sleep 50
-                            MouseMove(0, 0)
-                            SendInput("{Enter}")
-                        }
-                    else
+                    if !ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop "png2.png")
                         {
                             MouseMove(0, 0)
                             block.Off()
-                            tool.Cust("png",, 1)
-                            errorLog(, A_ThisFunc "()", "Was unable to find the png option", A_LineFile, A_LineNumber)
+                            errorLog(
+                                Error("Was unable to find the png option", -1)
+                                , A_ThisFunc "()",, 1
+                            )
                             return
                         }
+                    MouseMove(xpng, ypng)
+                    SendInput("{Click}")
+                    sleep 50
+                    MouseMove(0, 0)
+                    SendInput("{Enter}")
+                    return
                 }
+            MouseMove(0, 0)
+            SendInput("{Enter 2}")
         }
 
         Emote := InputBox("Please enter an Emote Name.", "Emote Name", "w100 h100")
@@ -195,8 +196,10 @@ class PS {
         else
             {
                 block.Off()
-                tool.Cust("png drop down",, 1)
-                errorLog(, A_ThisFunc "()", "Was unable to find the filetype option", A_LineFile, A_LineNumber)
+                errorLog(
+                    Error("Was unable to find the filetype option", -1)
+                    , A_ThisFunc "()",, 1
+                )
                 return
             }
         MouseMove(x, y)

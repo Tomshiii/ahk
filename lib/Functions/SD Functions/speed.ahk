@@ -12,6 +12,12 @@
  */
 speed(amount)
 {
+    if !IsNumber(amount)
+        {
+            typeErr := TypeError("Invalid parameter type in Parameter #1", -1, amount)
+            errorLog(typeErr, A_ThisFunc "()",, 1)
+            throw typeErr
+        }
     ;// first we make sure clips are selected
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
@@ -31,9 +37,11 @@ speed(amount)
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    tool.Cust("The wrong clips are selected")
-                    errorLog(, A_ThisFunc "()", "The wrong clips are selected", A_LineFile, A_LineNumber)
                     block.Off()
+                    errorLog(
+                        Error("No clips are selected", -1)
+                        , A_ThisFunc "()",, 1
+                    )
                     return
                 }
         }

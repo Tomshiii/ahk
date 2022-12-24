@@ -1,4 +1,10 @@
-# <> Release 2.9 -
+# <> Release 2.9 - Huge Refactor
+
+## > errorLog()
+- No longer takes a `backupVar` for every input instead requiring an `Error Object` to be passed into the function
+    - `backupFunc` is still a parameter
+- Can now have an optional message that will appear on a new, tabbed line
+- Can now automatically generate a `tool.Cust()` tooltip from the passed in error object
 
 ## > Functions
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`

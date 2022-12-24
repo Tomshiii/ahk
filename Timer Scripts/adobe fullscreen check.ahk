@@ -71,7 +71,10 @@ check()
                                 {
                                     fireRound := Round(fire/1000, 1)
                                     tool.Cust(A_ScriptName " attempted to reset the fullscreen of " getProgram " but was reset due to interactions with a keyboard`nIt will attempt again in " fireRound "s", 2000)
-                                    errorLog(, A_ScriptName, "attempted to reset the fullscreen of " getProgram " but was reset due to interactions with a keyboard", A_LineFile, A_LineNumber)
+                                    errorLog(
+                                        Error("Couldn't reset the fullscreen of " getProgram " because the user was interacting with the keyboard", -1)
+                                        , A_ThisFunc "()"
+                                    )
                                 }
                             SetTimer(, -fire) ;adds 5s to the timer and will check again after that time has elapsed
                         }
