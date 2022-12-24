@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/12/21
- * @version 1.0.6
+ * @date 2022/12/24
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -241,68 +241,6 @@ class Prem {
                         }
                 }
         }
-        block.Off()
-    }
-
-    /**
-     * This function is to simply cut down repeated code on my numpad punch in scripts. it punches the video into my preset values for highlight videos
-     * @param {Integer} xval is the pixel value you want this function to paste into the X coord text field in premiere
-     * @param {Integer} yval is the pixel value you want this function to paste into the y coord text field in premiere
-     * @param {Integer} scale is the scale value you want this function to paste into the scale text field in premiere
-     */
-    static num(xval, yval, scale)
-    {
-        KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-        MouseGetPos(&xpos, &ypos)
-        coord.s()
-        block.On()
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-        try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
-            return
-        }
-        SendInput(timelineWindow) ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            {
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
-                        block.Off()
-                        return
-                    }
-            }
-        SendInput(timelineWindow) ;adjust this in the ini file
-        SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-        if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png") ;moves to the "video" section of the effects control window tab
-            {
-                MouseMove(xpos, ypos)
-                block.Off()
-                tool.Cust("the video section",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
-                return
-            }
-        if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") && !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;moves to the motion tab
-            {
-                MouseMove(xpos, ypos) ;moves back to the original coords
-                block.Off()
-                tool.Cust("the motion tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Couldn't find the motion tab", A_LineFile, A_LineNumber)
-                return
-            }
-        MouseMove(x2 + "10", y2 + "10")
-        SendInput("{Click}")
-        SendInput("{Tab 2}" xval "{Tab}" yval "{Tab}" scale "{ENTER}")
-        SendInput("{Enter}")
-        MouseMove(xpos, ypos)
         block.Off()
     }
 
