@@ -53,7 +53,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.7
+;\\v2.25.8
 ;\\Current QMK Keyboard Version\\At time of last commit
 ;\\v2.13.4
 
@@ -581,6 +581,9 @@ SC03A & a::discord.button("DiscReact.png") ;add a reaction to the message you're
 ;discdeleteHotkey;
 SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
+
+;discitalicHotkey;
++*::^i ;+* in VSCode is how you encase something in * which I do in .md stuff to italisise it. I sometimes try to do this in discord oops
 
 ;discserverHotkey;
 F1::discord.Unread() ;will click any unread servers
