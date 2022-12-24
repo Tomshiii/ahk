@@ -11,16 +11,18 @@
 #Include <Functions\detect>
 #Include <GUIs\tomshiBasic>
 ; <checklist funcs> ;everything in <lib\checklist\> is needed for this script
-                    ;but these are just the ones that can be defined anywhere
+;but these are just the ones that can be defined anywhere
+#Include <checklist\timers>
 #Include <checklist\generateIni>
 #Include <checklist\premNotOpen>
 #Include <checklist\problemDir>
 #Include <checklist\trythenDel>
 #Include <checklist\timers>
 #Include <checklist\log>
-#Include <checklist\close>
 #Include <checklist\getPath>
 #Include <checklist\haltChecklist>
+#Include <checklist\checkSettings>
+#Include <checklist\msgButton>
 ; }
 
 TraySetIcon(ptf.Icons "\checklist.ico")
@@ -28,7 +30,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.10.1"
+version := "v2.11-alpha.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -45,6 +47,7 @@ checklist := ""
 global WaitTrack := 0
 global morethannine := unset
 global morethan11 := unset
+
 if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist is reloaded, we don't want it to automatically attempt to grab the title of the currently open premiere project - this allows us to open/create new projects while premiere is open
     {
         premNotOpen(&checklist, &logs, &path)
@@ -154,24 +157,9 @@ else
         end:
     }
 
-globalCheckTool := 1
-globalDarkTool := 1
-;grabbing the location dir of the users copy of tomshi's scripts. This will allow any deployed checklist scripts to automatically update
-if FileExist(ptf["settings"])
-    {
-        location := IniRead(ptf["settings"], "Track", "working dir")
-        tooltipSettings := IniRead(ptf["settings"], "Settings", "checklist tooltip", "true")
-        if tooltipSettings = "true"
-            global globalCheckTool := 1
-        else
-            global globalCheckTool := 0
-
-        darkSettings := IniRead(ptf["settings"], "Settings", "dark mode", "true")
-        if darkSettings = "true"
-            global globalDarkTool := 1
-        else
-            global globalDarkTool := 0
-    }
+;// setting default settings for GUI
+global globalCheckTool := checkTooltips()
+global globalDarkTool := checkDark()
 
 #Include <checklist\verCheck>
 
@@ -192,14 +180,7 @@ newDate(&today)
 ;constructing the GUI
 #Include <checklist\contruct>
 
-
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", logs)
-SetTimer(reminder, -ms)
-
-;timer
-global StartTickCount := "" ;that is required to start blank or the time will continue to increment while the timer is paused
-global ElapsedTime := 0 + startValue ;a starting value for the timer
-global logActive := false
 
 if darkToolTrack = 1
     which()
@@ -207,3 +188,4 @@ MyGui.OnEvent("Close", ExitFunc.Bind("", ""))
 MyGui.Show("AutoSize NoActivate")
 MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;finish defining GUI
+#Include <checklist\close>
