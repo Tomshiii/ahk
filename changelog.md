@@ -6,6 +6,10 @@
 - Can now have an optional message that will appear on a new, tabbed line
 - Can now automatically generate a `tool.Cust()` tooltip from the passed in error object
 
+## > settingsGUI()
+- Editor settings can now be accessed as separate GUIs through the menubar
+    - Removed the two edit controls to change prem/ae year from the main GUI
+
 ## > Functions
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - Added `class timer {` to quickly and easily build more complex timer functionality
