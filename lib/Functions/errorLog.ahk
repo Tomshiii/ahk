@@ -116,7 +116,7 @@ errorLog(err, backupfunc?, optMessage?, toolCust := false) {
         {
             optAppend := Format('`t`t`t// "{}"', optMessage)
             FileAppend(optAppend '`n', ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-            OutputDebug(optAppend)
+            OutputDebug(LTrim(optAppend, '`t'))
         }
     ;// if toolCust has been set to true, generate a tooltip based off the passed in error object
     if toolCust {
