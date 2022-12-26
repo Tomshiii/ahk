@@ -233,13 +233,29 @@ class WinGet {
     }
 
     /**
-     * A function to return the size of a path in `bytes`.
+     * A function to return the size of a path in `bytes` by default.
      * Code from: `DepthTrawler` : https://discord.com/channels/115993023636176902/734109033832906874/1053085736196382771 (ahk discord)
      *
      * @param {String} path is the filepath you wish to check
-     * @returns {Integer} the filesize in `bytes`
+     * @param {Integer} option decides if you wish for the return value to be something other than `bytes`.
+     *
+     * `1`: returns `MB`
+     *
+     * `2`: returns `GB`
+     *
+     * `3`: returns `TB`
+     * @returns {Integer} the filesize in `bytes` by default or in the option selected
      */
-    static FolderSize(path) {
-        return ComObject("Scripting.FileSystemObject").GetFolder(path).Size
+    static FolderSize(path, option?) {
+        if !IsSet(option)
+            return ComObject("Scripting.FileSystemObject").GetFolder(path).Size
+        if option > 3
+            {
+                errorLog(ValueError("Parameter #2 invalid", -1, option), A_ThisFunc "()")
+                throw ValueError("Parameter #2 invalid", -1, option)
+            }
+        ;// you convert bytes to another unit by x / (1024^y)
+        ;// ie. bytes => MB ; x / (1024x1024x1024) OR x / 1024^2
+        return (ComObject("Scripting.FileSystemObject").GetFolder(path).Size)/(1024**(option+1))
     }
 }

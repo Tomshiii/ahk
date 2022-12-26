@@ -4,9 +4,10 @@
  * @date 2022/12/01
  * @version 1.0.1
  ***********************************************************************/
-
+; { \\ #Includes
 #Include <Functions\detect>
 #Include <Classes\tool>
+; }
 
 class Pause {
     /**

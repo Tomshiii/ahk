@@ -584,6 +584,9 @@ SC03A & a::discord.button("DiscReact.png") ;add a reaction to the message you're
 SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
+;discitalicHotkey;
++*::^i ;+* in VSCode is how you encase something in * which I do in .md stuff to italisise it. I sometimes try to do this in discord oops
+
 ;discserverHotkey;
 F1::discord.Unread() ;will click any unread servers
 ;discmsgHotkey;
@@ -605,7 +608,7 @@ F3:: ;this hotkey is to click the "discord" button in discord to access your dm'
 ;		Photoshop
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.Photoshop.winTitle)
+#HotIf WinActive(editors.Photoshop.winTitle) && !GetKeyState("F24")
 ;pngHotkey;
 ^+p::ps.Type("png") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a png instead of the default psd
 ;jpgHotkey;
@@ -624,7 +627,7 @@ z::mouseDrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z
 ;		After Effects
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.AE.winTitle)
+#HotIf WinActive(editors.AE.winTitle) && !GetKeyState("F24")
 ;aetimelineHotkey;
 Xbutton1::ae.timeline() ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aeselectionHotkey;
@@ -639,7 +642,7 @@ F23::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hot
 ;		Premiere
 ;
 ;=============================================================================================================================================
-#HotIf WinActive(editors.Premiere.winTitle)
+#HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 ;There use to be a lot of macros about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
@@ -972,7 +975,7 @@ LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
 Xbutton2::prem.mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
-#Include right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+#Include *i right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;auto excecuting stuff will no longer function below this^ include
 
