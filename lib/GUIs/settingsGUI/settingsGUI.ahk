@@ -5,7 +5,7 @@
 #Include <Classes\dark>
 #Include <Classes\tool>
 #Include <Classes\ptf>
-#Include <Functions\SplitPathObj>
+#Include <Classes\obj>
 #Include <Functions\On_WM_MOUSEMOVE>
 #Include <Functions\reload_reset_exit>
 #Include <Functions\refreshWin>
@@ -429,7 +429,7 @@ settingsGUI()
     SB.OnEvent("Click", dir)
     dir(*)
     {
-        dirName := SplitPathObj(workDir)
+        dirName := obj.SplitPath(workDir)
         if WinExist("ahk_exe explorer.exe " dirName.NameNoExt)
             WinActivate("ahk_exe explorer.exe " dirName.NameNoExt)
         else

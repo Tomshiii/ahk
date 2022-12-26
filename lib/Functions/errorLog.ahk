@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include <Functions\SplitPathObj>
+#Include <Classes\obj>
 #Include <Functions\getScriptRelease>
 #Include <Functions\checkInternet>
 #Include <Classes\ptf>
@@ -101,7 +101,7 @@ errorLog(err, backupfunc?, optMessage?, toolCust := false) {
             }
         }
     ;// getting the name of the script that called the function
-    script := SplitPathObj(err.File)
+    script := obj.SplitPath(err.File)
     ;// assigning the time to a var
     timeString := Format("{}:{}:{}.{} ", A_Hour, A_Min, A_Sec, A_MSec)
     ;// assigning the log error to a variable so we can reuse it

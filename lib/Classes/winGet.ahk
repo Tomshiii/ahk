@@ -170,7 +170,7 @@ class WinGet {
                 )
                 return false
             }
-        path := IsSet(premCheck) ? SplitPathObj(premCheck) : SplitPathObj(aeCheck)
+        path := IsSet(premCheck) ? obj.SplitPath(premCheck) : obj.SplitPath(aeCheck)
         ;// if the comms folder isn't in the title path
         if !InStr(path.dir, ptf.comms) {
                 errorLog(

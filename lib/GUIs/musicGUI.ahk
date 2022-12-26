@@ -2,7 +2,7 @@
 #Include <GUIs\tomshiBasic>
 #Include <Classes\ptf>
 #Include <Classes\dark>
-#Include <Functions\SplitPathObj>
+#Include <Classes\obj>
 ; }
 
 /**
@@ -92,7 +92,7 @@ musicGUI()
         else
             {
                 scriptPath :=  A_LineFile ;this is taking the path given from A_LineFile
-                script := SplitPathObj(scriptPath) ;and splitting it out into just the .ahk filename
+                script := obj.SplitPath(scriptPath) ;and splitting it out into just the .ahk filename
                 MsgBox("The requested music folder doesn't exist`n`nWritten dir: " ptf.musicDir "`nScript: " script.Name "`nLine: " A_LineNumber-11)
             }
         MyGui.Destroy()

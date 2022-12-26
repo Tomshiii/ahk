@@ -36,6 +36,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Classes\Move>
 #Include <Classes\winget>
 #Include <Classes\Startup>
+#Include <Classes\obj>
 #Include <Functions\reload_reset_exit>
 #Include <Functions\errorLog>
 #Include <Functions\mouseDrag>
@@ -53,9 +54,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Requires AutoHotkey v2.0
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.26
-;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.13.4
+;\\v2.26.1
 
 ; ============================================================================================================================================
 ;
@@ -332,7 +331,7 @@ AppsKey::
 	 * @param {String} command is what you want to search for in the docs
 	 */
 	LinkClicked(command, search := true) {
-		path := SplitPathObj(A_AhkPath)
+		path := obj.SplitPath(A_AhkPath)
 		;// hopefully this never has to fire as browsers are unpredictable and there's no easy way to wait for things to load
         if !FileExist(chm := path.dir '\AutoHotkey.chm')
 			{
