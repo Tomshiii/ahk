@@ -23,7 +23,6 @@ timer.reminder.start()
 
 ;// creating timer text
 #Include <checklist\timerText>
-MyGui.AddButton("Default X0 Y0 W0 H0", ".")
 
 ;// set startvalue
 timer.Count := timer.Count + startValue

@@ -2,6 +2,7 @@
 #Include <GUIs\tomshiBasic>
 #Include <Classes\ptf>
 #Include <Classes\dark>
+#Include <Functions\SplitPathObj>
 ; }
 
 /**
@@ -44,8 +45,7 @@ musicGUI()
     folderlogo := MyGui.AddPicture("w25 h-1  X14 Y86", ptf.guiIMG "\explorer.png")
     FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
     FOLDERGUI.OnEvent("Click", MUSICFOLDER)
-    ;add an invisible button since removing the default off all the others did nothing
-    removedefault := MyGui.Add("Button", "Default X0 Y0 W0 H0", "_")
+
     ;#finished with definitions
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
