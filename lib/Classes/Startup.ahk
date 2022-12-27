@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/24
- * @version 1.0.8.2
+ * @date 2022/12/25
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -189,23 +189,24 @@ class Startup {
             tool.Cust("You are currently up to date", 2000)
         switch check {
             default:
-                tool.Cust("You put something else in the settings.ini file you goose")
-                errorLog(, A_ThisFunc "()", "You put something else in the settings.ini file you goose", A_LineFile, A_LineNumber)
+                errorLog(
+                    ValueError("Incorrect value input in ``settings.ini``", -1, check)
+                    , A_ThisFunc "()",, 1
+                )
                 return
             case "false":
                 tool.Wait()
                 if VerCompare(MyRelease, version) < 0
                     {
                         tool.Cust("You're using an outdated version of these scripts", 3.0)
-                        errorLog(, A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("User is using an outdated version of these scripts", -1, version)
+                            , A_ThisFunc "()"
+                        )
                         return
                     }
-                else
-                    {
-                        tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
-                        errorLog(, A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
-                        return
-                    }
+                tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
+                return
             case "true":
                 if VerCompare(MyRelease, version) >= 0
                     return

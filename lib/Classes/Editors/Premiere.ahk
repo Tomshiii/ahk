@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/12/21
- * @version 1.0.6
+ * @date 2022/12/25
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -68,15 +68,19 @@ class Prem {
                 if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
                     {
                         block.Off()
-                        tool.Cust("the graphics tab",, 1)
-                        errorLog(, A_ThisFunc "()", "Couldn't find the graphics tab", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("Couldn't find the graphics tab", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
                 if !ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
                     {
                         block.Off()
-                        tool.Cust("the eye icon",, 1)
-                        errorLog(, A_ThisFunc "()", "Couldn't find the eye icon", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("Couldn't find the eye icon", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
                 MouseMove(xeye, yeye)
@@ -96,16 +100,17 @@ class Prem {
                             if A_Index > 5
                                 {
                                     SendInput(findBox) ;adjust this in the ini file
-                                    tool.Cust("if you hear windows, blame premiere", 2000)
-                                    errorLog(, A_ThisFunc "()", "If you're looking here because you heard windows beep, it's because this function loops trying to find the search box in premiere but sometimes premiere is dumb and doesn't find it when it's supposed to, then when you send the hotkey again windows complains. Thanks Adobe.", A_LineFile, A_LineNumber)
+                                    tool.Cust("if you hear windows, blame adobe", 2000)
                                 }
                             sleep 30
                             CaretGetPos(&findx)
                             if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                 {
                                     block.Off()
-                                    tool.Cust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
-                                    errorLog(, A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
+                                    errorLog(
+                                        IndexError("Couldn't find the findbox", -1)
+                                        , A_ThisFunc "()",, 1
+                                    )
                                     return
                                 }
                         } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -133,9 +138,10 @@ class Prem {
                                         if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                             {
                                                 block.Off()
-                                                tool.Cust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
-                                                errorLog(, A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
-                                                return
+                                                errorLog(
+                                                    IndexError("Couldn't find the findbox", -1)
+                                                    , A_ThisFunc "()",, 1
+                                                )
                                             }
                                     } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                             }
@@ -146,8 +152,6 @@ class Prem {
                             {
                                 SendInput("{Esc}")
                                 sleep 50
-                                tool.Cust("it tried to delete your preset", 2000)
-                                errorLog(, A_ThisFunc "()", "The function attempted to delete the users preset and was aborted", A_LineFile, A_LineNumber)
                             }
                     }
             }
@@ -197,8 +201,10 @@ class Prem {
                         if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                             {
                                 block.Off()
-                                tool.Cust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
-                                errorLog(, A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
+                                errorLog(
+                                    IndexError("Couldn't find the findbox", -1)
+                                    , A_ThisFunc "()",, 1
+                                )
                                 return
                             }
                     } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -223,8 +229,10 @@ class Prem {
                                     if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                         {
                                             block.Off()
-                                            tool.Cust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
-                                            errorLog(, A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
+                                            errorLog(
+                                                IndexError("Couldn't find the findbox", -1)
+                                                , A_ThisFunc "()",, 1
+                                            )
                                             return
                                         }
                                 } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -236,73 +244,9 @@ class Prem {
                         {
                             SendInput("{Esc}")
                             sleep 50
-                            tool.Cust("it tried to delete your preset", 2000)
-                            errorLog(, A_ThisFunc "()", "The function attempted to delete the users preset and was aborted", A_LineFile, A_LineNumber)
                         }
                 }
         }
-        block.Off()
-    }
-
-    /**
-     * This function is to simply cut down repeated code on my numpad punch in scripts. it punches the video into my preset values for highlight videos
-     * @param {Integer} xval is the pixel value you want this function to paste into the X coord text field in premiere
-     * @param {Integer} yval is the pixel value you want this function to paste into the y coord text field in premiere
-     * @param {Integer} scale is the scale value you want this function to paste into the scale text field in premiere
-     */
-    static num(xval, yval, scale)
-    {
-        KeyWait(A_PriorHotkey) ;you can use A_PriorHotKey when you're using 1 button to activate a macro
-        MouseGetPos(&xpos, &ypos)
-        coord.s()
-        block.On()
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-        try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
-            return
-        }
-        SendInput(timelineWindow) ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            {
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
-                        block.Off()
-                        return
-                    }
-            }
-        SendInput(timelineWindow) ;adjust this in the ini file
-        SendInput(labelRed) ;changes the track colour so I know that the clip has been zoomed in
-        if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png") ;moves to the "video" section of the effects control window tab
-            {
-                MouseMove(xpos, ypos)
-                block.Off()
-                tool.Cust("the video section",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
-                return
-            }
-        if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") && !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;moves to the motion tab
-            {
-                MouseMove(xpos, ypos) ;moves back to the original coords
-                block.Off()
-                tool.Cust("the motion tab",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Couldn't find the motion tab", A_LineFile, A_LineNumber)
-                return
-            }
-        MouseMove(x2 + "10", y2 + "10")
-        SendInput("{Click}")
-        SendInput("{Tab 2}" xval "{Tab}" yval "{Tab}" scale "{ENTER}")
-        SendInput("{Enter}")
-        MouseMove(xpos, ypos)
         block.Off()
     }
 
@@ -383,7 +327,6 @@ class Prem {
                 block.Off()
                 tool.Wait()
                 tool.Cust("Couldn't get the client name")
-                errorLog(, A_ThisFunc "()", "Couldn't get the client name", A_LineFile, A_LineNumber)
                 return
             }
 
@@ -448,8 +391,10 @@ class Prem {
                 sleep 50
                 if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("No clips were selected", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         block.Off()
                         return
                     }
@@ -458,8 +403,10 @@ class Prem {
             {
                 MouseMove(xpos, ypos)
                 block.Off()
-                tool.Cust("the video section",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Couldn't find the video section", A_LineFile, A_LineNumber)
+                errorLog(
+                    Error("Couldn't find the video section", -1)
+                    , A_ThisFunc "()",, 1
+                )
                 return
             }
         MouseMove(motionX + "10", motionY + "10")
@@ -532,9 +479,11 @@ class Prem {
                 sleep 50
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "The wrong clips are selected", A_LineFile, A_LineNumber)
                         block.Off()
+                        errorLog(
+                            Error("No clips are selected", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
             }
@@ -542,9 +491,11 @@ class Prem {
             { ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
                 if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png")
                     {
-                        tool.Cust("you aren't scrolled down")
-                        errorLog(, A_ThisFunc "()", "The user wasn't scrolled down", A_LineFile, A_LineNumber)
                         block.Off()
+                        errorLog(
+                            Error("The user wasn't scrolled down", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                         return
                     }
@@ -587,8 +538,10 @@ class Prem {
             if A_Index > 3
                 {
                     block.Off()
-                    tool.Cust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, 5000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(, A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
+                    errorLog(
+                        IndexError("Failed to find the requested property", -1, filepath)
+                        , A_ThisFunc "()",, 1
+                    )
                     if A_ThisHotkey != ""
                         KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
@@ -601,9 +554,10 @@ class Prem {
             {
                 if !ImageSearch(&arrX, &arrY, x, y, x+400, y+40, "*2 " ptf.Premiere filepath "arrow.png")
                     {
-                        tool.Cust("the arrow to open the blend mode menu",, 1)
-                        errorLog(, A_ThisFunc "()", "Couldn't find the arrow to open the blend mode menu", A_LineFile, A_LineNumber)
-                        ; KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                        errorLog(
+                            Error("Couldn't find the arrow to open the blend mode menu", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         MouseMove(xpos, ypos)
                         block.Off()
                         return
@@ -613,9 +567,10 @@ class Prem {
                 sleep 500
                 if !ImageSearch(&modeX, &modeY, arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode "2.png")
                     {
-                        tool.Cust("the desired blend mode",, 1)
-                        errorLog(, A_ThisFunc "()", "Couldn't find the desired blend mode", A_LineFile, A_LineNumber)
-                        ; KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                        errorLog(
+                            Error("Couldn't find the desired blend mode", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         MouseMove(xpos, ypos)
                         block.Off()
                         return
@@ -631,7 +586,10 @@ class Prem {
             {
                 block.Off()
                 tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
+                errorLog(
+                    Error("Couldn't find the blue 'value' text", -1)
+                    , A_ThisFunc "()",, 1
+                )
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
                 return
@@ -663,8 +621,10 @@ class Prem {
                             }
                         MouseMove(xpos, ypos)
                         block.Off()
-                        tool.Cust("the reset button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                        errorLog(, A_ThisFunc "()", "Failed to find reset button", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("Couldn't find the reset button", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
                 MouseMove(x2, y2)
@@ -702,8 +662,10 @@ class Prem {
                 sleep 50
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("No clips were selected", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         block.Off()
                         return
                     }
@@ -711,9 +673,11 @@ class Prem {
         if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") && !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
             {
                 tool.Cust("you're already keyframing")
-                errorLog(, A_ThisFunc "()", "The user was already keyframing", A_LineFile, A_LineNumber)
+                errorLog(
+                    Error("The user was already keyframing", -1)
+                    , A_ThisFunc "()"
+                )
                 block.Off()
-                ;KeyWait(A_PriorHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 return
             }
         MouseMove(x + "7", y + "4")
@@ -749,9 +713,11 @@ class Prem {
                 sleep 50
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                         block.Off()
+                        errorLog(
+                            Error("No clips were selected", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
             }
@@ -765,9 +731,11 @@ class Prem {
             }
         else
             {
-                tool.Cust("Couldn't find the desired value")
-                errorLog(, A_ThisFunc "()", "Couldn't find the desired value", A_LineFile, A_LineNumber)
                 block.Off()
+                errorLog(
+                    Error("Couldn't find the desired value", -1)
+                    , A_ThisFunc "()",, 1
+                )
                 return
             }
         next:
@@ -793,8 +761,11 @@ class Prem {
         SendInput(selectionPrem)
         if !ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " ptf.Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
             {
-                tool.Cust("you haven't opened the bin", 2000)
-                errorLog(, A_ThisFunc "()", "User hasn't opened the required bin", A_LineFile, A_LineNumber)
+                errorLog(
+                    Error("User hasn't opened the required bin", -1)
+                    , A_ThisFunc "()",, 1
+                )
+                return
             }
         block.On()
         coord.s()
@@ -819,8 +790,10 @@ class Prem {
                             if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                 {
                                     block.Off()
-                                    tool.Cust("Premiere was dumb and`ncouldn't find the findbox. Try again", 3000)
-                                    errorLog(, A_ThisFunc "()", "Premiere couldn't find the findbox", A_LineFile, A_LineNumber)
+                                    errorLog(
+                                        Error("Couldn't determine the location of the findbox", -1)
+                                        , A_ThisFunc "()",, 1
+                                    )
                                     return
                                 }
                         } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -832,8 +805,10 @@ class Prem {
             if !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " ptf.Premiere "audio.png") && !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " ptf.Premiere "audio2.png") ;searches for the audio image next to an audio file
                 {
                     block.Off()
-                    tool.Cust("audio image", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(, A_ThisFunc "()", "Couldn't find the audio image", A_LineFile, A_LineNumber)
+                    errorLog(
+                        Error("Couldn't find the audio image", -1)
+                        , A_ThisFunc "()",, 1
+                    )
                     coord.s()
                     MouseMove(xpos, ypos)
                     return
@@ -859,7 +834,10 @@ class Prem {
                 colour = 0x292929 || colour = 0x2D2D2D || colour = 0x3B3B3B || colour = 0x404040 || colour = 0x454545 || colour = 0x4A4A4A || colour = 0x585858 || colour = 0x606060 || colour = 0x646464 || colour = 0xA7ADAB || colour = 0xB1B1B1 || colour = 0xCCCCCC|| colour = 0xD2D2D2 || colour = 0xEFEFEF  ;colours for the fx symbol box
             )
                 break
-            errorLog(, A_ThisFunc "()", "Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, A_LineFile, A_LineNumber)
+            errorLog(
+                IndexError("Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, -1)
+                , A_ThisFunc "()"
+            )
             if A_Index > 2
                 {
                     block.Off()
@@ -910,8 +888,10 @@ class Prem {
                     if A_Index > 160 ;built in timeout
                         {
                             block.Off()
-                            tool.Cust(A_ThisFunc " timed out due to no user interaction", 2000)
-                            errorLog(, A_ThisFunc "()", "timed out due to no user interaction", A_LineFile, A_LineNumber)
+                            errorLog(
+                                IndexError(A_ThisFunc "() timed out due to no user interaction", -1)
+                                , A_ThisFunc "()",, 1
+                            )
                             return
                         }
                     if ((A_TickCount - start) >= 1000)
@@ -934,8 +914,10 @@ class Prem {
                 if !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " ptf.Premiere "track " trackNumber "_1.png") && !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " ptf.Premiere "track " trackNumber "_2.png")
                     {
                         block.Off()
-                        tool.Cust("Couldn't determine the Y value of desired track")
-                        errorLog(, A_ThisFunc "()", "Couldn't determine the Y value of desired track", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("Couldn't determine the Y value of desired track", -1, trackNumber)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
                 MouseMove(refx, trackY, 2)
@@ -1010,9 +992,11 @@ class Prem {
                 sleep 50
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                         block.Off()
+                        errorLog(
+                            Error("No clips were selected", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
             }
@@ -1040,8 +1024,10 @@ class Prem {
             if A_Index > 3
                 {
                     block.Off()
-                    tool.Cust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, 5000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                    errorLog(, A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
+                    errorLog(
+                        IndexError("Couldn't find the requested property.", -1)
+                        , A_ThisFunc "()",, 1
+                    )
                     KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
                     return
@@ -1069,8 +1055,10 @@ class Prem {
                         {
                             MouseMove(moveX, moveY)
                             block.Off()
-                            tool.Cust(A_ThisFunc " couldn't find your video or it kept finding pure black at each coordinate", 2000)
-                            errorLog(, A_ThisFunc "()", "Couldn't find your video or it kept finding pure black at each coordinate", A_LineFile, A_LineNumber)
+                            errorLog(
+                                IndexError("Couldn't find the video in the Program Monitor.", -1)
+                                , A_ThisFunc "()", "Or the function kept finding pure black at each checking coordinate", 1
+                            )
                             break
                         }
                 }
@@ -1087,8 +1075,10 @@ class Prem {
                     {
                         block.Off()
                         MouseMove(xpos, ypos)
-                        tool.Cust("the reset button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                        errorLog(, A_ThisFunc "()", "Couldn't find the reset button", A_LineFile, A_LineNumber)
+                        errorLog(
+                            Error("Couldn't find the reset button", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
                 MouseMove(xcol, ycol)
@@ -1126,9 +1116,11 @@ class Prem {
                 sleep 50
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                         block.Off()
+                        errorLog(
+                            Error("No clips were selected", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
             }
@@ -1139,8 +1131,10 @@ class Prem {
             if A_Index > 5
                 {
                     block.Off()
-                    tool.Cust("the motion value",, 1)
-                    errorLog(, A_ThisFunc "()", "Couldn't find the motion image", A_LineFile, A_LineNumber)
+                    errorLog(
+                        IndexError("Couldn't find the motion image", -1)
+                        , A_ThisFunc "()",, 1
+                    )
                     return
                 }
         }
@@ -1181,9 +1175,11 @@ class Prem {
                 sleep 50
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        tool.Cust("The wrong clips are selected")
-                        errorLog(, A_ThisFunc "()", "No clips were selected", A_LineFile, A_LineNumber)
                         block.Off()
+                        errorLog(
+                            Error("No clips were selected", -1)
+                            , A_ThisFunc "()",, 1
+                        )
                         return
                     }
             }
@@ -1195,15 +1191,19 @@ class Prem {
         )
             {
                 block.Off()
-                tool.Cust("the property you wish to adjust",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Couldn't find the users requested property", A_LineFile, A_LineNumber)
+                errorLog(
+                    Error("Couldn't find the property requested.", -1, property)
+                    , A_ThisFunc "()",, 1
+                )
                 return
             }
         if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x205cce, 2) ;searches for the blue text to the right of the scale value
             {
                 block.Off()
-                tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
+                errorLog(
+                    Error("Couldn't find the blue 'value' text", -1)
+                    , A_ThisFunc "()",, 1
+                )
                 return
             }
         MouseMove(xcol + optional, ycol)
@@ -1226,9 +1226,9 @@ class Prem {
     {
         if !IsNumber(amount)
             {
-                tool.Cust("You have put a non numeric value as this function's parameter", 2.0)
-                errorLog(, A_ThisFunc "()", "User put a non numeric value in function's parameter", A_LineFile, A_LineNumber)
-                return
+                typeErr := TypeError("Invalid parameter type in Parameter #1", -1, amount)
+                errorLog(typeErr, A_ThisFunc "()",, 1)
+                throw typeErr
             }
         KeyWait(A_ThisHotkey)
         Critical
@@ -1280,19 +1280,6 @@ class Prem {
                         SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                         goto inputs
                     }
-                /* else
-                    {
-                    classNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                        if classNN = "DroverLord - Window Class3"
-                            goto inputs
-                        else
-                            {
-                                block.Off()
-                                tool.Cust("gain macro couldn't figure`nout what to do")
-                                errorLog(, A_ThisFunc "()", "Function was unable to determine how to proceed", A_LineFile, A_LineNumber)
-                                return
-                            }
-                    }*/
             } catch as e {
                 ToolTip("")
                 block.Off()

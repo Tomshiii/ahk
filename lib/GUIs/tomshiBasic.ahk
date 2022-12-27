@@ -10,6 +10,7 @@ class tomshiBasic extends Gui {
     __New(FontSize := 11, FontWeight := 500, options?, title:="") {
         super.__new(options?, title, this)
         this.BackColor := 0xF0F0F0
-        this.SetFont("S" FontSize " W" FontWeight) ;Sets the size of the font
+        this.SetFont("S" FontSize " W" FontWeight) ;// sets the size of the font
+        this.AddButton("Default W0 H0 X8 Y0", "_") ;// creates an invisible button to take focus away from the first defined ctrl
     }
 }

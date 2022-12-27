@@ -30,8 +30,9 @@ waitUntil()
             if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
                 {
                     block.Off()
-                    tool.Cust("``titlecheck`` variable wasn't assigned a value")
-                    errorLog(, A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                    errorLog(
+                        UnsetError("Variable wasn't assigned a value.", -1, titlecheck)
+                        , A_ThisFunc "()",, 1)
                     SetTimer(, -1000)
                 }
             dashLocationAgain := InStr(Namepremdash, "-")
@@ -44,8 +45,9 @@ waitUntil()
             if !IsSet(aeCheckagain) ;we ensure the title variable has been assigned before proceeding forward
                 {
                     block.Off()
-                    tool.Cust("``aeCheckagain`` variable wasn't assigned a value")
-                    errorLog(, A_ThisFunc "()", "Variable wasn't assigned a value", A_LineFile, A_LineNumber)
+                    errorLog(
+                        UnsetError("Variable wasn't assigned a value", -1, aeCheckagain)
+                        , A_ThisFunc "()",, 1)
                     SetTimer(, -1000)
                 }
             if !InStr(aeCheckagain, ":`\")

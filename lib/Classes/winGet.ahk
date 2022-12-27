@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/12/24
- * @version 1.0.5.2
+ * @date 2022/12/25
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,9 +33,9 @@ class WinGet {
                             return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
                     }
                 if A_Index >= numberofMonitors
-                    throw TargetError("Couldn't find the monitor", A_ThisFunc "()")
+                    throw IndexError("Couldn't find the monitor", -1, numberofMonitors)
             }
-            catch TargetError as e {
+            catch IndexError as e {
                 block.Off() ;to stop the user potentially getting stuck
                 tool.Cust(A_ThisFunc "() failed to get the monitor that the mouse is within", 2.0)
                 errorLog(e, A_ThisFunc "()")
@@ -58,11 +58,10 @@ class WinGet {
                 ignore := ""
             title := WinGetTitle("A",, ignore)
             if !IsSet(title) || title = "" || title = "Program Manager"
-                throw Error e
+                throw UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1, title)
             return title
-        } catch as e {
-            tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
-            errorLog(e, A_ThisFunc "()")
+        } catch UnsetError as e {
+            errorLog(e, A_ThisFunc "()",, 1)
             block.Off()
             Exit()
         }
@@ -155,27 +154,29 @@ class WinGet {
      */
     static ProjClient()
     {
-        /**
-         * cutting repeat code
-         */
-        err(Err) {
-            tool.Cust(Err, 2.0)
-            errorLog(, A_ThisFunc "()", Err, A_LineFile, A_LineNumber)
-        }
         ;// if the user doesn't have either editors active
         if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) {
-                err("Editors aren't open")
+                errorLog(
+                    TargetError("Couldn't determine an editor window", -1)
+                    , A_ThisFunc "()",, 1
+                )
                 return false
             }
         ;// if PremName fails to grab the title
         if !this.PremName(&premCheck, &titleCheck) && !this.AEName(&aeCheck) {
-                err("Unable to perform action as title is unable to be obtained")
+                errorLog(
+                    TargetError("Unable to determine the client as the title is unable to be obtained", -1)
+                    , A_ThisFunc "()",, 1
+                )
                 return false
             }
-        path := IsSet(premCheck) ? SplitPathObj(premCheck) : SplitPathObj(aeCheck)
+        path := IsSet(premCheck) ? obj.SplitPath(premCheck) : obj.SplitPath(aeCheck)
         ;// if the comms folder isn't in the title path
         if !InStr(path.dir, ptf.comms) {
-                err("``ptf.comms`` folder not found in Premiere title")
+                errorLog(
+                    UnsetError("``ptf.comms`` folder not found in Premiere title", -1, path.dir)
+                    , A_ThisFunc "()",, 1
+                )
                 return false
             }
         return ClientName := SubStr(

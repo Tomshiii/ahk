@@ -47,8 +47,10 @@ h:: ;opens the directory for the current premiere project
 					WinActivate("ahk_class CabinetWClass", "comms")
 					return
 				}
-			tool.Cust("A Premiere/AE isn't open")
-			errorLog(, A_ThisHotkey "::", "Could not find a Premiere/After Effects window", A_LineFile, A_LineNumber)
+			errorLog(
+				Error("Couldn't determine a Premiere/After Effects window", -1)
+				, A_ThisFunc "()",, 1
+			)
 			return
 		}
 	try {

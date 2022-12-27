@@ -5,7 +5,7 @@
 #Include <Classes\dark>
 #Include <Classes\tool>
 #Include <Classes\ptf>
-#Include <Functions\SplitPathObj>
+#Include <Classes\obj>
 #Include <Functions\On_WM_MOUSEMOVE>
 #Include <Functions\reload_reset_exit>
 #Include <Functions\refreshWin>
@@ -31,10 +31,16 @@ settingsGUI()
     openMenu.Disable("&Wiki")
     openMenu.Add("&Wiki Dir`tCtrl+O", openWiki.Bind("local"))
     openMenu.Add("&Wiki Web`tCtrl+W", openWiki.Bind("web"))
+    editorsMenu := Menu()
+    editorsMenu.Add("&After Effects", menu_Adobe.bind("AE"))
+    ; editorsMenu.Add("&Photoshop", ) ;// call a different gui
+    editorsMenu.Add("&Premiere", menu_Adobe.bind("Premiere"))
+    ; editorsMenu.Add("&Resolve", ) ;// call a different gui
     ;// define the entire menubar
     bar := MenuBar()
     bar.Add("&File", FileMenu)
     bar.Add("&Open", openMenu)
+    bar.Add("&Editors", editorsMenu)
 
     openWiki(which, *) {
         switch which {
@@ -77,8 +83,6 @@ settingsGUI()
     settingsGUI := tomshiBasic(,, "+Resize +MinSize250x AlwaysOnTop", "Settings " version)
     SetTimer(resize, -10)
     resize() => settingsGUI.Opt("-Resize")
-
-    settingsGUI.AddButton("Default W0 H0", "_")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! Top Titles
@@ -358,24 +362,13 @@ settingsGUI()
     AEInitYear := IniRead(ptf["settings"], "Adjust", "ae year")
     ;this loop auto generates the edit boxes using "..\settingsGUI\editValues.ahk"
     loop set_Edit_Val.Length {
-        if A_Index <= set_Edit_Val.Length - 2
-            {
-                initVal := IniRead(ptf["settings"], "Adjust", set_Edit_Val.iniInput[A_Index])
-                settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])
-                settingsGUI.Add("UpDown",, initVal)
-                settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
-                settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
-                settingsGUI.Add("Text", set_Edit_Val.otherTextPos[A_Index], set_Edit_Val.otherText[A_Index])
-                settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index], set_Edit_Val.iniInput[A_Index]))
-            }
-        if A_Index > set_Edit_Val.Length - 2
-            {
-                initVal := IniRead(ptf["settings"], "Adjust", set_Edit_Val.iniInput[A_Index])
-                settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number Limit4 v" set_Edit_Val.control[A_Index], initVal)
-                settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
-                settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
-                settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index], set_Edit_Val.iniInput[A_Index]))
-            }
+        initVal := IniRead(ptf["settings"], "Adjust", set_Edit_Val.iniInput[A_Index])
+        settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])
+        settingsGUI.Add("UpDown",, initVal)
+        settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
+        settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
+        settingsGUI.Add("Text", set_Edit_Val.otherTextPos[A_Index], set_Edit_Val.otherText[A_Index])
+        settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index], set_Edit_Val.iniInput[A_Index]))
     }
 
     editCtrl(script, ini, ctrl, *)
@@ -388,7 +381,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! BOTTOM TEXT
-    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+20", "Reset")
+    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+60", "Reset")
     resetText.SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -436,7 +429,7 @@ settingsGUI()
     SB.OnEvent("Click", dir)
     dir(*)
     {
-        dirName := SplitPathObj(workDir)
+        dirName := obj.SplitPath(workDir)
         if WinExist("ahk_exe explorer.exe " dirName.NameNoExt)
             WinActivate("ahk_exe explorer.exe " dirName.NameNoExt)
         else
@@ -475,8 +468,6 @@ settingsGUI()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         if IsSet(butt) && butt = "hard"
-            reload_reset_exit("reset")
-        if settingsGUI[set_Edit_Val.control[set_Edit_Val.num[6]]].Value != premInitYear || settingsGUI[set_Edit_Val.control[set_Edit_Val.num[7]]].Value != AEInitYear
             reload_reset_exit("reset")
         ;before finally closing
         settingsGUI.Destroy()
@@ -558,5 +549,116 @@ settingsGUI()
             settingsGUI.Opt("+AlwaysOnTop")
         SetTimer(, 0)
         end:
+    }
+
+    menu_Adobe(program, *) {
+        switch program {
+            case "Premiere":
+                title := program " Pro Settings"
+                yearIniName := "prem year"
+                iniInitYear := IniRead(ptf.SettingsLoc "\settings.ini", "adjust", yearIniName, A_Year)
+                verIniName := "premVer"
+                genProg := program
+                otherTitle := "After Effects Settings"
+                imageLoc := ptf.premIMGver
+            case "AE":
+                title := "After Effects Settings"
+                yearIniName := "ae year"
+                iniInitYear := IniRead(ptf.SettingsLoc "\settings.ini", "adjust", yearIniName, A_Year)
+                verIniName := "aeVer"
+                genProg := "AE"
+                otherTitle := "Premiere Pro Settings"
+                imageLoc := ptf.aeIMGver
+        }
+        if WinExist(title)
+            {
+                WinActivate(title)
+                return
+            }
+        adobeGui := tomshiBasic(,, "+MinSize275x", title)
+        ctrlX := 100
+
+        ;// start defining the gui
+        adobeGui.AddText("Section", "Year: ")
+        year := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W50 Number Limit4", iniInitYear)
+        year.OnEvent("Change", yearEvent)
+        adobeGui.AddText("xs y+10", "Version: ")
+        generateDrop(genProg, &ver, ctrlX)
+
+        adobeGui.AddText("xs y+15", "*some settings will require a full reload to take effect").SetFont("s9 italic")
+
+        ;// show
+        adobeGui.Show()
+        ;// move gui
+        add := 0
+        ;// settingsgui
+        WinGetPos(&x, &y,,, "Settings " version)
+        if WinExist(otherTitle)
+            {
+                WinGetPos(,,, &yearHeight, otherTitle)
+                add := yearHeight
+            }
+        adobeGui.GetPos(,, &width)
+        adobeGui.Move(x-width+5, y+add)
+
+        editCtrl(ini, ctrl, *)
+        {
+            IniWrite(ctrl.value, ptf["settings"], "Adjust", ini)
+        }
+
+        yearEvent(*) {
+            if StrLen(year.Value) != 4
+                return
+            if year.Value > A_Year + 1 || year.Value < 2013
+                {
+                    ver.Delete()
+                    return
+                }
+            if SubStr(ver.value, 3, 2) != SubStr(year.Value, 3, 2)
+                ver.Delete()
+            new := []
+            loop files ptf.ImgSearch "\" program "\*", "D"
+                {
+                    if InStr(A_LoopFileName, "v" SubStr(year.Value, 3, 2))
+                        new.Push(A_LoopFileName)
+                }
+            ver.Add(new)
+            if new.Has(1)
+                ver.Choose(1)
+            IniWrite(year.value, ptf.SettingsLoc "\settings.ini", "adjust", yearIniName)
+        }
+
+        generateDrop(program, &ver, ctrlX) {
+            if program != "AE" && program != "Premiere"
+                {
+                    err := ValueError("Incorrect value in Parameter #1", -1, program)
+                    errorLog(err, "settingsGUI()")
+                    throw err
+                }
+            if !DirExist(ptf.ImgSearch "\" program "\")
+                {
+                    dirErr := ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program)
+                    errorLog(dirErr, "settingsGUI()")
+                    throw dirErr
+                }
+            supportedVers := []
+            loop files ptf.ImgSearch "\" program "\*", "D"
+                {
+                    if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
+                        supportedVers.Push(A_LoopFileName)
+                }
+            for value in supportedVers
+                {
+                    if value = imageLoc
+                        {
+                            defaultIndex := A_Index
+                            break
+                        }
+                }
+            if !IsSet(defaultIndex)
+                defaultIndex := 1
+            ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 Choose" defaultIndex, supportedVers)
+            ver.OnEvent("Change", editCtrl.bind(verIniName))
+        }
     }
 }

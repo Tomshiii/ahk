@@ -2,6 +2,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\Apps\VSCode> ;// only to easy grab the path/wintitle information
+#Include <Classes\obj>
 #Include <Functions\detect>
 ; }
 
@@ -27,7 +28,7 @@ reload_reset_exit(which, includeChecklist?) {
         {
             name := WinGettitle(this_value,, browser.vscode.winTitle)
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
-            script := SplitPathObj(path)
+            script := obj.SplitPath(path)
             if all != true && (script.Name = "checklist.ahk" || script.Name = "My Scripts.ahk" || script.Name = "launcher.ahk")
                 continue
             if all = true && (script.Name = "My Scripts.ahk" || script.Name = "launcher.ahk")

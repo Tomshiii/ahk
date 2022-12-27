@@ -277,7 +277,10 @@ save()
                     avoid := 1
                     block.Off()
                     tool.Cust("A window is currently open that may alter the saving process")
-                    errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                    errorLog(
+                        Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1)
+                        , A_ThisFunc "()"
+                    )
                     SetTimer(, -ms)
                     goto end
                 }
@@ -349,7 +352,10 @@ save()
                             block.Off()
                             tool.Wait()
                             tool.Cust("A window is currently open that may alter the saving process")
-                            errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                            errorLog(
+                                Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1)
+                                , A_ThisFunc "()"
+                            )
                             goto end
                         }
                     tool.Wait()
@@ -378,7 +384,10 @@ save()
                             block.Off()
                             tool.Wait()
                             tool.Cust("A window is currently open that may alter the saving process")
-                            errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                            errorLog(
+                                Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1)
+                                , A_ThisFunc "()"
+                            )
                             goto end
                         }
                     tool.Wait()
