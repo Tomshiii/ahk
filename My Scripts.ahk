@@ -11,14 +11,17 @@
 ;\\CURRENT RELEASE VERSION
 global MyRelease := getLocalVer()
 
+;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
+;\\v2.26.2
+
 #SingleInstance Force
-SetWorkingDir(ptf.rootDir) ;sets the scripts working directory to the directory it's launched from
-SetNumLockState("AlwaysOn") ;sets numlock to always on (you can still it for macros)
-SetCapsLockState("AlwaysOff") ;sets caps lock to always off (you can still it for macros)
-SetScrollLockState("AlwaysOff") ;sets scroll lock to always off (you can still it for macros)
-SetDefaultMouseSpeed(0) ;sets default MouseMove speed to 0 (instant)
-SetWinDelay(0) ;sets default WinMove speed to 0 (instant)
-A_MaxHotkeysPerInterval := 400 ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
+SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
+SetNumLockState("AlwaysOn")            ;sets numlock to always on (you can still it for macros)
+SetCapsLockState("AlwaysOff")          ;sets caps lock to always off (you can still it for macros)
+SetScrollLockState("AlwaysOff")        ;sets scroll lock to always off (you can still it for macros)
+SetDefaultMouseSpeed(0)                ;sets default MouseMove speed to 0 (instant)
+SetWinDelay(0)                         ;sets default WinMove speed to 0 (instant)
+A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 ; { \\ #Includes
@@ -49,12 +52,9 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
-;#Include right click premiere.ahk ; this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
+;#Include right click premiere.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 #Requires AutoHotkey v2.0
-
-;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.26.1
 
 ; ============================================================================================================================================
 ;
@@ -398,6 +398,8 @@ F21::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 ;showmoreHotkey;
 F18:: ;open the "show more options" menu in win11
 {
+	;// I think I may have just changed my registry to always pull up the old menu within windows
+	;// and so I don't ever use this hotkey anymore and can't guarantee it even still functions
 	;Keep in mind I use dark mode on win11. Things will be different in light mode/other versions of windows
 	MouseGetPos(&mx, &my)
 	wingetPos(,, &width, &height, "A")
@@ -430,12 +432,6 @@ F18:: ;open the "show more options" menu in win11
 		{
 			;tool.Cust(colour "`n colour1&2 fired") ;for debugging
 			SendInput("{Click}")
-			SendInput("{Esc}" "+{F10}")
-			return
-		}
-	else if (colour = colour3 || colour = colour4)
-		{
-			;tool.Cust(colour "`n colour3&4 fired") ;for debugging
 			SendInput("{Esc}" "+{F10}")
 			return
 		}

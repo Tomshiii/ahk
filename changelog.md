@@ -1,7 +1,8 @@
 # <> Release 2.9 - Huge Refactor
+- Added `class timer {` to quickly and easily build more complex timer functionality
 
 ## > errorLog()
-- No longer takes a `backupVar` for every input instead requiring an `Error Object` to be passed into the function
+- No longer takes a `backupVar` for every input instead **_requiring_** an `Error Object` to be passed into the function
     - `backupFunc` is still a parameter
 - Can now have an optional message that will appear on a new, tabbed line
 - Can now automatically generate a `tool.Cust()` tooltip from the passed in error object
@@ -21,8 +22,8 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 - Fixed all instances of scripts not having the proper `#Include`
 
 ## > Functions
+- Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
-- Added `class timer {` to quickly and easily build more complex timer functionality
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
 
 ## > checklist.ahk
