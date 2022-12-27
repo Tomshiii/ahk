@@ -5,6 +5,7 @@
     - `backupFunc` is still a parameter
 - Can now have an optional message that will appear on a new, tabbed line
 - Can now automatically generate a `tool.Cust()` tooltip from the passed in error object
+    - This tooltip can have an object passed in to generate a custom tooltip, or it will default to `1.5s`
 
 ## > settingsGUI()
 - Editor settings can now be accessed as separate GUIs through the menubar

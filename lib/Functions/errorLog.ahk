@@ -10,7 +10,10 @@
  * @param {Object} err The error object you want to report on
  * @param {String} backupfunc Sometimes the error object doesn't pass through what func/hotkey has the issue - just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey "::"` if it's a hotkey
  * @param {String} optMessage An optional message you wish to append alongside the error. This message will be tabbed in to visually distinguish it
- * @param {Boolean} toolCust Allows the user to determine if they wish for a tooltip of the current error to be automatically generated. This tooltip will last `1.5s`
+ * @param {Boolean/Object} toolCust Allows the user to determine if they wish for a tooltip of the current error to be automatically generated. This parameter can either be a passed as a `true` boolean, or an object to determine a custom tooltip. If you wish to pass an object, follow the naming below:
+ * ```
+ * {x: '*desired x value', y: '*desired y value', time: '*desired time', ttip: '*desired WhichTooltip value'}
+ * ```
  */
 errorLog(err, backupfunc?, optMessage?, toolCust := false) {
     ;// this variable is only used on the first use of a day so we have to initialise it
@@ -119,8 +122,27 @@ errorLog(err, backupfunc?, optMessage?, toolCust := false) {
             OutputDebug(LTrim(optAppend, '`t'))
         }
     ;// if toolCust has been set to true, generate a tooltip based off the passed in error object
-    if toolCust {
-        scndLine := IsSet(optMessage) ? "`n" optMessage : ""
-        tool.Cust(err.Message scndLine, 1.5)
+    if !toolCust
+        return
+    scndLine := IsSet(optMessage) ? "`n" optMessage : ""
+    ;// if an object has been passed we'll create a custom tooltip
+    if IsObject(toolCust) {
+        ;// defaults
+        defaults := {ttip: 1, time: 1.5, x: "null", y: "null"}
+        ;// override any values passed into function
+        for key, value in toolCust.OwnProps() {
+            defaults.%key% := value
+        }
+        ;// checking if either the x/y values have been overridden
+        if defaults.x = "null"
+            x := unset
+        if defaults.y = "null"
+            y := unset
+        ;// generate tooltip
+        tool.Cust(err.Message scndLine, defaults.time,, x?, y?, defaults.ttip)
+        return
     }
+    ;// if only a boolean value has been passed we'll generate a standard tooltip
+    scndLine := IsSet(optMessage) ? "`n" optMessage : ""
+    tool.Cust(err.Message scndLine, 1.5)
 }
