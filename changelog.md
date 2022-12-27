@@ -15,6 +15,7 @@
 Added a new class `obj {` to maintain a collection of wrapper functions designed to take normal ahk functions and return their VarRefs as objects instead
 
 - Added `obj.WinPos()`
+- Added `obj.imgSrch()` using `checkImg()`
 - Moved `SplitPathObj()` and renamed to `obj.SplitPath()`
 - Moved `getMousePos()` and ranamed to `obj.MousePos()`
 - Fixed all instances of scripts not having the proper `#Include`
@@ -22,6 +23,7 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 ## > Functions
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - Added `class timer {` to quickly and easily build more complex timer functionality
+- `checkImg()` changed to support all normal ImageSearch `ImageFile options`
 
 ## > checklist.ahk
 - Entire script has been refactored to make use of `class timer {`
