@@ -90,12 +90,12 @@ class checklistTimer extends count {
         if newValue < 0
             newValue := 0
         IniWrite(newValue, checklist, "Info", "time")
-        SetTimer(watch, -1000)
         super.stop()
         this.logger.stop()
         this.reminder.stop()
         global startValue := IniRead(checklist, "Info", "time")
         this.count := 0 + startValue
+        this.StopWatch()
         newDate(&today)
         timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
         FileAppend("\\ The timer was stopped and " List.Text "min " word " : " timeStr " -- Hours after stopping = " forFile " -- seconds after stopping = " this.count "`n", logs)
