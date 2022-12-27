@@ -17,7 +17,7 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 - Added `obj.WinPos()`
 - Added `obj.imgSrch()` using `checkImg()`
 - Moved `SplitPathObj()` and renamed to `obj.SplitPath()`
-- Moved `getMousePos()` and ranamed to `obj.MousePos()`
+- Moved `getMousePos()` and renamed to `obj.MousePos()`
 - Fixed all instances of scripts not having the proper `#Include`
 
 ## > Functions
@@ -34,3 +34,4 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 
 ## > Other Changes
 - `tomshiBasic()` now creates a hidden button to force focus to it instead of the first user defined ctrl
+- `adobe fullscreen check.ahk` now uses `timer {`
