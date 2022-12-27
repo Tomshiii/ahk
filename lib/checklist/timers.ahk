@@ -5,8 +5,8 @@ class checklistTimer extends count {
         super.__New(newRepeat)
         this.logger   := checklistLog(10*1000)
         this.reminder := checklistReminder(ms)
+        watch := ObjBindMethod(this, "StopWatch")
     }
-    ;// if I have a class like this that extends another class, is there a way to change any of the methods of the base class? or are they stuck as they are?
 
     /**
      * This function handles what happens when the start button is pressed
@@ -90,7 +90,7 @@ class checklistTimer extends count {
         if newValue < 0
             newValue := 0
         IniWrite(newValue, checklist, "Info", "time")
-        SetTimer(this.StopWatch(), -1000)
+        SetTimer(watch, -1000)
         super.stop()
         this.logger.stop()
         this.reminder.stop()
