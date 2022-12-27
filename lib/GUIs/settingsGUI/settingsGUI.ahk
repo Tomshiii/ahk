@@ -571,16 +571,19 @@ settingsGUI()
                 imageLoc := ptf.aeIMGver
         }
         if WinExist(title)
-            return
+            {
+                WinActivate(title)
+                return
+            }
         adobeGui := tomshiBasic(,, "+MinSize275x", title)
         ctrlX := 100
 
         ;// start defining the gui
         adobeGui.AddText("Section", "Year: ")
         year := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W50 Number Limit4", iniInitYear)
-        year.OnEvent("Change", editCtrl.bind(yearIniName))
+        year.OnEvent("Change", yearEvent)
         adobeGui.AddText("xs y+10", "Version: ")
-        generateDrop(genProg, ctrlX)
+        generateDrop(genProg, &ver, ctrlX)
 
         adobeGui.AddText("xs y+15", "*some settings will require a full reload to take effect").SetFont("s9 italic")
 
@@ -603,7 +606,29 @@ settingsGUI()
             IniWrite(ctrl.value, ptf["settings"], "Adjust", ini)
         }
 
-        generateDrop(program, ctrlX) {
+        yearEvent(*) {
+            if StrLen(year.Value) != 4
+                return
+            if year.Value > A_Year + 1 || year.Value < 2013
+                {
+                    ver.Delete()
+                    return
+                }
+            if SubStr(ver.value, 3, 2) != SubStr(year.Value, 3, 2)
+                ver.Delete()
+            new := []
+            loop files ptf.ImgSearch "\" program "\*", "D"
+                {
+                    if InStr(A_LoopFileName, "v" SubStr(year.Value, 3, 2))
+                        new.Push(A_LoopFileName)
+                }
+            ver.Add(new)
+            if new.Has(1)
+                ver.Choose(1)
+            IniWrite(year.value, ptf.SettingsLoc "\settings.ini", "adjust", yearIniName)
+        }
+
+        generateDrop(program, &ver, ctrlX) {
             if program != "AE" && program != "Premiere"
                 {
                     err := ValueError("Incorrect value in Parameter #1", -1, program)
@@ -618,7 +643,10 @@ settingsGUI()
                 }
             supportedVers := []
             loop files ptf.ImgSearch "\" program "\*", "D"
-                supportedVers.Push(A_LoopFileName)
+                {
+                    if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
+                        supportedVers.Push(A_LoopFileName)
+                }
             for value in supportedVers
                 {
                     if value = imageLoc

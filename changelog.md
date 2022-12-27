@@ -18,8 +18,8 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 - Added `obj.WinPos()`
 - Added `obj.imgSrch()` using `checkImg()`
 - Moved `SplitPathObj()` and renamed to `obj.SplitPath()`
+    - Fixed all instances of scripts not having the proper `#Include`
 - Moved `getMousePos()` and renamed to `obj.MousePos()`
-- Fixed all instances of scripts not having the proper `#Include`
 
 ## > Functions
 - Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2022/12/20
- * @version 1.0.6
+ * @date 2022/12/28
+ * @version 1.0.7
  ***********************************************************************/
 
 class ptf {
@@ -55,8 +55,11 @@ class ptf {
     static ProgFi32          := "C:\Program Files (x86)"
 
     ;variables
-    static PremYear          := IniRead(this.SettingsLoc "\settings.ini", "adjust", "prem year", A_Year)
-    static AEYear            := IniRead(this.SettingsLoc "\settings.ini", "adjust", "ae year", A_Year)
+    static adobeYear(version) {
+        return SubStr(version, 2, 2)
+    }
+    static PremYear          := this.adobeYear(this.premIMGver)
+    static AEYear            := this.adobeYear(this.aeIMGver)
 
     /**
      * A little function to return the proper folder for the version of premiere/ae the user is using.
