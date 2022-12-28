@@ -59,6 +59,8 @@ class adobeTimer extends count {
             year := ptf.AEYear
         else
             year := A_Year
+        if year = ""
+            return
         end := InStr(title, year,, 1, 1) - 1
         getProgram := SubStr(title, 7, end - 7)
         titlecheck := InStr(title, "Adobe " getProgram A_Space year " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
