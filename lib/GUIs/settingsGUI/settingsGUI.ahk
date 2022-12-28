@@ -552,6 +552,7 @@ settingsGUI()
     }
 
     menu_Adobe(program, *) {
+        ;// setting values depending on which program settings the user wishes to change
         switch program {
             case "Premiere":
                 title := program " Pro Settings"
@@ -580,12 +581,16 @@ settingsGUI()
 
         ;// start defining the gui
         adobeGui.AddText("Section", "Year: ")
-        year := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W50 Number Limit4", iniInitYear)
+        year := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W100 Number Limit4", iniInitYear)
         year.OnEvent("Change", yearEvent)
         adobeGui.AddText("xs y+10", "Version: ")
         generateDrop(genProg, &ver, ctrlX)
 
-        adobeGui.AddText("xs y+15", "*some settings will require a full reload to take effect").SetFont("s9 italic")
+
+        ;// warning & save button
+        adobeGui.AddText("xs y+15", "*some settings will require`na full reload to take effect").SetFont("s9 italic")
+        saveBut := adobeGui.Add("Button", "x+-10", "save")
+        saveBut.OnEvent("Click", saveVer)
 
         ;// show
         adobeGui.Show()
@@ -601,11 +606,28 @@ settingsGUI()
         adobeGui.GetPos(,, &width)
         adobeGui.Move(x-width+5, y+add)
 
+        /**
+         * This function handles the logic for saving the adobe version number
+         */
         editCtrl(ini, ctrl, *)
         {
-            IniWrite(ctrl.value, ptf["settings"], "Adjust", ini)
+            ;// we don't want the version ini value to change unless it's actually a new version number
+            ;// (not blank) so we do a quick check beforehand
+            if InStr(ctrl.Value, "v") && InStr(ctrl.Value, ".")
+                IniWrite(ctrl.value, ptf["settings"], "Adjust", ini)
         }
 
+        /**
+         * This function handles the logic for what happens when the adobeGui save button is checked
+         * It is currently reserved for future use and has no current function besides destroying the gui
+         */
+        saveVer(*) {
+            adobeGui.Destroy()
+        }
+
+        /**
+         * This function handles the logic behind what happens when the user types in a new year value
+         */
         yearEvent(*) {
             if StrLen(year.Value) != 4
                 return
@@ -628,6 +650,9 @@ settingsGUI()
             IniWrite(year.value, ptf.SettingsLoc "\settings.ini", "adjust", yearIniName)
         }
 
+        /**
+         * This function generates the version dropdown selector
+         */
         generateDrop(program, &ver, ctrlX) {
             if program != "AE" && program != "Premiere"
                 {
@@ -657,7 +682,7 @@ settingsGUI()
                 }
             if !IsSet(defaultIndex)
                 defaultIndex := 1
-            ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 Choose" defaultIndex, supportedVers)
+            ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
             ver.OnEvent("Change", editCtrl.bind(verIniName))
         }
     }

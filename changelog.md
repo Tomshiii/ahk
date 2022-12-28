@@ -2,15 +2,16 @@
 - Added `class timer {` to quickly and easily build more complex timer functionality
 
 ## > errorLog()
-- No longer takes a `backupVar` for every input instead **_requiring_** an `Error Object` to be passed into the function
+- No longer takes a `backupVar` for every parameter instead **_requiring_** an `Error Object` to be passed into the function
     - `backupFunc` is still a parameter
 - Can now have an optional message that will appear on a new, tabbed line
 - Can now automatically generate a `tool.Cust()` tooltip from the passed in error object
-    - This tooltip can have an object passed in to generate a custom tooltip, or it will default to `1.5s`
+    - This parameter can have an object passed into it to generate a custom tooltip, or it will simply generate a default `tool.Cust()` tooltip that lasts `1.5s`
 
 ## > settingsGUI()
 - Editor settings can now be accessed as separate GUIs through the menubar
     - Removed the two edit controls to change prem/ae year from the main GUI
+    - These GUI windows offer the opportunity in the future to potentially support more than just one version of AE/Prem
 
 ## > obj {
 Added a new class `obj {` to maintain a collection of wrapper functions designed to take normal ahk functions and return their VarRefs as objects instead
