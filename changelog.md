@@ -7,6 +7,7 @@
 - Can now have an optional message that will appear on a new, tabbed line
 - Can now automatically generate a `tool.Cust()` tooltip from the passed in error object
     - This parameter can have an object passed into it to generate a custom tooltip, or it will simply generate a default `tool.Cust()` tooltip that lasts `1.5s`
+- Can now automatically `throw` with the passed in Error Object
 
 ## > settingsGUI()
 - Editor settings can now be accessed as separate GUIs through the menubar

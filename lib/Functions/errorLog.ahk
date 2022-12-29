@@ -14,8 +14,9 @@
  * ```
  * {x: '*desired x value', y: '*desired y value', time: '*desired time', ttip: '*desired WhichTooltip value'}
  * ```
+ * @param {Boolean} doThrow Determines whether you want for errorLog to throw for you. This is simply to save the need to manually throw
  */
-errorLog(err, backupfunc?, optMessage?, toolCust := false) {
+errorLog(err, backupfunc?, optMessage?, toolCust := false, doThrow := false) {
     ;// this variable is only used on the first use of a day so we have to initialise it
     start := ""
     ;// throw if no error object is passed
@@ -122,27 +123,40 @@ errorLog(err, backupfunc?, optMessage?, toolCust := false) {
             OutputDebug(LTrim(optAppend, '`t'))
         }
     ;// if toolCust has been set to true, generate a tooltip based off the passed in error object
-    if !toolCust
-        return
-    scndLine := IsSet(optMessage) ? "`n" optMessage : ""
-    ;// if an object has been passed we'll create a custom tooltip
-    if IsObject(toolCust) {
-        ;// defaults
-        defaults := {ttip: 1, time: 1.5, x: "null", y: "null"}
-        ;// override any values passed into function
-        for key, value in toolCust.OwnProps() {
-            defaults.%key% := value
-        }
-        ;// checking if either the x/y values have been overridden
-        if defaults.x = "null"
-            x := unset
-        if defaults.y = "null"
-            y := unset
-        ;// generate tooltip
-        tool.Cust(err.Message scndLine, defaults.time,, x?, y?, defaults.ttip)
-        return
+    if toolCust
+        doTooltip(toolCust, optMessage?)
+    ;// insert any new additions here OR above. Not below the throw
+
+    ;//! This part of the function should ALWAYS be last
+    if doThrow
+        throw err
+
+    /**
+     * This function is to simply help the flow of errorLog and make it more logical to follow
+     */
+    doTooltip(toolCust, optMessage?) {
+        scndLine := IsSet(optMessage) ? "`n" optMessage : ""
+        ;// if an object has been passed we'll create a custom tooltip
+        if IsObject(toolCust)
+            {
+                ;// defaults
+                defaults := {ttip: 1, time: 1.5, x: "null", y: "null"}
+                ;// override any values passed into function
+                for key, value in toolCust.OwnProps() {
+                    defaults.%key% := value
+                }
+                ;// checking if either the x/y values have been overridden
+                if defaults.x = "null"
+                    x := unset
+                if defaults.y = "null"
+                    y := unset
+                ;// generate tooltip
+                tool.Cust(err.Message scndLine, defaults.time,, x?, y?, defaults.ttip)
+                return
+            }
+        ;// if only a boolean value has been passed we'll generate a standard tooltip
+        scndLine := IsSet(optMessage) ? "`n" optMessage : ""
+        tool.Cust(err.Message scndLine, 1.5)
     }
-    ;// if only a boolean value has been passed we'll generate a standard tooltip
-    scndLine := IsSet(optMessage) ? "`n" optMessage : ""
-    tool.Cust(err.Message scndLine, 1.5)
 }
+
