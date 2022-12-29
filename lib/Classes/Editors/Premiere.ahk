@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/12/25
- * @version 1.2.0
+ * @date 2022/12/29
+ * @version 1.2.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,6 +33,10 @@ class Prem {
      */
     static preset(item)
     {
+        if Type(item) != "string" {
+            errorLog(TypeError("Incorrect value type in Parameter #1", -1, item)
+                        , A_ThisFunc "()",,, 1)
+        }
         KeyWait(A_ThisHotkey)
         ToolTip("Your Preset is being dragged")
         coord.s()

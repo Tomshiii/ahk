@@ -14,9 +14,9 @@ speed(amount)
 {
     if !IsNumber(amount)
         {
-            typeErr := TypeError("Invalid parameter type in Parameter #1", -1, amount)
-            errorLog(typeErr, A_ThisFunc "()",, 1)
-            throw typeErr
+            ;// throw
+            errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount)
+                        , A_ThisFunc "()",,, 1)
         }
     ;// first we make sure clips are selected
     SendInput(effectControls)
@@ -38,10 +38,8 @@ speed(amount)
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     block.Off()
-                    errorLog(
-                        Error("No clips are selected", -1)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(Error("No clips are selected", -1)
+                                , A_ThisFunc "()",, 1)
                     return
                 }
         }

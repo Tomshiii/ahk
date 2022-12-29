@@ -1,5 +1,6 @@
 ; { \\ #Includes
 #Include <Classes\tool>
+#Include <Functions\errorLog>
 #Include <Functions\getHTMLTitle>
 #Include <Functions\SD Functions\convert2>
 ; }
@@ -12,6 +13,12 @@
  * @param folder is the folder you wish the files to save. By default it's this scripts directory
  */
 ytDownload(args := "", folder := A_ScriptDir) {
+    if Type(args) != "string" || Type(folder) != "string"
+        {
+            ;// throw
+            errorLog(TypeError("Invalid parameter type in Parameter #1", -1)
+                        , A_ThisFunc "()",,, 1)
+        }
     if !DirExist(folder) ;saftey check
         folder := A_ScriptDir
     oldClip := A_ClipBoard

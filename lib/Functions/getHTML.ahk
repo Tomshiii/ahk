@@ -10,6 +10,12 @@
  * @returns {String}
  */
 getHTML(url) {
+    ;// type checking
+    if Type(url) != "string" {
+        errorLog(TypeError("Function expected a string but recieved a " Type(url), -1, url)
+                    , A_ThisFunc "()",,, 1)
+    }
+    ;// attempting to get url
     try {
         if !checkInternet()
             return 0
