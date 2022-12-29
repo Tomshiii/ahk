@@ -529,7 +529,8 @@ settingsGUI()
             refreshWin("settings.ini", ptf["settings"])
         else
             Run("Notepad.exe " ptf["settings"])
-        WinWait("settings.ini")
+        if !WinWait("settings.ini",, 3)
+            return
         WinMove(x+width-8, y, 322, height-2,"settings.ini")
         SetTimer(iniWait, -100)
     }
@@ -551,6 +552,9 @@ settingsGUI()
         end:
     }
 
+    /**
+     * This function is called to generate either the Premiere Pro or After Effects settings gui
+     */
     menu_Adobe(program, *) {
         ;// setting values depending on which program settings the user wishes to change
         switch program {

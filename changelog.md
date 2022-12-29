@@ -19,11 +19,12 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 - Added `obj.WinPos()`
 - Added `obj.imgSrch()` using `checkImg()`
 - Moved `SplitPathObj()` and renamed to `obj.SplitPath()`
-    - Fixed all instances of scripts not having the proper `#Include`
+    - Fixed all instances of scripts that use this function not having the proper `#Include`
 - Moved `getMousePos()` and renamed to `obj.MousePos()`
 
 ## > Functions
 - Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay
+- Added `allKeyUp()` to attempt to unstick as many keys as possible by looping through `ScanCodes` & `Virtual Key Codes`
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
 

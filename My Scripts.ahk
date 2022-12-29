@@ -49,6 +49,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
 #Include <Functions\getHotkeys>
+#Include <Functions\allKeyUp>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
@@ -127,10 +128,12 @@ F12::KeyHistory  ;debugging
 ;hardresetHotkey;
 #+^r::reload_reset_exit("reset") ;this will hard rerun all active ahk scripts
 
+;unstickKeysHotkey;
+#F11::allKeyUp() ;this function will attempt to unstick as many keys as possible
 ;panicExitHotkey;
 #F12::reload_reset_exit("exit") ;this is a panic button and will shutdown all active ahk scripts
 ;panicExitALLHotkey;
-#+F12::reload_reset_exit("exit", true) ;this is a panic button and will shutdown all active ahk scripts
+#+F12::reload_reset_exit("exit", true) ;this is a panic button and will shutdown all active ahk scripts INCLUDING the checklist.ahk script
 
 ;settingsHotkey;
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI
