@@ -14,9 +14,9 @@ class block {
         loop {
             if A_Index > choices.Length
                 {
-                    e := ValueError("Incorrect value in parameter #1", -1, args)
-                    errorLog(e, A_ThisFunc "()")
-                    throw e
+                    ;// throw
+                    errorLog(ValueError("Incorrect value in parameter #1", -1, args)
+                                , A_ThisFunc "()",,, 1)
                 }
             if args = choices[A_Index]
                 break
@@ -28,7 +28,7 @@ class block {
      *
      * Otherwise pass `send`, `mouse`, `sendandmouse`, `default`, `on` or `mousemove`
      *
-     * *[IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (CTRL + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]*
+     * *[IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (WIN + SHIFT + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]*
      */
     static On(option?) {
         if !IsSet(option)

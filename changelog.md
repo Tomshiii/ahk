@@ -23,6 +23,10 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
     - Fixed all instances of scripts that use this function not having the proper `#Include`
 - Moved `getMousePos()` and renamed to `obj.MousePos()`
 
+## > coord {
+- Added `coord.Client()` to set the pixel mode to `client`
+- Expanded functionality of all functions to accept a parameter to adjust what they want to target
+
 ## > Functions
 - Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay
 - Added `allKeyUp()` to attempt to unstick as many keys as possible by looping through `ScanCodes` & `Virtual Key Codes`
