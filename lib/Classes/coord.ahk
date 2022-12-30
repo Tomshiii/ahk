@@ -1,21 +1,19 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2022/12/30
- * @version 1.1.0
+ * @date 2022/12/31
+ * @version 1.1.0.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Functions\errorLog>
 ; }
 
 class coord {
-    static targets := ["tooltip", "pixel", "mouse", "caret", "menu"]
-    static relativeTo := ["screen", "window", "client"]
-
     /**
      * A function to do some basic error checking & cut repeat code
-     */
-    errorChecks(target, mouse?) {
+    */
+   errorChecks(target, mouse?) {
+        targets := ["tooltip", "pixel", "mouse", "caret", "menu"]
         ;// checking that the passed parameter is a string
         if Type(target) != "string"
             {
@@ -25,13 +23,13 @@ class coord {
             }
         ;// checking that the passed string is one of the accepted types
         loop {
-            if A_Index > this.targets.Length
+            if A_Index > targets.Length
                 {
                     ;// throw
                     errorLog(ValueError("Incorrect value in Parameter #1", -1, target)
                                 , A_ThisFunc "()",,, 1)
                 }
-            if this.targets[A_Index] = target
+            if targets[A_Index] = target
                 break
         }
         ;// ensuring the passed parameter is a boolean value
@@ -101,6 +99,7 @@ class coord {
      * @param {String} relative change the desired second parameter of Coormode that you want the caret to respond to
      */
      static c(relative := "window") {
+        relativeTo := ["screen", "window", "client"]
         ;// checking that the passed parameter is a string
         if Type(relative) != "string"
             {
@@ -110,13 +109,13 @@ class coord {
             }
         ;// checking that the passed string is one of the accepted types
         loop {
-            if A_Index > this.relativeTo.Length
+            if A_Index > relativeTo.Length
                 {
                     ;// throw
                     errorLog(ValueError("Incorrect value in Parameter #1", -1, relative)
                                 , A_ThisFunc "()",,, 1)
                 }
-            if this.relativeTo[A_Index] = relative
+            if relativeTo[A_Index] = relative
                 break
         }
         ;// setting the coordmode
