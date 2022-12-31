@@ -371,7 +371,7 @@ openProj(*)
         WinGet.PremName(&premCheck, &titleCheck, &saveCheck)
     else if WinExist(Editors.AE.winTitle)
         {
-            WinGet.AEName(&aeCheck, &aeSaveCheck)
+            WinGet.AEName(&aeCheck,, &aeSaveCheck)
             premCheck := aeCheck
         }
     if WinExist(projDir,, premCheck)

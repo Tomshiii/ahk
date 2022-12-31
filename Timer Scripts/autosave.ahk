@@ -192,7 +192,7 @@ save()
     if WinExist(editors.Premiere.winTitle)
         winget.PremName(&premCheck, &titleCheck, &saveCheck)
     if WinExist(editors.AE.winTitle)
-        winget.AEName(&aeCheck, &aeSaveCheck)
+        winget.AEName(&aeCheck,, &aeSaveCheck)
     ;// if the program is not responding, we'll reset the timer and cancel the attempted save
     if InStr(premCheck ?? 0, "(Not Responding)") || InStr(aeCheck ?? 0, "(Not Responding)")
         {
@@ -401,7 +401,7 @@ save()
         if WinExist(editors.Premiere.winTitle)
             winget.PremName(&premCheck, &titleCheck, &saveCheck)
         if WinExist(editors.AE.winTitle)
-            winget.AEName(&aeCheck, &aeSaveCheck)
+            winget.AEName(&aeCheck,, &aeSaveCheck)
         if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt < 3
             goto attempt
         else if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt >= 3

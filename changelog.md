@@ -30,6 +30,7 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 ## > Functions
 - Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay
 - Added `allKeyUp()` to attempt to unstick as many keys as possible by looping through `ScanCodes` & `Virtual Key Codes`
+- `winget.AEName()` updated to have complete feature parity with `winget.PremName()`
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
 
@@ -43,3 +44,4 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 ## > Other Changes
 - `tomshiBasic()` now creates a hidden button to force focus to it instead of the first user defined ctrl
 - `adobe fullscreen check.ahk` now uses `timer {`
+- QMK `open dir of current project` now uses `winget.AEName()/PremName()`

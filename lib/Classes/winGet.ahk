@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/12/25
- * @version 1.1.0
+ * @date 2022/12/31
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -112,7 +112,7 @@ class WinGet {
             premCheck := WinGetTitle(editors.Premiere.class)
             if premCheck = ""
                 premCheck := WinGetTitle(editors.Premiere.winTitle)
-            titleCheck := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            titleCheck := InStr(premCheck, "Adobe Premiere Pro 20" ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
             return true
         } catch as e {
@@ -128,7 +128,7 @@ class WinGet {
      * @param {var} aeCheck is the title of after effects, we want to pass this value back to the script
      * @param {var} aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
      */
-    static AEName(&aeCheck, &aeSaveCheck?)
+    static AEName(&aeCheck, &aeTitleCheck?, &aeSaveCheck?)
     {
         try {
             if !WinExist(editors.AE.winTitle)
@@ -138,6 +138,7 @@ class WinGet {
                     return false
                 }
             aeCheck := WinGetTitle(editors.AE.winTitle)
+            aeTitleCheck := InStr(aeCheck, "Adobe After Effects 20" ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
             aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
             return true
         } catch as e {

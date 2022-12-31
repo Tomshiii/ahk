@@ -1,6 +1,8 @@
 #Include <QMK\unassigned>
 #Include <Classes\switchTo>
 #Include <Classes\ptf>
+#Include <Classes\winget>
+#Include <Classes\obj>
 #Include <Functions\errorLog>
 #Include <Functions\detect>
 #Include <GUIs\musicGUI>
@@ -35,10 +37,12 @@ Enter & SC149::switchTo.closeOtherWindow(browser.firefox.class)
 Right & PgUp::switchTo.newWin("exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
-h:: ;opens the directory for the current premiere project
+h:: ;opens the directory for the current premiere/ae project
 {
+	;// if an editor isn't open
 	if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects")
 		{
+			;// check for commissions folder
 			if DirExist(ptf.comms)
 				{
 					tool.Cust("A Premiere/AE isn't open, opening the comms folder")
@@ -47,44 +51,41 @@ h:: ;opens the directory for the current premiere project
 					WinActivate("ahk_class CabinetWClass", "comms")
 					return
 				}
-			errorLog(
-				Error("Couldn't determine a Premiere/After Effects window", -1)
-				, A_ThisFunc "()",, 1
-			)
+			;// if the folder doesn't exist
+			errorLog(Error("Couldn't determine a Premiere/After Effects window", -1)
+						, A_ThisFunc "()",, 1)
 			return
 		}
+	;// attempt to get the editors name
 	try {
 		if WinExist("Adobe Premiere Pro")
-			{
-				Name := WinGetTitle("Adobe Premiere Pro")
-				titlecheck := InStr(Name, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-			}
+			WinGet.PremName(&Name, &titlecheck)
 		else if WinExist("Adobe After Effects")
-			{
-				Name := WinGetTitle("Adobe After Effects")
-				titlecheck := InStr(Name, "Adobe After Effects " ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
-			}
-		dashLocation := InStr(Name, "-")
-		length := StrLen(Name) - dashLocation
+			WinGet.AEName(&Name, &titlecheck)
 	}
+	;// if the name returns blank
 	if !titlecheck
 		{
 			tool.Cust("You're on a part of Premiere that won't contain the project path", 2000)
 			return
 		}
-	entirePath := SubStr(name, dashLocation + "2", length)
-	pathlength := StrLen(entirePath)
-	finalSlash := InStr(entirePath, "\",, -1)
-	path := SubStr(entirePath, 1, finalSlash - "1")
-	SplitPath(path,,,, &pathName)
-	if WinExist("ahk_class CabinetWClass", pathName, "Adobe" "Editing Checklist", "Adobe")
+	;// string manipulation to get the path
+	;// getting the path
+	entirePath := SubStr(name							                ;// string
+						, dashLocation := InStr(Name, "-") + 2			;// start location
+						, StrLen(Name) - dashLocation)                  ;// length
+	;// splitting the path
+	path := obj.SplitPath(entirePath)
+	;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
+	if WinExist("ahk_class CabinetWClass", path.NameNoExt, "Adobe" "Editing Checklist", "Adobe")
 		{
-			WinActivate("ahk_class CabinetWClass", pathName, "Adobe")
+			WinActivate("ahk_class CabinetWClass", path.NameNoExt, "Adobe")
 			return
 		}
-	RunWait(path)
-	WinWait("ahk_class CabinetWClass", pathName,, "Adobe")
-	WinActivate("ahk_class CabinetWClass", pathName, "Adobe")
+	;// run the path
+	RunWait(path.dir)
+	WinWait("ahk_class CabinetWClass", path.NameNoExt,, "Adobe")
+	WinActivate("ahk_class CabinetWClass", path.NameNoExt, "Adobe")
 }
 n::unassigned()
 Space::switchTo.Disc()
@@ -106,7 +107,7 @@ b:: ;this macro is to find the difference between 2 24h timecodes
 		if time.Result = "Cancel"
 			return 0
 		Length1 := StrLen(time.Value)
-		if Length1 != "4" || time.Value > 2359
+		if Length1 != 4 || time.Value > 2359
 			{
 				MsgBox("You didn't write in hhmm format`nTry again", startorend " Time", "16")
 				goto start1
@@ -120,7 +121,7 @@ b:: ;this macro is to find the difference between 2 24h timecodes
 	time2 := calculateTime("2")
 	if time2 = 0
 		return
-	diff := DateDiff("20220101" time2, "20220101" time1, "seconds")/"3600" ;do the math to determine the time difference
+	diff := DateDiff("20220101" time2, "20220101" time1, "seconds")/3600 ;do the math to determine the time difference
 	value := Round(diff, 2) ;round the result to 2dp
 	A_Clipboard := value ;copy it to the clipboard
 	tool.Cust(diff "`nor " value, 2000) ;and create a tooltip to show the user both the complete answer and the rounded answer
