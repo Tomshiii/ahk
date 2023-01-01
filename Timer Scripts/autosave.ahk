@@ -186,10 +186,9 @@ save()
     avoid := 0
 
     ;// checking to see if a save is necessary
-    if WinExist(editors.Premiere.winTitle)
-        premVal := winget.PremName(&premCheck)
-    if WinExist(editors.AE.winTitle)
-        aeVal := winget.AEName(&aeCheck)
+    premVal := WinExist(editors.Premiere.winTitle) ? winget.PremName(&premCheck) : {premCheck: "", titleCheck: unset, saveCheck: false}
+    aeVal   := WinExist(editors.AE.winTitle)       ? winget.AEName(&aeCheck)     : {premCheck: "", titleCheck: unset, saveCheck: false}
+
     ;// if the program is not responding, we'll reset the timer and cancel the attempted save
     if InStr(premCheck ?? 0, "(Not Responding)") || InStr(aeCheck ?? 0, "(Not Responding)")
         {
