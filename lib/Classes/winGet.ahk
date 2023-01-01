@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/12/31
- * @version 1.2.0
+ * @date 2023/01/01
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,57 +95,63 @@ class WinGet {
 
     /**
      * This function will grab the title of premiere if it exists and check to see if a save is necessary
-     * @param {var} premCheck is the title of premiere, we want to pass this value back to the script
-     * @param {var} titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
-     * @param {var} saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+     * @param {VarRef} premCheck is the complete title of premiere
+     * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return unset if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
+     * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return unset if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
+     * @returns {Object}
+     * ```
+     * prem := winget.PremName()
+     * prem.winTitle        ;// is the current title of the open premiere window
+     * prem.titleCheck      ;// a boolean value of if the window is available to save
+     * prem.saveCheck       ;// a boolean value of if a save is currently necessary
+     * ```
      */
-    static PremName(&premCheck, &titleCheck?, &saveCheck?)
+    static PremName(&premCheck?, &titleCheck?, &saveCheck?)
     {
         try {
             if !WinExist(editors.Premiere.winTitle)
-                {
-                    premCheck := false
-                    titleCheck := ""
-                    saveCheck := ""
-                    return false
-                }
+                return {premCheck: false, titleCheck: unset, saveCheck: unset}
             premCheck := WinGetTitle(editors.Premiere.class)
             if premCheck = ""
                 premCheck := WinGetTitle(editors.Premiere.winTitle)
-            titleCheck := InStr(premCheck, "Adobe Premiere Pro 20" ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-            saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
-            return true
+            titleCheck := InStr(premCheck, "Adobe Premiere Pro 20" ptf.PremYear " -") ;we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            saveCheck := (SubStr(premCheck, -1, 1) = "*") ? true : false
+            return {winTitle: premCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e, A_ThisFunc "()")
-            return false
+            return {premCheck: false, titleCheck: unset, saveCheck: unset}
         }
     }
 
     /**
      * This function will grab the title of after effects if it exists and check to see if a save is necessary
-     * @param {var} aeCheck is the title of after effects, we want to pass this value back to the script
-     * @param {var} aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+     * @param {VarRef} aeCheck is the complete title of after effects
+     * @param {VarRef} titleCheck is checking to see if the after effects window is available to save based off what's found in the current title. Will return unset if after effects cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
+     * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary.  Will return unset if after effects cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
+     * @returns {Object}
+     * ```
+     * ae := winget.AEName()
+     * ae.winTitle        ;// is the current title of the open ae window
+     * ae.titleCheck      ;// a boolean value of if the window is available to save
+     * ae.saveCheck       ;// a boolean value of if a save is currently necessary
+     * ```
      */
-    static AEName(&aeCheck, &aeTitleCheck?, &aeSaveCheck?)
+    static AEName(&aeCheck?, &titleCheck?, &saveCheck?)
     {
         try {
             if !WinExist(editors.AE.winTitle)
-                {
-                    aeCheck := false
-                    aeSaveCheck := ""
-                    return false
-                }
+                return {aeCheck: false, titleCheck: unset, saveCheck: unset}
             aeCheck := WinGetTitle(editors.AE.winTitle)
-            aeTitleCheck := InStr(aeCheck, "Adobe After Effects 20" ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
-            aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
-            return true
+            titleCheck := InStr(aeCheck, "Adobe After Effects 20" ptf.AEYear " -") ;we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+            saveCheck := (SubStr(aeCheck, -1, 1) = "*") ? true : false
+            return {winTitle: aeCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e, A_ThisFunc "()")
-            return false
+            return {aeCheck: false, titleCheck: unset, saveCheck: unset}
         }
     }
 

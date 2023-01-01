@@ -30,9 +30,15 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 ## > Functions
 - Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay
 - Added `allKeyUp()` to attempt to unstick as many keys as possible by looping through `ScanCodes` & `Virtual Key Codes`
-- `winget.AEName()` updated to have complete feature parity with `winget.PremName()`
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
+
+`winget.` `AEName()/PremName()`
+- `AEName()` Updated to have complete feature parity with `winget.PremName()`
+- Can now return objects containing all the variables instead of only requiring VarRefs
+    - All `VarRefs` are now optional to help accommodate this
+- `saveCheck` variable now returns a `boolean value` instead of a `string`
+- If the desired window can't be found, the variables will now return `unset` instead of as empty strings
 
 ## > checklist.ahk
 - Entire script has been refactored to make use of `class timer {`
