@@ -30,7 +30,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.11-rc.1"
+version := "v2.11-rc.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -75,8 +75,7 @@ else
                 if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
                     {
                         block.Off()
-                        tool.Cust("``titlecheck`` variable wasn't assigned a value")
-                        errorLog(UnsetError("Variable hasn't been assigned a value.", -1, titlecheck), A_ThisFunc "()")
+                        errorLog(UnsetError("Variable hasn't been assigned a value.", -1, titlecheck),, 1)
                         premNotOpen(&checklist, &logs, &path)
                         if WinExist("Select commission folder")
                             WinWaitClose("Select commission folder")
@@ -93,8 +92,7 @@ else
                 if !IsSet(aeCheck) ;we ensure the title variable has been assigned before proceeding forward
                     {
                         block.Off()
-                        tool.Cust("``aeCheck`` variable wasn't assigned a value")
-                        errorLog(UnsetError("Variable hasn't been assigned a value.", -1, aeCheck), A_ThisFunc "()")
+                        errorLog(UnsetError("Variable hasn't been assigned a value.", -1, aeCheck),, 1)
                         premNotOpen(&checklist, &logs, &path)
                         if WinExist("Select commission folder")
                             WinWaitClose("Select commission folder")

@@ -17,10 +17,7 @@ getScriptRelease(beta := false, &changeVer := "", user := "Tomshiii", repo := "a
 {
     if !checkInternet()
         {
-            errorLog(
-                Error("Couldn't confirm a connection to the internet", -1)
-                , A_ThisFunc "()",, 1
-            )
+            errorLog(Error("Couldn't confirm a connection to the internet", -1),, 1)
             return 0
         }
     if !html := getHTML("https://github.com/" user "/" repo "/releases.atom")

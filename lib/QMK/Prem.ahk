@@ -92,7 +92,7 @@ f:: ;this macro is to open the speed menu
 		}
 	} catch as e {
 		tool.Cust("something broke")
-		errorLog(e, A_ThisHotkey "::")
+		errorLog(e)
 		Exit
 	}
 	SendInput(selectAtPlayhead speedHotkey)
@@ -113,10 +113,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 	if !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "margin.png") && !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "margin2.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above instead, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason (and they're slow for the project monitor for whatever reason). My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
 		{
 			block.Off()
-			errorLog(
-				Error("Couldn't find the margin button", -1)
-				, A_ThisFunc "()",, 1
-			)
+			errorLog(Error("Couldn't find the margin button", -1),, 1)
 			return
 		}
 	MouseMove(x, y)

@@ -27,10 +27,7 @@ refreshWin(window, runTarget)
                     path := winget.ExplorerPath(hwnd)
                     if !path
                         {
-                            errorLog(
-                                Error("Couldn't determine the path of the explorer window", -1)
-                                , A_ThisFunc "()",, 1
-                            )
+                            errorLog(Error("Couldn't determine the path of the explorer window", -1),, 1)
                             return
                         }
                     runTarget := path
@@ -40,10 +37,7 @@ refreshWin(window, runTarget)
     WinClose(window)
     if !WinWaitClose(window,, 1.5)
         {
-            errorLog(
-                TimeoutError("Waiting for the window to close timed out", -1, window)
-                , A_ThisFunc "()",, 1
-            )
+            errorLog(TimeoutError("Waiting for the window to close timed out", -1, window),, 1)
             return
         }
     sleep 250
@@ -56,10 +50,7 @@ refreshWin(window, runTarget)
                 Run(runTarget)
                 if !WinWait(window,, 1.5)
                     {
-                        errorLog(
-                            TimeoutError("Waiting for the window to open timed out", -1, window)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(TimeoutError("Waiting for the window to open timed out", -1, window),, 1)
                         return
                     }
             }

@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2022/12/29
- * @version 1.2.0.1
+ * @date 2023/01/01
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,8 +34,9 @@ class Prem {
     static preset(item)
     {
         if Type(item) != "string" {
+            ;// throw
             errorLog(TypeError("Incorrect value type in Parameter #1", -1, item)
-                        , A_ThisFunc "()",,, 1)
+                        ,,, 1)
         }
         KeyWait(A_ThisHotkey)
         ToolTip("Your Preset is being dragged")
@@ -60,7 +61,7 @@ class Prem {
         } catch as e {
             block.Off() ;just incase
             tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return
         }
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
@@ -72,19 +73,13 @@ class Prem {
                 if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
                     {
                         block.Off()
-                        errorLog(
-                            Error("Couldn't find the graphics tab", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Couldn't find the graphics tab", -1),, 1)
                         return
                     }
                 if !ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
                     {
                         block.Off()
-                        errorLog(
-                            Error("Couldn't find the eye icon", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Couldn't find the eye icon", -1),, 1)
                         return
                     }
                 MouseMove(xeye, yeye)
@@ -111,10 +106,7 @@ class Prem {
                             if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                 {
                                     block.Off()
-                                    errorLog(
-                                        IndexError("Couldn't find the findbox", -1)
-                                        , A_ThisFunc "()",, 1
-                                    )
+                                    errorLog(IndexError("Couldn't find the findbox", -1),, 1)
                                     return
                                 }
                         } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -142,10 +134,7 @@ class Prem {
                                         if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
                                             {
                                                 block.Off()
-                                                errorLog(
-                                                    IndexError("Couldn't find the findbox", -1)
-                                                    , A_ThisFunc "()",, 1
-                                                )
+                                                errorLog(IndexError("Couldn't find the findbox", -1),, 1)
                                             }
                                     } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                             }
@@ -205,10 +194,7 @@ class Prem {
                         if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                             {
                                 block.Off()
-                                errorLog(
-                                    IndexError("Couldn't find the findbox", -1)
-                                    , A_ThisFunc "()",, 1
-                                )
+                                errorLog(IndexError("Couldn't find the findbox", -1),, 1)
                                 return
                             }
                     } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -233,10 +219,7 @@ class Prem {
                                     if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                         {
                                             block.Off()
-                                            errorLog(
-                                                IndexError("Couldn't find the findbox", -1)
-                                                , A_ThisFunc "()",, 1
-                                            )
+                                            errorLog(IndexError("Couldn't find the findbox", -1),, 1)
                                             return
                                         }
                                 } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -320,7 +303,7 @@ class Prem {
         } catch as e {
             block.Off() ;just incase
             tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return
         }
 
@@ -395,10 +378,7 @@ class Prem {
                 sleep 50
                 if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        errorLog(
-                            Error("No clips were selected", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("No clips were selected", -1),, 1)
                         block.Off()
                         return
                     }
@@ -407,10 +387,7 @@ class Prem {
             {
                 MouseMove(xpos, ypos)
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the video section", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the video section", -1),, 1)
                 return
             }
         MouseMove(motionX + "10", motionY + "10")
@@ -473,7 +450,7 @@ class Prem {
         } catch as e {
             block.Off() ;just incase
             tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return
         }
         SendInput(timelineWindow) ;focuses the timeline
@@ -484,10 +461,7 @@ class Prem {
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
-                        errorLog(
-                            Error("No clips are selected", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("No clips are selected", -1),, 1)
                         return
                     }
             }
@@ -496,10 +470,7 @@ class Prem {
                 if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png")
                     {
                         block.Off()
-                        errorLog(
-                            Error("The user wasn't scrolled down", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("The user wasn't scrolled down", -1),, 1)
                         KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                         return
                     }
@@ -515,7 +486,7 @@ class Prem {
                         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
                     } catch as e {
                         tool.Cust("Couldn't get the ClassNN of the Effects Controls panel")
-                        errorLog(e, A_ThisFunc "()")
+                        errorLog(e)
                         MouseMove(xpos, ypos)
                         block.Off()
                         return
@@ -542,10 +513,7 @@ class Prem {
             if A_Index > 3
                 {
                     block.Off()
-                    errorLog(
-                        IndexError("Failed to find the requested property", -1, filepath)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(IndexError("Failed to find the requested property", -1, filepath),, 1)
                     if A_ThisHotkey != ""
                         KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
@@ -558,10 +526,7 @@ class Prem {
             {
                 if !ImageSearch(&arrX, &arrY, x, y, x+400, y+40, "*2 " ptf.Premiere filepath "arrow.png")
                     {
-                        errorLog(
-                            Error("Couldn't find the arrow to open the blend mode menu", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Couldn't find the arrow to open the blend mode menu", -1),, 1)
                         MouseMove(xpos, ypos)
                         block.Off()
                         return
@@ -571,10 +536,7 @@ class Prem {
                 sleep 500
                 if !ImageSearch(&modeX, &modeY, arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode "2.png")
                     {
-                        errorLog(
-                            Error("Couldn't find the desired blend mode", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Couldn't find the desired blend mode", -1),, 1)
                         MouseMove(xpos, ypos)
                         block.Off()
                         return
@@ -590,10 +552,7 @@ class Prem {
             {
                 block.Off()
                 tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(
-                    Error("Couldn't find the blue 'value' text", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
                 return
@@ -625,10 +584,7 @@ class Prem {
                             }
                         MouseMove(xpos, ypos)
                         block.Off()
-                        errorLog(
-                            Error("Couldn't find the reset button", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Couldn't find the reset button", -1),, 1)
                         return
                     }
                 MouseMove(x2, y2)
@@ -656,7 +612,7 @@ class Prem {
         } catch as e {
             block.Off() ;just incase
             tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return
         }
         SendInput(timelineWindow) ;focuses the timeline
@@ -666,21 +622,14 @@ class Prem {
                 sleep 50
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
-                        errorLog(
-                            Error("No clips were selected", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("No clips were selected", -1),, 1)
                         block.Off()
                         return
                     }
             }
         if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") && !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
             {
-                tool.Cust("you're already keyframing")
-                errorLog(
-                    Error("The user was already keyframing", -1)
-                    , A_ThisFunc "()"
-                )
+                errorLog(Error("The user was already keyframing", -1),, 1)
                 block.Off()
                 return
             }
@@ -707,7 +656,7 @@ class Prem {
         } catch as e {
             block.Off() ;just incase
             tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return
         }
         SendInput(timelineWindow) ;focuses the timeline
@@ -718,10 +667,7 @@ class Prem {
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
-                        errorLog(
-                            Error("No clips were selected", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("No clips were selected", -1),, 1)
                         return
                     }
             }
@@ -736,10 +682,7 @@ class Prem {
         else
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the desired value", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the desired value", -1),, 1)
                 return
             }
         next:
@@ -765,10 +708,7 @@ class Prem {
         SendInput(selectionPrem)
         if !ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " ptf.Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
             {
-                errorLog(
-                    Error("User hasn't opened the required bin", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("User hasn't opened the required bin", -1),, 1)
                 return
             }
         block.On()
@@ -794,10 +734,7 @@ class Prem {
                             if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
                                 {
                                     block.Off()
-                                    errorLog(
-                                        Error("Couldn't determine the location of the findbox", -1)
-                                        , A_ThisFunc "()",, 1
-                                    )
+                                    errorLog(Error("Couldn't determine the location of the findbox", -1),, 1)
                                     return
                                 }
                         } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -809,10 +746,7 @@ class Prem {
             if !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " ptf.Premiere "audio.png") && !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " ptf.Premiere "audio2.png") ;searches for the audio image next to an audio file
                 {
                     block.Off()
-                    errorLog(
-                        Error("Couldn't find the audio image", -1)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(Error("Couldn't find the audio image", -1),, 1)
                     coord.s()
                     MouseMove(xpos, ypos)
                     return
@@ -838,14 +772,10 @@ class Prem {
                 colour = 0x292929 || colour = 0x2D2D2D || colour = 0x3B3B3B || colour = 0x404040 || colour = 0x454545 || colour = 0x4A4A4A || colour = 0x585858 || colour = 0x606060 || colour = 0x646464 || colour = 0xA7ADAB || colour = 0xB1B1B1 || colour = 0xCCCCCC|| colour = 0xD2D2D2 || colour = 0xEFEFEF  ;colours for the fx symbol box
             )
                 break
-            errorLog(
-                IndexError("Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, -1)
-                , A_ThisFunc "()"
-            )
             if A_Index > 2
                 {
                     block.Off()
-                    tool.Cust("Couldn't drag the file to the timeline`ncolour was " colour)
+                    errorLog(IndexError("Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, -1),, 1)
                     return
                 }
         }
@@ -892,10 +822,7 @@ class Prem {
                     if A_Index > 160 ;built in timeout
                         {
                             block.Off()
-                            errorLog(
-                                IndexError(A_ThisFunc "() timed out due to no user interaction", -1)
-                                , A_ThisFunc "()",, 1
-                            )
+                            errorLog(IndexError(A_ThisFunc "() timed out due to no user interaction", -1),, 1)
                             return
                         }
                     if ((A_TickCount - start) >= 1000)
@@ -918,10 +845,7 @@ class Prem {
                 if !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " ptf.Premiere "track " trackNumber "_1.png") && !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " ptf.Premiere "track " trackNumber "_2.png")
                     {
                         block.Off()
-                        errorLog(
-                            Error("Couldn't determine the Y value of desired track", -1, trackNumber)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Couldn't determine the Y value of desired track", -1, trackNumber),, 1)
                         return
                     }
                 MouseMove(refx, trackY, 2)
@@ -987,7 +911,7 @@ class Prem {
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
         } catch as e {
             tool.Cust("Couldn't find the ClassNN value")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
         }
         SendInput(timelineWindow) ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
@@ -997,10 +921,7 @@ class Prem {
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
-                        errorLog(
-                            Error("No clips were selected", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("No clips were selected", -1),, 1)
                         return
                     }
             }
@@ -1015,7 +936,7 @@ class Prem {
                         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
                     } catch as e {
                         tool.Cust("Couldn't get the ClassNN of the Effects Controls panel")
-                        errorLog(e, A_ThisFunc "()")
+                        errorLog(e)
                         MouseMove(xpos, ypos)
                         return
                     }
@@ -1028,10 +949,7 @@ class Prem {
             if A_Index > 3
                 {
                     block.Off()
-                    errorLog(
-                        IndexError("Couldn't find the requested property.", -1)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(IndexError("Couldn't find the requested property.", -1),, 1)
                     KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
                     return
@@ -1059,10 +977,8 @@ class Prem {
                         {
                             MouseMove(moveX, moveY)
                             block.Off()
-                            errorLog(
-                                IndexError("Couldn't find the video in the Program Monitor.", -1)
-                                , A_ThisFunc "()", "Or the function kept finding pure black at each checking coordinate", 1
-                            )
+                            errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
+                                        , "Or the function kept finding pure black at each checking coordinate", 1)
                             break
                         }
                 }
@@ -1079,10 +995,8 @@ class Prem {
                     {
                         block.Off()
                         MouseMove(xpos, ypos)
-                        errorLog(
-                            Error("Couldn't find the reset button", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Couldn't find the reset button", -1)
+                                    ,, 1)
                         return
                     }
                 MouseMove(xcol, ycol)
@@ -1110,7 +1024,7 @@ class Prem {
         } catch as e {
             block.Off() ;just incase
             tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return
         }
         SendInput(timelineWindow) ;focuses the timeline
@@ -1121,10 +1035,7 @@ class Prem {
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
-                        errorLog(
-                            Error("No clips were selected", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("No clips were selected", -1),, 1)
                         return
                     }
             }
@@ -1135,10 +1046,7 @@ class Prem {
             if A_Index > 5
                 {
                     block.Off()
-                    errorLog(
-                        IndexError("Couldn't find the motion image", -1)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(IndexError("Couldn't find the motion image", -1),, 1)
                     return
                 }
         }
@@ -1169,7 +1077,7 @@ class Prem {
         } catch as e {
             block.Off() ;just incase
             tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return
         }
         SendInput(timelineWindow)
@@ -1180,10 +1088,7 @@ class Prem {
                 if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
-                        errorLog(
-                            Error("No clips were selected", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("No clips were selected", -1),, 1)
                         return
                     }
             }
@@ -1195,19 +1100,13 @@ class Prem {
         )
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the property requested.", -1, property)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the property requested.", -1, property),, 1)
                 return
             }
         if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x205cce, 2) ;searches for the blue text to the right of the scale value
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the blue 'value' text", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
                 return
             }
         MouseMove(xcol + optional, ycol)
@@ -1230,9 +1129,8 @@ class Prem {
     {
         if !IsNumber(amount)
             {
-                typeErr := TypeError("Invalid parameter type in Parameter #1", -1, amount)
-                errorLog(typeErr, A_ThisFunc "()",, 1)
-                throw typeErr
+                ;// throw
+                errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
             }
         KeyWait(A_ThisHotkey)
         Critical
@@ -1259,7 +1157,7 @@ class Prem {
                 } catch as e {
                     block.Off() ;just incase
                     tool.Cust("Couldn't get the ClassNN of the desired panel")
-                    errorLog(e, A_ThisFunc "()")
+                    errorLog(e)
                     return
                 }
                 if ClassNN != "DroverLord - Window Class3" || ClassNN != "DroverLord - Window Class1"
@@ -1288,7 +1186,7 @@ class Prem {
                 ToolTip("")
                 block.Off()
                 tool.Cust("ClassNN wasn't given a value")
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 return
             }
             inputs:
@@ -1350,7 +1248,7 @@ class Prem {
                 } catch as e {
                     tool.Wait()
                     tool.Cust("Couldn't find the ClassNN value")
-                    errorLog(e, A_ThisFunc "()")
+                    errorLog(e)
                     goto skip
                 }
             }

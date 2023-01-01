@@ -52,8 +52,7 @@ h:: ;opens the directory for the current premiere/ae project
 					return
 				}
 			;// if the folder doesn't exist
-			errorLog(Error("Couldn't determine a Premiere/After Effects window", -1)
-						, A_ThisFunc "()",, 1)
+			errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
 			return
 		}
 	;// attempt to get the editors name

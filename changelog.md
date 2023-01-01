@@ -1,9 +1,11 @@
 # <> Release 2.9 - Huge Refactor
+Welcome to the first release of 2023! 🎉🎉  
+This release is a rather large one, containing a bunch of rather breaking changes to already existing parts of my code. If you use any of my functions for your own tinkering, paying close attention to this changelog is recommended if you're interested in updating.
+
 - Added `class timer {` to quickly and easily build more complex timer functionality
 
 ## > errorLog()
 - No longer takes a `backupVar` for every parameter instead **_requiring_** an `Error Object` to be passed into the function
-    - `backupFunc` is still a parameter
 - Can now have an optional message that will appear on a new, tabbed line
 - Can now automatically generate a `tool.Cust()` tooltip from the passed in error object
     - This parameter can have an object passed into it to generate a custom tooltip, or it will simply generate a default `tool.Cust()` tooltip that lasts `1.5s`
@@ -24,7 +26,8 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 - Moved `getMousePos()` and renamed to `obj.MousePos()`
 
 ## > clip {
-Added a new class `clip {` to maintain a collection of functions designed to manipulate the clipboard. This class helps cut large chunks of repeated code when dealing with the clipboard and waiting for data to be copied.
+Added a new class `clip {` to maintain a collection of functions designed to manipulate the clipboard.  
+This class helps cut large chunks of repeated code when dealing with the clipboard and waiting for data to be copied.
 
 ## > coord {
 - Added `coord.Client()` to set the pixel mode to `client`
@@ -36,7 +39,7 @@ Added a new class `clip {` to maintain a collection of functions designed to man
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
 
-`winget.` `AEName()/PremName()`
+`winget.AEName()/winget.PremName()`
 - `AEName()` Updated to have complete feature parity with `winget.PremName()`
 - Can now return objects containing all the variables instead of only requiring VarRefs
     - All `VarRefs` are now optional to help accommodate this

@@ -17,7 +17,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ; }
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8
+;\\v2.8.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.8.3
@@ -140,10 +140,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
             if !ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Resolve "speaker1.png") && !ImageSearch(&speakX, &speakY, A_ScreenWidth * 0.7, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Resolve "speaker2.png")
                 {
                     block.Off()
-                    errorLog(
-                        Error("Couldn't find reference point for scrub bar", -1)
-                        , A_ThisHotkey "::",, 1
-                    )
+                    errorLog(Error("Couldn't find reference point for scrub bar", -1),, 1)
                     return
                 }
             scrub := speakY + 74

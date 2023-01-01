@@ -12,13 +12,11 @@ openSocials(which) {
     if (which != "youtube" && which != "twitch") || Type(which) != "string"
         {
             ;// throw
-            errorLog(ValueError("Incorrect value in Parameter #1", -1, which)
-                        , A_ThisFunc "()",,, 1)
+            errorLog(ValueError("Incorrect value in Parameter #1", -1, which),,, 1)
         }
     if !WinExist(Editors.Premiere.winTitle) && !WinExist(Editors.AE.winTitle)
         {
-            errorLog(Error("Editor not currently open", -1)
-                        , A_ThisFunc "()",, 1)
+            errorLog(Error("Editor not currently open", -1),, 1)
             return
         }
     client := WinGet.ProjClient()

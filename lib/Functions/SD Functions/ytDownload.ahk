@@ -16,8 +16,7 @@ ytDownload(args := "", folder := A_ScriptDir) {
     if Type(args) != "string" || Type(folder) != "string"
         {
             ;// throw
-            errorLog(TypeError("Invalid parameter type in Parameter #1", -1)
-                        , A_ThisFunc "()",,, 1)
+            errorLog(TypeError("Invalid parameter type in Parameter #1", -1),,, 1)
         }
     if !DirExist(folder) ;saftey check
         folder := A_ScriptDir

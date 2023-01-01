@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/25
- * @version 1.1.0
+ * @date 2023/01/01
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -189,20 +189,13 @@ class Startup {
             tool.Cust("You are currently up to date", 2000)
         switch check {
             default:
-                errorLog(
-                    ValueError("Incorrect value input in ``settings.ini``", -1, check)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, check),, 1)
                 return
             case "false":
                 tool.Wait()
                 if VerCompare(MyRelease, version) < 0
                     {
-                        tool.Cust("You're using an outdated version of these scripts", 3.0)
-                        errorLog(
-                            Error("User is using an outdated version of these scripts", -1, version)
-                            , A_ThisFunc "()"
-                        )
+                        errorLog(Error("User is using an outdated version of these scripts", -1, version),, {time: 3.0})
                         return
                     }
                 tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
@@ -418,7 +411,7 @@ class Startup {
                             g.Destroy()
                     } catch as e {
                         tool.Cust("There was an error trying to backup your current scripts", 2000)
-                        errorLog(e, A_ThisFunc "()")
+                        errorLog(e)
                     }
                     return
                 }

@@ -11,8 +11,8 @@
 jumpChar(amount := 10)
 {
     if !IsInteger(amount) {
-        errorLog(TypeError("Function requires an Integer but recieved a " Type(amount), -1, amount)
-                    , A_ThisFunc "()",,, 1)
+        ;// throw
+        errorLog(TypeError("Function requires an Integer but recieved a " Type(amount), -1, amount),,, 1)
     }
     getHotkeys(&first, &second)
     side := "{" second " " amount "}"

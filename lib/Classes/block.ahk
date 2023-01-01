@@ -1,9 +1,10 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2022/12/24
- * @version 1.1.0
+ * @date 2023/01/01
+ * @version 1.1.1
  ***********************************************************************/
+
 ; { \\ #Includes
 #Include <Functions\errorLog>
 ; }
@@ -15,8 +16,7 @@ class block {
             if A_Index > choices.Length
                 {
                     ;// throw
-                    errorLog(ValueError("Incorrect value in parameter #1", -1, args)
-                                , A_ThisFunc "()",,, 1)
+                    errorLog(ValueError("Incorrect value in parameter #1", -1, args),,, 1)
                 }
             if args = choices[A_Index]
                 break

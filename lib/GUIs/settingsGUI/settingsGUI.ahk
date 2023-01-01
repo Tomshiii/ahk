@@ -660,15 +660,13 @@ settingsGUI()
         generateDrop(program, &ver, ctrlX) {
             if program != "AE" && program != "Premiere"
                 {
-                    err := ValueError("Incorrect value in Parameter #1", -1, program)
-                    errorLog(err, "settingsGUI()")
-                    throw err
+                    ;// throw
+                    errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
                 }
             if !DirExist(ptf.ImgSearch "\" program "\")
                 {
-                    dirErr := ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program)
-                    errorLog(dirErr, "settingsGUI()")
-                    throw dirErr
+                    ;// throw
+                    errorLog(ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program),,, 1)
                 }
             supportedVers := []
             loop files ptf.ImgSearch "\" program "\*", "D"

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2022/12/18
- * @version 1.0.5
+ * @date 2023/01/01
+ * @version 1.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -155,7 +155,7 @@ class switchTo {
                     }
             } catch as e {
                 tool.Cust("Couldn't determine proper path from Premiere")
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 runae()
                 return
             }

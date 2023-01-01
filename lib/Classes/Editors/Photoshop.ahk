@@ -2,8 +2,8 @@
  * @description A library of useful Photoshop functions to speed up common tasks
  * Last tested in v24.0.1 of Photoshop
  * @author tomshi
- * @date 2022/12/25
- * @version 1.1.0
+ * @date 2023/01/01
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -39,10 +39,7 @@ class PS {
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "InTransform.png") && !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " ptf.Photoshop image) ;checks to see if you're already in the free transform window
             {
                 block.Off()
-                errorLog(
-                    Error("Was unable to find the value the user wished to adjust")
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Was unable to find the value the user wished to adjust"),, 1)
                 return
             }
         else
@@ -55,10 +52,7 @@ class PS {
                     {
                         MouseMove(xpos, ypos)
                         block.Off()
-                        errorLog(
-                            Error("Was unable to find the value the user wished to adjust")
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Was unable to find the value the user wished to adjust"),, 1)
                         return
                     }
             }
@@ -110,10 +104,7 @@ class PS {
                         {
                             MouseMove(0, 0)
                             block.Off()
-                            errorLog(
-                                Error("Was unable to find the png option", -1)
-                                , A_ThisFunc "()",, 1
-                            )
+                            errorLog(Error("Was unable to find the png option", -1),, 1)
                             return
                         }
                     MouseMove(xpng, ypng)
@@ -196,10 +187,7 @@ class PS {
         else
             {
                 block.Off()
-                errorLog(
-                    Error("Was unable to find the filetype option", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Was unable to find the filetype option", -1),, 1)
                 return
             }
         MouseMove(x, y)

@@ -12,8 +12,8 @@
 getHTML(url) {
     ;// type checking
     if Type(url) != "string" {
-        errorLog(TypeError("Function expected a string but recieved a " Type(url), -1, url)
-                    , A_ThisFunc "()",,, 1)
+        ;// throw
+        errorLog(TypeError("Function expected a string but recieved a " Type(url), -1, url),,, 1)
     }
     ;// attempting to get url
     try {
@@ -26,7 +26,7 @@ getHTML(url) {
         string := main.ResponseText
     }  catch as e {
         tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
-        errorLog(e, A_ThisFunc "()")
+        errorLog(e)
         return 0
     }
     return string

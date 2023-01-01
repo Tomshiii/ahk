@@ -16,15 +16,12 @@
  * ```
  * @param {Boolean} doThrow Determines whether you want for errorLog to throw for you. This is simply to save the need to manually throw
  */
-errorLog(err, backupfunc?, optMessage?, toolCust := false, doThrow := false) {
+errorLog(err, optMessage?, toolCust := false, doThrow := false) {
     ;// this variable is only used on the first use of a day so we have to initialise it
     start := ""
     ;// throw if no error object is passed
     if !IsSet(err) || !IsObject(err)
         throw UnsetError("Parameter #1 is unset", -1, err)
-    ;// if err.what has no value, possibly assign the backup var
-    if err.what = "" && IsSet(backupfunc?)
-        err.what := backupfunc
     ;// clean up the message string
     err.Message := StrReplace(err.Message, "`n`n", "- ")
     err.Message := StrReplace(err.Message, "`r`r", "- ")

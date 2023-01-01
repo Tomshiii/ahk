@@ -19,7 +19,7 @@ checkImg(checkfilepath, &returnX?, &returnY?, x1 := 0, y1 := 0, x2 := A_ScreenWi
                  : checkfilepath
     if !FileExist(fileCheck)
         {
-            errorLog(ValueError("Desired file could not be found", -1, fileCheck), A_ThisFunc "()",, -1)
+            errorLog(ValueError("Desired file could not be found", -1, fileCheck),, -1)
             return false
         }
     imgCheck := (IsSet(check) && check != 0)
@@ -27,7 +27,7 @@ checkImg(checkfilepath, &returnX?, &returnY?, x1 := 0, y1 := 0, x2 := A_ScreenWi
                 : "*2 "
     if !ImageSearch(&returnX, &returnY, x1, y1, x2, y2, imgCheck fileCheck)
         {
-            errorLog(Error("Could not locate the requested image on the screen", -1), A_ThisFunc "()",, 1)
+            errorLog(Error("Could not locate the requested image on the screen", -1),, 1)
             return false
         }
     return true

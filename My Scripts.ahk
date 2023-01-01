@@ -12,7 +12,7 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.26.3
+;\\v2.26.4
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -190,7 +190,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			}
 			catch as e {
 				tool.Cust(A_ThisFunc "() failed to get the monitor that the active window is in")
-				errorLog(e, A_ThisFunc "()")
+				errorLog(e)
 				break
 			}
 		}
@@ -208,10 +208,8 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	monitor := getMonitor() ;now we run the above function we created
 	if !IsObject(monitor) || !IsSet(monitor)
 		{
-			errorLog(
-				UnsetError("Failed to get information about the window/monitor relationship", -1, monitor)
-				, A_ThisHotkey "::", "The window may be overlapping monitors", 1
-			)
+			errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1, monitor)
+						, "The window may be overlapping monitors", 1)
 			return
 		}
 	if win = "" ;if our win variable doesn't have a title yet we run this code block
@@ -502,7 +500,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 					WinActivate(title) ;reactivates the original window
 				} catch as e {
 					tool.Cust("Failed to get information on last active window")
-					errorLog(e, A_ThisHotkey "::")
+					errorLog(e)
 				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 				return
@@ -713,7 +711,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
     } catch as e {
         tool.Cust("Couldn't find the ClassNN value")
-        errorLog(e, A_ThisHotkey "::")
+        errorLog(e)
     }
 	;MouseMove 34, 917 ;location of the selection tool
 	if width = 0 || height = 0
@@ -724,10 +722,8 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 				if A_Index > 3
 					{
 						SendInput(selectionPrem)
-						errorLog(
-							UnsetError("Couldn't get dimensions of the class window", -1),
-							A_ThisHotkey "::", "Used the selection hotkey instead", 1
-						)
+						errorLog(UnsetError("Couldn't get dimensions of the class window", -1)
+									, "Used the selection hotkey instead", 1)
 						return
 					}
 				sleep 100
@@ -751,9 +747,8 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			{
 				SendInput(selectionPrem)
 				SendInput(programMonitor)
-				errorLog(
-					Error("Couldn't find the selection tool", -1),
-					A_ThisHotkey "::", "Used the selection hotkey instead", 1)
+				errorLog(Error("Couldn't find the selection tool", -1)
+							, "Used the selection hotkey instead", 1)
 				return
 			}
 	}
@@ -803,7 +798,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		}
 	} catch as e {
 			tool.Cust("Function failed to find project window")
-			errorLog(e, A_ThisHotkey "::")
+			errorLog(e)
 			return
 		}
 	;MsgBox("x " toolx "`ny " tooly "`nwidth " width "`nheight " height "`nclass " ClassNN) ;debugging
@@ -823,7 +818,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			}
 	} catch Error as e {
 		block.Off()
-		errorLog(e, A_ThisHotkey "::", "If this happens consistently, it may be an issue with premiere", 1)
+		errorLog(e, "If this happens consistently, it may be an issue with premiere", 1)
 		return
 	}
 	move:
@@ -850,10 +845,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			if !WinActive("_Editing Stuff")
 				{
 					block.Off()
-					errorLog(
-						Error("Activating the editing folder failed", -1),
-						A_ThisHotkey "::",, 1
-					)
+					errorLog(TargetError("Activating the editing folder failed", -1),, 1)
 					return
 				}
 		}
@@ -883,10 +875,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		if A_Index > 50
 			{
 				block.Off()
-				errorLog(
-					Error("Couldn't find the sfx folder in Windows Explorer", -1),
-					A_ThisHotkey "::",, 1
-				)
+				errorLog(TargetError("Couldn't find the sfx folder in Windows Explorer", -1),, 1)
 				return
 			}
 	}
@@ -911,10 +900,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	if !ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj.png") && !ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj2.png")
 		{
 			block.Off()
-			errorLog(
-				Error("Couldn't find the sfx folder in Premiere Pro", -1),
-				A_ThisHotkey "::",, 1
-			)
+			errorLog(TargetError("Couldn't find the sfx folder in Premiere Pro", -1),, 1)
 			return
 		}
 	MouseMove(fold2x + "5", fold2y + "2")
@@ -933,10 +919,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		if A_Index > 5
 			{
 				block.Off()
-				errorLog(
-					Error("Couldn't find the bin", -1),
-					A_ThisHotkey "::", 1
-				)
+				errorLog(TargetError("Couldn't find the bin", -1),, 1)
 				return
 			}
 	}
@@ -1022,7 +1005,7 @@ RButton::move.Window("") ;minimise
 				return "Active window now on top`n" '"' title '"'
 		} catch as e {
 			tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
-			errorLog(e, A_ThisFunc "()")
+			errorLog(e)
 			Exit()
 		}
 
@@ -1076,7 +1059,7 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 		{
 			clip.returnClip(store.storedClip)
 			msg := "Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount
-			errorLog(Error(msg, -1), A_ThisHotkey "::",, {time: 2.0})
+			errorLog(Error(msg, -1),, {time: 2.0})
 			return
 		}
 	SendInput("{BackSpace}")

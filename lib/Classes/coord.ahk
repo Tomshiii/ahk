@@ -1,9 +1,10 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2022/12/31
- * @version 1.1.0.1
+ * @date 2023/01/01
+ * @version 1.1.1
  ***********************************************************************/
+
 ; { \\ #Includes
 #Include <Functions\errorLog>
 ; }
@@ -18,16 +19,14 @@ class coord {
         if Type(target) != "string"
             {
                 ;// throw
-                errorLog(TypeError("Incorrect variable type in Parameter #1", -1, target)
-                            , A_ThisFunc "()",,, 1)
+                errorLog(TypeError("Incorrect variable type in Parameter #1", -1, target),,, 1)
             }
         ;// checking that the passed string is one of the accepted types
         loop {
             if A_Index > targets.Length
                 {
                     ;// throw
-                    errorLog(ValueError("Incorrect value in Parameter #1", -1, target)
-                                , A_ThisFunc "()",,, 1)
+                    errorLog(ValueError("Incorrect value in Parameter #1", -1, target),,, 1)
                 }
             if targets[A_Index] = target
                 break
@@ -36,8 +35,7 @@ class coord {
         if IsSet(mouse) {
             if mouse != true && mouse != false
                 {
-                    errorLog(ValueError("Incorrect value in Parameter #2", -1, mouse)
-                                A_ThisFunc "()",,,, 1)
+                    errorLog(ValueError("Incorrect value in Parameter #2", -1, mouse),,, 1)
                 }
         }
     }
@@ -104,16 +102,14 @@ class coord {
         if Type(relative) != "string"
             {
                 ;// throw
-                errorLog(TypeError("Incorrect variable type in Parameter #1", -1, relative)
-                            , A_ThisFunc "()",,, 1)
+                errorLog(TypeError("Incorrect variable type in Parameter #1", -1, relative),,, 1)
             }
         ;// checking that the passed string is one of the accepted types
         loop {
             if A_Index > relativeTo.Length
                 {
                     ;// throw
-                    errorLog(ValueError("Incorrect value in Parameter #1", -1, relative)
-                                , A_ThisFunc "()",,, 1)
+                    errorLog(ValueError("Incorrect value in Parameter #1", -1, relative),,, 1)
                 }
             if relativeTo[A_Index] = relative
                 break

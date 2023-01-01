@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2022/12/25
- * @version 1.2.0
+ * @date 2023/01/01
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\winget>
+#Include <Classes\clip>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
 ; }
@@ -82,7 +83,7 @@ class Resolve {
             } catch as e {
                 block.Off() ;// just incase
                 tool.Cust(errorMsg, 1,, 2)
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 Exit()
             }
         }
@@ -111,10 +112,7 @@ class Resolve {
         if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property "2.png")
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the desired property.", -1, property)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the desired property.", -1, property),, 1)
                 return
             }
         MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
@@ -175,10 +173,7 @@ class Resolve {
         if !srch2 && !srch3
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the search button", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the search button", -1),, 1)
                 return
             }
         if srch2
@@ -196,10 +191,7 @@ class Resolve {
         colError()
         {
             block.off
-            errorLog(
-                Error("Couldn't find the desired effect", -1, effect)
-                , A_ThisFunc "()",, 1
-            )
+            errorLog(Error("Couldn't find the desired effect", -1, effect),, 1)
             return
         }
         MouseGetPos(&xcol, &ycol)
@@ -232,10 +224,7 @@ class Resolve {
         if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property "2.png")
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the desired property", -1, property)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the desired property", -1, property),, 1)
                 return
             }
         MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
@@ -270,10 +259,7 @@ class Resolve {
             {
                 block.Off()
                 MouseMove(xpos, ypos)
-                errorLog(
-                    Error("Couldn't find the desired button", -1, button)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the desired button", -1, button),, 1)
             }
         MouseMove(xh, yh)
         click
@@ -289,9 +275,8 @@ class Resolve {
     {
         if !IsNumber(value)
             {
-                typeErr := TypeError("Invalid parameter type in Parameter #1", -1, amount)
-                errorLog(typeErr, A_ThisFunc "()",, 1)
-                throw typeErr
+                ;// throw
+                errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
             }
         coord.w()
         block.On()
@@ -302,33 +287,19 @@ class Resolve {
         if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve "volume.png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve "volume2.png") ;searches for the volume property
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the desired property", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the desired property", -1),, 1)
                 return
             }
         MouseMove(xz + "215", yz + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
         SendInput("{Click 2}")
-        orig := ClipboardAll()
-        A_Clipboard := ""
-        ;sleep 50
-        SendInput("^c")
-        if !ClipWait(1)
-            {
-                block.Off()
-                errorLog(
-                    TimeoutError("Clipboard timed out waiting for data", -1)
-                    , A_ThisFunc "()",, 1
-                )
-                return
-            }
+        orig := clip.clear()
+        clip.copyWait()
         gain := A_Clipboard + value
         SendInput(gain)
         SendInput("{Enter}")
         MouseMove(xpos, ypos)
         SendInput("{MButton}")
-        A_Clipboard := orig
+        clip.returnClip(orig.storedClip)
         block.Off()
     }
 }

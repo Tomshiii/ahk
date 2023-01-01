@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2023/01/01
- * @version 1.3.0
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,7 +38,7 @@ class WinGet {
             catch IndexError as e {
                 block.Off() ;to stop the user potentially getting stuck
                 tool.Cust(A_ThisFunc "() failed to get the monitor that the mouse is within", 2.0)
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 Exit()
             }
         }
@@ -61,7 +61,7 @@ class WinGet {
                 throw UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1, title)
             return title
         } catch UnsetError as e {
-            errorLog(e, A_ThisFunc "()",, 1)
+            errorLog(e,, 1)
             block.Off()
             Exit()
         }
@@ -87,7 +87,7 @@ class WinGet {
             return WinGetMinMax(title,, "Editing Checklist -") ;a return value of 1 means it is maximised
         } catch as e {
             tool.Cust(A_ThisFunc "() couldn't determine the active window")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             block.Off()
             Exit
         }
@@ -120,7 +120,7 @@ class WinGet {
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return {premCheck: false, titleCheck: unset, saveCheck: unset}
         }
     }
@@ -150,7 +150,7 @@ class WinGet {
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return {aeCheck: false, titleCheck: unset, saveCheck: unset}
         }
     }
@@ -163,27 +163,18 @@ class WinGet {
     {
         ;// if the user doesn't have either editors active
         if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) {
-                errorLog(
-                    TargetError("Couldn't determine an editor window", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(TargetError("Couldn't determine an editor window", -1),, 1)
                 return false
             }
         ;// if PremName fails to grab the title
         if !this.PremName(&premCheck, &titleCheck) && !this.AEName(&aeCheck) {
-                errorLog(
-                    TargetError("Unable to determine the client as the title is unable to be obtained", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(TargetError("Unable to determine the client as the title is unable to be obtained", -1),, 1)
                 return false
             }
         path := IsSet(premCheck) ? obj.SplitPath(premCheck) : obj.SplitPath(aeCheck)
         ;// if the comms folder isn't in the title path
         if !InStr(path.dir, ptf.comms) {
-                errorLog(
-                    UnsetError("``ptf.comms`` folder not found in Premiere title", -1, path.dir)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(UnsetError("``ptf.comms`` folder not found in Premiere title", -1, path.dir),, 1)
                 return false
             }
         return ClientName := SubStr(
@@ -206,7 +197,7 @@ class WinGet {
             return true
         } catch as e {
             tool.Cust("couldn't grab active window")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return false
         }
     }
@@ -258,8 +249,8 @@ class WinGet {
             return ComObject("Scripting.FileSystemObject").GetFolder(path).Size
         if option > 3
             {
-                errorLog(ValueError("Parameter #2 invalid", -1, option), A_ThisFunc "()")
-                throw ValueError("Parameter #2 invalid", -1, option)
+                ;// throw
+                errorLog(ValueError("Parameter #2 invalid - Value Too High", -1, option),,, 1)
             }
         ;// you convert bytes to another unit by x / (1024^y)
         ;// ie. bytes => MB ; x / (1024x1024x1024) OR x / 1024^2

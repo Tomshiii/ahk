@@ -79,10 +79,8 @@ class adobeTimer extends count {
         if !winget.isFullscreen(&title)
             {
                 fireRound := Round(fire/1000, 1)
-                errorLog(
-                    Error("Couldn't reset the fullscreen of " getProgram " because the user was interacting with the keyboard", -1)
-                    , A_ThisFunc "()", "It will attempt again in " fireRound "s", {time: 2.0}
-                )
+                errorLog(Error("Couldn't reset the fullscreen of " getProgram " because the user was interacting with the keyboard", -1)
+                            , "It will attempt again in " fireRound "s", {time: 2.0})
             }
         SetTimer(this.timer, -fire) ;adds 2s to the timer and will check again after that time has elapsed
     }

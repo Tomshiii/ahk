@@ -2,8 +2,9 @@
  * @description A class to encapsulate often used functions to manipulate the clipboard
  * @author tomshi
  * @date 2023/01/01
- * @version 1.0.0
+ * @version 1.0.1
  ***********************************************************************/
+
 ; { \\ #Includes
 #Include <Functions\errorLog>
 ; }
@@ -49,7 +50,7 @@ class clip {
             {
                 if IsSet(storedClip)
                     A_Clipboard := storedClip
-                errorLog(UnsetError("Couldn't copy data to clipboard", -1),,, 1)
+                errorLog(UnsetError("Couldn't copy data to clipboard", -1),, 1)
                 return false
             }
         return true

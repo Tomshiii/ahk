@@ -240,7 +240,7 @@ save()
             } catch as e {
                 block.Off()
                 tool.Cust("A variable wasn't assigned a value")
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 origWind := unset
                 SetTimer(, -ms)
                 goto theEnd
@@ -273,8 +273,7 @@ save()
                 {
                     avoid := 1
                     block.Off()
-                    errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1)
-                                , A_ThisFunc "()",, 1)
+                    errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
                     SetTimer(, -ms)
                     goto end
                 }
@@ -344,8 +343,7 @@ save()
                             avoid := 1
                             block.Off()
                             tool.Wait()
-                            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1)
-                                , A_ThisFunc "()",, 1)
+                            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
                             goto end
                         }
                     tool.Wait()
@@ -373,8 +371,7 @@ save()
                             SetTimer(, -ms)
                             block.Off()
                             tool.Wait()
-                            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1)
-                                , A_ThisFunc "()",, 1)
+                            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
                             goto end
                         }
                     tool.Wait()
@@ -436,7 +433,7 @@ save()
                 WinActivate("ahk_exe " origWind)
         } catch as e {
             tool.Cust("couldn't activate original window")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
         }
 
         ignore:

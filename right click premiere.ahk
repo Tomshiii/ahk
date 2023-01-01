@@ -106,7 +106,7 @@ Rbutton::
             } catch as e {
                 tool.Wait()
                 tool.Cust("Couldn't find the ClassNN value")
-                errorLog(e, "right click premiere.ahk")
+                errorLog(e)
                 goto skip
             }
         }

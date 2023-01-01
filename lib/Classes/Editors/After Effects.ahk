@@ -2,8 +2,8 @@
  * @description A library of useful After Effects functions to speed up common tasks
  * Tested on and designed for v22.6 of After Effects
  * @author tomshi
- * @date 2022/12/25
- * @version 1.1.0
+ * @date 2023/01/01
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -36,10 +36,7 @@ class AE {
         MouseGetPos(&x, &y)
         if !(x > 550 and x < 2542) and !(y > 1010) ;this ensures that this function only tries to activate if it's within the timeline of after effects
             {
-                errorLog(
-                    Error("User is not hovering over a track. Function cannot continue.", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("User is not hovering over a track. Function cannot continue.", -1),, 1)
                 return
             }
             block.On()
@@ -63,10 +60,7 @@ class AE {
         )
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the property the user was after", -1, property)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the property the user was after", -1, property),, 1)
                 KeyWait(A_ThisHotkey)
                 return
             }
@@ -103,11 +97,9 @@ class AE {
         colour := PixelGetColor(x, y) ;assigned the pixel colour at the mouse coords to the variable "colour"
         if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
             {
-                errorLog(
-                    Error("User not hovering over the right spot on the track")
-                    , A_ThisFunc "()", "Or not hovering over the right spot", 1
-                )
                 block.Off()
+                errorLog(Error("User not hovering over the right spot on the track")
+                            , "Or not hovering over the right spot", 1)
                 Exit
             }
         SendInput(audioAE effectsAE) ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
@@ -117,17 +109,14 @@ class AE {
             ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
         } catch as e {
             tool.Cust("Couldn't find the ClassNN value")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
         }
         if ImageSearch(&x2, &y2, efx, efy, efx + width, efy + height, "*2 " ptf.AE "findbox.png") || ImageSearch(&x2, &y2, efx, efy, efx + width, efy + height, "*2 " ptf.AE "findbox2.png")
             goto move
         else
             {
                 block.Off()
-                errorLog(
-                    Error("Couldn't find the magnifying glass", -1)
-                    , A_ThisFunc "()",, 1
-                )
+                errorLog(Error("Couldn't find the magnifying glass", -1),, 1)
                 return
             }
         move:
@@ -144,10 +133,8 @@ class AE {
                     if A_Index > 10
                         {
                             block.Off()
-                            errorLog(
-                                UnsetError("Couldn't determine the caret position", -1, find2x)
-                                , A_ThisFunc "()", "The findbox might not have been activated", 1
-                            )
+                            errorLog(UnsetError("Couldn't determine the caret position", -1, find2x)
+                                        , "The findbox might not have been activated", 1)
                             return
                         }
                 } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
@@ -178,19 +165,17 @@ class AE {
         colour := PixelGetColor(x, y) ;assigned the pixel colour at the mouse coords to the variable "colour"
         if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
             {
-                errorLog(
-                    Error("User not hovering over the right spot on the track")
-                    , A_ThisFunc "()", "Or not hovering over the right spot", 1
-                )
+                errorLog(Error("User not hovering over the right spot on the track")
+                            , "Or not hovering over the right spot", 1)
                 block.Off()
-                Exit
+                return
             }
         try {
             effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
         } catch as e {
             tool.Cust("Couldn't find the ClassNN value")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
         }
         ;ToolTip(efx ", " efy) ;debugging
         SendInput(audioAE "s") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
@@ -210,11 +195,7 @@ class AE {
             if A_Index > 10
                 {
                     block.Off()
-                    tool.Cust("The Scale property after " A_Index " attempts",, 1)
-                    errorLog(
-                        IndexError("Couldn't find the Scale property", -1)
-                        , A_ThisFunc "()"
-                    )
+                    errorLog(IndexError("Couldn't find the Scale property", -1),, 1)
                     return
                 }
         }
@@ -255,10 +236,7 @@ class AE {
             MouseMove(-30, 0,, "R") ;move the mouse incase it's in the way
             if A_Index > 4
                 {
-                    errorLog(
-                        IndexError("Couldn't find the blur button", -1)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(IndexError("Couldn't find the blur button", -1),, 1)
                     break
                 }
         }
@@ -286,10 +264,7 @@ class AE {
                     coord.s()
                     MouseMove(x, y)
                     block.Off()
-                    errorLog(
-                        IndexError("Couldn't find the advanced tab", -1)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(IndexError("Couldn't find the advanced tab", -1),, 1)
                     return
                 }
         }
@@ -312,10 +287,7 @@ class AE {
                     coord.s()
                     MouseMove(x, y)
                     block.Off()
-                    errorLog(
-                        IndexError("Couldn't find the shutter angle", -1)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(IndexError("Couldn't find the shutter angle", -1),, 1)
                     return
                 }
         }
@@ -342,10 +314,7 @@ class AE {
                     coord.s()
                     MouseMove(x, y)
                     block.Off()
-                    errorLog(
-                        IndexError("Couldn't find the shutter angle value", -1)
-                        , A_ThisFunc "()",, 1
-                    )
+                    errorLog(IndexError("Couldn't find the shutter angle value", -1),, 1)
                     return
                 }
         }
@@ -394,10 +363,8 @@ class AE {
                     case true:
                         tool.Cust("The main window is not active")
                     default:
-                        errorLog(
-                            UnsetError("A variable was not assigned a value", -1, set)
-                            , A_ThisFunc "()", "Or the main window is not active", 1
-                        )
+                        errorLog(UnsetError("A variable was not assigned a value", -1, set)
+                                    , "Or the main window is not active", 1)
                 }
                 return
             }
@@ -430,10 +397,7 @@ class AE {
             {
                 if !ImageSearch(&togx, &togy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "toggle.png")
                     {
-                        errorLog(
-                            Error("Couldn't toggle switches/modes", -1)
-                            , A_ThisFunc "()",, 1
-                        )
+                        errorLog(Error("Couldn't toggle switches/modes", -1),, 1)
                         return
                     }
                 MouseMove(togx, togy)
@@ -453,10 +417,8 @@ class AE {
         if findx = ""
             {
                 tool.Cust("the caret which indicates you aren't ready to type something`nTo prevent any unintended inputs being sent to AE none will be sent", 3.0, 1)
-                errorLog(
-                    UnsetError("Couldn't determine the caret position.", -1, findx)
-                    , A_ThisHotkey "::", "This indicates the user isn't ready to type anything."
-                )
+                errorLog(UnsetError("Couldn't determine the caret position.", -1, findx)
+                            , "This indicates the user isn't ready to type anything.")
                 return
             }
         SendInput("^a" "{BackSpace}")

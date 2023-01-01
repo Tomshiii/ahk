@@ -10,20 +10,19 @@
  */
 delaySI(delay := 50, inputs*) {
     if !IsNumber(delay) {
-        errorLog(TypeError("Incorrect value type in Parameter #1", -1, delay)
-                    , A_ThisFunc "()",,, 1)
+        ;// throw
+        errorLog(TypeError("Incorrect value type in Parameter #1", -1, delay),,, 1)
     }
     if inputs.Length < 1 {
-        errorLog(UnsetError("Parameter #2 has not been set", -1, inputs)
-                    , A_ThisFunc "()",,, 1)
+        ;// throw
+        errorLog(UnsetError("Parameter #2 has not been set", -1, inputs),,, 1)
     }
     for i in inputs {
         if Type(i) != "String" {
-            errorLog(ValueError("Incorrect value type in Parameter " A_Index+1, -1, i)
-                        , A_ThisFunc "()",,, 1)
+            ;// throw
+            errorLog(ValueError("Incorrect value type in Parameter " A_Index+1, -1, i),,, 1)
         }
         SendInput(i)
         sleep delay
     }
 }
-delaySI("s")
