@@ -23,6 +23,9 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
     - Fixed all instances of scripts that use this function not having the proper `#Include`
 - Moved `getMousePos()` and renamed to `obj.MousePos()`
 
+## > clip {
+Added a new class `clip {` to maintain a collection of functions designed to manipulate the clipboard. This class helps cut large chunks of repeated code when dealing with the clipboard and waiting for data to be copied.
+
 ## > coord {
 - Added `coord.Client()` to set the pixel mode to `client`
 - Expanded functionality of all functions to accept a parameter to adjust what they want to target
@@ -51,3 +54,4 @@ Added a new class `obj {` to maintain a collection of wrapper functions designed
 - `tomshiBasic()` now creates a hidden button to force focus to it instead of the first user defined ctrl
 - `adobe fullscreen check.ahk` now uses `timer {`
 - QMK `open dir of current project` now uses `winget.AEName()/PremName()`
+- Added a hotkey to make \` surround the highlighted text in \` in `Discord`

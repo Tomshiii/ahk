@@ -12,7 +12,7 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.26.2
+;\\v2.26.3
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -40,6 +40,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Classes\winget>
 #Include <Classes\Startup>
 #Include <Classes\obj>
+#Include <Classes\clip>
 #Include <Functions\reload_reset_exit>
 #Include <Functions\errorLog>
 #Include <Functions\mouseDrag>
@@ -584,6 +585,16 @@ SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering 
 
 ;discitalicHotkey;
 +*::^i ;+* in VSCode is how you encase something in * which I do in .md stuff to italisise it. I sometimes try to do this in discord oops
+;discBacktickHotkey;
+`::
+{
+	store := clip.clear()
+	if !clip.copyWait(store.storedClip)
+		return
+	A_Clipboard := '``' A_Clipboard '``'
+	SendInput("^v")
+	clip.delayReturn(store.storedClip)
+}
 
 ;discserverHotkey;
 F1::discord.Unread() ;will click any unread servers
@@ -663,8 +674,7 @@ Ctrl & BackSpace::
 	getHotkeys(, &second)
 	KeyWait(second)
 	sendLeft()
-	storeClip := ClipboardAll()
-	A_Clipboard := ""
+	store := clip.clear()
 	Send("^c")
 	if !ClipWait(0.1) || check := (StrLen(A_Clipboard) = 1) ? 1 : 0
 		{
@@ -685,7 +695,7 @@ Ctrl & BackSpace::
 				Send("{Delete}")
 		}
 	Send("{BackSpace}")
-	A_Clipboard := storeClip
+	clip.returnClip(store.storedClip)
 }
 
 ;premzoomoutHotkey;
@@ -1024,37 +1034,19 @@ RButton::move.Window("") ;minimise
 ;searchgoogleHotkey;
 ^+c:: ;runs a google search of highlighted text
 {
-	previous := ClipboardAll()
-	A_Clipboard := "" ;clears the clipboard
-	Send("^c")
-	if !ClipWait(1) ;waits for the clipboard to contain data
-		{
-			A_Clipboard := previous
-			errorLog(
-				UnsetError("Couldn't copy data to clipboard"),
-				A_ThisHotkey "::", 1
-			)
-			return
-		}
+	store := clip.clear()
+	if !clip.copyWait(store.storeClip)
+		return
 	Run("https://www.google.com/search?d&q=" A_Clipboard)
-	A_Clipboard := previous
+	clip.returnClip(store.storeClip)
 }
 
 ;capitaliseHotkey;
 SC03A & c:: ;will attempt to determine whether to capitilise or completely lowercase the highlighted text depending on which is more frequent
 {
-	previous := ClipboardAll()
-	A_Clipboard := "" ;clears the clipboard
-	Send("^c")
-	if !ClipWait(1) ;waits for the clipboard to contain data
-		{
-			A_Clipboard := previous
-			errorLog(
-				UnsetError("Couldn't copy data to clipboard"),
-				A_ThisHotkey "::", 1
-			)
-			return
-		}
+	store := clip.clear()
+	if !clip.copyWait(store.storedClip)
+		return
 	length := StrLen(A_Clipboard)
 	/* if length > 9999 ;personally I started encountering issues at about 16k characters but I'm dropping that just to be safe
 		{
@@ -1082,16 +1074,17 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 		StringtoX := StrUpper(A_Clipboard)
 	else
 		{
-			A_Clipboard := previous
-			tool.Cust("Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
+			clip.returnClip(store.storedClip)
+			msg := "Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount
+			errorLog(Error(msg, -1), A_ThisHotkey "::",, {time: 2.0})
 			return
 		}
 	SendInput("{BackSpace}")
 	A_Clipboard := ""
 	A_Clipboard := StringtoX
-	ClipWait(1)
+	clip.Wait(store.storedClip)
 	SendInput("{ctrl down}v{ctrl up}")
-	SetTimer(() => A_Clipboard := previous, -1000)
+	clip.delayReturn(store.storedClip)
 }
 
 ;timeHotkey;
