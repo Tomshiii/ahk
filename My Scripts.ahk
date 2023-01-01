@@ -12,7 +12,7 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.26.4
+;\\v2.26.5
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -109,7 +109,8 @@ startup.firstCheck(MyRelease)    ;runs the firstCheck() function
 startup.oldError()               ;runs the loop to delete old log files
 startup.adobeTemp(MyRelease)     ;runs the loop to delete cache files
 startup.libUpdateCheck()         ;runs a loop to check for lib updates
-startup.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
+;// apparently ahk v2.0.0 does this itself!
+; startup.updateAHK()            ;--checks for a newer version of ahk and alerts the user asking if they wish to download it
 startup.monitorAlert()           ;checks the users monitor work area for any changes
 
 ;=============================================================================================================================================

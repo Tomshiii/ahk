@@ -59,3 +59,4 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - `adobe fullscreen check.ahk` now uses `timer {`
 - QMK `open dir of current project` now uses `winget.AEName()/PremName()`
 - Added a hotkey to make \` surround the highlighted text in \` in `Discord`
+- Disabled `startup.updateAHK()` as `v2.0.0` of ahk does this itself
