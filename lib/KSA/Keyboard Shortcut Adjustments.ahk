@@ -552,6 +552,11 @@ DragKeywait := IniRead(ptf["KSAini"], "Hotkeys", "Mousedrag Keywait")
  */
 longSkip := IniRead(ptf["KSAini"], "Hotkeys", "10s skip")
 
+;[discord]
+/**
+ * This value is a key or key combination that is being called upon within a function, these values will need to be adjusted within KSA.ahk/ini
+ */
+discHighlightChat := IniRead(ptf["KSAini"], "discord", "highlight chat")
 
 ;[ImageSearchCoords]
 

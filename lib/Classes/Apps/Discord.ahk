@@ -2,15 +2,16 @@
  * @description Speed up interactions with discord
  * @author tomshi
  * @date 2023/01/01
- * @version 1.1.1
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
-; #Include <KSA\Keyboard Shortcut Adjustments>
+#Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\block>
 #Include <Classes\coord>
 #Include <Classes\ptf>
 #Include <Classes\tool>
+#Include <Classes\clip>
 #Include <Functions\errorLog>
 #Include <Functions\checkImg>
 ; }
@@ -156,5 +157,32 @@ class discord {
                 return
             }
         end()
+    }
+
+    /**
+     * This function allows the user to wrap the highlighted text with whatever characters they want (eg. ``, (), etc). I created this mostly because I got too use to VSCode offering this feature that I kept trying to do it in discord.
+     *
+     * *If the passed `char` variable is 2 characters long, the first character will be appended at the beginning of the highlighted text & the second character will be appended to the end of the highlighted text*
+     * @param {String} char the desired character(s) to wrap the text with. This parameter can be no more than 2 characters long
+     */
+    static surround(char)
+    {
+        if StrLen(char) > 2
+            {
+                ;// throw
+                errorLog(ValueError("Incorrect String Length in Parameter #1", -1, char),,, 1)
+            }
+        char1 := (StrLen(char) = 2) ? SubStr(char, 1, 1) : char
+        char2 := (StrLen(char) = 2) ? SubStr(char, 2, 1) : char
+        store := clip.clear()
+        if !clip.copyWait(store.storedClip)
+            {
+                SendInput(discHighlightChat)
+                SendInput(char)
+                return
+            }
+        A_Clipboard := char1 A_Clipboard char2
+        SendInput("^v")
+        clip.delayReturn(store.storedClip)
     }
 }

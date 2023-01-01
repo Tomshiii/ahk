@@ -582,17 +582,12 @@ SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering 
 ^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 ;discitalicHotkey;
-+*::^i ;+* in VSCode is how you encase something in * which I do in .md stuff to italisise it. I sometimes try to do this in discord oops
++*::discord.surround("*")
 ;discBacktickHotkey;
-`::
-{
-	store := clip.clear()
-	if !clip.copyWait(store.storedClip)
-		return
-	A_Clipboard := '``' A_Clipboard '``'
-	SendInput("^v")
-	clip.delayReturn(store.storedClip)
-}
+`::discord.surround("``")
+;discParenthHotkey;
+(::
+)::discord.surround("()")
 
 ;discserverHotkey;
 F1::discord.Unread() ;will click any unread servers
