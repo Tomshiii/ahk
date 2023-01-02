@@ -266,8 +266,8 @@ save()
     if WinExist(editors.Premiere.winTitle) && premVal.saveCheck = true
         {
             premWinCheck := WinGetTitle(editors.Premiere.winTitle)
-            premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro 20" ptf.PremYear " -")
-            premTitleCheck2 := InStr(premVal.winTitle, "Adobe Premiere Pro 20" ptf.PremYear " -") ;same as above except checking a different variable (depending on whether you check the ahk_exe or the ahk_class returns different results under different circumstances)
+            premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro 20" ptf.PremYearVer " -")
+            premTitleCheck2 := InStr(premVal.winTitle, "Adobe Premiere Pro 20" ptf.PremYearVer " -") ;same as above except checking a different variable (depending on whether you check the ahk_exe or the ahk_class returns different results under different circumstances)
             if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
                 {
                     avoid := 1
@@ -284,7 +284,7 @@ save()
                 {
                     switchTo.Premiere()
                     premWinCheck := WinGetTitle("A")
-                    premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro 20" ptf.PremYear " -")
+                    premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro 20" ptf.PremYearVer " -")
                     ; appendCheck(2, premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "0_2") ;// debugging
                 }
             if !premTitleCheck && !premTitleCheck2 ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave

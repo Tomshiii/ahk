@@ -3,7 +3,7 @@
  * Tested on and designed for v22.6 of After Effects
  * @author tomshi
  * @date 2023/01/02
- * @version 1.1.2
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -339,7 +339,7 @@ class AE {
         */
         getCoords(&graphX, &graphY, &end, &bottom)
         {
-            if !InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYear " -")
+            if !InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYearVer " -")
                 return
             tool.Cust(A_ThisFunc "() is grabbing the timeline coords")
             if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph.png") || ImageSearch(&graphX, &graphY, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph2.png")
@@ -355,7 +355,7 @@ class AE {
         }
         if !IsSet(set)
             getCoords(&graphX, &graphY, &end, &bottom)
-        if (!IsSet(graphX) || !IsSet(graphY) || !IsSet(end) || !IsSet(bottom)) || !InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYear " -")
+        if (!IsSet(graphX) || !IsSet(graphY) || !IsSet(end) || !IsSet(bottom)) || !InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYearVer " -")
             {
                 SendInput("{" A_ThisHotkey "}")
                 tool.Wait()

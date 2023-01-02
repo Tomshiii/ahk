@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/01
- * @version 1.1.1
+ * @date 2023/01/02
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -111,8 +111,8 @@ class Startup {
         AUTOMIN         := IniRead(ptf["settings"], "Adjust",   "autosave MIN"             , 5)
         GAMESEC         := IniRead(ptf["settings"], "Adjust",   "game SEC"                 , 2.5)
         MULTI           := IniRead(ptf["settings"], "Adjust",   "multi SEC"                , 5)
-        PREMYEAR        := IniRead(ptf["settings"], "Adjust",   "prem year"                , A_Year)
-        AEYEAR          := IniRead(ptf["settings"], "Adjust",   "ae year"                  , A_Year)
+        PREMYEARVER     := IniRead(ptf["settings"], "Adjust",   "prem year"                , "2022")
+        AEYEARVER       := IniRead(ptf["settings"], "Adjust",   "ae year"                  , "2022")
         premVer         := IniRead(ptf["settings"], "Adjust",   "premVer"                  , "v22.3.1")
         aeVer           := IniRead(ptf["settings"], "Adjust",   "aeVer"                    , "v22.6")
         psVer           := IniRead(ptf["settings"], "Adjust",   "psVer"                    , "v24.0.1")
@@ -153,7 +153,7 @@ class Startup {
             working dir={}
             first check={}
             version={}
-        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEAR, AEYEAR, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, MyRelease)
+        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, MyRelease)
         , ptf["settings"])
     }
 

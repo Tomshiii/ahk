@@ -54,9 +54,9 @@ class adobeTimer extends count {
             }
         title := WinGetTitle("A")
         if InStr(title, "Adobe Premiere Pro")
-            year := ptf.PremYear
+            year := "20" ptf.PremYearVer
         else if InStr(title, "Adobe After Effects")
-            year := ptf.AEYear
+            year := "20" ptf.AEYearVer
         else
             year := A_Year
         if year = ""

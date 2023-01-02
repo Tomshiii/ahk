@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2022/12/28
- * @version 1.0.7
+ * @date 2023/01/02
+ * @version 1.0.8
  ***********************************************************************/
 
 class ptf {
@@ -58,8 +58,8 @@ class ptf {
     static adobeYear(version) {
         return SubStr(version, 2, 2)
     }
-    static PremYear          := this.adobeYear(this.premIMGver)
-    static AEYear            := this.adobeYear(this.aeIMGver)
+    static PremYearVer          := this.adobeYear(this.premIMGver)
+    static AEYearVer            := this.adobeYear(this.aeIMGver)
 
     /**
      * A little function to return the proper folder for the version of premiere/ae the user is using.
@@ -67,7 +67,7 @@ class ptf {
     static trimAdobeYear(which) {
         switch which {
             case "premiere":
-                return subVer := SubStr(this.PremYear, -2) ".0"
+                return subVer := SubStr(this.PremYearVer, -2) ".0"
             case "ae":
                 return trimVer := LTrim(this.aeIMGver, "v")
         }
