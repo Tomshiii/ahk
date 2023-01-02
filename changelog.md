@@ -60,3 +60,4 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - QMK `open dir of current project` now uses `winget.AEName()/PremName()`
 - Added a hotkey to make \` surround the highlighted text in \` in `Discord`
 - Disabled `startup.updateAHK()` as `v2.0.0` of ahk does this itself
+- Fix `autosave.ahk` erroring out if Premiere itself autosaves automatically before `autosave.ahk` can

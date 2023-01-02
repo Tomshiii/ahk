@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/01/01
- * @version 1.0.6
+ * @date 2023/01/02
+ * @version 1.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -128,7 +128,7 @@ class switchTo {
         {
             try {
                 Name := WinGetTitle("Adobe Premiere Pro")
-                titlecheck := InStr(Name, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                titlecheck := InStr(Name, "Adobe Premiere Pro 20" ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                 dashLocation := InStr(Name, "-")
                 length := StrLen(Name) - dashLocation
                 if !titlecheck
@@ -166,7 +166,7 @@ class switchTo {
             {
                 try {
                     Name := WinGetTitle("Adobe After Effects")
-                    titlecheck := InStr(Name, "Adobe After Effects " ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
+                    titlecheck := InStr(Name, "Adobe After Effects 20" ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
                     if slash := InStr(Name, "\",, -1) ;if there's a slash in the title, it means a project is open
                         WinActivate(AE.winTitle)
                     else

@@ -282,6 +282,10 @@ class Prem {
         chloeZoomXYS := [-1679, -854, 486]
         chloeExtraZoom := [632, 278, 292]
 
+        ;// emeraldd
+        emeralddXYS := [1913, 67, 200]
+        emeralddZoomXYS := [2873, -436, 300]
+
         ;then we'll define the values that will allow us to change things depending on the project
         static x := 0
         static y := 0
