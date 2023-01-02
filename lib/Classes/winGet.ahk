@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2023/01/01
- * @version 1.3.1
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -110,18 +110,18 @@ class WinGet {
     {
         try {
             if !WinExist(editors.Premiere.winTitle)
-                return {premCheck: false, titleCheck: unset, saveCheck: unset}
+                return {winTitle: false, titleCheck: unset, saveCheck: unset}
             premCheck := WinGetTitle(editors.Premiere.class)
             if premCheck = ""
                 premCheck := WinGetTitle(editors.Premiere.winTitle)
-            titleCheck := InStr(premCheck, "Adobe Premiere Pro 20" ptf.PremYear " -") ;we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            titleCheck := InStr(premCheck, "Adobe Premiere Pro 20" ptf.PremYearVer " -") ;we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
             saveCheck := (SubStr(premCheck, -1, 1) = "*") ? true : false
             return {winTitle: premCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e)
-            return {premCheck: false, titleCheck: unset, saveCheck: unset}
+            return {winTitle: false, titleCheck: unset, saveCheck: unset}
         }
     }
 
@@ -142,16 +142,16 @@ class WinGet {
     {
         try {
             if !WinExist(editors.AE.winTitle)
-                return {aeCheck: false, titleCheck: unset, saveCheck: unset}
+                return {winTitle: false, titleCheck: unset, saveCheck: unset}
             aeCheck := WinGetTitle(editors.AE.winTitle)
-            titleCheck := InStr(aeCheck, "Adobe After Effects 20" ptf.AEYear " -") ;we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+            titleCheck := InStr(aeCheck, "Adobe After Effects 20" ptf.AEYearVer " -") ;we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
             saveCheck := (SubStr(aeCheck, -1, 1) = "*") ? true : false
             return {winTitle: aeCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e)
-            return {aeCheck: false, titleCheck: unset, saveCheck: unset}
+            return {winTitle: false, titleCheck: unset, saveCheck: unset}
         }
     }
 

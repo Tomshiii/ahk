@@ -394,8 +394,8 @@ save()
         replayPlayback(title) {
             try {
                 replayCheck := WinGet.PremName()
-                if title != replayCheck.premCheck
-                    title := replayCheck.premCheck
+                if title != replayCheck.winTitle
+                    title := replayCheck.winTitle
                 sleep 250
                 ControlSend(timelineWindow,, title)
                 ControlSend(timelineWindow,, title)
