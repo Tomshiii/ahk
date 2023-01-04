@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2023/01/01
- * @version 1.2.1
+ * @date 2023/01/04
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -939,6 +939,7 @@ class Prem {
                         ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
                         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
                     } catch as e {
+                        block.Off()
                         tool.Cust("Couldn't get the ClassNN of the Effects Controls panel")
                         errorLog(e)
                         MouseMove(xpos, ypos)
@@ -963,7 +964,7 @@ class Prem {
         sleep 50
         if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
             { ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
-                Click
+                SendInput("{Click}")
                 MouseMove(moveX, moveY) ;move to the preview window
                 loop {
                     MouseGetPos(&colX, &colY)
@@ -1004,7 +1005,7 @@ class Prem {
                         return
                     }
                 MouseMove(xcol, ycol)
-                Click
+                SendInput("{Click}")
                 sleep 50
                 MouseMove(xpos, ypos)
                 block.Off()

@@ -37,6 +37,7 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay
 - Added `allKeyUp()` to attempt to unstick as many keys as possible by looping through `ScanCodes` & `Virtual Key Codes`
 - Added `discord.surround()` to surround highlighted text with the desired characters
+- Fixed `block.On()` & `block.Off()` failing to do anything
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
 

@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/02
- * @version 1.1.2
+ * @date 2023/01/04
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -120,6 +120,7 @@ class Startup {
         ADOBE           := IniRead(ptf["settings"], "Track",    "adobe temp"               , "")
         WORK            := IniRead(ptf["settings"], "Track",    "working dir"              , "E:\Github\ahk")
         FC              := IniRead(ptf["settings"], "Track",    "first check"              , "false")
+        BLOCKAWARE      := IniRead(ptf["settings"], "Track",    "block aware"              , "false")
         deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
         if FileExist(ptf["settings"])
             FileDelete(ptf["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
@@ -152,8 +153,9 @@ class Startup {
             adobe temp={}
             working dir={}
             first check={}
+            block aware={}
             version={}
-        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, MyRelease)
+        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MyRelease)
         , ptf["settings"])
     }
 
