@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/04
- * @version 1.1.3
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -799,18 +799,19 @@ class Startup {
                 tool.Cust("A new version of AHK is available")
                 return
             }
-        check := MsgBox("A new version of AHK is available`n`nDo you wish to download it?", "AHK - v" latestVer, "4 32 4096")
-        if check = "No"
-            return
+        marg := 8
+        ;// define gui
         mygui := tomshiBasic(,,, "AHK v" latestVer " available")
         mygui.AddText(, "A newer version of AHK (v" latestVer ") is available`nDo you wish to download it?")
 
-        runafter := mygui.Add("Checkbox",, "Run installer after download?")
+        ;// run installer checkbox
+        runafter := mygui.Add("Checkbox", "Section y+10 x" marg, "Run after download?")
         checkboxValue := 0
         runafter.OnEvent("Click", checkVal)
-        yesButt := mygui.Add("Button",, "Yes")
+        ;// buttons
+        yesButt := mygui.Add("Button", "ys-10 x+25", "Yes")
         yesButt.OnEvent("Click", downahk)
-        nobutt := mygui.Add("Button", "x+15", "No")
+        nobutt := mygui.Add("Button", "x+5", "No")
         nobutt.OnEvent("Click", noclick)
 
         mygui.Show()
@@ -872,7 +873,6 @@ class Startup {
                 If o.perc = 100
                     {
                         g["Cancel"].Text := "Exit"
-                        Run(dest)
                         g.Hide()
                     }
             }
