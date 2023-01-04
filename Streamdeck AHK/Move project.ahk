@@ -14,7 +14,7 @@ splitSelected := obj.SplitPath(SelectedFolder)
 
 ;;this part makes you select the destination folder
 move:
-Move := FileSelect("D2", "N:\_RC\Tomshi\2022", "Pick the destination folder you wish everything to move to.")
+Move := FileSelect("D2", "N:\_RC\Tomshi\" A_Year, "Pick the destination folder you wish everything to move to.")
 if Move = ""
     return
 if Move = SelectedFolder

@@ -31,7 +31,7 @@ closeWaitUntil()
         ProcessClose(WinGetPID("waitUntil.ahk",, browser.vscode.winTitle))
 }
 
-OnExit(ExitFunc)
+MyGui.OnEvent("Close", ExitFunc.Bind(""))
 
 /**
  * This function determines what the script will do if it's forced to exit - ie. a second instance is forced open

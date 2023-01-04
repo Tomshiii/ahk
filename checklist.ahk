@@ -30,7 +30,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.11-rc.2"
+version := "v2.11-rc.3"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -182,7 +182,6 @@ FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour
 
 if darkToolTrack = 1
     which()
-MyGui.OnEvent("Close", ExitFunc.Bind("", ""))
 MyGui.Show("AutoSize NoActivate")
 MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;finish defining GUI
