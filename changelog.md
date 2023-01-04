@@ -40,6 +40,8 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - Fixed `block.On()` & `block.Off()` failing to do anything
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
+- `ytDownload()` now allows the user to define if they want the function to convert the downloaded filetype to another filetype
+    - Adjusted passed `args` of `vfx.ahk` & `video.ahk`
 
 `winget.AEName()/winget.PremName()`
 - `AEName()` Updated to have complete feature parity with `winget.PremName()`
