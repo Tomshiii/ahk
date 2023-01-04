@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard
  * @author tomshi
- * @date 2023/01/01
- * @version 1.0.1
+ * @date 2023/01/05
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -65,7 +65,15 @@ class clip {
 
     /**
      * This function returns the clipboard to the stored variable
-     * @param {Var} returnClip is the variable you're storing the clipboard in.
+     * @param {Var/Object} returnClip is the variable/object you're storing the clipboard in. If this parameter is an object it MUST have a parameter `clipObj.storedClip`
      */
-    static returnClip(returnClip) => A_Clipboard := returnClip
+    static returnClip(returnClip) {
+        if !IsObject(returnClip)
+            {
+                A_Clipboard := returnClip
+                return
+            }
+        if returnClip.HasOwnProp("storedClip")
+            A_Clipboard := returnClip.storedClip
+    }
 }
