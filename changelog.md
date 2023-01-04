@@ -40,8 +40,6 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - Fixed `block.On()` & `block.Off()` failing to do anything
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
-- `ytDownload()` now allows the user to define if they want the function to convert the downloaded filetype to another filetype
-    - Adjusted passed `args` of `vfx.ahk` & `video.ahk`
 - `settingsGUI()` menu dropdown now follows darkmode setting
 - `getHTMLTitle()` will now replace some html strings with their respecting characters
 
@@ -51,6 +49,11 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
     - All `VarRefs` are now optional to help accommodate this
 - `saveCheck` variable now returns a `boolean value` instead of a `string`
 - If the desired window can't be found, the variables will now return `unset` instead of as empty strings
+
+`ytDownload()`
+- Now allows the user to pass an object to define if they want the function to convert the downloaded filetype to another filetype
+- Can now properly handle `yt shorts` links
+- Adjusted passed `args` of `vfx.ahk` & `video.ahk`
 
 ## > checklist.ahk
 - Entire script has been refactored to make use of `class timer {`

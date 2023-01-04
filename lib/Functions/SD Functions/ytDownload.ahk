@@ -3,6 +3,7 @@
 #Include <Functions\errorLog>
 #Include <Functions\getHTMLTitle>
 #Include <Functions\SD Functions\convert2>
+#Include <Classes\clip>
 ; }
 
 /**
@@ -28,8 +29,7 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
         }
     if !DirExist(folder) ;saftey check
         folder := A_ScriptDir
-    oldClip := A_ClipBoard
-    A_Clipboard := ""
+    oldClip := clip.clear()
     SendInput("^c")
     if ClipWait(0.3)
         {
@@ -41,15 +41,15 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
             goto run
         }
     attempt:
-    if !InStr(oldClip, "https://www.youtube.com/") && !InStr(oldClip, "https://www.twitch.tv/")
+    if !InStr(oldClip.storedClip, "https://www.youtube.com/") && !InStr(oldClip.storedClip, "https://www.twitch.tv/")
         {
             tool.Cust("Clipboard doesn't contain a youtube link")
             return
         }
     command := Format('yt-dlp {} -P `"{}`" `"{}`"'
-                     , args, folder, oldClip
+                     , args, folder, oldClip.storedClip
                     )
-    A_Clipboard := oldClip
+    clip.returnClip(oldClip)
     run:
     RunWait(A_ComSpec " /c " command)
     SplitPath(folder, &name)
@@ -58,17 +58,43 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
     else if WinExist(name " ahk_exe explorer.exe")
         WinActivate(name " ahk_exe explorer.exe")
     else
-        Run("explore " folder)
+        RunWait("explore " folder)
+    getId := WinGetID("A")
     ;// the below block converts the downloaded file from mkv to mp4 if the user has it set to true
     if (conv2 = true || IsObject(conv2))
         {
+            knownTypes := ["mkv", "mp4", "webm"]
             dlFileType   := (IsObject(conv2) && conv2.HasOwnProp("from"))   ? conv2.from   : "mkv"
             convFileType := (IsObject(conv2) && conv2.HasOwnProp("to"))     ? conv2.to     : "mp4"
             doDelete     := (IsObject(conv2) && conv2.HasOwnProp("delete")) ? conv2.delete : true
-            ;// convert mkv to mp4
-            expPath := WinGet.ExplorerPath(WinActive("A"))
+            ;// check to make sure the user is passing known working filetypes
+            for value in knownTypes
+                {
+                    if dlFileType = value
+                        fromContains := 1
+                    if convFileType = value
+                        toContains := 1
+                    if IsSet(fromContains) && IsSet(toContains)
+                        break
+                    if A_Index = knownTypes.Length
+                        {
+                            alert := MsgBox("One or both of the passed filetypes aren't confirmed to work with this function, do you wish to continue?", "Error", "4 4096")
+                            if alert = "No"
+                                return
+                        }
+                }
+            ;//* convert from downloaded filetype to the specified type
+
+            ;// get the path of the explorer window
+            expPath := WinGet.ExplorerPath(getId)
+            ;// get title of url
             URLTitle := RTrim(getHTMLTitle(A_Clipboard), " - YouTube")
-            fileTitle := URLTitle " [" SubStr(A_Clipboard, InStr(A_Clipboard, "=",, 1, 1) + 1) "]"
+            ;// determine if title is a full length video or a short
+            if InStr(URLTitle, "watch?v=")
+                fileTitle := URLTitle " [" SubStr(A_Clipboard, InStr(A_Clipboard, "=",, 1, 1) + 1) "]"
+            else
+                fileTitle := URLTitle " [" SubStr(A_Clipboard, InStr(A_Clipboard, "/shorts/",, 1, 1) + 8) "]"
+            ;// check to make sure the download suceeded
             if FileExist(expPath "\" fileTitle "." dlFileType)
                 {
                     convert2(Format('ffmpeg -i `"{}.{}`" -codec copy `"{}.{}`"', fileTitle, dlFileType, URLTitle, convFileType))
@@ -80,5 +106,5 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
                         FileDelete(expPath "\" fileTitle "." dlFileType)
                 }
         }
-    A_Clipboard := oldClip
+    clip.returnClip(oldClip)
 }
