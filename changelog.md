@@ -43,6 +43,7 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - `ytDownload()` now allows the user to define if they want the function to convert the downloaded filetype to another filetype
     - Adjusted passed `args` of `vfx.ahk` & `video.ahk`
 - `settingsGUI()` menu dropdown now follows darkmode setting
+- `getHTMLTitle()` will now replace some html strings with their respecting characters
 
 `winget.AEName()/winget.PremName()`
 - `AEName()` Updated to have complete feature parity with `winget.PremName()`
