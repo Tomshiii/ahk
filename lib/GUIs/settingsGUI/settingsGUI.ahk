@@ -483,11 +483,26 @@ settingsGUI()
 
     goDark(darkm := true, DarkorLight := "Dark")
     {
-            dark.titleBar(settingsGUI.Hwnd, darkm)
-            dark.button(adobeToggle.Hwnd, DarkorLight)
-            dark.button(firstToggle.Hwnd, DarkorLight)
-            dark.button(hardResetVar.Hwnd, DarkorLight)
-            dark.button(saveAndClose.Hwnd, DarkorLight)
+        dark.menu(darkm)
+        dark.titleBar(settingsGUI.Hwnd, darkm)
+        dark.button(adobeToggle.Hwnd, DarkorLight)
+        dark.button(firstToggle.Hwnd, DarkorLight)
+        dark.button(hardResetVar.Hwnd, DarkorLight)
+        dark.button(saveAndClose.Hwnd, DarkorLight)
+        switch darkm {
+            case true:
+                settingsGUI.BackColor := 0xd4d4d4
+                adobeToggle.Opt("Backgroundd4d4d4")
+                firstToggle.Opt("Backgroundd4d4d4")
+                hardResetVar.Opt("Backgroundd4d4d4")
+                saveAndClose.Opt("Backgroundd4d4d4")
+            default:
+                settingsGUI.BackColor := 0xF0F0F0
+                adobeToggle.Opt("BackgroundF0F0F0")
+                firstToggle.Opt("BackgroundF0F0F0")
+                hardResetVar.Opt("BackgroundF0F0F0")
+                saveAndClose.Opt("BackgroundF0F0F0")
+        }
     }
 
     settingsGUI.Show("Center AutoSize")
