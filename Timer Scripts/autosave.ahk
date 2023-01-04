@@ -206,7 +206,7 @@ save()
             goto theEnd
         }
 
-    block.On()
+    block.On("SendAndMouse")
     ;// checking if keys that cause problems are currently being held down
     ;// if they are, release them
     playheadCheck := GetKeyState("\") ;//! the user may have changed this value in their KSA.ini but I don't *think* other keys cause premiere to go haywire..?
@@ -216,7 +216,7 @@ save()
             if rbutCheck
                 SendInput("{RButton Up}")
             if playheadCheck
-                SendInput("{" playheadtoCursor " Up}")
+                SendInput("{\ Up}")
         }
 
     ;// keeping track of save attempts

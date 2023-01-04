@@ -56,10 +56,13 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - Using `-sub`/`+add` is now instant and no longer requires 1s to process
 - Added functions `checkTooltips()` & `checkDark()` to return settings relating to both instead of cluttering the main script with code
 
+## > autosave.ahk
+- Fix erroring out if Premiere itself autosaves automatically before `autosave.ahk` can
+- Will no longer block mouse movements during a save attempt, will simply block any keyboard/mouse inputs
+
 ## > Other Changes
 - `tomshiBasic()` now creates a hidden button to force focus to it instead of the first user defined ctrl
 - `adobe fullscreen check.ahk` now uses `timer {`
 - QMK `open dir of current project` now uses `winget.AEName()/PremName()`
 - Added a hotkey to make \` surround the highlighted text in \` in `Discord`
 - `startup.updateAHK()` will no longer run the download directory if `Run installer after download?` is selected
-- Fix `autosave.ahk` erroring out if Premiere itself autosaves automatically before `autosave.ahk` can
