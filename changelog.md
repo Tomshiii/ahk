@@ -53,6 +53,7 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
     - `checklistTimer {`, `checklistLog {` & `checklistReminder {` have been created to extend off the base class
 - `H:` float will now **always** show `3dp` even if the current hour value is a whole integer.
     > old: `H: 1.0 M: 0 S: 0` => new: `H: 1.000 M: 0 S: 0`
+- Using `-sub`/`+add` is now instant and no longer requires 1s to process
 - Added functions `checkTooltips()` & `checkDark()` to return settings relating to both instead of cluttering the main script with code
 
 ## > Other Changes

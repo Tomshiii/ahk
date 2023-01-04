@@ -1,23 +1,18 @@
 #Include <Classes\timer>
 
 class checklistTimer extends count {
-    __New(newRepeat := 1000) {
-        super.__New(newRepeat)
-        this.logger   := checklistLog(10*1000)
-        this.reminder := checklistReminder(ms)
-        watch := ObjBindMethod(this, "StopWatch")
+    __New() {
+        super.__New(1000)
+        this.logger   := checklistLog(((1000*60)*10)) ;// every 10min
+        this.reminder := checklistReminder(ms)        ;// user defined value
+        ; watch := ObjBindMethod(this, "StopWatch")
     }
 
     /**
      * This function handles what happens when the start button is pressed
      */
     start(*) {
-        ;// can these methods have the same name as the base class?? probably not
-        startButton.Move(,, 0, 0) ;hiding the start button
-        stopButton.Move(,, 50, 30) ;showing the stop button
-        timerText.SetFont("cGreen") ;changing the colours
-        timerMinutes.SetFont("cGreen")
-        timerSeconds.SetFont("cGreen")
+        this.buttonChange("start")
         forFile := Round(this.count / 3600, 3)
         newDate(&today)
         timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
@@ -45,6 +40,23 @@ class checklistTimer extends count {
         timerSeconds.Text := displaySeconds
     }
 
+    buttonChange(which) {
+        switch which {
+            case "stop":
+                startButton.Move(,, 50, 30) ;then show the start button
+                stopButton.Move(,, 0, 0) ;and hide the stop button
+                timerText.SetFont("cRed") ;and return the colour to red
+                timerMinutes.SetFont("cRed")
+                timerSeconds.SetFont("cRed")
+            case "start":
+                startButton.Move(,, 0, 0) ;hiding the start button
+                stopButton.Move(,, 50, 30) ;showing the stop button
+                timerText.SetFont("cGreen") ;changing the colours
+                timerMinutes.SetFont("cGreen")
+                timerSeconds.SetFont("cGreen")
+                forFile := Round(this.count / 3600, 3)
+        }
+    }
     /**
      * This function handles what happens when the stop button is pressed
      */
@@ -57,11 +69,7 @@ class checklistTimer extends count {
         timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
         FileAppend("\\ The timer was stopped : " timeStr " -- Stopping Hours = " forFile " -- seconds at stop = " this.count "`n", logs)
         super.stop() ;then stop the timer
-        startButton.Move(,, 50, 30) ;then show the start button
-        stopButton.Move(,, 0, 0) ;and hide the stop button
-        timerText.SetFont("cRed") ;and return the colour to red
-        timerMinutes.SetFont("cRed")
-        timerSeconds.SetFont("cRed")
+        this.buttonChange("stop")
         this.logger.stop()
         this.reminder.start()
         global startValue := IniRead(checklist, "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
@@ -80,17 +88,18 @@ class checklistTimer extends count {
         switch sign {
             case "-":
                 word := "removed"
-                funcMinutes := ((List.Text * 60) + 1)
+                funcMinutes := ((List.Text * 60))
                 newValue := initialRead - funcMinutes
             default:
                 word := "added"
-                funcMinutes := ((List.Text * 60) - 1)
+                funcMinutes := ((List.Text * 60))
                 newValue := initialRead + funcMinutes
         }
         if newValue < 0
             newValue := 0
         IniWrite(newValue, checklist, "Info", "time")
         super.stop()
+        this.buttonChange("stop")
         this.logger.stop()
         this.reminder.stop()
         global startValue := IniRead(checklist, "Info", "time")
