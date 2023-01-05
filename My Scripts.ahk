@@ -960,7 +960,7 @@ Xbutton2::prem.mousedrag(handPrem, selectionPrem) ;changes the tool to the hand 
 ;auto excecuting stuff will no longer function below this^ include
 
 ;bonkHotkey;
-F19::prem.audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
+F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 ;bleepHotkey;
 F20::prem.audioDrag("bleep")
 

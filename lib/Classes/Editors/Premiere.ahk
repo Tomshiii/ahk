@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
  * @date 2023/01/05
- * @version 1.2.3
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,7 +38,8 @@ class Prem {
             errorLog(TypeError("Incorrect value type in Parameter #1", -1, item)
                         ,,, 1)
         }
-        KeyWait(A_ThisHotkey)
+        if A_ThisHotkey != ""
+            KeyWait(A_ThisHotkey)
         ToolTip("Your Preset is being dragged")
         coord.s()
         block.On()
