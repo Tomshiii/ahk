@@ -12,7 +12,7 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.26.6
+;\\v2.27
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -948,12 +948,6 @@ F21::prem.wheelEditPoint(previousEditPoint) ;goes to the next edit point towards
 F23::prem.wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
 ;playstopHotkey;
 F18::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse button
-;nudgeupHotkey;
-F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
-;slowDownHotkey;
-F14 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
-;speedUpHotkey;
-F14 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
 ;nudgedownHotkey;
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 ;mousedrag1Hotkey;
@@ -1099,3 +1093,18 @@ F19 & XButton1::SendInput("^#{Left}")
 F21::youMouse("j", "{Left}")
 ;youskipforHotkey;
 F23::youMouse("l", "{Right}")
+
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		Premiere F14 scripts
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;// having these scripts above with the other premiere scripts caused `wheelupHotkey` and `wheeldownHotkey` to lag out and cause windows beeping
+;// thanks ahk :)
+#HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
+;nudgeupHotkey;
+F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
+;slowDownHotkey;
+F14 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
+;speedUpHotkey;
+F14 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons

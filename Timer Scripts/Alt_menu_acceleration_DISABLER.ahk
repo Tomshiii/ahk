@@ -9,7 +9,7 @@ InstallKeybdHook true
 TraySetIcon(ptf.Icons "\error.ico") ;changes the icon this script uses in the taskbar
 
 ;These next two lines are very important. You have to change the "menu mask key" away from being CTRL, to something that won't result in cross-talk. Read this thread to learn the details: https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
-A_MenuMaskKey := "vk07"  ; vk07 is unassigned.
+A_MenuMaskKey := "vkE8"  ; vk07 is unassigned.
 
 ; *********** IS THE WINDOWS / XBOX GAME BAR GETTING IN YOUR WAY? ************
 ; ****************** OR MAYBE IT'S THE NVIDIA SHARE OVERLAY! *****************

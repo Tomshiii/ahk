@@ -37,11 +37,12 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay
 - Added `allKeyUp()` to attempt to unstick as many keys as possible by looping through `ScanCodes` & `Virtual Key Codes`
 - Added `discord.surround()` to surround highlighted text with the desired characters
+    - Added a hotkey to make \` surround the highlighted text in \` in `Discord`
 - Fixed `block.On()` & `block.Off()` failing to do anything
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
 - `settingsGUI()` menu dropdown now follows darkmode setting
-- `getHTMLTitle()` will now replace some html strings with their respecting characters
+- `getHTMLTitle()` will now replace some html strings with their respective characters
 
 `winget.AEName()/winget.PremName()`
 - `AEName()` Updated to have complete feature parity with `winget.PremName()`
@@ -70,6 +71,7 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 ## > Other Changes
 - `tomshiBasic()` now creates a hidden button to force focus to it instead of the first user defined ctrl
 - `adobe fullscreen check.ahk` now uses `timer {`
-- QMK `open dir of current project` now uses `winget.AEName()/PremName()`
-- Added a hotkey to make \` surround the highlighted text in \` in `Discord`
+- QMK `open dir of current project` now uses `winget.AEName()/winget.PremName()`
 - `startup.updateAHK()` will no longer run the download directory if `Run installer after download?` is selected
+- Restored the original `fastWheel()` function from `Release v2.7.0.1`
+    - Moved Premiere `F14::` hotkeys to the bottom of `My Scripts.ahk` as they were the cause of my issues

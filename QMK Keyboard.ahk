@@ -9,12 +9,12 @@ SetDefaultMouseSpeed(0) ;sets default MouseMove speed to 0 (instant)
 SetWinDelay(0) ;sets default WinMove speed to 0 (instant)
 TraySetIcon(ptf.Icons "\keyboard.ico")
 ;SetCapsLockState "AlwaysOff" ;having this on broke my main script for whatever reason
-SetNumLockState("AlwaysOn")
+;SetNumLockState("AlwaysOn")
 #SingleInstance Force ;only one instance of this script may run at a time!
 #WinActivateForce ;https://autohotkey.com/docs/commands/_WinActivateForce.htm ;prevent taskbar flashing.
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.6
+;\\v2.13.7
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.8.3
