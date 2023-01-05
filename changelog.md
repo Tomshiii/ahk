@@ -20,6 +20,7 @@ This release is a rather large one, containing a bunch of rather breaking change
 Added a new class `obj {` to maintain a collection of wrapper functions designed to take normal ahk functions and return their VarRefs as objects instead
 
 - Added `obj.WinPos()`
+- Added `obj.ctrlPos()`
 - Added `obj.imgSrch()` using `checkImg()`
 - Moved `SplitPathObj()` and renamed to `obj.SplitPath()`
     - Fixed all instances of scripts that use this function not having the proper `#Include`

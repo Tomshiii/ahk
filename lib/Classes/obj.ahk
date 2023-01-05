@@ -2,11 +2,13 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2022/12/27
- * @version 1.0.1
+ * @date 2023/01/06
+ * @version 1.0.2
  ***********************************************************************/
 
+; { \\ #Includes
 #Include <Functions\checkImg>
+; }
 
 class obj {
 
@@ -88,5 +90,36 @@ class obj {
         if !checkImg(imgFile, &x, &y, x1, y1, x2, y2)
             return false
         return {x: x, y: y}
+    }
+
+    /**
+     * This function is a wrapper function for `ControlGetPos()`.
+     * @param {String} ctrl the desired control. If this value is left unset, it will attempt to grab the ClassNN of the currently active control and use that for `ControlGetPos()`
+     * @returns {Object} returns an object containing all varrefs and the control name
+     *
+     * *If the function fails to get the position of the control, it will simply return `false`*
+     * ```
+     * button := obj.ctrlPos()
+     * button.x         ;// returns the x coordinate of the control
+     * button.y         ;// returns the y coordinate of the control
+     * button.width     ;// returns the width of the control
+     * button.height    ;// returns the height of the control
+     * button.ctrl      ;// returns a string containing the control
+     * ```
+     */
+    static ctrlPos(ctrl?, winTitle := this.winTitle, winText := this.winText, exTitle := this.exTitle, exText := this.exText) {
+        if !IsSet(ctrl) {
+            try {
+                ctrl := ControlGetClassNN(ControlGetFocus(winTitle, winText, exTitle, exText)
+                                        , winTitle , winText, exTitle, exText)
+            }
+        }
+        try {
+            ControlGetPos(&x, &y, &width, &height, ctrl, winTitle, winText, exTitle, exText)
+            return {x: x, y: y, width: width, height: height, ctrl: ctrl}
+        } catch {
+            errorLog(UnsetError("Couldn't find the ClassNN value", -1, ctrl),, 1)
+            return false
+        }
     }
 }
