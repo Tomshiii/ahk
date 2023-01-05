@@ -39,10 +39,12 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - Added `discord.surround()` to surround highlighted text with the desired characters
     - Added a hotkey to make \` surround the highlighted text in \` in `Discord`
 - Fixed `block.On()` & `block.Off()` failing to do anything
+- Fixed `prem.zoom()` erroring out if client hasn't been defined yet
 - Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
 - `checkImg()` changed to support all normal ImageSearch `ImageFile options`
 - `settingsGUI()` menu dropdown now follows darkmode setting
 - `getHTMLTitle()` will now replace some html strings with their respective characters
+- `prem.movepreview()` now uses the program window coordinates to get an initial position for the mouse
 
 `winget.AEName()/winget.PremName()`
 - `AEName()` Updated to have complete feature parity with `winget.PremName()`

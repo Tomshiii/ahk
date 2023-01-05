@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2023/01/04
- * @version 1.2.2
+ * @date 2023/01/05
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -282,9 +282,9 @@ class Prem {
         chloeZoomXYS := [-1679, -854, 486]
         chloeExtraZoom := [632, 278, 292]
 
-        ;// emeraldd
-        emeralddXYS := [1913, 67, 200]
-        emeralddZoomXYS := [2873, -436, 300]
+        ;// emerldd
+        emerlddXYS := [1913, 67, 200]
+        emerlddZoomXYS := [2873, -436, 300]
 
         ;then we'll define the values that will allow us to change things depending on the project
         static x := 0
@@ -320,10 +320,13 @@ class Prem {
                 tool.Cust("Couldn't get the client name")
                 return
             }
-
-        x := %ClientName%XYS[1]
-        y := %ClientName%XYS[2]
-        scale := %ClientName%XYS[3]
+        ;// check if clientname is defined above
+        if IsSet(%ClientName%XYS)
+            {
+                x := %ClientName%XYS[1]
+                y := %ClientName%XYS[2]
+                scale := %ClientName%XYS[3]
+            }
         if IsSet(%ClientName%ZoomXYS)
             {
                 if !this.timer
@@ -963,24 +966,31 @@ class Prem {
         }
         sleep 50
         if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
-            { ;you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
+            {
+                ;// you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
+                SendInput(programMonitor)
+                SendInput(programMonitor)
+                previewWin := obj.CtrlPos()
+                if !previewWin
+                    return
+                startX := (previewWin.x + (previewWin.width/2)) - 20, startY := (previewWin.y + (previewWin.height/2)) - 10
                 SendInput("{Click}")
-                MouseMove(moveX, moveY) ;move to the preview window
+                MouseMove(startX, startY) ;move to the preview window
                 loop {
                     MouseGetPos(&colX, &colY)
                     if PixelGetColor(colX, colY) != 0x000000
                         break
                     if A_Index = 1
-                        MouseMove(moveX + 100, moveY + 200)
+                        MouseMove(startX + 150, startY + 100)
                     if A_Index = 2
-                        MouseMove(moveX - 200, moveY + 200)
+                        MouseMove(startX - 150, startY + 100)
                     if A_Index = 3
-                        MouseMove(moveX - 200, moveY - 50)
+                        MouseMove(startX - 150, startY - 100)
                     if A_Index = 4
-                        MouseMove(moveX + 100, moveY - 50)
+                        MouseMove(startX + 150, startY - 100)
                     if A_Index > 4
                         {
-                            MouseMove(moveX, moveY)
+                            MouseMove(startX, startY)
                             block.Off()
                             errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
                                         , "Or the function kept finding pure black at each checking coordinate", 1)

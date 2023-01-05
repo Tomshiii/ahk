@@ -2,8 +2,8 @@
  * @description A library of useful After Effects functions to speed up common tasks
  * Tested on and designed for v22.6 of After Effects
  * @author tomshi
- * @date 2023/01/02
- * @version 1.1.3
+ * @date 2023/01/05
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -359,7 +359,7 @@ class AE {
             {
                 SendInput("{" A_ThisHotkey "}")
                 tool.Wait()
-                switch set {
+                switch set ?? false {
                     case true:
                         tool.Cust("The main window is not active")
                     default:
