@@ -47,6 +47,7 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - `getHTMLTitle()` will now replace some html strings with their respective characters
 - `prem.movepreview()` now uses the program window coordinates to get an initial position for the mouse
 - `startup.monitorAlert()` can now be muted for the current day
+- If `switchTo.AE()` encounters multiple `.aep` files in the project directory, it will now offer the user the ability to select which project to open instead of opening the first one it finds
 
 `winget.AEName()/winget.PremName()`
 - `AEName()` Updated to have complete feature parity with `winget.PremName()`

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/01/02
- * @version 1.0.8
+ * @date 2023/01/06
+ * @version 1.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -145,14 +145,29 @@ class switchTo {
                         runae()
                         return
                     }
+                count := 0, foundFile := ""
                 loop files path "\*.aep", "F"
                     {
-                        Run(A_LoopFileFullPath)
+                        foundFile := A_LoopFileFullPath
+                        count++
+                    }
+                switch count {
+                    case 1:
+                        Run(foundFile)
                         tool.Cust("Running AE file for this project")
                         if WinWait(AE.winTitle,, 2)
                             WinActivate(AE.winTitle)
                         return
-                    }
+                    default:
+                        pick := FileSelect("3", path "\effects.aep", "Which project do you wish to open?", "*.aep")
+                        if pick = ""
+                            return
+                        Run(pick)
+                        tool.Cust("Running selected AE project")
+                        if WinWait(AE.winTitle,, 2)
+                            WinActivate(AE.winTitle)
+                        return
+                }
             } catch as e {
                 tool.Cust("Couldn't determine proper path from Premiere")
                 errorLog(e)
