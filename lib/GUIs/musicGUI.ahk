@@ -26,7 +26,7 @@ musicGUI()
     MyGui := tomshiBasic(10, 600, "AlwaysOnTop -Resize +MinSize260x120 +MaxSize260x120", "Music to open?") ;creates our GUI window
     ;#now we define the elements of the GUI window
     ;defining AIMP
-    aimplogo := MyGui.AddPicture("w25 h-1 Y9", ptf.guiIMG "\aimp.png")
+    aimplogo := MyGui.AddPicture("x12 w25 h-1 Y9", ptf.guiIMG "\aimp.png")
     AIMP := MyGui.Add("Button", "X40 Y7", "AIMP")
     AIMP.OnEvent("Click", musicRun)
     ;defining Foobar
