@@ -12,7 +12,7 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.27
+;\\v2.27.1
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -1007,10 +1007,10 @@ RButton::move.Window("") ;minimise
 ^+c:: ;runs a google search of highlighted text
 {
 	store := clip.clear()
-	if !clip.copyWait(store.storeClip)
+	if !clip.copyWait(store.storedClip)
 		return
 	Run("https://www.google.com/search?d&q=" A_Clipboard)
-	clip.returnClip(store.storeClip)
+	clip.returnClip(store.storedClip)
 }
 
 ;capitaliseHotkey;
