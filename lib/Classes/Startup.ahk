@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/04
- * @version 1.1.4
+ * @date 2023/01/06
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -121,6 +121,7 @@ class Startup {
         WORK            := IniRead(ptf["settings"], "Track",    "working dir"              , "E:\Github\ahk")
         FC              := IniRead(ptf["settings"], "Track",    "first check"              , "false")
         BLOCKAWARE      := IniRead(ptf["settings"], "Track",    "block aware"              , "false")
+        MONITORALERT    := IniRead(ptf["settings"], "Track",    "monitor alert"            , "0")
         deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
         if FileExist(ptf["settings"])
             FileDelete(ptf["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
@@ -154,8 +155,9 @@ class Startup {
             working dir={}
             first check={}
             block aware={}
+            monitor alert={}
             version={}
-        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MyRelease)
+        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
         , ptf["settings"])
     }
 
@@ -924,9 +926,26 @@ class Startup {
         ;// if something has changed alert the user
         if (readCount != MonitorCount) || (readPrimary != MonitorPrimary)
             {
-                check := MsgBox("It appears like your monitor layout has changed, either by your own doing, or windows`nThis may mess with any pixel coordinates you use for scripts.`n`nDo you want your current layout to be remembered instead?", "Monitor layout changed", "4 32 4096")
-                if check = "No"
+                if IniRead(ptf["settings"], "Track", "monitor alert", 0) = A_YDay
                     return
+                ignoreToday() {
+                    if !WinExist("Monitor layout changed")
+                        return
+                    SetTimer(, 0)
+                    WinActivate
+                    ControlSetText("&Yes", "Button1")
+                    ControlSetText("&No", "Button2")
+                    ControlSetText("&Mute Alert", "Button3")
+                }
+                SetTimer(ignoreToday, 16)
+                check := MsgBox("It appears like your monitor layout has changed, either by your own doing, or windows`nThis may mess with any pixel coordinates you use for scripts.`n`nDo you want your current layout to be remembered instead?`n`nAlternatively you can mute this alert for today.", "Monitor layout changed", "2 32 4096")
+                switch check {
+                    case "No":
+                        return
+                    case "Cancel":
+                        IniWrite(A_YDay, ptf["settings"], "Track", "monitor alert")
+                        return
+                }
                 save := true
                 ;// log new values
                 IniWrite(MonitorCount, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")

@@ -46,6 +46,7 @@ This class helps cut large chunks of repeated code when dealing with the clipboa
 - `settingsGUI()` menu dropdown now follows darkmode setting
 - `getHTMLTitle()` will now replace some html strings with their respective characters
 - `prem.movepreview()` now uses the program window coordinates to get an initial position for the mouse
+- `startup.monitorAlert()` can now be muted for the current day
 
 `winget.AEName()/winget.PremName()`
 - `AEName()` Updated to have complete feature parity with `winget.PremName()`
