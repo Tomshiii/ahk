@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2022/12/20
- * @version 1.0.6
+ * @date 2023/01/02
+ * @version 1.0.8
  ***********************************************************************/
 
 class ptf {
@@ -55,16 +55,25 @@ class ptf {
     static ProgFi32          := "C:\Program Files (x86)"
 
     ;variables
-    static PremYear          := IniRead(this.SettingsLoc "\settings.ini", "adjust", "prem year", A_Year)
-    static AEYear            := IniRead(this.SettingsLoc "\settings.ini", "adjust", "ae year", A_Year)
+    /**
+     * This function converts the version number into its year value
+     * ie; `v22.3.1` => `22`
+     * @param {String} version is the version number of desired adobe program
+     */
+    static adobeYear(version) {
+        return SubStr(version, 2, 2)
+    }
+    static PremYearVer          := this.adobeYear(this.premIMGver)
+    static AEYearVer            := this.adobeYear(this.aeIMGver)
 
     /**
      * A little function to return the proper folder for the version of premiere/ae the user is using.
+     * @param {String} which is which editor the function is operating on
      */
     static trimAdobeYear(which) {
         switch which {
             case "premiere":
-                return subVer := SubStr(this.PremYear, -2) ".0"
+                return subVer := SubStr(this.PremYearVer, -2) ".0"
             case "ae":
                 return trimVer := LTrim(this.aeIMGver, "v")
         }

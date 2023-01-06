@@ -1,5 +1,6 @@
 ; { \\ #Includes
 #Include <Functions\getHotkeys>
+#Include <Functions\errorLog>
 ; }
 
 /**
@@ -9,6 +10,10 @@
  */
 jumpChar(amount := 10)
 {
+    if !IsInteger(amount) {
+        ;// throw
+        errorLog(TypeError("Function requires an Integer but recieved a " Type(amount), -1, amount),,, 1)
+    }
     getHotkeys(&first, &second)
     side := "{" second " " amount "}"
     if GetKeyState("Shift", "P")

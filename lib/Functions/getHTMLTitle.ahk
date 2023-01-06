@@ -16,13 +16,29 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
         return false
     var := getHTML(url)
     RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
+    initialMatch := sTitle[1]
+    replaceChars := ["&#39;", "'", "&quot;", '＂']
+    finalTitle := ""
+    for ind, value in replaceChars
+        {
+            if A_Index/2 > (replaceChars.Length/2)
+                break
+            if Mod(A_Index, 2) == 0
+                continue
+            if ind = 1
+                finalTitle := StrReplace(initialMatch, value, replaceChars.Get(ind+1, "_"))
+            else
+                finalTitle := StrReplace(finalTitle, value, replaceChars.Get(ind+1, "_"))
+        }
     if !sanitise
-        return sTitle[1]
+        return finalTitle ?? initialMatch
+    if finalTitle = ""
+        finalTitle := initialMatch
     params.InsertAt(1, replace)
     ;// sanitising title of invalid filename characters
-    if RegExMatch(sTitle[1], "\\|\/|:|\*|\?|\`"|<|>|\|", &match)
+    if RegExMatch(finalTitle, "\\|\/|:|\*|\?|\`"|<|>|\|", &match)
         {
-            URLTitle := sTitle[1]
+            URLTitle := finalTitle
             loop {
                 if !RegExMatch(URLTitle, "\\|\/|:|\*|\?|\`"|<|>|\|", &match)
                     break
@@ -31,5 +47,5 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
                 URLTitle := RegExReplace(URLTitle, "\\|\/|:|\*|\?|\`"|<|>|\|", params[A_Index],, 1)
             }
         }
-    return URLTitle ?? sTitle[1]
+    return URLTitle ?? finalTitle
 }

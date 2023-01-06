@@ -11,7 +11,6 @@
 #Include <Classes\switchTo>
 #Include <Functions\detect>
 #Include <Functions\errorLog>
-#Include <Classes\Startup>
 ; }
 
 A_MaxHotkeysPerInterval := 2000
@@ -185,14 +184,11 @@ save()
     premSaveTrack := 0
     aeSaveTrack := 0
     avoid := 0
-    saveCheck := ""
-    aeSaveCheck := ""
 
     ;// checking to see if a save is necessary
-    if WinExist(editors.Premiere.winTitle)
-        winget.PremName(&premCheck, &titleCheck, &saveCheck)
-    if WinExist(editors.AE.winTitle)
-        winget.AEName(&aeCheck, &aeSaveCheck)
+    premVal := WinExist(editors.Premiere.winTitle) ? winget.PremName(&premCheck) : {premCheck: "", titleCheck: unset, saveCheck: false}
+    aeVal   := WinExist(editors.AE.winTitle)       ? winget.AEName(&aeCheck)     : {premCheck: "", titleCheck: unset, saveCheck: false}
+
     ;// if the program is not responding, we'll reset the timer and cancel the attempted save
     if InStr(premCheck ?? 0, "(Not Responding)") || InStr(aeCheck ?? 0, "(Not Responding)")
         {
@@ -200,7 +196,7 @@ save()
             goto theEnd
         }
     ;// if a save isn't necessary, we'll simply skip the save attempt
-    if saveCheck != "*" && aeSaveCheck != "*"
+    if !premVal.saveCheck && !aeVal.saveCheck
         goto end
 
     if (A_TimeIdleKeyboard <= idle) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton") && A_TimeIdleMouse <= idle)
@@ -210,7 +206,7 @@ save()
             goto theEnd
         }
 
-    block.On()
+    block.On("SendAndMouse")
     ;// checking if keys that cause problems are currently being held down
     ;// if they are, release them
     playheadCheck := GetKeyState("\") ;//! the user may have changed this value in their KSA.ini but I don't *think* other keys cause premiere to go haywire..?
@@ -220,7 +216,7 @@ save()
             if rbutCheck
                 SendInput("{RButton Up}")
             if playheadCheck
-                SendInput("{" playheadtoCursor " Up}")
+                SendInput("{\ Up}")
         }
 
     ;// keeping track of save attempts
@@ -243,7 +239,7 @@ save()
             } catch as e {
                 block.Off()
                 tool.Cust("A variable wasn't assigned a value")
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 origWind := unset
                 SetTimer(, -ms)
                 goto theEnd
@@ -267,31 +263,29 @@ save()
      * If it does and isn't the active window, it will controlsend ^s
      * otherwise it will sendinput ^s (as using controlsend while active seems to not function properly)
      */
-    if WinExist(editors.Premiere.winTitle) && saveCheck = "*"
+    if WinExist(editors.Premiere.winTitle) && premVal.saveCheck = true
         {
             premWinCheck := WinGetTitle(editors.Premiere.winTitle)
-            premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-            premTitleCheck2 := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;same as above except checking a different variable (depending on whether you check the ahk_exe or the ahk_class returns different results under different circumstances)
+            premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro 20" ptf.PremYearVer " -")
+            premTitleCheck2 := InStr(premVal.winTitle, "Adobe Premiere Pro 20" ptf.PremYearVer " -") ;same as above except checking a different variable (depending on whether you check the ahk_exe or the ahk_class returns different results under different circumstances)
             if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe")
                 {
                     avoid := 1
                     block.Off()
-                    tool.Cust("A window is currently open that may alter the saving process")
-                    errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                    errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
                     SetTimer(, -ms)
                     goto end
                 }
             ;// debugging
-            ; appendCheck(checkNum, premTitleCheck, premTitleCheck2, premWinCheck, premCheck, whichNum) => FileAppend("check" checkNum "`ntitle: " premTitleCheck "`n" "title2: " premTitleCheck2 "`npremWinCheck: " premWinCheck "`npremcheck: " premCheck "`nwhich: " whichNum "`n---------------`n", "test.txt")
-            ; appendCheck(1, premTitleCheck, premTitleCheck2, premWinCheck, premCheck, 0)
+            ; appendCheck(checkNum, premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, whichNum) => FileAppend("check" checkNum "`ntitle: " premTitleCheck "`n" "title2: " premTitleCheck2 "`npremWinCheck: " premWinCheck "`nprem.winTitle: " premVal.winTitle "`nwhich: " whichNum "`n---------------`n", "test.txt")
+            ; appendCheck(1, premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, 0)
 
-            if premWinCheck = "" && premCheck = ""
+            if premWinCheck = "" && premVal.winTitle = ""
                 {
                     switchTo.Premiere()
                     premWinCheck := WinGetTitle("A")
-                    premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-
-                    ; appendCheck(2, premTitleCheck, premTitleCheck2, premWinCheck, premCheck, "0_2") ;// debugging
+                    premTitleCheck := InStr(premWinCheck, "Adobe Premiere Pro 20" ptf.PremYearVer " -")
+                    ; appendCheck(2, premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "0_2") ;// debugging
                 }
             if !premTitleCheck && !premTitleCheck2 ;if you're using another window (ie rendering something, changing gain, etc) this part of the code will trip, cancelling the autosave
                 {
@@ -310,26 +304,26 @@ save()
                         SendInput(timelineWindow)
                         SendInput(timelineWindow)
                         SendInput("{Ctrl Down}s{Ctrl Up}")
-                        ; appendCheck("3_focus", premTitleCheck, premTitleCheck2, premWinCheck, premCheck, "premsave() swap: " swap) ;// debugging
+                        ; appendCheck("3_focus", premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "premsave() swap: " swap) ;// debugging
                     default:
                         ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, title)
-                        ; appendCheck("3_bg", premTitleCheck, premTitleCheck2, premWinCheck, premCheck, "premsave() bg") ;// debugging
+                        ; appendCheck("3_bg", premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "premsave() bg") ;// debugging
                 }
                 if WinWait("Save Project",, 2)
                     WinWaitClose("Save Project",, 2)
                 premSaveTrack := 1
             }
-            if saveCheck = "*" && origWind = "Adobe Premiere Pro.exe"
+            if premVal.saveCheck = true && origWind = "Adobe Premiere Pro.exe"
                 {
                     if premWinCheck != ""
                         premSave(, "focus")
-                    else if premCheck != ""
+                    else if premVal.winTitle != ""
                         premSave(, "focus", 1)
                 }
-            else if saveCheck = "*" && premWinCheck != 0
+            else if premVal.saveCheck = true && premWinCheck != 0
                 premSave(premWinCheck)
-            else if saveCheck = "*" && premCheck != 0
-                premSave(premCheck)
+            else if premVal.saveCheck = true && premVal.winTitle != 0
+                premSave(premVal.winTitle)
         }
 
 
@@ -339,23 +333,22 @@ save()
      * This is to avoid after effects flashing on the screen as, when you save after effects, it FORCES itself to be in focus (typical adobe nonsense)
      * So this function will first make ae transparent, save, refocus the original window, then winmovebottom AE so it doesn't force itself to the top
      */
-    if WinExist(editors.AE.winTitle) && aeSaveCheck = "*"
+    if WinExist(editors.AE.winTitle) && aeVal.saveCheck = true
         {
-            if aeSaveCheck = "*" && origWind != WinGetProcessName(aeCheck) ;this variable will contain "*" if a save is required
+            if origWind != WinGetProcessName(aeVal.winTitle)
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {
                             avoid := 1
                             block.Off()
                             tool.Wait()
-                            tool.Cust("A window is currently open that may alter the saving process")
-                            errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
                             goto end
                         }
                     tool.Wait()
                     tool.Cust("Saving AE")
                     WinSetTransparent(0, editors.AE.winTitle)
-                    ControlSend("{Ctrl Down}s{Ctrl Up}",, aeCheck)
+                    ControlSend("{Ctrl Down}s{Ctrl Up}",, aeVal.winTitle)
                     WinWaitClose("Save Project",, 3)
                     try {
                         if origWind = "ahk_class CabinetWClass"
@@ -367,18 +360,17 @@ save()
                     }
                     WinMoveBottom(editors.AE.winTitle)
                     WinSetTransparent(255, editors.AE.winTitle)
-                    aeSaveTrack := 1
+                    aeVal.SaveTrack := 1
                     goto end
                 }
-            else if aeSaveCheck= "*" && origWind = WinGetProcessName(aeCheck) ;this variable will contain "*" if a save is required
+            else if origWind = WinGetProcessName(aeVal.winTitle)
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {
                             SetTimer(, -ms)
                             block.Off()
                             tool.Wait()
-                            tool.Cust("A window is currently open that may alter the saving process")
-                            errorLog(, A_ThisFunc "()", "A window is currently open that may alter the saving process", A_LineFile, A_LineNumber)
+                            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
                             goto end
                         }
                     tool.Wait()
@@ -390,29 +382,34 @@ save()
 
         ;// double checking to see if the saves worked
         if WinExist(editors.Premiere.winTitle)
-            winget.PremName(&premCheck, &titleCheck, &saveCheck)
+            premDouble := winget.PremName()
         if WinExist(editors.AE.winTitle)
-            winget.AEName(&aeCheck, &aeSaveCheck)
-        if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt < 3
+            aeDouble := winget.AEName()
+        if ((WinExist(editors.Premiere.winTitle) && premDouble.saveCheck = true) || (WinExist(editors.AE.winTitle) && aeDouble.saveCheck = true)) && attempt < 3
             goto attempt
-        else if ((WinExist(editors.Premiere.winTitle) && saveCheck = "*") || (WinExist(editors.AE.winTitle) && aeSaveCheck = "*")) && attempt >= 3
+        else if ((WinExist(editors.Premiere.winTitle) && premDouble.saveCheck = true) || (WinExist(editors.AE.winTitle) && aeDouble.saveCheck = true)) && attempt >= 3
             tool.Cust("Couldn't properly save after " attempt " attempts", 2.0)
 
         ;// replaying playback if necessary
         replayPlayback(title) {
-            sleep 250
-            ControlSend(timelineWindow,, title)
-            ControlSend(timelineWindow,, title)
-            sleep 100
-            ControlSend(playStop,, title)
-            block.Off()
-            ToolTip("")
-            ControlSend(timelineWindow,, title)
+            try {
+                replayCheck := WinGet.PremName()
+                if title != replayCheck.winTitle
+                    title := replayCheck.winTitle
+                sleep 250
+                ControlSend(timelineWindow,, title)
+                ControlSend(timelineWindow,, title)
+                sleep 100
+                ControlSend(playStop,, title)
+                block.Off()
+                ToolTip("")
+                ControlSend(timelineWindow,, title)
+            }
         }
         if stop = "yes" && premWinCheck != "" && premSaveTrack = 1
             replayPlayback(premWinCheck)
-        else if stop = "yes" && premCheck != "" premSaveTrack = 1
-            replayPlayback(premCheck)
+        else if stop = "yes" && premVal.winTitle != "" premSaveTrack = 1
+            replayPlayback(premVal.winTitle)
 
 
         end:
@@ -440,7 +437,7 @@ save()
                 WinActivate("ahk_exe " origWind)
         } catch as e {
             tool.Cust("couldn't activate original window")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
         }
 
         ignore:

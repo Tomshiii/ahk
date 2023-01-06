@@ -1,7 +1,7 @@
 ;#SingleInstance Force ;don't want to accidentally start a second instance while it's mid move
 ; { \\ #Includes
 #Include <Classes\ptf>
-#Include <Functions\SplitPathObj>
+#Include <Classes\obj>
 ; }
 
 ;; This part makes you select the folder you wish to move
@@ -10,11 +10,11 @@ if SelectedFolder = ""
     return
 
 ;;this part takes that folder directory and splits it out to just grab the final folder in the path as we need it below
-splitSelected := SplitPathObj(SelectedFolder)
+splitSelected := obj.SplitPath(SelectedFolder)
 
 ;;this part makes you select the destination folder
 move:
-Move := FileSelect("D2", "N:\_RC\Tomshi\2022", "Pick the destination folder you wish everything to move to.")
+Move := FileSelect("D2", "N:\_RC\Tomshi\" A_Year, "Pick the destination folder you wish everything to move to.")
 if Move = ""
     return
 if Move = SelectedFolder

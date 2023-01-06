@@ -18,9 +18,7 @@ activeScripts(MyRelease)
     margX := 8
 
     MyGui := tomshiBasic(,, "-Resize AlwaysOnTop", "Active Scripts " MyRelease)
-    ;nofocus
-    ;add an invisible button since removing the default off all the others did nothing
-    removedefault := MyGui.Add("Button", "Default X0 Y0 w0 h0", "_")
+
     ;active scripts
     text := MyGui.Add("Text", "X" margX " Y8 W300 H20", "Current active scripts are:")
     text.SetFont("S13 Bold")

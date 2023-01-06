@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2023/01/01
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -57,7 +57,7 @@ class Move {
             SendInput(key)
         } catch as e {
             tool.Cust("Failed to get information on current active window")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
         }
     }
 
@@ -108,17 +108,15 @@ class Move {
         if !IsObject(initMon) || !IsObject(monitor)
             {
                 block.Off() ;to stop the user potentially getting stuck
-                tool.Cust(A_ThisFunc " failed to get the monitor that the mouse is within")
-                errorLog(, A_ThisFunc "()", "failed to get the monitor that the mouse is within", A_LineFile, A_LineNumber)
+                errorLog(UnsetError("Failed to get the monitor that the mouse is within", -1, monitor),, 1)
                 return
             }
         if x > 4260 ;because of the pixelsearch block down below, you can't just reactivate this function to move between monitors. Thankfully for me the two monitors I wish to cycle between are stacked on top of each other so I can make it so if my x coord is greater than a certain point, it should be assumed I'm simply trying to cycle monitors
             goto move
         if !ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " ptf.firefox "contextMenu.png") && !ImageSearch(&contX, &contY, x - 300, y - 300, x + 300, y + 300, "*2 " ptf.firefox "contextMenu2.png") ;right clicking a tab in firefox will automatically pull up the right click context menu. This ImageSearch is checking to see if it's there and then getting rid of it if it is
             {
-                tool.Cust("You moved too far away from the right click context menu", 1500)
-                errorLog(, A_ThisFunc "()", "moved too far away from the right click context menu", A_LineFile, A_LineNumber)
                 block.Off()
+                errorLog(Error("Moved too far away from the right click context menu", -1),, 1)
                 return
             }
         SendInput("{Escape}")
@@ -157,8 +155,7 @@ class Move {
                         }
                     if A_Index > 6
                         {
-                            tool.Cust("Couldn't find the active tab colour", 1500)
-                            errorLog(, A_ThisFunc "()", "couldn't find the active tab colour", A_LineFile, A_LineNumber)
+                            errorLog(TargetError("Culdn't find the active tab colour", -1),, 1)
                             block.Off()
                             return
                         }

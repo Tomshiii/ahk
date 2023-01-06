@@ -14,7 +14,11 @@
 scale(amount)
 {
     ;// This function borrows code from `prem.valuehold()`
-
+    if !IsNumber(amount)
+        {
+            ;// throw
+            errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
+        }
     ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
     ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
     ;You can plug your own x distance in by changing the value below
@@ -30,7 +34,7 @@ scale(amount)
     } catch as e {
         block.Off() ;just incase
         tool.Cust("Couldn't get the ClassNN of the desired panel")
-        errorLog(e, A_ThisFunc "()")
+        errorLog(e)
         return
     }
     SendInput(timelineWindow) ;focuses the timeline
@@ -40,9 +44,8 @@ scale(amount)
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    tool.Cust("The wrong clips are selected")
-                    errorLog(, A_ThisFunc "()", "The wrong clips are selected", A_LineFile, A_LineNumber)
                     block.Off()
+                    errorLog(Error("No clips are selected", -1),, 1)
                     return
                 }
         }
@@ -57,7 +60,7 @@ scale(amount)
                     ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
                 } catch as e {
                     tool.Cust("Couldn't get the ClassNN of the Effects Controls panel")
-                    errorLog(e, A_ThisFunc "()")
+                    errorLog(e)
                     MouseMove(xpos, ypos)
                     return
                 }
@@ -72,8 +75,7 @@ scale(amount)
         if A_Index > 3
             {
                 block.Off()
-                tool.Cust("the image after " A_Index " attempts`nx " classX "`ny " classY "`nwidth " width "`nheight " height, 5000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Failed to find the appropiate image after " A_Index " attempts ~~ x " classX " ~~ y " classY " ~~ width " width " ~~ height " height, A_LineFile, A_LineNumber)
+                errorLog(IndexError("Couldn't find the desired property", -1),, 1)
                 KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
                 return
@@ -84,8 +86,7 @@ scale(amount)
     if !PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
         {
             block.Off()
-            tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-            errorLog(, A_ThisFunc "()", "Failed to find the blue 'value' text", A_LineFile, A_LineNumber)
+            errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
             KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
             MouseMove(xpos, ypos)
             return

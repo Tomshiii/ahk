@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2022/12/24
- * @version 1.0.5.2
+ * @date 2023/01/01
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,7 +16,7 @@
 class WinGet {
     /**
      * This function will grab the monitor that the mouse is currently within and return it as well as coordinate information in the form of a function object. ie if your mouse is within monitor 1 having code `monitor := getMouseMonitor()` would make `monitor.monitor` = 1
-     * @returns {object} containing the monitor number, the left/right/top/bottom pixel coordinate
+     * @returns {Object} containing the monitor number, the left/right/top/bottom pixel coordinate
      */
     static MouseMonitor()
     {
@@ -33,12 +33,12 @@ class WinGet {
                             return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
                     }
                 if A_Index >= numberofMonitors
-                    throw TargetError("Couldn't find the monitor", A_ThisFunc "()")
+                    throw IndexError("Couldn't find the monitor", -1, numberofMonitors)
             }
-            catch TargetError as e {
+            catch IndexError as e {
                 block.Off() ;to stop the user potentially getting stuck
                 tool.Cust(A_ThisFunc "() failed to get the monitor that the mouse is within", 2.0)
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 Exit()
             }
         }
@@ -58,11 +58,10 @@ class WinGet {
                 ignore := ""
             title := WinGetTitle("A",, ignore)
             if !IsSet(title) || title = "" || title = "Program Manager"
-                throw Error e
+                throw UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1, title)
             return title
-        } catch as e {
-            tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
-            errorLog(e, A_ThisFunc "()")
+        } catch UnsetError as e {
+            errorLog(e,, 1)
             block.Off()
             Exit()
         }
@@ -70,7 +69,7 @@ class WinGet {
 
     /**
      * This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
-     * @param {var} title is the active window, this function will populate the `title` variable with the active window
+     * @param {VarRef} title is the active window, this function will populate the `title` variable with the active window
      * @param {String} window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
      */
     static isFullscreen(&title?, window := false)
@@ -88,7 +87,7 @@ class WinGet {
             return WinGetMinMax(title,, "Editing Checklist -") ;a return value of 1 means it is maximised
         } catch as e {
             tool.Cust(A_ThisFunc "() couldn't determine the active window")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             block.Off()
             Exit
         }
@@ -96,56 +95,63 @@ class WinGet {
 
     /**
      * This function will grab the title of premiere if it exists and check to see if a save is necessary
-     * @param {var} premCheck is the title of premiere, we want to pass this value back to the script
-     * @param {var} titleCheck is checking to see if the premiere window is available to save, we want to pass this value back to the script
-     * @param {var} saveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+     * @param {VarRef} premCheck is the complete title of premiere
+     * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return unset if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
+     * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return unset if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
+     * @returns {Object}
+     * ```
+     * prem := winget.PremName()
+     * prem.winTitle        ;// is the current title of the open premiere window
+     * prem.titleCheck      ;// a boolean value of if the window is available to save
+     * prem.saveCheck       ;// a boolean value of if a save is currently necessary
+     * ```
      */
-    static PremName(&premCheck, &titleCheck?, &saveCheck?)
+    static PremName(&premCheck?, &titleCheck?, &saveCheck?)
     {
         try {
             if !WinExist(editors.Premiere.winTitle)
-                {
-                    premCheck := false
-                    titleCheck := ""
-                    saveCheck := ""
-                    return false
-                }
+                return {winTitle: false, titleCheck: unset, saveCheck: unset}
             premCheck := WinGetTitle(editors.Premiere.class)
             if premCheck = ""
                 premCheck := WinGetTitle(editors.Premiere.winTitle)
-            titleCheck := InStr(premCheck, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-            saveCheck := SubStr(premCheck, -1, 1) ;this variable will contain "*" if a save is required
-            return true
+            titleCheck := InStr(premCheck, "Adobe Premiere Pro 20" ptf.PremYearVer " -") ;we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            saveCheck := (SubStr(premCheck, -1, 1) = "*") ? true : false
+            return {winTitle: premCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
-            errorLog(e, A_ThisFunc "()")
-            return false
+            errorLog(e)
+            return {winTitle: false, titleCheck: unset, saveCheck: unset}
         }
     }
 
     /**
      * This function will grab the title of after effects if it exists and check to see if a save is necessary
-     * @param {var} aeCheck is the title of after effects, we want to pass this value back to the script
-     * @param {var} aeSaveCheck is checking for an * in the title to say a save is necessary, we want to pass this value back to the script
+     * @param {VarRef} aeCheck is the complete title of after effects
+     * @param {VarRef} titleCheck is checking to see if the after effects window is available to save based off what's found in the current title. Will return unset if after effects cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
+     * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary.  Will return unset if after effects cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
+     * @returns {Object}
+     * ```
+     * ae := winget.AEName()
+     * ae.winTitle        ;// is the current title of the open ae window
+     * ae.titleCheck      ;// a boolean value of if the window is available to save
+     * ae.saveCheck       ;// a boolean value of if a save is currently necessary
+     * ```
      */
-    static AEName(&aeCheck, &aeSaveCheck?)
+    static AEName(&aeCheck?, &titleCheck?, &saveCheck?)
     {
         try {
             if !WinExist(editors.AE.winTitle)
-                {
-                    aeCheck := false
-                    aeSaveCheck := ""
-                    return false
-                }
+                return {winTitle: false, titleCheck: unset, saveCheck: unset}
             aeCheck := WinGetTitle(editors.AE.winTitle)
-            aeSaveCheck := SubStr(aeCheck, -1, 1) ;this variable will contain "*" if a save is required
-            return true
+            titleCheck := InStr(aeCheck, "Adobe After Effects 20" ptf.AEYearVer " -") ;we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
+            saveCheck := (SubStr(aeCheck, -1, 1) = "*") ? true : false
+            return {winTitle: aeCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
-            errorLog(e, A_ThisFunc "()")
-            return false
+            errorLog(e)
+            return {winTitle: false, titleCheck: unset, saveCheck: unset}
         }
     }
 
@@ -155,27 +161,20 @@ class WinGet {
      */
     static ProjClient()
     {
-        /**
-         * cutting repeat code
-         */
-        err(Err) {
-            tool.Cust(Err, 2.0)
-            errorLog(, A_ThisFunc "()", Err, A_LineFile, A_LineNumber)
-        }
         ;// if the user doesn't have either editors active
         if !WinExist(editors.Premiere.winTitle) && !WinExist(editors.AE.winTitle) {
-                err("Editors aren't open")
+                errorLog(TargetError("Couldn't determine an editor window", -1),, 1)
                 return false
             }
         ;// if PremName fails to grab the title
         if !this.PremName(&premCheck, &titleCheck) && !this.AEName(&aeCheck) {
-                err("Unable to perform action as title is unable to be obtained")
+                errorLog(TargetError("Unable to determine the client as the title is unable to be obtained", -1),, 1)
                 return false
             }
-        path := IsSet(premCheck) ? SplitPathObj(premCheck) : SplitPathObj(aeCheck)
+        path := IsSet(premCheck) ? obj.SplitPath(premCheck) : obj.SplitPath(aeCheck)
         ;// if the comms folder isn't in the title path
         if !InStr(path.dir, ptf.comms) {
-                err("``ptf.comms`` folder not found in Premiere title")
+                errorLog(UnsetError("``ptf.comms`` folder not found in Premiere title", -1, path.dir),, 1)
                 return false
             }
         return ClientName := SubStr(
@@ -187,7 +186,7 @@ class WinGet {
 
     /**
      * This function will grab the proccess ID of the current active window
-     * @param {var} id is the processname of the active window, we want to pass this value back to the script
+     * @param {VarRef} id is the processname of the active window, we want to pass this value back to the script
      */
     static ID(&id)
     {
@@ -198,7 +197,7 @@ class WinGet {
             return true
         } catch as e {
             tool.Cust("couldn't grab active window")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
             return false
         }
     }
@@ -207,7 +206,7 @@ class WinGet {
      * A function that returns the path of an open explorer window
      *
      * Original code found here by svArtist: https://www.autohotkey.com/boards/viewtopic.php?p=422751#p387113
-     * @param {number} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
+     * @param {Integer} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
      * @returns {String} the directory path of the explorer window
      */
     static ExplorerPath(hwnd := 0)
@@ -250,8 +249,8 @@ class WinGet {
             return ComObject("Scripting.FileSystemObject").GetFolder(path).Size
         if option > 3
             {
-                errorLog(ValueError("Parameter #2 invalid", -1, option), A_ThisFunc "()")
-                throw ValueError("Parameter #2 invalid", -1, option)
+                ;// throw
+                errorLog(ValueError("Parameter #2 invalid - Value Too High", -1, option),,, 1)
             }
         ;// you convert bytes to another unit by x / (1024^y)
         ;// ie. bytes => MB ; x / (1024x1024x1024) OR x / 1024^2

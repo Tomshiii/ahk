@@ -14,11 +14,11 @@ class tool {
      * `tool.Cust("message",,, MouseGetPos(&x, &y) x + 15, y)`
      *
      * If you pass EITHER the x OR y value (but not both) this function will take that value and continuously `offset` it from the current cursor position. If you wish to plant the cursor in an exact position BOTH x & y values must be passed
-     * @param {string} message is what you want the tooltip to say
-     * @param {number} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a floating point number, ie; `1.0`, `2.5`, etc
-     * @param {boolean} find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 (or true) for this variable if you do, or omit it if you don't
-     * @param {number} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
-     * @param {integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified or set larger than 20, that number is 1 (the first).
+     * @param {String} message is what you want the tooltip to say
+     * @param {Number} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a floating point number, ie; `1.0`, `2.5`, etc
+     * @param {Boolean} find is whether you want this function to state "Couldn't find " at the beginning of it's tooltip. Simply add 1 (or true) for this variable if you do, or omit it if you don't
+     * @param {Integer} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
+     * @param {Integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified or set larger than 20, that number is 1 (the first).
      */
     static Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     {

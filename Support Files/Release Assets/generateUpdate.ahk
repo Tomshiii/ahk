@@ -2,6 +2,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Functions\getLocalVer>
+#Include <Functions\delaySI>
 #Include <Other\7zip\SevenZip>
 ; }
 
@@ -185,18 +186,7 @@ if !WinActive("Open Script")
 sleep 250
 SendInput("{F4}")
 sleep 1000
-SendInput("^a")
-SendInput("{BackSpace}")
-sleep 250
-SendInput(A_WorkingDir "\release\")
-sleep 250
-SendInput("{Enter}")
-sleep 250
-SendInput("!n")
-SendInput(yes.value ".ahk")
-sleep 250
-SendInput("!o")
-sleep 250
+delaySI(250, "^a", "{BackSpace}", A_WorkingDir "\release\", "{Enter}", "!n", yes.value ".ahk", "!o")
 ;// save exe
 if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
     {
@@ -212,21 +202,8 @@ if !WinActive("Save Executable As")
         WinWaitActive("Save Executable As")
     }
 sleep 1000
-SendInput("{F4}")
-sleep 1000
-SendInput("^a")
-SendInput("{BackSpace}")
-SendInput(A_WorkingDir "\release\")
-sleep 1000
-SendInput("{Enter}")
-sleep 1000
-SendInput("+{Tab 8}")
-sleep 1000
-SendInput("!n")
-SendInput(yes.value ".exe")
-sleep 250
-SendInput("!s")
-sleep 250
+delaySI(1000, "{F4}", "^a", "{BackSpace}", A_WorkingDir "\release\", "{Enter}", "+{Tab 8}", "!n")
+delaySI(250, yes.value ".exe", "!s")
 ;// change ahk ver
 if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
     {

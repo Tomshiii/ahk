@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2022/12/21
- * @version 1.1.0
+ * @date 2023/01/02
+ * @version 1.2.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,8 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\winget>
+#Include <Classes\clip>
+#Include <Classes\obj>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
 ; }
@@ -24,6 +26,9 @@ class Resolve {
     static class := Editors.Resolve.class
     static path := ptf.ProgFi "\Blackmagic Design\DaVinci Resolve\Resolve.exe"
 
+    /**
+     * This nested class is simply to store coordinate ranges for imagesearches for certain UI elements of resolve. This makes it easier for another user to come along and adjust them if they don't quite line up with their setup
+     */
     class open {
         ;// setting imagesearch coordinates
 
@@ -60,11 +65,11 @@ class Resolve {
 
         /**
          * This function cuts massive amounts of repeat code. It handles checking if a certain UI element is selected or not.
-         * @param {any} objCoords the object of coordinates you wish to pass into the function
-         * @param {any} pngName1 the name of the first image
-         * @param {any} pngName2 the name of the second image
-         * @param {string} errorMsg the error message you wish for the tooltip to use
-         * @returns {number}
+         * @param {Object} objCoords the object of coordinates you wish to pass into the function
+         * @param {String} pngName1 the name of the first image
+         * @param {String} pngName2 the name of the second image
+         * @param {String} errorMsg the error message you wish for the tooltip to use
+         * @returns {Boolean}
          */
         static open(objCoords, pngName1, pngName2, errorMsg := "") {
             try {
@@ -82,7 +87,7 @@ class Resolve {
             } catch as e {
                 block.Off() ;// just incase
                 tool.Cust(errorMsg, 1,, 2)
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 Exit()
             }
         }
@@ -91,7 +96,7 @@ class Resolve {
 
     /**
      * A function to set the scale of a video within resolve
-     * @param {Integer} value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
+     * @param {Number} value is the number you want to type into the text field (100% in reslove requires a 1 here for example)
      * @param {String} property is the property you want this function to type a value into (eg. zoom)
      * @param {Integer} plus is the pixel value you wish to add to the x value to grab the respective value you want to adjust
      */
@@ -105,21 +110,30 @@ class Resolve {
         coord.w()
         block.On()
         SendInput(resolveSelectPlayhead)
-        MouseGetPos(&xpos, &ypos)
+        orig := obj.MousePos()
+        ;// open the inspector tab
         this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        ;// open the video tab
         this.open.open(this.open.vid, "video", "videoN", "video tab")
-        if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property "2.png")
+        if (!ImageSearch(&xz, &yz
+                           , this.open.prop.x1, this.open.prop.y1
+                           , this.open.prop.x2, this.open.prop.y2
+                           , "*5 " ptf.Resolve property ".png")
+           &&
+           !ImageSearch(&xz, &yz
+                           , this.open.prop.x1, this.open.prop.y1
+                           , this.open.prop.x2, this.open.prop.y2
+                           , "*5 " ptf.Resolve property "2.png"))
             {
                 block.Off()
-                tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
+                errorLog(Error("Couldn't find the desired property.", -1, property),, 1)
                 return
             }
         MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
         click
         SendInput(value)
         SendInput("{ENTER}")
-        MouseMove(xpos, ypos)
+        MouseMove(orig.x, orig.y)
         SendInput("{MButton}")
         block.Off()
     }
@@ -164,17 +178,20 @@ class Resolve {
         }
         coord.w()
         block.On()
-        MouseGetPos(&xpos, &ypos)
+        orig := obj.MousePos()
+        ;// open the effects panel
         this.open.open(this.open.effects, "effects2", "effects", "the effects button")
+        ;// find the open/close button
         this.open.open(this.open.opnCls, "open", "closed", "the open/close button")
+        ;// open the fx folder
         this.open.open(this.open.fx, folder, folder "2", "the fxfolder")
+        ;// do a few imagesearches to figure out what to do next
         srch2 := ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search2.png")
         srch3 := ImageSearch(&xs2, &ys2, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search3.png")
         if !srch2 && !srch3
             {
                 block.Off()
-                tool.Cust("the search button",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the search button", A_LineFile, A_LineNumber)
+                errorLog(Error("Couldn't find the search button", -1),, 1)
                 return
             }
         if srch2
@@ -191,19 +208,18 @@ class Resolve {
         SendInput(effect)
         colError()
         {
-            tool.Cust("the desired effect",, 1)
-            errorLog(, A_ThisFunc "()", "couldn't find desired effect", A_LineFile, A_LineNumber)
             block.off
-            exit
+            errorLog(TargetError("Couldn't find the desired effect", -1, effect),, 1)
+            return
         }
-        MouseGetPos(&xcol, &ycol)
-        if !ImageSearch(&effx, &effy, xcol - (A_ScreenWidth/3), ycol, xcol, ycol + (A_ScreenHeight/3), "*2 " ptf.Resolve folder "3.png")
+        colour := obj.MousePos()
+        if !ImageSearch(&effx, &effy, colour.x - (A_ScreenWidth/3), colour.y, colour.x, colour.y + (A_ScreenHeight/3), "*2 " ptf.Resolve folder "3.png")
             colError()
         if !PixelSearch(&findx, &findy, effx + 5, effy, effx + 20, effy + 50, 0x000000)
             colError()
         MouseMove(findx, findy + 5, 2)
         SendInput("{Click Down}")
-        MouseMove(xpos, ypos, 2) ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
+        MouseMove(orig.x, orig.y, 2) ;moves the mouse at a slower, more normal speed because resolve doesn't like it if the mouse warps instantly back to the clip
         SendInput("{Click Up}")
         block.Off()
         return
@@ -220,14 +236,23 @@ class Resolve {
         coord.w()
         block.On()
         SendInput(resolveSelectPlayhead)
-        MouseGetPos(&xpos, &ypos)
+        orig := obj.MousePos()
+        ;// open the inspector tab
         this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        ;// open the video tab
         this.open.open(this.open.vid, "video", "videoN", "video tab")
-        if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property ".png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve property "2.png")
+        if (!ImageSearch(&xz, &yz
+                           , this.open.prop.x1, this.open.prop.y1
+                           , this.open.prop.x2, this.open.prop.y2
+                           , "*5 " ptf.Resolve property ".png")
+            &&
+           !ImageSearch(&xz, &yz
+                           , this.open.prop.x1, this.open.prop.y1
+                           , this.open.prop.x2, this.open.prop.y2
+                           , "*5 " ptf.Resolve property "2.png"))
             {
                 block.Off()
-                tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
+                errorLog(Error("Couldn't find the desired property", -1, property),, 1)
                 return
             }
         MouseMove(xz + plus, yz + "5") ;moves the mouse to the value next to the property. This function assumes x/y are linked
@@ -236,7 +261,7 @@ class Resolve {
         if !GetKeyState(A_ThisHotkey, "P")
             {
                 this.rfElse(rfelseval) ;do note rfelse doesn't use any imagesearch information and just uses raw pixel values (not a great idea), so if you have any issues, do look into changing that
-                MouseMove(xpos, ypos)
+                MouseMove(orig.x, orig.y)
                 SendInput("{MButton}")
                 block.Off()
                 return
@@ -244,7 +269,7 @@ class Resolve {
         block.Off()
         KeyWait(A_ThisHotkey)
         SendInput("{Click Up}")
-        MouseMove(xpos, ypos)
+        MouseMove(orig.x, orig.y)
     }
 
     /**
@@ -255,19 +280,27 @@ class Resolve {
     {
         coord.w()
         block.On()
-        MouseGetPos(&xpos, &ypos)
+        orig := obj.MousePos()
+        ;// open the inspector tab
         this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        ;// open the video tab
         this.open.open(this.open.vid, "video", "videoN", "video tab")
-        if !ImageSearch(&xh, &yh, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve button ".png") && !ImageSearch(&xh, &yh, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve button "2.png")
+        if (!ImageSearch(&xh, &yh
+                           , this.open.prop.x1, this.open.prop.y1
+                           , this.open.prop.x2, this.open.prop.y2
+                           , "*5 " ptf.Resolve button ".png") &&
+           !ImageSearch(&xh, &yh
+                           , this.open.prop.x1, this.open.prop.y1
+                           , this.open.prop.x2, this.open.prop.y2
+                           , "*5 " ptf.Resolve button "2.png"))
             {
                 block.Off()
                 MouseMove(xpos, ypos)
-                tool.Cust("desired button",, 1)
-                errorLog(, A_ThisFunc "()", "Was unable to find the desired button", A_LineFile, A_LineNumber)
+                errorLog(Error("Couldn't find the desired button", -1, button),, 1)
             }
         MouseMove(xh, yh)
-        click
-        MouseMove(xpos, ypos)
+        SendInput("{Click}")
+        MouseMove(orig.x, orig.y)
         block.Off()
     }
 
@@ -279,42 +312,40 @@ class Resolve {
     {
         if !IsNumber(value)
             {
-                tool.Cust("You have put a non numeric value as this function's parameter", 2.0)
-                errorLog(, A_ThisFunc "()", "User put a non numeric value in function's parameter", A_LineFile, A_LineNumber)
-                return
+                ;// throw
+                errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
             }
         coord.w()
         block.On()
         SendInput(resolveSelectPlayhead)
-        MouseGetPos(&xpos, &ypos)
+        orig := obj.MousePos()
+        ;// open the inspector tab
         this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        ;// open the audio tab
         this.open.open(this.open.vid, "audio2", "audio", "audio tab")
-        if !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve "volume.png") && !ImageSearch(&xz, &yz, this.open.prop.x1, this.open.prop.y1, this.open.prop.x2, this.open.prop.y2, "*5 " ptf.Resolve "volume2.png") ;searches for the volume property
+        if (!ImageSearch(&xz, &yz
+                            , this.open.prop.x1, this.open.prop.y1
+                            , this.open.prop.x2, this.open.prop.y2
+                            , "*5 " ptf.Resolve "volume.png") &&
+            !ImageSearch(&xz, &yz
+                            , this.open.prop.x1, this.open.prop.y1
+                            , this.open.prop.x2, this.open.prop.y2
+                            , "*5 " ptf.Resolve "volume2.png"))
             {
                 block.Off()
-                tool.Cust("your desired property",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(, A_ThisFunc "()", "Was unable to find the desired property", A_LineFile, A_LineNumber)
+                errorLog(Error("Couldn't find the desired property", -1),, 1)
                 return
             }
-        MouseMove(xz + "215", yz + "5") ;moves the mouse to the value next to volume. This function assumes x/y are linked
+        MouseMove(xz + 215, yz + 5) ;moves the mouse to the value next to volume. This function assumes x/y are linked
         SendInput("{Click 2}")
-        orig := ClipboardAll()
-        A_Clipboard := ""
-        ;sleep 50
-        SendInput("^c")
-        if !ClipWait(1)
-            {
-                block.Off()
-                tool.Cust("Clipboard timed out waiting for data")
-                errorLog(, A_ThisFunc "()", "Clipboard timed out waiting for data", A_LineFile, A_LineNumber)
-                return
-            }
+        orig := clip.clear()
+        clip.copyWait()
         gain := A_Clipboard + value
         SendInput(gain)
         SendInput("{Enter}")
-        MouseMove(xpos, ypos)
+        MouseMove(orig.x, orig.y)
         SendInput("{MButton}")
-        A_Clipboard := orig
+        clip.returnClip(orig.storedClip)
         block.Off()
     }
 }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2022/12/18
- * @version 1.0.5
+ * @date 2023/01/06
+ * @version 1.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -128,7 +128,7 @@ class switchTo {
         {
             try {
                 Name := WinGetTitle("Adobe Premiere Pro")
-                titlecheck := InStr(Name, "Adobe Premiere Pro " ptf.PremYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+                titlecheck := InStr(Name, "Adobe Premiere Pro 20" ptf.PremYearVer " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
                 dashLocation := InStr(Name, "-")
                 length := StrLen(Name) - dashLocation
                 if !titlecheck
@@ -145,17 +145,32 @@ class switchTo {
                         runae()
                         return
                     }
+                count := 0, foundFile := ""
                 loop files path "\*.aep", "F"
                     {
-                        Run(A_LoopFileFullPath)
+                        foundFile := A_LoopFileFullPath
+                        count++
+                    }
+                switch count {
+                    case 1:
+                        Run(foundFile)
                         tool.Cust("Running AE file for this project")
                         if WinWait(AE.winTitle,, 2)
                             WinActivate(AE.winTitle)
                         return
-                    }
+                    default:
+                        pick := FileSelect("3", path "\effects.aep", "Which project do you wish to open?", "*.aep")
+                        if pick = ""
+                            return
+                        Run(pick)
+                        tool.Cust("Running selected AE project")
+                        if WinWait(AE.winTitle,, 2)
+                            WinActivate(AE.winTitle)
+                        return
+                }
             } catch as e {
                 tool.Cust("Couldn't determine proper path from Premiere")
-                errorLog(e, A_ThisFunc "()")
+                errorLog(e)
                 runae()
                 return
             }
@@ -166,7 +181,7 @@ class switchTo {
             {
                 try {
                     Name := WinGetTitle("Adobe After Effects")
-                    titlecheck := InStr(Name, "Adobe After Effects " ptf.AEYear " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
+                    titlecheck := InStr(Name, "Adobe After Effects 20" ptf.AEYearVer " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
                     if slash := InStr(Name, "\",, -1) ;if there's a slash in the title, it means a project is open
                         WinActivate(AE.winTitle)
                     else

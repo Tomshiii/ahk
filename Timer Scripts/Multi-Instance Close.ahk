@@ -4,7 +4,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Functions\detect>
-#Include <Functions\SplitPathObj>
+#Include <Classes\obj>
 ; }
 
 TraySetIcon(ptf.Icons "\M-I_C.png")
@@ -35,7 +35,7 @@ check()
             if !IsSet(newWin) || !IsSet(window)
                 continue
             path := SubStr(newWin, 1, InStr(newWin, " -",,, 1) -1)
-            script := SplitPathObj(path)
+            script := obj.SplitPath(path)
             if InStr(windows, script.Name "`n", 1,, 1) && script.Name != "checklist.ahk" && script.Name != "launcher.ahk"
                 {
                     tool.Cust("Closing multiple instance of : " script.Name, 3000)

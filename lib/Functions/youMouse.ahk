@@ -29,7 +29,7 @@ youMouse(tenS, fiveS)
             WinActivate(lastactive) ;will reactivate the original window
         } catch as e {
             tool.Cust("Failed to get information on the previously active window")
-            errorLog(e, A_ThisFunc "()")
+            errorLog(e)
         }
     }
 }

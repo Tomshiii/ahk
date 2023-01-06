@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <Functions\errorLog>
+; }
+
 class clients {
     static chloe := "Baeginning"
     static d0yle := "D0yle"
@@ -5,14 +9,14 @@ class clients {
 }
 
 openSocials(which) {
-    if which != "youtube" && which != "twitch"
+    if (which != "youtube" && which != "twitch") || Type(which) != "string"
         {
-            tool.Cust("Incorrect parameter passed into function")
-            return
+            ;// throw
+            errorLog(ValueError("Incorrect value in Parameter #1", -1, which),,, 1)
         }
     if !WinExist(Editors.Premiere.winTitle) && !WinExist(Editors.AE.winTitle)
         {
-            tool.Cust("Editor not currently open")
+            errorLog(Error("Editor not currently open", -1),, 1)
             return
         }
     client := WinGet.ProjClient()

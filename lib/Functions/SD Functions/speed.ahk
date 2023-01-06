@@ -12,6 +12,11 @@
  */
 speed(amount)
 {
+    if !IsNumber(amount)
+        {
+            ;// throw
+            errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
+        }
     ;// first we make sure clips are selected
     SendInput(effectControls)
     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
@@ -21,7 +26,7 @@ speed(amount)
     } catch as e {
         block.Off() ;just incase
         tool.Cust("Couldn't get the ClassNN of the desired panel")
-        errorLog(e, A_ThisFunc "()")
+        errorLog(e)
         return
     }
     SendInput(timelineWindow) ;focuses the timeline
@@ -31,9 +36,8 @@ speed(amount)
             sleep 50
             if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
-                    tool.Cust("The wrong clips are selected")
-                    errorLog(, A_ThisFunc "()", "The wrong clips are selected", A_LineFile, A_LineNumber)
                     block.Off()
+                    errorLog(Error("No clips are selected", -1),, 1)
                     return
                 }
         }

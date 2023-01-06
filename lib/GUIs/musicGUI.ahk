@@ -2,6 +2,7 @@
 #Include <GUIs\tomshiBasic>
 #Include <Classes\ptf>
 #Include <Classes\dark>
+#Include <Classes\obj>
 ; }
 
 /**
@@ -25,7 +26,7 @@ musicGUI()
     MyGui := tomshiBasic(10, 600, "AlwaysOnTop -Resize +MinSize260x120 +MaxSize260x120", "Music to open?") ;creates our GUI window
     ;#now we define the elements of the GUI window
     ;defining AIMP
-    aimplogo := MyGui.AddPicture("w25 h-1 Y9", ptf.guiIMG "\aimp.png")
+    aimplogo := MyGui.AddPicture("x12 w25 h-1 Y9", ptf.guiIMG "\aimp.png")
     AIMP := MyGui.Add("Button", "X40 Y7", "AIMP")
     AIMP.OnEvent("Click", musicRun)
     ;defining Foobar
@@ -44,8 +45,7 @@ musicGUI()
     folderlogo := MyGui.AddPicture("w25 h-1  X14 Y86", ptf.guiIMG "\explorer.png")
     FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
     FOLDERGUI.OnEvent("Click", MUSICFOLDER)
-    ;add an invisible button since removing the default off all the others did nothing
-    removedefault := MyGui.Add("Button", "Default X0 Y0 W0 H0", "_")
+
     ;#finished with definitions
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
@@ -92,7 +92,7 @@ musicGUI()
         else
             {
                 scriptPath :=  A_LineFile ;this is taking the path given from A_LineFile
-                script := SplitPathObj(scriptPath) ;and splitting it out into just the .ahk filename
+                script := obj.SplitPath(scriptPath) ;and splitting it out into just the .ahk filename
                 MsgBox("The requested music folder doesn't exist`n`nWritten dir: " ptf.musicDir "`nScript: " script.Name "`nLine: " A_LineNumber-11)
             }
         MyGui.Destroy()

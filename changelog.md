@@ -1,76 +1,82 @@
-# <> Release 2.8.3 - Additions & Fixes
-Congratulations to ahk for `v2.0.0` hitting a full release! 🎉🎉
+# <> Release 2.9 - Huge Refactor
+Welcome to the first release of 2023! 🎉🎉  
+This release is a rather large one, containing a bunch of rather breaking changes to already existing parts of my code. If you use any of my functions for your own tinkering, paying close attention to this changelog is recommended if you're interested in updating.
 
-All scripts have been updated to require `v2.0` as a minimum!
+- Added `class timer {` to quickly and easily build more complex timer functionality
+
+## > errorLog()
+- No longer takes a `backupVar` for every parameter instead **_requiring_** an `Error Object` to be passed into the function
+- Can now have an optional message that will appear on a new, tabbed line
+- Can now automatically generate a `tool.Cust()` tooltip from the passed in error object
+    - This parameter can have an object passed into it to generate a custom tooltip, or it will simply generate a default `tool.Cust()` tooltip that lasts `1.5s`
+- Can now automatically `throw` with the passed in Error Object
+
+## > settingsGUI()
+- Editor settings can now be accessed as separate GUIs through the menubar
+    - Removed the two edit controls to change prem/ae year from the main GUI
+    - These GUI windows offer the opportunity in the future to potentially support more than just one version of AE/Prem
+
+## > obj {
+Added a new class `obj {` to maintain a collection of wrapper functions designed to take normal ahk functions and return their VarRefs as objects instead
+
+- Added `obj.WinPos()`
+- Added `obj.ctrlPos()`
+- Added `obj.imgSrch()` using `checkImg()`
+- Moved `SplitPathObj()` and renamed to `obj.SplitPath()`
+    - Fixed all instances of scripts that use this function not having the proper `#Include`
+- Moved `getMousePos()` and renamed to `obj.MousePos()`
+
+## > clip {
+Added a new class `clip {` to maintain a collection of functions designed to manipulate the clipboard.  
+This class helps cut large chunks of repeated code when dealing with the clipboard and waiting for data to be copied.
+
+## > coord {
+- Added `coord.Client()` to set the pixel mode to `client`
+- Expanded functionality of all functions to accept a parameter to adjust what they want to target
 
 ## > Functions
-- Added `getHTMLTitle.ahk` to return the title of a passed url
-- Added `ae.wiggle()`
-- Added `startup.monitorAlert()` which will log the user's monitor setup and check for any changes so the user can be alerted as scripts may break due to changed pixel coordinates
-- Fixed `getHTML.ahk` not including proper `#Includes`
-- Added `openSocials()` to open the youtube/twitch of the current project client
-    - Added `openYoutube.ahk` & `openTwitch.ahk` as streamdeck scripts
-- Added `getMousePos()` to return `MouseGetPos()` VarRefs as an object
-- `getHotkeys()` `VarRefs` are now optional
-    - Also now returns an object
-- If `reload_reset_exit()` fails to reload, it will now read a registry value set during the ahk install process that contains the users default editor. If this value is for some reason **not** set, the function will default to VSCode before futher falling back to asking the user to select a new default editor.
-- `errorLog()` will now additionally send the error to `OutputDebug()`
-- `winget.FolderSize()` can now optionally return it's value in `MB`, `GB` & `TB`
-- `block.On()`/`block.Off()` can now simply act as wrapper functions and normal `BlockInput` parameters can be passed into either of them. Otherwise they will still perform their old default behaviour
+- Added `delaySI()` to send a string of `SendInput` commands spaced out with a custom delay
+- Added `allKeyUp()` to attempt to unstick as many keys as possible by looping through `ScanCodes` & `Virtual Key Codes`
+- Added `discord.surround()` to surround highlighted text with the desired characters
+    - Added a hotkey to make \` surround the highlighted text in \` in `Discord`
+- Fixed `block.On()` & `block.Off()` failing to do anything
+- Fixed `prem.zoom()` erroring out if client hasn't been defined yet
+- Removed `prem.num()` - it's old code that was superceeded by `prem.zoom()`
+- `checkImg()` changed to support all normal ImageSearch `ImageFile options`
+- `settingsGUI()` menu dropdown now follows darkmode setting
+- `getHTMLTitle()` will now replace some html strings with their respective characters
+- `prem.movepreview()` now uses the program window coordinates to get an initial position for the mouse
+- `startup.monitorAlert()` can now be muted for the current day
+- If `switchTo.AE()` encounters multiple `.aep` files in the project directory, it will now offer the user the ability to select which project to open instead of opening the first one it finds
 
-`fastWheel()`
-- Will now check for the state of `LButton` to allow for bulk highlighting
-- Will now only attempt to send the `focusCode` hotkey once every `5s` instead of every activation.
-
-`updateAHK()`
-- Now offers the user the ability to run the installer after download
-- Now uses the `_DLFile.ahk` lib so the user knows a download is taking place
-
-`resolve {`
-
-Cleaned up the entire class.
-
-- Cut a lot of repeat code by feeding it through a function
-- Removed KSA values relating to `ImageSearch` coordinates and replaced with class objects containing coordinates
-
-`prem {`
-- `prem.zoom()` will no longer produce multiple tooltips to alert the user that toggles are being reset
-- `preset()` will now loop attempting to get the `classNN` value in an attempt to fix it constantly failing
-
-`winget {`
-- Added `ProjClient()` to retrieve the name of the client the current project is for by stripping the directory path in the title
-    - `prem.zoom()` now uses `winget.ProjClient()` and references that value instead of hard coding for every client
-
-> `.PremName()/.AEName()`
-- 2nd and 3rd `VarRefs` are now optional and no longer required
-- All return paths that indicate an error/fail now pass back `false` so `if !winget.PremName()` works as expected
-
-## > My Scripts
-- Added a hotkey to disable `Tab` in `Premiere`
-- Added a hotkey to return `Ctrl + BackSpace` functionality to `Premiere` as adobe doesn't let you do so
-- Added a hotkey to make `+*` remap to `^i` in `Discord`
-- Added hotkeys to quickly move `12 frames` in either direction in `Premiere`
-- Added `&& !GetKeyState("F24")` to all Adobe `#HotIf` declarations as some hotkeys were stopping `QMK` hotkeys from firing
-- `AppsKey:: ;akhdocuHotkey;` will now attempt to pull up the local documentation before falling back to the online documentation
-- `SC03A & v:: ;premselecttoolHotkey;` will now activate the `program monitor` after the activating selection tool
-
-## > Streamdeck AHK
-- `New Premiere.ahk` now copies a template `.prproj` file instead of manually creating one
-- Added `thumbnail.ahk` that uses `ytDownload()` to download a videos thumbnail
-- Moved `speed` & `scale` scripts into their own folders
-    - `scale` scripts now work in `Resolve` as well as `Premiere`
+`winget.AEName()/winget.PremName()`
+- `AEName()` Updated to have complete feature parity with `winget.PremName()`
+- Can now return objects containing all the variables instead of only requiring VarRefs
+    - All `VarRefs` are now optional to help accommodate this
+- `saveCheck` variable now returns a `boolean value` instead of a `string`
+- If the desired window can't be found, the variables will now return `unset` instead of as empty strings
 
 `ytDownload()`
-- Fixed bug relating to incorrect filepath variable
-- Fixed bug causing function to activate premiere instead of explorer
-- Fixed bug causing download to fail if attempting to set the download url from the old clipboard
-- Will now automatically convert downloaded mkv to mp4 files using `convert2`
-    - Changed args for `video.ahk` and `vfx.ahk`
+- Now allows the user to pass an object to define if they want the function to convert the downloaded filetype to another filetype
+- Can now properly handle `yt shorts` links
+- Adjusted passed `args` of `vfx.ahk` & `video.ahk`
+
+## > checklist.ahk
+- Entire script has been refactored to make use of `class timer {`
+    - `checklistTimer {`, `checklistLog {` & `checklistReminder {` have been created to extend off the base class
+- `H:` float will now **always** show `3dp` even if the current hour value is a whole integer.
+    > old: `H: 1.0 M: 0 S: 0` => new: `H: 1.000 M: 0 S: 0`
+- Using `-sub`/`+add` is now instant and no longer requires 1s to process
+- Added functions `checkTooltips()` & `checkDark()` to return settings relating to both instead of cluttering the main script with code
+
+## > autosave.ahk
+- Fix erroring out if Premiere itself autosaves automatically before `autosave.ahk` can
+- Will no longer block mouse movements during a save attempt, will simply block any keyboard/mouse inputs
 
 ## > Other Changes
-- `prem.mouseDrag()` & `right click premiere` no longer stop each other with their tooltips
-- `CreateSymLink.ahk` now attempts to backup the lib folder if it already exists
-
-`autosave.ahk`
-- Will now check if `Premiere/AE` is not responding and will reset the timer if true
-- Will now check to ensure that `{RButton}` & `\` aren't being held down before performing a save attempt
+- `tomshiBasic()` now creates a hidden button to force focus to it instead of the first user defined ctrl
+- `adobe fullscreen check.ahk` now uses `timer {`
+- QMK `open dir of current project` now uses `winget.AEName()/winget.PremName()`
+- `startup.updateAHK()` will no longer run the download directory if `Run installer after download?` is selected
+- Restored the original `fastWheel()` function from `Release v2.7.0.1`
+    - Moved Premiere `F14::` hotkeys to the bottom of `My Scripts.ahk` as they were the cause of my issues

@@ -90,12 +90,12 @@ menuTooltips(*)
 
     restart()
     {
-        forFile := Round(ElapsedTime / 3600, 3)
-        IniWrite(ElapsedTime, checklist, "Info", "time")
+        forFile := Round(timer.Count / 3600, 3)
+        IniWrite(timer.Count, checklist, "Info", "time")
         newDate(&today)
-        FileAppend("\\ The checklist tooltip setting was changed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " ElapsedTime "`n", logs)
-        SetTimer(StopWatch, 0)
-        SetTimer(reminder, 0)
+        FileAppend("\\ The checklist tooltip setting was changed : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after closing = " forFile " -- seconds at close = " timer.Count "`n", logs)
+        timer.stop()
+        timer.reminder.stop()
         MsgBox("checklist.ahk will need to be reloaded for changes to this setting to take effect", "Warning")
     }
 }
@@ -249,7 +249,7 @@ hours(*)
     endpos := InStr(readLog, "-",, findHours, 1)
     startHours := SubStr(readLog, findHours + 22, (endpos - 1) - (findHours + 22))
 
-    currentHours := floorDecimal(ElapsedTime / 3600, 3)
+    currentHours := floorDecimal(timer.Count / 3600, 3)
     workedToday := floorDecimal(currentHours - startHours, 3)
     if workedToday <= 0
         workedToday := 0
@@ -371,7 +371,7 @@ openProj(*)
         WinGet.PremName(&premCheck, &titleCheck, &saveCheck)
     else if WinExist(Editors.AE.winTitle)
         {
-            WinGet.AEName(&aeCheck, &aeSaveCheck)
+            WinGet.AEName(&aeCheck,, &aeSaveCheck)
             premCheck := aeCheck
         }
     if WinExist(projDir,, premCheck)

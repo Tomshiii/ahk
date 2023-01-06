@@ -3,22 +3,25 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2022/12/26
- * @version v2.8.3
- * @ahk_ver 2.0.0
+ * @date 2023/01/06
+ * @version v2.9
+ * @ahk_ver 2.0.2
  ***********************************************************************/
 
 ;\\CURRENT RELEASE VERSION
 global MyRelease := getLocalVer()
 
+;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
+;\\v2.27.1
+
 #SingleInstance Force
-SetWorkingDir(ptf.rootDir) ;sets the scripts working directory to the directory it's launched from
-SetNumLockState("AlwaysOn") ;sets numlock to always on (you can still it for macros)
-SetCapsLockState("AlwaysOff") ;sets caps lock to always off (you can still it for macros)
-SetScrollLockState("AlwaysOff") ;sets scroll lock to always off (you can still it for macros)
-SetDefaultMouseSpeed(0) ;sets default MouseMove speed to 0 (instant)
-SetWinDelay(0) ;sets default WinMove speed to 0 (instant)
-A_MaxHotkeysPerInterval := 400 ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
+SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
+SetNumLockState("AlwaysOn")            ;sets numlock to always on (you can still it for macros)
+SetCapsLockState("AlwaysOff")          ;sets caps lock to always off (you can still it for macros)
+SetScrollLockState("AlwaysOff")        ;sets scroll lock to always off (you can still it for macros)
+SetDefaultMouseSpeed(0)                ;sets default MouseMove speed to 0 (instant)
+SetWinDelay(0)                         ;sets default WinMove speed to 0 (instant)
+A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 ; { \\ #Includes
@@ -36,6 +39,8 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Classes\Move>
 #Include <Classes\winget>
 #Include <Classes\Startup>
+#Include <Classes\obj>
+#Include <Classes\clip>
 #Include <Functions\reload_reset_exit>
 #Include <Functions\errorLog>
 #Include <Functions\mouseDrag>
@@ -45,17 +50,13 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
 #Include <Functions\getHotkeys>
+#Include <Functions\allKeyUp>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
-;#Include right click premiere.ahk ; this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
+;#Include right click premiere.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 #Requires AutoHotkey v2.0
-
-;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.25.9
-;\\Current QMK Keyboard Version\\At time of last commit
-;\\v2.13.4
 
 ; ============================================================================================================================================
 ;
@@ -128,10 +129,12 @@ F12::KeyHistory  ;debugging
 ;hardresetHotkey;
 #+^r::reload_reset_exit("reset") ;this will hard rerun all active ahk scripts
 
+;unstickKeysHotkey;
+#F11::allKeyUp() ;this function will attempt to unstick as many keys as possible
 ;panicExitHotkey;
 #F12::reload_reset_exit("exit") ;this is a panic button and will shutdown all active ahk scripts
 ;panicExitALLHotkey;
-#+F12::reload_reset_exit("exit", true) ;this is a panic button and will shutdown all active ahk scripts
+#+F12::reload_reset_exit("exit", true) ;this is a panic button and will shutdown all active ahk scripts INCLUDING the checklist.ahk script
 
 ;settingsHotkey;
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI
@@ -187,7 +190,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 			}
 			catch as e {
 				tool.Cust(A_ThisFunc "() failed to get the monitor that the active window is in")
-				errorLog(e, A_ThisFunc "()")
+				errorLog(e)
 				break
 			}
 		}
@@ -205,8 +208,8 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	monitor := getMonitor() ;now we run the above function we created
 	if !IsObject(monitor) || !IsSet(monitor)
 		{
-			tool.Cust("Failed to get information about the window/monitor relationship`nThe window may be overlapping monitors")
-			errorLog(, A_ThisHotkey "::", "Failed to get information about the window/monitor relationship", A_LineFile, A_LineNumber)
+			errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1, monitor)
+						, "The window may be overlapping monitors", 1)
 			return
 		}
 	if win = "" ;if our win variable doesn't have a title yet we run this code block
@@ -330,7 +333,7 @@ AppsKey::
 	 * @param {String} command is what you want to search for in the docs
 	 */
 	LinkClicked(command, search := true) {
-		path := SplitPathObj(A_AhkPath)
+		path := obj.SplitPath(A_AhkPath)
 		;// hopefully this never has to fire as browsers are unpredictable and there's no easy way to wait for things to load
         if !FileExist(chm := path.dir '\AutoHotkey.chm')
 			{
@@ -397,6 +400,8 @@ F21::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 ;showmoreHotkey;
 F18:: ;open the "show more options" menu in win11
 {
+	;// I think I may have just changed my registry to always pull up the old menu within windows
+	;// and so I don't ever use this hotkey anymore and can't guarantee it even still functions
 	;Keep in mind I use dark mode on win11. Things will be different in light mode/other versions of windows
 	MouseGetPos(&mx, &my)
 	wingetPos(,, &width, &height, "A")
@@ -429,12 +434,6 @@ F18:: ;open the "show more options" menu in win11
 		{
 			;tool.Cust(colour "`n colour1&2 fired") ;for debugging
 			SendInput("{Click}")
-			SendInput("{Esc}" "+{F10}")
-			return
-		}
-	else if (colour = colour3 || colour = colour4)
-		{
-			;tool.Cust(colour "`n colour3&4 fired") ;for debugging
 			SendInput("{Esc}" "+{F10}")
 			return
 		}
@@ -501,7 +500,7 @@ Media_Play_Pause:: ;pauses youtube video if there is one.
 					WinActivate(title) ;reactivates the original window
 				} catch as e {
 					tool.Cust("Failed to get information on last active window")
-					errorLog(e, A_ThisHotkey "::")
+					errorLog(e)
 				}
 				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
 				return
@@ -583,7 +582,12 @@ SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering 
 ^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 ;discitalicHotkey;
-+*::^i ;+* in VSCode is how you encase something in * which I do in .md stuff to italisise it. I sometimes try to do this in discord oops
++*::discord.surround("*")
+;discBacktickHotkey;
+`::discord.surround("``")
+;discParenthHotkey;
+(::
+)::discord.surround("()")
 
 ;discserverHotkey;
 F1::discord.Unread() ;will click any unread servers
@@ -663,8 +667,7 @@ Ctrl & BackSpace::
 	getHotkeys(, &second)
 	KeyWait(second)
 	sendLeft()
-	storeClip := ClipboardAll()
-	A_Clipboard := ""
+	store := clip.clear()
 	Send("^c")
 	if !ClipWait(0.1) || check := (StrLen(A_Clipboard) = 1) ? 1 : 0
 		{
@@ -685,7 +688,7 @@ Ctrl & BackSpace::
 				Send("{Delete}")
 		}
 	Send("{BackSpace}")
-	A_Clipboard := storeClip
+	clip.returnClip(store.storedClip)
 }
 
 ;premzoomoutHotkey;
@@ -703,7 +706,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
     } catch as e {
         tool.Cust("Couldn't find the ClassNN value")
-        errorLog(e, A_ThisHotkey "::")
+        errorLog(e)
     }
 	;MouseMove 34, 917 ;location of the selection tool
 	if width = 0 || height = 0
@@ -714,8 +717,8 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 				if A_Index > 3
 					{
 						SendInput(selectionPrem)
-						tool.Cust("Couldn't get dimensions of the class window`nUsed the selection hotkey instead", 2000)
-						errorLog(, A_ThisHotkey "::", "Couldn't get dimensions of the class window (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
+						errorLog(UnsetError("Couldn't get dimensions of the class window", -1)
+									, "Used the selection hotkey instead", 1)
 						return
 					}
 				sleep 100
@@ -739,8 +742,8 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 			{
 				SendInput(selectionPrem)
 				SendInput(programMonitor)
-				tool.Cust("selection tool`nUsed the selection hotkey instead", 2000, 1) ;useful tooltip to help you debug when it can't find what it's looking for
-				errorLog(, A_ThisHotkey "::", "Couldn't find the selection tool (premiere is a good program), used the selection hotkey instead", A_LineFile, A_LineNumber)
+				errorLog(Error("Couldn't find the selection tool", -1)
+							, "Used the selection hotkey instead", 1)
 				return
 			}
 	}
@@ -785,13 +788,12 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			if A_Index > 5
 				{
 					;tool.Cust("Function failed to find project window")
-					;errorLog(, A_ThisHotkey "::", "Function failed to find ClassNN value that wasn't the timeline", A_LineNumber)
 					break
 				}
 		}
 	} catch as e {
 			tool.Cust("Function failed to find project window")
-			errorLog(e, A_ThisHotkey "::")
+			errorLog(e)
 			return
 		}
 	;MsgBox("x " toolx "`ny " tooly "`nwidth " width "`nheight " height "`nclass " ClassNN) ;debugging
@@ -807,12 +809,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				if ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
 					goto move
 				else
-					throw Error e
+					throw Error("Couldn't find the project window", -1)
 			}
-	} catch as e {
+	} catch Error as e {
 		block.Off()
-		tool.Cust("Couldn't find the project window`nIf this happens consistently, it may be an issue with premiere")
-		errorLog(e, A_ThisHotkey "::")
+		errorLog(e, "If this happens consistently, it may be an issue with premiere", 1)
 		return
 	}
 	move:
@@ -839,8 +840,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			if !WinActive("_Editing Stuff")
 				{
 					block.Off()
-					tool.Cust("activating the editing folder failed", 2000, 1)
-					errorLog(, A_ThisHotkey "::", "activating the editing folder failed", A_LineFile, A_LineNumber)
+					errorLog(TargetError("Activating the editing folder failed", -1),, 1)
 					return
 				}
 		}
@@ -870,8 +870,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		if A_Index > 50
 			{
 				block.Off()
-				tool.Cust("the sfx folder", 2000, 1)
-				errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Windows Explorer", A_LineFile, A_LineNumber)
+				errorLog(TargetError("Couldn't find the sfx folder in Windows Explorer", -1),, 1)
 				return
 			}
 	}
@@ -896,8 +895,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	if !ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj.png") && !ImageSearch(&fold2x, &fold2y, 10, 3, 1038, 1072, "*2 " ptf.Premiere "sfxinproj2.png")
 		{
 			block.Off()
-			tool.Cust("the sfx folder in premiere", 2000, 1)
-			errorLog(, A_ThisHotkey "::", "Couldn't find the sfx folder in Premiere Pro", A_LineFile, A_LineNumber)
+			errorLog(TargetError("Couldn't find the sfx folder in Premiere Pro", -1),, 1)
 			return
 		}
 	MouseMove(fold2x + "5", fold2y + "2")
@@ -916,8 +914,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		if A_Index > 5
 			{
 				block.Off()
-				tool.Cust("the bin", 2000, 1)
-				errorLog(, A_ThisHotkey "::", "Couldn't find the bin", A_LineFile, A_LineNumber)
+				errorLog(TargetError("Couldn't find the bin", -1),, 1)
 				return
 			}
 	}
@@ -951,12 +948,6 @@ F21::prem.wheelEditPoint(previousEditPoint) ;goes to the next edit point towards
 F23::prem.wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
 ;playstopHotkey;
 F18::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse button
-;nudgeupHotkey;
-F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
-;slowDownHotkey;
-F14 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
-;speedUpHotkey;
-F14 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
 ;nudgedownHotkey;
 Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 ;mousedrag1Hotkey;
@@ -969,7 +960,7 @@ Xbutton2::prem.mousedrag(handPrem, selectionPrem) ;changes the tool to the hand 
 ;auto excecuting stuff will no longer function below this^ include
 
 ;bonkHotkey;
-F19::prem.audioDrag("bonk") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
+F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 ;bleepHotkey;
 F20::prem.audioDrag("bleep")
 
@@ -1003,7 +994,7 @@ RButton::move.Window("") ;minimise
 				return "Active window now on top`n" '"' title '"'
 		} catch as e {
 			tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
-			errorLog(e, A_ThisFunc "()")
+			errorLog(e)
 			Exit()
 		}
 
@@ -1015,32 +1006,19 @@ RButton::move.Window("") ;minimise
 ;searchgoogleHotkey;
 ^+c:: ;runs a google search of highlighted text
 {
-	previous := ClipboardAll()
-	A_Clipboard := "" ;clears the clipboard
-	Send("^c")
-	if !ClipWait(1) ;waits for the clipboard to contain data
-		{
-			tool.Cust("Couldn't copy data to clipboard")
-			errorLog(, A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
-			return
-		}
+	store := clip.clear()
+	if !clip.copyWait(store.storedClip)
+		return
 	Run("https://www.google.com/search?d&q=" A_Clipboard)
-	A_Clipboard := previous
+	clip.returnClip(store.storedClip)
 }
 
 ;capitaliseHotkey;
 SC03A & c:: ;will attempt to determine whether to capitilise or completely lowercase the highlighted text depending on which is more frequent
 {
-	previous := ClipboardAll()
-	A_Clipboard := "" ;clears the clipboard
-	Send("^c")
-	if !ClipWait(1) ;waits for the clipboard to contain data
-		{
-			A_Clipboard := previous
-			tool.Cust("Couldn't copy data to clipboard")
-			errorLog(, A_ThisHotkey "::", "couldn't copy data to clipboard", A_LineFile, A_LineNumber)
-			return
-		}
+	store := clip.clear()
+	if !clip.copyWait(store.storedClip)
+		return
 	length := StrLen(A_Clipboard)
 	/* if length > 9999 ;personally I started encountering issues at about 16k characters but I'm dropping that just to be safe
 		{
@@ -1068,16 +1046,17 @@ SC03A & c:: ;will attempt to determine whether to capitilise or completely lower
 		StringtoX := StrUpper(A_Clipboard)
 	else
 		{
-			A_Clipboard := previous
-			tool.Cust("Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
+			clip.returnClip(store.storedClip)
+			msg := "Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount
+			errorLog(Error(msg, -1),, {time: 2.0})
 			return
 		}
 	SendInput("{BackSpace}")
 	A_Clipboard := ""
 	A_Clipboard := StringtoX
-	ClipWait(1)
+	clip.Wait(store.storedClip)
 	SendInput("{ctrl down}v{ctrl up}")
-	SetTimer(() => A_Clipboard := previous, -1000)
+	clip.delayReturn(store.storedClip)
 }
 
 ;timeHotkey;
@@ -1114,3 +1093,18 @@ F19 & XButton1::SendInput("^#{Left}")
 F21::youMouse("j", "{Left}")
 ;youskipforHotkey;
 F23::youMouse("l", "{Right}")
+
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;
+;		Premiere F14 scripts
+;
+;---------------------------------------------------------------------------------------------------------------------------------------------
+;// having these scripts above with the other premiere scripts caused `wheelupHotkey` and `wheeldownHotkey` to lag out and cause windows beeping
+;// thanks ahk :)
+#HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
+;nudgeupHotkey;
+F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
+;slowDownHotkey;
+F14 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
+;speedUpHotkey;
+F14 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons

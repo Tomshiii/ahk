@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2022/12/24
- * @version 1.0.8.2
+ * @date 2023/01/06
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,7 +23,7 @@
 
 class Startup {
     /**
-     * Checks to see if the script was reloaded
+     * Checks to see if the script was reloaded.
      */
     static isReload() => DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
 
@@ -32,7 +32,7 @@ class Startup {
      *
      * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
      *
-     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
+     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static generate(MyRelease) {
         if this.isReload() ;checks if script was reloaded
@@ -81,19 +81,21 @@ class Startup {
                 }
         }
 
-        ;//
+        ;// checking to see if the settings folder location exists & if not, creates it
         if !DirExist(ptf.SettingsLoc)
             DirCreate(ptf.SettingsLoc)
         if FileExist(ptf["settings"])
             {
                 ver := IniRead(ptf["settings"], "Track", "version")
-                if !VerCompare(MyRelease, ver) > 0 ;do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
+                ;//! do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
+                if !VerCompare(MyRelease, ver) > 0
                     return
 
                 ;WARNING THE USER OF SETTINGS CHANGES
                 if VerCompare(MyRelease, "v2.5.1") > 0 && VerCompare(MyRelease, "v2.5.2") <= 0 ; v2.5.2 brought changes to settings.ini and will reset some values to default
                     tool.Cust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
             }
+        ;// checking to see if the users OS version is high enough to support dark mode
         if VerCompare(A_OSVersion, "10.0.17763") < 0
             darkVerCheck := "disabled"
         else
@@ -111,8 +113,8 @@ class Startup {
         AUTOMIN         := IniRead(ptf["settings"], "Adjust",   "autosave MIN"             , 5)
         GAMESEC         := IniRead(ptf["settings"], "Adjust",   "game SEC"                 , 2.5)
         MULTI           := IniRead(ptf["settings"], "Adjust",   "multi SEC"                , 5)
-        PREMYEAR        := IniRead(ptf["settings"], "Adjust",   "prem year"                , A_Year)
-        AEYEAR          := IniRead(ptf["settings"], "Adjust",   "ae year"                  , A_Year)
+        PREMYEARVER     := IniRead(ptf["settings"], "Adjust",   "prem year"                , "2022")
+        AEYEARVER       := IniRead(ptf["settings"], "Adjust",   "ae year"                  , "2022")
         premVer         := IniRead(ptf["settings"], "Adjust",   "premVer"                  , "v22.3.1")
         aeVer           := IniRead(ptf["settings"], "Adjust",   "aeVer"                    , "v22.6")
         psVer           := IniRead(ptf["settings"], "Adjust",   "psVer"                    , "v24.0.1")
@@ -120,6 +122,8 @@ class Startup {
         ADOBE           := IniRead(ptf["settings"], "Track",    "adobe temp"               , "")
         WORK            := IniRead(ptf["settings"], "Track",    "working dir"              , "E:\Github\ahk")
         FC              := IniRead(ptf["settings"], "Track",    "first check"              , "false")
+        BLOCKAWARE      := IniRead(ptf["settings"], "Track",    "block aware"              , "false")
+        MONITORALERT    := IniRead(ptf["settings"], "Track",    "monitor alert"            , "0")
         deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
         if FileExist(ptf["settings"])
             FileDelete(ptf["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
@@ -152,8 +156,10 @@ class Startup {
             adobe temp={}
             working dir={}
             first check={}
+            block aware={}
+            monitor alert={}
             version={}
-        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEAR, AEYEAR, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, MyRelease)
+        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
         , ptf["settings"])
     }
 
@@ -163,7 +169,7 @@ class Startup {
      * Which branch the user wishes to check for (either beta, or main releases) can be determined by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`)
      *
      * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
-    * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
+    * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static updateChecker(MyRelease) {
         if this.isReload() ;checks if script was reloaded
@@ -189,23 +195,17 @@ class Startup {
             tool.Cust("You are currently up to date", 2000)
         switch check {
             default:
-                tool.Cust("You put something else in the settings.ini file you goose")
-                errorLog(, A_ThisFunc "()", "You put something else in the settings.ini file you goose", A_LineFile, A_LineNumber)
+                errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, check),, 1)
                 return
             case "false":
                 tool.Wait()
                 if VerCompare(MyRelease, version) < 0
                     {
-                        tool.Cust("You're using an outdated version of these scripts", 3.0)
-                        errorLog(, A_ThisFunc "()", "You're using an outdated version of these scripts", A_LineFile, A_LineNumber)
+                        errorLog(Error("User is using an outdated version of these scripts", -1, version),, {time: 3.0})
                         return
                     }
-                else
-                    {
-                        tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
-                        errorLog(, A_ThisFunc "()", "This script will not prompt you when a new version is available", A_LineFile, A_LineNumber)
-                        return
-                    }
+                tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
+                return
             case "true":
                 if VerCompare(MyRelease, version) >= 0
                     return
@@ -417,7 +417,7 @@ class Startup {
                             g.Destroy()
                     } catch as e {
                         tool.Cust("There was an error trying to backup your current scripts", 2000)
-                        errorLog(e, A_ThisFunc "()")
+                        errorLog(e)
                     }
                     return
                 }
@@ -430,7 +430,7 @@ class Startup {
 
     /**
      * This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
-     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
+     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static firstCheck(MyRelease) {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
@@ -541,7 +541,7 @@ class Startup {
      * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
      *
      * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
-     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
+     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static adobeTemp(MyRelease) {
         if this.isReload()
@@ -803,18 +803,19 @@ class Startup {
                 tool.Cust("A new version of AHK is available")
                 return
             }
-        check := MsgBox("A new version of AHK is available`n`nDo you wish to download it?", "AHK - v" latestVer, "4 32 4096")
-        if check = "No"
-            return
+        marg := 8
+        ;// define gui
         mygui := tomshiBasic(,,, "AHK v" latestVer " available")
         mygui.AddText(, "A newer version of AHK (v" latestVer ") is available`nDo you wish to download it?")
 
-        runafter := mygui.Add("Checkbox",, "Run installer after download?")
+        ;// run installer checkbox
+        runafter := mygui.Add("Checkbox", "Section y+10 x" marg, "Run after download?")
         checkboxValue := 0
         runafter.OnEvent("Click", checkVal)
-        yesButt := mygui.Add("Button",, "Yes")
+        ;// buttons
+        yesButt := mygui.Add("Button", "ys-10 x+25", "Yes")
         yesButt.OnEvent("Click", downahk)
-        nobutt := mygui.Add("Button", "x+15", "No")
+        nobutt := mygui.Add("Button", "x+5", "No")
         nobutt.OnEvent("Click", noclick)
 
         mygui.Show()
@@ -876,7 +877,6 @@ class Startup {
                 If o.perc = 100
                     {
                         g["Cancel"].Text := "Exit"
-                        Run(dest)
                         g.Hide()
                     }
             }
@@ -928,9 +928,26 @@ class Startup {
         ;// if something has changed alert the user
         if (readCount != MonitorCount) || (readPrimary != MonitorPrimary)
             {
-                check := MsgBox("It appears like your monitor layout has changed, either by your own doing, or windows`nThis may mess with any pixel coordinates you use for scripts.`n`nDo you want your current layout to be remembered instead?", "Monitor layout changed", "4 32 4096")
-                if check = "No"
+                if IniRead(ptf["settings"], "Track", "monitor alert", 0) = A_YDay
                     return
+                ignoreToday() {
+                    if !WinExist("Monitor layout changed")
+                        return
+                    SetTimer(, 0)
+                    WinActivate
+                    ControlSetText("&Yes", "Button1")
+                    ControlSetText("&No", "Button2")
+                    ControlSetText("&Mute Alert", "Button3")
+                }
+                SetTimer(ignoreToday, 16)
+                check := MsgBox("It appears like your monitor layout has changed, either by your own doing, or windows`nThis may mess with any pixel coordinates you use for scripts.`n`nDo you want your current layout to be remembered instead?`n`nAlternatively you can mute this alert for today.", "Monitor layout changed", "2 32 4096")
+                switch check {
+                    case "No":
+                        return
+                    case "Cancel":
+                        IniWrite(A_YDay, ptf["settings"], "Track", "monitor alert")
+                        return
+                }
                 save := true
                 ;// log new values
                 IniWrite(MonitorCount, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")

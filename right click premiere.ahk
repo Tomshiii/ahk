@@ -13,7 +13,7 @@ CoordMode("Pixel", "screen")
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\ptf>
-#Include <Functions\SplitPathObj>
+#Include <Classes\obj>
 #Include <Functions\errorLog>
 ; }
 
@@ -100,13 +100,13 @@ Rbutton::
 				SetTimer(tools, -100)
 				tools() {
 					tool.Wait()
-					script := SplitPathObj(A_LineFile)
+					script := obj.SplitPath(A_LineFile)
 					tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 2.0)
 				}
             } catch as e {
                 tool.Wait()
                 tool.Cust("Couldn't find the ClassNN value")
-                errorLog(e, "right click premiere.ahk")
+                errorLog(e)
                 goto skip
             }
         }
