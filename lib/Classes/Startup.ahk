@@ -23,7 +23,7 @@
 
 class Startup {
     /**
-     * Checks to see if the script was reloaded
+     * Checks to see if the script was reloaded.
      */
     static isReload() => DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
 
@@ -32,7 +32,7 @@ class Startup {
      *
      * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
      *
-     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
+     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static generate(MyRelease) {
         if this.isReload() ;checks if script was reloaded
@@ -81,19 +81,21 @@ class Startup {
                 }
         }
 
-        ;//
+        ;// checking to see if the settings folder location exists & if not, creates it
         if !DirExist(ptf.SettingsLoc)
             DirCreate(ptf.SettingsLoc)
         if FileExist(ptf["settings"])
             {
                 ver := IniRead(ptf["settings"], "Track", "version")
-                if !VerCompare(MyRelease, ver) > 0 ;do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
+                ;//! do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
+                if !VerCompare(MyRelease, ver) > 0
                     return
 
                 ;WARNING THE USER OF SETTINGS CHANGES
                 if VerCompare(MyRelease, "v2.5.1") > 0 && VerCompare(MyRelease, "v2.5.2") <= 0 ; v2.5.2 brought changes to settings.ini and will reset some values to default
                     tool.Cust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
             }
+        ;// checking to see if the users OS version is high enough to support dark mode
         if VerCompare(A_OSVersion, "10.0.17763") < 0
             darkVerCheck := "disabled"
         else
@@ -167,7 +169,7 @@ class Startup {
      * Which branch the user wishes to check for (either beta, or main releases) can be determined by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`)
      *
      * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
-    * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
+    * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static updateChecker(MyRelease) {
         if this.isReload() ;checks if script was reloaded
@@ -428,7 +430,7 @@ class Startup {
 
     /**
      * This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
-     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
+     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static firstCheck(MyRelease) {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
@@ -539,7 +541,7 @@ class Startup {
      * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
      *
      * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
-     * @param MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
+     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static adobeTemp(MyRelease) {
         if this.isReload()

@@ -27,8 +27,8 @@ class obj {
      * script.NameNoExt  ; My Scripts
      * script.Drive      ; E:
      * ```
-     * @param {any} Path is the input path that will be split
-     * @returns {object} `x.path` | `x.name` | `x.dir` | `x.ext` | `x.namenoext` | `x.drive`
+     * @param {String} Path is the input path that will be split
+     * @returns {Object} `x.path` | `x.name` | `x.dir` | `x.ext` | `x.namenoext` | `x.drive`
      */
     static SplitPath(Path) {
         SplitPath(Path, &Name, &Dir, &Ext, &NameNoExt, &Drive)
@@ -54,11 +54,11 @@ class obj {
 
     /**
      * This function acts as a wrapper for `WinGetPos()` to return its VarRefs as an object instead
-     * @param {string} winTitle is the winTitle you wish to get the position of, this will default to the active window
+     * @param {String} winTitle is the winTitle you wish to get the position of, this will default to the active window
      * @param {String} winText is the winText of the window
      * @param {String} exTitle the title of any window you wish to exclude
      * @param {String} exText the text of any window you wish to exclude
-     * @returns {object} contains an object of all standard WinGetPos VarRefs
+     * @returns {Object} contains an object of all standard WinGetPos VarRefs
      * ```
      * window := obj.WinPos()
      * window.x

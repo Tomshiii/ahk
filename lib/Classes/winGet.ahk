@@ -16,7 +16,7 @@
 class WinGet {
     /**
      * This function will grab the monitor that the mouse is currently within and return it as well as coordinate information in the form of a function object. ie if your mouse is within monitor 1 having code `monitor := getMouseMonitor()` would make `monitor.monitor` = 1
-     * @returns {object} containing the monitor number, the left/right/top/bottom pixel coordinate
+     * @returns {Object} containing the monitor number, the left/right/top/bottom pixel coordinate
      */
     static MouseMonitor()
     {
@@ -69,7 +69,7 @@ class WinGet {
 
     /**
      * This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
-     * @param {var} title is the active window, this function will populate the `title` variable with the active window
+     * @param {VarRef} title is the active window, this function will populate the `title` variable with the active window
      * @param {String} window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
      */
     static isFullscreen(&title?, window := false)
@@ -186,7 +186,7 @@ class WinGet {
 
     /**
      * This function will grab the proccess ID of the current active window
-     * @param {var} id is the processname of the active window, we want to pass this value back to the script
+     * @param {VarRef} id is the processname of the active window, we want to pass this value back to the script
      */
     static ID(&id)
     {
@@ -206,7 +206,7 @@ class WinGet {
      * A function that returns the path of an open explorer window
      *
      * Original code found here by svArtist: https://www.autohotkey.com/boards/viewtopic.php?p=422751#p387113
-     * @param {number} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
+     * @param {Integer} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
      * @returns {String} the directory path of the explorer window
      */
     static ExplorerPath(hwnd := 0)

@@ -55,6 +55,11 @@ class ptf {
     static ProgFi32          := "C:\Program Files (x86)"
 
     ;variables
+    /**
+     * This function converts the version number into its year value
+     * ie; `v22.3.1` => `22`
+     * @param {String} version is the version number of desired adobe program
+     */
     static adobeYear(version) {
         return SubStr(version, 2, 2)
     }
@@ -63,6 +68,7 @@ class ptf {
 
     /**
      * A little function to return the proper folder for the version of premiere/ae the user is using.
+     * @param {String} which is which editor the function is operating on
      */
     static trimAdobeYear(which) {
         switch which {

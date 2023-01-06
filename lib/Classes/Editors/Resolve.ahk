@@ -26,6 +26,9 @@ class Resolve {
     static class := Editors.Resolve.class
     static path := ptf.ProgFi "\Blackmagic Design\DaVinci Resolve\Resolve.exe"
 
+    /**
+     * This nested class is simply to store coordinate ranges for imagesearches for certain UI elements of resolve. This makes it easier for another user to come along and adjust them if they don't quite line up with their setup
+     */
     class open {
         ;// setting imagesearch coordinates
 

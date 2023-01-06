@@ -10,6 +10,10 @@
 ; }
 
 class block {
+    /**
+     * This function is designed to be internal to the class and isn't intended to be manually called. It checks the users custom input settings to make sure they're a usable option. This function will also alert the user about the intricacies of using `BlockInput("On"/"Off")`
+     * @param {String} args is the users passed in custom option
+     */
     inputs(args) {
         choices := ["send", "mouse", "sendandmouse", "default", "on", "mousemove", "mousemoveoff", "off"]
         if args = "on" || args = "off"
@@ -38,12 +42,14 @@ class block {
         }
         BlockInput(args)
     }
+
     /**
-     * By default this function will blocks all user inputs (`BlockInput("On")`).
+     * By default this function will blocks all user inputs (`BlockInput("SendAndMouse") & BlockInput("MouseMove")`).
      *
      * Otherwise pass `send`, `mouse`, `sendandmouse`, `default`, `on` or `mousemove`
      *
      * *[IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (WIN + SHIFT + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]*
+     * @param {String} option? is the desired block mode. If this parameter is omitted `BlockInput("SendAndMouse") & BlockInput("MouseMove")` will be enabled
      */
     static On(option?) {
         if !IsSet(option)
@@ -57,7 +63,10 @@ class block {
     }
 
     /**
-     * This function by default will unblock all user input
+     * This function by default will unblock all user input (`BlockInput("Default") & BlockInput("MouseMoveOff")`).
+     *
+     * Otherwise pass `mousemoveoff`, `off`
+     * @param {String} option? is the desired block mode the user wishes to disable. If this parameter is omitted `BlockInput("Default") & BlockInput("MouseMoveOff")` will be disabled
      */
     static Off(option?) {
         if !IsSet(option)

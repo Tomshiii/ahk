@@ -1,8 +1,19 @@
+/************************************************************************
+ * @description A class to make dealing with a timer easier to use and expand on.
+ * @author lexikos, tomshi
+ * @date 2023/01/06
+ * @version 1.0.0
+ ***********************************************************************/
 ;// based on code found: https://www.autohotkey.com/docs/v2/lib/SetTimer.htm#ExampleClass
 
+/**
+ * A class to make dealing with a timer easier to use and expand on.
+ * @param {Integer} repeat the interval in `ms` you want the timer to count in. Alternatively, pass a float (1.0) if you wish to pass in `sec`
+ */
 class count {
+
     /**
-     * @params {Integer} repeat the interval in `ms` you want the timer to count in. Alternatively, pass a float (1.0) if you wish to pass in `sec`
+     * @param {Integer} repeat the interval in `ms` you want the timer to count in. Alternatively, pass a float (1.0) if you wish to pass in `sec`
      */
     __New(repeat := 1000) {
         if !IsInteger(repeat) && IsFloat(repeat) ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500

@@ -11,7 +11,9 @@
 
 class coord {
     /**
-     * A function to do some basic error checking & cut repeat code
+     * A function to do some basic error checking & cut repeat code. This function is designed to be internal to the class and isn't intended to be manually called.
+     * @param {String} target is the passed in `target` parameter of `CoordMode`
+     * @param {Boolean} mouse is the passed in boolean dictating if the user wants the function to adjust the mouse to screen as well
     */
    errorChecks(target, mouse?) {
         targets := ["tooltip", "pixel", "mouse", "caret", "menu"]
