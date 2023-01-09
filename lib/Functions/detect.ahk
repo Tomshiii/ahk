@@ -10,7 +10,7 @@
  * ```
  */
 detect(windows := true, title := 2) {
-    Windows := A_DetectHiddenWindows, Title := A_TitleMatchMode
+    origWindows := A_DetectHiddenWindows, origTitle := A_TitleMatchMode
     DetectHiddenWindows(windows), SetTitleMatchMode(title)
-    return {Windows: Windows, Title: Title}
+    return {Windows: origWindows, Title: origTitle}
 }
