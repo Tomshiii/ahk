@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord
  * @author tomshi
- * @date 2023/01/01
- * @version 1.1.2
+ * @date 2023/01/09
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -47,7 +47,6 @@ class discord {
         yheight := 400
         getHotkeys(&first, &second)
         KeyWait(first) ;use A_PriorKey when you're using 2 buttons to activate a macro
-        coord.w()
         MouseGetPos(&x, &y)
         WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
         ;MsgBox("x " nx "`ny " ny "`nwidth " width "`nheight " height) ;testing
@@ -78,11 +77,11 @@ class discord {
         if button != "DiscReply.png" || !ImageSearch(&x2, &y2, nx, ny/"3", width, height, "*2 " ptf.Discord "dm1.png")
             goto end  ;YOU MUST CALL YOUR REPLY IMAGESEARCH FILE "DiscReply.png" FOR THIS PART OF THE CODE TO WORK - ELSE CHANGE THIS VALUE TOO
         loop {
-                if ImageSearch(&xdir, &ydir, 0, height/"2", width, height, "*2 " ptf.Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the `end:` below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
+                if ImageSearch(&xdir, &ydir, 0, height/2, width, height, "*2 " ptf.Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the `end:` below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
                     {
                         ;ToolTip("")
                         MouseMove(xdir, ydir) ;moves to the @ location
-                        Click
+                        SendInput("{Click}")
                         break
                     }
                 ;ToolTip(A_Index)
@@ -93,6 +92,7 @@ class discord {
                     }
             }
         end:
+        coord.w()
         MouseMove(x, y) ;moves the mouse back to the original coords
         block.Off()
     }
