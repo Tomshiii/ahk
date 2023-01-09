@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2023/01/05
- * @version 1.2.4
+ * @date 2023/01/09
+ * @version 1.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\winget>
+#Include <Classes\obj>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
 ; }
@@ -914,19 +915,13 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         SendInput(effectControls)
         SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-        try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            tool.Cust("Couldn't find the ClassNN value")
-            errorLog(e)
-        }
+        effectCtrl := obj.ctrlPos()
         SendInput(timelineWindow) ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
@@ -939,18 +934,9 @@ class Prem {
                     ToolTip(A_Index)
                     SendInput(effectControls)
                     SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-                    try {
-                        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
-                        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-                    } catch as e {
-                        block.Off()
-                        tool.Cust("Couldn't get the ClassNN of the Effects Controls panel")
-                        errorLog(e)
-                        MouseMove(xpos, ypos)
-                        return
-                    }
+                    effectCtrl := obj.ctrlPos()
                 }
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
+            if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
                     {
                         MouseMove(x + "25", y)
                         break
@@ -966,48 +952,11 @@ class Prem {
             sleep 50
         }
         sleep 50
-        if GetKeyState(A_ThisHotkey, "P") ;gets the state of the hotkey, enough time now has passed that if I just press the button, I can assume I want to reset the paramater instead of edit it
+        ToolTip("")
+        ;// gets the state of the hotkey, enough time now has passed that if the user just presses the button, you can assume they want to reset the paramater instead of edit it
+        if !GetKeyState(A_ThisHotkey, "P")
             {
-                ;// you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
-                SendInput(programMonitor)
-                SendInput(programMonitor)
-                previewWin := obj.CtrlPos()
-                if !previewWin
-                    return
-                startX := (previewWin.x + (previewWin.width/2)) - 20, startY := (previewWin.y + (previewWin.height/2)) - 10
-                SendInput("{Click}")
-                MouseMove(startX, startY) ;move to the preview window
-                loop {
-                    MouseGetPos(&colX, &colY)
-                    if PixelGetColor(colX, colY) != 0x000000
-                        break
-                    if A_Index = 1
-                        MouseMove(startX + 150, startY + 100)
-                    if A_Index = 2
-                        MouseMove(startX - 150, startY + 100)
-                    if A_Index = 3
-                        MouseMove(startX - 150, startY - 100)
-                    if A_Index = 4
-                        MouseMove(startX + 150, startY - 100)
-                    if A_Index > 4
-                        {
-                            MouseMove(startX, startY)
-                            block.Off()
-                            errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
-                                        , "Or the function kept finding pure black at each checking coordinate", 1)
-                            break
-                        }
-                }
-                SendInput("{Click Down}")
-                sleep 50
-                block.Off()
-                KeyWait(A_ThisHotkey)
-                SendInput("{Click Up}")
-                ;MouseMove(xpos, ypos) ; // moving the mouse position back to origin after doing this is incredibly disorienting
-            }
-        else
-            {
-                if !ImageSearch(&xcol, &ycol, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "reset.png")
+                if !ImageSearch(&xcol, &ycol, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "reset.png")
                     {
                         block.Off()
                         MouseMove(xpos, ypos)
@@ -1020,8 +969,44 @@ class Prem {
                 sleep 50
                 MouseMove(xpos, ypos)
                 block.Off()
+                return
             }
-        ToolTip("")
+        ;//* you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
+        SendInput(programMonitor)
+        SendInput(programMonitor)
+        previewWin := obj.CtrlPos()
+        if !IsObject(previewWin)
+            return
+        startX := (previewWin.x + (previewWin.width/2)) - 20, startY := (previewWin.y + (previewWin.height/2)) - 10
+        SendInput("{Click}")
+        MouseMove(startX, startY) ;move to the preview window
+        loop {
+            MouseGetPos(&colX, &colY)
+            if PixelGetColor(colX, colY) != 0x000000
+                break
+            if A_Index = 1
+                MouseMove(startX + 150, startY + 100)
+            if A_Index = 2
+                MouseMove(startX - 150, startY + 100)
+            if A_Index = 3
+                MouseMove(startX - 150, startY - 100)
+            if A_Index = 4
+                MouseMove(startX + 150, startY - 100)
+            if A_Index > 4
+                {
+                    MouseMove(startX, startY)
+                    block.Off()
+                    errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
+                                , "Or the function kept finding pure black at each checking coordinate", 1)
+                    break
+                }
+        }
+        SendInput("{Click Down}")
+        sleep 50
+        block.Off()
+        KeyWait(A_ThisHotkey)
+        SendInput("{Click Up}")
+        ;!MouseMove(xpos, ypos) ; // moving the mouse position back to origin after doing this is incredibly disorienting
     }
 
     /**
