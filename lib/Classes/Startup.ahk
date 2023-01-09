@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/06
- * @version 1.2.0
+ * @date 2023/01/10
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -97,7 +97,10 @@ class Startup {
             }
         ;// checking to see if the users OS version is high enough to support dark mode
         if VerCompare(A_OSVersion, "10.0.17763") < 0
-            darkVerCheck := "disabled"
+            {
+                IniWrite("disabled", ptf["settings"], "Settings", "dark mode")
+                darkVerCheck := "disabled"
+            }
         else
             darkVerCheck := "true"
         UPDATE          := IniRead(ptf["settings"], "Settings", "update check"             , "true")
@@ -564,32 +567,42 @@ class Startup {
             "PeakFiles", A_AppData "\Adobe\Common\Peak Files",
             "AEFiles", A_AppData "\Adobe\Common\AE", ;AGAIN ~~ THIS AE folder to exist you have to set it WITHIN THE AE CACHE SETTINGS, it IS NOT THE DEFAULT
         )
-        ;// adding up the total size of the above listed filepaths
-        for v, p in cacheFolders
-            {
-                CacheSize := CacheSize + winget.FolderSize(p, 2)
-            }
-        if CacheSize = 0
-            {
-                tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0)
-                goto end
-            }
-        ;// `winget.FolderSize()` returns it's value in GB, we simply want to round it to 2dp
-        tool.Cust("Total Adobe cache size - " Round(CacheSize, 2) "/" largestSize "GB", 3.0)
-
-        ;// if the total is bigger than the set number, we loop those directories and delete all the files
-        if CacheSize >= largestSize
-            {
-                tool.Cust(A_ThisFunc " is currently deleting temp files", 2.0)
-                try {
-                    for v, p in cacheFolders
+        try {
+            ;// adding up the total size of the above listed filepaths
+            alerted := false
+            for v, p in cacheFolders
+                {
+                    if !DirExist(p) && alerted = false
                         {
-                            loop files, p "\*.*", "R"
-                                FileDelete(A_LoopFileFullPath)
+                            errorLog(TargetError(A_ThisFunc "() could not find one or more of the specified folders, therefor making it unable to calculate the total cache size", -1), A_ScriptName "`nLine: " A_LineNumber, {time: 4.0})
+                            alerted := true
+                            tool.Wait()
+                            continue
                         }
+                    CacheSize := CacheSize + winget.FolderSize(p, 2)
                 }
-            }
-        end:
+            if CacheSize = 0
+                {
+                    tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0)
+                    goto end
+                }
+            ;// `winget.FolderSize()` returns it's value in GB, we simply want to round it to 2dp
+            tool.Cust("Total Adobe cache size - " Round(CacheSize, 2) "/" largestSize "GB", 3.0)
+
+            ;// if the total is bigger than the set number, we loop those directories and delete all the files
+            if CacheSize >= largestSize
+                {
+                    tool.Cust(A_ThisFunc " is currently deleting temp files", 2.0)
+                    try {
+                        for v, p in cacheFolders
+                            {
+                                loop files, p "\*.*", "R"
+                                    FileDelete(A_LoopFileFullPath)
+                            }
+                    }
+                }
+            end:
+        }
         IniWrite(A_YDay, ptf["settings"], "Track", "adobe temp") ;tracks the day so it will not run again today
     }
 
