@@ -1,9 +1,13 @@
 /************************************************************************
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
- * @date 2022/12/07
- * @version 1.0.4
+ * @date 2023/01/09
+ * @version 1.0.5
  ***********************************************************************/
+
+; { \\ #Includes
+#Include <Functions\detect>
+; }
 
 class tool {
     /**
@@ -103,10 +107,9 @@ class tool {
      */
     static Wait(timeout?)
     {
-        detectVal := A_DetectHiddenWindows
-        DetectHiddenWindows(0) ;we need to ensure detecthiddenwindows is disabled before proceeding or this function may never stop waiting
+        dct := detect(0) ;we need to ensure detecthiddenwindows is disabled before proceeding or this function may never stop waiting
         if WinExist("ahk_class tooltips_class32")
             WinWaitClose("ahk_class tooltips_class32",, timeout?)
-        DetectHiddenWindows(detectVal)
+        DetectHiddenWindows(dct.Windows)
     }
 }
