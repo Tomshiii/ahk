@@ -2,7 +2,7 @@
  * @description Speed up interactions with discord
  * @author tomshi
  * @date 2023/01/09
- * @version 1.1.3
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,32 +33,36 @@ class discord {
     /**
      * This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \Support Files\ImageSearch\disc[button].png
      *
-     * @param {String} button in the png name of a screenshot of the button you want the function to press
+     * This function is constantly being broken as discord updates their logo/the @ reply ping button. When this happens you can try taking new screenshots to see if that fixes the issue.
+     *
+     * *This function includes specific code for the reply button and requires the passed parameter to be `DiscReply.png`*
+     * @param {String} button is the png name of a screenshot of the button you want the function to press.
+     * ```
+     * ;NOTE this function may only work if you use the same display settings. Otherwise you may need your own screenshots.
+     * ;dark theme
+     * ;chat font scaling: 20px
+     * ;space between message groups: 16px
+     * ;zoom level: 100
+     * ;saturation; 70%
+     * ```
      */
     static button(button)
-    ;NOTE THESE WILL ONLY WORK IF YOU USE THE SAME DISPLAY SETTINGS AS ME (otherwise you'll need your own screenshots.. tbh you'll probably need your own anyway). YOU WILL LIKELY NEED YOUR OWN SCREENSHOTS AS I HAVE DISCORD ON A VERTICAL SCREEN SO ALL MY SCALING IS WEIRD
-    ;dark theme
-    ;chat font scaling: 20px
-    ;space between message groups: 16px
-    ;zoom level: 100
-    ;saturation; 70%
-    ;ensure this function only fires if discord is active ( #HotIf WinActive("ahk_exe Discord.exe") ) - VERY IMPORTANT
     {
         yheight := 400
         getHotkeys(&first, &second)
-        KeyWait(first) ;use A_PriorKey when you're using 2 buttons to activate a macro
+        KeyWait(first)
         MouseGetPos(&x, &y)
         WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
-        ;MsgBox("x " nx "`ny " ny "`nwidth " width "`nheight " height) ;testing
         block.On()
-        click("right") ;this opens the right click context menu on the message you're hovering over
+        SendInput("{RButton}") ;this opens the right click context menu on the message you're hovering over
         sleep 50 ;sleep required so the right click context menu has time to open
         loop {
-            if ImageSearch(&xpos, &ypos, x - "200", y -"400",  x + "200", y + yheight, "*2 " ptf.Discord button) ;searches for the button you've requested
+            if ImageSearch(&xpos, &ypos, x-200, y-400,  x+200, y + yheight, "*2 " ptf.Discord button) ;searches for the button you've requested
                 {
                     MouseMove(xpos, ypos)
                     break
                 }
+            ;// if the button isn't found, we increase the search area
             sleep 50
             yheight += 100
             if A_Index > 4
@@ -72,9 +76,9 @@ class discord {
                     return
                 }
         }
-        Click
+        SendInput("{Click}")
         sleep 100
-        if button != "DiscReply.png" || !ImageSearch(&x2, &y2, nx, ny/"3", width, height, "*2 " ptf.Discord "dm1.png")
+        if button != "DiscReply.png" || !ImageSearch(&x2, &y2, nx, ny/3, width, height, "*2 " ptf.Discord "dm1.png")
             goto end  ;YOU MUST CALL YOUR REPLY IMAGESEARCH FILE "DiscReply.png" FOR THIS PART OF THE CODE TO WORK - ELSE CHANGE THIS VALUE TOO
         loop {
                 if ImageSearch(&xdir, &ydir, 0, height/2, width, height, "*2 " ptf.Discord "DiscDirReply.png") ;this is to get the location of the @ notification that discord has on by default when you try to reply to someone. If you prefer to leave that on, remove from the above sleep 100, to the `end:` below. The coords here are to search the entire window (but only half the windows height) - (that's what the WinGetPos is for) for the sake of compatibility. if you keep discord at the same size all the time (or have monitors all the same res) you can define these coords tighter if you wish but it isn't really neccessary.
