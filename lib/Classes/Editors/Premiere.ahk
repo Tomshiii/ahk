@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2023/01/09
- * @version 1.2.5
+ * @date 2023/01/10
+ * @version 1.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -939,6 +939,7 @@ class Prem {
             if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
                     {
                         MouseMove(x + "25", y)
+                        SendInput("{Click}")
                         break
                     }
             if A_Index > 3
@@ -972,13 +973,53 @@ class Prem {
                 return
             }
         ;//* you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
+        /**
+         * This codeblock is potentially used below if the first loop fails
+         */
+        fallback() {
+            origX := previewWin.x + 10, origY := previewWin.height
+            previewWin.y += 30
+            previewWin.x += 15
+            loop {
+                previewWin.x += 5, previewWin.y += 10
+                if previewWin.x > previewWin.x + previewWin.width
+                    previewWin.x := origX
+                if previewWin.y > origY
+                    {
+                        MouseMove(xpos, ypos)
+                        block.Off()
+                        KeyWait(A_ThisHotkey)
+                        return false
+                    }
+                check := PixelGetColor(previewWin.x, previewWin.y)
+                ;// debugging
+                /* FileAppend(Format("
+                (
+                    Index: {}
+                    x: {}
+                    y: {}
+                    width: {}
+                    height: {}
+                    origX: {}
+                    origY: {}
+                    ________________
+
+                )", A_Index, previewWin.x, previewWin.y, previewWin.width, previewWin.height, origX, origY), "test.txt") */
+                if check != 0x232323 && check != 0x000000
+                    {
+                        MouseMove(previewWin.x, previewWin.y)
+                        break
+                    }
+            }
+            return true
+        }
         SendInput(programMonitor)
         SendInput(programMonitor)
         previewWin := obj.CtrlPos()
         if !IsObject(previewWin)
             return
-        startX := (previewWin.x + (previewWin.width/2)) - 20, startY := (previewWin.y + (previewWin.height/2)) - 10
-        SendInput("{Click}")
+        startX := (previewWin.x + (previewWin.width/2)) - 20
+        startY := (previewWin.y + (previewWin.height/2)) - 10
         MouseMove(startX, startY) ;move to the preview window
         loop {
             MouseGetPos(&colX, &colY)
@@ -994,10 +1035,11 @@ class Prem {
                 MouseMove(startX + 150, startY - 100)
             if A_Index > 4
                 {
-                    MouseMove(startX, startY)
-                    block.Off()
-                    errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
-                                , "Or the function kept finding pure black at each checking coordinate", 1)
+                    if !fallback()
+                        {
+                            errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
+                                        , "Or the function kept finding pure black at each checking coordinate", 1)
+                        }
                     break
                 }
         }

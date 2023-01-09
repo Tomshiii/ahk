@@ -8,7 +8,7 @@
 
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release
 ; // Then goes through the annoying process of generating the release
-; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep it's code open so you can make sure the install exe isn't too scary)
+; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep its code open so you can make sure the install exe isn't too scary)
 
 ;// setting our working dir to the release folder
 SetWorkingDir("E:\Github\ahk\releases") ;this folder isn't included in the public version of my repo as it simply acts as a backup place for all the releases
@@ -103,8 +103,10 @@ if !InStr(yes.value, "pre") && !InStr(yes.value, "alpha") && !InStr(yes.value, "
 
 sleep 100
 ;// checking values for testing
-/* versions := "verChangeLog: " verChangeLog "`n" "verNew: " verNew "`n" "name: " name "`n" "yes.value: " yes.value "`n"
-MsgBox(versions) */
+/*
+versions := "verChangeLog: " verChangeLog "`n" "verNew: " verNew "`n" "name: " name "`n" "yes.value: " yes.value "`n"
+MsgBox(versions)
+*/
 
 ;// copying over the repo to a temp folder
 loop files ptf.rootDir "\*", "D"

@@ -13,7 +13,6 @@
 #Include <Functions\errorLog>
 ; }
 
-A_MaxHotkeysPerInterval := 2000
 TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 #WinActivateForce
@@ -33,7 +32,7 @@ timeRemain(*)
 ;// This script will autosave your premire pro/after effects project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 ;// It can also ensure you have the checklist script for the current project open. This can be disabled in `settingsGUI()`
 
-;! This file requires you to properly set the "year" value for both programs in `settings.ini` (or in settingsGUI() #F1 by default). This value is whatever year appears in the title of the respectiveprogram
+;! This file requires you to properly set the "year" value for both programs in `settings.ini` (or in settingsGUI() #F1 by default). This value is whatever year appears in the title of the respective program
 
 ;// SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
 
@@ -56,29 +55,24 @@ global retry := secondsRetry * 1000
 ;// DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
 tools := IniRead(ptf["settings"], "Settings", "tooltip") ;This value can be adjusted at any time by right clicking the tray icon for this script
 
-;// setting some defaul values
+;// setting some default values
 timer := false
 half := false
 
 A_TrayMenu.Insert("9&", "Tooltip Countdown", tooltipCount)
 if tools = "true"
     A_TrayMenu.Check("Tooltip Countdown")
-if tools = "false"
-    A_TrayMenu.Uncheck("Tooltip Countdown")
 tooltipCount(*)
 {
-    if tools = "true"
-        {
+    switch tools {
+        case "true":
             IniWrite("false", ptf["settings"], "Settings", "tooltip")
             A_TrayMenu.Uncheck("Tooltip Countdown")
-            reload
-        }
-    if tools = "false"
-        {
+        case "false":
             IniWrite("true", ptf["settings"], "Settings", "tooltip")
             A_TrayMenu.Check("Tooltip Countdown")
-            reload
         }
+    reload
 }
 
 ;// timer for tray function
@@ -199,7 +193,7 @@ save()
     if !premVal.saveCheck && !aeVal.saveCheck
         goto end
 
-    if (A_TimeIdleKeyboard <= idle) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton") && A_TimeIdleMouse <= idle)
+    if (A_TimeIdleKeyboard <= idle) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= idle) || GetKeyState("RButton", "P")
         {
             tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last " secondsIdle "s`nthe script will try again in " secondsRetry "s", 3000)
             SetTimer(, -retry)
@@ -249,7 +243,7 @@ save()
     ;// If premiere is the active window, we're checking to see if the user is playing back footage on the timeline
     if origWind = "Adobe Premiere Pro.exe"
         {
-            if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
+            if ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "stop.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above and swapping out x1/2 & y1/2 with the respective classNN properties, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason - I just got over relying on them for this script. My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
             {
                 tool.Cust("If you were playing back anything, this function should resume it", 2.0,,, 30, 2)
                 stop := "yes"
@@ -413,11 +407,11 @@ save()
 
 
         end:
-        tool.Wait()
         ;// if a save isn't necessary, the next save will happen in half the time
         if aeSaveTrack = 0 && premSaveTrack = 0 && avoid = 0
             {
                 global half := true
+                tool.Wait()
                 tool.Cust("No save necessary")
             }
 
