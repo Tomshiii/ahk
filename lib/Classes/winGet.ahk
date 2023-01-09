@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/01/01
- * @version 1.3.2
+ * @date 2023/01/09
+ * @version 1.4.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,14 +15,14 @@
 
 class WinGet {
     /**
-     * This function will grab the monitor that the mouse is currently within and return it as well as coordinate information in the form of a function object. ie if your mouse is within monitor 1 having code `monitor := getMouseMonitor()` would make `monitor.monitor` = 1
-     * @returns {Object} containing the monitor number, the left/right/top/bottom pixel coordinate
+     * This function is a helper function for a few other functions down below and removes repeat code
+     * It compares the coordinates passed into it, to the coordinates of all monitors connected to the system
+     * If the passed in coordinates are within one of the monitor coordinates, this function will return the monitor number as well as the monitor coordinates that the original coordinates are within
      */
-    static MouseMonitor()
+    Monitor(x, y)
     {
-        coord.s()
-        MouseGetPos(&x, &y)
         numberofMonitors := SysGet(80)
+        static attempt := 0
         loop numberofMonitors {
             try {
                 MonitorGet(A_Index, &left, &Top, &Right, &Bottom)
@@ -32,17 +32,78 @@ class WinGet {
                             ;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index)
                             return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
                     }
-                if A_Index >= numberofMonitors
-                    throw IndexError("Couldn't find the monitor", -1, numberofMonitors)
-            }
-            catch IndexError as e {
-                block.Off() ;to stop the user potentially getting stuck
-                tool.Cust(A_ThisFunc "() failed to get the monitor that the mouse is within", 2.0)
-                errorLog(e)
-                Exit()
             }
         }
     }
+
+    /**
+     * This function will grab the monitor that the active window is currently within and return it as well as coordinate information in the form of a function object.
+     *
+     * *If a window is overlapping multiple monitors, this function may attempt to fullscreen the window first to get the correct monitor.*
+     * @param {String} title? allows you to pass a custom winTitle into the function instead of using the currently active window
+     * @return {Object}
+     * ```
+     * window := winget.WinMonitor()
+     * window.monitor      ;// returns monitor the window is within
+     * window.left         ;// returns left x position
+     * window.right        ;// returns right x position
+     * window.top          ;// returns top y position
+     * window.bottom       ;// returns bottom y position
+     * ```
+     */
+    static WinMonitor(title?)
+    {
+        if !IsSet(title)
+            this.Title(&title)
+        tryagain:
+        WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
+        ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
+		;// so we just add 10 pixels to both variables to ensure we're in the correct monitor
+        monObj := WinGet().Monitor(x + 10, y + 10)
+        if !IsObject(monObj) {
+            ;// if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
+            if !winget.isFullscreen(&testWin, title)
+                {
+                    WinMaximize(title,, "Editing Checklist -")
+                    goto tryagain
+                }
+        }
+        return {monitor: monObj.monitor, left: monObj.left, right: monObj.right, top:monObj.top, bottom: monObj.bottom}
+    }
+
+    /**
+     * This function will grab the monitor that the mouse is currently within and return it as well as coordinate information in the form of a function object.
+     * @param {Integer} x allows you to pass a custom x coordinate
+     * @param {Integer} y allows you to pass a custom y coordinate
+     *
+     * *Both `x` & `y` have to be passed to the function to test a coordinate, otherwise the function will use the current mouse coordinates*
+     * @return {Object}
+     * ```
+     * ;mouse is within monitor 1 (2560x1440)
+     * monitor := winget.MouseMonitor()
+     * monitor.monitor      ;// returns 1
+     * monitor.left         ;// returns 0
+     * monitor.right        ;// returns 2560
+     * monitor.top          ;// returns 0
+     * monitor.bottom       ;// returns 1440
+     * ```
+     * @returns {Object} containing the monitor number, the left/right/top/bottom pixel coordinate
+     */
+    static MouseMonitor(x?, y?)
+    {
+        if !IsSet(x?) || !IsSet(y?) {
+            coord.s()
+            MouseGetPos(&x, &y)
+        }
+        monObj := WinGet().Monitor(x, y)
+        if !IsObject(monObj)
+            {
+                errorLog(TargetError("Failed to get the requested monitor", -1),, 1)
+                Exit()
+            }
+        return {monitor: monObj.monitor, left: monObj.left, right: monObj.right, top:monObj.top, bottom: monObj.bottom}
+    }
+
 
     /**
      * This function gets and returns the title for the current active window, autopopulating the `title` variable
@@ -52,16 +113,13 @@ class WinGet {
     {
         try {
             check := WinGetProcessName("A")
-            if check = "AutoHotkey64.exe"
-                ignore := WinGetTitle(check)
-            else
-                ignore := ""
+            ignore := (check = "AutoHotkey64.exe") ? WinGetTitle(check) : ""
             title := WinGetTitle("A",, ignore)
             if !IsSet(title) || title = "" || title = "Program Manager"
-                throw UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1, title)
+                throw
             return title
-        } catch UnsetError as e {
-            errorLog(e,, 1)
+        } catch {
+            errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
             block.Off()
             Exit()
         }
@@ -74,22 +132,15 @@ class WinGet {
      */
     static isFullscreen(&title?, window := false)
     {
-        if window != false
-            {
-                title := window
-                goto skip
-            }
-        this.Title(&title)
-        skip:
+        title := (window != false) ? window : this.Title(&title)
         if title = "Program Manager" ;this is the desktop. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
             title := ""
         try {
             return WinGetMinMax(title,, "Editing Checklist -") ;a return value of 1 means it is maximised
-        } catch as e {
-            tool.Cust(A_ThisFunc "() couldn't determine the active window")
-            errorLog(e)
+        } catch {
+            errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
             block.Off()
-            Exit
+            Exit()
         }
     }
 

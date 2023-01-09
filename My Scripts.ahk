@@ -12,7 +12,7 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.27.1
+;\\v2.27.2
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -167,45 +167,11 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 #c:: ;this hotkey will center the active window in the middle of the active monitor
 { ;this scripts math can act a bit funky with vertical monitors. Especially with with programs like discord that have a minimum width
 	mainMon := 1 ;set which monitor your main monitor is (usually 1, but can check in windows display settings)
-
-	/**
-	 * This function will determine which monitor the current active window is on, then return some information to help us do some math down below
-	 */
-	getMonitor()
-	{
-		winget.Title(&title)
-		tryagain:
-		wingetPos(&x, &y,,, title,, "Editing Checklist -")
-		x := x + 10 ;sometimes windows when fullscreened will be at -8, -8 and not 0, 0
-		y := y + 10 ;so we just add 10 pixels to both variables to ensure we're in the correct monitor
-		numberofMonitors := SysGet(80)
-		loop numberofMonitors {
-			try {
-				MonitorGet(A_Index, &left, &top, &right, &bottom)
-				if x > left && x < right
-					{ ;these two if statements determine what monitor the active window is in
-						if y < bottom && y > top
-							return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
-					}
-			}
-			catch as e {
-				tool.Cust(A_ThisFunc "() failed to get the monitor that the active window is in")
-				errorLog(e)
-				break
-			}
-		}
-		try { ;if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
-			winget.isFullscreen(&testWin, title)
-				{
-					WinMaximize(title,, "Editing Checklist -")
-					goto tryagain
-				}
-		}
-	}
 	title := ""
 	static win := "" ;a variable we'll hold the title of the window in
 	static toggle := 1 ;a variable to determine whether to centre on the current display or move to the main one
-	monitor := getMonitor() ;now we run the above function we created
+	winget.Title(&title)
+	monitor := WinGet.WinMonitor(title) ;now we run the above function we created
 	if !IsObject(monitor) || !IsSet(monitor)
 		{
 			errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1, monitor)
@@ -262,7 +228,6 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		}
 	try{
 		WinMove(newX, newY, newWidth, newHeight, title,, "Editing Checklist -") ;then we attempt to move the window
-		;tool.Cust("Window: " win "`nToggle: " toggle) ;for whatever reason, producing a tooltip actually breaks functionality.... huh??
 	}
 }
 
