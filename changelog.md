@@ -5,9 +5,11 @@
 
 ## > Functions
 - Fix `startup.adobeTemp()` causing errors if the directory doesn't exist
+- Added `dark.allButtons()` that will convert all buttons defined in the gui to dark/light mode
 - `checkInternet()` now does more than simply checking if the user is connected to a network
 - `detect()` now returns the original values as an object
 - `prem.movepreview()` now has more fallback in the event it can't find the video you're looking to move
+- `tomshibasic()` will now automatically make the titlebar of the define GUI dark mode if the setting is enabled
 
 `disc.button()`
 - Update images

@@ -47,8 +47,7 @@
         if darkmode = "true"
             {
                 dark.titleBar(this.Hwnd)
-                dark.button(addButton.Hwnd)
-                dark.button(cancelButton.Hwnd)
+                dark.allButtons(this)
             }
 
         /**

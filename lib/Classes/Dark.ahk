@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to turn GUI elements to a dark mode.
  * @author tomshi, Lexikos, others
- * @date 2022/11/24
- * @version 1.0.0
+ * @date 2023/01/10
+ * @version 1.0.1
  ***********************************************************************/
 
 class Dark {
@@ -14,6 +14,27 @@ class Dark {
      * https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
      */
     static button(ctrl_hwnd, DarkorLight := "Dark") => DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
+
+    /**
+     * This function will convert all buttons defined in the GUI to a dark/light theme.
+     * @param {Object} guiObj is the gui object you're working on (ie. MyGui, settingsGUI, etc)
+     * @param {String} DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light"
+     */
+    static allButtons(guiObj, DarkorLight := "Dark") {
+        for ctrl in guiObj
+            {
+                if Type(ctrl) != "Gui.Button"
+                    continue
+                try {
+                    switch DarkorLight {
+                        case "Light":
+                            this.button(ctrl.Hwnd, "Light")
+                        default:
+                            this.button(ctrl.Hwnd)
+                    }
+                }
+            }
+    }
 
     /**
      * This function will convert GUI menus to dark mode/light mode

@@ -49,16 +49,7 @@ musicGUI()
     ;#finished with definitions
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
-        goDark()
-    goDark()
-    {
-        dark.titleBar(MyGui.Hwnd)
-        dark.button(AIMP.Hwnd)
-        dark.button(foobar.Hwnd)
-        dark.button(WMP.Hwnd)
-        dark.button(VLC.Hwnd)
-        dark.button(FOLDERGUI.Hwnd)
-    }
+        dark.allButtons(MyGui)
 
     MyGui.Show()
     ;below is what happens when you click on each button

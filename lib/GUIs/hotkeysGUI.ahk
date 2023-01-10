@@ -116,13 +116,7 @@ hotkeysGUI() {
 	close(*) => hotGUI.Destroy()
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
-        goDark()
-    goDark()
-    {
-        dark.titleBar(hotGUI.Hwnd)
-        dark.button(closeButton.Hwnd)
-        dark.button(selection.Hwnd)
-    }
+        dark.allButtons(hotGUI)
 
     ;Show the GUI
 	hotGUI.Show("AutoSize")

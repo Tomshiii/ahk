@@ -334,10 +334,7 @@ which(darkmode := true, DarkorLight := "Dark", menu := 1)
 
     dark.menu(menu)
     dark.titleBar(MyGui.Hwnd, darkmode)
-    dark.button(startButton.Hwnd, DarkorLight)
-    dark.button(stopButton.Hwnd, DarkorLight)
-    dark.button(minusButton.Hwnd, DarkorLight)
-    dark.button(plusButton.Hwnd, DarkorLight)
+    dark.allbuttons(MyGui, DarkorLight)
 }
 
 /**

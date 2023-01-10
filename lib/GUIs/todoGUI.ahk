@@ -36,11 +36,6 @@ todoGUI()
     }
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
-        goDark()
-    goDark()
-    {
-        dark.titleBar(todoGUI.Hwnd)
         dark.button(closeButton.Hwnd)
-    }
     todoGUI.Show()
 }

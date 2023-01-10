@@ -130,11 +130,8 @@ activeScripts(MyRelease)
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
         goDark()
-    goDark()
-    {
-        dark.titleBar(MyGui.Hwnd)
-        dark.button(closeButton.Hwnd)
-    }
+
+    goDark() => dark.button(closeButton.Hwnd)
 
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
