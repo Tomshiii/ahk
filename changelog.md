@@ -12,6 +12,7 @@
 `disc.button()`
 - Update images
 - Fix cursor returning to incorrect position on failure
+- Will do a `PixelSearch` for the blue colour of the `@ ON` button if the ImageSearch continuously fails
 
 `WinGet`
 - Added `winget.WinMonitor()`
