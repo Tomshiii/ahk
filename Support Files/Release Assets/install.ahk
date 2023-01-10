@@ -67,6 +67,7 @@ loop {
 FileDelete(A_WorkingDir '\7-zip32.dll')
 FileDelete(A_WorkingDir '\7-zip64.dll')
 FileDelete(A_WorkingDir '\SevenZip.ahk')
+FileDelete(A_WorkingDir '\createIni.ahk')
 FileDelete(A_WorkingDir '\Extract.ahk')
 FileDelete(A_WorkingDir '\yes.value.zip')
 sleep 100

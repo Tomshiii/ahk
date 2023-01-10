@@ -127,7 +127,7 @@ class Startup {
         WORK            := IniRead(ptf["settings"], "Track",    "working dir"              , "E:\Github\ahk")
         FC              := IniRead(ptf["settings"], "Track",    "first check"              , "false")
         BLOCKAWARE      := IniRead(ptf["settings"], "Track",    "block aware"              , "false")
-        MONITORALERT    := IniRead(ptf["settings"], "Track",    "monitor alert"            , "0")
+        MONITORALERT    := IniRead(ptf["settings"], "Track",    "monitor alert"            , 0)
         ;// deletes any of the old files I used to track information
         deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS)
         ;// generate new ini file
