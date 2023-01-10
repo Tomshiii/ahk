@@ -28,6 +28,8 @@ if DirExist(ahklib)
         try {
             if !DirExist(A_Temp "\tomshi")
                 DirCreate(A_Temp "\tomshi")
+            if DirExist(ahklib "\UserBackup")
+                DirDelete(ahklib "\UserBackup", 1)
             DirMove(ahklib, A_Temp "\tomshi\UserBackup", 1)
             temp := true
             if DirExist(ahklib)
