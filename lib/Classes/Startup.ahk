@@ -17,6 +17,7 @@
 #Include <Functions\errorLog>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
+#Include <Functions\createIni>
 ; // libs
 #Include <Other\_DLFile>
 ; }
@@ -127,43 +128,10 @@ class Startup {
         FC              := IniRead(ptf["settings"], "Track",    "first check"              , "false")
         BLOCKAWARE      := IniRead(ptf["settings"], "Track",    "block aware"              , "false")
         MONITORALERT    := IniRead(ptf["settings"], "Track",    "monitor alert"            , "0")
-        deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) ;deletes any of the old files I used to track information
-        if FileExist(ptf["settings"])
-            FileDelete(ptf["settings"]) ;if the user is on a newer release version, we automatically replace the settings file with their previous information/any new information defaults
-        FileAppend(Format("
-        (
-            [Settings]
-            update check={}
-            beta update check={}
-            dark mode={}
-            run at startup={}
-            autosave check checklist={}
-            tooltip={}
-            checklist tooltip={}
-            checklist wait={}
-
-            [Adjust]
-            adobe GB={}
-            adobe FS={}
-            autosave MIN={}
-            game SEC={}
-            multi SEC={}
-            prem year={}
-            ae year={}
-            premVer={}
-            aeVer={}
-            psVer={}
-            resolveVer={}
-
-            [Track]
-            adobe temp={}
-            working dir={}
-            first check={}
-            block aware={}
-            monitor alert={}
-            version={}
-        )", UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
-        , ptf["settings"])
+        ;// deletes any of the old files I used to track information
+        deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS)
+        ;// generate new ini file
+        createIni(ptf.SettingsLoc, UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
     }
 
     /**

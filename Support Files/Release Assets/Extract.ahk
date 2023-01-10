@@ -38,12 +38,22 @@ try {
                             if size = 0 ;// so that we can delete it if it is
                                 DirDelete(A_WorkingDir '\yes.value')
                         }
-                    return
+                        found := false
+                        loop files, A_WorkingDir '\*.*', "R"
+                            {
+                                if A_LoopFileName = "My Scripts.ahk"
+                                    {
+                                        found := true
+                                        break
+                                    }
+                            }
+                    if found = true
+                        return
                 }
         }
 }
 
-;// if the user doesn't have 7zip installed then we need to do a more roundabout process
+;// if the user doesn't have 7zip installed or the extraction failed then we need to do a more roundabout process
 ;// first we'll check to see if the user has powershell installed
 
 ;// powershell should come preinstalled on windows since windows 7 SP1 BUT to use the expand archive command we need v5+

@@ -140,6 +140,10 @@ if DirExist(A_WorkingDir "\release\" yes.Value "\Stream\TomSongQueueue")
 ;// copying over a script that will be used to extract the .zip file
 FileCopy(ptf.SupportFiles "\Release Assets\Extract.ahk", A_WorkingDir "\release")
 
+;// moving our function to generate a baseline settings file
+FileCopy(ptf.lib "\Functions\createIni.ahk", A_WorkingDir "\release")
+FileAppend('`n`ncreateIni(A_MyDocuments "\tomshi", "true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", "", A_ScriptDir, "false", "false", "0", 0)', A_WorkingDir "\release\createIni.ahk")
+
 ;// copying over thqby's 7zip lib in case it's useful
 FileCopy(ptf.lib "\Other\7zip\7-zip32.dll", A_WorkingDir "\release")
 FileCopy(ptf.lib "\Other\7zip\7-zip64.dll", A_WorkingDir "\release")

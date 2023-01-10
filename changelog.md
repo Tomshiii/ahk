@@ -1,4 +1,7 @@
 # <> Release 2.9.x - 
+- Fix installation process failing due to `settings.ini` file not existing yet
+    - Added `baseLineSettings.ahk` to `..\Support Files\Release Assets\` to quickly genereate a baseline `settings.ini` file in the event that the installation process fails
+- More checks during the installation process to ensure the extraction has actually taken place before deleting files
 
 ## > Functions
 - Fix `startup.adobeTemp()` causing errors if the directory doesn't exist
