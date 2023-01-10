@@ -34,7 +34,7 @@ PC Startup:         `..\PC Startup\PC Startup.ahk`
 
 Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's a compiled version of my scripts, alongside the `SevenZip.ahk` lib by `thqby` to allow me to include the repo in a .zip file that then gets automatically extracted when you run the release .exe ^.^
 
-If your installer fails, a `settings.ini` file may fail to generate in `A_MyDocuments\tomshi\`. If this happens you can try running `baseLineSettings.ahk` found: `..\Support Files\Release Assets\baseLineSettings.ahk` to get started.
+If your installer fails, a `settings.ini` file may fail to generate in `A_MyDocuments\tomshi\`. If this happens you can try running `baselineSettings.ahk` found: `..\Support Files\Release Assets\baselineSettings.ahk` to get started.
 
 ⠀⠀⠀⠀⠀⠀⢀⣤⣚⣛⡶⣒⡁⠐⠦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⡾⠃⣀⠈⠉⡀⠈⠳⡀⠘⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
