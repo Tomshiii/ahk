@@ -127,15 +127,39 @@ loop files ptf.rootDir "\*", "F"
             continue
         FileCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value, 1)
     }
-;// deleting psd files
-loop files A_WorkingDir "\release\" yes.Value "\*", "F R"
-    {
-        if A_LoopFileExt = "psd" ;they're large and unnecessary to include
-            FileDelete(A_LoopFileFullPath)
+
+;// this portion doesn't need to be a function, it just makes it easier to keep track of by encapsulating it in one
+deleting() {
+    ;// these files will still be stored in their respective repos and can be downloaded manually
+    ;// deleting these files saves close to 10mb for the final release
+
+    ;// these functions is simply a wrapper to save lines & visual clutter
+    checkDirDelete(dir) {
+        if DirExist(dir)
+            DirDelete(dir, 1)
     }
-;// deleting remaining folders I store in repo that aren't needed
-if DirExist(A_WorkingDir "\release\" yes.Value "\Stream\TomSongQueueue")
-    DirDelete(A_WorkingDir "\release\" yes.Value "\Stream\TomSongQueueue", 1)
+    checkFileDelete(file) {
+        if FileExist(file)
+            FileDelete(file)
+    }
+    ;// deleting psd files
+    loop files A_WorkingDir "\release\" yes.Value "\*", "F R"
+        {
+            if A_LoopFileExt = "psd" ;they're large and unnecessary to include
+                FileDelete(A_LoopFileFullPath)
+        }
+    ;// deleting the repo banner image
+    checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\repo_social.png")
+    ;// deleting the `old` wiki folder
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Wiki")
+    ;// deleting the `RODECaster` backup folder
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\RODECaster")
+    ;// deleting the full res images
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\og")
+    ;// deleting folder I store in repo that isn't needed
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Stream\TomSongQueueue")
+}
+deleting()
 
 ;// copying over a script that will be used to extract the .zip file
 FileCopy(ptf.SupportFiles "\Release Assets\Extract.ahk", A_WorkingDir "\release")
