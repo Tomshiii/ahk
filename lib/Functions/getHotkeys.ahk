@@ -4,9 +4,26 @@
  * If the hotkey used with this function is only 2 characters long, it will assign each of those to &first & &second respectively. If one of those characters is a special key (ie. ! or ^) it will return the virtual key so `KeyWait` will still work as expected
  * @param {VarRef} first is the variable that will be filled with the first activation hotkey. Must be written as `&var`
  * @param {VarRef} second is the variable that will be filled with the second activation hotkey. Must be written as `&var`
- * @return {Object} optionally this function returns `var.first` & `var.second` containing the two hotkeys respectively
+ * @return {Object} optionally this function can return an object containing the two hotkeys
+ * ```
+ * RAlt & p::
+ * {
+ *    hotkeys := getHotkeys()
+ *    MsgBox(hotkeys.first)  ; returns "RAlt"
+ *    MsgBox(hotkeys.second) ; returns "p"
+ * }
+ *
+ * !p::
+ * {
+ *    getHotkeys(&first, &second)
+ *    MsgBox(first)  ; returns "vk12"
+ *    MsgBox(second) ; returns "p"
+ * }
+ * ```
 */
 getHotkeys(&first?, &second?) {
+    if A_ThisHotkey = ""
+        return {first: unset, second: unset}
     getHotkey := A_ThisHotkey
     length := StrLen(getHotkey)
     if length = 2

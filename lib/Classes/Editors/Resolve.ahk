@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2023/01/02
- * @version 1.2.1.1
+ * @date 2023/01/11
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -17,6 +17,7 @@
 #Include <Classes\obj>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
+#Include <Functions\allKeyWait>
 ; }
 
 class Resolve {
@@ -102,11 +103,7 @@ class Resolve {
      */
     static scale(value, property, plus := 0)
     {
-        if (A_ThisHotkey != "") && (InStr(A_ThisHotkey, "&") || StrLen(A_ThisHotkey) = 2)
-            {
-                getHotkeys(&first, &second)
-                KeyWait(second)
-            }
+        allKeyWait("second")
         coord.w()
         block.On()
         SendInput(resolveSelectPlayhead)
@@ -168,8 +165,7 @@ class Resolve {
     ;Open or close/reopen the search bar
     ;Search for your effect of choice, then drag back to the click you were hovering over originally
     {
-        getHotkeys(&first, &second)
-        KeyWait(second)
+        allKeyWait("second")
         if !winget.isFullscreen(&title, this.winTitle)
         {
             SplitPath(A_LineFile, &filename)
@@ -267,7 +263,7 @@ class Resolve {
                 return
             }
         block.Off()
-        KeyWait(A_ThisHotkey)
+        allKeyWait()
         SendInput("{Click Up}")
         MouseMove(orig.x, orig.y)
     }

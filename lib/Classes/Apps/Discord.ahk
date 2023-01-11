@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord
  * @author tomshi
- * @date 2023/01/10
- * @version 1.1.5
+ * @date 2023/01/11
+ * @version 1.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,6 +14,7 @@
 #Include <Classes\clip>
 #Include <Functions\errorLog>
 #Include <Functions\checkImg>
+#Include <Functions\allKeyWait>
 ; }
 
 class discord {
@@ -49,8 +50,7 @@ class discord {
     static button(button)
     {
         yheight := 400
-        getHotkeys(&first, &second)
-        KeyWait(first)
+        allKeyWait("second")
         MouseGetPos(&x, &y)
         WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
         block.On()

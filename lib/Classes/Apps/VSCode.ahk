@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/01/01
- * @version 1.1.1
+ * @date 2023/01/11
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,7 @@
 #Include <Classes\tool>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
+#Include <Functions\allKeyWait>
 ; }
 
 class VSCode {
@@ -29,8 +30,7 @@ class VSCode {
      */
     static script(script := 0)
     {
-        getHotkeys(&first, &second)
-        KeyWait(first)
+        allKeyWait("first")
         block.On()
         sleep 50
         SendInput(focusExplorerWin) ;highlight the explorer window

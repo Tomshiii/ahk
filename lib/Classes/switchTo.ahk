@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/01/06
- * @version 1.0.9
+ * @date 2023/01/11
+ * @version 1.0.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,6 +18,7 @@
 ;funcs
 #Include <Functions\getHotkeys>
 #Include <Functions\errorLog>
+#Include <Functions\allKeyWait>
 ; }
 
 class switchTo {
@@ -90,8 +91,7 @@ class switchTo {
      */
     static newWin(classorexe, activate, runval)
     {
-        getHotkeys(&first, &second)
-        KeyWait(second) ;prevent spamming
+        allKeyWait("second")
         if !WinExist("ahk_" classorexe . activate)
             {
                 Run(runval)

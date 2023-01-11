@@ -12,7 +12,7 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.27.2
+;\\v2.27.3
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -51,6 +51,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <Functions\refreshWin>
 #Include <Functions\getHotkeys>
 #Include <Functions\allKeyUp>
+#Include <Functions\allKeyWait>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
@@ -499,17 +500,10 @@ Numpad9::
 ;pinfirefoxHotkey;
 RAlt & p:: ;This hotkey is to pin the first two tabs
 {
-	KeyWait("Alt")
+	allKeyWait("first")
 	Send("!d") ;opens the alt context menu to begin detatching the firefox tab
 	sleep 100
-	Send("+{TAB 3}")
-	sleep 50
-	Send("+{F10}")
-	sleep 50
-	Send("p")
-	sleep 50
-	Send("{Right}")
-	Send("+{F10}" "p" "{Left}")
+	delaySI(50, "+{TAB 3}", "+{F10}", "p", "{Right}", "+{F10}" "p" "{Left}")
 }
 
 ;movetabHotkey;
@@ -629,8 +623,7 @@ Ctrl & BackSpace::
 		Send("{Left}")
 		Send("{Shift Up}{Ctrl Up}")
 	}
-	getHotkeys(, &second)
-	KeyWait(second)
+	allKeyWait("second")
 	sendLeft()
 	store := clip.clear()
 	Send("^c")
@@ -921,6 +914,8 @@ LAlt & Xbutton2:: ;this is necessary for the below function to work
 Xbutton2::prem.mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 #Include *i right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+
+#Include <Functions\delaySI>
 
 ;auto excecuting stuff will no longer function below this^ include
 

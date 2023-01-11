@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2023/01/10
- * @version 1.2.6
+ * @date 2023/01/11
+ * @version 1.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include <Classes\obj>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
+#Include <Functions\allKeyWait>
 ; }
 
 class Prem {
@@ -39,8 +40,7 @@ class Prem {
             errorLog(TypeError("Incorrect value type in Parameter #1", -1, item)
                         ,,, 1)
         }
-        if A_ThisHotkey != ""
-            KeyWait(A_ThisHotkey)
+        allKeyWait()
         ToolTip("Your Preset is being dragged")
         coord.s()
         block.On()
@@ -294,7 +294,7 @@ class Prem {
         static scale := 0
         static Tog := 0
 
-        KeyWait(A_ThisHotkey)
+        allKeyWait()
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
@@ -480,7 +480,7 @@ class Prem {
                     {
                         block.Off()
                         errorLog(Error("The user wasn't scrolled down", -1),, 1)
-                        KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                        allKeyWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                         return
                     }
             }
@@ -523,8 +523,7 @@ class Prem {
                 {
                     block.Off()
                     errorLog(IndexError("Failed to find the requested property", -1, filepath),, 1)
-                    if A_ThisHotkey != ""
-                        KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                    allKeyWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
                     block.Off()
                     return
@@ -562,7 +561,7 @@ class Prem {
                 block.Off()
                 tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
-                KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                allKeyWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
                 return
             }
@@ -573,7 +572,7 @@ class Prem {
             {
                 SendInput("{Click Down}")
                 block.Off()
-                KeyWait(A_ThisHotkey)
+                allKeyWait()
                 SendInput("{Click Up}" "{Enter}")
                 sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
                 MouseMove(xpos, ypos)
@@ -732,7 +731,7 @@ class Prem {
         loop {
             SendInput(projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
             SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
-            ;KeyWait(A_PriorKey) ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
+            ;allKeyWait() ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
             SendInput(findBox)
             CaretGetPos(&findx)
             if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
@@ -902,7 +901,7 @@ class Prem {
     {
         SendInput(timelineWindow) ;focuses the timeline
         SendInput(direction) ;Set these shortcuts in the keyboards shortcut ini file
-        KeyWait(A_ThisHotkey) ;prevents hotkey spam
+        allKeyWait() ;prevents hotkey spam
     }
 
     /**
@@ -946,7 +945,7 @@ class Prem {
                 {
                     block.Off()
                     errorLog(IndexError("Couldn't find the requested property.", -1),, 1)
-                    KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                    allKeyWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
                     return
                 }
@@ -988,7 +987,7 @@ class Prem {
                     {
                         MouseMove(xpos, ypos)
                         block.Off()
-                        KeyWait(A_ThisHotkey)
+                        allKeyWait()
                         return false
                     }
                 check := PixelGetColor(previewWin.x, previewWin.y)
@@ -1046,7 +1045,7 @@ class Prem {
         SendInput("{Click Down}")
         sleep 50
         block.Off()
-        KeyWait(A_ThisHotkey)
+        allKeyWait()
         SendInput("{Click Up}")
         ;!MouseMove(xpos, ypos) ; // moving the mouse position back to origin after doing this is incredibly disorienting
     }
@@ -1056,7 +1055,7 @@ class Prem {
      */
     static reset()
     {
-        KeyWait(A_ThisHotkey)
+        allKeyWait()
         coord.s()
         block.On()
         SendInput(effectControls)
@@ -1175,7 +1174,7 @@ class Prem {
                 ;// throw
                 errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
             }
-        KeyWait(A_ThisHotkey)
+        allKeyWait()
         Critical
         ToolTip("Adjusting Gain")
         BlockInput(1)

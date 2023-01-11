@@ -14,10 +14,11 @@ TraySetIcon(ptf.Icons "\resolve.png")
 #Include <Classes\coord>
 #Include <Classes\block>
 #Include <Classes\tool>
+#Include <Functions\allKeyWait>
 ; }
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.1
+;\\v2.8.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.9.1
@@ -165,7 +166,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
                     SendInput("{Click Down}")
                     MouseMove(xpos, ypos)
                     block.Off()
-                    KeyWait(A_ThisHotkey)
+                    allKeyWait()
                     SendInput("{Click Up}")
                     return
                 }

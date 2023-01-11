@@ -5,6 +5,7 @@
 #Include <Classes\coord>
 #Include <Classes\tool>
 #Include <Functions\errorLog>
+#Include <Functions\allKeyWait>
 ; }
 
 /**
@@ -76,7 +77,7 @@ scale(amount)
             {
                 block.Off()
                 errorLog(IndexError("Couldn't find the desired property", -1),, 1)
-                KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                allKeyWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
                 return
             }
@@ -87,7 +88,7 @@ scale(amount)
         {
             block.Off()
             errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
-            KeyWait(A_ThisHotkey) ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+            allKeyWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
             MouseMove(xpos, ypos)
             return
         }
