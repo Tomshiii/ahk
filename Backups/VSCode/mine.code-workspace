@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"name": "ahk",
+			"path": "../.."
+		},
+		{
+			"name": "ahk_wiki",
+			"path": "../../../ahk_wiki"
+		},
+		{
+			"name": "textreplace",
+			"path": "../../../textreplace"
+		}
+	],
+	"settings": {
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": []
+	}
+}
