@@ -29,11 +29,11 @@ allKeyWait(which := "both") {
         ;// throw
         errorLog(TypeError("Incorrect Type in Parameter #1", -1, which),,, 1)
     }
-    if (which != "both" || which != "first" || which != "second") {
+    if (which != "both" && which != "first" && which != "second") {
         ;// throw
         errorLog(ValueError("Incorrect Value in Parameter #1", -1, which),,, 1)
     }
-    if (A_ThisHotkey != "" && !InStr(A_ThisHotkey, "&"))
+    if (A_ThisHotkey != "" && !InStr(A_ThisHotkey, "&")) && StrLen(A_ThisHotkey) != 2
         KeyWait(A_ThisHotkey)
     else if A_ThisHotkey != ""
         {
