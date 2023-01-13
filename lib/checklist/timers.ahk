@@ -171,7 +171,7 @@ class checklistReminder extends count {
             }
         switch settingsToolTrack {
             case 1:
-                tool.Cust("Don't forget you have the timer stopped!", "2000",,, 30, 20)
+                tool.Cust("Don't forget you have the timer stopped!", 2.0,,, 30, 20)
                 SetTimer(this.timer, -ms)
                 return
             case 0:

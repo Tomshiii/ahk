@@ -12,7 +12,7 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.27.5
+;\\v2.27.6
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -174,18 +174,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 	static toggle := 1 ;a variable to determine whether to centre on the current display or move to the main one
 	winget.Title(&title)
 	monitor := WinGet.WinMonitor(title) ;now we run the above function we created
-	if !IsObject(monitor) || !IsSet(monitor)
-		{
-			errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1, monitor)
-						, "The window may be overlapping monitors", 1)
-			return
-		}
-	if win = "" ;if our win variable doesn't have a title yet we run this code block
-		{
-			win := title
-			toggle := 1
-		}
-	if win != title ;if our win variable doesn't equal the active window we run this code block to reset our values
+	if win = "" || win != title ;if our win variable doesn't have a title yet, or if it doesn't match the active window we run this code block to reset values
 		{
 			win := title
 			toggle := 1

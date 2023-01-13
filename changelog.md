@@ -9,6 +9,7 @@
 - Fixed `tool.Cust()` not properly returning the original `CoordMode`
     - Fixes `right click resolve` macro not working correctly on first use but being fine after
 - Moved `isReload()` out of `startup {` and into it's own function
+- Cleaned up `tool.Cust()`
 - `allKeyUp()` will now send `Esc` after every key up event to try to mitigate damage from sending so many keystrokes
 
 ## > Other Changes

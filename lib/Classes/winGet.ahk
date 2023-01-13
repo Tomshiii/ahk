@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2023/01/13
- * @version 1.5.0
+ * @version 1.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,12 +26,8 @@ class WinGet {
         loop numberofMonitors {
             try {
                 MonitorGet(A_Index, &left, &Top, &Right, &Bottom)
-                if x > left && x < Right
-                    {
-                        if y < Bottom && y > Top
-                            ;MsgBox(x " " y "`n" left " " Right " " Bottom " " Top "`nwithin monitor " A_Index)
-                            return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
-                    }
+                if (x > left && x < Right) && (y < Bottom && y > Top)
+                    return {monitor: A_Index, left: left, right: right, top: top, bottom: bottom}
             }
         }
     }
@@ -41,7 +37,7 @@ class WinGet {
      *
      * *If a window is overlapping multiple monitors, this function may attempt to fullscreen the window first to get the correct monitor.*
      * @param {String} title? allows you to pass a custom winTitle into the function instead of using the currently active window
-     * @return {Object}
+     * @returns {Object}
      * ```
      * window := winget.WinMonitor()
      * window.monitor      ;// returns monitor the window is within
@@ -55,12 +51,19 @@ class WinGet {
     {
         if !IsSet(title)
             this.Title(&title)
+        attempt := 0
         tryagain:
+        attempt++
         WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
         ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
 		;// so we just add 10 pixels to both variables to ensure we're in the correct monitor
         monObj := WinGet().__Monitor(x + 10, y + 10)
         if !IsObject(monObj) {
+            if attempt > 2 {
+                errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1)
+                            , "The window may be overlapping monitors", 1)
+                Exit()
+            }
             ;// if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
             if !winget.isFullscreen(&testWin, title)
                 {
@@ -77,7 +80,7 @@ class WinGet {
      * @param {Integer} y allows you to pass a custom y coordinate
      *
      * *Both `x` & `y` have to be passed to the function to test a coordinate, otherwise the function will use the current mouse coordinates*
-     * @return {Object}
+     * @returns {Object}
      * ```
      * ;mouse is within monitor 1 (2560x1440)
      * monitor := winget.MouseMonitor()
@@ -108,6 +111,7 @@ class WinGet {
     /**
      * This function gets and returns the title for the current active window, autopopulating the `title` variable
      * @param {VarRef} title populates with the active window
+     * @returns {String} returns the title
      */
     static Title(&title?)
     {
@@ -129,6 +133,7 @@ class WinGet {
      * This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
      * @param {VarRef} title is the active window, this function will populate the `title` variable with the active window
      * @param {String} window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
+     * @returns {Boolean} returns wether the desired window is maximised. A return value of 1 means it is maximised
      */
     static isFullscreen(&title?, window := false)
     {
@@ -208,7 +213,7 @@ class WinGet {
 
     /**
      * This function is designed to retrieve the name of the client using some string manipulation of the dir path within Premiere's title. It uses `ptf.comms` as the "root" dir and expects the next folder in the path to be the client name.
-     * @return {String} The clients name
+     * @returns {String} The clients name
      */
     static ProjClient()
     {
@@ -238,6 +243,7 @@ class WinGet {
     /**
      * This function will grab the proccess ID of the current active window
      * @param {VarRef} id is the processname of the active window, we want to pass this value back to the script
+     * @returns {Boolean} returns true/false on completion
      */
     static ID(&id)
     {
