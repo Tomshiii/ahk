@@ -19,6 +19,7 @@
 #Include <Functions\getHTML>
 #Include <Functions\createIni>
 #Include <Functions\isReload>
+#Include <Other\print>
 ; // libs
 #Include <Other\_DLFile>
 ; }
@@ -683,8 +684,8 @@ class Startup {
             scriptPos: ptf.lib "\Other\7zip"
         }
         static JSON := {
-            name: "JSON",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
-            scriptPos: ptf.lib "\Other\JSON"
+            name: "JSON",                                       url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
+            scriptPos: ptf.lib "\Other"
         }
 
         static name        := [this.webView2.name, this.comVar.name, this.SevenZip.name, this.JSON.name, ]
