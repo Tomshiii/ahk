@@ -42,7 +42,6 @@ reload_reset_exit(which, includeChecklist?) {
                 case "exit":
                     ProcessClose(PID)
             }
-
         }
     detect(false)
     tool.Wait()

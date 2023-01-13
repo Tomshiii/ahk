@@ -10,12 +10,14 @@
 allKeyUp() {
     loop 128 {
         which := Format("sc{:x}", A_Index)
-        Send "{Blind}{" which " Up}"
+        Send("{Blind}{" which " Up}") ;// send Up keystroke
+        Send("{Blind}{Esc}") ;// try to mitigate any damage from an UP keystroke doing something
         ToolTip("Sending " GetKeyName(which) " Up")
     }
     loop 256 {
         which := Format("vk{:x}", A_Index)
-        Send "{" which " Up}"
+        Send("{Blind}{" which " Up}") ;// send Up keystroke
+        Send("{Blind}{Esc}") ;// try to mitigate any damage from an UP keystroke doing something
         ToolTip("Sending " GetKeyName(which) " Up")
     }
     tool.Cust("Sending {Up} commands complete")

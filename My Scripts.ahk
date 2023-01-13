@@ -12,10 +12,9 @@
 global MyRelease := getLocalVer()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.27.4
+;\\v2.27.5
 
 #SingleInstance Force
-ListLines(1)
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
 SetNumLockState("AlwaysOn")            ;sets numlock to always on (you can still it for macros)
 SetCapsLockState("AlwaysOff")          ;sets caps lock to always off (you can still it for macros)
