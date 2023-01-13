@@ -111,19 +111,20 @@ errorLog(err, optMessage?, toolCust := false, doThrow := false) {
                 )
     ;// append the error and send to the debug stream
     FileAppend(append, ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-    OutputDebug(append)
+    OutputDebug(Trim(append, "``"))
     ;// if optMessage has been set, append it as an error and send it to the debug stream
     if IsSet(optMessage)
         {
             optAppend := Format('`t`t`t// "{}"', optMessage)
             FileAppend(optAppend '`n', ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-            OutputDebug(LTrim(optAppend, '`t'))
+            OutputDebug(Trim(LTrim(optAppend, '`t'), "``"))
         }
     ;// if toolCust has been set to true, generate a tooltip based off the passed in error object
     if toolCust
         doTooltip(toolCust, optMessage?)
     ;// insert any new additions here OR above. Not below the throw
 
+    ;//! -----------------------------------------------
     ;//! This part of the function should ALWAYS be last
     if doThrow
         throw err

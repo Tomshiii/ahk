@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/10
- * @version 1.2.1
+ * @date 2023/01/13
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,15 +18,12 @@
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
 #Include <Functions\createIni>
+#Include <Functions\isReload>
 ; // libs
 #Include <Other\_DLFile>
 ; }
 
 class Startup {
-    /**
-     * Checks to see if the script was reloaded.
-     */
-    static isReload() => DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
 
     /**
      * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
@@ -36,7 +33,7 @@ class Startup {
      * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static generate(MyRelease) {
-        if this.isReload() ;checks if script was reloaded
+        if isReload() ;checks if script was reloaded
             return
 
         /**
@@ -143,7 +140,7 @@ class Startup {
     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static updateChecker(MyRelease) {
-        if this.isReload() ;checks if script was reloaded
+        if isReload() ;checks if script was reloaded
             return
         ;checking to see if the user wishes to check for updates
         check := IniRead(ptf["settings"], "Settings", "update check")
@@ -405,7 +402,7 @@ class Startup {
      */
     static firstCheck(MyRelease) {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
-        if this.isReload() ;checks if script was reloaded
+        if isReload() ;checks if script was reloaded
             return
         if !IsSet(version) ;if the user has no internet, "version" will not have been assigned a value in `updateChecker()` - this checks to see if `version` has been assigned a value
             version := ""
@@ -501,7 +498,7 @@ class Startup {
      * This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
      */
     static oldError() {
-        if this.isReload()
+        if isReload()
             return
         loop files, ptf.ErrorLog "\*.txt"
         if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
@@ -515,7 +512,7 @@ class Startup {
      * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
     static adobeTemp(MyRelease) {
-        if this.isReload()
+        if isReload()
             return
         tool.Wait()
         if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
@@ -582,7 +579,7 @@ class Startup {
      * This script will take note of the users A_WorkingDir and store it in `A_MyDocuments \tomshi\settings.ini` and will check it every launch to ensure location variables are always updated and accurate
     */
     static locationReplace() {
-        if this.isReload()
+        if isReload()
             return
         tool.Wait()
         checkDir := IniRead(ptf["settings"], "Track", "working dir")
@@ -685,17 +682,21 @@ class Startup {
             name: "SevenZip",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/7Zip/SevenZip.ahk",
             scriptPos: ptf.lib "\Other\7zip"
         }
+        static JSON := {
+            name: "JSON",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
+            scriptPos: ptf.lib "\Other\JSON"
+        }
 
-        static name        := [this.webView2.name, this.comVar.name, this.SevenZip.name, ]
-        static url         := [this.webView2.url, this.comVar.url, this.SevenZip.url, ]
-        static scriptPos   := [this.webView2.scriptPos, this.comVar.scriptPos, this.SevenZip.scriptPos, ]
+        static name        := [this.webView2.name, this.comVar.name, this.SevenZip.name, this.JSON.name, ]
+        static url         := [this.webView2.url, this.comVar.url, this.SevenZip.url, this.JSON.url, ]
+        static scriptPos   := [this.webView2.scriptPos, this.comVar.scriptPos, this.SevenZip.scriptPos, this.JSON.scriptPos, ]
     }
 
     /**
      * This function will loop through `class libs {` and ensure that all libs are up to date. This function will not fire on a reload
      */
     static libUpdateCheck() {
-        if this.isReload()
+        if isReload()
             return
         check := IniRead(ptf["settings"], "Settings", "update check")
         if check = "stop"
@@ -764,7 +765,7 @@ class Startup {
      * This function will check for a new version of AHK by comparing the latest version to the users currently running version. If a newer version is available, it will prompt the user.
      */
     static updateAHK() {
-        if this.isReload() ;checks if script was reloaded
+        if isReload() ;checks if script was reloaded
             return
         settingsCheck := IniRead(ptf["settings"], "Settings", "update check")
         if settingsCheck = "stop"

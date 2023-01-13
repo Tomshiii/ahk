@@ -9,6 +9,7 @@
 #Include <Functions\floorDecimal>
 #Include <Functions\errorLog>
 #Include <Functions\detect>
+#Include <Functions\isReload>
 #Include <GUIs\tomshiBasic>
 ; <checklist funcs> ;everything in <lib\checklist\> is needed for this script
 ;but these are just the ones that can be defined anywhere
@@ -30,7 +31,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.11-rc.3"
+version := "v2.11.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -48,7 +49,7 @@ global WaitTrack := 0
 global morethannine := unset
 global morethan11 := unset
 
-if DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" ;if the checklist is reloaded, we don't want it to automatically attempt to grab the title of the currently open premiere project - this allows us to open/create new projects while premiere is open
+if isReload() ;if the checklist is reloaded, we don't want it to automatically attempt to grab the title of the currently open premiere project - this allows us to open/create new projects while premiere is open
     {
         premNotOpen(&checklist, &logs, &path)
         if WinExist("Select commission folder")

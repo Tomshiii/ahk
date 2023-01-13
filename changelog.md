@@ -8,8 +8,10 @@
     - Replaced as many instances of simply using `KeyWait` as possible to make functions less error prone in the event a user calls them in a different way to myself
 - Fixed `tool.Cust()` not properly returning the original `CoordMode`
     - Fixes `right click resolve` macro not working correctly on first use but fine after
+- Moved `isReload()` out of `startup {` and into it's own function
 
 ## > Other Changes
+- Added `thqby's` `print.ahk` & `JSON.ahk` lib files to help with debugging
 
 `Listlines` & `KeyHistory`
 - Scripts that do not need to log keys/lines have had them disabled
