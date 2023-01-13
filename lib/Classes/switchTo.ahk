@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/01/11
- * @version 1.0.10
+ * @date 2023/01/13
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,7 +31,7 @@ class switchTo {
      * @param {String} addClass is the class name you wish to pass into `GroupAdd` if it's different to `winExistVar`
      * @param {String} ignore is the winTitle you wish to pass into the `ignore` parameter of `WinActive`
      */
-    static Win(winExistVar, runVar, groupVar, addClass?, ignore?) {
+    __Win(winExistVar, runVar, groupVar, addClass?, ignore?) {
         if !IsSet(addClass)
             addClass := winExistVar
         if !WinExist(winExistVar)
@@ -220,7 +220,7 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Photo() => this.Win(PS.winTitle, PS.path, "photoshop")
+    static Photo() => switchTo().__Win(PS.winTitle, PS.path, "photoshop")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
@@ -257,42 +257,42 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static VSCode() => this.Win(VSCode.winTitle, VSCode.path, "code")
+    static VSCode() => switchTo().__Win(VSCode.winTitle, VSCode.path, "code")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Github() => this.Win("ahk_exe GitHubDesktop.exe", ptf.LocalAppData "\GitHubDesktop\GitHubDesktop.exe", "git")
+    static Github() => switchTo().__Win("ahk_exe GitHubDesktop.exe", ptf.LocalAppData "\GitHubDesktop\GitHubDesktop.exe", "git")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Streamdeck() => this.Win("ahk_exe StreamDeck.exe", ptf.ProgFi "\Elgato\StreamDeck\StreamDeck.exe", "stream", "ahk_class Qt5152QWindowIcon")
+    static Streamdeck() => switchTo().__Win("ahk_exe StreamDeck.exe", ptf.ProgFi "\Elgato\StreamDeck\StreamDeck.exe", "stream", "ahk_class Qt5152QWindowIcon")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Excel() => this.Win("ahk_exe EXCEL.EXE", ptf.ProgFi "\Microsoft Office\root\Office16\EXCEL.EXE", "xlmain", "ahk_class XLMAIN")
+    static Excel() => switchTo().__Win("ahk_exe EXCEL.EXE", ptf.ProgFi "\Microsoft Office\root\Office16\EXCEL.EXE", "xlmain", "ahk_class XLMAIN")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Word() => this.Win("ahk_exe WINWORD.EXE", ptf.ProgFi "\Microsoft Office\root\Office16\WINWORD.EXE", "wordgroup", "ahk_class wordgroup")
+    static Word() => switchTo().__Win("ahk_exe WINWORD.EXE", ptf.ProgFi "\Microsoft Office\root\Office16\WINWORD.EXE", "wordgroup", "ahk_class wordgroup")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static WindowSpy() => this.Win("WindowSpy.ahk", ptf.ProgFi "\AutoHotkey\UX\WindowSpy.ahk", "winspy", "ahk_class AutoHotkeyGUI", VSCode.winTitle)
+    static WindowSpy() => switchTo().__Win("WindowSpy.ahk", ptf.ProgFi "\AutoHotkey\UX\WindowSpy.ahk", "winspy", "ahk_class AutoHotkeyGUI", VSCode.winTitle)
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static YourPhone() => this.Win("ahk_pid 5252", ptf["YourPhone"], "yourphone", "ahk_class WinUIDesktopWin32WindowClass")
+    static YourPhone() => switchTo().__Win("ahk_pid 5252", ptf["YourPhone"], "yourphone", "ahk_class WinUIDesktopWin32WindowClass")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Edge() => this.Win(browser.edge.winTitle, "msedge.exe", "edge")
+    static Edge() => switchTo().__Win(browser.edge.winTitle, "msedge.exe", "edge")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one

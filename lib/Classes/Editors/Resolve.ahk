@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2023/01/11
- * @version 1.2.2
+ * @date 2023/01/13
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,7 +30,7 @@ class Resolve {
     /**
      * This nested class is simply to store coordinate ranges for imagesearches for certain UI elements of resolve. This makes it easier for another user to come along and adjust them if they don't quite line up with their setup
      */
-    class open {
+    class OpenCoords {
         ;// setting imagesearch coordinates
 
         ;// for the inspector button
@@ -72,7 +72,7 @@ class Resolve {
          * @param {String} errorMsg the error message you wish for the tooltip to use
          * @returns {Boolean}
          */
-        static open(objCoords, pngName1, pngName2, errorMsg := "") {
+        __open(objCoords, pngName1, pngName2, errorMsg := "") {
             try {
                 ;// they NEED to be ordered this way so the values don't get overridden
                 img1 := ImageSearch(&xi, &yi, objCoords.x1, objCoords.y1, objCoords.x2, objCoords.y2, "*2 " ptf.Resolve pngName1 ".png")
@@ -109,17 +109,17 @@ class Resolve {
         SendInput(resolveSelectPlayhead)
         orig := obj.MousePos()
         ;// open the inspector tab
-        this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the video tab
-        this.open.open(this.open.vid, "video", "videoN", "video tab")
+        this.OpenCoords().__open(this.OpenCoords.vid, "video", "videoN", "video tab")
         if (!ImageSearch(&xz, &yz
-                           , this.open.prop.x1, this.open.prop.y1
-                           , this.open.prop.x2, this.open.prop.y2
+                           , this.OpenCoords.prop.x1, this.OpenCoords.prop.y1
+                           , this.OpenCoords.prop.x2, this.OpenCoords.prop.y2
                            , "*5 " ptf.Resolve property ".png")
            &&
            !ImageSearch(&xz, &yz
-                           , this.open.prop.x1, this.open.prop.y1
-                           , this.open.prop.x2, this.open.prop.y2
+                           , this.OpenCoords.prop.x1, this.OpenCoords.prop.y1
+                           , this.OpenCoords.prop.x2, this.OpenCoords.prop.y2
                            , "*5 " ptf.Resolve property "2.png"))
             {
                 block.Off()
@@ -176,11 +176,11 @@ class Resolve {
         block.On()
         orig := obj.MousePos()
         ;// open the effects panel
-        this.open.open(this.open.effects, "effects2", "effects", "the effects button")
+        this.OpenCoords().__open(this.OpenCoords.effects, "effects2", "effects", "the effects button")
         ;// find the open/close button
-        this.open.open(this.open.opnCls, "open", "closed", "the open/close button")
+        this.OpenCoords().__open(this.OpenCoords.opnCls, "open", "closed", "the open/close button")
         ;// open the fx folder
-        this.open.open(this.open.fx, folder, folder "2", "the fxfolder")
+        this.OpenCoords().__open(this.OpenCoords.fx, folder, folder "2", "the fxfolder")
         ;// do a few imagesearches to figure out what to do next
         srch2 := ImageSearch(&xs, &ys, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search2.png")
         srch3 := ImageSearch(&xs2, &ys2, 8, 300, A_ScreenWidth/2, A_ScreenHeight, "*2 " ptf.Resolve "search3.png")
@@ -234,17 +234,17 @@ class Resolve {
         SendInput(resolveSelectPlayhead)
         orig := obj.MousePos()
         ;// open the inspector tab
-        this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the video tab
-        this.open.open(this.open.vid, "video", "videoN", "video tab")
+        this.OpenCoords().__open(this.OpenCoords.vid, "video", "videoN", "video tab")
         if (!ImageSearch(&xz, &yz
-                           , this.open.prop.x1, this.open.prop.y1
-                           , this.open.prop.x2, this.open.prop.y2
+                           , this.OpenCoords.prop.x1, this.OpenCoords.prop.y1
+                           , this.OpenCoords.prop.x2, this.OpenCoords.prop.y2
                            , "*5 " ptf.Resolve property ".png")
             &&
            !ImageSearch(&xz, &yz
-                           , this.open.prop.x1, this.open.prop.y1
-                           , this.open.prop.x2, this.open.prop.y2
+                           , this.OpenCoords.prop.x1, this.OpenCoords.prop.y1
+                           , this.OpenCoords.prop.x2, this.OpenCoords.prop.y2
                            , "*5 " ptf.Resolve property "2.png"))
             {
                 block.Off()
@@ -278,20 +278,20 @@ class Resolve {
         block.On()
         orig := obj.MousePos()
         ;// open the inspector tab
-        this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the video tab
-        this.open.open(this.open.vid, "video", "videoN", "video tab")
+        this.OpenCoords().__open(this.OpenCoords.vid, "video", "videoN", "video tab")
         if (!ImageSearch(&xh, &yh
-                           , this.open.prop.x1, this.open.prop.y1
-                           , this.open.prop.x2, this.open.prop.y2
+                           , this.OpenCoords.prop.x1, this.OpenCoords.prop.y1
+                           , this.OpenCoords.prop.x2, this.OpenCoords.prop.y2
                            , "*5 " ptf.Resolve button ".png") &&
            !ImageSearch(&xh, &yh
-                           , this.open.prop.x1, this.open.prop.y1
-                           , this.open.prop.x2, this.open.prop.y2
+                           , this.OpenCoords.prop.x1, this.OpenCoords.prop.y1
+                           , this.OpenCoords.prop.x2, this.OpenCoords.prop.y2
                            , "*5 " ptf.Resolve button "2.png"))
             {
                 block.Off()
-                MouseMove(xpos, ypos)
+                MouseMove(orig.x, orig.y)
                 errorLog(Error("Couldn't find the desired button", -1, button),, 1)
             }
         MouseMove(xh, yh)
@@ -309,23 +309,23 @@ class Resolve {
         if !IsNumber(value)
             {
                 ;// throw
-                errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
+                errorLog(TypeError("Invalid parameter type in Parameter #1", -1, value),,, 1)
             }
         coord.w()
         block.On()
         SendInput(resolveSelectPlayhead)
         orig := obj.MousePos()
         ;// open the inspector tab
-        this.open.open(this.open.inspect, "inspector", "inspector2", "inspector tab")
+        this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the audio tab
-        this.open.open(this.open.vid, "audio2", "audio", "audio tab")
+        this.OpenCoords().__open(this.OpenCoords.vid, "audio2", "audio", "audio tab")
         if (!ImageSearch(&xz, &yz
-                            , this.open.prop.x1, this.open.prop.y1
-                            , this.open.prop.x2, this.open.prop.y2
+                            , this.OpenCoords.prop.x1, this.OpenCoords.prop.y1
+                            , this.OpenCoords.prop.x2, this.OpenCoords.prop.y2
                             , "*5 " ptf.Resolve "volume.png") &&
             !ImageSearch(&xz, &yz
-                            , this.open.prop.x1, this.open.prop.y1
-                            , this.open.prop.x2, this.open.prop.y2
+                            , this.OpenCoords.prop.x1, this.OpenCoords.prop.y1
+                            , this.OpenCoords.prop.x2, this.OpenCoords.prop.y2
                             , "*5 " ptf.Resolve "volume2.png"))
             {
                 block.Off()

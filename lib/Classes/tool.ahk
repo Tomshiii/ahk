@@ -2,7 +2,7 @@
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
  * @date 2023/01/13
- * @version 1.0.6
+ * @version 1.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,10 +15,26 @@ class tool {
      */
     __storeLines() {
         ;// saving the previous ListLines value
-        priorLines := A_ListLines
-        ListLines(0)
+        priorLines := A_ListLines, ListLines(0)
         return priorLines
     }
+
+    /**
+     * This function saves the previous coordmode states
+     */
+    __storeCoords() {
+        return {Tooltip: A_CoordModeToolTip, Mouse: A_CoordModeMouse}
+    }
+
+    /**
+     * This function ensures any custom coordinates passed by the user don't default to window mode and ensures the initial tooltip generates in the correct position if cursor isn't on the main display
+     */
+    __setCoords() => (CoordMode("ToolTip", "Screen"), CoordMode("Mouse", "Screen"))
+
+    /**
+     * This function will return the coordmodes to their previous state
+     */
+    __returnCoord(priorTooltip, priorMouse, priorLines) => (A_CoordModeToolTip := priorTooltip, A_CoordModeMouse := priorMouse, ListLines(priorLines))
 
     /**
      * Create a tooltip with any message. This tooltip will then follow the cursor and only redraw itself if the user has moved the cursor.
@@ -38,12 +54,17 @@ class tool {
     {
         ;// saving the previous ListLines value
         priorLines := tool().__storeLines()
+        ;// store initial coord mode
+        priorCoords := tool().__storeCoords()
+        ;// set coord mode
+        tool().__setCoords()
+
         ;// doing some setup
-        one := false ;this variable will be used to determine if only x or only y has been assigned a value
-        both := false ;this variable will be used to determine if both x and y have been assigned a value
-        none := false ;this variable will be used to determine if neither x or y have been assigned a value
-        xDef := 20 ;the default value for x
-        yDef := 1 ;the default value for y
+        one  := false  ;this variable will be used to determine if only x or only y has been assigned a value
+        both := false  ;this variable will be used to determine if both x and y have been assigned a value
+        none := false  ;this variable will be used to determine if neither x or y have been assigned a value
+        xDef := 20     ;the default value for x
+        yDef := 1      ;the default value for y
         if (IsSet(x) || IsSet(y)) && !(IsSet(x) && IsSet(y)) ; checking if one value has been assigned but not both
             {
                 one := true
@@ -68,14 +89,6 @@ class tool {
                     WhichToolTip := 1
             }
 
-        ;// saving the previous coordmode states
-        priorTooltip := A_CoordModeToolTip, priorMouse := A_CoordModeMouse
-        ;// this function will return the coordmodes to their previous state
-        returnCoord() => (A_CoordModeToolTip := priorTooltip, A_CoordModeMouse   := priorMouse, ListLines(priorLines))
-
-        CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
-        CoordMode("Mouse", "Screen") ;this ensures the initial tooltip generates in the correct position if cursor isn't on the main display
-
         ;// starting the tooltip logic
         MouseGetPos(&xpos, &ypos) ;log our starting mouse coords
         time := A_TickCount ;log our starting time
@@ -84,14 +97,14 @@ class tool {
             {
                 ToolTip(messageFind message, xpos + x, ypos + y, WhichToolTip?) ;produce the initial tooltip
                 SetTimer(moveWithMouse.Bind(x, y), 15)
-                ListLines(priorLines)
+                tool().__returnCoord(priorCoords.Tooltip, priorCoords.Mouse, priorLines)
                 return
             }
         else ;what happens otherwise
             {
                 ToolTip(messageFind message, x, y, WhichToolTip?) ;produce the initial tooltip
                 SetTimer(() => ToolTip("",,, WhichToolTip?), - timeout) ;otherwise we create a timer to remove the cursor after the timout period
-                returnCoord()
+                tool().__returnCoord(priorCoords.Tooltip, priorCoords.Mouse, priorLines)
                 return
             }
 
@@ -99,11 +112,12 @@ class tool {
         moveWithMouse(x, y)
         {
             ListLines(0)
+            tool().__setCoords()
             if (A_TickCount - time) >= timeout ;here we compare the current time, minus the original time and see if it's been longer than the timeout time
                 {
                     SetTimer(, 0) ;if it has we kill the timer
                     ToolTip("",,, WhichToolTip?) ;and kill the tooltip
-                    returnCoord()
+                    tool().__returnCoord(priorCoords.Tooltip, priorCoords.Mouse, priorLines)
                     return ;then kill the function
                 }
             MouseGetPos(&newX, &newY) ;here we're grabbing new mouse coords

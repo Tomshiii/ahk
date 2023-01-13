@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2023/01/04
- * @version 1.1.2
+ * @date 2023/01/13
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,7 +14,7 @@ class block {
      * This function is designed to be internal to the class and isn't intended to be manually called. It checks the users custom input settings to make sure they're a usable option. This function will also alert the user about the intricacies of using `BlockInput("On"/"Off")`
      * @param {String} args is the users passed in custom option
      */
-    inputs(args) {
+    __inputs(args) {
         choices := ["send", "mouse", "sendandmouse", "default", "on", "mousemove", "mousemoveoff", "off"]
         if args = "on" || args = "off"
             {
@@ -58,8 +58,7 @@ class block {
                 BlockInput("SendAndMouse"), BlockInput("MouseMove")
                 return
             }
-        else
-            block().inputs(option)
+        block().__inputs(option)
     }
 
     /**
@@ -74,6 +73,6 @@ class block {
                 BlockInput("Default"), BlockInput("MouseMoveOff")
                 return
             }
-        block().inputs(option)
+        block().__inputs(option)
     }
 }

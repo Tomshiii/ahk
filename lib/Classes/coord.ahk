@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2023/01/01
- * @version 1.1.1
+ * @date 2023/01/13
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,7 +15,7 @@ class coord {
      * @param {String} target is the passed in `target` parameter of `CoordMode`
      * @param {Boolean} mouse is the passed in boolean dictating if the user wants the function to adjust the mouse to screen as well
     */
-   errorChecks(target, mouse?) {
+    __errorChecks(target, mouse?) {
         targets := ["tooltip", "pixel", "mouse", "caret", "menu"]
         ;// checking that the passed parameter is a string
         if Type(target) != "string"
@@ -52,7 +52,7 @@ class coord {
      * @param {Boolean} mouse whether you want this function to adjust the mouse to screen coordmode as well
     */
     static s(target := "pixel", mouse := true) {
-        coord().errorChecks(target, mouse)
+        coord().__errorChecks(target, mouse)
         CoordMode(target, "screen")
         if mouse
             CoordMode("mouse", "screen")
@@ -68,7 +68,7 @@ class coord {
      * @param {Boolean} mouse whether you want this function to adjust the mouse to window coordmode as well
      */
      static w(target := "pixel", mouse := true) {
-        coord().errorChecks(target, mouse)
+        coord().__errorChecks(target, mouse)
         CoordMode(target, "window")
         if mouse
             CoordMode("mouse", "window")
@@ -84,7 +84,7 @@ class coord {
      * @param {Boolean} mouse whether you want this function to adjust the mouse to client coordmode as well
     */
     static client(target := "pixel", mouse := true) {
-        coord().errorChecks(target, mouse)
+        coord().__errorChecks(target, mouse)
         CoordMode(target, "client")
         if mouse
             CoordMode("mouse", "client")

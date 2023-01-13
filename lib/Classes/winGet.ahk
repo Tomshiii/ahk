@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/01/09
- * @version 1.4.0
+ * @date 2023/01/13
+ * @version 1.5.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,7 +19,7 @@ class WinGet {
      * It compares the coordinates passed into it, to the coordinates of all monitors connected to the system
      * If the passed in coordinates are within one of the monitor coordinates, this function will return the monitor number as well as the monitor coordinates that the original coordinates are within
      */
-    Monitor(x, y)
+    __Monitor(x, y)
     {
         numberofMonitors := SysGet(80)
         static attempt := 0
@@ -59,7 +59,7 @@ class WinGet {
         WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
         ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
 		;// so we just add 10 pixels to both variables to ensure we're in the correct monitor
-        monObj := WinGet().Monitor(x + 10, y + 10)
+        monObj := WinGet().__Monitor(x + 10, y + 10)
         if !IsObject(monObj) {
             ;// if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
             if !winget.isFullscreen(&testWin, title)
@@ -95,7 +95,7 @@ class WinGet {
             coord.s()
             MouseGetPos(&x, &y)
         }
-        monObj := WinGet().Monitor(x, y)
+        monObj := WinGet().__Monitor(x, y)
         if !IsObject(monObj)
             {
                 errorLog(TargetError("Failed to get the requested monitor", -1),, 1)
