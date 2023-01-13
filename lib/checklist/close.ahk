@@ -17,7 +17,7 @@ close(*) {
     timer.stop()
     if timer.logger.logActive = true
         timer.logger.timeStop()
-    ;MyGui.Destroy()
+    ;checklistGUI.Destroy()
     ExitApp()
 }
 
@@ -31,7 +31,7 @@ closeWaitUntil()
         ProcessClose(WinGetPID("waitUntil.ahk",, browser.vscode.winTitle))
 }
 
-MyGui.OnEvent("Close", ExitFunc.Bind(""))
+checklistGUI.OnEvent("Close", ExitFunc.Bind(""))
 
 /**
  * This function determines what the script will do if it's forced to exit - ie. a second instance is forced open

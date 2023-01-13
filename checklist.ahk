@@ -22,7 +22,6 @@
 #Include <checklist\log>
 #Include <checklist\getPath>
 #Include <checklist\haltChecklist>
-#Include <checklist\checkSettings>
 #Include <checklist\msgButton>
 ; }
 
@@ -31,23 +30,15 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.11.1"
+version := "v2.11.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
 ;THIS SCRIPT --->>
 ;DO NOT RELOAD THIS SCRIPT WITHOUT FIRST STOPPING THE TIMER - PRESSING THE `X` IS FINE BUT RELOADING FROM THE FILE MIGHT CAUSE IT TO CLOSE WITHOUT WRITING THE ELAPSED TIME
 
-;SET THE AMOUNT OF MINUTES YOU WANT THE REMINDER TIMER TO WAIT HERE
-minutes := 1
-global ms := minutes * 60000
-;SET THE AMOUNT OF MINUTES YOU WANT INBETWEEN EACH TIME THE SCRIPT LOGS HOW MUCH TIME HAS PASSED (purely for backup purposes)
-minutes2 := 10
-global ms10 := minutes2 * 60000
 checklist := ""
-global WaitTrack := 0
-global morethannine := unset
-global morethan11 := unset
+WaitTrack := 0
 
 if isReload() ;if the checklist is reloaded, we don't want it to automatically attempt to grab the title of the currently open premiere project - this allows us to open/create new projects while premiere is open
     {
@@ -156,34 +147,37 @@ else
         end:
     }
 
-;// setting default settings for GUI
-global globalCheckTool := checkTooltips()
-global globalDarkTool := checkDark()
-
 #Include <checklist\verCheck>
 
-;getting the title
+;// getting the title
 SplitPath(path, &name)
 
-;grabbing hour information from ini file
+;// grabbing hour information from ini file
 getTime := IniRead(checklist, "Info", "time")
 timeForLog := Round(getTime / 3600, 3)
 if getTime = 0
     timeForLog := "0.000"
-;checking for log file
+;// checking for log file
 if !FileExist(logs)
     FileAppend("Initial creation time : " today ", " A_Hour ":" A_Min ":" A_Sec "`n`n{ " today " - " timeForLog "`n", logs)
 
+;// checking the date
 newDate(&today)
 
-;constructing the GUI
+;// constructing the GUI
 #Include <checklist\contruct>
 
+;// log opening
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", logs)
 
+;// setting dark/light mode
 if darkToolTrack = 1
     which()
-MyGui.Show("AutoSize NoActivate")
-MyGui.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
-;finish defining GUI
+else ;* because `checklist.ahk` has it's own darkmode settings an `else` block is needed
+    which(false, "Light", 0)
+
+checklistGUI.Show("AutoSize NoActivate")
+checklistGUI.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
+;// finish defining GUI
+
 #Include <checklist\close>

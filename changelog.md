@@ -18,6 +18,10 @@
 ## > Other Changes
 - Added `thqby's` `print.ahk` & `JSON.ahk` lib files to help with debugging
 
+`checklist.ahk`
+- Cleaned up a lot of code
+- Refactored to remove all `global` variables
+
 `Listlines` & `KeyHistory`
 - Scripts that do not need to log keys/lines have had them disabled
 

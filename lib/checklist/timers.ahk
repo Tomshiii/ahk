@@ -1,11 +1,11 @@
 #Include <Classes\timer>
 
 class checklistTimer extends count {
-    __New() {
+    __New(startValue := 0, ms := 1*60000, ms10 := 10*60000) {
         super.__New(1000)
-        this.logger   := checklistLog(((1000*60)*10)) ;// every 10min
-        this.reminder := checklistReminder(ms)        ;// user defined value
-        ; watch := ObjBindMethod(this, "StopWatch")
+        this.logger   := checklistLog(ms10)           ;// every 10min
+        this.reminder := checklistReminder(ms)        ;// every minute
+        this.count := this.count + startValue
     }
 
     /**
@@ -22,6 +22,9 @@ class checklistTimer extends count {
         this.reminder.stop()
     }
 
+    /**
+     * This function is called to add 1s to the timer
+     */
     Tick() {
         ++this.count
         this.StopWatch()
@@ -57,6 +60,7 @@ class checklistTimer extends count {
                 forFile := Round(this.count / 3600, 3)
         }
     }
+
     /**
      * This function handles what happens when the stop button is pressed
      */
@@ -72,7 +76,7 @@ class checklistTimer extends count {
         this.buttonChange("stop")
         this.logger.stop()
         this.reminder.start()
-        global startValue := IniRead(checklist, "Info", "time") ;then update startvalue so it will start from the new elapsed time instead of the original
+        this.count := IniRead(checklist, "Info", "time") ;then update the count so it will start from the new elapsed time instead of the original
     }
 
     /**
@@ -83,17 +87,15 @@ class checklistTimer extends count {
     {
         forFile := Round(this.count / 3600, 3)
         word := ""
-        IniWrite(this.count, checklist, "Info", "time")
-        global initialRead := IniRead(checklist, "Info", "time")
         switch sign {
             case "-":
                 word := "removed"
                 funcMinutes := ((List.Text * 60))
-                newValue := initialRead - funcMinutes
+                newValue := this.count - funcMinutes
             default:
                 word := "added"
                 funcMinutes := ((List.Text * 60))
-                newValue := initialRead + funcMinutes
+                newValue := this.count + funcMinutes
         }
         if newValue < 0
             newValue := 0
@@ -102,8 +104,7 @@ class checklistTimer extends count {
         this.buttonChange("stop")
         this.logger.stop()
         this.reminder.stop()
-        global startValue := IniRead(checklist, "Info", "time")
-        this.count := 0 + startValue
+        this.count := IniRead(checklist, "Info", "time") ;then update the count so it will start from the new elapsed time instead of the original
         this.StopWatch()
         newDate(&today)
         timeStr := Format("{}_{}_{}, {}:{}:{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec)
@@ -118,7 +119,7 @@ class checklistTimer extends count {
 }
 
 class checklistLog extends count {
-    __New(repeat := ms10) {
+    __New(repeat := 10*60000) {
         super.__New(repeat)
         this.logActive := false
     }

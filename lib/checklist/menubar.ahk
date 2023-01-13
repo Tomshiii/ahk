@@ -5,6 +5,7 @@
 #Include <Classes\ptf>
 #Include <Functions\getScriptRelease>
 #Include <Functions\refreshWin>
+#Include <checklist\checkSettings>
 ; }
 
 ;define menu
@@ -24,18 +25,18 @@ openSub.Add("&ini`tCtrl+I", openini)
 FileMenu.Add("E&xit", close)
 ;settings menu
 SettingsMenu := Menu()
-SettingsMenu.Add("&Tooltips", menuTooltips)
-SettingsMenu.Add("&Dark Mode", goDark)
+SettingsMenu.Add("&Tooltips", menuTooltips.bind(&settingsToolTrack))
+SettingsMenu.Add("&Dark Mode", goDark.bind(&darkToolTrack))
 settingsToolTrack := 0
 if IniRead(checklist, "Info", "tooltip") = "1"
     {
         SettingsMenu.Check("&Tooltips")
-        if globalCheckTool != 0
-            global settingsToolTrack := 1
+        if checkTooltips() != 0
+            settingsToolTrack := 1
         else
-            global settingsToolTrack := 0
+            settingsToolTrack := 0
     }
-if globalCheckTool = 0
+if checkTooltips() = 0
     SettingsMenu.Disable("&Tooltips")
 else
     SettingsMenu.Enable("&Tooltips")
@@ -44,12 +45,12 @@ darkToolTrack := 0
 if IniRead(checklist, "Info", "dark") = "1"
 {
     SettingsMenu.Check("&Dark Mode")
-    if globalDarkTool != 0
-        global darkToolTrack := 1
+    if checkDark() != 0
+        darkToolTrack := 1
     else
-        global darkToolTrack := 0
+        darkToolTrack := 0
 }
-if globalDarkTool = 0
+if checkDark() = 0
     SettingsMenu.Disable("&Dark Mode")
 else
     SettingsMenu.Enable("&Dark Mode")
@@ -73,16 +74,16 @@ bar.Add("&Help", HelpMenu)
 /**
  * A function for the menubar to work correctly. Is called when the menuTooltips setting is pressed
  */
-menuTooltips(*)
+menuTooltips(&settingsToolTrack, *)
 {
     switch settingsToolTrack {
         case 1:
-            global settingsToolTrack := 0
+            settingsToolTrack := 0
             SettingsMenu.UnCheck("&Tooltips")
             IniWrite("0", checklist, "Info", "tooltip")
             restart()
         case 0:
-            global settingsToolTrack := 1
+            settingsToolTrack := 1
             SettingsMenu.Check("&Tooltips")
             IniWrite("1", checklist, "Info", "tooltip")
             restart()
@@ -111,10 +112,10 @@ fileNewandOpen(*) => Reload()
  */
 aboutBox(*)
 {
-    MyGui.GetPos(&x, &y, &width, &height)
+    checklistGUI.GetPos(&x, &y, &width, &height)
     aboutGUI := tomshiBasic(12, 400, "AlwaysOnTop +MinSize200x200", "About ©")
-    aboutGUI.Opt("+Owner" MyGui.Hwnd)
-    MyGui.Opt("+Disabled")
+    aboutGUI.Opt("+Owner" checklistGUI.Hwnd)
+    checklistGUI.Opt("+Disabled")
 
     aboutGUI.Add("Text", "W200 Center", "Tomshi's Checklist`r&&`rEditing Tracker Script")
     verstionText := aboutGUI.Add("Text", "Center W200", "⚙ " version "`n© Tomshi " A_Year)
@@ -127,10 +128,12 @@ aboutBox(*)
 
     if darkToolTrack = 1
         dark.titleBar(aboutGUI.Hwnd)
+    else
+        dark.titleBar(aboutGUI.Hwnd, false)
 
     aboutClose(*)
     {
-        MyGui.Opt("-Disabled")
+        checklistGUI.Opt("-Disabled")
         aboutGUI.Destroy
     }
 }
@@ -282,10 +285,10 @@ hours(*)
     else
         avg := floorDecimal(StartVal/increment,3)
 
-    MyGui.GetPos(&x, &y, &width, &height)
+    checklistGUI.GetPos(&x, &y, &width, &height)
     hoursGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Hours Worked")
-    hoursGUI.Opt("+Owner" MyGui.Hwnd)
-    MyGui.Opt("+Disabled")
+    hoursGUI.Opt("+Owner" checklistGUI.Hwnd)
+    checklistGUI.Opt("+Disabled")
 
     hoursGUI.Add("Text", "W200 Center", "Hours worked today: " workedToday "`nDays worked: " increment "`nAvg Hours per day: " avg)
 
@@ -299,7 +302,7 @@ hours(*)
 
     hoursClose(*)
     {
-        MyGui.Opt("-Disabled")
+        checklistGUI.Opt("-Disabled")
         hoursGUI.Destroy
     }
 }
@@ -307,16 +310,16 @@ hours(*)
 /**
  * This function is called when the darkmode toggle menu option is pressed and handles keeping track of what option the user wants. It then calls `which()` to actually make the switch
  */
-goDark(*)
+goDark(&darkToolTrack, *)
 {
     switch darkToolTrack {
         case 1:
-            global darkToolTrack := 0
+            darkToolTrack := 0
             SettingsMenu.UnCheck("&Dark Mode")
             IniWrite("0", checklist, "Info", "dark")
             which(false, "Light", 0)
         case 0:
-            global darkToolTrack := 1
+            darkToolTrack := 1
             SettingsMenu.Check("&Dark Mode")
             IniWrite("1", checklist, "Info", "dark")
             which()
@@ -331,10 +334,9 @@ goDark(*)
  */
 which(darkmode := true, DarkorLight := "Dark", menu := 1)
 {
-
     dark.menu(menu)
-    dark.titleBar(MyGui.Hwnd, darkmode)
-    dark.allbuttons(MyGui, DarkorLight)
+    dark.titleBar(checklistGUI.Hwnd, darkmode)
+    dark.allbuttons(checklistGUI, DarkorLight)
 }
 
 /**
@@ -382,7 +384,7 @@ openProj(*)
 }
 
 openini(*) {
-    MyGui.GetPos(&x, &y, &width, &height)
+    checklistGUI.GetPos(&x, &y, &width, &height)
     if WinExist("checklist.ini") ;if ini already open, get pos, close, and then reopen to refresh
         refreshWin("checklist.ini", checklist)
     else
@@ -393,10 +395,10 @@ openini(*) {
 
 addNew(*)
 {
-    MyGui.GetPos(&x, &y, &width, &height)
+    checklistGUI.GetPos(&x, &y, &width, &height)
     addGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Add Checkbox")
-    addGUI.Opt("+Owner" MyGui.Hwnd)
-    MyGui.Opt("+Disabled")
+    addGUI.Opt("+Owner" checklistGUI.Hwnd)
+    checklistGUI.Opt("+Disabled")
 
     addGUI.Add("Text", "Section W150", "Add New Checkbox:")
     addcheck := addGUI.Add("Edit", "r1 W150 xs y+10 Limit15")
@@ -426,7 +428,7 @@ addNew(*)
 
     addClose(*)
     {
-        MyGui.Opt("-Disabled")
+        checklistGUI.Opt("-Disabled")
         addGUI.Destroy
     }
 }
