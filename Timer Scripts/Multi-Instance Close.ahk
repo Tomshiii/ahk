@@ -1,4 +1,6 @@
 #SingleInstance Force
+ListLines(0)
+KeyHistory(0)
 
 ; { \\ #Includes
 #Include <Classes\ptf>

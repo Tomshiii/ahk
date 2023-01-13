@@ -4,6 +4,7 @@
  * code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
  */
 On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
+    ListLines(0)
     static PrevHwnd := 0
     if (Hwnd != PrevHwnd)
     {

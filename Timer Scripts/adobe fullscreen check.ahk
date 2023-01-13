@@ -1,5 +1,7 @@
 #SingleInstance force
 #Requires AutoHotkey v2.0
+ListLines(0)
+KeyHistory(0)
 
 ; { \\ #Includes
 #Include <Classes\ptf>

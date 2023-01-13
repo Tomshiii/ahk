@@ -1,6 +1,8 @@
 ;This script will suspend `My Scripts.ahk` when a listed game is active. This is useful as several of the hotkeys in `My Scripts.ahk` interfere with games
 
 #SingleInstance Force
+ListLines(0)
+KeyHistory(0)
 
 ; { \\ #Includes
 #Include <Classes\ptf>

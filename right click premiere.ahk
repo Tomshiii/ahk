@@ -15,6 +15,7 @@ CoordMode("Pixel", "screen")
 #Include <Classes\ptf>
 #Include <Classes\obj>
 #Include <Functions\errorLog>
+#Include <Functions\checkKey>
 ; }
 
 
@@ -54,22 +55,6 @@ loop {
 
 #HotIf WinActive(editors.Premiere.winTitle)
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
-
-checkKey(key) {
-	if GetKeyState(key) && !GetKeyState(key, "P")
-		{
-			tool.Cust(key " was stuck")
-			SendInput("{" key " Up}")
-		}
-}
-while WinExist(editors.Premiere.winTitle)
-	{
-		sleep 100
-		checkKey("RButton")
-		;checkKey("LButton") ;don't do this, things break
-		checkKey("XButton2")
-		checkKey("\")
-	}
 
 Rbutton::
 {

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
- * @date 2023/01/09
- * @version 1.0.5
+ * @date 2023/01/13
+ * @version 1.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,6 +10,16 @@
 ; }
 
 class tool {
+    /**
+     * A function simply to store the previous listlines value
+     */
+    __storeLines() {
+        ;// saving the previous ListLines value
+        priorLines := A_ListLines
+        ListLines(0)
+        return priorLines
+    }
+
     /**
      * Create a tooltip with any message. This tooltip will then follow the cursor and only redraw itself if the user has moved the cursor.
      *
@@ -26,6 +36,8 @@ class tool {
      */
     static Cust(message, timeout := 1000, find := false, x?, y?, WhichToolTip?)
     {
+        ;// saving the previous ListLines value
+        priorLines := tool().__storeLines()
         ;// doing some setup
         one := false ;this variable will be used to determine if only x or only y has been assigned a value
         both := false ;this variable will be used to determine if both x and y have been assigned a value
@@ -59,7 +71,7 @@ class tool {
         ;// saving the previous coordmode states
         priorTooltip := A_CoordModeToolTip, priorMouse := A_CoordModeMouse
         ;// this function will return the coordmodes to their previous state
-        returnCoord() => (A_CoordModeToolTip := priorTooltip, A_CoordModeMouse   := priorMouse)
+        returnCoord() => (A_CoordModeToolTip := priorTooltip, A_CoordModeMouse   := priorMouse, ListLines(priorLines))
 
         CoordMode("ToolTip", "Screen") ;this ensures any custom coordinates passed by the user don't default to window mode
         CoordMode("Mouse", "Screen") ;this ensures the initial tooltip generates in the correct position if cursor isn't on the main display
@@ -72,17 +84,21 @@ class tool {
             {
                 ToolTip(messageFind message, xpos + x, ypos + y, WhichToolTip?) ;produce the initial tooltip
                 SetTimer(moveWithMouse.Bind(x, y), 15)
+                ListLines(priorLines)
+                return
             }
         else ;what happens otherwise
             {
                 ToolTip(messageFind message, x, y, WhichToolTip?) ;produce the initial tooltip
                 SetTimer(() => ToolTip("",,, WhichToolTip?), - timeout) ;otherwise we create a timer to remove the cursor after the timout period
                 returnCoord()
+                return
             }
 
         ;// this timer is what allows the tooltip to follow the cursor
         moveWithMouse(x, y)
         {
+            ListLines(0)
             if (A_TickCount - time) >= timeout ;here we compare the current time, minus the original time and see if it's been longer than the timeout time
                 {
                     SetTimer(, 0) ;if it has we kill the timer
@@ -107,9 +123,11 @@ class tool {
      */
     static Wait(timeout?)
     {
+        priorLines := tool().__storeLines()
         dct := detect(0) ;we need to ensure detecthiddenwindows is disabled before proceeding or this function may never stop waiting
         if WinExist("ahk_class tooltips_class32")
             WinWaitClose("ahk_class tooltips_class32",, timeout?)
         DetectHiddenWindows(dct.Windows)
+        ListLines(priorLines)
     }
 }

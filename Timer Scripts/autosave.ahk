@@ -1,5 +1,7 @@
 #SingleInstance force ;only one instance of this script may run at a time!
 #Requires AutoHotkey v2.0
+ListLines(0)
+KeyHistory(0)
 
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>

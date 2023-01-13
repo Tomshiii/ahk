@@ -23,7 +23,7 @@ activeScripts(MyRelease)
     text := MyGui.Add("Text", "X" margX " Y8 W300 H20", "Current active scripts are:")
     text.SetFont("S13 Bold")
 
-    scripts := ["myscript", "error", "dismiss", "save", "fullscreen", "game", "M-I_C", "keyboard", "text", "resolve"]
+    scripts := ["myscript", "error", "dismiss", "save", "fullscreen", "game", "M-I_C", "premkey", "keyboard", "text", "resolve"]
     names := Map(
         scripts[1],      "My Scripts.ahk",
         scripts[2],      "Alt_menu_acceleration_DISABLER.ahk",
@@ -32,9 +32,10 @@ activeScripts(MyRelease)
         scripts[5],      "adobe fullscreen check.ahk",
         scripts[6],      "gameCheck.ahk",
         scripts[7],      "Multi-Instance Close.ahk",
-        scripts[8],      "QMK Keyboard.ahk",
-        scripts[9],      "textreplace.ahk",
-        scripts[10],     "Resolve_Example.ahk",
+        scripts[8],      "premKeyCheck.ahk",
+        scripts[9],      "QMK Keyboard.ahk",
+        scripts[10],      "textreplace.ahk",
+        scripts[11],     "Resolve_Example.ahk",
     )
     tooltiptext := Map(
         scripts[1],      "Clicking this checkbox will toggle suspend the script",
@@ -103,6 +104,9 @@ activeScripts(MyRelease)
                             type := ".png"
                             y := "+11"
                         case "text":
+                            type := ".png"
+                            y := "+4"
+                        case "premkey":
                             type := ".png"
                             y := "+4"
                         default:
