@@ -8,8 +8,9 @@
     - Replaced as many instances of simply using `KeyWait` as possible to make functions less error prone in the event a user calls them in a different way to myself
 - Fixed `tool.Cust()` not properly returning the original `CoordMode`
     - Fixes `right click resolve` macro not working correctly on first use but being fine after
+- Fixed `startup.libUpdateCheck()` comparing versions incorrectly
 - Moved `isReload()` out of `startup {` and into it's own function
-- Cleaned up `tool.Cust()`
+- `tool.Cust()` will now check all passed parameters to ensure the correct types are used
 - `allKeyUp()` will now send `Esc` after every key up event to try to mitigate damage from sending so many keystrokes
 
 ## > Other Changes

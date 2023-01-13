@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/13
- * @version 1.2.2
+ * @date 2023/01/14
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -671,26 +671,35 @@ class Startup {
      * This class is a collection of information relating to external lib files used by my scripts.
      */
     class libs {
-        static webView2 := {
+        static init() => Startup.libs().__defControls(this)
+        __defControls(cls) {
+            for v in this.objs {
+                for name, val in v.OwnProps() {
+                    cls.%name%.Push(val)
+                }
+            }
+        }
+        webView2 := {
             name: "WebView2",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/WebView2/WebView2.ahk",
             scriptPos: ptf.lib "\Other\WebView2"
         }
-        static comVar := {
+        comVar := {
             name: "ComVar",                                     url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/ComVar.ahk",
             scriptPos: ptf.lib "\Other"
         }
-        static SevenZip := {
+        SevenZip := {
             name: "SevenZip",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/7Zip/SevenZip.ahk",
             scriptPos: ptf.lib "\Other\7zip"
         }
-        static JSON := {
+        JSON := {
             name: "JSON",                                       url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
             scriptPos: ptf.lib "\Other"
         }
 
-        static name        := [this.webView2.name, this.comVar.name, this.SevenZip.name, this.JSON.name, ]
-        static url         := [this.webView2.url, this.comVar.url, this.SevenZip.url, this.JSON.url, ]
-        static scriptPos   := [this.webView2.scriptPos, this.comVar.scriptPos, this.SevenZip.scriptPos, this.JSON.scriptPos, ]
+        objs := [this.webView2, this.comVar, this.SevenZip, this.JSON]
+        static name        := []
+        static url         := []
+        static scriptPos   := []
     }
 
     /**
@@ -699,9 +708,12 @@ class Startup {
     static libUpdateCheck() {
         if isReload()
             return
+        if !checkInternet()
+            return
         check := IniRead(ptf["settings"], "Settings", "update check")
         if check = "stop"
             return
+        this.libs.init()
         /**
          * This function get's the local version of the requested lib
          * @param {any} path is the local path the lib is located
@@ -713,7 +725,7 @@ class Startup {
             if getVerPos = 0 ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
                 return {version: "", script: script}
             endPos := InStr(script, "*",, getVerPos, 1) - 2
-            localVerStr := Trim(SubStr(script, getVerPos + 9, endPos-(getVerPos + 9)))
+            localVerStr := Trim(SubStr(script, getVerPos + 9, endPos-(getVerPos + 9)), " `t`n`r")
             return {version: localVerStr, script: script}
         }
         /**
@@ -731,7 +743,7 @@ class Startup {
             if getVerPos = 0
                 return {version: "", script: string}
             endPos := InStr(string, "*",, getVerPos, 1) - 2
-            ver := Trim(SubStr(string, getVerPos + 9, endPos-(getVerPos + 9)))
+            ver := Trim(SubStr(string, getVerPos + 9, endPos-(getVerPos + 9)), " `t`n`r")
             return {version: ver, script: string}
         }
         ;begin loop
