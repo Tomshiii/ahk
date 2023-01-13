@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/01/11
- * @version 1.1.2
+ * @date 2023/01/14
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,6 +22,47 @@ class VSCode {
     static winTitle := "Visual Studio Code " this.exeTitle
     static class := browser.vscode.class
     static path := ptf.ProgFi "\Microsoft VS Code\Code.exe"
+
+    /**
+     * A function to cut repeat code amongst functions below
+     *
+     * @param {VarRef} orig passes back the original clipboard
+     * @param {Boolean} focusFirst determines whether to focus the code window at the beginning or end of the function
+     * @param {String} copyOrCut determines whether to send ^c or ^x
+     */
+    __getHighlightState(&orig, focusFirst := true, copyOrCut := "^c") {
+        if copyOrCut !== "^c" && copyOrCut !== "^x"
+            {
+                ;// throw
+                errorLog(ValueError("Invalid hotkey in Parameter #3", -1, copyOrCut),,, 1)
+            }
+        if focusFirst = true
+            SendInput(focusCode)
+        orig := ClipboardAll()
+        A_Clipboard := ""
+        SendInput(copyOrCut)
+        if !ClipWait(0.1) && focusFirst = false
+            SendInput(focusCode)
+    }
+
+    /**
+     * A function to cut repeat code amongst functions below
+     *
+     * @param {VarRef} store passes back the clipboard
+     * @param {String} which is to determine whether you wish to copy or cut the line. Defaults to copy and can be omitted
+     */
+    __getLine(&store, which := "") {
+        SendInput("{End}")
+        switch which {
+            case "cut":
+                SendInput("{Shift Down}{Home}{Shift Up}" "^x")
+            default:
+                SendInput("{Shift Down}{Home}{Shift Up}" "^c" "{End}")
+        }
+        sleep 50
+        store := A_Clipboard
+        sleep 50
+    }
 
     /**
       * A function to quickly naviate between my scripts. For this script to work [explorer.autoReveal] must be set to false in VSCode's settings (File->Preferences->Settings, search for "explorer" and set "explorer.autoReveal"). This scripts is updated to navigate around the scripts in my repo only, it isn't super flexible and would need a bit of tinkering if you have anything else in your vscode workspace.
@@ -65,53 +106,12 @@ class VSCode {
     }
 
     /**
-     * A function to cut repeat code amongst functions below
-     *
-     * @param {VarRef} orig passes back the original clipboard
-     * @param {Boolean} focusFirst determines whether to focus the code window at the beginning or end of the function
-     * @param {String} copyOrCut determines whether to send ^c or ^x
-     */
-    static getHighlightState(&orig, focusFirst := true, copyOrCut := "^c") {
-        if copyOrCut !== "^c" && copyOrCut !== "^x"
-            {
-                ;// throw
-                errorLog(ValueError("Invalid hotkey in Parameter #3", -1, copyOrCut),,, 1)
-            }
-        if focusFirst = true
-            SendInput(focusCode)
-        orig := ClipboardAll()
-        A_Clipboard := ""
-        SendInput(copyOrCut)
-        if !ClipWait(0.1) && focusFirst = false
-            SendInput(focusCode)
-    }
-
-    /**
-     * A function to cut repeat code amongst functions below
-     *
-     * @param {VarRef} store passes back the clipboard
-     * @param {String} which is to determine whether you wish to copy or cut the line. Defaults to copy and can be omitted
-     */
-    static getLine(&store, which := "") {
-        SendInput("{End}")
-        switch which {
-            case "cut":
-                SendInput("{Shift Down}{Home}{Shift Up}" "^x")
-            default:
-                SendInput("{Shift Down}{Home}{Shift Up}" "^c" "{End}")
-        }
-        sleep 50
-        store := A_Clipboard
-        sleep 50
-    }
-
-    /**
      * I have a habit of always trying to ^f in the explorer window instead of the code window
      *
      * This macro REQUIRES `editor.emptySelectionClipboard` to be set to false within VSCode (if you use vscode)
      */
     static search() {
-        this.getHighlightState(&orig)
+        this().__getHighlightState(&orig)
         if !ClipWait(0.1)
             {
                 SendInput("^f")
@@ -129,11 +129,11 @@ class VSCode {
      * It recreates the usual ability to completely remove a line by pressed ^x
      */
     static cut() {
-        this.getHighlightState(&orig, false, "^x")
+        this().__getHighlightState(&orig, false, "^x")
         if !ClipWait(0.1)
             {
                 amount := 1
-                this.getLine(&store, "cut")
+                this().__getLine(&store, "cut")
                 A_Clipboard := ""
                 SendInput("{Shift Down}{Home}{Shift Up}" "^c")
                 sleep 50
@@ -152,10 +152,10 @@ class VSCode {
      * It recreates the usual ability to copy a line by pressed ^c
      */
     static copy() {
-        this.getHighlightState(&orig, false)
+        this().__getHighlightState(&orig, false)
         if !ClipWait(0.1)
             {
-                this.getLine(&store)
+                this().__getLine(&store)
                 A_Clipboard := orig ;restore the original clipboard - don't really know if this line makes a difference really
                 A_Clipboard := store ;add the cut content to the clipboard
                 tool.Cust("Current line copied to clipboard")

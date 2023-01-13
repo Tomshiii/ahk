@@ -30,7 +30,7 @@ hotkeysGUI() {
     hotkeys := ["#F1", "#F2", "#F12", "#+r", "#+^r", "#h", "#c", "#f", "#+``", "^+c", "CapsLock & c"]
 
     ;add listbox
-    selection := hotGUI.Add("ListBox", "r" hotkeys.Length -2 " Choose1", [hotkeys[1], hotkeys[2], hotkeys[3], hotkeys[4], hotkeys[5], hotkeys[6], hotkeys[7], hotkeys[8], hotkeys[9], hotkeys[10], hotkeys[11]])
+    selection := hotGUI.Add("ListBox", "r" hotkeys.Length -2 " Choose1", hotkeys)
     selection.OnEvent("Change", text)
 
     ;buttons
@@ -40,12 +40,13 @@ hotkeysGUI() {
     ;remove the default
 	hotGUI.AddButton("X0 Y0 W0 H0", "")
 
-    selectionText := hotGUI.Add("Text", "W240 X180 Y80 H100", "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!")
+    default := "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!"
+    selectionText := hotGUI.Add("Text", "W240 X180 Y80 H100", default)
     text(*) {
         switch selection.Value {
             case 1:
                 selectionText.Move(, guiText_y[2], widthSize["small"], heightSize["small"])
-                selectionText.Text := "Pulls up the settings GUI window to adjust a few settings available to my scripts! This window can also be accessed by right clicking on ``My Scripts.ahk`` in the taskbar. Try it now!"
+                selectionText.Text := default
                 hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 2:
                 selectionText.Move(, guiText_y[2], widthSize["small"], heightSize["small"])

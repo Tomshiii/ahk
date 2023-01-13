@@ -17,14 +17,15 @@ musicGUI()
     if WinExist("Music to open?")
         return
 
-    aimpPath := ptf.ProgFi32 "\AIMP3\AIMP.exe"
+    aimpPath   := ptf.ProgFi32 "\AIMP3\AIMP.exe"
     foobarPath := ptf.ProgFi32 "\foobar2000\foobar2000.exe"
-    wmpPath := ptf.ProgFi32 "\Windows Media Player\wmplayer.exe"
-    vlcPath := ptf.ProgFi "\VideoLAN\VLC\vlc.exe"
+    wmpPath    := ptf.ProgFi32 "\Windows Media Player\wmplayer.exe"
+    vlcPath    := ptf.ProgFi "\VideoLAN\VLC\vlc.exe"
 
-    ;if there is no music player open, a custom GUI window will open asking which program you'd like to open
+    ;// if there is no music player open, a custom GUI window will open asking which program you'd like to open
     MyGui := tomshiBasic(10, 600, "AlwaysOnTop -Resize +MinSize260x120 +MaxSize260x120", "Music to open?") ;creates our GUI window
-    ;#now we define the elements of the GUI window
+
+    ;// now we define the elements of the GUI window
     ;defining AIMP
     aimplogo := MyGui.AddPicture("x12 w25 h-1 Y9", ptf.guiIMG "\aimp.png")
     AIMP := MyGui.Add("Button", "X40 Y7", "AIMP")

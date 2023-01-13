@@ -3,6 +3,7 @@
 #Include <Classes\dark>
 #Include <Classes\ptf>
 #Include <Functions\On_WM_MOUSEMOVE>
+#Include <Functions\detect>
 ;
 
 /**
@@ -133,9 +134,7 @@ activeScripts(MyRelease)
     closeButton.OnEvent("Click", escape)
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
-        goDark()
-
-    goDark() => dark.button(closeButton.Hwnd)
+        dark.button(closeButton.Hwnd)
 
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip

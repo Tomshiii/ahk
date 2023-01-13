@@ -361,7 +361,8 @@ settingsGUI()
     premInitYear := IniRead(ptf["settings"], "Adjust", "prem year")
     AEInitYear := IniRead(ptf["settings"], "Adjust", "ae year")
     ;this loop auto generates the edit boxes using "..\settingsGUI\editValues.ahk"
-    loop set_Edit_Val.Length {
+    set_Edit_Val.init()
+    loop set_Edit_Val().objs.Length {
         initVal := IniRead(ptf["settings"], "Adjust", set_Edit_Val.iniInput[A_Index])
         settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])
         settingsGUI.Add("UpDown",, initVal)

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2023/01/13
- * @version 1.2.0
+ * @date 2023/01/14
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -58,7 +58,7 @@ class block {
                 BlockInput("SendAndMouse"), BlockInput("MouseMove")
                 return
             }
-        block().__inputs(option)
+        this().__inputs(option)
     }
 
     /**
@@ -73,6 +73,6 @@ class block {
                 BlockInput("Default"), BlockInput("MouseMoveOff")
                 return
             }
-        block().__inputs(option)
+        this().__inputs(option)
     }
 }

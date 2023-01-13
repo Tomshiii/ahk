@@ -31,9 +31,7 @@ todoGUI()
 
     todoGUI.OnEvent("Escape", close)
     todoGUI.OnEvent("Close", close)
-    close(*) {
-        todoGUI.Destroy()
-    }
+    close(*) => todoGUI.Destroy()
 
     if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
         dark.button(closeButton.Hwnd)

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/01/13
- * @version 1.5.1
+ * @date 2023/01/14
+ * @version 1.5.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -57,7 +57,7 @@ class WinGet {
         WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
         ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
 		;// so we just add 10 pixels to both variables to ensure we're in the correct monitor
-        monObj := WinGet().__Monitor(x + 10, y + 10)
+        monObj := this().__Monitor(x + 10, y + 10)
         if !IsObject(monObj) {
             if attempt > 2 {
                 errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1)
@@ -98,7 +98,7 @@ class WinGet {
             coord.s()
             MouseGetPos(&x, &y)
         }
-        monObj := WinGet().__Monitor(x, y)
+        monObj := this().__Monitor(x, y)
         if !IsObject(monObj)
             {
                 errorLog(TargetError("Failed to get the requested monitor", -1),, 1)

@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/14
- * @version 1.2.3
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -671,7 +671,7 @@ class Startup {
      * This class is a collection of information relating to external lib files used by my scripts.
      */
     class libs {
-        static init() => Startup.libs().__defControls(this)
+        static init() => this().__defControls(this)
         __defControls(cls) {
             for v in this.objs {
                 for name, val in v.OwnProps() {
