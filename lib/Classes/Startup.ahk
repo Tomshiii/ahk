@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/14
- * @version 1.2.4
+ * @version 1.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,23 +19,24 @@
 #Include <Functions\getHTML>
 #Include <Functions\createIni>
 #Include <Functions\isReload>
+#Include <Functions\getLocalVer>
 #Include <Other\print>
 ; // libs
 #Include <Other\_DLFile>
 ; }
 
 class Startup {
+    __getMainRelease() => getLocalVer()
 
     /**
      * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
      *
      * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
-     *
-     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
-    static generate(MyRelease) {
+    static generate() {
         if isReload() ;checks if script was reloaded
             return
+        MyRelease := this().__getMainRelease()
 
         /**
          * This function is designed to transition an install of my scripts from before I had `settings.ini` => a version that does.
@@ -138,11 +139,11 @@ class Startup {
      * Which branch the user wishes to check for (either beta, or main releases) can be determined by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`)
      *
      * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
-    * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
-    static updateChecker(MyRelease) {
+    static updateChecker() {
         if isReload() ;checks if script was reloaded
             return
+        MyRelease := this().__getMainRelease()
         ;checking to see if the user wishes to check for updates
         check := IniRead(ptf["settings"], "Settings", "update check")
         if check = "stop"
@@ -150,11 +151,11 @@ class Startup {
         betaprep := 0
         if IniRead(ptf["settings"], "Settings", "beta update check", "false") = "true"
             { ;if the user wants to check for beta updates instead, this block will fire
-                global version := getScriptRelease(true, &changeVer)
+                version := getScriptRelease(true, &changeVer)
                 betaprep := 1
             }
         else
-            global version := getScriptRelease(, &changeVer) ;getting non beta latest release
+            version := getScriptRelease(, &changeVer) ;getting non beta latest release
         if version = 0
             return
         tool.Wait()
@@ -399,16 +400,14 @@ class Startup {
 
     /**
      * This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
-     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
-    static firstCheck(MyRelease) {
+    static firstCheck() {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
         if isReload() ;checks if script was reloaded
             return
-        if !IsSet(version) ;if the user has no internet, "version" will not have been assigned a value in `updateChecker()` - this checks to see if `version` has been assigned a value
-            version := ""
-        if WinExist("Scripts Release " version)
-            WinWaitClose("Scripts Release " version)
+        MyRelease := this().__getMainRelease()
+        if WinExist("Scripts Release ")
+            WinWaitClose("Scripts Release ")
         check := IniRead(ptf["settings"], "Track", "first check")
         if check != "false" ;how the function tracks whether this is the first time the user is running the script or not
             return
@@ -510,11 +509,11 @@ class Startup {
      * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
      *
      * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
-     * @param {String} MyRelease This variable is the current Release version of Tomshi's ahk repo. Begins with "v" followed by the version number
      */
-    static adobeTemp(MyRelease) {
+    static adobeTemp() {
         if isReload()
             return
+        MyRelease := this().__getMainRelease()
         tool.Wait()
         if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
             WinWaitClose("Scripts Release " MyRelease)

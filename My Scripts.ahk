@@ -8,11 +8,8 @@
  * @ahk_ver 2.0.2
  ***********************************************************************/
 
-;\\CURRENT RELEASE VERSION
-global MyRelease := getLocalVer()
-
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.27.6
+;\\v2.28
 
 #SingleInstance Force
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
@@ -103,13 +100,13 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ;				STARTUP
 ;
 ; =======================================================================================================================================
-startup.generate(MyRelease)      ;generates/replaces the `settings.ini` file every release
+startup.generate()               ;generates/replaces the `settings.ini` file every release
 startup.locationReplace()        ;runs the location variable
-startup.updateChecker(MyRelease) ;runs the update checker
+startup.updateChecker()          ;runs the update checker
 startup.trayMen()                ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
-startup.firstCheck(MyRelease)    ;runs the firstCheck() function
+startup.firstCheck()             ;runs the firstCheck() function
 startup.oldError()               ;runs the loop to delete old log files
-startup.adobeTemp(MyRelease)     ;runs the loop to delete cache files
+startup.adobeTemp()              ;runs the loop to delete cache files
 startup.libUpdateCheck()         ;runs a loop to check for lib updates
 startup.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
 startup.monitorAlert()           ;checks the users monitor work area for any changes
@@ -142,7 +139,7 @@ F12::KeyHistory  ;debugging
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI
 
 ;activescriptsHotkey;
-#F2::activeScripts(MyRelease) ;This hotkey pulls up a GUI that gives information regarding all current active scripts, as well as offering the ability to close/open any of them by simply unchecking/checking the corresponding box
+#F2::activeScripts() ;This hotkey pulls up a GUI that gives information regarding all current active scripts, as well as offering the ability to close/open any of them by simply unchecking/checking the corresponding box
 
 ;handyhotkeysHotkey;
 #h::hotkeysGUI() ;this hotkey pulls up a GUI showing some useful hotkeys at your disposal while using these scripts

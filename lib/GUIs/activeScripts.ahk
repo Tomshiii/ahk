@@ -2,6 +2,7 @@
 #Include <GUIs\tomshiBasic>
 #Include <Classes\dark>
 #Include <Classes\ptf>
+#Include <Functions\getLocalVer>
 #Include <Functions\On_WM_MOUSEMOVE>
 #Include <Functions\detect>
 ;
@@ -9,9 +10,10 @@
 /**
  * This functions pulls up a GUI that shows which of my scripts are active and allows the user to suspend/close them or unsuspend/open them
  */
-activeScripts(MyRelease)
+activeScripts()
 {
     detect()
+    MyRelease := getLocalVer()
     if WinExist("Active Scripts " MyRelease)
         return
 
