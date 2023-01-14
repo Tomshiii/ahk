@@ -21,7 +21,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 ;\\v2.8.2
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.9.1
+;\\v2.9.2
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY

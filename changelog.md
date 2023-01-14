@@ -1,4 +1,4 @@
-# <> Release 2.9.x - 
+# <> Release 2.9.2 - Hotfix and Cleanup
 - `generateUpdate.ahk` will now delete a number of files/dirs that aren't necessary to contain within release files, this helps save on final filesize
 - Changed all methods in classes that are intended to be `"private"` to start with `__`
     - eg. `__inputs()`

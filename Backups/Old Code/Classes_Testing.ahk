@@ -43,7 +43,9 @@ class test2 extends test {
 
 }
 
-tester  := test2()         ;// initialises the base class
+;// initialising a class allows you to access any method
+
+/* tester  := test2()         ;// initialises the base class
 tester2 := test2.test3()   ;// initialises the nested class
 msgbox tester.var          ;// works - includes "this."
 msgbox tester.var2         ;// doesn't work
@@ -51,10 +53,29 @@ msgbox tester.var3         ;// works
 MsgBox tester2.var4        ;// works
 MsgBox tester.var4         ;// works
 MsgBox tester.tick()       ;// calls both tick()s
-; tester.call()            ;// works
-; tester.call2()           ;// works
+tester.call()              ;// works
+tester.call2()             ;// works */
 
 
+;// let static methods access non static methods using this().
+Class test3 {
+    static __notSoHidden() {
+        MsgBox("oh no you found me again")
+    }
+    __superHidden() {
+        MsgBox("you'll never find me")
+        ; this.__notSoHidden()   ;// doesn't work
+        ; this.()__notSoHidden() ;// doesn't work
+        ;// nonstatic methods can't call back to a static method with `this`
+        test3.__notSoHidden()   ;// it has to be called like this
+    }
+    __hidden() {
+        MsgBox("you found me")
+        this.__superHidden()    ;// non static methods call other non static without `()`
+    }
 
-
-;// initialising a class allows you to access any method
+    static caller() {
+        this().__hidden()       ;// static methods call non static methods with `this().`
+    }
+}
+test3.caller() ;// calls `caller()` which calls `__hidden()` which calles `__superHidden()`
