@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/14
- * @version 1.2.6
+ * @date 2023/01/15
+ * @version 1.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -899,16 +899,43 @@ class Startup {
          * this function is to cut repeat code
          */
         write(WL, WT, WR, WB) {
-            IniWrite(WL, ptf["monitorINI"], A_Index, "Left")
-            IniWrite(WT, ptf["monitorINI"], A_Index, "Top")
-            IniWrite(WR, ptf["monitorINI"], A_Index, "Right")
-            IniWrite(WB, ptf["monitorINI"], A_Index, "Bottom")
+            IniWrite(WL, ptf["monitorsINI"], A_Index, "Left")
+            IniWrite(WT, ptf["monitorsINI"], A_Index, "Top")
+            IniWrite(WR, ptf["monitorsINI"], A_Index, "Right")
+            IniWrite(WB, ptf["monitorsINI"], A_Index, "Bottom")
+        }
+        ;// msgbox function
+        alrtmsgbox() {
+            ignoreToday() {
+                if !WinExist("Monitor layout changed")
+                    return
+                SetTimer(, 0)
+                WinActivate
+                ControlSetText("&Yes", "Button1")
+                ControlSetText("&No", "Button2")
+                ControlSetText("&Mute Alert", "Button3")
+            }
+            SetTimer(ignoreToday, 16)
+            check := MsgBox("
+            (
+                It appears like your monitor layout has changed, either by your own doing, or windows
+                This may mess with any pixel coordinates you use for scripts.`n
+                Do you want your current layout to be remembered instead?`n
+                Alternatively you can mute this alert for today.
+            )", "Monitor layout changed", "2 32 256 4096")
+            switch check {
+                case "Retry": ;// "No"
+                    return 0
+                case "Ignore": ;// "Mute Alert"
+                    IniWrite(A_YDay, ptf["settings"], "Track", "monitor alert")
+                    return 0
+            }
         }
         ;// what to do if the ini file doesn't yet exist
-        if !FileExist(ptf["monitorINI"])
+        if !FileExist(ptf["monitorsINI"])
             {
-                IniWrite(MonitorCount, ptf["monitorINI"], "Sys", "Count")
-                IniWrite(MonitorPrimary, ptf["monitorINI"], "Sys", "Primary")
+                IniWrite(MonitorCount, ptf["monitorsINI"], "Sys", "Count")
+                IniWrite(MonitorPrimary, ptf["monitorsINI"], "Sys", "Primary")
                 loop MonitorCount {
                     ;// log initial data
                     MonitorGetWorkArea(A_Index, &WL, &WT, &WR, &WB)
@@ -917,43 +944,27 @@ class Startup {
                 return
             }
         ;// if the file does exist, we cross reference it
-        readCount := IniRead(ptf["monitorINI"], "Sys", "Count")
-        readPrimary := IniRead(ptf["monitorINI"], "Sys", "Primary")
+        readCount := IniRead(ptf["monitorsINI"], "Sys", "Count")
+        readPrimary := IniRead(ptf["monitorsINI"], "Sys", "Primary")
         ;// if something has changed alert the user
         if (readCount != MonitorCount) || (readPrimary != MonitorPrimary)
             {
                 if IniRead(ptf["settings"], "Track", "monitor alert", 0) = A_YDay
                     return
-                ignoreToday() {
-                    if !WinExist("Monitor layout changed")
-                        return
-                    SetTimer(, 0)
-                    WinActivate
-                    ControlSetText("&Yes", "Button1")
-                    ControlSetText("&No", "Button2")
-                    ControlSetText("&Mute Alert", "Button3")
-                }
-                SetTimer(ignoreToday, 16)
-                check := MsgBox("It appears like your monitor layout has changed, either by your own doing, or windows`nThis may mess with any pixel coordinates you use for scripts.`n`nDo you want your current layout to be remembered instead?`n`nAlternatively you can mute this alert for today.", "Monitor layout changed", "2 32 4096")
-                switch check {
-                    case "No":
-                        return
-                    case "Cancel":
-                        IniWrite(A_YDay, ptf["settings"], "Track", "monitor alert")
-                        return
-                }
+                if !alrtmsgbox()
+                    return
                 save := true
                 ;// log new values
-                IniWrite(MonitorCount, ptf["monitorINI"], "Sys", "Count")
-                IniWrite(MonitorPrimary, ptf["monitorINI"], "Sys", "Primary")
+                IniWrite(MonitorCount, ptf["monitorsINI"], "Sys", "Count")
+                IniWrite(MonitorPrimary, ptf["monitorsINI"], "Sys", "Primary")
             }
         loop MonitorCount {
             ;// this loop is cross referencing the rest of the data
             MonitorGetWorkArea(A_Index, &WL, &WT, &WR, &WB)
-            left := IniRead(ptf["monitorINI"], A_Index, "Left")
-            top := IniRead(ptf["monitorINI"], A_Index, "Top")
-            right := IniRead(ptf["monitorINI"], A_Index, "Right")
-            bottom := IniRead(ptf["monitorINI"], A_Index, "Bottom")
+            left := IniRead(ptf["monitorsINI"], A_Index, "Left")
+            top := IniRead(ptf["monitorsINI"], A_Index, "Top")
+            right := IniRead(ptf["monitorsINI"], A_Index, "Right")
+            bottom := IniRead(ptf["monitorsINI"], A_Index, "Bottom")
             if( ;// if nothing has changed, continue
                 left = WL &&
                 top = WT &&
@@ -962,8 +973,7 @@ class Startup {
                 continue
             ;// if the user hasn't been alerted yet, they will be alerted now
             if !save {
-                check := MsgBox(A_index "It appears like your monitor layout has changed, either by your own doing, or windows`nThis may mess with any pixel coordinates you use for scripts.`n`nDo you want your current layout to be remembered instead?", "Monitor layout changed", "4 32 4096")
-                if check = "No"
+                if !alrtmsgbox()
                     return
                 save := true
             }

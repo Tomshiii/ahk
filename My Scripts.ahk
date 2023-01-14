@@ -12,6 +12,7 @@
 ;\\v2.28
 
 #SingleInstance Force
+#Requires AutoHotkey v2.0
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
 SetNumLockState("AlwaysOn")            ;sets numlock to always on (you can still it for macros)
 SetCapsLockState("AlwaysOff")          ;sets caps lock to always off (you can still it for macros)
@@ -55,7 +56,6 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <GUIs\hotkeysGUI>
 ;#Include right click premiere.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
-#Requires AutoHotkey v2.0
 
 ; ============================================================================================================================================
 ;
@@ -73,7 +73,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ;
 ; This script was created by & for Tomshi (https://www.youtube.com/c/tomshiii, https://www.twitch.tv/tomshi)
 ; Its purpose is to help speed up editing and random interactions with windows.
-; Copyright (C) <2022>  <Tom Tomshi>
+; Copyright (C) <2023>  <Tom Tomshi>
 ;
 ; You are free to modify this script to your own personal uses/needs, but you must follow the terms shown in the license file in the root directory of this repo (basically just keep source code available)
 ; You should have received a copy of the GNU General Public License along with this script.  If not, see <https://www.gnu.org/licenses/>

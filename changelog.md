@@ -1,7 +1,10 @@
 # <> Release 2.9.x - 
 
 ## > Functions
-- Fix `monitorAlert()` not using `ptf` values
+
+`monitorAlert()`
+- Fix not using `ptf` values
+- Fix function going ahead if script is reloaded while the alert MsgBox is active
 
 ## > Other Changes
 - Fix `checklist.ahk` defaulting to expanded UI

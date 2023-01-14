@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/01/14
- * @version 1.0.9
+ * @date 2023/01/15
+ * @version 1.0.10
  ***********************************************************************/
 
 class ptf {
@@ -82,7 +82,7 @@ class ptf {
     ;complete file links
     static __Item := Map(
         "settings",        this.SettingsLoc "\settings.ini",
-        "monitorINI",      this.SettingsLoc "\monitor.ini",
+        "monitorsINI",      this.SettingsLoc "\monitors.ini",
         "KSAini",          this.lib "\KSA\Keyboard Shortcuts.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
