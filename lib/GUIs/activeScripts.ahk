@@ -35,7 +35,7 @@ activeScripts(MyRelease)
         scripts[7],      "Multi-Instance Close.ahk",
         scripts[8],      "premKeyCheck.ahk",
         scripts[9],      "QMK Keyboard.ahk",
-        scripts[10],      "textreplace.ahk",
+        scripts[10],     "textreplace.ahk",
         scripts[11],     "Resolve_Example.ahk",
     )
     tooltiptext := Map(
@@ -43,87 +43,73 @@ activeScripts(MyRelease)
         scripts[2],      "Clicking this checkbox will open/close the script",
     )
 
-    createCheck()
+    /**
+     * This function generates the checkboxes and places the correct images next to each
+     */
+    _createCheck()
     {
-        moveOver := 6
+        _gen(position := "Section", tooltip := 2, method?) {
+            MyGui.Add("CheckBox", position " Checked0 v" scripts[A_Index], names[scripts[A_Index]])
+            MyGui[scripts[A_Index]].OnEvent("Click", method)
+            MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[tooltip]]
+        }
         loop scripts.Length {
-            if A_Index = 1
-                {
-                    MyGui.Add("CheckBox", "Section Checked0 v" scripts[A_Index], names[scripts[A_Index]])
-                    MyGui[scripts[1]].OnEvent("Click", myClick)
-                    MyGui[scripts[1]].ToolTip := tooltiptext[scripts[1]]
-                }
-            else if A_Index != scripts.Length && A_Index < moveOver ;first row
-                {
-                    MyGui.Add("CheckBox", "xs Checked0 v" scripts[A_Index], names[scripts[A_Index]])
-                    MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
-                    MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
-                }
-            else if A_Index >= moveOver ;second row
-                {
-                    if A_Index = scripts.Length ;for resolve (the last item)
-                        {
-                            MyGui[scripts[moveOver-1]].GetPos(, &firstRowLastY) ;get ypos of the last checkbox in the first row
-                            resolveY := firstRowLastY + 35
-                            MyGui.Add("CheckBox", "x" margX " Checked0 Y" resolveY " v" scripts[A_Index], names[scripts[A_Index]])
-                            MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
-                            MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
-                        }
-                    ;second row
-                    else if A_Index = moveOver
-                        MyGui.Add("CheckBox", "x+120 ys Section Checked0 v" scripts[A_Index], names[scripts[A_Index]])
+            listNum := 6
+            moveOver := Mod(A_Index, listNum)
+            switch A_Index {
+                case 1:
+                    _gen(, 1, myClick.Bind())
+                case scripts.Length: ;for resolve (the last item)
+                    MyGui[scripts[listNum-1]].GetPos(, &firstRowLastY) ;get ypos of the last checkbox in the first row
+                    resolveY := firstRowLastY + 35
+                    _gen("x" margX " y" resolveY,, scriptClick.Bind())
+                default:
+                    if moveOver = 0 ;additional rows
+                        _gen("x+120 ys Section",, scriptClick.Bind())
                     else ;everything else
-                        MyGui.Add("CheckBox", "xs Checked0 v" scripts[A_Index], names[scripts[A_Index]])
-                    MyGui[scripts[A_Index]].OnEvent("Click", scriptClick)
-                    MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[2]]
-                }
+                        _gen("xs",, scriptClick.Bind())
+            }
         }
         loop scripts.Length {
             pictureX := 275
-            if A_Index = 1
-                MyGui.Add("Picture", "w18 h-1 X" pictureX " Ys", ptf.Icons "\" scripts[A_Index] ".png")
-            else if A_Index < moveOver ;first row
-                {
-                    switch scripts[A_Index] {
-                        case "dismiss":
-                            y := "+5"
-                        default:
-                            type := ".ico"
-                            y := "+7"
-                    }
-                    MyGui.Add("Picture", "w18 h-1 Y" y, ptf.Icons "\" scripts[A_Index] type)
-                }
-            else if A_Index >= moveOver ;second row
-                {
-                    switch scripts[A_Index] {
-                        case "game":
-                            type := ".png"
-                        case "M-I_C" :
-                            type := ".png"
-                            y := "+5"
-                        case "resolve":
-                            type := ".png"
-                            y := "+11"
-                        case "text":
-                            type := ".png"
-                            y := "+4"
-                        case "premkey":
-                            type := ".png"
-                            y := "+4"
-                        default:
-                            type := ".ico"
-                            y := "+7"
-                    }
-                    if A_Index = scripts.Length ;for resolve (the last item)
-                        MyGui.Add("Picture", "x" pictureX " w18 h-1 Y" resolveY, ptf.Icons "\" scripts[A_Index] type)
-                    else if A_Index = moveOver ;second row
+            moveOver := Mod(A_Index, listNum)
+            ;// making minor adjustments for some images
+            switch scripts[A_Index] {
+                case "dismiss":
+                    y := "+5"
+                case "game":
+                    type := ".png"
+                case "M-I_C" :
+                    type := ".png"
+                    y := "+5"
+                case "resolve":
+                    type := ".png"
+                    y := "+11"
+                case "text":
+                    type := ".png"
+                    y := "+4"
+                case "premkey":
+                    type := ".png"
+                    y := "+7"
+                default:
+                    type := ".ico"
+                    y := "+7"
+            }
+            ;// generating pictures
+            switch A_Index {
+                case 1:
+                    MyGui.Add("Picture", "w18 h-1 X" pictureX " Ys", ptf.Icons "\" scripts[A_Index] ".png")
+                case scripts.Length: ;for resolve (the last item)
+                    MyGui.Add("Picture", "x" pictureX " w18 h-1 Y" resolveY, ptf.Icons "\" scripts[A_Index] type)
+                default:
+                    if moveOver = 0 ;new rows
                         MyGui.Add("Picture", "xs+200 w18 h-1 Ys", ptf.Icons "\" scripts[A_Index] type)
                     else ;everything else
                         MyGui.Add("Picture", "w18 h-1 Y" y, ptf.Icons "\" scripts[A_Index] type)
-                }
+            }
         }
     }
-    createCheck()
+    _createCheck()
 
     SetTimer(checkScripts, -100)
 
@@ -183,6 +169,7 @@ activeScripts(MyRelease)
         SetTimer(checkScripts, 0)
         MyGui.Destroy()
     }
+    OnExit(escape)
 
     MyGui.Show("Center AutoSize")
 }

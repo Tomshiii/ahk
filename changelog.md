@@ -9,6 +9,7 @@
 - Fixed `startup.libUpdateCheck()` comparing versions incorrectly
 - Moved `isReload()` out of `startup {` and into its own function
 - `allKeyUp()` will now send `Esc` after every `Key Up` event to try and mitigate damage from sending so many keystrokes
+- Refactored `activeScripts()` to allow for easier expansion and less hard coding
 
 `tool.Cust()`
 - Fixed not properly returning the original `CoordMode`
