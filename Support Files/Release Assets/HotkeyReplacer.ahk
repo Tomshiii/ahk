@@ -44,9 +44,9 @@ replaceButton.OnEvent("Click", replace)
 cancelButton := ReplacerGui.Add("Button", "X+10", "cancel")
 cancelButton.OnEvent("Click", cancel)
 
-if FileExist(A_MyDocuments "\tomshi\settings.ini") ;the user has run my scripts before and a settings menu exists
+if FileExist(ptf.SettingsLoc "\settings.ini") ;the user has run my scripts before and a settings menu exists
     {
-        if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true" ;then we check if the user wants dark mode
+        if IniRead(ptf.SettingsLoc "\settings.ini", "Settings", "dark mode") = "true" ;then we check if the user wants dark mode
             goDark()
     }
 else

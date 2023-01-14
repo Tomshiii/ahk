@@ -42,20 +42,20 @@ class Startup {
          * This function likely no longer needs to exist but is kept here for the sake of history.
          */
         deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) {
-            if DirExist(A_MyDocuments "\tomshi\adobe")
+            if DirExist(ptf.SettingsLoc "\adobe")
                 {
                     try {
-                        loop files, A_MyDocuments "\tomshi\adobe\*.*"
+                        loop files, ptf.SettingsLoc "\adobe\*.*"
                             checkAdobe := A_LoopFileName
                     }
                     if IsSet(checkAdobe)
                         ADOBE := checkAdobe
-                    DirDelete(A_MyDocuments "\tomshi\adobe", 1)
+                    DirDelete(ptf.SettingsLoc "\adobe", 1)
                 }
-            if DirExist(A_MyDocuments "\tomshi\location")
+            if DirExist(ptf.SettingsLoc "\location")
                 {
                     try {
-                        WORK := FileRead(A_MyDocuments "\tomshi\location\workingDir")
+                        WORK := FileRead(ptf.SettingsLoc "\location\workingDir")
                     }
                     if WORK != ""
                         {
@@ -66,17 +66,17 @@ class Startup {
                             if FileExist(WORK "\Support Files\ignore.ini")
                                 FileDelete(WORK "\Support Files\ignore.ini")
                         }
-                    DirDelete(A_MyDocuments "\tomshi\location", 1)
+                    DirDelete(ptf.SettingsLoc "\location", 1)
                 }
-            if FileExist(A_MyDocuments "\tomshi\autosave.ini")
+            if FileExist(ptf.SettingsLoc "\autosave.ini")
                 {
-                    TOOLS := IniRead(A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip", "true")
-                    FileDelete(A_MyDocuments "\tomshi\autosave.ini")
+                    TOOLS := IniRead(ptf.SettingsLoc "\autosave.ini", "tooltip", "tooltip", "true")
+                    FileDelete(ptf.SettingsLoc "\autosave.ini")
                 }
-            if FileExist(A_MyDocuments "\tomshi\first")
+            if FileExist(ptf.SettingsLoc "\first")
                 {
                     FC := "true"
-                    FileDelete(A_MyDocuments "\tomshi\first")
+                    FileDelete(ptf.SettingsLoc "\first")
                 }
         }
 
@@ -900,16 +900,16 @@ class Startup {
          * this function is to cut repeat code
          */
         write(WL, WT, WR, WB) {
-            IniWrite(WL, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Left")
-            IniWrite(WT, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Top")
-            IniWrite(WR, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Right")
-            IniWrite(WB, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Bottom")
+            IniWrite(WL, ptf.SettingsLoc "\monitors.ini", A_Index, "Left")
+            IniWrite(WT, ptf.SettingsLoc "\monitors.ini", A_Index, "Top")
+            IniWrite(WR, ptf.SettingsLoc "\monitors.ini", A_Index, "Right")
+            IniWrite(WB, ptf.SettingsLoc "\monitors.ini", A_Index, "Bottom")
         }
         ;// what to do if the ini file doesn't yet exist
-        if !FileExist(A_MyDocuments "\tomshi\monitors.ini")
+        if !FileExist(ptf.SettingsLoc "\monitors.ini")
             {
-                IniWrite(MonitorCount, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
-                IniWrite(MonitorPrimary, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+                IniWrite(MonitorCount, ptf.SettingsLoc "\monitors.ini", "Sys", "Count")
+                IniWrite(MonitorPrimary, ptf.SettingsLoc "\monitors.ini", "Sys", "Primary")
                 loop MonitorCount {
                     ;// log initial data
                     MonitorGetWorkArea A_Index, &WL, &WT, &WR, &WB
@@ -918,8 +918,8 @@ class Startup {
                 return
             }
         ;// if the file does exist, we cross reference it
-        readCount := IniRead(A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
-        readPrimary := IniRead(A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+        readCount := IniRead(ptf.SettingsLoc "\monitors.ini", "Sys", "Count")
+        readPrimary := IniRead(ptf.SettingsLoc "\monitors.ini", "Sys", "Primary")
         ;// if something has changed alert the user
         if (readCount != MonitorCount) || (readPrimary != MonitorPrimary)
             {
@@ -945,16 +945,16 @@ class Startup {
                 }
                 save := true
                 ;// log new values
-                IniWrite(MonitorCount, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
-                IniWrite(MonitorPrimary, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+                IniWrite(MonitorCount, ptf.SettingsLoc "\monitors.ini", "Sys", "Count")
+                IniWrite(MonitorPrimary, ptf.SettingsLoc "\monitors.ini", "Sys", "Primary")
             }
         loop MonitorCount {
             ;// this loop is cross referencing the rest of the data
             MonitorGetWorkArea A_Index, &WL, &WT, &WR, &WB
-            left := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Left")
-            top := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Top")
-            right := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Right")
-            bottom := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Bottom")
+            left := IniRead(ptf.SettingsLoc "\monitors.ini", A_Index, "Left")
+            top := IniRead(ptf.SettingsLoc "\monitors.ini", A_Index, "Top")
+            right := IniRead(ptf.SettingsLoc "\monitors.ini", A_Index, "Right")
+            bottom := IniRead(ptf.SettingsLoc "\monitors.ini", A_Index, "Bottom")
             if( ;// if nothing has changed, continue
                 left = WL &&
                 top = WT &&

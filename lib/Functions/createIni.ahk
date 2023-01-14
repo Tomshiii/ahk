@@ -1,7 +1,7 @@
 ;// generating a baseline settings.ini file
 
 /**
- * @param {params1} installLocation (usually A_MyDocuments "\tomshi")
+ * @param {params1} installLocation (usually ptf.SettingsLoc)
  * @param {params2-26} settingsIni these are the settings.ini entries in order
  */
 createIni(params*) {
