@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/14
- * @version 1.2.5
+ * @version 1.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -899,26 +899,26 @@ class Startup {
          * this function is to cut repeat code
          */
         write(WL, WT, WR, WB) {
-            IniWrite(WL, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Left")
-            IniWrite(WT, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Top")
-            IniWrite(WR, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Right")
-            IniWrite(WB, A_MyDocuments "\tomshi\monitors.ini", A_Index, "Bottom")
+            IniWrite(WL, ptf["monitorINI"], A_Index, "Left")
+            IniWrite(WT, ptf["monitorINI"], A_Index, "Top")
+            IniWrite(WR, ptf["monitorINI"], A_Index, "Right")
+            IniWrite(WB, ptf["monitorINI"], A_Index, "Bottom")
         }
         ;// what to do if the ini file doesn't yet exist
-        if !FileExist(A_MyDocuments "\tomshi\monitors.ini")
+        if !FileExist(ptf["monitorINI"])
             {
-                IniWrite(MonitorCount, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
-                IniWrite(MonitorPrimary, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+                IniWrite(MonitorCount, ptf["monitorINI"], "Sys", "Count")
+                IniWrite(MonitorPrimary, ptf["monitorINI"], "Sys", "Primary")
                 loop MonitorCount {
                     ;// log initial data
-                    MonitorGetWorkArea A_Index, &WL, &WT, &WR, &WB
+                    MonitorGetWorkArea(A_Index, &WL, &WT, &WR, &WB)
                     write(WL, WT, WR, WB)
                 }
                 return
             }
         ;// if the file does exist, we cross reference it
-        readCount := IniRead(A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
-        readPrimary := IniRead(A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+        readCount := IniRead(ptf["monitorINI"], "Sys", "Count")
+        readPrimary := IniRead(ptf["monitorINI"], "Sys", "Primary")
         ;// if something has changed alert the user
         if (readCount != MonitorCount) || (readPrimary != MonitorPrimary)
             {
@@ -944,16 +944,16 @@ class Startup {
                 }
                 save := true
                 ;// log new values
-                IniWrite(MonitorCount, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Count")
-                IniWrite(MonitorPrimary, A_MyDocuments "\tomshi\monitors.ini", "Sys", "Primary")
+                IniWrite(MonitorCount, ptf["monitorINI"], "Sys", "Count")
+                IniWrite(MonitorPrimary, ptf["monitorINI"], "Sys", "Primary")
             }
         loop MonitorCount {
             ;// this loop is cross referencing the rest of the data
-            MonitorGetWorkArea A_Index, &WL, &WT, &WR, &WB
-            left := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Left")
-            top := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Top")
-            right := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Right")
-            bottom := IniRead(A_MyDocuments "\tomshi\monitors.ini", A_Index, "Bottom")
+            MonitorGetWorkArea(A_Index, &WL, &WT, &WR, &WB)
+            left := IniRead(ptf["monitorINI"], A_Index, "Left")
+            top := IniRead(ptf["monitorINI"], A_Index, "Top")
+            right := IniRead(ptf["monitorINI"], A_Index, "Right")
+            bottom := IniRead(ptf["monitorINI"], A_Index, "Bottom")
             if( ;// if nothing has changed, continue
                 left = WL &&
                 top = WT &&
