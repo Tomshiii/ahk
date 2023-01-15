@@ -2,7 +2,7 @@
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
  * @date 2023/01/15
- * @version 1.0.0b1
+ * @version 1.0.0b2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,28 +31,32 @@ class UserPref {
         this.__setAdjust()
         this.__setTrack()
     }
+
     ;// define settings location
     SettingsDir => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
 
     /**
      * A function to provide the default for each .ini value
+     * @param {String} key the key name
      */
     __getDefault(key) {
+        if InStr(key, A_Space)
+            key := StrReplace(key, A_Space, "_")
         switch key {
-            case "adobe_GB":              return 45
-            case "adobe_FS":              return 2
-            case "autosave_MIN":          return 5
-            case "game_SEC":              return 2
-            case "multi_SEC":             return 5
-            case "prem_year", "ae_year":  return 2022
-            case "version":               return 0
-            case "premVer":               return "v22.3.1"
-            case "aeVer":                 return "v22.6"
-            case "psVer":                 return "v24.0.1"
-            case "resolveVer":            return "v18.0.4"
-            case "update check":          return "true"
-            case "dark mode":             return ""
+            case "adobe_GB":                              return 45
+            case "adobe_FS":                              return 2
+            case "autosave_MIN":                          return 5
+            case "game_SEC":                              return 2
+            case "multi_SEC":                             return 5
+            case "prem_year", "ae_year":                  return 2022
+            case "version":                               return 0
+            case "premVer":                               return "v22.3.1"
+            case "aeVer":                                 return "v22.6"
+            case "psVer":                                 return "v24.0.1"
+            case "resolveVer":                            return "v18.0.4"
+            case "update_check":                          return "true"
+            case "dark_mode":                             return ""
             case "autosave_check_checklist", "tooltip", "checklist_tooltip":
                 return "true"
             case "beta_update_check", "run_at_startup", "checklist_wait", "first_check", "block_aware":
@@ -65,6 +69,7 @@ class UserPref {
     /**
      * Convert boolean strings to proper boolean values
      * @param {String} key "true" or "false"
+     * @param {String} section the section name of the ini file currently being read from
      */
     __convertToBool(key, section) {
         default := this.__getDefault(key)
@@ -102,11 +107,14 @@ class UserPref {
      */
     __del(arr, section) {
         for v in arr {
-            writeVal := (this.%v% = 1 || this.%v% = 0) ? RTrim(this.__convertToStr(this.%v%), " ") : this.%v%
-            ;//! add a default below here
-            prior_value := IniRead(this.SettingsFile, section, this.__convertToKey(v))
-            if this.%v% != prior_value
-                IniWrite(writeVal, this.SettingsFile, section, this.__convertToKey(v))
+            try {
+                writeVal := (this.%v% = 1 || this.%v% = 0) ? RTrim(this.__convertToStr(this.%v%), " ") : this.%v%
+                ;// Don't want a default value here, if something errors out during the deletion of the class, we don't want it
+                ;// returning back to the default value instead of leaving it how it currently is
+                prior_value := IniRead(this.SettingsFile, section, this.__convertToKey(v))
+                if this.%v% != prior_value
+                    IniWrite(writeVal, this.SettingsFile, section, this.__convertToKey(v))
+            }
         }
     }
 
@@ -160,8 +168,8 @@ class UserPref {
                 case "first_check", "block_aware":
                     this.%v% := this.__convertToBool(this.__convertToKey(v), "Track")
                 default:
-                    ; default := this.__getDefault(v)
-                    this.%v% := IniRead(this.SettingsFile, "Track", this.__convertToKey(v))
+                    default := this.__getDefault(v)
+                    this.%v% := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), default)
             }
         }
     }
