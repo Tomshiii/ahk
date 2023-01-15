@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\dark>
 ; }
@@ -17,7 +18,7 @@ class tomshiBasic extends Gui {
         this.BackColor := 0xF0F0F0
         this.SetFont("S" FontSize " W" FontWeight) ;// sets the size of the font
         this.AddButton("Default W0 H0 X8 Y0", "_") ;// creates an invisible button to take focus away from the first defined ctrl
-        if IniRead(ptf["settings"], "Settings", "dark mode", "false") = "true"
-            Dark.titleBar(this.Hwnd) ;// automatically make the titlebar darkmode if the setting is enabled
+        if UserSettings.dark_mode = true
+            dark.titleBar(this.Hwnd) ;// automatically make the titlebar darkmode if the setting is enabled
     }
 }

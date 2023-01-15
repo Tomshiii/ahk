@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <GUIs\tomshiBasic>
 #Include <GUIs\gameCheckGUI>
 #Include <GUIs\settingsGUI\editValues>
@@ -11,8 +12,7 @@
 #Include <Functions\refreshWin>
 #Include <Functions\detect>
 #Include <Functions\checkInternet>
-#Include <Functions\trueOrfalse>
-; }
+;}
 
 /**
  * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
@@ -71,8 +71,8 @@ settingsGUI()
         winTitle := ""
     }
 
-    darkMode := IniRead(ptf["settings"], "Settings", "dark mode")
-    version := IniRead(ptf["settings"], "Track", "version")
+    darkMode := UserSettings.dark_mode
+    version := UserSettings.version
 
     ;gameCheckGUI
     gameTitle := "Add game to gameCheck.ahk"
@@ -101,12 +101,12 @@ settingsGUI()
     ;//! checkboxes
 
     ;// update check
-    checkVal := IniRead(ptf["settings"], "Settings", "update check", "true")
+    checkVal := UserSettings.update_check
     switch checkVal {
-        case "true":
+        case true:
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs+1 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will check for updates"
-        case "false":
+        case false:
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs+1 Y+5", "Check for Updates")
             updateCheckToggle.ToolTip := "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available"
         case "stop":
@@ -117,32 +117,31 @@ settingsGUI()
     update(*)
     {
         ToolTip("")
-        betaCheck := IniRead(ptf["settings"], "Settings", "beta update check") ;storing the beta check value so we can toggle it back on if it was on originally
+        betaCheck := UserSettings.beta_update_check ;storing the beta check value so we can toggle it back on if it was on originally
         updateVal := updateCheckToggle.Value
         switch updateVal {
             case 1: ;true
-                IniWrite("true", ptf["settings"], "Settings", "update check")
+                UserSettings.update_check := true
                 tool.Cust("Scripts will check for updates", 2000)
-                if betaCheck = "true"
+                if betaCheck = true
                     betaupdateCheckToggle.Value := 1
             case -1: ;false
-                IniWrite("false", ptf["settings"], "Settings", "update check")
+                UserSettings.update_check := false
                 tool.Cust("Scripts will still check for updates but will not present the user`nwith a GUI when an update is available", 2000)
-                if betaCheck = "true"
+                if betaCheck = true
                     betaupdateCheckToggle.Value := 1
             case 0: ;stop
                 betaupdateCheckToggle.Value := 0
-                IniWrite("stop", ptf["settings"], "Settings", "update check")
+                UserSettings.update_check := "stop"
                 tool.Cust("Scripts will NOT check for updates", 2000)
         }
     }
 
     ;// check for beta updates
     betaStart := false ;if the user enables the check for beta updates, we want my main script to reload on exit.
-    if IniRead(ptf["settings"], "Settings", "beta update check") = "true" && updateCheckToggle.Value != 0
-        betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked1 xs Y+5", "Check for Beta Updates")
-    else
-        betaupdateCheckToggle := settingsGUI.Add("Checkbox", "Checked0 xs Y+5", "Check for Beta Updates")
+    betaupdateCheckToggle := (UserSettings.beta_update_check = true && updateCheckToggle.Value != 0)
+                            ? settingsGUI.Add("Checkbox", "Checked1 xs Y+5", "Check for Beta Updates")
+                            : settingsGUI.Add("Checkbox", "Checked0 xs Y+5", "Check for Beta Updates")
     betaupdateCheckToggle.OnEvent("Click", betaupdate)
     betaupdate(*)
     {
@@ -150,28 +149,28 @@ settingsGUI()
         if updateVal = 1 && updateCheckToggle.Value != 0
             {
                 betaStart := true
-                IniWrite("true", ptf["settings"], "Settings", "beta update check")
+                UserSettings.beta_update_check := true
             }
 
         else
             {
                 betaupdateCheckToggle.Value := 0
                 betaStart := false
-                IniWrite("false", ptf["settings"], "Settings", "beta update check")
+                UserSettings.beta_update_check := false
             }
     }
 
     ;// dark mode toggle
-    darkINI := IniRead(ptf["settings"], "Settings", "dark mode")
-    darkCheck := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(darkINI) " Y+5", "Dark Mode")
+    darkINI   := UserSettings.dark_mode
+    darkCheck := settingsGUI.Add("Checkbox", "Checked" darkINI " Y+5", "Dark Mode")
     darkToolY := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
     darkToolN := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
     switch darkINI {
-        case "true":
+        case true:
             darkCheck.ToolTip := darkToolY
-        case "false":
+        case false:
             darkCheck.ToolTip := darkToolN
-        case "Disabled":
+        case "disabled":
             darkCheck.ToolTip := "The users OS version is too low for this feature"
             darkCheck.Opt("+Disabled")
     }
@@ -182,12 +181,12 @@ settingsGUI()
         darkToggleVal := darkCheck.Value
         switch darkToggleVal {
             case 1:
-                IniWrite("true", ptf["settings"], "Settings", "dark mode")
+                UserSettings.dark_mode := true
                 darkCheck.ToolTip := darkToolY
                 tool.Cust(darkToolY, 2000)
                 goDark()
             case 0:
-                IniWrite("false", ptf["settings"], "Settings", "dark mode")
+                UserSettings.dark_mode := false
                 darkCheck.ToolTip := darkToolN
                 tool.Cust(darkToolN, 2000)
                 goDark(false, "Light")
@@ -195,16 +194,14 @@ settingsGUI()
     }
 
     ;// run at startup
-    runStartupINI := IniRead(ptf["settings"], "Settings", "run at startup")
+    runStartupINI := UserSettings.run_at_startup
     StartupCheckTitle := "Run at Startup"
-    StartupCheck := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(runStartupINI) " Y+5", StartupCheckTitle)
+    StartupCheck := settingsGUI.Add("Checkbox", "Checked" runStartupINI " Y+5", StartupCheckTitle)
     startToolY := "My scripts will automatically run at PC startup"
     startToolN := "My scripts will no longer run at PC startup"
     switch runStartupINI {
-        case "true":
-            StartupCheck.ToolTip := startToolY
-        case "false":
-            StartupCheck.ToolTip := startToolN
+        case true:  StartupCheck.ToolTip := startToolY
+        case false: StartupCheck.ToolTip := startToolN
     }
     StartupCheck.OnEvent("Click", toggle.Bind("run at startup"))
 
@@ -212,30 +209,26 @@ settingsGUI()
     ;//! script checkboxes
 
     ;// autosave check checklist
-    ascheckCheck := IniRead(ptf["settings"], "Settings", "autosave check checklist")
+    ascheckCheck := UserSettings.autosave_check_checklist
     ascheckCheckTitle := "``autosave.ahk`` check for`n ``checklist.ahk``"
-    ascheckToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(ascheckCheck) " Y+20", ascheckCheckTitle)
+    ascheckToggle := settingsGUI.Add("Checkbox", "Checked" ascheckCheck " Y+20", ascheckCheckTitle)
     ascheckCheckY := "``autosave.ahk`` will check to ensure you have ``checklist.ahk`` open"
     ascheckCheckN := "``autosave.ahk`` will no longer check to ensure you have ``checklist.ahk`` open"
     switch ascheckCheck {
-        case "true":
-            ascheckToggle.ToolTip := ascheckCheckY
-        case "false":
-            ascheckToggle.ToolTip := ascheckCheckN
+        case true:    ascheckToggle.ToolTip := ascheckCheckY
+        case false:   ascheckToggle.ToolTip := ascheckCheckN
     }
     ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist"))
 
     ;// autosave tooltips
-    tooltipCheck := IniRead(ptf["settings"], "Settings", "tooltip")
+    tooltipCheck := UserSettings.tooltip
     tooltipCheckTitle := "``autosave.ahk`` tooltips"
-    toggleToggle := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(tooltipCheck) " Y+5", tooltipCheckTitle)
+    toggleToggle := settingsGUI.Add("Checkbox", "Checked" tooltipCheck " Y+5", tooltipCheckTitle)
     toggleToolY := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
     toggleToolN := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
     switch tooltipCheck {
-        case "true":
-            toggleToggle.ToolTip := toggleToolY
-        case "false":
-            toggleToggle.ToolTip := toggleToolN
+        case true:  toggleToggle.ToolTip := toggleToolY
+        case false: toggleToggle.ToolTip := toggleToolN
     }
     toggleToggle.OnEvent("Click", toggle.Bind("tooltip"))
 
@@ -264,13 +257,14 @@ settingsGUI()
 
         ;// toggling the checkboxes
         toggleVal := script.Value
+        iniVar := StrReplace(ini, A_Space, "_")
         switch toggleVal {
             case 1:
-                IniWrite("true", ptf["settings"], "Settings", ini)
+                UserSettings.%iniVar% := true
                 script.ToolTip := toolTrue
                 tool.Cust(toolTrue, 2000)
             case 0:
-                IniWrite("false", ptf["settings"], "Settings", ini)
+                UserSettings.%iniVar% := false
                 script.ToolTip := toolFalse
                 tool.Cust(toolFalse, 2000)
         }
@@ -293,30 +287,26 @@ settingsGUI()
     }
 
     ;// checklist tooltip
-    checklistTooltip := IniRead(ptf["settings"], "Settings", "checklist tooltip")
+    checklistTooltip := UserSettings.checklist_tooltip
     checklistTooltipTitle := "``checklist.ahk`` tooltips"
-    checkTool := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistTooltip) " Y+5", checklistTooltipTitle)
+    checkTool := settingsGUI.Add("Checkbox", "Checked" checklistTooltip " Y+5", checklistTooltipTitle)
     checkToolY := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
     checkToolN := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
     switch checklistTooltip {
-        case "true":
-            checkTool.ToolTip := checkToolY
-        case "false":
-            checkTool.ToolTip := checkToolN
+        case true:    checkTool.ToolTip := checkToolY
+        case false:   checkTool.ToolTip := checkToolN
     }
     checkTool.OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
 
     ;// checklist wait
-    checklistWait := IniRead(ptf["settings"], "Settings", "checklist wait")
+    checklistWait := UserSettings.checklist_wait
     checklistWaitTitle := "``checklist.ahk`` always wait"
-    checkWait := settingsGUI.Add("Checkbox", "Checked" trueOrfalse(checklistWait) " Y+5", checklistWaitTitle)
+    checkWait := settingsGUI.Add("Checkbox", "Checked" checklistWait " Y+5", checklistWaitTitle)
     waitToolY := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
     waitToolN := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
     switch checklistWait {
-        case "true":
-            checkWait.ToolTip := waitToolY
-        case "false":
-            checkWait.ToolTip := waitToolN
+        case true:    checkWait.ToolTip := waitToolY
+        case false: checkWait.ToolTip := waitToolN
     }
     checkWait.OnEvent("Click", msgboxToggle.Bind("checklist wait"))
 
@@ -340,15 +330,16 @@ settingsGUI()
             }
         msgboxText := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
         checkWaitVal := script.Value
+        iniVar := StrReplace(ini, A_Space, "_")
         switch checkWaitVal {
             case 1:
-                IniWrite("true", ptf["settings"], "Settings", ini)
+                UserSettings.%iniVar% := true
                 checkWait.ToolTip := toolTrue
                 tool.Cust(toolTrue, 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
                     MsgBox(msgboxtext,, "48 4096")
             case 0:
-                IniWrite("false", ptf["settings"], "Settings", ini)
+                UserSettings.%iniVar% := false
                 checkWait.ToolTip := toolFalse
                 tool.Cust(toolFalse, 2.0)
                 if WinExist("checklist.ahk - AutoHotkey")
@@ -358,12 +349,13 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! EDIT BOXES
-    premInitYear := IniRead(ptf["settings"], "Adjust", "prem year")
-    AEInitYear := IniRead(ptf["settings"], "Adjust", "ae year")
+    premInitYear := UserSettings.prem_year
+    AEInitYear   := UserSettings.ae_year
     ;this loop auto generates the edit boxes using "..\settingsGUI\editValues.ahk"
     set_Edit_Val.init()
     loop set_Edit_Val().objs.Length {
-        initVal := IniRead(ptf["settings"], "Adjust", set_Edit_Val.iniInput[A_Index])
+        initValVar := StrReplace(set_Edit_Val.iniInput[A_Index], A_Space, "_")
+        initVal := UserSettings.%initValVar%
         settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])
         settingsGUI.Add("UpDown",, initVal)
         settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
@@ -375,7 +367,8 @@ settingsGUI()
     editCtrl(script, ini, ctrl, *)
     {
         detect()
-        IniWrite(ctrl.value, ptf["settings"], "Adjust", ini)
+        iniVar := StrReplace(ini, A_Space, "_")
+        UserSettings.%iniVar% := ctrl.value
         if WinExist(script " - AutoHotkey")
             PostMessage 0x0111, 65303,,, script " - AutoHotkey"
     }
@@ -411,7 +404,7 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! STATUS BAR
 
-    workDir := IniRead(ptf["settings"], "Track", "working dir")
+    workDir := UserSettings.working_dir
     SB := settingsGUI.Add("StatusBar")
     SB.SetText("  Current working dir: " workDir)
     checkdir := SB.GetPos(,, &width)
@@ -461,10 +454,10 @@ settingsGUI()
             }
         ;check to see if the user wants to reset adobeTemp()
         if adobeToggle.Text = "undo?"
-            IniWrite("", ptf["settings"], "Track", "adobe temp")
+            UserSettings.adobe_temp := ""
         ;check to see if the user wants to reset firstCheck()
         if firstToggle.Text = "undo?"
-            IniWrite("false", ptf["settings"], "Track", "first check")
+            UserSettings.first_check := ""
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
@@ -472,14 +465,16 @@ settingsGUI()
             reload_reset_exit("reset")
         ;before finally closing
         settingsGUI.Destroy()
+        ;// has to reload at a minimum to refresh any settings changes
+        reload_reset_exit("reload")
     }
 
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
     OnMessage(0x0200, On_WM_MOUSEMOVE)
 
-    ;gets defined at the top of the script
-    if darkMode = "true"
+    ;this variable gets defined at the top of the script
+    if darkMode = true
         goDark()
 
     goDark(darkm := true, DarkorLight := "Dark")
@@ -540,12 +535,12 @@ settingsGUI()
         settingsGUI.GetPos(&x, &y, &width, &height)
         settingsGUI.Opt("-AlwaysOnTop")
         if WinExist("settings.ini") ;if ini already open, get pos, close, and then reopen to refresh
-            refreshWin("settings.ini", ptf["settings"])
+            refreshWin("settings.ini", UserSettings.SettingsFile)
         else
-            Run("Notepad.exe " ptf["settings"])
+            Run("Notepad.exe " UserSettings.SettingsFile)
         if !WinWait("settings.ini",, 3)
             return
-        WinMove(x+width-8, y, 322, height-2,"settings.ini")
+        WinMove(x+width-8, y, 322, height-2, "settings.ini")
         SetTimer(iniWait, -100)
     }
     iniWait()
@@ -574,16 +569,16 @@ settingsGUI()
         switch program {
             case "Premiere":
                 title := program " Pro Settings"
-                yearIniName := "prem year"
-                iniInitYear := IniRead(ptf.SettingsLoc "\settings.ini", "adjust", yearIniName, A_Year)
+                yearIniName := "prem_year"
+                iniInitYear := UserSettings.prem_year
                 verIniName := "premVer"
                 genProg := program
                 otherTitle := "After Effects Settings"
                 imageLoc := ptf.premIMGver
             case "AE":
                 title := "After Effects Settings"
-                yearIniName := "ae year"
-                iniInitYear := IniRead(ptf.SettingsLoc "\settings.ini", "adjust", yearIniName, A_Year)
+                yearIniName := "ae_year"
+                iniInitYear := UserSettings.ae_year
                 verIniName := "aeVer"
                 genProg := "AE"
                 otherTitle := "Premiere Pro Settings"
@@ -629,10 +624,11 @@ settingsGUI()
          */
         editCtrl(ini, ctrl, *)
         {
+            iniVar := StrReplace(ini, A_Space, "_")
             ;// we don't want the version ini value to change unless it's actually a new version number
             ;// (not blank) so we do a quick check beforehand
             if InStr(ctrl.Value, "v") && InStr(ctrl.Value, ".")
-                IniWrite(ctrl.value, ptf["settings"], "Adjust", ini)
+                UserSettings.%iniVar% := ctrl.value
         }
 
         /**
@@ -665,7 +661,7 @@ settingsGUI()
             ver.Add(new)
             if new.Has(1)
                 ver.Choose(1)
-            IniWrite(year.value, ptf.SettingsLoc "\settings.ini", "adjust", yearIniName)
+            UserSettings.%yearIniName% := year.value
         }
 
         /**

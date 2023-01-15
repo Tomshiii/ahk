@@ -4,6 +4,7 @@ ListLines(0)
 KeyHistory(0)
 
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\winget>
 #Include <Classes\timer>
@@ -26,7 +27,7 @@ I have \ set in premiere to "Move playhead to cursor" and use it in `right click
 */
 
 ;//enter your desired frequency in SECONDS in `fire_frequency` then leave `fire` as it is. By default you will see this script checks every 2s
-fire_frequency := IniRead(ptf["settings"], "Adjust", "adobe FS", 5)
+fire_frequency := UserSettings.adobe_FS
 fire := fire_frequency * 1000
 
 ;// initialise timer

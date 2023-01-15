@@ -9,10 +9,11 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.28
+;\\v2.29b1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
+#Include <Classes\Settings>
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
 SetNumLockState("AlwaysOn")            ;sets numlock to always on (you can still it for macros)
 SetCapsLockState("AlwaysOff")          ;sets caps lock to always off (you can still it for macros)
@@ -23,13 +24,13 @@ A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If yo
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 ; { \\ #Includes
+#Include <Classes\ptf>
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Apps\Discord>
 #Include <Classes\Apps\VSCode>
 #Include <Classes\Editors\After Effects>
 #Include <Classes\Editors\Photoshop>
 #Include <Classes\Editors\Premiere>
-#Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\coord>

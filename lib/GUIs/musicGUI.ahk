@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <GUIs\tomshiBasic>
 #Include <Classes\ptf>
 #Include <Classes\dark>
@@ -49,7 +50,7 @@ musicGUI()
 
     ;#finished with definitions
 
-    if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
+    if UserSettings.dark_mode = true
         dark.allButtons(MyGui)
 
     MyGui.Show()
@@ -58,16 +59,14 @@ musicGUI()
     {
         text := button.Text
         switch button.Text {
-            case "AIMP":
-                Run(aimpPath)
+            case "AIMP": Run(aimpPath)
             case "Foobar":
                 Run(foobarPath)
                 text := "foobar2000"
             case "WMP":
                 Run(wmpPath)
                 text := "wmplayer"
-            case "VLC":
-                Run(vlcPath)
+            case "VLC": Run(vlcPath)
         }
         WinWait("ahk_exe " text ".exe")
         WinActivate("ahk_exe " text ".exe")

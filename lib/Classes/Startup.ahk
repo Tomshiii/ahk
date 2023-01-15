@@ -3,13 +3,14 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/15
- * @version 1.2.7
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <GUIs\todoGUI>
 #Include <GUIs\hotkeysGUI>
 #Include <GUIs\settingsGUI\settingsGUI>
+#Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\Dark>
@@ -26,7 +27,25 @@
 ; }
 
 class Startup {
+    /**
+     * This function retrieves the release version the user is currently running
+     */
     __getMainRelease() => getLocalVer()
+
+    __checkDark() {
+        switch UserSettings.dark_mode {
+            case "":
+                if (VerCompare(A_OSVersion, "10.0.17763") < 0)
+                    {
+                        UserSettings.dark_mode := "disabled"
+                        reload_reset_exit("reset")
+                    }
+                UserSettings.dark_mode := true
+                reload_reset_exit("reset")
+                return
+        }
+        return UserSettings.dark_mode
+    }
 
     /**
      * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
@@ -38,55 +57,10 @@ class Startup {
             return
         MyRelease := this().__getMainRelease()
 
-        /**
-         * This function is designed to transition an install of my scripts from before I had `settings.ini` => a version that does.
-         * This function likely no longer needs to exist but is kept here for the sake of history.
-         */
-        deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS) {
-            if DirExist(A_MyDocuments "\tomshi\adobe")
-                {
-                    try {
-                        loop files, A_MyDocuments "\tomshi\adobe\*.*"
-                            checkAdobe := A_LoopFileName
-                    }
-                    if IsSet(checkAdobe)
-                        ADOBE := checkAdobe
-                    DirDelete(A_MyDocuments "\tomshi\adobe", 1)
-                }
-            if DirExist(A_MyDocuments "\tomshi\location")
-                {
-                    try {
-                        WORK := FileRead(A_MyDocuments "\tomshi\location\workingDir")
-                    }
-                    if WORK != ""
-                        {
-                            UPDATE := IniRead(WORK "\Support Files\ignore.ini", "ignore", "ignore", "true")
-                            if UPDATE = "no"
-                                UPDATE := "true"
-                            else UPDATE := "false"
-                            if FileExist(WORK "\Support Files\ignore.ini")
-                                FileDelete(WORK "\Support Files\ignore.ini")
-                        }
-                    DirDelete(A_MyDocuments "\tomshi\location", 1)
-                }
-            if FileExist(A_MyDocuments "\tomshi\autosave.ini")
-                {
-                    TOOLS := IniRead(A_MyDocuments "\tomshi\autosave.ini", "tooltip", "tooltip", "true")
-                    FileDelete(A_MyDocuments "\tomshi\autosave.ini")
-                }
-            if FileExist(A_MyDocuments "\tomshi\first")
-                {
-                    FC := "true"
-                    FileDelete(A_MyDocuments "\tomshi\first")
-                }
-        }
-
         ;// checking to see if the settings folder location exists & if not, creates it
-        if !DirExist(ptf.SettingsLoc)
-            DirCreate(ptf.SettingsLoc)
-        if FileExist(ptf["settings"])
+        if FileExist(UserSettings.SettingsFile)
             {
-                ver := IniRead(ptf["settings"], "Track", "version")
+                ver := IniRead(UserSettings.SettingsFile, "Track", "version")
                 ;//! do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
                 if !VerCompare(MyRelease, ver) > 0
                     return
@@ -96,16 +70,11 @@ class Startup {
                     tool.Cust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
             }
         ;// checking to see if the users OS version is high enough to support dark mode
-        if VerCompare(A_OSVersion, "10.0.17763") < 0
-            {
-                IniWrite("disabled", ptf["settings"], "Settings", "dark mode")
-                darkVerCheck := "disabled"
-            }
-        else
-            darkVerCheck := "true"
+        darkCheck := this().__checkDark()
+
         UPDATE          := IniRead(ptf["settings"], "Settings", "update check"             , "true")
         BETAUPDATE      := IniRead(ptf["settings"], "Settings", "beta update check"        , "false")
-        DARK            := IniRead(ptf["settings"], "Settings", "dark mode"                , darkVerCheck)
+        DARK            := IniRead(ptf["settings"], "Settings", "dark mode"                , darkCheck)
         RUNSTARTUP      := IniRead(ptf["settings"], "Settings", "run at startup"           , "true")
         CHECKCHECK      := IniRead(ptf["settings"], "Settings", "autosave check checklist" , "true")
         TOOLS           := IniRead(ptf["settings"], "Settings", "tooltip"                  , "true")
@@ -127,10 +96,8 @@ class Startup {
         FC              := IniRead(ptf["settings"], "Track",    "first check"              , "false")
         BLOCKAWARE      := IniRead(ptf["settings"], "Track",    "block aware"              , "false")
         MONITORALERT    := IniRead(ptf["settings"], "Track",    "monitor alert"            , 0)
-        ;// deletes any of the old files I used to track information
-        deleteOld(&ADOBE, &WORK, &UPDATE, &FC, &TOOLS)
         ;// generate new ini file
-        createIni(ptf.SettingsLoc, UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
+        createIni(UserSettings.SettingsDir, UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
     }
 
     /**
@@ -145,11 +112,11 @@ class Startup {
             return
         MyRelease := this().__getMainRelease()
         ;checking to see if the user wishes to check for updates
-        check := IniRead(ptf["settings"], "Settings", "update check")
+        check := UserSettings.update_check
         if check = "stop"
             return
         betaprep := 0
-        if IniRead(ptf["settings"], "Settings", "beta update check", "false") = "true"
+        if UserSettings.beta_update_check = true
             { ;if the user wants to check for beta updates instead, this block will fire
                 version := getScriptRelease(true, &changeVer)
                 betaprep := 1
@@ -167,7 +134,7 @@ class Startup {
             default:
                 errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, check),, 1)
                 return
-            case "false":
+            case false:
                 tool.Wait()
                 if VerCompare(MyRelease, version) < 0
                     {
@@ -176,7 +143,7 @@ class Startup {
                     }
                 tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
                 return
-            case "true":
+            case true:
                 if VerCompare(MyRelease, version) >= 0
                     return
                 ;create gui
@@ -214,20 +181,17 @@ class Startup {
                 noprompt := MyGui.Add("Checkbox", "xs-175 Ys-10", "Don't prompt again")
                 noprompt.OnEvent("Click", prompt)
                 ;set beta checkbox
-                if IniRead(ptf["settings"], "Settings", "beta update check", "false") = "true"
-                    betaCheck := MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
-                else
-                    betaCheck := MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
+                betaCheck := (UserSettings.beta_update_check = true)
+                           ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
+                           : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
                 betaCheck.OnEvent("Click", prompt)
 
-                if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
+                if UserSettings.dark_mode = true
                     goDark()
                 goDark()
                 {
                     dark.titleBar(MyGui.Hwnd)
-                    dark.button(gitButton.Hwnd)
-                    dark.button(downloadbutt.Hwnd)
-                    dark.button(cancelbutt.Hwnd)
+                    dark.allButtons(MyGui)
                 }
 
                 MyGui.Show()
@@ -236,18 +200,18 @@ class Startup {
                         {
                             switch guiCtrl.Value {
                                 case 0:
-                                    IniWrite("true", ptf["settings"], "Settings", "update check")
+                                    UserSettings.update_check := true
                                 case 1:
-                                    IniWrite("false", ptf["settings"], "Settings", "update check")
+                                    UserSettings.update_check := false
                             }
                         }
                     if InStr(guiCtrl.Text, "beta")
                         {
                             switch guiCtrl.Value {
                                 case 1:
-                                    IniWrite("true", ptf["settings"], "Settings", "beta update check")
+                                    UserSettings.beta_update_check := true
                                 case 0:
-                                    IniWrite("false", ptf["settings"], "Settings", "beta update check")
+                                    UserSettings.beta_update_check := false
                             }
                             Run(A_ScriptFullPath)
                         }
@@ -408,8 +372,8 @@ class Startup {
         MyRelease := this().__getMainRelease()
         if WinExist("Scripts Release ")
             WinWaitClose("Scripts Release ")
-        check := IniRead(ptf["settings"], "Track", "first check")
-        if check != "false" ;how the function tracks whether this is the first time the user is running the script or not
+        check := UserSettings.first_check
+        if check != false ;how the function tracks whether this is the first time the user is running the script or not
             return
         firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " MyRelease)
         ;set title
@@ -451,8 +415,10 @@ class Startup {
         firstCheckGUI.OnEvent("Escape", close)
         firstCheckGUI.OnEvent("Close", close)
         close(*) {
-            IniWrite("true", ptf["settings"], "Track", "first check") ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
+            UserSettings.first_check := true ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
             firstCheckGUI.Destroy()
+            RunWait(A_ScriptFullPath)
+            return
         }
         todoPage(*) {
             todoGUI()
@@ -470,15 +436,12 @@ class Startup {
             firstCheckGUI.Opt("-Disabled")
         }
 
-        if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
+        if UserSettings.dark_mode = true
             goDark()
         goDark()
         {
             dark.titleBar(firstCheckGUI.Hwnd)
-            dark.button(settingsButton.Hwnd)
-            dark.button(todoButton.Hwnd)
-            dark.button(hotkeysButton.Hwnd)
-            dark.button(closeButton.Hwnd)
+            dark.allButtons(firstCheckGUI)
         }
 
         firstCheckGUI.Show("AutoSize")
@@ -487,11 +450,6 @@ class Startup {
         title.GetPos(,, &width)
         firstCheckGUI.GetClientPos(,, &guiWidth)
         title.Move((guiWidth-width)/2)
-        /*MsgBox(
-            "titleWidth: " width "`n"
-            "guiClientWidth: " guiWidth "`n"
-            "newPos: " (guiWidth/4) - (width/4) "`n"
-        ) */
     }
 
     /**
@@ -517,12 +475,12 @@ class Startup {
         tool.Wait()
         if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
             WinWaitClose("Scripts Release " MyRelease)
-        day := IniRead(ptf["settings"], "Track", "adobe temp")
+        day := UserSettings.adobe_temp
         if day = A_YDay ;checks to see if the function has already run today
             return
 
         ;SET HOW BIG YOU WANT IT TO WAIT FOR IN THE `settings.ini` FILE (IN GB) -- IT WILL DEFAULT TO 45GB
-        largestSize := IniRead(ptf["settings"], "Adjust", "adobe GB", 45)
+        largestSize := UserSettings.adobe_GB
 
         ;first we set our counts to 0
         CacheSize := 0
@@ -568,7 +526,7 @@ class Startup {
                 }
             end:
         }
-        IniWrite(A_YDay, ptf["settings"], "Track", "adobe temp") ;tracks the day so it will not run again today
+        UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
     }
 
     /**
@@ -582,12 +540,12 @@ class Startup {
         if isReload()
             return
         tool.Wait()
-        checkDir := IniRead(ptf["settings"], "Track", "working dir")
+        checkDir := UserSettings.working_dir
         if checkDir = A_WorkingDir
             return
 
         funcTray := "'" A_ThisFunc "()" "'" A_Space
-        found := "false"
+        found := false
         tomshiOrUser := "t"
         loop files, A_WorkingDir "\*.ahk", "R"
             {
@@ -596,11 +554,11 @@ class Startup {
                 read := FileRead(A_LoopFileFullPath)
                 if InStr(read, "E:\Github\ahk", 1)
                     {
-                        found := "true"
+                        found := true
                         break
                     }
             }
-        if found = "false"
+        if found = false
             {
                 loop files, A_WorkingDir "\*.ahk", "R"
                     {
@@ -609,13 +567,13 @@ class Startup {
                         read := FileRead(A_LoopFileFullPath)
                         if InStr(read, checkDir, 1)
                             {
-                                found := "true"
+                                found := true
                                 tomshiOrUser := "u"
                                 break
                             }
                     }
             }
-        if found = "false"
+        if found = false
             return
         TrayTip(funcTray "is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir,, 17)
         SetTimer(end, -2000)
@@ -638,32 +596,33 @@ class Startup {
         end() {
             TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
         }
-        IniWrite(A_WorkingDir, ptf["settings"], "Track", "working dir")
+        UserSettings.working_dir := A_WorkingDir
+        RunWait(A_ScriptFullPath)
     }
 
     /**
      * This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
      */
     static trayMen() {
-        check := IniRead(ptf["settings"], "Settings", "update check")
+        check := UserSettings.update_check
         A_TrayMenu.Insert("7&") ;adds a divider bar
-        A_TrayMenu.Insert("8&", "Settings", settings)
-        A_TrayMenu.Insert("9&", "Check for Updates", checkUp)
-        if check =  "true"
+        A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
+        A_TrayMenu.Insert("9&", "Active Scripts", (*) => activeScripts())
+        A_TrayMenu.Insert("10&", "Check for Updates", checkUp)
+        if check =  true
             A_TrayMenu.Check("Check for Updates")
         checkUp(*)
         {
-            check := IniRead(ptf["settings"], "Settings", "update check") ;has to be checked everytime you wish to toggle
+            check := UserSettings.update_check ;has to be checked everytime you wish to toggle
             switch check {
-                case "true":
-                    IniWrite("false", ptf["settings"], "Settings", "update check")
+                case true:
+                    UserSettings.update_check := false
                     A_TrayMenu.Uncheck("Check for Updates")
-                case "false":
-                    IniWrite("true", ptf["settings"], "Settings", "update check")
+                case false:
+                    UserSettings.update_check := true
                     A_TrayMenu.Check("Check for Updates")
             }
         }
-        settings(*) => settingsGUI()
     }
 
     /**
@@ -709,7 +668,7 @@ class Startup {
             return
         if !checkInternet()
             return
-        check := IniRead(ptf["settings"], "Settings", "update check")
+        check := UserSettings.update_check
         if check = "stop"
             return
         this.libs.init()
@@ -779,7 +738,7 @@ class Startup {
     static updateAHK() {
         if isReload() ;checks if script was reloaded
             return
-        settingsCheck := IniRead(ptf["settings"], "Settings", "update check")
+        settingsCheck := UserSettings.update_check
         if settingsCheck = "stop"
             return
         latestVer := getHTML("https://www.autohotkey.com/download/2.0/version.txt")
@@ -791,7 +750,7 @@ class Startup {
                 tool.Cust("AHK up to date")
                 return
             }
-        if settingsCheck = "false"
+        if settingsCheck = false
             {
                 tool.Wait()
                 tool.Cust("A new version of AHK is available")
@@ -877,10 +836,8 @@ class Startup {
             ; #end DLFile
 
             switch checkboxValue {
-                case 1:
-                    Run(downloadLocation "\ahk-v2.exe")
-                default:
-                    Run(downloadLocation)
+                case 1:  Run(downloadLocation "\ahk-v2.exe")
+                default: Run(downloadLocation)
             }
         }
     }
@@ -927,7 +884,7 @@ class Startup {
                 case "Retry": ;// "No"
                     return 0
                 case "Ignore": ;// "Mute Alert"
-                    IniWrite(A_YDay, ptf["settings"], "Track", "monitor alert")
+                    UserSettings.monitor_alert := A_YDay
                     return 0
             }
         }
@@ -949,7 +906,7 @@ class Startup {
         ;// if something has changed alert the user
         if (readCount != MonitorCount) || (readPrimary != MonitorPrimary)
             {
-                if IniRead(ptf["settings"], "Track", "monitor alert", 0) = A_YDay
+                if UserSettings.monitor_alert = A_YDay
                     return
                 if !alrtmsgbox()
                     return

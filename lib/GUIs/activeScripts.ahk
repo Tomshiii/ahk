@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <GUIs\tomshiBasic>
 #Include <Classes\dark>
 #Include <Classes\ptf>
@@ -121,7 +122,7 @@ activeScripts()
     closeButton := MyGui.Add("Button", "X" buttonX " Y" buttonHeight, "Close")
     closeButton.OnEvent("Click", escape)
 
-    if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
+    if UserSettings.dark_mode = true
         dark.button(closeButton.Hwnd)
 
     ;the below code allows for the tooltips on hover

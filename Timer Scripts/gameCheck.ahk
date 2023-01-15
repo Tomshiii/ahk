@@ -5,6 +5,7 @@ ListLines(0)
 KeyHistory(0)
 
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\pause>
 #Include <Classes\winget>
@@ -17,12 +18,12 @@ SetTitleMatchMode(2) ;this is necessary to detect open .ahk scripts
 
 
 ;// Set seconds delay
-sec := IniRead(ptf["settings"], "Adjust", "game SEC", 2.5)
+sec := UserSettings.game_SEC
 secms := sec * 1000
 
 ;// getting info from settings
-darkMode := IniRead(ptf["settings"], "Settings", "dark mode")
-version := IniRead(ptf["settings"], "Track", "version")
+darkMode := UserSettings.dark_mode
+version := UserSettings.version
 
 ;// defining a GUI the user can access by right clicking the script
 A_TrayMenu.Insert("7&") ;adds a divider bar

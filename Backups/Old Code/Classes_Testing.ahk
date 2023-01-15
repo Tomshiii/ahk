@@ -27,6 +27,7 @@ class test2 extends test {
         ; MsgBox(this.var3) ;// this works
     }
 
+    var5 := "huh"
     call2() {
         ; super.call() ;// calls call() in base calss
         msgbox "test2"
@@ -78,4 +79,25 @@ Class test3 {
         this().__hidden()       ;// static methods call non static methods with `this().`
     }
 }
-test3.caller() ;// calls `caller()` which calls `__hidden()` which calles `__superHidden()`
+; test3.caller() ;// calls `caller()` which calls `__hidden()` which calles `__superHidden()`
+
+Class test4 {
+    __Init() {
+
+    }
+    /* __New() {
+        this.var := "hell0"
+        this.__Method("test")
+    } */
+
+    /* __Method(words) {
+        MsgBox(this.var)
+    } */
+    otherthing => "duh"
+    ; words := this.__Method("test")
+    check := true
+}
+
+ver := test4()
+msgbox ver.check
+; msgbox ver.words

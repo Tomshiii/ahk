@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <GUIs\tomshiBasic>
 #Include <Other\WebView2\WebView2>
 #Include <Classes\ptf>
@@ -11,7 +12,7 @@ SetWorkingDir(ptf.lib)
 TraySetIcon(ptf.Icons "\update.png")
 
 
-if IniRead(ptf["settings"], "Settings", "beta update check", "false") = "true"
+if UserSettings.beta_update_check = true
 	{ ;if the user wants to check for beta updates instead, this block will fire
 		version := getScriptRelease(true, &changeVer)
 		betaprep := 1

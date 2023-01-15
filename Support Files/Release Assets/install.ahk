@@ -28,14 +28,9 @@ if check = "No"
 ;// dumping all required files
 FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
 FileInstall("E:\Github\ahk\releases\release\Extract.ahk", A_WorkingDir "\Extract.ahk", 1)
-FileInstall("E:\Github\ahk\releases\release\createIni.ahk", A_WorkingDir "\createIni.ahk", 1)
 FileInstall("E:\Github\ahk\releases\release\SevenZip.ahk", A_WorkingDir "\SevenZip.ahk", 1)
 FileInstall("E:\Github\ahk\releases\release\7-zip32.dll", A_WorkingDir "\7-zip32.dll", 1)
 FileInstall("E:\Github\ahk\releases\release\7-zip64.dll", A_WorkingDir "\7-zip64.dll", 1)
-
-;// generate a baseline settings.ini file
-if !FileExist(A_MyDocuments "\tomshi\settings.ini")
-    RunWait(A_WorkingDir "\createIni.ahk")
 
 ;// setting location vars
 releaseGUILoc := A_WorkingDir "\Support Files\Release Assets\releaseGUI.ahk"
@@ -62,12 +57,15 @@ loop {
         break
     sleep 1000
 }
+sleep 500
+;// generate a baseline settings.ini file
+if !FileExist(A_MyDocuments "\tomshi\settings.ini") && FileExist(A_WorkingDir "\lib|Classes\Settings.ahk")
+    Run(A_WorkingDir "\lib\Classes\Settings.ahk")
 
 ;// cleaning up files that are no longer needed
 FileDelete(A_WorkingDir '\7-zip32.dll')
 FileDelete(A_WorkingDir '\7-zip64.dll')
 FileDelete(A_WorkingDir '\SevenZip.ahk')
-FileDelete(A_WorkingDir '\createIni.ahk')
 FileDelete(A_WorkingDir '\Extract.ahk')
 FileDelete(A_WorkingDir '\yes.value.zip')
 sleep 100
