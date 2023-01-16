@@ -361,8 +361,7 @@ class AE {
                 SendInput("{" A_ThisHotkey "}")
                 tool.Wait()
                 switch set ?? false {
-                    case true:
-                        tool.Cust("The main window is not active")
+                    case true: tool.Cust("The main window is not active")
                     default:
                         errorLog(UnsetError("A variable was not assigned a value", -1, set)
                                     , "Or the main window is not active", 1)

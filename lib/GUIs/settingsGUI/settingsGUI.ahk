@@ -166,10 +166,8 @@ settingsGUI()
     darkToolY := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
     darkToolN := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
     switch darkINI {
-        case true:
-            darkCheck.ToolTip := darkToolY
-        case false:
-            darkCheck.ToolTip := darkToolN
+        case true:  darkCheck.ToolTip := darkToolY
+        case false: darkCheck.ToolTip := darkToolN
         case "disabled":
             darkCheck.ToolTip := "The users OS version is too low for this feature"
             darkCheck.Opt("+Disabled")
@@ -394,10 +392,8 @@ settingsGUI()
         if which = "first"
             buttonTitle := "firstCheck()"
         switch button.text {
-            case buttonTitle:
-                button.Text := "undo?"
-            case "undo?":
-                button.Text := buttonTitle
+            case buttonTitle: button.Text := "undo?"
+            case "undo?":     button.Text := buttonTitle
         }
     }
 

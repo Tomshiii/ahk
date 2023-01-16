@@ -198,19 +198,15 @@ class Startup {
                     if InStr(guiCtrl.Text, "prompt")
                         {
                             switch guiCtrl.Value {
-                                case 0:
-                                    UserSettings.update_check := true
-                                case 1:
-                                    UserSettings.update_check := false
+                                case 0: UserSettings.update_check := true
+                                case 1: UserSettings.update_check := false
                             }
                         }
                     if InStr(guiCtrl.Text, "beta")
                         {
                             switch guiCtrl.Value {
-                                case 1:
-                                    UserSettings.beta_update_check := true
-                                case 0:
-                                    UserSettings.beta_update_check := false
+                                case 1: UserSettings.beta_update_check := true
+                                case 0: UserSettings.beta_update_check := false
                             }
                             Run(A_ScriptFullPath)
                         }
@@ -880,8 +876,7 @@ class Startup {
                 Alternatively you can mute this alert for today.
             )", "Monitor layout changed", "2 32 256 4096")
             switch check {
-                case "Retry": ;// "No"
-                    return 0
+                case "Retry": return 0 ;// "No"
                 case "Ignore": ;// "Mute Alert"
                     UserSettings.monitor_alert := A_YDay
                     return 0
