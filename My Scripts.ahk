@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.29b1
+;\\v2.29
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -533,8 +533,7 @@ SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering 
 ;discBacktickHotkey;
 `::discord.surround("``")
 ;discParenthHotkey;
-(::
-)::discord.surround("()")
+(::discord.surround("()")
 
 ;discserverHotkey;
 F1::discord.Unread() ;will click any unread servers

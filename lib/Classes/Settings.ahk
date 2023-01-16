@@ -2,12 +2,11 @@
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
  * @date 2023/01/16
- * @version 1.0.0b3
+ * @version 1.0.0
  ***********************************************************************/
 
 class UserPref {
     __New() {
-        SetWorkingDir(A_LineFile "\..\..\..\") ;// the root dir of the repo
         if !FileExist(this.SettingsFile)
             this.__createIni(this.SettingsDir, "true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", 0, A_WorkingDir, "false", "false", 0, 0)
         ;// initialise settings variables
@@ -17,7 +16,7 @@ class UserPref {
     }
 
     ;// define settings location
-    SettingsDir => A_MyDocuments "\tomshi"
+    SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
 
     /**
@@ -28,25 +27,27 @@ class UserPref {
         if InStr(key, A_Space)
             key := StrReplace(key, A_Space, "_")
         switch key {
-            case "adobe_GB":                              return 45
-            case "adobe_FS":                              return 2
-            case "autosave_MIN":                          return 5
-            case "game_SEC":                              return 2
-            case "multi_SEC":                             return 5
-            case "prem_year", "ae_year":                  return 2022
-            case "version":                               return 0
-            case "premVer":                               return "v22.3.1"
-            case "aeVer":                                 return "v22.6"
-            case "psVer":                                 return "v24.0.1"
-            case "resolveVer":                            return "v18.0.4"
-            case "update_check":                          return "true"
-            case "dark_mode":                             return ""
-            case "autosave_check_checklist", "tooltip", "checklist_tooltip":
-                return "true"
-            case "beta_update_check", "run_at_startup", "checklist_wait", "first_check", "block_aware":
-                return "false"
-            default:
-                return "false"
+            case "adobe_GB":                          return 45
+            case "adobe_FS":                          return 2
+            case "autosave_MIN":                      return 5
+            case "game_SEC":                          return 2
+            case "multi_SEC":                         return 5
+            case "prem_year", "ae_year":              return 2022
+            case "version":                           return 0
+            case "premVer":                           return "v22.3.1"
+            case "aeVer":                             return "v22.6"
+            case "psVer":                             return "v24.0.1"
+            case "resolveVer":                        return "v18.0.4"
+            case "update_check":                      return "true"
+            case "dark_mode":                         return ""
+            case "autosave_check_checklist",
+                 "tooltip", "checklist_tooltip":
+                                                      return "true"
+            case "beta_update_check",
+                 "run_at_startup", "checklist_wait",
+                 "first_check", "block_aware":
+                                                      return "false"
+            default:                                  return "false"
         }
     }
 
@@ -161,51 +162,53 @@ class UserPref {
 
     /**
      * This function generates a baseline settings.ini file
-     * @param {params1} installLocation (usually A_MyDocuments "\tomshi")
-     * @param {params2-26} settingsIni these are the settings.ini entries in order
+     * @param {params1-25} settingsIni these are the settings.ini entries in order
      */
     __createIni(params*) {
-    if params.Length > 26
-        throw (ValueError("Incorrect number of Parameters passed to function.", -1)) ;// don't add errorlog to this function, keep it no dependencies
-    if !DirExist(params[1])
-        DirCreate(params[1])
-    if FileExist(params[1] "\settings.ini")
-        FileDelete(params[1] "\settings.ini")
-    FileAppend(Format("
-    (
-        [Settings]
-        update check={}
-        beta update check={}
-        dark mode={}
-        run at startup={}
-        autosave check checklist={}
-        tooltip={}
-        checklist tooltip={}
-        checklist wait={}
+        if params.Length > 25
+            throw (ValueError("Incorrect number of Parameters passed to function.", -1)) ;// don't add errorlog to this function, keep it no dependencies
+        if !DirExist(this.SettingsDir)
+            DirCreate(this.SettingsDir)
+        if FileExist(this.SettingsFile)
+            FileDelete(this.SettingsFile)
+        FileAppend(Format("
+                (
+                    [Settings]
+                    update check={}
+                    beta update check={}
+                    dark mode={}
+                    run at startup={}
+                    autosave check checklist={}
+                    tooltip={}
+                    checklist tooltip={}
+                    checklist wait={}
 
-        [Adjust]
-        adobe GB={}
-        adobe FS={}
-        autosave MIN={}
-        game SEC={}
-        multi SEC={}
-        prem year={}
-        ae year={}
-        premVer={}
-        aeVer={}
-        psVer={}
-        resolveVer={}
+                    [Adjust]
+                    adobe GB={}
+                    adobe FS={}
+                    autosave MIN={}
+                    game SEC={}
+                    multi SEC={}
+                    prem year={}
+                    ae year={}
+                    premVer={}
+                    aeVer={}
+                    psVer={}
+                    resolveVer={}
 
-        [Track]
-        adobe temp={}
-        working dir={}
-        first check={}
-        block aware={}
-        monitor alert={}
-        version={}
-    )", params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], params[12], params[13], params[14], params[15], params[16], params[17], params[18], params[19], params[20], params[21], params[22], params[23], params[24], params[25], params[26])
-    , params[1] "\settings.ini")
-}
+                    [Track]
+                    adobe temp={}
+                    working dir={}
+                    first check={}
+                    block aware={}
+                    monitor alert={}
+                    version={}
+                )", params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9],
+                    params[10], params[11], params[12], params[13], params[14], params[15], params[16], params[17],
+                    params[18], params[19], params[20], params[21], params[22], params[23], params[24], params[25]
+            ), this.SettingsFile
+        )
+    }
 }
 
 UserSettings := UserPref()
