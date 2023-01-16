@@ -27,10 +27,8 @@ class Dark {
                     continue
                 try {
                     switch DarkorLight {
-                        case "Light":
-                            this.button(ctrl.Hwnd, "Light")
-                        default:
-                            this.button(ctrl.Hwnd)
+                        case "Light": this.button(ctrl.Hwnd, "Light")
+                        default:      this.button(ctrl.Hwnd)
                     }
                 }
             }

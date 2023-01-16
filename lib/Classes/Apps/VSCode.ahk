@@ -54,10 +54,8 @@ class VSCode {
     __getLine(&store, which := "") {
         SendInput("{End}")
         switch which {
-            case "cut":
-                SendInput("{Shift Down}{Home}{Shift Up}" "^x")
-            default:
-                SendInput("{Shift Down}{Home}{Shift Up}" "^c" "{End}")
+            case "cut": SendInput("{Shift Down}{Home}{Shift Up}" "^x")
+            default:    SendInput("{Shift Down}{Home}{Shift Up}" "^c" "{End}")
         }
         sleep 50
         store := A_Clipboard

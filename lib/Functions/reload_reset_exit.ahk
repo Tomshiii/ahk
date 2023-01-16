@@ -15,12 +15,9 @@ reload_reset_exit(which, includeChecklist?) {
     if IsSet(includeChecklist)
         all := true
     switch which {
-        case "reload":
-            tool.Cust("all active ahk scripts reloading", 500)
-        case "reset":
-            tool.Cust("All active ahk scripts are being rerun")
-        case "exit":
-            tool.Cust("All active ahk scripts are being CLOSED")
+        case "reload": tool.Cust("all active ahk scripts reloading", 500)
+        case "reset":  tool.Cust("All active ahk scripts are being rerun")
+        case "exit":   tool.Cust("All active ahk scripts are being CLOSED")
     }
     detect()
     value := WinGetList("ahk_class AutoHotkey")

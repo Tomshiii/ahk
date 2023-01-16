@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <GUIs\tomshiBasic>
 #Include <Classes\dark>
 #Include <Classes\ptf>
@@ -33,7 +34,7 @@ todoGUI()
     todoGUI.OnEvent("Close", close)
     close(*) => todoGUI.Destroy()
 
-    if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
+    if UserSettings.dark_mode = true
         dark.button(closeButton.Hwnd)
     todoGUI.Show()
 }

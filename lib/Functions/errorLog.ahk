@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <Classes\obj>
 #Include <Functions\getScriptRelease>
 #Include <Functions\checkInternet>
@@ -63,7 +64,7 @@ errorLog(err, optMessage?, toolCust := false, doThrow := false) {
                 Memory := Round(Response, 2)
                 FreePhysMem := Round(Response2, 2)
                 ;// check for the latest versions of these scripts
-                InstalledVersion := IniRead(ptf["settings"], "Track", "version")
+                InstalledVersion := UserSettings.version
                 LatestReleaseBeta := ""
                 LatestReleaseMain := ""
                 if checkInternet() {

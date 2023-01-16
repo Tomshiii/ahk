@@ -39,10 +39,8 @@ allKeyWait(which := "both") {
         {
             keys := getHotkeys()
             switch which {
-                case "first":
-                    KeyWait(keys.first)
-                case "second":
-                    KeyWait(keys.second)
+                case "first":  KeyWait(keys.first)
+                case "second": KeyWait(keys.second)
                 default:
                     KeyWait(keys.second)
                     KeyWait(keys.first)

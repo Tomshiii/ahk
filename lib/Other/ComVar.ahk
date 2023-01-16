@@ -5,9 +5,9 @@ class ComVar {
 	 * @param vVal Values that need to be wrapped, supports String, Integer, Double, Array, ComValue, ComObjArray
 	 * ### example
 	 * `var1 := ComVar('string'), MsgBox(var1[])`
-	 * 
+	 *
 	 * `var2 := ComVar([1,2,3,4], , true)`
-	 * 
+	 *
 	 * `var3 := ComVar(ComValue(0xb, -1))`
 	 * @param vType Variant's type, VT_VARIANT(default)
 	 * @param convert Convert AHK's array to ComObjArray

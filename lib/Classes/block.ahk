@@ -1,11 +1,12 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2023/01/14
- * @version 1.2.1
+ * @date 2023/01/15
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <Functions\errorLog>
 ; }
 
@@ -18,7 +19,7 @@ class block {
         choices := ["send", "mouse", "sendandmouse", "default", "on", "mousemove", "mousemoveoff", "off"]
         if args = "on" || args = "off"
             {
-                checkIni := IniRead(ptf["settings"], "Track", "block aware", "false")
+                checkIni := UserSettings.block_aware
                 if checkIni = "false"
                     {
                         alert := MsgBox("
@@ -28,7 +29,7 @@ class block {
                             Would you like to be alerted of this again in the future?
                         )", "Block Mode Warning", "4 48 4096")
                         if alert = "No"
-                            IniWrite("true", ptf["settings"], "Track", "block aware")
+                            UserSettings.block_aware := true
                     }
             }
         loop {

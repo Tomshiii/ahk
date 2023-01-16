@@ -33,18 +33,12 @@ getHotkeys(&first?, &second?) {
             vk(variable)
             {
                 switch variable {
-                    case "#":
-                        variable := "Win"
-                    case "!":
-                        variable := "Alt"
-                    case "^":
-                        variable := "Ctrl"
-                    case "+":
-                        variable := "Shift"
-                    case "<^>!":
-                        variable := "AltGr"
-                    default:
-                        return false
+                    case "#":    variable := "Win"
+                    case "!":    variable := "Alt"
+                    case "^":    variable := "Ctrl"
+                    case "+":    variable := "Shift"
+                    case "<^>!": variable := "AltGr"
+                    default:     return false
                 }
                 check := GetKeyVK(variable)
                 vkReturn := Format("vk{:X}", check)

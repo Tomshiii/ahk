@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <Classes\Dark>
 #Include <Classes\winGet>
 #Include <Classes\tool>
@@ -162,7 +163,7 @@ updateCheck(Item, *)
         tree := "main"
     if Item = "&Beta"
         tree := "dev"
-    if !FileExist(ptf["settings"])
+    if !FileExist(UserSettings.SettingsFile)
         {
             string := getHTML("https://raw.githubusercontent.com/Tomshiii/ahk/" tree "/checklist.ahk")
             if string = 0
@@ -188,7 +189,7 @@ updateCheck(Item, *)
                 tool.Cust("You are up to date!")
             return
         }
-    currentVer := IniRead(ptf["settings"], "Track", "version")
+    currentVer := UserSettings.version
     if tree = "main"
         latestVer := getScriptRelease()
     if tree = "dev"

@@ -2,13 +2,16 @@
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
  * @date 2023/01/15
- * @version 1.0.10
+ * @version 1.1.0
  ***********************************************************************/
+
+; { \\ #Includes
+#Include <Classes\Settings>
+; }
 
 class ptf {
     ;general
-    static SettingsLoc       := A_MyDocuments "\tomshi"
-    static rootDir           := IniRead(this.SettingsLoc "\settings.ini", "Track", "working dir", "E:\Github\ahk")
+    static rootDir           := UserSettings.working_dir
     static SupportFiles      := this.rootDir "\Support Files"
     static Backups           := this.rootDir "\Backups"
     static Stream            := this.rootDir "\Stream"
@@ -29,10 +32,10 @@ class ptf {
     static musicDir          := "S:\Program Files\User\Music\"
 
     ;ImageSearch
-    static premIMGver        := IniRead(this.SettingsLoc "\settings.ini", "Adjust", "premVer", "v22.3.1")
-    static aeIMGver          := IniRead(this.SettingsLoc "\settings.ini", "Adjust", "aeVer", "v22.6")
-    static psIMGver          := IniRead(this.SettingsLoc "\settings.ini", "Adjust", "psVer", "v24.0.1")
-    static resolveIMGver     := IniRead(this.SettingsLoc "\settings.ini", "Adjust", "resolveVer", "v18.0.4")
+    static premIMGver        := UserSettings.premVer
+    static aeIMGver          := UserSettings.aeVer
+    static psIMGver          := UserSettings.psVer
+    static resolveIMGver     := UserSettings.resolveVer
     static ImgSearch         := this.SupportFiles "\ImageSearch"
     static Discord           := this.ImgSearch "\Discord\"
     static Premiere          := this.ImgSearch "\Premiere\" this.premIMGver "\"
@@ -60,11 +63,10 @@ class ptf {
      * ie; `v22.3.1` => `22`
      * @param {String} version is the version number of desired adobe program
      */
-    static adobeYear(version) {
-        return SubStr(version, 2, 2)
-    }
-    static PremYearVer          := this.adobeYear(this.premIMGver)
-    static AEYearVer            := this.adobeYear(this.aeIMGver)
+    __adobeYear(version) => SubStr(version, 2, 2)
+
+    static PremYearVer          := this().__adobeYear(this.premIMGver)
+    static AEYearVer            := this().__adobeYear(this.aeIMGver)
 
     /**
      * A little function to return the proper folder for the version of premiere/ae the user is using.
@@ -72,17 +74,15 @@ class ptf {
      */
     static trimAdobeYear(which) {
         switch which {
-            case "premiere":
-                return subVer := SubStr(this.PremYearVer, -2) ".0"
-            case "ae":
-                return trimVer := LTrim(this.aeIMGver, "v")
+            case "premiere": return SubStr(this.PremYearVer, -2) ".0"
+            case "ae":       return LTrim(this.aeIMGver, "v")
         }
     }
 
     ;complete file links
     static __Item := Map(
-        "settings",        this.SettingsLoc "\settings.ini",
-        "monitorsINI",      this.SettingsLoc "\monitors.ini",
+        "settings",        UserSettings.SettingsFile,
+        "monitorsINI",     UserSettings.SettingsDir "\monitors.ini",
         "KSAini",          this.lib "\KSA\Keyboard Shortcuts.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",

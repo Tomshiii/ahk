@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <GUIs\tomshiBasic>
 #Include <Classes\dark>
 ; }
@@ -116,7 +117,7 @@ hotkeysGUI() {
     ;onEvent Functions
 	close(*) => hotGUI.Destroy()
 
-    if IniRead(ptf["settings"], "Settings", "dark mode") = "true"
+    if UserSettings.dark_mode = true
         dark.allButtons(hotGUI)
 
     ;Show the GUI
