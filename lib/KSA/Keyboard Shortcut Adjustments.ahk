@@ -219,7 +219,7 @@ shuttleStop := IniRead(ptf["KSAini"], "Premiere", "shuttle stop")
 
  Can be set within KSA.ahk/ini
  */
-adjustmentPrem := IniRead(ptf["KSAini"], "Premiere", "adjustment")
+adjustmentPrem := IniRead(ptf["KSAini"], "Premiere", "adjustmentPrem")
 
 ;==Labels==
 labelViolet := IniRead(ptf["KSAini"], "Premiere", "Violet")
@@ -413,7 +413,7 @@ compSettings := IniRead(ptf["KSAini"], "After Effects", "comp")
 
  Can be set within KSA.ahk/ini
  */
-adjustmentAE := IniRead(ptf["KSAini"], "After Effects", "adjustment")
+adjustmentAE := IniRead(ptf["KSAini"], "After Effects", "adjustmentAE")
 
 
 

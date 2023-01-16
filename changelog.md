@@ -12,4 +12,5 @@
 
 ## > Other Changes
 - Fix `checklist.ahk` defaulting to expanded UI
+- Fix some duplicate values in `KSA.ini`
 - `MyRelease` is no longer a global variable defined in `My Scripts.ahk`
