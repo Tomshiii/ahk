@@ -1,6 +1,7 @@
 # <> Release 2.10 - Settings.ahk 
 - Added a new class `Settings.ahk` that takes complete control over all interactions with `settings.ini`
-    - Handles creating `settings.ini` if it doesn't exist yet
+    - Handles creating `settings.ini` if it doesn't exist yet]
+    - Moved `createIni()` into `Settings.ahk`
     
 ## > Functions
 - `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu

@@ -1,31 +1,15 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/01/15
- * @version 1.0.0b2
+ * @date 2023/01/16
+ * @version 1.0.0b3
  ***********************************************************************/
-
-; { \\ #Includes
-#Include <Functions\createIni>
-; }
 
 class UserPref {
     __New() {
         SetWorkingDir(A_LineFile "\..\..\..\") ;// the root dir of the repo
         if !FileExist(this.SettingsFile)
-            {
-                createIni(this.SettingsDir, "true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", 0, A_WorkingDir, "false", "false", 0, 0)
-                ;// if initially run from anything other than `My Scripts` we can simply reload
-                ;// otherwise we need to completely rerun `My Scripts` to ensure all
-                ;// `startup` functions fire
-                if A_ScriptName != "My Scripts.ahk"
-                    Reload()
-                else
-                    {
-                        RunWait(A_ScriptFullPath)
-                        return
-                    }
-            }
+            this.__createIni(this.SettingsDir, "true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", 0, A_WorkingDir, "false", "false", 0, 0)
         ;// initialise settings variables
         this.__setSett()
         this.__setAdjust()
@@ -118,17 +102,26 @@ class UserPref {
         }
     }
 
-    ;// [Settings]
-    Settings_ := []
-    __setSett() {
-        ;// read the entire section within the ini file and push to array
-        allSettings   := IniRead(this.SettingsFile, "Settings")
+    /**
+     * This function reads an entire .ini section and turns pushes every key to the designated array
+     * Any whitespace is converted to "_"
+     * @param {String} section is the section you wish to be read from
+     * @param {Array} arr is the desired array you wish to push to
+     */
+    __fillArr(section, arr) {
+        allSettings   := IniRead(this.SettingsFile, section)
         splitSettings := StrSplit(allSettings, ["=", "`n", "`r"])
         for k, v in splitSettings {
             if Mod(k, 2) = 0
                 continue
-            this.Settings_.Push(StrReplace(v, A_Space, "_"))
+            arr.Push(StrReplace(v, A_Space, "_"))
         }
+    }
+
+    ;// [Settings]
+    Settings_ := []
+    __setSett() {
+        this.__fillArr("Settings", this.Settings_)
         ;// create variables
         for v in this.Settings_ {
             this.%v% := this.__convertToBool(this.__convertToKey(v), "Settings")
@@ -137,14 +130,7 @@ class UserPref {
     ;// [Adjust]
     Adjust_ := []
     __setAdjust() {
-        ;// read the entire section within the ini file and push to array
-        allSettings   := IniRead(this.SettingsFile, "Adjust")
-        splitSettings := StrSplit(allSettings, ["=", "`n", "`r"])
-        for k, v in splitSettings {
-            if Mod(k, 2) = 0
-                continue
-            this.Adjust_.Push(StrReplace(v, A_Space, "_"))
-        }
+        this.__fillArr("Adjust", this.Adjust_)
         ;// create variables
         for v in this.Adjust_ {
             default := this.__getDefault(v)
@@ -154,14 +140,7 @@ class UserPref {
     ;// [Track]
     Track_ := []
     __setTrack() {
-        ;// read the entire section within the ini file and push to array
-        allSettings   := IniRead(this.SettingsFile, "Track")
-        splitSettings := StrSplit(allSettings, ["=", "`n", "`r"])
-        for k, v in splitSettings {
-            if Mod(k, 2) = 0
-                continue
-            this.Track_.Push(StrReplace(v, A_Space, "_"))
-        }
+        this.__fillArr("Track", this.Track_)
         ;// create variables
         for v in this.Track_ {
             switch v {
@@ -179,6 +158,54 @@ class UserPref {
         this.__del(this.Adjust_, "Adjust")
         this.__del(this.Track_, "Track")
     }
+
+    /**
+     * This function generates a baseline settings.ini file
+     * @param {params1} installLocation (usually A_MyDocuments "\tomshi")
+     * @param {params2-26} settingsIni these are the settings.ini entries in order
+     */
+    __createIni(params*) {
+    if params.Length > 26
+        throw (ValueError("Incorrect number of Parameters passed to function.", -1)) ;// don't add errorlog to this function, keep it no dependencies
+    if !DirExist(params[1])
+        DirCreate(params[1])
+    if FileExist(params[1] "\settings.ini")
+        FileDelete(params[1] "\settings.ini")
+    FileAppend(Format("
+    (
+        [Settings]
+        update check={}
+        beta update check={}
+        dark mode={}
+        run at startup={}
+        autosave check checklist={}
+        tooltip={}
+        checklist tooltip={}
+        checklist wait={}
+
+        [Adjust]
+        adobe GB={}
+        adobe FS={}
+        autosave MIN={}
+        game SEC={}
+        multi SEC={}
+        prem year={}
+        ae year={}
+        premVer={}
+        aeVer={}
+        psVer={}
+        resolveVer={}
+
+        [Track]
+        adobe temp={}
+        working dir={}
+        first check={}
+        block aware={}
+        monitor alert={}
+        version={}
+    )", params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], params[12], params[13], params[14], params[15], params[16], params[17], params[18], params[19], params[20], params[21], params[22], params[23], params[24], params[25], params[26])
+    , params[1] "\settings.ini")
+}
 }
 
 UserSettings := UserPref()

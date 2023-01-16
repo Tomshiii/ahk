@@ -1,4 +1,5 @@
 #Include *i SevenZip.ahk
+#Include *i <Classes\Settings> ;// will attempt to generate a settings file
 
 ;// all references to `yes (dot) value` get automatically replaced with the latest version number by `generateUpdate.ahk` - this saves me from needing to manually change it each release
 

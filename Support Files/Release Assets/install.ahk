@@ -58,8 +58,9 @@ loop {
     sleep 1000
 }
 sleep 500
-;// generate a baseline settings.ini file
-if !FileExist(A_MyDocuments "\tomshi\settings.ini") && FileExist(A_WorkingDir "\lib|Classes\Settings.ahk")
+
+;// generate a baseline settings.ini file if it doesn't already exist
+if !FileExist(A_MyDocuments "\tomshi\settings.ini") && FileExist(A_WorkingDir "\lib\Classes\Settings.ahk")
     Run(A_WorkingDir "\lib\Classes\Settings.ahk")
 
 ;// cleaning up files that are no longer needed

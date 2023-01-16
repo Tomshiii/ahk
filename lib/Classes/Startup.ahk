@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/15
- * @version 1.3.0
+ * @date 2023/01/16
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,7 +18,6 @@
 #Include <Functions\errorLog>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
-#Include <Functions\createIni>
 #Include <Functions\isReload>
 #Include <Functions\getLocalVer>
 #Include <Other\print>
@@ -97,7 +96,7 @@ class Startup {
         BLOCKAWARE      := IniRead(ptf["settings"], "Track",    "block aware"              , "false")
         MONITORALERT    := IniRead(ptf["settings"], "Track",    "monitor alert"            , 0)
         ;// generate new ini file
-        createIni(UserSettings.SettingsDir, UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
+        UserPref().__createIni(UserSettings.SettingsDir, UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
     }
 
     /**
