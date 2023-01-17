@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2023/01/01
- * @version 1.1.1
+ * @date 2023/01/17
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,8 +22,17 @@ class Move {
      * If the activation hotkey is `Rbutton`, this function will minimise the current window.
      * @param {String} key is what key(s) you want the function to press to move a window around (etc. #Left/#Right)
      */
-    static Window(key)
+    static Window(key?)
     {
+        if !IsSet(key) && (A_ThisHotkey != minimiseHotkey && A_ThisHotkey != maximiseHotkey) {
+            ;// throw
+            errorLog(ValueError("Incorrect hotkey has been used for function.`nDouble check KSA values.", -1),,, 1)
+        }
+        if !GetKeyState("LButton", "P") ;checks for the left mouse button as without this check the function will continue to work until you click somewhere else
+            {
+                SendInput("{" A_ThisHotkey "}")
+                return
+            }
         if WinActive("ahk_class CabinetWClass") ;this if statement is to check whether windows explorer is active to ensure proper right click functionality is kept
             {
                 if A_ThisHotkey = "RButton"
@@ -37,27 +46,17 @@ class Move {
                             }
                     }
             }
-        if !GetKeyState("LButton", "P") ;checks for the left mouse button as without this check the function will continue to work until you click somewhere else
-            {
-                SendInput("{" A_ThisHotkey "}")
-                return
-            }
-        try {
-            window := WinGetTitle("A") ;grabs the title of the active window
-            SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
-            if A_ThisHotkey = minimiseHotkey ;this must be set to the hotkey you choose to use to minimise the window
-                WinMinimize(window)
-            if A_ThisHotkey = maximiseHotkey ;this must be set to the hotkey you choose to use to maximise the window
-                {
-                    if !winget.isFullscreen(&title, window)
-                        WinMaximize(window)
-                    else
-                        WinRestore(window)
-                }
-            SendInput(key)
-        } catch as e {
-            tool.Cust("Failed to get information on current active window")
-            errorLog(e)
+        window := winGet.Title()
+        SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
+        switch A_ThisHotkey {
+            case minimiseHotkey: WinMinimize(window)
+            case maximiseHotkey:
+                if !winget.isFullscreen(&title, window)
+                    WinMaximize(window)
+                else
+                    WinRestore(window)
+            default:
+                SendInput(key)
         }
     }
 
@@ -130,7 +129,7 @@ class Move {
         ;The below block of text will go through a process of trying to find the tab you wish to move.
         ;0x42414D is the colour of the active tab
         ;0x35343A is the colour of a non active tab when you hover over it
-        ;I use firefox in dark mode
+        ;! I use firefox in dark mode
         if PixelSearch(&colx, &coly, contX - 30, contY - 30, contX + 5, contY + 30, 0x42414D) ;this is checking to see if the tab you're clicked on is selected
             MouseMove(colx, coly)
         else ;if the tab isn't selected we will enter this else block
@@ -246,6 +245,8 @@ class Move {
     static XorY()
     {
         getHotkeys(&fr, &sc)
+        if sc != "XButton1" && sc != "XButton2"
+            return
         MouseGetPos(&x, &y)
         start:
         oneAxis(sc)
@@ -259,44 +260,40 @@ class Move {
                         static tooly := yy
                         if A_TimeIdleMouse < 500
                             {
-                                if sc = "XButton2"
-                                    ToolTip("Your mouse will now only move along the x axis")
-                                else if sc = "XButton1"
-                                    ToolTip("Your mouse will now only move along the y axis")
+                                switch sc {
+                                    case "XButton2": ToolTip("Your mouse will now only move along the x axis")
+                                    case "XButton1": ToolTip("Your mouse will now only move along the y axis")
+                                }
                             }
-                        if A_TimeIdleMouse > 500
+                        else if A_TimeIdleMouse > 500
                             {
                                 MouseGetPos(&newX, &newY)
-                                if sc = "XButton2"
-                                    {
-                                        if newY = y && newX != toolx
+                                switch sc {
+                                    case "XButton2":
+                                        if (newY = y) && (newX != toolx)
                                             {
                                                 ToolTip("Your mouse will now only move along the x axis`nYou are currently level on the y axis")
                                                 toolx := newX
                                             }
-                                    }
-                                else if sc = "XButton1"
-                                    {
-                                        if newX = x && newY != tooly
+                                    case "XButton1":
+                                        if (newX = x) && (newY != tooly)
                                             {
                                                 ToolTip("Your mouse will now only move along the y axis`nYou are currently level on the x axis")
                                                 tooly := newY
                                             }
-                                    }
+                                }
                             }
                     }
                     MouseGetPos(&newX, &newY)
-                    if sc = "XButton2"
-                        MouseMove(newX, y)
-                    else if sc = "XButton1"
-                        MouseMove(x, newY)
+                    switch sc {
+                        case "XButton2": MouseMove(newX, y)
+                        case "XButton1": MouseMove(x, newY)
+                    }
                 }
                 SetTimer(tools, 0)
                 ToolTip("")
         }
         oneAxis(sc)
-        if sc != "XButton1" || sc != "XButton2"
-            return
         if GetKeyState(fr, "P")
             goto start
     }

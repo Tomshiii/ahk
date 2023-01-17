@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.29
+;\\v2.29.1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -916,13 +916,13 @@ F20::prem.audioDrag("bleep")
 #HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 
 ;winmaxHotkey;
-F14::move.Window("") ;maximise
+F14::move.Window() ;maximise
 ;winleftHotkey;
 XButton2::move.Window("#{Left}") ;snap left
 ;winrightHotkey;
 XButton1::move.Window("#{Right}") ;snap right
 ;winminHotkey;
-RButton::move.Window("") ;minimise
+RButton::move.Window() ;minimise
 
 ;alwaysontopHotkey;
 ^SPACE::
@@ -1028,9 +1028,9 @@ F14 & WheelUp::fastWheel()
 
 ;The below scripts are to swap between virtual desktops
 ;virtualrightHotkey;
-F19 & XButton2::SendInput("^#{Right}") ;you don't need these two as a sendinput, the syntax highlighting I'm using just see's ^#Right as an error and it's annoying
+F19 & XButton2::^#Right
 ;virtualleftHotkey;
-F19 & XButton1::SendInput("^#{Left}")
+F19 & XButton1::^#Left
 
 ;The below scripts are to skip ahead in the youtube player with the mouse
 ;youskipbackHotkey;
