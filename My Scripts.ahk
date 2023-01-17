@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.29.1
+;\\v2.29.2
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -357,6 +357,12 @@ F18:: ;open the "show more options" menu in win11
 	;// I think I may have just changed my registry to always pull up the old menu within windows
 	;// and so I don't ever use this hotkey anymore and can't guarantee it even still functions
 	;Keep in mind I use dark mode on win11. Things will be different in light mode/other versions of windows
+	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer. It is only necessary because I use the same button for both scripts.
+		{
+			SendInput("{LButton Up}")
+			WinMaximize
+			return
+		}
 	MouseGetPos(&mx, &my)
 	wingetPos(,, &width, &height, "A")
 	colour1 := 0x4D4D4D ;when hovering a folder
@@ -364,13 +370,7 @@ F18:: ;open the "show more options" menu in win11
 	colour3 := 0x353535 ;when already clicked on
 	colour4 := 0x777777 ;when already clicked on
 	colour := PixelGetColor(mx, my)
-	if GetKeyState("LButton", "P") ;this is here so that moveWin() can function within windows Explorer. It is only necessary because I use the same button for both scripts.
-		{
-			SendInput("{LButton Up}")
-			WinMaximize
-			return
-		}
-	else if ImageSearch(&x, &y, 0, 0, width, height, "*5 " ptf.Explorer "showmore.png")
+	if ImageSearch(&x, &y, 0, 0, width, height, "*5 " ptf.Explorer "showmore.png")
 		{
 			;tool.Cust(colour "`n imagesearch fired") ;for debugging
 			;SendInput("{Esc}")
@@ -384,19 +384,15 @@ F18:: ;open the "show more options" menu in win11
 				SendInput("{Esc}" "+{F10}" "+{F10}")
 			return
 		}
-	else if (colour = colour1 || colour = colour2)
-		{
-			;tool.Cust(colour "`n colour1&2 fired") ;for debugging
+	switch colour {
+		case colour1, colour2:
 			SendInput("{Click}")
 			SendInput("{Esc}" "+{F10}")
 			return
-		}
-	else
-		{
-			;tool.Cust(colour "`n final else fired") ;for debugging
+		default:
 			SendInput("{Esc}" "+{F10}")
 			return
-		}
+	}
 }
 
 #HotIf WinActive(vscode.winTitle)
@@ -934,8 +930,7 @@ RButton::move.Window() ;minimise
 			ExStyle := wingetExStyle(title)
 			if(ExStyle & 0x8) ; 0x8 is WS_EX_TOPMOST.
 				return "Active window no longer on top`n" '"' title '"'
-			else
-				return "Active window now on top`n" '"' title '"'
+			return "Active window now on top`n" '"' title '"'
 		} catch as e {
 			tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
 			errorLog(e)
@@ -1027,10 +1022,11 @@ F14 & WheelDown::fastWheel()
 F14 & WheelUp::fastWheel()
 
 ;The below scripts are to swap between virtual desktops
+;// leaving them as sendinputs stops ;winleftHotkey; & ;winrightHotkey; from firing twice..? ahk is weird
 ;virtualrightHotkey;
-F19 & XButton2::^#Right
+F19 & XButton2::SendInput("^#{Right}")
 ;virtualleftHotkey;
-F19 & XButton1::^#Left
+F19 & XButton1::SendInput("^#{Left}")
 
 ;The below scripts are to skip ahead in the youtube player with the mouse
 ;youskipbackHotkey;

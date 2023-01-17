@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/01/14
- * @version 1.1.3
+ * @date 2023/01/17
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,6 +14,7 @@
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
 #Include <Functions\allKeyWait>
+#Include <Functions\delaySI>
 ; }
 
 class VSCode {
@@ -72,21 +73,10 @@ class VSCode {
         allKeyWait("first")
         block.On()
         sleep 50
-        SendInput(focusExplorerWin) ;highlight the explorer window
-        sleep 50
-        SendInput(focusWork)
-        SendInput(collapseFold collapseFold) ;close all repos
-        sleep 50
-        SendInput("{Up 2}{Enter}") ;this highlights the top repo in the workspace
-        sleep 50
+        delaySI(50, focusExplorerWin, focusExplorerWin, focusWork, collapseFold, collapseFold, "{Up 2}", "{Enter}")
         if A_ThisHotkey = functionHotkey ;this opens my \functions folder
             {
-                SendInput("{Down 3}{Enter}")
-                sleep 50
-                SendInput("{Down 2}{Enter}")
-                sleep 50
-                SendInput("{Down 2}{Enter}")
-                sleep 50
+                delaySI(50, "{Down 3}{Enter}", "{Down 2}{Enter}", "{Down 2}{Enter}")
                 sleep 50
                 SendInput("{Up 1}{Enter}")
                 block.Off()
