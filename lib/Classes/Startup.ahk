@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/18
- * @version 1.3.4
+ * @version 1.4.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,15 +26,23 @@
 ; }
 
 class Startup {
+    __New() {
+        this.MyRelease := this.__getMainRelease()
+    }
+
+    MyRelease := 0
+
     /**
      * This function retrieves the release version the user is currently running
      */
     __getMainRelease() => getLocalVer()
 
+    /**
+     * This function checks whether the user is on a late enough version of windows to use dark mode
+     */
     __checkDark() {
         if UserSettings.dark_mode != ""
             return UserSettings.dark_mode
-        ;// check to see if the user has a high enough OS version to use dark mode
         if (VerCompare(A_OSVersion, "10.0.17763") < 0)
             {
                 UserSettings.dark_mode := "disabled"
@@ -50,19 +58,18 @@ class Startup {
      *
      * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
      */
-    static generate() {
+    generate() {
         if isReload() ;checks if script was reloaded
             return
-        MyRelease := this().__getMainRelease()
         ;// checking to see if the users OS version is high enough to support dark mode
-        darkCheck := this().__checkDark()
+        darkCheck := this.__checkDark()
 
         ;// checking to see if the settings folder location exists & if not, creates it
         if FileExist(UserSettings.SettingsFile)
             {
                 ver := UserSettings.version
                 ;//! do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
-                if !VerCompare(MyRelease, ver) > 0
+                if !VerCompare(this.MyRelease, ver) > 0
                     return
             }
 
@@ -104,7 +111,7 @@ class Startup {
             ;// set version number
             if k = UserSettings.Track_.Length
                 {
-                    UserSettings.%v% := MyRelease
+                    UserSettings.%v% := this.MyRelease
                     return
                 }
             UserSettings.%v% := allTrack[A_Index]
@@ -119,10 +126,9 @@ class Startup {
      *
      * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
      */
-    static updateChecker() {
+    updateChecker() {
         if isReload() ;checks if script was reloaded
             return
-        MyRelease := this().__getMainRelease()
         ;checking to see if the user wishes to check for updates
         check := UserSettings.update_check
         if check = "stop"
@@ -138,8 +144,8 @@ class Startup {
         if version = 0
             return
         tool.Wait()
-        if MyRelease != version
-            tool.Cust("Current Installed Version = " MyRelease "`nCurrent Github Release = " version, 5000)
+        if this.MyRelease != version
+            tool.Cust("Current Installed Version = " this.MyRelease "`nCurrent Github Release = " version, 5000)
         else
             tool.Cust("You are currently up to date", 2000)
         switch check {
@@ -148,7 +154,7 @@ class Startup {
                 return
             case false:
                 tool.Wait()
-                if VerCompare(MyRelease, version) < 0
+                if VerCompare(this.MyRelease, version) < 0
                     {
                         errorLog(Error("User is using an outdated version of these scripts", -1, version),, {time: 3.0})
                         return
@@ -156,7 +162,7 @@ class Startup {
                 tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
                 return
             case true:
-                if VerCompare(MyRelease, version) >= 0
+                if VerCompare(this.MyRelease, version) >= 0
                     return
                 ;create gui
                 MyGui := tomshiBasic(,, "-Resize +MaxSize600x400 AlwaysOnTop", "Scripts Release " version)
@@ -333,13 +339,13 @@ class Startup {
                     }
                     ; #end DLFile
 
-                    if DirExist(A_Temp "\" MyRelease)
-                        DirDelete(A_Temp "\" MyRelease, 1)
-                    if DirExist(ptf.rootDir "\Backups\Script Backups\" MyRelease)
+                    if DirExist(A_Temp "\" this.MyRelease)
+                        DirDelete(A_Temp "\" this.MyRelease, 1)
+                    if DirExist(ptf.rootDir "\Backups\Script Backups\" this.MyRelease)
                         {
-                            newbackup := MsgBox("You already have a backup of Release " MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
+                            newbackup := MsgBox("You already have a backup of Release " this.MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
                             if newbackup = "Yes"
-                                DirDelete(ptf.rootDir "\Backups\Script Backups\" MyRelease, 1)
+                                DirDelete(ptf.rootDir "\Backups\Script Backups\" this.MyRelease, 1)
                             else
                                 {
                                     ToolTip("")
@@ -350,11 +356,11 @@ class Startup {
                     try {
                         TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
                         SetTimer(HideTrayTip, -5000)
-                        DirCopy(ptf.rootDir, A_Temp "\" MyRelease)
-                        DirMove(A_Temp "\" MyRelease, ptf.rootDir "\Backups\Script Backups\" MyRelease, "1")
-                        if DirExist(A_Temp "\" MyRelease)
-                            DirDelete(A_Temp "\" MyRelease, 1)
-                        tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" MyRelease "' folder", 3000)
+                        DirCopy(ptf.rootDir, A_Temp "\" this.MyRelease)
+                        DirMove(A_Temp "\" this.MyRelease, ptf.rootDir "\Backups\Script Backups\" this.MyRelease, "1")
+                        if DirExist(A_Temp "\" this.MyRelease)
+                            DirDelete(A_Temp "\" this.MyRelease, 1)
+                        tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" this.MyRelease "' folder", 3000)
                         if WinExist("Download Progress") && g["Cancel"].Text := "Exit"
                             g.Destroy()
                     } catch as e {
@@ -373,21 +379,20 @@ class Startup {
     /**
      * This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
      */
-    static firstCheck() {
+    firstCheck() {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
         if isReload() ;checks if script was reloaded
             return
-        MyRelease := this().__getMainRelease()
         if WinExist("Scripts Release ")
             WinWaitClose("Scripts Release ")
         check := UserSettings.first_check
         if check != false ;how the function tracks whether this is the first time the user is running the script or not
             return
-        firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " MyRelease)
+        firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " this.MyRelease)
         ;set title
-        MyRelease := MyRelease
-        titleText := "Welcome to Tomshi's AHK Scripts : Release " MyRelease
-        titleWidth := 430 + ((StrLen(MyRelease)-4)*8)
+        this.MyRelease := this.MyRelease
+        titleText := "Welcome to Tomshi's AHK Scripts : Release " this.MyRelease
+        titleWidth := 430 + ((StrLen(this.MyRelease)-4)*8)
         Title := firstCheckGUI.Add("Text", "X8 R1.5 W" titleWidth, titleText)
         Title.SetFont("S15")
         ;text
@@ -436,11 +441,11 @@ class Startup {
         }
         settings(*) {
             firstCheckGUI.Opt("Disabled")
-            WinSetAlwaysOnTop(0, "Scripts Release " MyRelease)
+            WinSetAlwaysOnTop(0, "Scripts Release " this.MyRelease)
             settingsGUI()
-            WinWait("Settings " MyRelease)
-            WinActivate("Settings " MyRelease)
-            WinWaitClose("Settings " MyRelease)
+            WinWait("Settings " this.MyRelease)
+            WinActivate("Settings " this.MyRelease)
+            WinWaitClose("Settings " this.MyRelease)
             firstCheckGUI.Opt("-Disabled")
         }
 
@@ -463,7 +468,7 @@ class Startup {
     /**
      * This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
      */
-    static oldError() {
+    oldError() {
         if isReload()
             return
         loop files, ptf.ErrorLog "\*.txt"
@@ -476,13 +481,12 @@ class Startup {
      *
      * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
      */
-    static adobeTemp() {
+    adobeTemp() {
         if isReload()
             return
-        MyRelease := this().__getMainRelease()
         tool.Wait()
-        if WinExist("Scripts Release " MyRelease) ;checks to make sure firstCheck() isn't still running
-            WinWaitClose("Scripts Release " MyRelease)
+        if WinExist("Scripts Release " this.MyRelease) ;checks to make sure firstCheck() isn't still running
+            WinWaitClose("Scripts Release " this.MyRelease)
         day := UserSettings.adobe_temp
         if day = A_YDay ;checks to see if the function has already run today
             return
@@ -544,7 +548,7 @@ class Startup {
      *
      * This script will take note of the users A_WorkingDir and store it in `A_MyDocuments \tomshi\settings.ini` and will check it every launch to ensure location variables are always updated and accurate
     */
-    static locationReplace() {
+    locationReplace() {
         if isReload()
             return
         tool.Wait()
@@ -611,7 +615,7 @@ class Startup {
     /**
      * This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
      */
-    static trayMen() {
+    trayMen() {
         check := UserSettings.update_check
         A_TrayMenu.Insert("7&") ;adds a divider bar
         A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
@@ -637,11 +641,14 @@ class Startup {
      * This class is a collection of information relating to external lib files used by my scripts.
      */
     class libs {
-        static init() => this().__defControls(this)
-        __defControls(cls) {
+        __New() {
+            this.__defControls()
+        }
+        ; static init() => this().__defControls(this)
+        __defControls() {
             for v in this.objs {
                 for name, val in v.OwnProps() {
-                    cls.%name%.Push(val)
+                    this.%name%.Push(val)
                 }
             }
         }
@@ -663,15 +670,15 @@ class Startup {
         }
 
         objs := [this.webView2, this.comVar, this.SevenZip, this.JSON]
-        static name        := []
-        static url         := []
-        static scriptPos   := []
+        name        := []
+        url         := []
+        scriptPos   := []
     }
 
     /**
      * This function will loop through `class libs {` and ensure that all libs are up to date. This function will not fire on a reload
      */
-    static libUpdateCheck() {
+    libUpdateCheck() {
         if isReload()
             return
         if !checkInternet()
@@ -679,7 +686,7 @@ class Startup {
         check := UserSettings.update_check
         if check = "stop"
             return
-        this.libs.init()
+        allLibs := Startup.libs()
         /**
          * This function get's the local version of the requested lib
          * @param {any} path is the local path the lib is located
@@ -713,16 +720,16 @@ class Startup {
             return {version: ver, script: string}
         }
         ;begin loop
-        loop this.libs.name.Length {
-            localVersion := localVer(this.libs.scriptPos[A_Index] "\" this.libs.name[A_Index] ".ahk")
-            latestVer := getString(this.libs.url[A_Index])
+        loop allLibs.name.Length {
+            localVersion := localVer(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
+            latestVer := getString(allLibs.url[A_Index])
             if latestVer.version = ""
                 { ;if the lib doesn't have a @version tag, we'll instead compare the entire file against the local copy and override it if there are differences
                     if localVersion.script !== latestVer.script
                         {
                             tool.Wait()
-                            Download(this.libs.url[A_Index], this.libs.scriptPos[A_Index] "\" this.libs.name[A_Index] ".ahk")
-                            tool.Cust(this.libs.name[A_Index] ".ahk lib file updated")
+                            Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
+                            tool.Cust(allLibs.name[A_Index] ".ahk lib file updated")
                         }
                     continue
                 }
@@ -731,8 +738,8 @@ class Startup {
             if VerCompare(latestVer.version, localVersion.version) > 0
                 {
                     tool.Wait()
-                    Download(this.libs.url[A_Index], this.libs.scriptPos[A_Index] "\" this.libs.name[A_Index] ".ahk")
-                    tool.Cust(this.libs.name[A_Index] ".ahk lib file updated to v" latestVer.version)
+                    Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
+                    tool.Cust(allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version)
                     continue
                 }
         }
@@ -743,7 +750,7 @@ class Startup {
     /**
      * This function will check for a new version of AHK by comparing the latest version to the users currently running version. If a newer version is available, it will prompt the user.
      */
-    static updateAHK() {
+    updateAHK() {
         if isReload() ;checks if script was reloaded
             return
         settingsCheck := UserSettings.update_check
@@ -854,7 +861,7 @@ class Startup {
      * This function alerts the user when their monitor layout has changed.
      * This is important as it can seriously mess up any scripts that contain hard coded pixel coords
      */
-    static monitorAlert() {
+    monitorAlert() {
         save := false
 
         ;// get initial values

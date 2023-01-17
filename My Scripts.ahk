@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.29.2
+;\\v2.29.3
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -101,16 +101,17 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ;				STARTUP
 ;
 ; =======================================================================================================================================
-startup.generate()               ;generates/replaces the `settings.ini` file every release
-startup.locationReplace()        ;runs the location variable
-startup.updateChecker()          ;runs the update checker
-startup.trayMen()                ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
-startup.firstCheck()             ;runs the firstCheck() function
-startup.oldError()               ;runs the loop to delete old log files
-startup.adobeTemp()              ;runs the loop to delete cache files
-startup.libUpdateCheck()         ;runs a loop to check for lib updates
-startup.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
-startup.monitorAlert()           ;checks the users monitor work area for any changes
+start := Startup()
+start.generate()               ;generates/replaces the `settings.ini` file every release
+start.locationReplace()        ;runs the location variable
+start.updateChecker()          ;runs the update checker
+start.trayMen()                ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
+start.firstCheck()             ;runs the firstCheck() function
+start.oldError()               ;runs the loop to delete old log files
+start.adobeTemp()              ;runs the loop to delete cache files
+start.libUpdateCheck()         ;runs a loop to check for lib updates
+start.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
+start.monitorAlert()           ;checks the users monitor work area for any changes
 
 ;=============================================================================================================================================
 ;
