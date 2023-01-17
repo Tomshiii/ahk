@@ -4,6 +4,7 @@
     - Moved `createIni()` into `Settings.ahk`
     
 ## > Functions
+- Fix `tool.Cust()` throwing an error if a `float` is passed to the `x or y` parameters
 - `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu
 - Cleaned up `move {`
 

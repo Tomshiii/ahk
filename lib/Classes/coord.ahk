@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2023/01/14
- * @version 1.2.1
+ * @date 2023/01/17
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,29 +16,22 @@ class coord {
      * @param {Boolean} mouse is the passed in boolean dictating if the user wants the function to adjust the mouse to screen as well
     */
     __errorChecks(target, mouse?) {
-        targets := ["tooltip", "pixel", "mouse", "caret", "menu"]
+        targets := Map("tooltip", 1, "pixel", 1, "mouse", 1, "caret", 1, "menu", 1)
         ;// checking that the passed parameter is a string
         if Type(target) != "string"
             {
                 ;// throw
-                errorLog(TypeError("Incorrect variable type in Parameter #1", -1, target),,, 1)
+                errorLog(TypeError("Incorrect variable type in Parameter #1", -2, target),,, 1)
             }
         ;// checking that the passed string is one of the accepted types
-        loop {
-            if A_Index > targets.Length
-                {
-                    ;// throw
-                    errorLog(ValueError("Incorrect value in Parameter #1", -1, target),,, 1)
-                }
-            if targets[A_Index] = target
-                break
-        }
+        if !targets.Has(target) {
+                ;// throw
+                errorLog(ValueError("Incorrect value in Parameter #1", -2, target),,, 1)
+            }
         ;// ensuring the passed parameter is a boolean value
-        if IsSet(mouse) {
-            if mouse != true && mouse != false
-                {
-                    errorLog(ValueError("Incorrect value in Parameter #2", -1, mouse),,, 1)
-                }
+        if IsSet(mouse) && (mouse != true && mouse != false) {
+            ;// throw
+            errorLog(ValueError("Incorrect value in Parameter #2", -2, mouse),,, 1)
         }
     }
 
@@ -47,22 +40,16 @@ class coord {
      * @param {String} relative is the passed in `relativeTo` parameter of `CoordMode`
     */
     __caretErrorCheck(relative) {
-        relativeTo := ["screen", "window", "client"]
+        relativeTo := Map("screen", 1, "window", 1, "client", 1)
         ;// checking that the passed parameter is a string
-        if Type(relative) != "string"
-            {
+        if Type(relative) != "string" {
                 ;// throw
-                errorLog(TypeError("Incorrect variable type in Parameter #1", -1, relative),,, 1)
+                errorLog(TypeError("Incorrect variable type in Parameter #1", -2, relative),,, 1)
             }
         ;// checking that the passed string is one of the accepted types
-        loop {
-            if A_Index > relativeTo.Length
-                {
-                    ;// throw
-                    errorLog(ValueError("Incorrect value in Parameter #1", -1, relative),,, 1)
-                }
-            if relativeTo[A_Index] = relative
-                break
+        if !relativeTo.Has(relative) {
+            ;// throw
+            errorLog(ValueError("Incorrect value in Parameter #1", -2, relative),,, 1)
         }
     }
 

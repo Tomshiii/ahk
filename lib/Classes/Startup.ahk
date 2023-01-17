@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/16
- * @version 1.3.1
+ * @date 2023/01/17
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,18 +32,17 @@ class Startup {
     __getMainRelease() => getLocalVer()
 
     __checkDark() {
-        switch UserSettings.dark_mode {
-            case "":
-                if (VerCompare(A_OSVersion, "10.0.17763") < 0)
-                    {
-                        UserSettings.dark_mode := "disabled"
-                        reload_reset_exit("reset")
-                    }
-                UserSettings.dark_mode := true
+        if UserSettings.dark_mode != ""
+            return UserSettings.dark_mode
+        ;// check to see if the user has a high enough OS version to use dark mode
+        if (VerCompare(A_OSVersion, "10.0.17763") < 0)
+            {
+                UserSettings.dark_mode := "disabled"
                 reload_reset_exit("reset")
-                return
-        }
-        return UserSettings.dark_mode
+            }
+        UserSettings.dark_mode := true
+        reload_reset_exit("reset")
+        return
     }
 
     /**

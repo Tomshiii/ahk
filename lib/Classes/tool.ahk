@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
- * @date 2023/01/14
- * @version 1.1.1
+ * @date 2023/01/17
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,16 +41,27 @@ class tool {
      * @param {Object} args the tooltip parameters
      */
     __inputs(args) {
-        if (
-           Type(args.message) != "string" ||
-          (Type(args.timeout) != "integer" && Type(args.timeout) != "float") ||
-          (Type(args.find) != "integer") || (Type(args.find) = "integer" && (args.find != 1 && args.find != 0)) ||
-          (args.HasOwnProp("x") && Type(args.x) != "integer") || (args.HasOwnProp("y") && Type(args.y) != "integer") || (args.HasOwnProp("ttip") && Type(args.ttip) != "integer")
-        )
-            {
-                ;// throw
-                errorLog(TypeError("Incorrect Parameter passed to Function", -1),,, 1)
+        for k, v in args.OwnProps() {
+            switch k {
+                ;//throw
+                case "message":
+                    if Type(v) != "string"
+                        errorLog(TypeError("Incorrect Type in Parameter #1", -2),,, 1)
+                case "timeout":
+                    if (Type(v) != "integer" && Type(v) != "float")
+                        errorLog(TypeError("Incorrect Type in Parameter #2", -2),,, 1)
+                case "find":
+                    if (Type(v) != "integer" || (Type(v) = "integer" && (v != 1 && v != 0)))
+                        errorLog(TypeError("Incorrect Type in Parameter #3", -2),,, 1)
+                case "x", "y":
+                    if ((Type(v) != "integer" && Type(v) != "float"))
+                        errorLog(TypeError("Incorrect Type in Parameter #4 or #5", -2),,, 1)
+                case "ttip":
+                    if Type(v) != "integer"
+                        errorLog(TypeError("Incorrect Type in Parameter #6", -2),,, 1)
+
             }
+        }
     }
 
     /**

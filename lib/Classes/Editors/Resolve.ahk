@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2023/01/13
- * @version 1.3.0
+ * @date 2023/01/17
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -87,8 +87,7 @@ class Resolve {
                 return true
             } catch as e {
                 block.Off() ;// just incase
-                tool.Cust(errorMsg, 1,, 2)
-                errorLog(e)
+                errorLog(e,, 1)
                 Exit()
             }
         }

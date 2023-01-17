@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2023/01/15
- * @version 1.3.0
+ * @date 2023/01/17
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,7 +16,11 @@ class block {
      * @param {String} args is the users passed in custom option
      */
     __inputs(args) {
-        choices := ["send", "mouse", "sendandmouse", "default", "on", "mousemove", "mousemoveoff", "off"]
+        choices := Map("send", 1, "mouse", 1, "sendandmouse", 1, "default", 1, "on", 1, "mousemove", 1, "mousemoveoff", 1, "off", 1)
+        if !choices.Has(args) {
+                ;// throw
+                errorLog(ValueError("Incorrect value in parameter #1", -2, args),,, 1)
+            }
         if args = "on" || args = "off"
             {
                 checkIni := UserSettings.block_aware
@@ -32,15 +36,6 @@ class block {
                             UserSettings.block_aware := true
                     }
             }
-        loop {
-            if A_Index > choices.Length
-                {
-                    ;// throw
-                    errorLog(ValueError("Incorrect value in parameter #1", -1, args),,, 1)
-                }
-            if args = choices[A_Index]
-                break
-        }
         BlockInput(args)
     }
 
