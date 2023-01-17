@@ -2,13 +2,13 @@
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
  * @date 2023/01/16
- * @version 1.0.0
+ * @version 1.0.1
  ***********************************************************************/
 
 class UserPref {
     __New() {
         if !FileExist(this.SettingsFile)
-            this.__createIni(this.SettingsDir, "true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", 0, A_WorkingDir, "false", "false", 0, 0)
+            this.__createIni("true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", 0, A_WorkingDir, "false", "false", 0, 0)
         ;// initialise settings variables
         this.__setSett()
         this.__setAdjust()

@@ -85,10 +85,22 @@ loop files ptf.rootDir "\Backups\Changelogs\*", "F"
         if InStr(name, oldVer, 1, 1, 1)
             break
     }
-verChangeLog := SubStr(name, 1, 4)
-verNew := SubStr(yes.value, 1, 4)
+;// dealing with file names
+if pre := InStr(yes.value, "pre",, 1, 1) || beta := InStr(yes.value, "beta",, 1, 1) || alpha := InStr(yes.value, "alpha",, 1, 1)
+    {
+        verNew := pre ?? 0   ? SubStr(yes.value, 1, pre-1)   : yes.value
+        verNew := beta ?? 0  ? SubStr(yes.value, 1, beta-1)  : verNew
+        verNew := alpha ?? 0 ? SubStr(yes.value, 1, alpha-1) : verNew
+        verChangeLog := verNew
+    }
+else
+    {
+        removeFiletype := StrReplace(name, ".md", "")
+        verChangeLog   := InStr(removeFiletype, ".",, 1, 2) ? SubStr(name, 1, (InStr(yes.value, ".",, 1, 2)-1))    : removeFiletype
+        verNew         := InStr(yes.value, ".",, 1, 2)      ? SubStr(yes.value, 1, InStr(yes.value, ".",, 1, 2)-1) : yes.value
+    }
 
-if !InStr(yes.value, "pre") && !InStr(yes.value, "alpha") && !InStr(yes.value, "beta") && !InStr(name, Trim(yes.value, "v"), 1, 1, 1)
+if !pre && !InStr(yes.value, "alpha") && !beta && !alpha && !InStr(name, Trim(yes.value, "v"), 1, 1, 1)
     {
         if IsSet(name) && (SubStr(name, 1, StrLen(name)-3) = yes.value) ;if inputbox ver is the same as the current changelog, ignore
             return
@@ -244,7 +256,7 @@ SendInput("{Enter}")
 
 
 currentDir := ""
-verNum := SubStr(yes.value, 2, 3)
+verNum := Trim(verNew, "vprebetaalpha")
 
 ;// using logic to determine where to place this release
 if !DirExist(A_WorkingDir "\" verNum ".x")
