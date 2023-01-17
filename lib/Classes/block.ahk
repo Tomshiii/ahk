@@ -2,7 +2,7 @@
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
  * @date 2023/01/17
- * @version 1.3.1
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,7 +16,9 @@ class block {
      * @param {String} args is the users passed in custom option
      */
     __inputs(args) {
-        choices := Map("send", 1, "mouse", 1, "sendandmouse", 1, "default", 1, "on", 1, "mousemove", 1, "mousemoveoff", 1, "off", 1)
+        choices := Map()
+        choices.CaseSense := "Off"
+        choices.Set("send", 1, "mouse", 1, "sendandmouse", 1, "default", 1, "on", 1, "mousemove", 1, "mousemoveoff", 1, "off", 1)
         if !choices.Has(args) {
                 ;// throw
                 errorLog(ValueError("Incorrect value in parameter #1", -2, args),,, 1)

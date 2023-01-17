@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/17
- * @version 1.3.2
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -54,48 +54,62 @@ class Startup {
         if isReload() ;checks if script was reloaded
             return
         MyRelease := this().__getMainRelease()
+        ;// checking to see if the users OS version is high enough to support dark mode
+        darkCheck := this().__checkDark()
 
         ;// checking to see if the settings folder location exists & if not, creates it
         if FileExist(UserSettings.SettingsFile)
             {
-                ver := IniRead(UserSettings.SettingsFile, "Track", "version")
+                ver := UserSettings.version
                 ;//! do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
                 if !VerCompare(MyRelease, ver) > 0
                     return
-
-                ;WARNING THE USER OF SETTINGS CHANGES
-                if VerCompare(MyRelease, "v2.5.1") > 0 && VerCompare(MyRelease, "v2.5.2") <= 0 ; v2.5.2 brought changes to settings.ini and will reset some values to default
-                    tool.Cust("This version (" MyRelease ") may reset some settings back to default`nas there were changes to ``settings.ini``", "3000")
             }
-        ;// checking to see if the users OS version is high enough to support dark mode
-        darkCheck := this().__checkDark()
 
-        UPDATE          := IniRead(ptf["settings"], "Settings", "update check"             , "true")
-        BETAUPDATE      := IniRead(ptf["settings"], "Settings", "beta update check"        , "false")
-        DARK            := IniRead(ptf["settings"], "Settings", "dark mode"                , darkCheck)
-        RUNSTARTUP      := IniRead(ptf["settings"], "Settings", "run at startup"           , "true")
-        CHECKCHECK      := IniRead(ptf["settings"], "Settings", "autosave check checklist" , "true")
-        TOOLS           := IniRead(ptf["settings"], "Settings", "tooltip"                  , "true")
-        CHECKTOOL       := IniRead(ptf["settings"], "Settings", "checklist tooltip"        , "true")
-        WAIT            := IniRead(ptf["settings"], "Settings", "checklist wait"           , "false")
-        ADOBE_GB        := IniRead(ptf["settings"], "Adjust",   "adobe GB"                 , 45)
-        ADOBE_FS        := IniRead(ptf["settings"], "Adjust",   "adobe FS"                 , 5)
-        AUTOMIN         := IniRead(ptf["settings"], "Adjust",   "autosave MIN"             , 5)
-        GAMESEC         := IniRead(ptf["settings"], "Adjust",   "game SEC"                 , 2.5)
-        MULTI           := IniRead(ptf["settings"], "Adjust",   "multi SEC"                , 5)
-        PREMYEARVER     := IniRead(ptf["settings"], "Adjust",   "prem year"                , "2022")
-        AEYEARVER       := IniRead(ptf["settings"], "Adjust",   "ae year"                  , "2022")
-        premVer         := IniRead(ptf["settings"], "Adjust",   "premVer"                  , "v22.3.1")
-        aeVer           := IniRead(ptf["settings"], "Adjust",   "aeVer"                    , "v22.6")
-        psVer           := IniRead(ptf["settings"], "Adjust",   "psVer"                    , "v24.0.1")
-        resolveVer      := IniRead(ptf["settings"], "Adjust",   "resolveVer"               , "v18.0.4")
-        ADOBE           := IniRead(ptf["settings"], "Track",    "adobe temp"               , "")
-        WORK            := IniRead(ptf["settings"], "Track",    "working dir"              , "E:\Github\ahk")
-        FC              := IniRead(ptf["settings"], "Track",    "first check"              , "false")
-        BLOCKAWARE      := IniRead(ptf["settings"], "Track",    "block aware"              , "false")
-        MONITORALERT    := IniRead(ptf["settings"], "Track",    "monitor alert"            , 0)
-        ;// generate new ini file
-        UserPref().__createIni(UserSettings.SettingsDir, UPDATE, BETAUPDATE, DARK, RUNSTARTUP, CHECKCHECK, TOOLS, CHECKTOOL, WAIT, ADOBE_GB, ADOBE_FS, AUTOMIN, GAMESEC, MULTI, PREMYEARVER, AEYEARVER, premVer, aeVer, psVer, resolveVer, ADOBE, WORK, FC, BLOCKAWARE, MONITORALERT, MyRelease)
+        allSett   := []
+        allAdjust := []
+        allTrack  := []
+        UPDATE          := allSett.Push(IniRead(ptf["settings"],   "Settings", "update check"             , "true"))
+        BETAUPDATE      := allSett.Push(IniRead(ptf["settings"],   "Settings", "beta update check"        , "false"))
+        DARK            := allSett.Push(IniRead(ptf["settings"],   "Settings", "dark mode"                , darkCheck))
+        RUNSTARTUP      := allSett.Push(IniRead(ptf["settings"],   "Settings", "run at startup"           , "true"))
+        CHECKCHECK      := allSett.Push(IniRead(ptf["settings"],   "Settings", "autosave check checklist" , "true"))
+        TOOLS           := allSett.Push(IniRead(ptf["settings"],   "Settings", "tooltip"                  , "true"))
+        CHECKTOOL       := allSett.Push(IniRead(ptf["settings"],   "Settings", "checklist tooltip"        , "true"))
+        WAIT            := allSett.Push(IniRead(ptf["settings"],   "Settings", "checklist wait"           , "false"))
+        ADOBE_GB        := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "adobe GB"                 , 45))
+        ADOBE_FS        := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "adobe FS"                 , 5))
+        AUTOMIN         := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "autosave MIN"             , 5))
+        GAMESEC         := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "game SEC"                 , 2.5))
+        MULTI           := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "multi SEC"                , 5))
+        PREMYEARVER     := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "prem year"                , "2022"))
+        AEYEARVER       := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "ae year"                  , "2022"))
+        premVer         := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "premVer"                  , "v22.3.1"))
+        aeVer           := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "aeVer"                    , "v22.6"))
+        psVer           := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "psVer"                    , "v24.0.1"))
+        resolveVer      := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "resolveVer"               , "v18.0.4"))
+        ADOBE           := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "adobe temp"               , ""))
+        WORK            := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "working dir"              , "E:\Github\ahk"))
+        FC              := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "first check"              , "false"))
+        BLOCKAWARE      := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "block aware"              , "false"))
+        MONITORALERT    := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "monitor alert"            , 0))
+        ;// generate new settings
+        for k, v in UserSettings.Settings_ {
+            UserSettings.%v% := allSett[A_Index]
+        }
+        for k, v in UserSettings.Adjust_ {
+            UserSettings.%v% := allAdjust[A_Index]
+        }
+        for k, v in UserSettings.Track_ {
+            ;// set version number
+            if k = UserSettings.Track_.Length
+                {
+                    UserSettings.%v% := MyRelease
+                    return
+                }
+            UserSettings.%v% := allTrack[A_Index]
+        }
+        reload_reset_exit("reset")
     }
 
     /**
@@ -923,6 +937,8 @@ class Startup {
                 continue
             ;// if the user hasn't been alerted yet, they will be alerted now
             if !save {
+                if UserSettings.monitor_alert = A_YDay
+                    return
                 if !alrtmsgbox()
                     return
                 save := true

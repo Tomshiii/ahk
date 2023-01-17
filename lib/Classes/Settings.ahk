@@ -1,14 +1,14 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/01/16
- * @version 1.0.1
+ * @date 2023/01/17
+ * @version 1.0.2
  ***********************************************************************/
 
 class UserPref {
     __New() {
         if !FileExist(this.SettingsFile)
-            this.__createIni("true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", 0, A_WorkingDir, "false", "false", 0, 0)
+            this.__createIni("true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", 0, A_WorkingDir, "false", "false", 0, "v2.0")
         ;// initialise settings variables
         this.__setSett()
         this.__setAdjust()
@@ -33,7 +33,8 @@ class UserPref {
             case "game_SEC":                          return 2
             case "multi_SEC":                         return 5
             case "prem_year", "ae_year":              return 2022
-            case "version":                           return 0
+            case "version":                           return "v2.0"
+            case "monitor_alert":                     return "0"
             case "premVer":                           return "v22.3.1"
             case "aeVer":                             return "v22.6"
             case "psVer":                             return "v24.0.1"

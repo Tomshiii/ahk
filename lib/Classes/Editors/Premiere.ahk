@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2023/01/11
- * @version 1.2.7
+ * @date 2023/01/17
+ * @version 1.2.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -944,7 +944,7 @@ class Prem {
             if A_Index > 3
                 {
                     block.Off()
-                    errorLog(IndexError("Couldn't find the requested property.", -1),, 1)
+                    errorLog(IndexError("Couldn't find the requested property.", -1),, {ttip: 2, y:30})
                     allKeyWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
                     return
@@ -1014,6 +1014,7 @@ class Prem {
         }
         SendInput(programMonitor)
         SendInput(programMonitor)
+        sleep 50
         previewWin := obj.CtrlPos()
         if !IsObject(previewWin)
             return
