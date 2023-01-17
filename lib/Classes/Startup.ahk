@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/17
- * @version 1.3.3
+ * @date 2023/01/18
+ * @version 1.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -893,6 +893,7 @@ class Startup {
                 case "Ignore": ;// "Mute Alert"
                     UserSettings.monitor_alert := A_YDay
                     return 0
+                default:      return 1
             }
         }
         ;// what to do if the ini file doesn't yet exist
