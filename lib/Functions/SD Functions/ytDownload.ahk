@@ -2,6 +2,7 @@
 #Include <Classes\tool>
 #Include <Functions\errorLog>
 #Include <Functions\getHTMLTitle>
+#Include <Functions\runcmd>
 #Include <Functions\SD Functions\convert2>
 #Include <Classes\clip>
 ; }
@@ -51,7 +52,7 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
                     )
     clip.returnClip(oldClip)
     run:
-    RunWait(A_ComSpec " /c " command)
+    runcmd(,, command)
     SplitPath(folder, &name)
     if WinExist(folder " ahk_exe explorer.exe")
         WinActivate(folder " ahk_exe explorer.exe")

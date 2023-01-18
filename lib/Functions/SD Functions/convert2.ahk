@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <Classes\tool>
 #Include <Classes\winget>
+#Include <Functions\runcmd>
 ; }
 
 /**
@@ -13,7 +14,7 @@ convert2(command)
         {
             hwnd := WinExist("A")
             expPath := WinGet.ExplorerPath(hwnd)
-            RunWait(A_ComSpec " /c " command, expPath)
+            runcmd(false, true, command, expPath)
             WinActivate(hwnd)
         }
 }

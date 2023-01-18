@@ -194,4 +194,4 @@ TrayTip()
 if inputNeeded = true
     MsgBox("Extraction complete!", "Install Complete")
 
-;// `getCMD.ahk` gets appended to the end of this file during `generateUpdate.ahk`
+;// `getcmd.ahk` gets appended to the end of this file during `generateUpdate.ahk`
