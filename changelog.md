@@ -18,3 +18,4 @@
 - Fix some duplicate values in `KSA.ini`
 - `MyRelease` is no longer a global variable defined in `My Scripts.ahk`
     - `Startup {` now gets initiated instead of using purely static functions so that it can share `MyRelease` and only assign it a value once
+- `Multi-Instnce Close.ahk` now ignores all scripts in `..\lib\Multi-Instance Close\ignoreList.ahk`

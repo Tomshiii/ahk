@@ -8,21 +8,19 @@ KeyHistory(0)
 #Include <Classes\tool>
 #Include <Functions\detect>
 #Include <Classes\obj>
+#Include <Multi-Instance Close\ignoreList>
 ; }
 
 TraySetIcon(ptf.Icons "\M-I_C.png")
 ;This script will check for and close scripts that have multiple instances open
 ;Even if you have #SingleInstance Force enabled, sometimes while reloading you can end up with a second instance of any given script, this script should hopefully negate that
 
-;This script will not close multiple instances of `checklist.ahk`
+;This script will not close multiple instances of `checklist.ahk` or anything within the `ignoreList.ahk` file
 set:
-sec := 5
-if FileExist(UserSettings.SettingsFile)
-    sec := UserSettings.multi_SEC
-global ms := sec * 1000
+ms := UserSettings.multi_SEC * 1000
 
 if IsSet(ms) ;we don't want the timer starting before the ms variable has been set
-    SetTimer(check, -1)
+    SetTimer(check, -50)
 else
     goto set
 check()
@@ -30,25 +28,22 @@ check()
     detect()
     value := WinGetList("ahk_class AutoHotkey")
     windows := ""
-    for window in value
-        {
-            try {
-                newWin := WinGettitle(window)
-            }
-            if !IsSet(newWin) || !IsSet(window)
-                continue
-            path := SubStr(newWin, 1, InStr(newWin, " -",,, 1) -1)
-            script := obj.SplitPath(path)
-            if InStr(windows, script.Name "`n", 1,, 1) && script.Name != "checklist.ahk" && script.Name != "launcher.ahk"
-                {
-                    tool.Cust("Closing multiple instance of : " script.Name, 3000)
-                    try {
-                        WinClose(window)
-                    }
-                }
-            windows .= script.Name "`n"
+    for window in value{
+        try {
+            newWin := WinGettitle(window)
         }
-    end:
+        if !IsSet(newWin) || !IsSet(window)
+            continue
+        script := obj.SplitPath(SubStr(newWin, 1, InStr(newWin, " -",,, 1) -1))
+        if InStr(windows, script.Name "`n", 1,, 1) && !ignorelist.Has(script.Name)
+            {
+                tool.Cust("Closing multiple instance of : " script.Name, 3000)
+                try {
+                    WinClose(window)
+                }
+            }
+        windows .= script.Name "`n"
+    }
     SetTimer(, -ms)
 }
 
