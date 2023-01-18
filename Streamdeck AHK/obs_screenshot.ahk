@@ -9,7 +9,7 @@ if WinExist("ahk_exe obs64.exe")
     {
         if WinActive()
             {
-                SendInput(screenshotOBS)
+                SendInput(KSA.screenshotOBS)
                 ExitApp()
             }
         else
@@ -21,7 +21,7 @@ if WinExist("ahk_exe obs64.exe")
                 }
                 WinActivate()
                 sleep 50
-                SendInput(screenshotOBS)
+                SendInput(KSA.screenshotOBS)
                 sleep 100
                 try {
                     WinActivate(title)

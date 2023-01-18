@@ -62,8 +62,8 @@ F22::  ;temporary way to play full mii wii song using lioranboard
 	if WinExist("ahk_exe obs64.exe")
 		WinActivate
 	sleep 1000
-	SendInput(replayBuffer) ;Main replay buffer hotkey must be set to this
-	SendInput(sourceRecord1) ;Source Record OBS Plugin replay buffer must be set to this
+	SendInput(KSA.replayBuffer) ;Main replay buffer hotkey must be set to this
+	SendInput(KSA.sourceRecord1) ;Source Record OBS Plugin replay buffer must be set to this
 	;sleep 10
 	;SendInput, ^+9 ;Source Record OBS Plugin replay buffer must be set to this
 	sleep 10

@@ -21,7 +21,7 @@ youMouse(tenS, fiveS)
         }
         WinActivate() ;activates Youtube if there is a window of it open
         sleep 25 ;sometimes the window won't activate fast enough
-        if GetKeyState(longSkip, "P") ;checks to see if you have a second key held down to see whether you want the function to skip 10s or 5s. If you hold down this second button, it will skip 10s
+        if GetKeyState(KSA.longSkip, "P") ;checks to see if you have a second key held down to see whether you want the function to skip 10s or 5s. If you hold down this second button, it will skip 10s
             SendInput(tenS)
         else
             SendInput(fiveS) ;otherwise it will send 5s

@@ -222,7 +222,7 @@ save()
     if attempt = 3
         {
             switchTo.Premiere() ; last ditch effort to get a save off properly
-            SendInput(timelineWindow)
+            SendInput(KSA.timelineWindow)
         }
     attempt++
 
@@ -298,8 +298,8 @@ save()
                     case "focus":
                         if swap
                             switchTo.Premiere()
-                        SendInput(timelineWindow)
-                        SendInput(timelineWindow)
+                        SendInput(KSA.timelineWindow)
+                        SendInput(KSA.timelineWindow)
                         SendInput("{Ctrl Down}s{Ctrl Up}")
                         ; appendCheck("3_focus", premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "premsave() swap: " swap) ;// debugging
                     default:

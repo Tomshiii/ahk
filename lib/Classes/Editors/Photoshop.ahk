@@ -2,12 +2,12 @@
  * @description A library of useful Photoshop functions to speed up common tasks
  * Last tested in v24.0.1 of Photoshop
  * @author tomshi
- * @date 2023/01/11
- * @version 1.1.2
+ * @date 2023/01/19
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-; #Include <KSA\Keyboard Shortcut Adjustments>
+#Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\block>
 #Include <Classes\coord>
 #Include <Classes\ptf>
@@ -36,7 +36,7 @@ class PS {
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "text2.png") ;checks to see if you're typing
             SendInput("^{Enter}")
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "text.png") ;checks to see if you're in the text tool
-            SendInput("v") ;if you are, it'll press v to go to the selection tool
+            SendInput(KSA.selectiontool) ;if you are, it'll press v to go to the selection tool
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "InTransform.png") && !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " ptf.Photoshop image) ;checks to see if you're already in the free transform window
             {
                 block.Off()
@@ -45,7 +45,7 @@ class PS {
             }
         else
             {
-                SendInput(freeTransform) ;if you aren't in the free transform it'll simply press your hotkey to get you into it. check the ini file to adjust this hotkey
+                SendInput(KSA.freeTransform) ;if you aren't in the free transform it'll simply press your hotkey to get you into it. check the ini file to adjust this hotkey
                 ToolTip("we must wait for photoshop`nbecause it's slow as hell")
                 sleep 300 ;photoshop is slow
                 ToolTip("")
@@ -86,11 +86,11 @@ class PS {
         {
             WinActivate(editors.Photoshop.winTitle)
             block.On()
-            SendInput(imageSize) ;check the keyboard shortcut ini file
+            SendInput(KSA.imageSize) ;check the keyboard shortcut ini file
             WinWait("Image Size")
             SendInput(size "{tab 2}" size "{Enter}")
             sleep 1000
-            SendInput(saveasCopy) ;check the keyboard shortcut ini file
+            SendInput(KSA.saveasCopy) ;check the keyboard shortcut ini file
             WinWait("Save a Copy")
         }
         image()

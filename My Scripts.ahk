@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.29.3
+;\\v2.30
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -560,11 +560,11 @@ F3:: ;this hotkey is to click the "discord" button in discord to access your dm'
 ^+j::ps.Type("jpg") ;When saving a file and highlighting the name of the document, this moves through and selects the output file as a jpg instead of the default psd
 
 ;photopenHotkey;
-XButton1::mouseDrag(handTool, penTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+XButton1::mouseDrag(KSA.handTool, KSA.penTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;photoselectHotkey;
-Xbutton2::mouseDrag(handTool, selectionTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+Xbutton2::mouseDrag(KSA.handTool, KSA.selectionTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;photozoomHotkey;
-z::mouseDrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
+z::mouseDrag(KSA.zoomTool, KSA.selectionTool) ;changes the tool to the zoom tool while z button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcut ini file to adjust hotkeys
 ;F1::ps.Save()
 
 ;=============================================================================================================================================
@@ -576,11 +576,11 @@ z::mouseDrag(zoomTool, selectionTool) ;changes the tool to the zoom tool while z
 ;aetimelineHotkey;
 Xbutton1::ae.timeline() ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aeselectionHotkey;
-Xbutton2::mouseDrag(handAE, selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
+Xbutton2::mouseDrag(KSA.handAE, KSA.selectionAE) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard ini file for keyboard shortcuts
 ;aepreviousframeHotkey;
-F21::SendInput(previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
+F21::SendInput(KSA.previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 ;aenextframeHotkey;
-F23::SendInput(nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
+F23::SendInput(KSA.nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 
 ;=============================================================================================================================================
 ;
@@ -634,14 +634,14 @@ Ctrl & BackSpace::
 }
 
 ;premzoomoutHotkey;
-SC03A & z::SendInput(zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
+SC03A & z::SendInput(KSA.zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
 ;premselecttoolHotkey;
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
 	coord.s()
 	MouseGetPos(&xpos, &ypos)
-	SendInput(toolsWindow)
-	SendInput(toolsWindow)
+	SendInput(KSA.toolsWindow)
+	SendInput(KSA.toolsWindow)
 	sleep 50
 	try {
         toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
@@ -658,13 +658,13 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 				;tool.Cust(A_Index "`n" width "`n" height, "100")
 				if A_Index > 3
 					{
-						SendInput(selectionPrem)
+						SendInput(KSA.selectionPrem)
 						errorLog(UnsetError("Couldn't get dimensions of the class window", -1)
 									, "Used the selection hotkey instead", 1)
 						return
 					}
 				sleep 100
-				SendInput(toolsWindow)
+				SendInput(KSA.toolsWindow)
 				toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
 				ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
 			} until width != 0 || height != 0
@@ -682,8 +682,8 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 		sleep 100
 		if A_Index > 3
 			{
-				SendInput(selectionPrem)
-				SendInput(programMonitor)
+				SendInput(KSA.selectionPrem)
+				SendInput(KSA.programMonitor)
 				errorLog(Error("Couldn't find the selection tool", -1)
 							, "Used the selection hotkey instead", 1)
 				return
@@ -691,7 +691,7 @@ SC03A & v:: ;getting back to the selection tool while you're editing text will u
 	}
 	SendInput("{Click}")
 	MouseMove(xpos, ypos)
-	SendInput(programMonitor)
+	SendInput(KSA.programMonitor)
 }
 
 ;premprojectHotkey;
@@ -711,11 +711,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			KeyWait("RShift")
 			shiftval := 1
 		}
-	SendInput(resetWorkspace)
+	SendInput(KSA.resetWorkspace)
 	sleep 1500
-	SendInput(timelineWindow) ;adjust this shortcut in the ini file
-	SendInput(projectsWindow) ;adjust this shortcut in the ini file
-	SendInput(projectsWindow) ;adjust this shortcut in the ini file
+	SendInput(KSA.timelineWindow) ;adjust this shortcut in the ini file
+	SendInput(KSA.projectsWindow) ;adjust this shortcut in the ini file
+	SendInput(KSA.projectsWindow) ;adjust this shortcut in the ini file
 	sleep 300
 	WinGetPos(&sanX, &sanY,,, "A")
 	;if you have this panel on a different monitor ahk won't be able to find it because of premiere weirdness so this value will be used in some fallback code down below
@@ -868,15 +868,15 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 ;12forwardHotkey;
 PgDn::
 {
-	SendInput(effectControls)
-	SendInput(effectControls)
+	SendInput(KSA.effectControls)
+	SendInput(KSA.effectControls)
 	SendInput("{Right 12}")
 }
 ;12backHotkey;
 PgUp::
 {
-	SendInput(effectControls)
-	SendInput(effectControls)
+	SendInput(KSA.effectControls)
+	SendInput(KSA.effectControls)
 	SendInput("{Left 12}")
 }
 ;---------------------------------------------------------------------------------------------------------------------------------------------
@@ -885,17 +885,17 @@ PgUp::
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;previouseditHotkey;
-F21::prem.wheelEditPoint(previousEditPoint) ;goes to the next edit point towards the left
+F21::prem.wheelEditPoint(KSA.previousEditPoint) ;goes to the next edit point towards the left
 ;nexteditHotkey;
-F23::prem.wheelEditPoint(nextEditPoint) ;goes to the next edit point towards the right
+F23::prem.wheelEditPoint(KSA.nextEditPoint) ;goes to the next edit point towards the right
 ;playstopHotkey;
-F18::SendInput(playStop) ;alternate way to play/stop the timeline with a mouse button
+F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
 ;nudgedownHotkey;
-Xbutton1::SendInput(nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
+Xbutton1::SendInput(KSA.nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 ;mousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
-Xbutton2::prem.mousedrag(handPrem, selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 #Include *i right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 ;auto excecuting stuff will no longer function below this^ include
@@ -1044,8 +1044,8 @@ F23::youMouse("l", "{Right}")
 ;// thanks ahk :)
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 ;nudgeupHotkey;
-F14::SendInput(nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
+F14::SendInput(KSA.nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
 ;slowDownHotkey;
-F14 & F21::SendInput(slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
+F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
 ;speedUpHotkey;
-F14 & F23::SendInput(speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
+F14 & F23::SendInput(KSA.speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons

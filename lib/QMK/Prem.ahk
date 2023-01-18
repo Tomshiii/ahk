@@ -62,8 +62,8 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 		return
 	;// read the preset file
 	preset := FileRead(ptf["PremPresets"])
-	SendInput(effectControls)
-	SendInput(effectControls)
+	SendInput(KSA.effectControls)
+	SendInput(KSA.effectControls)
 	;// check if preset for current proj exists
 	if InStr(preset, "fix clipping_" ClientName)
 		prem.preset("fix clipping_" ClientName)
@@ -72,17 +72,17 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 }
 g:: ;this hotkey will fill the frame to fit the window
 {
-	SendInput(timelineWindow)
-	;SendInput(selectAtPlayhead)
-	SendInput(scaleFrameSize)
+	SendInput(KSA.timelineWindow)
+	;SendInput(KSA.selectAtPlayhead)
+	SendInput(KSA.scaleFrameSize)
 }
 b::prem.preset("transform_MINE")
 
 r::prem.preset("tint 100")
 f:: ;this macro is to open the speed menu
 {
-	SendInput(timelineWindow)
-	SendInput(timelineWindow)
+	SendInput(KSA.timelineWindow)
+	SendInput(KSA.timelineWindow)
 	try {
 		loop 3 {
 			effClassNN := ControlGetClassNN(ControlGetFocus("A"))
@@ -95,14 +95,14 @@ f:: ;this macro is to open the speed menu
 		errorLog(e)
 		Exit
 	}
-	SendInput(selectAtPlayhead speedHotkey)
+	SendInput(KSA.selectAtPlayhead KSA.speedHotkey)
 }
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
 	block.On()
 	MouseGetPos(&origX, &origY)
-	SendInput(timelineWindow)
-	SendInput(timelineWindow)
+	SendInput(KSA.timelineWindow)
+	SendInput(KSA.timelineWindow)
 	/* SendInput(programMonitor)
 	SendInput(programMonitor)
 	sleep 250
