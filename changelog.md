@@ -23,3 +23,4 @@
 - Add `runcmd()` as a wrapper function to quickly send a command to the command line
     - Added Streamdeck scripts `ffmpeg.ahk` & `yt-dlp.ahk` to check for updates for both utilities
 - Moved `getcmd()` out of `Extract.ahk` and into its own function file
+- Streamdeck `download` scripts now use `#SingleInstance Off` to allow multiple downloads at the same time

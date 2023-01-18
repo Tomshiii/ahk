@@ -1,3 +1,4 @@
+#SingleInstance Off
 ; { \\ #Includes
 #Include <Functions\SD Functions\ytDownload>
 #Include <Classes\winget>
