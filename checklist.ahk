@@ -31,7 +31,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.12"
+version := "v2.12.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -115,7 +115,7 @@ else
                 if FileExist(UserSettings.SettingsFile) ;checks to see if the user wants to always wait until they open a project
                     {
                         waitCheck := UserSettings.checklist_wait
-                        if waitCheck = "true"
+                        if waitCheck = true
                             {
                                 WaitTrack := 1
                                 tool.Wait()

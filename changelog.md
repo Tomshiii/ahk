@@ -5,6 +5,7 @@
     
 ## > Functions
 - Fix `tool.Cust()` throwing an error if a `float` is passed to the `x or y` parameters
+- `dark.allButtons()` can now pass an object to customise the background colours of the GUI/GUI buttons
 - `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu
 - Cleaned up `move {`
 

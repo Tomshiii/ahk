@@ -6,7 +6,6 @@
 #Include <Classes\ptf>
 #Include <Functions\getScriptRelease>
 #Include <Functions\refreshWin>
-#Include <checklist\checkSettings>
 ; }
 
 ;define menu
@@ -32,12 +31,12 @@ settingsToolTrack := 0
 if IniRead(checklist, "Info", "tooltip") = "1"
     {
         SettingsMenu.Check("&Tooltips")
-        if checkTooltips() != 0
+        if UserSettings.checklist_tooltip != 0
             settingsToolTrack := 1
         else
             settingsToolTrack := 0
     }
-if checkTooltips() = 0
+if UserSettings.checklist_tooltip = 0
     SettingsMenu.Disable("&Tooltips")
 else
     SettingsMenu.Enable("&Tooltips")
@@ -46,12 +45,12 @@ darkToolTrack := 0
 if IniRead(checklist, "Info", "dark") = "1"
 {
     SettingsMenu.Check("&Dark Mode")
-    if checkDark() != 0
+    if UserSettings.dark_mode != false
         darkToolTrack := 1
     else
         darkToolTrack := 0
 }
-if checkDark() = 0
+if UserSettings.dark_mode = false
     SettingsMenu.Disable("&Dark Mode")
 else
     SettingsMenu.Enable("&Dark Mode")
@@ -337,7 +336,7 @@ which(darkmode := true, DarkorLight := "Dark", menu := 1)
 {
     dark.menu(menu)
     dark.titleBar(checklistGUI.Hwnd, darkmode)
-    dark.allbuttons(checklistGUI, DarkorLight)
+    dark.allbuttons(checklistGUI, DarkorLight, {default: true, DarkBG: false})
 }
 
 /**

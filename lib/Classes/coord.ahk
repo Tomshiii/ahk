@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2023/01/17
- * @version 1.2.3
+ * @date 2023/01/18
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -17,7 +17,7 @@ class coord {
     */
     __errorChecks(target, mouse?) {
         targets := Map()
-        targets.CaseSense("Off")
+        targets.CaseSense:= "Off"
         targets.Set("tooltip", 1, "pixel", 1, "mouse", 1, "caret", 1, "menu", 1)
         ;// checking that the passed parameter is a string
         if Type(target) != "string"
@@ -43,7 +43,7 @@ class coord {
     */
     __caretErrorCheck(relative) {
         relativeTo := Map()
-        relativeTo.CaseSense("Off")
+        relativeTo.CaseSense:= "Off"
         relativeTo.Set("screen", 1, "window", 1, "client", 1)
         ;// checking that the passed parameter is a string
         if Type(relative) != "string" {

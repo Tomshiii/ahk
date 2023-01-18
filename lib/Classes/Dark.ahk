@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to turn GUI elements to a dark mode.
  * @author tomshi, Lexikos, others
- * @date 2023/01/10
- * @version 1.0.1
+ * @date 2023/01/18
+ * @version 1.0.2
  ***********************************************************************/
 
 class Dark {
@@ -19,19 +19,66 @@ class Dark {
      * This function will convert all buttons defined in the GUI to a dark/light theme.
      * @param {Object} guiObj is the gui object you're working on (ie. MyGui, settingsGUI, etc)
      * @param {String} DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light"
+     * @param {Boolean/Object} changeBg gives the ability to modify button bg colours & gui bg colours. Defaults to false and will not adjust either
+     * ```
+     * allButtons(guiObj, DarkorLight, {changeBg (obj)}
+     * default: true                    ;// sets 0xF0F0F0 for light mode && 0xd4d4d4 for darkmode. No other parameters are necessary if this is passed
+     * LightColour/DarkColour: "xxxxxx" ;// This value is a hex code (WITHOUT 0x) - sets the bg colour for all buttons for the given colour mode
+     * LightBG/DarkBG: "xxxxxx"         ;// This value is a hex code (WITHOUT 0x) - sets the gui bg colour when in the desired colour mode. If this value is not set, it will default to `LightColour/DarkColour`.
+     * DarkBG/LightBG: false            ;// can be set if you do not wish to adjust the BG colour of a certain colour mode
+     * ```
      */
-    static allButtons(guiObj, DarkorLight := "Dark") {
+    static allButtons(guiObj, DarkorLight := "Dark", changeBg := false) {
         for ctrl in guiObj
             {
                 if Type(ctrl) != "Gui.Button"
                     continue
                 try {
+                    /**
+                     * This function is to cut repeat code in the switch statement down below. It facilitates changing the bg colour of the GUI and the gui buttons
+                     */
+                    changeCol(guiObj, ctrl) {
+                        ;// default values
+                        defaultCol := (DarkorLight = "Dark") ? "d4d4d4" : "F0F0F0"
+                        clrVar := DarkorLight
+                        clr := clrVar 'Colour'
+                        BG := clrVar 'BG'
+                        ;// if the user passes 'default'
+                        if changeBg.HasProp("default") && changeBG.default = true
+                            {
+                                ctrl.Opt("Background" defaultCol)
+                                guiObj.BackColor := Format("{:#x}", "0x" defaultCol)
+                            }
+                        ;// if the user passes a 'DarkColour' or 'LightColour'
+                        if changeBg.HasProp(DarkorLight "Colour")
+                            {
+                                bgColour := changeBg.HasProp(BG) ? changeBg.%BG% : changeBg.%clr%
+                                guiObj.BackColor := Format("{:#x}", "0x" bgColour)
+                                ctrl.Opt("Background" changeBg.%clr%)
+                            }
+                        ;// if the user passes 'DarkBG: false' or 'LightBG: false'
+                        else if changeBg.HasProp(BG) && changeBg.%BG% = false
+                            {
+                                guiObj.BackColor := ""
+                                ctrl.Opt("BackgroundDefault")
+                                return
+                            }
+                    }
                     switch DarkorLight {
-                        case "Light": this.button(ctrl.Hwnd, "Light")
-                        default:      this.button(ctrl.Hwnd)
+                        case "Light":
+                            this.button(ctrl.Hwnd, "Light")
+                            if !changeBg || !IsObject(changeBg)
+                                return
+                            changeCol(guiObj, ctrl)
+                        default:
+                            this.button(ctrl.Hwnd)
+                            if !changeBg || !IsObject(changeBg)
+                                return
+                            changeCol(guiObj, ctrl)
                     }
                 }
             }
+
     }
 
     /**
