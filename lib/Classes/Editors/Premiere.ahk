@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2023/01/17
- * @version 1.2.8
+ * @date 2023/01/18
+ * @version 1.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -17,6 +17,7 @@
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
 #Include <Functions\allKeyWait>
+#Include <Functions\delaySI>
 ; }
 
 class Prem {
@@ -50,7 +51,7 @@ class Prem {
         try {
             loop {
                 if (A_Index > 3 && (!IsSet(classX) || width = 0))
-                    throw e
+                    throw
                 ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
                 try {
                     ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -62,28 +63,36 @@ class Prem {
             }
         } catch as e {
             block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e)
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
             {
                 sleep 100
-                SendInput(timelineWindow) ;focuses the timeline
-                SendInput(newText) ;creates a new text layer, check the keyboard shortcuts ini file to change this
-                sleep 100
-                if !ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
-                    {
+                delaySI(150, timelineWindow, timelineWindow, newText)
+                sleep 150
+                ;// premiere can slow down depending on the size of your project so it's best
+                ;// to build in multiple checks for most things
+                loop {
+                    if A_Index > 30 { ;// 3s
                         block.Off()
                         errorLog(Error("Couldn't find the graphics tab", -1),, 1)
                         return
                     }
-                if !ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
-                    {
+                    if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
+                        break
+                    sleep 100
+                }
+                loop {
+                    if A_Index > 30 { ;// 3s
                         block.Off()
                         errorLog(Error("Couldn't find the eye icon", -1),, 1)
                         return
                     }
+                    if ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
+                        break
+                    sleep 100
+                }
                 MouseMove(xeye, yeye)
                 SendInput("{Click}")
                 MouseGetPos(&eyeX, &eyeY)
@@ -91,8 +100,7 @@ class Prem {
             }
         effectbox() ;this is simply to cut needing to repeat this code below
         {
-            SendInput(effectsWindow) ;adjust this in the ini file
-            SendInput(findBox) ;adjust this in the ini file
+            delaySI(50, effectsWindow, effectsWindow, findBox)
             tool.Cust("if you hear windows, blame premiere")
             CaretGetPos(&findx)
             if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
@@ -154,10 +162,10 @@ class Prem {
         effectbox()
         coord.c() ;change caret coord mode to window
         CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
-        MouseMove carx, cary ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
-        SendInput item ;create a preset of any effect, must be in a folder as well
+        MouseMove(carx, cary) ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
+        SendInput(item) ;create a preset of any effect, must be in a folder as well
         sleep 50
-        MouseMove 0, 60,, "R" ;move down to the saved preset (must be in an additional folder)
+        MouseMove(0, 60,, "R") ;move down to the saved preset (must be in an additional folder)
         SendInput("{Click Down}")
         if item = "loremipsum" ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
             {

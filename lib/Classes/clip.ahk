@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard
  * @author tomshi
- * @date 2023/01/05
- * @version 1.0.2
+ * @date 2023/01/18
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -21,7 +21,7 @@ class clip {
      * ```
      */
     static clear(&storedClip?) {
-        storedClip := ClipboardAll()
+        storedClip := A_Clipboard
         A_Clipboard := ""
         return {storedClip: storedClip}
     }
