@@ -477,22 +477,7 @@ settingsGUI()
     {
         dark.menu(darkm)
         dark.titleBar(settingsGUI.Hwnd, darkm)
-        for ctrl in settingsGUI
-            {
-                if Type(ctrl) != "Gui.Button"
-                    continue
-                try {
-                    dark.button(ctrl.Hwnd, DarkorLight)
-                    switch darkm {
-                        case true:
-                            settingsGUI.BackColor := 0xd4d4d4
-                            ctrl.Opt("Backgroundd4d4d4")
-                        default:
-                            settingsGUI.BackColor := 0xF0F0F0
-                            ctrl.Opt("BackgroundF0F0F0")
-                    }
-                }
-            }
+        dark.allButtons(settingsGUI, DarkorLight, {LightColour: "F0F0F0", DarkColour: "d4d4d4"})
     }
 
     settingsGUI.Show("Center AutoSize")
