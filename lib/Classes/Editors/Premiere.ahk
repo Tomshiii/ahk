@@ -3,11 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
  * @date 2023/01/19
-<<<<<<< HEAD
  * @version 1.3.0.2
-=======
- * @version 1.3.0.1
->>>>>>> 4925f85705543a65457b54c2ed03e99e5a684d18
  ***********************************************************************/
 
 ; { \\ #Includes
