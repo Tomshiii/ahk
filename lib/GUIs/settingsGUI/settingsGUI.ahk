@@ -459,10 +459,10 @@ settingsGUI()
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         if IsSet(butt) && butt = "hard"
             reload_reset_exit("reset")
-        ;before finally closing
-        settingsGUI.Destroy()
         ;// has to reload at a minimum to refresh any settings changes
         reload_reset_exit("reload")
+        ;before finally closing
+        settingsGUI.Destroy()
     }
 
     ;the below code allows for the tooltips on hover
@@ -608,8 +608,8 @@ settingsGUI()
             iniVar := StrReplace(ini, A_Space, "_")
             ;// we don't want the version ini value to change unless it's actually a new version number
             ;// (not blank) so we do a quick check beforehand
-            if InStr(ctrl.Value, "v") && InStr(ctrl.Value, ".")
-                UserSettings.%iniVar% := ctrl.value
+            if InStr(ctrl.Text, "v") && InStr(ctrl.Text, ".")
+                UserSettings.%iniVar% := ctrl.Text
         }
 
         /**
@@ -626,16 +626,14 @@ settingsGUI()
         yearEvent(*) {
             if StrLen(year.Value) != 4
                 return
-            if year.Value > A_Year + 1 || year.Value < 2013
-                {
+            if (year.Value > A_Year + 1 || year.Value < 2013) {
                     ver.Delete()
                     return
                 }
             if SubStr(ver.value, 3, 2) != SubStr(year.Value, 3, 2)
                 ver.Delete()
             new := []
-            loop files ptf.ImgSearch "\" program "\*", "D"
-                {
+            loop files ptf.ImgSearch "\" program "\*", "D" {
                     if InStr(A_LoopFileName, "v" SubStr(year.Value, 3, 2))
                         new.Push(A_LoopFileName)
                 }
@@ -643,30 +641,27 @@ settingsGUI()
             if new.Has(1)
                 ver.Choose(1)
             UserSettings.%yearIniName% := year.value
+            editCtrl(verIniName, ver) ;// call the func to reassign the settings value
         }
 
         /**
          * This function generates the version dropdown selector
          */
         generateDrop(program, &ver, ctrlX) {
-            if program != "AE" && program != "Premiere"
-                {
+            if (program != "AE" && program != "Premiere") {
                     ;// throw
                     errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
                 }
-            if !DirExist(ptf.ImgSearch "\" program "\")
-                {
+            if !DirExist(ptf.ImgSearch "\" program "\") {
                     ;// throw
                     errorLog(ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program),,, 1)
                 }
             supportedVers := []
-            loop files ptf.ImgSearch "\" program "\*", "D"
-                {
+            loop files ptf.ImgSearch "\" program "\*", "D" {
                     if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
                         supportedVers.Push(A_LoopFileName)
                 }
-            for value in supportedVers
-                {
+            for value in supportedVers {
                     if value = imageLoc
                         {
                             defaultIndex := A_Index

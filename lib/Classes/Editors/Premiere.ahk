@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
  * @date 2023/01/19
- * @version 1.3.0.1
+ * @version 1.3.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1161,7 +1161,7 @@ class Prem {
                 return
             }
         MouseMove(xcol + optional, ycol)
-        keywait(KSA.waitHotkey)
+        keywait(waitHotkey)
         SendInput("{Click}")
         ToolTip("manInput() is waiting for the " "'" KSA.manInputEnd "'" "`nkey to be pressed")
         KeyWait(KSA.manInputEnd, "D") ;waits until the final hotkey is pressed before continuing

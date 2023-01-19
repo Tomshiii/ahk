@@ -41,6 +41,7 @@ timeline1 := 0x414141 ;timeline color inside the in/out points ON a targeted tra
 timeline2 := 0x313131 ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
 timeline3 := 0x1b1b1b ;the timeline color inside in/out points on a NON targeted track
 timeline4 := 0x212121 ;the color of the bare timeline NOT inside the in out points
+timeline9 := 0x1C1C1C ;the color of the bare timeline NOT inside the in out points (v23.1)
 timeline5 := 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
 timeline6 := 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
@@ -136,7 +137,8 @@ Rbutton::
 					color2 != timelineCol[2] &&
 					color2 != timelineCol[3] &&
 					color2 != timelineCol[8] &&
-					color2 != timelineCol[4]
+					color2 != timelineCol[4] &&
+					color2 != timelineCol[9]
 				) {
 					SendInput("{Rbutton}")
 					return

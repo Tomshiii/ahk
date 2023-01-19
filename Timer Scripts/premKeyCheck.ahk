@@ -1,5 +1,6 @@
 #SingleInstance force ;only one instance of this script may run at a time!
 #Requires AutoHotkey v2.0
+ListLines(0)
 
 ; { \\ #Includes
 #Include <Functions\checkKey>
@@ -7,7 +8,6 @@
 ; }
 
 TraySetIcon(ptf.Icons "\premKey.png")
-ListLines(0)
 
 start:
 if WinExist(editors.Premiere.winTitle)

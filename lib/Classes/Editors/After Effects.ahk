@@ -3,7 +3,7 @@
  * Tested on and designed for v22.6 of After Effects
  * @author tomshi
  * @date 2023/01/19
- * @version 1.2.0
+ * @version 1.2.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -363,7 +363,7 @@ class AE {
                 switch set ?? false {
                     case true: tool.Cust("The main window is not active")
                     default:
-                        errorLog(UnsetError("A variable was not assigned a value", -1, set)
+                        errorLog(UnsetError("A variable was not assigned a value", -1)
                                     , "Or the main window is not active", 1)
                 }
                 return
