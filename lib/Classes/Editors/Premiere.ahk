@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
  * @date 2023/01/19
- * @version 1.3.0
+ * @version 1.3.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -100,7 +100,7 @@ class Prem {
             }
         effectbox() ;this is simply to cut needing to repeat this code below
         {
-            delaySI(50, KSA.effectsWindow, KSA.effectsWindow, KSA.KSA.findBox)
+            delaySI(50, KSA.effectsWindow, KSA.effectsWindow, KSA.findBox)
             tool.Cust("if you hear windows, blame premiere")
             CaretGetPos(&findx)
             if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
@@ -1327,7 +1327,7 @@ class Prem {
                 }
             ; click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
             SendInput(KSA.timelineWindow) ;don't use middle click, it causes lag and keys to get stuck
-            SendInput(KSA.premtool "{LButton Down}")
+            SendInput(premtool "{LButton Down}")
             if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
                 KeyWait(A_ThisHotkey, "T5")
             else if A_ThisHotkey != KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P")

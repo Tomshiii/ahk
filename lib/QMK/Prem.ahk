@@ -103,8 +103,8 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 	MouseGetPos(&origX, &origY)
 	SendInput(KSA.timelineWindow)
 	SendInput(KSA.timelineWindow)
-	/* SendInput(programMonitor)
-	SendInput(programMonitor)
+	/* SendInput(KSA.programMonitor)
+	SendInput(KSA.programMonitor)
 	sleep 250
 	toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
 	ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
