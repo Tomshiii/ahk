@@ -394,13 +394,13 @@ save()
                 if title != replayCheck.winTitle
                     title := replayCheck.winTitle
                 sleep 250
-                ControlSend(timelineWindow,, title)
-                ControlSend(timelineWindow,, title)
+                ControlSend(KSA.timelineWindow,, title)
+                ControlSend(KSA.timelineWindow,, title)
                 sleep 100
-                ControlSend(playStop,, title)
+                ControlSend(KSA.playStop,, title)
                 block.Off()
                 ToolTip("")
-                ControlSend(timelineWindow,, title)
+                ControlSend(KSA.timelineWindow,, title)
             }
         }
         if stop = "yes" && premWinCheck != "" && premSaveTrack = 1

@@ -26,7 +26,7 @@ if WinExist("ahk_exe obs64.exe")
 		if WinExist("ahk_exe obs64.exe") ;waits until obs is open then brings it into focus
 			WinActivate
 		else
-			WinWaitActive "ahk_exe obs64.exe"
+			WinWaitActive("ahk_exe obs64.exe")
 	block.On()
 	sleep 2500 ; you have to wait a while after obs opens before you can start sending it commands or it'll crash
 	SendInput("!p") ;Opens alt context menu - The Above 2.5s sleep is essential as obs crashes if you instantly change the profile
@@ -44,7 +44,7 @@ if WinExist("ahk_exe obs64.exe")
 			sleep 200
 			SendInput "{TAB 55}"
 			sleep 200
-			SendInput(sourceRecord1)
+			SendInput(KSA.sourceRecord1)
 			sleep 1000
 			SendInput "{TAB}"
 			SendInput "+{TAB 57}"
