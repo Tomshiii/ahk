@@ -30,7 +30,7 @@ class KeyShortAdjust {
             if InStr(SubStr(getSection, var+1, InStr(getSection, '"',, var, 2) - var)
                         , "=")
                 throw ValueError("An = sign was used in an ini value. Please remove this entry.", -1, section)
-            ; print(SubStr(getSection, var+1, InStr(getSection, '"',, var, 2) - var))
+            ; print(SubStr(getSection, var+1, InStr(getSection, '"',, var, 2) - var)) ;// debugging
         }
         ;// splitting the section into an array
         arr := StrSplit(getSection, ["=", "`n", "`r"])
@@ -44,6 +44,7 @@ class KeyShortAdjust {
             if newMap.Has(v)
                 throw ValueError("Variable Already Exists. Try a new name.", -1, v)
             newMap.Set(v, arr.Get(i+1))
+            ; print(v ' ' arr.Get(i+1)) ;// debugging
         }
         return newMap
     }

@@ -1,7 +1,11 @@
-# <> Release 2.10 - Settings.ahk 
+# <> Release 2.10 - Settings.ahk & KSA.ahk
 - Added a new class `Settings.ahk` that takes complete control over all interactions with `settings.ini`
     - Handles creating `settings.ini` if it doesn't exist yet
     - Moved `createIni()` into `Settings.ahk`
+
+- `Keyboard Shortcut Adjustmenst.ahk` is now a self contained class that automatically generates variables based on `KSA.ini`
+    - Will now alert the user of duplicates
+    - `=` can no longer be used as a hotkey
     
 ## > Functions
 - Fix `tool.Cust()` throwing an error if a `float` is passed to the `x or y` parameters
