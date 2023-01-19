@@ -2,7 +2,7 @@
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
  * @date 2023/01/19
- * @version 1.0.0b2
+ * @version 1.0.0
  ***********************************************************************/
 
 ;{ \\ #Includes
@@ -41,6 +41,8 @@ class KeyShortAdjust {
                 continue
             if i+1 > arr.Length
                 break
+            if InStr(v, A_Space)
+                v := StrReplace(v, A_Space, "_")
             if newMap.Has(v)
                 throw ValueError("Variable Already Exists. Try a new name.", -1, v)
             newMap.Set(v, arr.Get(i+1))
