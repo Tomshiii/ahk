@@ -2,6 +2,7 @@
 ; { \\ #Includes
 #Include <Classes\Editors\Premiere>
 #Include <Classes\ptf>
+#Include <Classes\Editors\After Effects>
 ; }
 
 if WinActive(Editors.Premiere.winTitle)

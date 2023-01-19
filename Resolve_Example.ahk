@@ -1,3 +1,14 @@
+; { \\ #Includes
+#Include <Classes\ptf>
+#Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\Editors\Resolve>
+#Include <Classes\switchTo>
+#Include <Classes\coord>
+#Include <Classes\block>
+#Include <Classes\tool>
+#Include <Functions\allKeyWait>
+; }
+
 SetWorkingDir(ptf.rootDir) ; Ensures a consistent starting directory.
 SetDefaultMouseSpeed 0
 #SingleInstance Force
@@ -6,19 +17,8 @@ SetDefaultMouseSpeed 0
 ; SetCapsLockState "AlwaysOff" ;uncomment if you want capslock to always be OFF. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 TraySetIcon(ptf.Icons "\resolve.png")
 
-; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\Editors\Resolve>
-#Include <Classes\switchTo>
-#Include <Classes\ptf>
-#Include <Classes\coord>
-#Include <Classes\block>
-#Include <Classes\tool>
-#Include <Functions\allKeyWait>
-; }
-
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.8.2
+;\\v2.9
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.9.2
@@ -170,7 +170,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
                     SendInput("{Click Up}")
                     return
                 }
-            SendInput(resolveDeselect) ;in case you end up inside the "delete" right click menu from the timeline
+            SendInput(KSA.resolveDeselect) ;in case you end up inside the "delete" right click menu from the timeline
             block.Off()
             return
         }

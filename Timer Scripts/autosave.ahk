@@ -222,7 +222,7 @@ save()
     if attempt = 3
         {
             switchTo.Premiere() ; last ditch effort to get a save off properly
-            SendInput(timelineWindow)
+            SendInput(KSA.timelineWindow)
         }
     attempt++
 
@@ -298,8 +298,8 @@ save()
                     case "focus":
                         if swap
                             switchTo.Premiere()
-                        SendInput(timelineWindow)
-                        SendInput(timelineWindow)
+                        SendInput(KSA.timelineWindow)
+                        SendInput(KSA.timelineWindow)
                         SendInput("{Ctrl Down}s{Ctrl Up}")
                         ; appendCheck("3_focus", premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "premsave() swap: " swap) ;// debugging
                     default:
@@ -394,13 +394,13 @@ save()
                 if title != replayCheck.winTitle
                     title := replayCheck.winTitle
                 sleep 250
-                ControlSend(timelineWindow,, title)
-                ControlSend(timelineWindow,, title)
+                ControlSend(KSA.timelineWindow,, title)
+                ControlSend(KSA.timelineWindow,, title)
                 sleep 100
-                ControlSend(playStop,, title)
+                ControlSend(KSA.playStop,, title)
                 block.Off()
                 ToolTip("")
-                ControlSend(timelineWindow,, title)
+                ControlSend(KSA.timelineWindow,, title)
             }
         }
         if stop = "yes" && premWinCheck != "" && premSaveTrack = 1

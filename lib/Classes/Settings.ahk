@@ -105,7 +105,7 @@ class UserPref {
     }
 
     /**
-     * This function reads an entire .ini section and turns pushes every key to the designated array
+     * This function reads an entire .ini section and pushes every key to the designated array
      * Any whitespace is converted to "_"
      * @param {String} section is the section you wish to be read from
      * @param {Array} arr is the desired array you wish to push to

@@ -41,6 +41,7 @@ timeline1 := 0x414141 ;timeline color inside the in/out points ON a targeted tra
 timeline2 := 0x313131 ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
 timeline3 := 0x1b1b1b ;the timeline color inside in/out points on a NON targeted track
 timeline4 := 0x212121 ;the color of the bare timeline NOT inside the in out points
+timeline9 := 0x1C1C1C ;the color of the bare timeline NOT inside the in out points (v23.1)
 timeline5 := 0xDFDFDF ;the color of a SELECTED blank space on the timeline, NOT in the in/out points
 timeline6 := 0xE4E4E4 ;the color of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 timeline7 := 0xBEBEBE ;the color of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
@@ -75,7 +76,7 @@ Rbutton::
     if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
         {
             try {
-                SendInput(timelineWindow)
+                SendInput(KSA.timelineWindow)
                 effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
                 ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
                 static xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
@@ -128,7 +129,7 @@ Rbutton::
 			;   -- while as stated above, middle clicking the mouse does indeed bring focus to the timeline, for whatever reason having that line active made it so that
 			;   -- if I ever click RButton and an XButton at the same time, the script would sorta lag and then get stuck in it's loop unable to tell that RButton isn't being held
 			; //
-			SendInput(timelineWindow) ;so we'll do this instead
+			SendInput(KSA.timelineWindow) ;so we'll do this instead
 			if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead
 			{
 				if (
@@ -136,18 +137,19 @@ Rbutton::
 					color2 != timelineCol[2] &&
 					color2 != timelineCol[3] &&
 					color2 != timelineCol[8] &&
-					color2 != timelineCol[4]
+					color2 != timelineCol[4] &&
+					color2 != timelineCol[9]
 				) {
 					SendInput("{Rbutton}")
 					return
 				}
 			}
 			if PixelSearch(&throwx, &throwy, xValue, ypos, xControl, ypos, playhead) ;checking to see if the playhead is on the screen
-				SendInput(shuttleStop) ;if it is, we input a shuttle stop
+				SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stop
 			if PixelSearch(&xcol, &ycol, xpos - 4, ypos, xpos + 6, ypos, playhead)
 				{
 					block.On()
-					SendInput(selectionPrem)
+					SendInput(KSA.selectionPrem)
 					MouseMove(xcol, ycol)
 					SendInput("{LButton Down}")
 					block.Off()
@@ -156,7 +158,7 @@ Rbutton::
 				}
 			if !GetKeyState("Rbutton", "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
 				{
-					SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
+					SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 					;The below checks are to ensure no buttons end up stuck
 					checkKey("LButton")
 					checkKey("XButton1")
@@ -176,7 +178,7 @@ Rbutton::
 					static left := 0
 					static xbutton := 0
 					if colourOrNorm != "colour"
-						SendInput(playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
+						SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 					sleep 16 ;this loop will repeat every 16 milliseconds. Lowering this value won't make it go any faster as you're limited by Premiere Pro
 					if GetKeyState("LButton", "P")
 						left := 1
@@ -192,9 +194,9 @@ Rbutton::
 				SendInput("{LButton Up}")
 			if left > 0 ;if you press LButton at all while holding the Rbutton, this script will remember and begin playing once you stop moving the playhead
 				{ ;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
-					SendInput(playStop)
+					SendInput(KSA.playStop)
 					if xbutton > 0 ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
-						SendInput(speedUpPlayback)
+						SendInput(KSA.speedUpPlayback)
 					left := 0
 					xbutton := 0
 				}

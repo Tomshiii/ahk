@@ -6,10 +6,10 @@
 
 if WinActive(Editors.Premiere.winTitle)
     {
-        SendInput(timelineWindow)
-        SendInput(timelineWindow)
-        SendInput(projectsWindow)
-        SendInput(adjustmentPrem)
+        SendInput(KSA.timelineWindow)
+        SendInput(KSA.timelineWindow)
+        SendInput(KSA.projectsWindow)
+        SendInput(KSA.adjustmentPrem)
         if !WinWait("Adjustment Layer",, 2)
             {
                 tool.Cust("Adjustment layer window didn't open in time")
@@ -25,4 +25,4 @@ if WinActive(Editors.Premiere.winTitle)
         SendInput("{Enter}")
     }
 if WinActive(Editors.AE.winTitle)
-    SendInput(adjustmentAE)
+    SendInput(KSA.adjustmentAE)

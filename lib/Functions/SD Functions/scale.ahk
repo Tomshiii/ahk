@@ -27,8 +27,8 @@ scale(amount)
     coord.s()
     MouseGetPos(&xpos, &ypos)
     block.On()
-    SendInput(effectControls)
-    SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+    SendInput(KSA.effectControls)
+    SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     try {
         ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -38,12 +38,12 @@ scale(amount)
         errorLog(e)
         return
     }
-    SendInput(timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-        { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
-            SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+    SendInput(KSA.timelineWindow) ;focuses the timeline
+    if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        { ;any imagesearches on the effect controls window includes a division variable (KSA.ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
+            SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                 {
                     block.Off()
                     errorLog(Error("No clips are selected", -1),, 1)
@@ -54,8 +54,8 @@ scale(amount)
         if A_Index > 1
             {
                 ToolTip(A_Index)
-                SendInput(effectControls)
-                SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                SendInput(KSA.effectControls)
+                SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
                 try {
                     ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
                     ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -67,10 +67,10 @@ scale(amount)
                 }
             }
         if ( ;finds the value you want to adjust, then finds the value adjustment to the right of it
-                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "scale.png") ||
-                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "scale2.png") ||
-                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "scale3.png") ||
-                ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "scale4.png")
+                ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "scale.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "scale2.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "scale3.png") ||
+                ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "scale4.png")
         )
             break
         if A_Index > 3
@@ -97,6 +97,6 @@ scale(amount)
     SendInput(amount)
     SendInput("{Enter}")
     MouseMove xpos, ypos
-    SendInput(timelineWindow)
+    SendInput(KSA.timelineWindow)
     block.Off()
 }

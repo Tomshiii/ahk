@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2023/01/17
- * @version 1.3.1
+ * @date 2023/01/19
+ * @version 1.4.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -105,7 +105,7 @@ class Resolve {
         allKeyWait("second")
         coord.w()
         block.On()
-        SendInput(resolveSelectPlayhead)
+        SendInput(KSA.resolveSelectPlayhead)
         orig := obj.MousePos()
         ;// open the inspector tab
         this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
@@ -230,7 +230,7 @@ class Resolve {
     {
         coord.w()
         block.On()
-        SendInput(resolveSelectPlayhead)
+        SendInput(KSA.resolveSelectPlayhead)
         orig := obj.MousePos()
         ;// open the inspector tab
         this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
@@ -312,7 +312,7 @@ class Resolve {
             }
         coord.w()
         block.On()
-        SendInput(resolveSelectPlayhead)
+        SendInput(KSA.resolveSelectPlayhead)
         orig := obj.MousePos()
         ;// open the inspector tab
         this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")

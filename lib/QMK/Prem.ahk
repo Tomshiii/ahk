@@ -62,8 +62,8 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 		return
 	;// read the preset file
 	preset := FileRead(ptf["PremPresets"])
-	SendInput(effectControls)
-	SendInput(effectControls)
+	SendInput(KSA.effectControls)
+	SendInput(KSA.effectControls)
 	;// check if preset for current proj exists
 	if InStr(preset, "fix clipping_" ClientName)
 		prem.preset("fix clipping_" ClientName)
@@ -72,17 +72,17 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 }
 g:: ;this hotkey will fill the frame to fit the window
 {
-	SendInput(timelineWindow)
-	;SendInput(selectAtPlayhead)
-	SendInput(scaleFrameSize)
+	SendInput(KSA.timelineWindow)
+	;SendInput(KSA.selectAtPlayhead)
+	SendInput(KSA.scaleFrameSize)
 }
 b::prem.preset("transform_MINE")
 
 r::prem.preset("tint 100")
 f:: ;this macro is to open the speed menu
 {
-	SendInput(timelineWindow)
-	SendInput(timelineWindow)
+	SendInput(KSA.timelineWindow)
+	SendInput(KSA.timelineWindow)
 	try {
 		loop 3 {
 			effClassNN := ControlGetClassNN(ControlGetFocus("A"))
@@ -95,33 +95,14 @@ f:: ;this macro is to open the speed menu
 		errorLog(e)
 		Exit
 	}
-	SendInput(selectAtPlayhead speedHotkey)
+	SendInput(KSA.selectAtPlayhead KSA.speedHotkey)
 }
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
-	block.On()
-	MouseGetPos(&origX, &origY)
-	SendInput(timelineWindow)
-	SendInput(timelineWindow)
-	/* SendInput(programMonitor)
-	SendInput(programMonitor)
-	sleep 250
-	toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-	ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-	sleep 250
-	if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height, "*2 " Premiere "margin.png") || ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height, "*2 " Premiere "margin2.png")
-	*/
-	;//! the above code is if you want to use ClassNN values instead of just searching the right side of the screen. I stopped using that because even though it's more universal, it's just too slow to be worth it
-	if !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "margin.png") && !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "margin2.png") ;if you don't have your project monitor on your main computer monitor, you can try using the code above instead, ClassNN values are just an absolute pain in the neck and sometimes just choose to break for absolutely no reason (and they're slow for the project monitor for whatever reason). My project window is on the right side of my screen (which is why the first x value is A_ScreenWidth/2 - if yours is on the left you can simply switch these two values
-		{
-			block.Off()
-			errorLog(Error("Couldn't find the margin button", -1),, 1)
-			return
-		}
-	MouseMove(x, y)
-	SendInput("{Click}")
-	MouseMove(origX, origY)
-	block.Off()
+	SendInput(KSA.programMonitor)
+	SendInput(KSA.programMonitor)
+	SendInput(KSA.premSafeMargins)
+	SendInput(KSA.timelineWindow)
 }
 ;PgDn::unassigned()
 

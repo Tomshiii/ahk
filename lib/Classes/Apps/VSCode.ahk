@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/01/17
- * @version 1.1.4
+ * @date 2023/01/19
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,12 +38,12 @@ class VSCode {
                 errorLog(ValueError("Invalid hotkey in Parameter #3", -1, copyOrCut),,, 1)
             }
         if focusFirst = true
-            SendInput(focusCode)
+            SendInput(KSA.focusCode)
         orig := ClipboardAll()
         A_Clipboard := ""
         SendInput(copyOrCut)
         if !ClipWait(0.1) && focusFirst = false
-            SendInput(focusCode)
+            SendInput(KSA.focusCode)
     }
 
     /**
@@ -73,8 +73,8 @@ class VSCode {
         allKeyWait("first")
         block.On()
         sleep 50
-        delaySI(50, focusExplorerWin, focusExplorerWin, focusWork, collapseFold, collapseFold, "{Up 2}", "{Enter}")
-        if A_ThisHotkey = functionHotkey ;this opens my \functions folder
+        delaySI(50, KSA.focusExplorerWin, KSA.focusExplorerWin, KSA.focusWork, KSA.collapseFold, KSA.collapseFold, "{Up 2}", "{Enter}")
+        if A_ThisHotkey = KSA.functionHotkey ;this opens my \functions folder
             {
                 delaySI(50, "{Down 3}{Enter}", "{Down 2}{Enter}", "{Down 2}{Enter}")
                 sleep 50
@@ -87,7 +87,7 @@ class VSCode {
         SendInput("{Down " script "}")
         sleep 25
         SendInput("{Enter}")
-        SendInput(focusCode)
+        SendInput(KSA.focusCode)
         block.Off()
         tool.Wait()
         tool.Cust("The proper file should now be focused", 2.0)

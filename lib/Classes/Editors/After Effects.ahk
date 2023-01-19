@@ -2,8 +2,8 @@
  * @description A library of useful After Effects functions to speed up common tasks
  * Tested on and designed for v22.6 of After Effects
  * @author tomshi
- * @date 2023/01/11
- * @version 1.1.5
+ * @date 2023/01/19
+ * @version 1.2.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -49,7 +49,7 @@ class AE {
                 MouseMove(X, Y)
             }
         Click()
-        SendInput(anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) ~ check the keyboard shortcut ini file to adjust hotkeys
+        SendInput(KSA.anchorpointProp) ;swaps to a redundant value (in this case "anchor point" because I don't use it) ~ check the keyboard shortcut ini file to adjust hotkeys
         sleep 150
         SendInput(button) ;then swaps to your button of choice. We do this switch second to ensure it and it alone opens (if you already have scale open for example then you press "s" again, scale will hide)
         sleep 300 ;after effects is slow as hell so we have to give it time to swap over or the imagesearch's won't work
@@ -103,7 +103,7 @@ class AE {
                             , "Or not hovering over the right spot", 1)
                 Exit
             }
-        SendInput(audioAE effectsAE) ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
+        SendInput(KSA.audioAE KSA.effectsAE) ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
         sleep 100
         try {
             effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
@@ -179,7 +179,7 @@ class AE {
             errorLog(e)
         }
         ;ToolTip(efx ", " efy) ;debugging
-        SendInput(audioAE "s") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
+        SendInput(KSA.audioAE "s") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
         sleep 200
         xsize := 200
         ysize := 40
@@ -244,7 +244,7 @@ class AE {
         if WinExist("Composition Settings") ;if the menu is already open, this check will allow us to continue without running into any futher issues
             goto open
         block.On()
-        SendInput(compSettings) ;opens the composition settings
+        SendInput(KSA.compSettings) ;opens the composition settings
         WinWait("Composition Settings") ;waits for composition settings to open
         open:
         MouseMove(0,0)
@@ -363,7 +363,7 @@ class AE {
                 switch set ?? false {
                     case true: tool.Cust("The main window is not active")
                     default:
-                        errorLog(UnsetError("A variable was not assigned a value", -1, set)
+                        errorLog(UnsetError("A variable was not assigned a value", -1)
                                     , "Or the main window is not active", 1)
                 }
                 return

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2023/01/17
- * @version 1.1.2
+ * @date 2023/01/19
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,15 +24,10 @@ class Move {
      */
     static Window(key?)
     {
-        if !IsSet(key) && (A_ThisHotkey != minimiseHotkey && A_ThisHotkey != maximiseHotkey) {
+        if !IsSet(key) && (A_ThisHotkey != KSA.minimiseHotkey && A_ThisHotkey != KSA.maximiseHotkey) {
             ;// throw
             errorLog(ValueError("Incorrect hotkey has been used for function.`nDouble check KSA values.", -1),,, 1)
         }
-        if !GetKeyState("LButton", "P") ;checks for the left mouse button as without this check the function will continue to work until you click somewhere else
-            {
-                SendInput("{" A_ThisHotkey "}")
-                return
-            }
         if WinActive("ahk_class CabinetWClass") ;this if statement is to check whether windows explorer is active to ensure proper right click functionality is kept
             {
                 if A_ThisHotkey = "RButton"
@@ -46,11 +41,18 @@ class Move {
                             }
                     }
             }
+        ;// checks for the left mouse button as without this check the function will continue to work until you click somewhere else
+        ;//! this block HAS to be below the explorer check, otherwise right click dragging won't work
+        if !GetKeyState("LButton", "P")
+            {
+                SendInput("{" A_ThisHotkey "}")
+                return
+            }
         window := winGet.Title()
         SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
         switch A_ThisHotkey {
-            case minimiseHotkey: WinMinimize(window)
-            case maximiseHotkey:
+            case KSA.minimiseHotkey: WinMinimize(window)
+            case KSA.maximiseHotkey:
                 if !winget.isFullscreen(&title, window)
                     WinMaximize(window)
                 else
@@ -141,17 +143,9 @@ class Move {
                     if PixelGetColor(searchX, searchY) = 0x35343A ;then we check for the hover colour
                         break
                     if A_Index > 4 ;then we simply run through some different possible locations for the tab
-                        {
-                            MouseMove(startX - 20, startY - 10)
-                            if PixelGetColor(searchX, searchY) = 0x35343A
-                                break
-                        }
+                        MouseMove(startX - 20, startY - 10)
                     if A_Index > 5
-                        {
-                            MouseMove(startX - 20, startY + 10)
-                            if PixelGetColor(searchX, searchY) = 0x35343A
-                                break
-                        }
+                        MouseMove(startX - 20, startY + 10)
                     if A_Index > 6
                         {
                             errorLog(TargetError("Culdn't find the active tab colour", -1),, 1)

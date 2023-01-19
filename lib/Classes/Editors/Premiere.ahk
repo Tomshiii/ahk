@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere
  * @author tomshi
- * @date 2023/01/18
- * @version 1.2.9
+ * @date 2023/01/19
+ * @version 1.3.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -46,8 +46,8 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        SendInput(effectControls) ;highlights the effect controls panel
-        SendInput(effectControls) ;premiere is dumb, focus things twice
+        SendInput(KSA.effectControls) ;highlights the effect controls panel
+        SendInput(KSA.effectControls) ;premiere is dumb, focus things twice
         try {
             loop {
                 if (A_Index > 3 && (!IsSet(classX) || width = 0))
@@ -69,7 +69,7 @@ class Prem {
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
             {
                 sleep 100
-                delaySI(150, timelineWindow, timelineWindow, newText)
+                delaySI(150, KSA.timelineWindow, KSA.timelineWindow, KSA.newText)
                 sleep 150
                 ;// premiere can slow down depending on the size of your project so it's best
                 ;// to build in multiple checks for most things
@@ -79,7 +79,7 @@ class Prem {
                         errorLog(Error("Couldn't find the graphics tab", -1),, 1)
                         return
                     }
-                    if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
+                    if ImageSearch(&x2, &y2, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
                         break
                     sleep 100
                 }
@@ -100,7 +100,7 @@ class Prem {
             }
         effectbox() ;this is simply to cut needing to repeat this code below
         {
-            delaySI(50, effectsWindow, effectsWindow, findBox)
+            delaySI(50, KSA.effectsWindow, KSA.effectsWindow, KSA.findBox)
             tool.Cust("if you hear windows, blame premiere")
             CaretGetPos(&findx)
             if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
@@ -108,7 +108,7 @@ class Prem {
                     loop {
                             if A_Index > 5
                                 {
-                                    SendInput(findBox) ;adjust this in the ini file
+                                    SendInput(KSA.findBox) ;adjust this in the ini file
                                     tool.Cust("if you hear windows, blame adobe", 2000)
                                 }
                             sleep 30
@@ -121,7 +121,7 @@ class Prem {
                                 }
                         } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                 }
-            SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+            SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
             SendInput("^a" "+{BackSpace}")
             SetTimer(delete, -250)
             delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
@@ -130,15 +130,15 @@ class Prem {
                     {
                         SendInput("{Esc}")
                         sleep 100
-                        SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
-                        SendInput(findBox)
+                        SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+                        SendInput(KSA.findBox)
                         tool.Cust("if you hear windows, blame premiere", 2000)
                         CaretGetPos(&find2x)
                         if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                             {
                                 loop {
                                         sleep 30
-                                        SendInput(findBox)
+                                        SendInput(KSA.findBox)
                                         tool.Cust("if you hear windows, blame premiere", 2000)
                                         CaretGetPos(&find2x)
                                         if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
@@ -148,7 +148,7 @@ class Prem {
                                             }
                                     } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                             }
-                        SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+                        SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
                         SendInput("^a" "+{BackSpace}")
                         sleep 60
                         if WinExist("Delete Item")
@@ -172,7 +172,7 @@ class Prem {
                 MouseMove(eyeX, eyeY - "5")
                 SendInput("{Click Up}")
                 effectbox()
-                SendInput(timelineWindow)
+                SendInput(KSA.timelineWindow)
                 MouseMove(xpos, ypos)
                 block.Off()
                 return
@@ -180,7 +180,7 @@ class Prem {
         MouseMove(xpos, ypos) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
         SendInput("{Click Up}")
         effectbox() ;this will delete whatever preset it had typed into the find box
-        SendInput(timelineWindow) ;this will rehighlight the timeline after deleting the text from the find box
+        SendInput(KSA.timelineWindow) ;this will rehighlight the timeline after deleting the text from the find box
         block.Off()
         ToolTip("")
     }
@@ -192,9 +192,9 @@ class Prem {
     {
         coord.s()
         block.On()
-        SendInput(effectsWindow)
-        SendInput(effectsWindow) ;adjust this in the ini file
-        SendInput(findBox) ;adjust this in the ini file
+        SendInput(KSA.effectsWindow)
+        SendInput(KSA.effectsWindow) ;adjust this in the ini file
+        SendInput(KSA.findBox) ;adjust this in the ini file
         CaretGetPos(&findx)
         if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
             {
@@ -209,7 +209,7 @@ class Prem {
                             }
                     } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
             }
-        SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+        SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
         SendInput("^a" "+{BackSpace}")
         SetTimer(delete, -250)
         delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
@@ -218,8 +218,8 @@ class Prem {
                 {
                     SendInput("{Esc}")
                     sleep 100
-                    SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
-                    SendInput(findBox)
+                    SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+                    SendInput(KSA.findBox)
                     CaretGetPos(&find2x)
                     if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                         {
@@ -234,7 +234,7 @@ class Prem {
                                         }
                                 } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
                         }
-                    SendInput(effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+                    SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
                     SendInput("^a" "+{BackSpace}")
                     sleep 60
                     if WinExist("Delete Item")
@@ -308,8 +308,8 @@ class Prem {
         block.On()
         WinActivate(this.winTitle)
         sleep 50
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        SendInput(KSA.effectControls)
+        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
         sleep 50
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
@@ -388,19 +388,19 @@ class Prem {
                 if setValue = "No"
                     return
             }
-        SendInput(timelineWindow)
-        if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        SendInput(KSA.timelineWindow)
+        if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         errorLog(Error("No clips were selected", -1),, 1)
                         block.Off()
                         return
                     }
             }
-        if !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") && !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png")
+        if !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") && !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png")
             {
                 MouseMove(xpos, ypos)
                 block.Off()
@@ -459,8 +459,8 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         ;tool.Cust("x " xpos "`ny " ypos) ;testing stuff
         block.On()
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        SendInput(KSA.effectControls)
+        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -470,12 +470,12 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(timelineWindow) ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            { ;any imagesearches on the effect controls window includes a division variable (ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+        SendInput(KSA.timelineWindow) ;focuses the timeline
+        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+            { ;any imagesearches on the effect controls window includes a division variable (KSA.ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
+                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips are selected", -1),, 1)
@@ -484,7 +484,7 @@ class Prem {
             }
         if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, YOUR PNG MUST BE CALLED "levels.png"
             { ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
-                if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "video.png")
+                if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "video.png")
                     {
                         block.Off()
                         errorLog(Error("The user wasn't scrolled down", -1),, 1)
@@ -496,8 +496,8 @@ class Prem {
             if A_Index > 1
                 {
                     ToolTip(A_Index)
-                    SendInput(effectControls)
-                    SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                    SendInput(KSA.effectControls)
+                    SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
                     try {
                         ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
                         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -513,7 +513,7 @@ class Prem {
                 blendheight := filepath = "blend\blendmode" ? 50 : 0
                 if FileExist(checkfilepath)
                     {
-                        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height + blendheight, "*2 " checkfilepath)
+                        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height + blendheight, "*2 " checkfilepath)
                             return true
                         else
                             return false
@@ -620,8 +620,8 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        SendInput(KSA.effectControls)
+        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -631,19 +631,19 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(timelineWindow) ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        SendInput(KSA.timelineWindow) ;focuses the timeline
+        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         errorLog(Error("No clips were selected", -1),, 1)
                         block.Off()
                         return
                     }
             }
-        if !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") && !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
+        if !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") && !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
             {
                 errorLog(Error("The user was already keyframing", -1),, 1)
                 block.Off()
@@ -664,8 +664,8 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        SendInput(KSA.effectControls)
+        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -675,21 +675,21 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(timelineWindow) ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        SendInput(KSA.timelineWindow) ;focuses the timeline
+        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
                         return
                     }
             }
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
+        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") || ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
                 goto next
-        else if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath ".png") || ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere filepath "3.png")
+        else if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath ".png") || ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "3.png")
             {
                 MouseMove(x + "5", y + "5")
                 Click()
@@ -706,7 +706,7 @@ class Prem {
             MouseMove(keyx + "3", keyy)
         Click()
         end:
-        SendInput(timelineWindow) ;focuses the timeline
+        SendInput(KSA.timelineWindow) ;focuses the timeline
         MouseMove(xpos, ypos)
         block.Off()
     }
@@ -721,7 +721,7 @@ class Prem {
     {
         ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
         coord.s()
-        SendInput(selectionPrem)
+        SendInput(KSA.selectionPrem)
         if !ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " ptf.Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
             {
                 errorLog(Error("User hasn't opened the required bin", -1),, 1)
@@ -737,10 +737,10 @@ class Prem {
                 sleep 100
             }
         loop {
-            SendInput(projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
-            SendInput(projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
+            SendInput(KSA.projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
+            SendInput(KSA.projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
             ;allKeyWait() ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
-            SendInput(findBox)
+            SendInput(KSA.findBox)
             CaretGetPos(&findx)
             if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
                 {
@@ -759,7 +759,7 @@ class Prem {
             SendInput(sfxName)
             sleep 250 ;the project search is pretty slow so you might need to adjust this
             coord.w()
-            if !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " ptf.Premiere "audio.png") && !ImageSearch(&vlx, &vly, sfxX1, sfxY1, sfxX2, sfxY2, "*2 " ptf.Premiere "audio2.png") ;searches for the audio image next to an audio file
+            if !ImageSearch(&vlx, &vly, KSA.sfxX1, KSA.sfxY1, KSA.sfxX2, KSA.sfxY2, "*2 " ptf.Premiere "audio.png") && !ImageSearch(&vlx, &vly, KSA.sfxX1, KSA.sfxY1, KSA.sfxX2, KSA.sfxY2, "*2 " ptf.Premiere "audio2.png") ;searches for the audio image next to an audio file
                 {
                     block.Off()
                     errorLog(Error("Couldn't find the audio image", -1),, 1)
@@ -774,7 +774,7 @@ class Prem {
             coord.s()
             MouseMove(xpos, ypos)
             SendInput("{Click Up}")
-            SendInput(timelineWindow)
+            SendInput(KSA.timelineWindow)
             ;MouseMove(30,0,, "R")
             sleep 50
             ;MouseGetPos(&colourX, &colourY)
@@ -799,7 +799,7 @@ class Prem {
         if sfxName = "bleep"
             {
                 sleep 50
-                SendInput(selectionPrem)
+                SendInput(KSA.selectionPrem)
                 MouseGetPos(&delx, &dely)
                 MouseMove(10, 0,, "R")
                 sleep 50
@@ -816,14 +816,14 @@ class Prem {
                     }
                 SendInput("{Click}")
                 sleep 50
-                SendInput(gainAdjust)
+                SendInput(KSA.gainAdjust)
                 SendInput("-20")
                 SendInput("{Enter}")
                 WinWaitClose("Audio Gain")
                 MouseMove(xpos, ypos)
                 trackNumber := 2
                 sleep 100
-                SendInput(cutPrem)
+                SendInput(KSA.cutPrem)
                 start := A_TickCount
                 sec := 0
                 loop {
@@ -852,7 +852,7 @@ class Prem {
                 ToolTip("")
                 block.On()
                 sleep 50
-                SendInput(selectionPrem)
+                SendInput(KSA.selectionPrem)
                 MouseGetPos(&delx, &dely)
                 MouseMove(xpos + 10, ypos)
                 sleep 500
@@ -907,7 +907,7 @@ class Prem {
      */
     static wheelEditPoint(direction)
     {
-        SendInput(timelineWindow) ;focuses the timeline
+        SendInput(KSA.timelineWindow) ;focuses the timeline
         SendInput(direction) ;Set these shortcuts in the keyboards shortcut ini file
         allKeyWait() ;prevents hotkey spam
     }
@@ -920,15 +920,15 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        SendInput(KSA.effectControls)
+        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
         effectCtrl := obj.ctrlPos()
-        SendInput(timelineWindow) ;focuses the timeline
-        if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        SendInput(KSA.timelineWindow) ;focuses the timeline
+        if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
@@ -939,11 +939,11 @@ class Prem {
             if A_Index > 1
                 {
                     ToolTip(A_Index)
-                    SendInput(effectControls)
-                    SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                    SendInput(KSA.effectControls)
+                    SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
                     effectCtrl := obj.ctrlPos()
                 }
-            if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
+            if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
                     {
                         MouseMove(x + "25", y)
                         SendInput("{Click}")
@@ -964,7 +964,7 @@ class Prem {
         ;// gets the state of the hotkey, enough time now has passed that if the user just presses the button, you can assume they want to reset the paramater instead of edit it
         if !GetKeyState(A_ThisHotkey, "P")
             {
-                if !ImageSearch(&xcol, &ycol, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "reset.png")
+                if !ImageSearch(&xcol, &ycol, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "reset.png")
                     {
                         block.Off()
                         MouseMove(xpos, ypos)
@@ -1020,8 +1020,8 @@ class Prem {
             }
             return true
         }
-        SendInput(programMonitor)
-        SendInput(programMonitor)
+        SendInput(KSA.programMonitor)
+        SendInput(KSA.programMonitor)
         sleep 50
         previewWin := obj.CtrlPos()
         if !IsObject(previewWin)
@@ -1067,8 +1067,8 @@ class Prem {
         allKeyWait()
         coord.s()
         block.On()
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        SendInput(KSA.effectControls)
+        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -1078,12 +1078,12 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(timelineWindow) ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        SendInput(KSA.timelineWindow) ;focuses the timeline
+        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
@@ -1092,7 +1092,7 @@ class Prem {
             }
         MouseGetPos(&xpos, &ypos)
         loop {
-            if ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") || ImageSearch(&x2, &y2, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;checks if the "motion" value is in view
+            if ImageSearch(&x2, &y2, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") || ImageSearch(&x2, &y2, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;checks if the "motion" value is in view
                 break
             if A_Index > 5
                 {
@@ -1101,7 +1101,7 @@ class Prem {
                     return
                 }
         }
-        SendInput(timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
+        SendInput(KSA.timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
         if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " ptf.Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
             MouseMove(xcol, ycol)
         click
@@ -1120,8 +1120,8 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        SendInput(effectControls)
-        SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        SendInput(KSA.effectControls)
+        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -1131,12 +1131,12 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(timelineWindow)
-        if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        SendInput(KSA.timelineWindow)
+        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
-                SendInput(selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
@@ -1144,10 +1144,10 @@ class Prem {
                     }
             }
         if ( ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-            !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere property ".png") &&
-            !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere property "2.png") &&
-            !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere property "3.png") &&
-            !ImageSearch(&x, &y, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere property "4.png")
+            !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere property ".png") &&
+            !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere property "2.png") &&
+            !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere property "3.png") &&
+            !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere property "4.png")
         )
             {
                 block.Off()
@@ -1163,8 +1163,8 @@ class Prem {
         MouseMove(xcol + optional, ycol)
         keywait(waitHotkey)
         SendInput("{Click}")
-        ToolTip("manInput() is waiting for the " "'" manInputEnd "'" "`nkey to be pressed")
-        KeyWait(manInputEnd, "D") ;waits until the final hotkey is pressed before continuing
+        ToolTip("manInput() is waiting for the " "'" KSA.manInputEnd "'" "`nkey to be pressed")
+        KeyWait(KSA.manInputEnd, "D") ;waits until the final hotkey is pressed before continuing
         ToolTip("")
         SendInput("{Enter}")
         MouseMove(xpos, ypos)
@@ -1192,8 +1192,8 @@ class Prem {
         start:
         try {
             loop {
-                SendInput(effectControls)
-                SendInput(effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                SendInput(KSA.effectControls)
+                SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
                 winget.Title(&check)
                 if check = "Audio Gain"
                     {
@@ -1226,11 +1226,11 @@ class Prem {
             goto start
         /* if ClassNN = "DroverLord - Window Class3"
             goto start */
-            SendInput(timelineWindow)
+            SendInput(KSA.timelineWindow)
             try {
-                if ImageSearch(&x3, &y3, classX, classY, classX + (width/ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                     {
-                        SendInput(timelineWindow selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
+                        SendInput(KSA.timelineWindow KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                         goto inputs
                     }
             } catch as e {
@@ -1284,7 +1284,7 @@ class Prem {
         if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
             {
                 try {
-                    SendInput(timelineWindow)
+                    SendInput(KSA.timelineWindow)
                     effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
                     ControlGetPos(&xpos, &ypos, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
                     static xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
@@ -1311,7 +1311,7 @@ class Prem {
         skip:
         again()
         {
-            if A_ThisHotkey = DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+            if A_ThisHotkey = KSA.DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
                 {
                     if !GetKeyState(A_ThisHotkey, "P") ;this is here so it doesn't reactivate if you quickly let go before the timer comes back around
                         {
@@ -1319,19 +1319,19 @@ class Prem {
                             return
                         }
                 }
-            else if !GetKeyState(DragKeywait, "P")
+            else if !GetKeyState(KSA.DragKeywait, "P")
                 {
                     SetTimer(again, 0)
                     SetTimer(rdisable, 0)
                     Exit()
                 }
             ; click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-            SendInput(timelineWindow) ;don't use middle click, it causes lag and keys to get stuck
+            SendInput(KSA.timelineWindow) ;don't use middle click, it causes lag and keys to get stuck
             SendInput(premtool "{LButton Down}")
-            if A_ThisHotkey = DragKeywait && GetKeyState(DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+            if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
                 KeyWait(A_ThisHotkey, "T5")
-            else if A_ThisHotkey != DragKeywait && GetKeyState(DragKeywait, "P")
-                KeyWait(DragKeywait, "T5") ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
+            else if A_ThisHotkey != KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P")
+                KeyWait(KSA.DragKeywait, "T5") ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
             SendInput("{LButton Up}")
             SendInput(toolorig)
             SetTimer(rdisable, 0)

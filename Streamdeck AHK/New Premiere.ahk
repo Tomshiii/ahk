@@ -8,6 +8,7 @@ SetDefaultMouseSpeed 0
 #Include <Classes\pause>
 #Include <Classes\coord>
 #Include <Classes\block>
+#Include <Functions\delaySI>
 ; }
 
 ;//This version of the script (from 19th Dec, 2022) is designed for Premiere v22.3.1 (and beyond) - it copies a template project folder out of the `..\Backups\Adobe Backups\Premiere\Template\` folder and places it in the desired project folder. It then handles changing the proxy location
@@ -52,12 +53,12 @@ if !WinWait("Open Project",, 20)
 sleep 5000
 skip:
 block.On()
-SendInput(premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
+SendInput(KSA.premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
 if !WinWait("Project Settings",, 2)
     {
         sleep 1000
         WinActivate(editors.Premiere.winTitle)
-        SendInput(premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
+        SendInput(KSA.premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
         if !WinWait("Project Settings",, 2)
             {
                 block.Off()
@@ -79,28 +80,17 @@ SendInput("{Tab 3}")
 sleep 500
 SendInput("{Space}")
 sleep 1000
-SendInput("{Tab}" "{Space}" "{Down 2}" "{Space}")
+delaySI(50, "{Tab}", "{Space}", "{Down 2}", "{Space}")
 sleep 1000
-SendInput("{Tab}" "{Space}")
-sleep 300
-SendInput("{Down 3}" "{Space}")
-sleep 300
-SendInput("{Tab 2}" "{Space}")
-sleep 300
+delaySI(300, "{Tab}" "{Space}", "{Down 3}" "{Space}", "{Tab 2}" "{Space}")
 SendInput("{Up}" "{Space}")
 WinWait("Select Folder")
 sleep 800
-SendInput("{F4}")
-sleep 800
-SendInput("^a" "+{BackSpace}")
+delaySI(800, "{F4}", "^a" "+{BackSpace}")
 SendText(SelectedFolder "\proxies") ;INSERT PATH AND PROXIES HERE
 sleep 800
-SendInput("{Enter}")
-sleep 250
-SendInput("+{Tab 5}")
-sleep 250
-SendInput("{Enter}")
-sleep 2000
+delaySI(250, "{Enter}", "+{Tab 5}", "{Enter}")
+sleep 1750
 SendInput("{Tab}" "{Space}") ;if you're on premiere v22.5 or above you'll need 2 tabs here. I've downgraded back to 22.3.1 for stability reasons
 sleep 1000
 MouseMove(x, y, 2) ;// get it out of the way
