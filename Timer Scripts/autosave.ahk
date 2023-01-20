@@ -332,7 +332,7 @@ save()
      */
     if WinExist(editors.AE.winTitle) && aeVal.saveCheck = true
         {
-            if origWind != WinGetProcessName(aeVal.winTitle)
+            if origWind != WinGetProcessName(editors.AE.winTitle)
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {
@@ -414,6 +414,7 @@ save()
         if aeSaveTrack = 0 && premSaveTrack = 0 && avoid = 0
             {
                 global half := true
+                static origWind := unset
                 tool.Wait()
                 tool.Cust("No save necessary")
             }
