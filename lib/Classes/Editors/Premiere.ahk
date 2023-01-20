@@ -288,8 +288,9 @@ class Prem {
         d0yleZoomXYS := [-833, -462, 288]
 
         ;// chloe
-        chloeXYS := [-426, -238, 267]
-        chloeZoomXYS := [-1679, -854, 486]
+        ;// below contains temp changes, orig; [-426, -238, 267], [-1679, -854, 486]
+        chloeXYS := [1727, 304, 267]
+        chloeZoomXYS := [3070, 139, 486]
         chloeExtraZoom := [632, 278, 292]
 
         ;// emerldd
@@ -306,7 +307,10 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        WinActivate(this.winTitle)
+        if !WinActive(this.winTitle) {
+            errorLog(Error("Premiere is not the active window", -1),, 1)
+            return
+        }
         sleep 50
         SendInput(KSA.effectControls)
         SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused

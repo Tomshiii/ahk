@@ -8,13 +8,16 @@
     - `=` can no longer be used as a hotkey
     
 ## > Functions
-- Fix `tool.Cust()` throwing an error if a `float` is passed to the `x or y` parameters
 - `dark.allButtons()` can now pass an object to customise the background colours of the GUI/GUI buttons
 - `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu
 - `prem.preset("loremipsum")` now checks for images multiple times to avoid erroring out earlier than necessary 
 - Add `runcmd()` as a wrapper function to quickly send a command to the command line
     - Added Streamdeck scripts `ffmpeg.ahk` & `yt-dlp.ahk` to check for updates for both utilities
 - Moved `getcmd()` out of `Extract.ahk` and into its own function file
+
+`tool.Cust()`
+- Fix function throwing an error if a `float` is passed to the `x or y` parameters
+- Fix function throwing an error if a number is passed in to the first parameter
 
 `monitorAlert()`
 - Fix not using `ptf` values

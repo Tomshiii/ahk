@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip functions for easier coding.
  * @author tomshi
- * @date 2023/01/17
- * @version 1.1.2
+ * @date 2023/01/20
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -45,7 +45,7 @@ class tool {
             switch k {
                 ;//throw
                 case "message":
-                    if Type(v) != "string"
+                    if Type(v) != "string" && Type(v) != "integer" && Type(v) != "float"
                         errorLog(TypeError("Incorrect Type in Parameter #1", -2),,, 1)
                 case "timeout":
                     if (Type(v) != "integer" && Type(v) != "float")

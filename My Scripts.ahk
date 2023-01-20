@@ -9,21 +9,13 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.30
+;\\v2.30.1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
-#Include <Classes\Settings>
-SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
-SetNumLockState("AlwaysOn")            ;sets numlock to always on (you can still it for macros)
-SetCapsLockState("AlwaysOff")          ;sets caps lock to always off (you can still it for macros)
-SetScrollLockState("AlwaysOff")        ;sets scroll lock to always off (you can still it for macros)
-SetDefaultMouseSpeed(0)                ;sets default MouseMove speed to 0 (instant)
-SetWinDelay(0)                         ;sets default WinMove speed to 0 (instant)
-A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
-TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Apps\Discord>
@@ -57,6 +49,18 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #Include <GUIs\hotkeysGUI>
 ;#Include right click premiere.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
+
+;//! Setting up script defaults.
+SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
+SetNumLockState("AlwaysOn")            ;sets numlock to always on (you can still it for macros)
+SetCapsLockState("AlwaysOff")          ;sets caps lock to always off (you can still it for macros)
+SetScrollLockState("AlwaysOff")        ;sets scroll lock to always off (you can still it for macros)
+SetDefaultMouseSpeed(0)                ;sets default MouseMove speed to 0 (instant)
+SetWinDelay(0)                         ;sets default WinMove speed to 0 (instant)
+A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
+TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
+
+
 
 ; ============================================================================================================================================
 ;
@@ -823,7 +827,8 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	MouseMove(3240, 564, "2")
 	SendInput("{Click Up}")
 	switchTo.Premiere()
-	WinWaitClose("Import Files")
+	WinWait("Import Files",, 2)
+	WinWaitClose("Import Files", 20)
 	sleep 1000
 	added:
 	coord.w()
