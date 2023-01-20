@@ -1,4 +1,6 @@
 # <> Release 2.10 - Settings.ahk & KSA.ahk
+###### This release contains a lot of underlying refactoring that completely changes large chunks of the codebase.
+
 - Added a new class `Settings.ahk` that takes complete control over all interactions with `settings.ini`
     - Handles creating `settings.ini` if it doesn't exist yet
     - Moved `createIni()` into `Settings.ahk`
