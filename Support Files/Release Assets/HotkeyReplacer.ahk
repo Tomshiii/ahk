@@ -1,8 +1,18 @@
 ; { \\ #Includes
-#Include "%A_ScriptDir%"
-#Include "..\..\lib\Classes\dark.ahk"
-#Include "..\..\lib\Functions\getLocalVer.ahk"
+#Include *i <Classes\Settings>
+#Include *i <KSA\Keyboard Shortcut Adjustments>
+#Include *i <Classes\dark>
+#Include *i <Classes\ptf>
+#Include *i <GUIs\tomshiBasic>
+#Include *i <Functions\getLocalVer>
+#Include *i <Other\print>
 ; }
+
+if !IsSet(UserSettings)
+    {
+        MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease do so and try again.")
+        return
+    }
 
 forRelease := getLocalVer()
 
@@ -13,22 +23,83 @@ if !IsSet(forRelease) || forRelease = ""
         return
     }
 
-;localVer // v2.8
-if FileExist("..\Icons\myscript.png")
-    TraySetIcon("..\Icons\myscript.png")
+;localVer // v2.9
+
+TraySetIcon(ptf.Icons "\myscript.png")
+
+class HotkeyReplacer {
+    UserDir := ""
+    UserIniLocation := ""
+    MyScriptsLoc => ptf.rootDir "\My Scripts.ahk"
+    KSAIniLoc => ptf["KSAini"]
+
+    __getUserLoc() {
+        getUserFile := FileSelect("D" 2,, "Select the root directory of your current in-use script path")
+        if getUserFile = ""
+            ExitApp()
+        return getUserFile
+    }
+
+    __replaceUserKSA(*) {
+        this.UserDir := this.__getUserLoc()
+        this.UserIniLocation := this.UserDir "\lib\KSA\Keyboard Shortcuts.ini"
+        readSections := IniRead(this.UserIniLocation)
+        allSections := StrSplit(readSections, ["`n", "`r"])
+        for v in allSections {
+            sectionArr := KeyShortAdjust().__CreateMap(v, this.UserIniLocation)
+            for k, v2 in sectionArr {
+                if KSA.HasOwnProp(k) {
+                    IniWrite(v2, ptf["KSAini"], v, k)
+                    print(Format("value: {}, section: {}, key: {}, file: {}", v2, v, k, ptf["KSAini"]))
+                }
+            }
+        }
+        ;// move on to my scripts
+        this.__replaceUserMyScripts()
+    }
+
+    __generateMSMap(string) {
+        hotkeyMap := Map()
+        loop {
+            if !location := InStr(string, "hotkey;",,, A_Index)
+                break
+            hotkeyKey := SubStr(string, location + 9, InStr(string, "::", 1, location, 1) - location - 9) ;creating a substring of just the hotkey
+
+            nameLocation := InStr(string, ";", 1, location, -1) ;getting the beginning location of the hotkey tag
+            hotkeyName := SubStr(string, nameLocation + 1, location - nameLocation - 1) ;getting the name of the hotkey tag
+            hotkeyMap.Set(hotkeyName, hotkeyKey)
+        }
+        return hotkeyMap
+    }
+
+    __replaceUserMyScripts() {
+        FileCopy(ptf.rootDir "\My Scripts.ahk", ptf.Backups "\My Scripts_Backup.ahk")
+        readUserMS := FileRead(this.UserDir "\My Scripts.ahk")
+        UserHotkeys := this.__generateMSMap(readUserMS)
+        for k, v in UserHotkeys
+            ;MsgBox(k "_" v)
+    }
+}
+
+HKR := HotkeyReplacer()
+replaceIt := ObjBindMethod(HKR, '__replaceUserKSA')
+
 ;defining the informational gui
-ReplacerGui := Gui("-Resize +MinSize500x380 -MaximizeBox", "Tomshi Hotkey Replacer for " forRelease)
-ReplacerGui.SetFont("S11.5")
-;nofocus
-ReplacerGui.AddButton("Default X0 Y0 w0 h0", "_")
+ReplacerGui := tomshiBasic(11.5,, "-Resize +MinSize500x380 -MaximizeBox", "Tomshi Hotkey Replacer for " forRelease)
 
 ;title and text
 titletext := "Welcome to Hotkey Replacer for " forRelease
 titleWidth := 362 + ((StrLen(forRelease)-4)*8)
 title := ReplacerGui.Add("Text", "X105 Y8 W" titleWidth " Center R1.5", titletext)
-;logoImg := ReplacerGui.Add("Picture", "X246 Y+10", A_ScriptDir "\" forRelease "\Support Files\Icons\myscript.png")
+
 title.SetFont("S15 Bold")
-text := ReplacerGui.Add("Text", "X30 W530 Y+5 Center", "This script is only designed to be used if you already have a version of my scripts in use. If you don't, feel free to exit out of this script.`n`nThis script is designed to replace all of the hotkeys in the release version of ``My Scripts.ahk`` with the hotkeys you have in your own local copy.`n`nThis script works by detecting the ``;xHotkey;`` tag I have above every hotkey and doing some string replacement to replace the release version with any you've changed locally.`n`nPlease be aware that any hotkeys you've added yourself will not be transfered over and there may still be some manual adjustment needed in that case.")
+text := ReplacerGui.Add("Text", "X30 W530 Y+5 Center", "
+(
+    This script is only designed to be used if you already have a version of my scripts in use. If you don't, feel free to exit out of this script.`n
+    This script is designed to replace all of the hotkeys in the release version of ``My Scripts.ahk`` with the hotkeys you have in your own local copy.`n
+    This script works by detecting the ``;xHotkey;`` tag I have above every hotkey and doing some string replacement to replace the release version with any you've changed locally.`n
+    Please be aware that any hotkeys you've added yourself will not be transfered over and there may still be some manual adjustment needed in that case.
+)")
 
 ;progress bar
 prog := ReplacerGui.Add("Progress", "X18 Y+20 w400 h20 cblue Smooth vMyProgress")
@@ -41,24 +112,18 @@ SB.SetText("  " forRelease)
 
 ;buttons
 replaceButton := ReplacerGui.Add("Button", "X+10 Y+-30", "replace")
-replaceButton.OnEvent("Click", replace)
+replaceButton.OnEvent("Click", replaceIt)
 cancelButton := ReplacerGui.Add("Button", "X+10", "cancel")
 cancelButton.OnEvent("Click", cancel)
 
-if FileExist(A_MyDocuments "\tomshi\settings.ini") ;the user has run my scripts before and a settings menu exists
-    {
-        if IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "dark mode") = "true" ;then we check if the user wants dark mode
-            goDark()
-    }
-else
-    goDark() ;otherwise we just default to it so it's in line with the rest of my scripts
+if UserSettings.dark_mode = true
+    dark.allButtons(ReplacerGui)
 
 ;show gui
 ReplacerGui.Show("Center")
 ReplacerGui.GetClientPos(,, &guiwidth, &height)
 title.GetPos(,, &width)
 title.Move((guiWidth-width)/2)
-
 
 ; ==============================================================================
 ; Functions
@@ -338,9 +403,3 @@ replace(*)
 }
 
 cancel(*) => ReplacerGui.Destroy()
-
-goDark(darkmode := true, DarkorLight := "Dark")
-{
-        dark.titleBar(ReplacerGui.Hwnd, darkmode)
-        dark.allButtons(ReplacerGui)
-}

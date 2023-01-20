@@ -1045,7 +1045,7 @@ F23::youMouse("l", "{Right}")
 ;		Premiere F14 scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-;// having these scripts above with the other premiere scripts caused `wheelupHotkey` and `wheeldownHotkey` to lag out and cause windows beeping
+;// having these scripts above with the other premiere scripts caused `wheelup` and `wheeldown` hotkeys to lag out and cause windows beeping
 ;// thanks ahk :)
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 ;nudgeupHotkey;
