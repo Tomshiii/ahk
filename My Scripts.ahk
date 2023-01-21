@@ -1028,7 +1028,7 @@ F14 & WheelDown::fastWheel()
 F14 & WheelUp::fastWheel()
 
 ;The below scripts are to swap between virtual desktops
-;// leaving them as sendinputs stops ;winleftHotkey; & ;winrightHotkey; from firing twice..? ahk is weird
+;// leaving them as sendinputs stops ;winleft; & ;winright; from firing twice..? ahk is weird
 ;virtualrightHotkey;
 F19 & XButton2::SendInput("^#{Right}")
 ;virtualleftHotkey;

@@ -1,4 +1,4 @@
-# <> Release 2.10 - Settings.ahk & KSA.ahk
+# <> Release 2.10 - Settings.ahk, KSA.ahk & HotkeyReplacer.ahk
 ###### This release contains a lot of underlying refactoring that completely changes large chunks of the codebase.
 
 - Added a new class `Settings.ahk` that takes complete control over all interactions with `settings.ini`
@@ -7,7 +7,10 @@
 
 - `Keyboard Shortcut Adjustmenst.ahk` is now a self contained class that automatically generates variables based on `KSA.ini`
     - Will now alert the user of duplicates
-    - `=` can no longer be used as a hotkey
+    - `=` can no longer be used as a hotkey within `KSA.ini`
+
+- `HotkeyReplacer.ahk` is now a self contained class that takes advantages of `Maps` to quickly and easily find and replace the user's custom values
+    - Has complete feature parity while only needing a fraction of the code
     
 ## > Functions
 - `dark.allButtons()` can now pass an object to customise the background colours of the GUI/GUI buttons
