@@ -1028,7 +1028,7 @@ F14 & WheelDown::fastWheel()
 F14 & WheelUp::fastWheel()
 
 ;The below scripts are to swap between virtual desktops
-;// leaving them as sendinputs stops ;winleftHotkey; & ;winrightHotkey; from firing twice..? ahk is weird
+;// leaving them as sendinputs stops ;winleft; & ;winright; from firing twice..? ahk is weird
 ;virtualrightHotkey;
 F19 & XButton2::SendInput("^#{Right}")
 ;virtualleftHotkey;
@@ -1045,7 +1045,7 @@ F23::youMouse("l", "{Right}")
 ;		Premiere F14 scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-;// having these scripts above with the other premiere scripts caused `wheelupHotkey` and `wheeldownHotkey` to lag out and cause windows beeping
+;// having these scripts above with the other premiere scripts caused `wheelup` and `wheeldown` hotkeys to lag out and cause windows beeping
 ;// thanks ahk :)
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 ;nudgeupHotkey;

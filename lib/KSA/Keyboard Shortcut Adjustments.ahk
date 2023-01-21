@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2023/01/19
- * @version 1.0.0
+ * @date 2023/01/21
+ * @version 1.0.1
  ***********************************************************************/
 
 ;{ \\ #Includes
@@ -21,8 +21,8 @@ class KeyShortAdjust {
      * @param {String} section the name of the ini section
      * @return returns a Map of all key names with their values in the ini section that was passed to the function
      */
-    __CreateMap(section) {
-        getSection := IniRead(this.iniLocation, section)
+    __CreateMap(section, iniLocation := this.iniLocation) {
+        getSection := IniRead(iniLocation, section)
         ;// checking to see if `=` is between any of the ""
         loop {
             if !var := InStr(getSection, '="',,, A_Index)
@@ -61,11 +61,11 @@ class KeyShortAdjust {
     /**
      * generate all variables based off ini file
      */
-    __SetSections() {
-        readSections := IniRead(this.iniLocation)
+    __SetSections(iniLocation := this.iniLocation) {
+        readSections := IniRead(iniLocation)
         allSections := StrSplit(readSections, ["`n", "`r"])
         for v in allSections {
-            sectionArr := this.__CreateMap(v)
+            sectionArr := this.__CreateMap(v, iniLocation)
             for k, v2 in sectionArr {
                 this.%k% := this.__SetType(v2)
                 ; print("Index: " k "`nvariablename: " v2 "`nvalue: " this.__SetType(v2) "`n-------`n") ;// debugging

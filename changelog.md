@@ -1,4 +1,4 @@
-# <> Release 2.10 - Settings.ahk & KSA.ahk
+# <> Release 2.10 - Settings.ahk, KSA.ahk & HotkeyReplacer.ahk
 ###### This release contains a lot of underlying refactoring that completely changes large chunks of the codebase.
 
 - Added a new class `Settings.ahk` that takes complete control over all interactions with `settings.ini`
@@ -7,15 +7,21 @@
 
 - `Keyboard Shortcut Adjustmenst.ahk` is now a self contained class that automatically generates variables based on `KSA.ini`
     - Will now alert the user of duplicates
-    - `=` can no longer be used as a hotkey
+    - `=` can no longer be used as a hotkey within `KSA.ini`
+
+- `HotkeyReplacer.ahk` is now a self contained class that takes advantages of `Maps` to quickly and easily find and replace the user's custom values
+    - Has complete feature parity while only needing a fraction of the code
     
 ## > Functions
-- `dark.allButtons()` can now pass an object to customise the background colours of the GUI/GUI buttons
 - `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu
 - `prem.preset("loremipsum")` now checks for images multiple times to avoid erroring out earlier than necessary 
 - Add `runcmd()` as a wrapper function to quickly send a command to the command line
     - Added Streamdeck scripts `ffmpeg.ahk` & `yt-dlp.ahk` to check for updates for both utilities
 - Moved `getcmd()` out of `Extract.ahk` and into its own function file
+
+`dark.allButtons()`
+- Fix function failing to enumerate passed the first button
+- Can now pass an object to customise the background colours of the GUI/GUI buttons
 
 `tool.Cust()`
 - Fix function throwing an error if a `float` is passed to the `x or y` parameters
