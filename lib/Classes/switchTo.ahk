@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/01/14
- * @version 1.1.1
+ * @date 2023/01/21
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -103,7 +103,8 @@ class switchTo {
     }
 
     /**
-     * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+     * This switchTo function will quickly switch to & cycle between windows of the specified program.
+     * This function will run premiere using the premiere shortcut defined in `ptf {` - this means that changing your adobe version within `settingsGUI()` currently has no change on what version of premiere opens
      */
     static Premiere()
     {
@@ -114,7 +115,8 @@ class switchTo {
     }
 
     /**
-     * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+     * This switchTo function will quickly switch to & cycle between windows of the specified program.
+     * This function will run AE using the after effects shortcut defined in `ptf {` - this means that changing your adobe version within `settingsGUI()` currently has no change on what version of after effects opens
      */
     static AE()
     {
@@ -153,7 +155,7 @@ class switchTo {
                     }
                 switch count {
                     case 1:
-                        Run(foundFile)
+                        Run(AE.path A_Space '"' foundFile '"')
                         tool.Cust("Running AE file for this project")
                         if WinWait(AE.winTitle,, 2)
                             WinActivate(AE.winTitle)
@@ -162,7 +164,7 @@ class switchTo {
                         pick := FileSelect("3", path "\effects.aep", "Which project do you wish to open?", "*.aep")
                         if pick = ""
                             return
-                        Run(pick)
+                        Run(AE.path A_Space '"' pick '"')
                         tool.Cust("Running selected AE project")
                         if WinWait(AE.winTitle,, 2)
                             WinActivate(AE.winTitle)

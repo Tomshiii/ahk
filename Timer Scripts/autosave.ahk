@@ -360,7 +360,7 @@ save()
                     aeVal.SaveTrack := 1
                     goto end
                 }
-            else if origWind = WinGetProcessName(aeVal.winTitle)
+            else if origWind = WinGetProcessName(editors.AE.winTitle)
                 {
                     if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                         {

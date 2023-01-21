@@ -4,6 +4,7 @@
 #Include <Classes\winGet>
 #Include <Classes\tool>
 #Include <Classes\ptf>
+#Include <GUIs\tomshiBasic>
 #Include <Functions\getScriptRelease>
 #Include <Functions\refreshWin>
 ; }
