@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to turn GUI elements to a dark mode.
  * @author tomshi, Lexikos, others
- * @date 2023/01/18
- * @version 1.0.2
+ * @date 2023/01/22
+ * @version 1.0.3
  ***********************************************************************/
 
 class Dark {
@@ -68,12 +68,12 @@ class Dark {
                         case "Light":
                             this.button(ctrl.Hwnd, "Light")
                             if !changeBg || !IsObject(changeBg)
-                                return
+                                continue
                             changeCol(guiObj, ctrl)
                         default:
                             this.button(ctrl.Hwnd)
                             if !changeBg || !IsObject(changeBg)
-                                return
+                                continue
                             changeCol(guiObj, ctrl)
                     }
                 }

@@ -166,9 +166,9 @@ text := ReplacerGui.Add("Text", "X15 W530 Y+5 Center", "
 )")
 
 ;buttons
-replaceButton := ReplacerGui.Add("Button", "x400", "replace")
+replaceButton := ReplacerGui.AddButton("x400", "replace")
 replaceButton.OnEvent("Click", replaceIt)
-cancelButton := ReplacerGui.Add("Button", "X+10", "cancel")
+cancelButton := ReplacerGui.AddButton("X+10", "cancel")
 cancelButton.OnEvent("Click", (*) => ReplacerGui.Destroy())
 
 if UserSettings.dark_mode = true
