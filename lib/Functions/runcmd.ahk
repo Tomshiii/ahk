@@ -14,12 +14,16 @@ runcmd(admin := false, wait := true, runParams*) {
         ;// throw
         errorLog(ValueError("Too many Parameters passed to function", -1),,, 1)
     }
-    elevation := (admin = true) ? "*RunAs " : ""
-    Params := ["", "", ""]
+    elevation  := (admin = true) ? "*RunAs " : ""
+    defaultDir := (admin = true) ? A_WinDir "\System32" : "C:\Users\" A_UserName
+    Params := ["", defaultDir, ""]
     if IsSet(runParams) {
         for i, v in runParams {
             if IsSet(v)
-                Params.InsertAt(i, v)
+                {
+                    Params.RemoveAt(i)
+                    Params.InsertAt(i, v)
+                }
         }
     }
     try {
