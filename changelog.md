@@ -14,16 +14,14 @@
     - Will now only run after a symlink has been properly generated
     
 ## > Functions
+- Fix `errorLog()` not logging the current date
 - `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu
 - `prem.preset("loremipsum")` now checks for images multiple times to avoid erroring out earlier than necessary 
 - Add `runcmd()` as a wrapper function to quickly send a command to the command line
     - Added Streamdeck scripts `ffmpeg.ahk` & `yt-dlp.ahk` to check for updates for both utilities
 - Moved `getcmd()` out of `Extract.ahk` and into its own function file
 - `switchTo.AE()` & `New Premiere.ahk` now specifically run the shortcuts for their respective programs found in `..\Support Files\shortcuts\` instead of defaulting to the latest version of either program
-
-`dark.allButtons()`
-- Fix function failing to enumerate passed the first button
-- Can now pass an object to customise the background colours of the GUI/GUI buttons
+- `dark.allButtons()` can now pass an object to customise the background colours of the GUI/GUI buttons
 
 `tool.Cust()`
 - Fix function throwing an error if a `float` is passed to the `x or y` parameters

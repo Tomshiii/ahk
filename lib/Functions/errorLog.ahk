@@ -75,7 +75,7 @@ errorLog(err, optMessage?, toolCust := false, doThrow := false) {
                     if LatestReleaseBeta = LatestReleaseMain
                         LatestReleaseBeta := ""
                 }
-                time := Format("{}_{}_, {}:{}:{}.{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec, A_MSec)
+                time := Format("{}_{}_{}, {}:{}:{}.{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec, A_MSec)
                 start := Format("
                 (
                     \\ ErrorLogs
