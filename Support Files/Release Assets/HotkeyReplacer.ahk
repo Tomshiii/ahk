@@ -35,6 +35,9 @@ class HotkeyReplacer {
     tempDir => A_Temp "\tomshi"
     tempMS => this.tempDir "\tempMS.ahk"
 
+    /**
+     * prompts the user to select their in use root directory of the tomshi repo
+     */
     __getUserLoc() {
         getUserFile := FileSelect("D" 2,, "Select the root directory of your current in-use script path")
         if getUserFile = ""
@@ -42,6 +45,9 @@ class HotkeyReplacer {
         return getUserFile
     }
 
+    /**
+     * This function checks to ensure both `My Scripts.ahk` & `KSA.ini` can be found in the user's defined location
+     */
     __checkFiles() {
         this.UserDir := this.__getUserLoc()
         this.UserIniLocation := this.UserDir "\lib\KSA\Keyboard Shortcuts.ini"
@@ -49,6 +55,10 @@ class HotkeyReplacer {
             throw ValueError("Could not find ``My Scripts.ahk`` or ``Keyboard Shortcuts.ini`` within the chosen directory.", -1)
     }
 
+    /**
+     * This function will enumerate through the user's KSA.ini file and use that as a base to replace the release version of the tomshi repo.
+     * This function uses a function within `KeyShortAdjust()` to generate a map to do so
+     */
     __replaceUserKSA(*) {
         this.__checkFiles()
         FileCopy(this.UserIniLocation, ptf.Backups "\keyboard Shortcuts_Backup.ini", 1)
@@ -67,6 +77,9 @@ class HotkeyReplacer {
         this.__replaceUserMyScripts()
     }
 
+    /**
+     * This function will enumerate through the user's My Scripts.ahk file and generate a map of `;Hotkey; tag`/`hotkey::` combo
+     */
     __generateMSMap(string) {
         hotkeyMap := Map()
         loop {
@@ -82,6 +95,9 @@ class HotkeyReplacer {
         return hotkeyMap
     }
 
+    /**
+     * This function will enumerate through the user's My Scripts.ahk file and use that as a base to replace the release version of the tomshi repo.
+     */
     __replaceUserMyScripts() {
         ;// backup script
         FileCopy(ptf.rootDir "\My Scripts.ahk", ptf.Backups "\My Scripts_Backup.ahk", 1)
@@ -139,6 +155,9 @@ class HotkeyReplacer {
         this.__finish()
     }
 
+    /**
+     * What will happen when the class has finished
+     */
     __finish() {
         MsgBox("Attempting to replace the user's ``KSA`` & ``My Scripts`` values has completed. A backup of the original files can be found here:`n" ptf.Backups)
         ExitApp()
