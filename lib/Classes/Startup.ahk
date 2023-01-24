@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/18
- * @version 1.4.0
+ * @date 2023/01/25
+ * @version 1.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,6 +23,7 @@
 #Include <Other\print>
 ; // libs
 #Include <Other\_DLFile>
+#Include <Functions\allKeyUp>
 ; }
 
 class Startup {
@@ -621,6 +622,9 @@ class Startup {
         A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
         A_TrayMenu.Insert("9&", "Active Scripts", (*) => activeScripts())
         A_TrayMenu.Insert("10&", "Check for Updates", checkUp)
+        A_TrayMenu.Insert("11&") ;adds a divider bar
+        A_TrayMenu.Insert("12&", "allKeyUp()", (*) => allKeyUp())
+        A_TrayMenu.Insert("16&", "Close All", (*) => reload_reset_exit("exit"))
         if check =  true
             A_TrayMenu.Check("Check for Updates")
         checkUp(*)
