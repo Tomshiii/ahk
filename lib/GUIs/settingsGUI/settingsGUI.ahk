@@ -549,6 +549,8 @@ settingsGUI()
         ;// setting values depending on which program settings the user wishes to change
         switch program {
             case "Premiere":
+                shortcutName := "Adobe Premiere Pro.exe"
+                adobeFullName := "Adobe Premiere Pro"
                 title := program " Pro Settings"
                 yearIniName := "prem_year"
                 iniInitYear := UserSettings.prem_year
@@ -556,7 +558,10 @@ settingsGUI()
                 genProg := program
                 otherTitle := "After Effects Settings"
                 imageLoc := ptf.premIMGver
+                path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
             case "AE":
+                shortcutName := "AfterFX.exe"
+                adobeFullName := "Adobe After Effects"
                 title := "After Effects Settings"
                 yearIniName := "ae_year"
                 iniInitYear := UserSettings.ae_year
@@ -564,6 +569,7 @@ settingsGUI()
                 genProg := "AE"
                 otherTitle := "Premiere Pro Settings"
                 imageLoc := ptf.aeIMGver
+                path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
         }
         if WinExist(title)
             {
@@ -642,6 +648,13 @@ settingsGUI()
                 ver.Choose(1)
             UserSettings.%yearIniName% := year.value
             editCtrl(verIniName, ver) ;// call the func to reassign the settings value
+            ;// C:\Program Files\Adobe\Adobe Premiere Pro 2022
+            switch adobeFullName {
+                case "Adobe Premiere Pro":
+                    FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.Value "\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
+                    case "Adobe After Effects":
+                    FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.Value "\Support Files\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
+            }
         }
 
         /**

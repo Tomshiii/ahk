@@ -104,7 +104,7 @@ class switchTo {
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program.
-     * This function will run premiere using the premiere shortcut defined in `ptf {` - this means that changing your adobe version within `settingsGUI()` currently has no change on what version of premiere opens
+     * This function will run AE using the after effects version defined within `settingsGUI()`
      */
     static Premiere()
     {
@@ -116,7 +116,7 @@ class switchTo {
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program.
-     * This function will run AE using the after effects shortcut defined in `ptf {` - this means that changing your adobe version within `settingsGUI()` currently has no change on what version of after effects opens
+     * This function will run AE using the after effects version defined within `settingsGUI()`
      */
     static AE()
     {

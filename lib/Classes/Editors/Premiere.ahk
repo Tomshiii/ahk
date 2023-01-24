@@ -1,6 +1,6 @@
 /************************************************************************
  * @description A library of useful Premiere functions to speed up common tasks
- * Tested on and designed for v22.3.1 of Premiere
+ * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
  * @date 2023/01/19
  * @version 1.3.0.2

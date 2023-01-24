@@ -22,6 +22,7 @@
 - Moved `getcmd()` out of `Extract.ahk` and into its own function file
 - `switchTo.AE()` & `New Premiere.ahk` now specifically run the shortcuts for their respective programs found in `..\Support Files\shortcuts\` instead of defaulting to the latest version of either program
 - `dark.allButtons()` can now pass an object to customise the background colours of the GUI/GUI buttons
+- Changing `Adobe Premiere/Adobe After Effects` versions within `settingsGUI()` will now automatically generate new shortcuts within `..\Support Files\shortcuts\` to the selected version of the desired program
 
 `tool.Cust()`
 - Fix function throwing an error if a `float` is passed to the `x or y` parameters
