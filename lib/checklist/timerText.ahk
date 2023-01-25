@@ -1,5 +1,5 @@
 ;defines all text for the timer. Everything is relative to the previous control, move one to move them all
-startHoursRounded := floorDecimal(timer.Count/3600, 3) ;getting the hours by dividing the seconds past then rounding to 2dp
+startHoursRounded := floorDecimal(timer.Count/3600, timer.decimalPlace) ;getting the hours by dividing the seconds past then rounding to 2dp
 startMinutesRounded := Floor(((timer.Count/3600) - floor(timer.Count/3600))*60) ;getting the minutes past the hour
 
 timeHeights := Map(
@@ -12,13 +12,9 @@ if lengthCheck > 7
         MsgBox("Time listed in ``checklist.ini`` is too large.")
         return
     }
-if lengthCheck < 6
-    width := 60
-else
-    width := 70 + ((lengthCheck-6)*12)
 
 checklistGUI.AddText("X8 " timeHeights["default"] " W18", "H: ").SetFont("S14") ;defining the hours text
-timerText := checklistGUI.Add("Text", "X+5 w" width, startHoursRounded) ;setting the text that will contain the numbers
+timerText := checklistGUI.Add("Text", "X+5 w60", startHoursRounded) ;setting the text that will contain the numbers
 timerText.SetFont("S16 cRed")
 
 checklistGUI.AddText("X+12 W22", "M: ").SetFont("S14") ;defining the minutes text

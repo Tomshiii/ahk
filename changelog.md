@@ -36,6 +36,7 @@
 - Add `pcTimerShutdown.ahk` to provide a quick and easy GUI to shutdown your PC after any amount of time up to a max of `9999 hours`
 - Fix `checklist.ahk` defaulting to expanded UI
 - Fix some duplicate values in `KSA.ini`
+- Fix `checklist.ahk` hour value getting cut off
 - `MyRelease` is no longer a global variable defined in `My Scripts.ahk`
     - `Startup {` now gets initiated instead of using purely static functions so that it can share `MyRelease` and only assign it a value once
 - `Multi-Instnce Close.ahk` now ignores all scripts in `..\lib\Multi-Instance Close\ignoreList.ahk`

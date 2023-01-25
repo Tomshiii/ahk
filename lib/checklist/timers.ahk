@@ -6,7 +6,15 @@ class checklistTimer extends count {
         this.logger   := checklistLog(ms10)           ;// every 10min
         this.reminder := checklistReminder(ms)        ;// every minute
         this.count := this.count + startValue
+        if this.count >= 36000
+            {
+                this.hoursAdjust := true
+                this.decimalPlace := 2
+            }
     }
+
+    hoursAdjust := false
+    decimalPlace := 3
 
     /**
      * This function handles what happens when the start button is pressed
@@ -34,7 +42,9 @@ class checklistTimer extends count {
      * This function handles updating the text and is called by `tick()`
      */
     StopWatch() {
-        displayHours := Format("{:.3f}", floorDecimal(this.count/3600, 3)) ;
+        if (StrLen(Floor(this.count/3600)) > 1 && this.hoursAdjust = false)
+            this.decimalPlace := 2
+        displayHours := Format("{:." this.decimalPlace "f}", floorDecimal(this.count/3600, timer.decimalPlace)) ;
         timerText.Text := displayHours
         displayMinutes := Floor(((this.count/3600) - floor(this.count/3600))*60)
         timerMinutes.Text := displayMinutes
