@@ -15,8 +15,19 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
     if !RegExMatch(url, "^(https?://)?[\w/?=%.-]+\.[\w/&?=%.-]+$")
         return false
     var := getHTML(url)
-    RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
-    initialMatch := sTitle[1]
+    document := ComObject("HTMLfile")
+    document.write(var)
+    initialMatch := document.Title
+    if initialMatch = ""
+        {
+            RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
+            initialMatch := sTitle[1]
+            if initialMatch = "" {
+                errorLog(ValueError("Couldn't determine the title", -2),, 1)
+                return false
+            }
+        }
+
     replaceChars := ["&#39;", "'", "&quot;", '＂']
     finalTitle := ""
     for ind, value in replaceChars
