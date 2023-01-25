@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.30.1
+;\\v2.30.2
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -409,6 +409,8 @@ F18:: ;open the "show more options" menu in win11
 !q::VSCode.script(16) ;clicks on my `qmk` script in vscode
 ;vscodechangeHotkey;
 !c::VSCode.script(12) ;clicks on my `changelog` file in vscode
+;vscodeTestHotkey;
+!t::VSCode.script()
 ;vscodesearchHotkey;
 $^f::VSCode.search()
 ;vscodecutHotkey;

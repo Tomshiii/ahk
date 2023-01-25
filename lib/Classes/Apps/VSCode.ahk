@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/01/19
- * @version 1.2.0
+ * @date 2023/01/25
+ * @version 1.2.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -82,6 +82,16 @@ class VSCode {
                 block.Off()
                 tool.Wait()
                 tool.Cust("The function folder has been expanded", 2.0)
+                return
+            }
+        ;// I have a dummy test .ahk file I use constantly, this is simply navigating to it
+        if A_ThisHotkey = KSA.testHotkey
+            {
+                delaySI(50, "{Down 5}{Enter}", "{Down 16}{Enter}")
+                sleep 50
+                block.Off()
+                tool.Wait()
+                tool.Cust("The test file has been selected", 2.0)
                 return
             }
         SendInput("{Down " script "}")
