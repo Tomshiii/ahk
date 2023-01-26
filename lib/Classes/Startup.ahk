@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/26
- * @version 1.4.3
+ * @version 1.4.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -64,15 +64,6 @@ class Startup {
         ;// checking to see if the users OS version is high enough to support dark mode
         darkCheck := this.__checkDark()
 
-        ;// checking to see if the settings folder location exists & if not, creates it
-        if FileExist(UserSettings.SettingsFile)
-            {
-                ver := UserSettings.version
-                ;//! do note if you're pulling commits from the `dev` branch of this repo and I add something to the `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
-                if !VerCompare(this.MyRelease, ver) > 0
-                    return
-            }
-
         genNewMap() {
             newMap := Map()
             newMap.CaseSense := "Off"
@@ -109,6 +100,18 @@ class Startup {
         BLOCKAWARE      := allTrack.Set("block_aware",             IniRead(ptf["settings"], "Track", "block aware", "false"))
         MONITORALERT    := allTrack.Set("monitor_alert",           IniRead(ptf["settings"], "Track", "monitor alert", 0))
         allTrack.Set("version", this.MyRelease)
+
+        ;// checking to see if the settings folder location exists
+        if FileExist(UserSettings.SettingsFile)
+            {
+                ;// this check ensures that the function will only prematurely return if the release version in the settings.ini is the same as the current release AND
+                ;// that the amount of settings all line up, otherwise the function will continue so that it may add missing settings values
+                if !VerCompare(this.MyRelease, UserSettings.version) > 0 &&
+                    UserSettings.Settings_.Length = allSett.Count &&
+                    UserSettings.Adjust_.Length = allAdjust.Count &&
+                    UserSettings.Track_.Length = allTrack.Count
+                    return
+            }
 
         ;// generate new settings
         ;// [settings]
