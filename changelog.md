@@ -16,8 +16,9 @@
 
 ## > Functions
 - Fix `errorLog()` not logging the current date
+- Fix `prem.movepreview()` sometimes getting stuck in the `Effect Controls` window
 - `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu
-- `prem.preset("loremipsum")` now checks for images multiple times to avoid erroring out earlier than necessary 
+- `prem.preset("loremipsum")` now checks for images multiple times to avoid erroring out earlier than necessary
 - Add `runcmd()` as a wrapper function to quickly send a command to the command line
     - Added Streamdeck scripts `ffmpeg.ahk` & `yt-dlp.ahk` to check for updates for both utilities
 - Moved `getcmd()` out of `Extract.ahk` and into its own function file

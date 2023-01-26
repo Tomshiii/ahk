@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
- * @date 2023/01/19
- * @version 1.3.0.2
+ * @date 2023/01/26
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -260,6 +260,7 @@ class Prem {
          * @param {Integer} time the current tick count that gets passed in as `A_TickCount`
          */
         reset(time) {
+            ListLines(0)
             ;// if the user activates this function before the timer finishes, due to some code below
             ;// this variable will be set to false. The timer will then see this change and cancel
             ;// itself so it can be later reset
@@ -924,10 +925,10 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        SendInput(KSA.effectControls)
-        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        delaySI(25, KSA.effectControls, KSA.effectControls)
         effectCtrl := obj.ctrlPos()
         SendInput(KSA.timelineWindow) ;focuses the timeline
+        sleep 25
         if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -940,13 +941,6 @@ class Prem {
                     }
             }
         loop {
-            if A_Index > 1
-                {
-                    ToolTip(A_Index)
-                    SendInput(KSA.effectControls)
-                    SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-                    effectCtrl := obj.ctrlPos()
-                }
             if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
                     {
                         MouseMove(x + "25", y)
@@ -988,6 +982,7 @@ class Prem {
          * This codeblock is potentially used below if the first loop fails
          */
         fallback() {
+            tool.Cust("fallback")
             origX := previewWin.x + 10, origY := previewWin.height
             previewWin.y += 30
             previewWin.x += 15
@@ -1024,12 +1019,29 @@ class Prem {
             }
             return true
         }
-        SendInput(KSA.programMonitor)
-        SendInput(KSA.programMonitor)
-        sleep 50
-        previewWin := obj.CtrlPos()
+        /**
+         * Save repeat code
+         * @return return an object of the currently in focus control
+         */
+        projMon() {
+            delaySI(25, KSA.programMonitor, KSA.programMonitor)
+            sleep 50
+            return obj.CtrlPos()
+        }
+        previewWin := projMon()
         if !IsObject(previewWin)
             return
+        ;// check to see if the classNN value of the current object is the same as earlier in the function
+        ;// if it is, it indicates that the function may have moved too fast so this block will try again
+        if previewWin.ctrl == effectCtrl.ctrl
+            {
+                previewWin := projMon()
+                if previewWin.ctrl == effectCtrl.ctrl
+                    {
+                        errorLog(TargetError("Function couldn't determine the difference between the Effect Controls window and the Program Monitor", 1), "This may be due to Premiere assigning them the same ClassNN value", 1)
+                        return
+                    }
+            }
         startX := (previewWin.x + (previewWin.width/2)) - 20
         startY := (previewWin.y + (previewWin.height/2)) - 10
         MouseMove(startX, startY) ;move to the preview window
