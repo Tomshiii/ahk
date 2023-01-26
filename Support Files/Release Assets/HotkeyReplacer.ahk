@@ -1,3 +1,5 @@
+#Warn VarUnset, StdOut
+
 ; { \\ #Includes
 #Include *i <Classes\Settings>
 #Include *i <KSA\Keyboard Shortcut Adjustments>
@@ -10,7 +12,7 @@
 
 if !IsSet(UserSettings)
     {
-        MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease do so and try again.")
+        MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease run ``CreateSymLink.ahk`` to do so and then try running this script again again.", "HotkeyReplacer.ahk requires SymLink")
         return
     }
 
@@ -23,7 +25,7 @@ if !IsSet(forRelease) || forRelease = ""
         return
     }
 
-;localVer // v2.10
+;localVer // v2.10.1
 
 TraySetIcon(ptf.Icons "\myscript.png")
 

@@ -1,5 +1,9 @@
-#Include "%A_ScriptDir%\..\lib\Classes\ptf.ahk"
-;// the user might not have created the symlink yet so we have to hardcode this one include
+#Warn VarUnset, StdOut
+#Include *i <Classes\ptf>
+
+;// if the user has not generated the symlink yet this script will return
+if !IsSet(UserSettings)
+    return
 
 SetWorkingDir(ptf.rootDir)
 

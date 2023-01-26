@@ -38,24 +38,17 @@ if DirExist(ahklib)
     }
 
 RunWait("*RunAs " A_ComSpec " /c " cmdLine)
+if !DirExist(ahklib)
+    {
+        MsgBox("Something went wrong", "Error", "16 4096")
+        return
+    }
 if !temp
-    return
+    {
+        MsgBox("SymLink generated successfully!", "Success", "64 4096")
+        return
+    }
 try {
     DirMove(A_Temp "\tomshi\UserBackup", ahklib "\UserBackup", 1)
+    MsgBox("SymLink generated successfully!", "Success", "64 4096")
 }
-
-/*
-grabGenerate() {
-    ;// read file
-    startRead     := FileRead(ptf.lib "\Classes\Startup.ahk")
-    generateStart := InStr(startRead, "static generate(MyRelease) {",,, 1)
-    nextFunction  := InStr(startRead, "static updateChecker(MyRelease) {",,, 1)
-    lastBrace     := InStr(startRead, "}",, nextFunction, -2)
-    ;//
-    return SubStr(startRead, generateStart, (lastBrace+1) - generateStart)
-}
-
-if !DirExist(A_Temp "\tomshi")
-    DirCreate(A_Temp "\tomshi")
-FileAppend(grabGenerate(), A_Temp "\tomshi")
-*/
