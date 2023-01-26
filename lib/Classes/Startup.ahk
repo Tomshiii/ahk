@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/25
- * @version 1.4.1
+ * @date 2023/01/26
+ * @version 1.4.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,9 +55,8 @@ class Startup {
     }
 
     /**
-     * This function will generate the settings.ini file if it doesn't already exist as well as regenerating it every new release to ensure any new .ini values are added without breaking anything.
-     *
-     * Do note if you're pulling commits from the `dev` branch of this repo and I add something to this `settings.ini` file & you pull the commit before a new release, this function will not generate a new file for you and you may encounter errors. You can get around this by manually lowering the "version" number in the `settings.ini` file and then running `My Scripts.ahk`
+     * This function handles checking `settings.ini` on a new release of the repo and ensures all values are present and set.
+     * It will also automatically add new values to an existing settings file if it isn't currently present.
      */
     generate() {
         if isReload() ;checks if script was reloaded
@@ -74,49 +73,84 @@ class Startup {
                     return
             }
 
-        allSett   := []
-        allAdjust := []
-        allTrack  := []
-        UPDATE          := allSett.Push(IniRead(ptf["settings"],   "Settings", "update check"             , "true"))
-        BETAUPDATE      := allSett.Push(IniRead(ptf["settings"],   "Settings", "beta update check"        , "false"))
-        DARK            := allSett.Push(IniRead(ptf["settings"],   "Settings", "dark mode"                , darkCheck))
-        RUNSTARTUP      := allSett.Push(IniRead(ptf["settings"],   "Settings", "run at startup"           , "true"))
-        CHECKCHECK      := allSett.Push(IniRead(ptf["settings"],   "Settings", "autosave check checklist" , "true"))
-        TOOLS           := allSett.Push(IniRead(ptf["settings"],   "Settings", "tooltip"                  , "true"))
-        CHECKTOOL       := allSett.Push(IniRead(ptf["settings"],   "Settings", "checklist tooltip"        , "true"))
-        WAIT            := allSett.Push(IniRead(ptf["settings"],   "Settings", "checklist wait"           , "false"))
-        ADOBE_GB        := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "adobe GB"                 , 45))
-        ADOBE_FS        := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "adobe FS"                 , 5))
-        AUTOMIN         := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "autosave MIN"             , 5))
-        GAMESEC         := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "game SEC"                 , 2.5))
-        MULTI           := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "multi SEC"                , 5))
-        PREMYEARVER     := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "prem year"                , "2022"))
-        AEYEARVER       := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "ae year"                  , "2022"))
-        premVer         := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "premVer"                  , "v22.3.1"))
-        aeVer           := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "aeVer"                    , "v22.6"))
-        psVer           := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "psVer"                    , "v24.0.1"))
-        resolveVer      := allAdjust.Push(IniRead(ptf["settings"], "Adjust"  , "resolveVer"               , "v18.0.4"))
-        ADOBE           := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "adobe temp"               , ""))
-        WORK            := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "working dir"              , "E:\Github\ahk"))
-        FC              := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "first check"              , "false"))
-        BLOCKAWARE      := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "block aware"              , "false"))
-        MONITORALERT    := allTrack.Push(IniRead(ptf["settings"],  "Track"   , "monitor alert"            , 0))
+        genNewMap() {
+            newMap := Map()
+            newMap.CaseSense := "Off"
+            return newMap
+        }
+        allSett   := genNewMap()
+        allAdjust := genNewMap()
+        allTrack  := genNewMap()
+;//     VarName         //             MapKey           //         MapValue+Default
+        UPDATE          := allSett.Set("update_check",             IniRead(ptf["settings"], "Settings", "update check", "true"))
+        BETAUPDATE      := allSett.Set("beta_update_check",        IniRead(ptf["settings"], "Settings", "beta update check", "false"))
+        DARK            := allSett.Set("dark_mode",                IniRead(ptf["settings"], "Settings", "dark mode", darkCheck))
+        RUNSTARTUP      := allSett.Set("run_at_startup",           IniRead(ptf["settings"], "Settings", "run at startup", "true"))
+        CHECKCHECK      := allSett.Set("autosave_check_checklist", IniRead(ptf["settings"], "Settings", "autosave check checklist", "true"))
+        TOOLS           := allSett.Set("tooltip",                  IniRead(ptf["settings"], "Settings", "tooltip", "true"))
+        CHECKTOOL       := allSett.Set("checklist_tooltip",        IniRead(ptf["settings"], "Settings", "checklist tooltip", "true"))
+        WAIT            := allSett.Set("checklist_wait",           IniRead(ptf["settings"], "Settings", "checklist wait", "false"))
+        ADOBE_GB        := allAdjust.Set("adobe_GB",               IniRead(ptf["settings"], "Adjust", "adobe GB", 45))
+        ADOBE_FS        := allAdjust.Set("adobe_FS",               IniRead(ptf["settings"], "Adjust", "adobe FS", 5))
+        AUTOMIN         := allAdjust.Set("autosave_MIN",           IniRead(ptf["settings"], "Adjust", "autosave MIN", 5))
+        GAMESEC         := allAdjust.Set("game_SEC",               IniRead(ptf["settings"], "Adjust", "game SEC", 2.5))
+        MULTI           := allAdjust.Set("multi_SEC",              IniRead(ptf["settings"], "Adjust", "multi SEC", 5))
+        PREMYEARVER     := allAdjust.Set("prem_year",              IniRead(ptf["settings"], "Adjust", "prem year", "2022"))
+        AEYEARVER       := allAdjust.Set("ae_year",                IniRead(ptf["settings"], "Adjust", "ae year", "2022"))
+        premVer         := allAdjust.Set("premVer",                IniRead(ptf["settings"], "Adjust", "premVer", "v22.3.1"))
+        aeVer           := allAdjust.Set("aeVer",                  IniRead(ptf["settings"], "Adjust", "aeVer", "v22.6"))
+        psVer           := allAdjust.Set("psVer",                  IniRead(ptf["settings"], "Adjust", "psVer", "v24.0.1"))
+        resolveVer      := allAdjust.Set("resolveVer",             IniRead(ptf["settings"], "Adjust", "resolveVer", "v18.0.4"))
+        premCache       := allAdjust.Set("premCache",              IniRead(ptf["settings"], "Adjust", "premCache", "F:\Adobe Cache\Prem"))
+        aeCache         := allAdjust.Set("aeCache",                IniRead(ptf["settings"], "Adjust", "aeCache", "F:\Adobe Cache\AE"))
+        ADOBE           := allTrack.Set("adobe_temp",              IniRead(ptf["settings"], "Track", "adobe temp", ""))
+        WORK            := allTrack.Set("working_dir",             IniRead(ptf["settings"], "Track", "working dir", "E:\Github\ahk"))
+        FC              := allTrack.Set("first_check",             IniRead(ptf["settings"], "Track", "first check", "false"))
+        BLOCKAWARE      := allTrack.Set("block_aware",             IniRead(ptf["settings"], "Track", "block aware", "false"))
+        MONITORALERT    := allTrack.Set("monitor_alert",           IniRead(ptf["settings"], "Track", "monitor alert", 0))
+        allTrack.Set("version", this.MyRelease)
+
         ;// generate new settings
-        for k, v in UserSettings.Settings_ {
-            UserSettings.%v% := allSett[A_Index]
-        }
-        for k, v in UserSettings.Adjust_ {
-            UserSettings.%v% := allAdjust[A_Index]
-        }
-        for k, v in UserSettings.Track_ {
-            ;// set version number
-            if k = UserSettings.Track_.Length
-                {
-                    UserSettings.%v% := this.MyRelease
-                    return
+        ;// [settings]
+        /**
+         * This function is to cut reduce code
+         * It enumerates through an array from `UserPref {` and compares it against an array created earlier
+         * It handles adding new values to settings.ini if they're listed above but not present in settings.ini
+         */
+        setSection(userSettingsArr, startupArr, iniSection, track := false) {
+            if (userSettingsArr.Length != startupArr.Count) {
+                tempSett := startupArr.Clone()
+                for k, v in userSettingsArr {
+                    if tempSett.Has(v)
+                        tempSett.Delete(v)
                 }
-            UserSettings.%v% := allTrack[A_Index]
+                if tempSett.Count > 0
+                    {
+                        for k, v in tempSett {
+                            IniWrite(startupArr.Get(k), UserSettings.SettingsFile, iniSection, k)
+                        }
+                    }
+            }
+            switch track {
+                case true:
+                    for k, v in userSettingsArr {
+                        ;// set version number
+                        if k = "version"
+                            {
+                                UserSettings.%v% := this.MyRelease
+                                continue
+                            }
+                        UserSettings.%v% := startupArr.Get(v)
+                    }
+                default:
+                    for k, v in userSettingsArr {
+                        UserSettings.%v% := startupArr.Get(v)
+                    }
+            }
         }
+        setSection(UserSettings.Settings_, allSett, "Settings")
+        setSection(UserSettings.Adjust_, allAdjust, "Adjust")
+        setSection(UserSettings.Track_, allTrack, "Track", true)
         reload_reset_exit("reset")
     }
 
@@ -131,17 +165,9 @@ class Startup {
         if isReload() ;checks if script was reloaded
             return
         ;checking to see if the user wishes to check for updates
-        check := UserSettings.update_check
-        if check = "stop"
+        if UserSettings.update_check = "stop"
             return
-        betaprep := 0
-        if UserSettings.beta_update_check = true
-            { ;if the user wants to check for beta updates instead, this block will fire
-                version := getScriptRelease(true, &changeVer)
-                betaprep := 1
-            }
-        else
-            version := getScriptRelease(, &changeVer) ;getting non beta latest release
+        version := (UserSettings.beta_update_check = true) ? getScriptRelease(true, &changeVer) : getScriptRelease(, &changeVer)
         if version = 0
             return
         tool.Wait()
@@ -149,9 +175,9 @@ class Startup {
             tool.Cust("Current Installed Version = " this.MyRelease "`nCurrent Github Release = " version, 5000)
         else
             tool.Cust("You are currently up to date", 2000)
-        switch check {
+        switch UserSettings.update_check {
             default:
-                errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, check),, 1)
+                errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, UserSettings.update_check),, 1)
                 return
             case false:
                 tool.Wait()
@@ -480,7 +506,11 @@ class Startup {
     /**
      * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
      *
-     * It should be noted I have created a custom location for `After Effects'` temp files to go to so that they're in the same folder as `Premiere's` just to keep things in one place. You will either have to change this folder directory to the actual default or set it to a similar place
+     * It should be noted I have created a custom location for all cache/temp folders and I do not keep them on my main drive. The default locations for premiere are:
+     * ```
+     * "MediaCache", A_AppData "\Adobe\Common\Media Cache Files",
+     * "PeakFiles", A_AppData "\Adobe\Common\Peak Files",
+     * ```
      */
     adobeTemp() {
         if isReload()
@@ -497,11 +527,12 @@ class Startup {
 
         ;first we set our counts to 0
         CacheSize := 0
-        ;then we define some filepaths, MediaCache & PeakFiles are Adobe defaults, AEFiles has to be set within after effects' cache settings
+        ;// the below filelocations are custom and will NOT work out of the box
+        baseFolder := "F:\Adobe Cache"
         cacheFolders := Map(
-            "MediaCache", A_AppData "\Adobe\Common\Media Cache Files",
-            "PeakFiles", A_AppData "\Adobe\Common\Peak Files",
-            "AEFiles", A_AppData "\Adobe\Common\AE", ;AGAIN ~~ THIS AE folder to exist you have to set it WITHIN THE AE CACHE SETTINGS, it IS NOT THE DEFAULT
+            "MediaCache", baseFolder "\Prem\Media Cache Files",
+            "PeakFiles",  baseFolder "\Prem\Peak Files",
+            "AEFiles",    baseFolder "\AE",
         )
         try {
             ;// adding up the total size of the above listed filepaths
@@ -510,7 +541,7 @@ class Startup {
                 {
                     if !DirExist(p) && alerted = false
                         {
-                            errorLog(TargetError(A_ThisFunc "() could not find one or more of the specified folders, therefor making it unable to calculate the total cache size", -1), A_ScriptName "`nLine: " A_LineNumber, {time: 4.0})
+                            errorLog(TargetError(A_ThisFunc "() could not find one or more of the specified folders, therefore making it unable to calculate the total cache size", -1), A_ScriptName "`nLine: " A_LineNumber, {time: 4.0})
                             alerted := true
                             tool.Wait()
                             continue
@@ -520,7 +551,8 @@ class Startup {
             if CacheSize = 0
                 {
                     tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0)
-                    goto end
+                    UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
+                    return
                 }
             ;// `winget.FolderSize()` returns it's value in GB, we simply want to round it to 2dp
             tool.Cust("Total Adobe cache size - " Round(CacheSize, 2) "/" largestSize "GB", 3.0)
@@ -537,7 +569,6 @@ class Startup {
                             }
                     }
                 }
-            end:
         }
         UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
     }

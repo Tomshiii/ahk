@@ -4,15 +4,16 @@
 - Added a new class `Settings.ahk` (#12) that takes complete control over all interactions with `settings.ini`
     - Handles creating `settings.ini` if it doesn't exist yet
     - Moved `createIni()` into `Settings.ahk`
+    - `startup.generate()` can now add missing `settings.ini` values
 
 - `Keyboard Shortcut Adjustmenst.ahk` (#13) is now a self contained class that automatically generates variables based on `KSA.ini`
     - Will now alert the user of duplicates
     - `=` can no longer be used as a hotkey within `KSA.ini`
 
-- `HotkeyReplacer.ahk` is now a self contained class (#14) that takes advantages of `Maps` to quickly and easily find and replace the user's custom values
+- `HotkeyReplacer.ahk` is now a self contained class (#14) that takes advantages of `Map()'s` to quickly and easily find and replace the user's custom values
     - Has complete feature parity while only needing a fraction of the code
     - Will now only run after a symlink has been properly generated
-    
+
 ## > Functions
 - Fix `errorLog()` not logging the current date
 - `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu
