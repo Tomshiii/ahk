@@ -6,8 +6,8 @@ KeyHistory(0)
 #Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\tool>
-#Include <Functions\detect>
 #Include <Classes\obj>
+#Include <Functions\detect>
 #Include <Multi-Instance Close\ignoreList>
 ; }
 

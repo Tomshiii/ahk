@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/26
- * @version 1.4.4
+ * @version 1.4.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -531,11 +531,11 @@ class Startup {
         ;first we set our counts to 0
         CacheSize := 0
         ;// the below filelocations are custom and will NOT work out of the box
-        baseFolder := "F:\Adobe Cache"
+        ;// can be set within settingGUI()
         cacheFolders := Map(
-            "MediaCache", baseFolder "\Prem\Media Cache Files",
-            "PeakFiles",  baseFolder "\Prem\Peak Files",
-            "AEFiles",    baseFolder "\AE",
+            "Prem", UserSettings.premCache,
+            "AE",  UserSettings.aeCache,
+            ;// add any more here
         )
         try {
             ;// adding up the total size of the above listed filepaths
@@ -653,12 +653,12 @@ class Startup {
     trayMen() {
         check := UserSettings.update_check
         A_TrayMenu.Insert("7&") ;adds a divider bar
-        A_TrayMenu.Insert("8&", "allKeyUp()", (*) => allKeyUp())
-        A_TrayMenu.Insert("9&", "Settings", (*) => settingsGUI())
+        A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
+        A_TrayMenu.Insert("9&", "allKeyUp()", (*) => allKeyUp())
         A_TrayMenu.Insert("10&", "Active Scripts", (*) => activeScripts())
         A_TrayMenu.Insert("11&", "Check for Updates", checkUp)
-        A_TrayMenu.Insert("15&", "Open All", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
-        A_TrayMenu.Insert("16&", "Close All", (*) => reload_reset_exit("exit"))
+        A_TrayMenu.Insert("13&", "Open All", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
+        A_TrayMenu.Insert("14&", "Close All", (*) => reload_reset_exit("exit"))
         A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")
         A_TrayMenu.Delete("3&")

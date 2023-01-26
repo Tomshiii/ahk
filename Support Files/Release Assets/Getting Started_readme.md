@@ -7,9 +7,9 @@ ___
 
 **Symlink:**
 
-Will create a symlink between ``A_MyDocuments \AutoHotkey\`` & the ``..\lib\`` folder in these scripts. This symlink is essential for correct opperation but only needs to be created once (or if the user moves the repo to a new directory)
+Will create a symlink between ``A_MyDocuments \AutoHotkey\`` & the ``..\lib\`` folder in these scripts. This symlink is essential for correct opperation but only needs to be created once (or if the user moves the repo to a new directory. *This means that if you download a **new** release and don't put it in the same file directory, the symlink will need to be regenerated.*)
 
-**note: selecting this option will ask for a script to be launched elevated, this is necessary as cmd needs to be elevated to create symlinks. This option should also not be selected if the current directory is not the final destination for this repo*
+**note: selecting this option will ask for elevation, this is necessary as cmd needs to be elevated to create symlinks. This option should also not be selected if the current directory is not the final destination for this repo*
 ___
 
 **Hotkey Replacer:**
@@ -27,12 +27,12 @@ Will create a shortcut of `PC Startup.ahk` (`..\PC Startup\PC Startup.ahk`) in t
 
 ___
 
-If you choose to ignore this install step and wish to run these files at a later time, they can be located;
-Symlink:            `..\Support Files\Release Assets\CreateSymLink.ahk`
-Hotkey Replacer:    `..\Support Files\Release Assets\HotkeyReplacer.ahk`
-PC Startup:         `..\PC Startup\PC Startup.ahk`
+If you choose to ignore this install step and wish to run these files at a later time, they can be located;  
+Symlink:            `..\Support Files\Release Assets\CreateSymLink.ahk`  
+Hotkey Replacer:    `..\Support Files\Release Assets\HotkeyReplacer.ahk`  
+PC Startup:         `..\PC Startup\PC Startup.ahk`  
 
-Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's a compiled version of my scripts, alongside the `SevenZip.ahk` lib by `thqby` to allow me to include the repo in a .zip file that then gets automatically extracted when you run the release .exe ^.^
+Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's a compiled version of my scripts, alongside the `SevenZip.ahk` lib by `thqby` to allow me to include the repo in a .zip file that then gets automatically extracted when you run the release `.exe` you can see how this process works by looking at `..\Support Files\Release Assets\generateUpdate.ahk` in the repo ^.^
 
 If your installer fails, a `settings.ini` file may fail to generate in `A_MyDocuments\tomshi\`. If this happens you can try running `baselineSettings.ahk` found: `..\Support Files\Release Assets\baselineSettings.ahk` to get started.
 

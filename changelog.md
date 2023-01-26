@@ -17,15 +17,18 @@
 ## > Functions
 - Fix `errorLog()` not logging the current date
 - Fix `prem.movepreview()` sometimes getting stuck in the `Effect Controls` window
-- `activeScripts()` can now be called by right clicking on `My Scripts.ahk` in the tray menu
 - `prem.preset("loremipsum")` now checks for images multiple times to avoid erroring out earlier than necessary
 - Add `runcmd()` as a wrapper function to quickly send a command to the command line
     - Added Streamdeck scripts `ffmpeg.ahk` & `yt-dlp.ahk` to check for updates for both utilities
 - Moved `getcmd()` out of `Extract.ahk` and into its own function file
 - `switchTo.AE()` & `New Premiere.ahk` now specifically run the shortcuts for their respective programs found in `..\Support Files\shortcuts\` instead of defaulting to the latest version of either program
 - `dark.allButtons()` can now pass an object to customise the background colours of the GUI/GUI buttons
-- Changing `Adobe Premiere/Adobe After Effects` versions within `settingsGUI()` will now automatically generate new shortcuts within `..\Support Files\shortcuts\` to the selected version of the desired program
 - `getHTMLTitle()` now uses a `ComObject` to retrieve the url title instead on relying solely on regex
+
+`settingsGUI()`
+- Changing `Adobe Premiere/Adobe After Effects` versions within their respective menu GUI will now automatically generate new shortcuts within `..\Support Files\shortcuts\` to the selected version of the desired program
+- Cache folders for `startup.adobeTemp()` are now assigned within the desired programs settings GUI
+
 
 `tool.Cust()`
 - Fix function throwing an error if a `float` is passed to the `x or y` parameters
@@ -40,9 +43,9 @@
 - Fix some duplicate values in `KSA.ini`
 - `MyRelease` is no longer a global variable defined in `My Scripts.ahk`
     - `Startup {` now gets initiated instead of using purely static functions so that it can share `MyRelease` and only assign it a value once
-- `Multi-Instnce Close.ahk` now ignores all scripts in `..\lib\Multi-Instance Close\ignoreList.ahk`
+- `Multi-Instance Close.ahk` now ignores all scripts in `..\lib\Multi-Instance Close\ignoreList.ahk`
 - Streamdeck `download` scripts now use `#SingleInstance Off` to allow multiple downloads at the same time
-- `allKeyUp()` and `reload_reset_exit("exit")` can now be called by right clicking on `My Scripts.ahk`'s tray icon
+- `allKeyUp()`, `activeScripts()`, `PC Startup.ahk` and `reload_reset_exit("exit")` can now be called by right clicking on `My Scripts.ahk`'s tray icon
 
 `checklist.ahk`
 - Fix defaulting to expanded UI

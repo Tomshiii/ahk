@@ -32,6 +32,8 @@ settingsGUI()
     openMenu.Add("&Wiki Dir`tCtrl+O", openWiki.Bind("local"))
     openMenu.Add("&Wiki Web`tCtrl+W", openWiki.Bind("web"))
     editorsMenu := Menu()
+    editorsMenu.Add("&Adobe", (*) => MsgBox("Not implemented"))
+    editorsMenu.Disable("&Adobe")
     editorsMenu.Add("&After Effects", menu_Adobe.bind("AE"))
     ; editorsMenu.Add("&Photoshop", ) ;// call a different gui
     editorsMenu.Add("&Premiere", menu_Adobe.bind("Premiere"))
@@ -146,18 +148,15 @@ settingsGUI()
     betaupdate(*)
     {
         updateVal := betaupdateCheckToggle.Value
-        if updateVal = 1 && updateCheckToggle.Value != 0
-            {
+        switch betaupdateCheckToggle.Value {
+            case 1 && (updateCheckToggle.Value != 0):
                 betaStart := true
                 UserSettings.beta_update_check := true
-            }
-
-        else
-            {
+            default:
                 betaupdateCheckToggle.Value := 0
                 betaStart := false
                 UserSettings.beta_update_check := false
-            }
+        }
     }
 
     ;// dark mode toggle
@@ -177,26 +176,25 @@ settingsGUI()
     {
         ToolTip("")
         darkToggleVal := darkCheck.Value
-        switch darkToggleVal {
-            case 1:
-                UserSettings.dark_mode := true
-                darkCheck.ToolTip := darkToolY
+        UserSettings.dark_mode := (darkCheck.Value = 1) ? true : false
+        darkCheck.ToolTip := (darkCheck.Value = 1) ? darkToolY : darkToolN
+        if (darkCheck.Value = 1)
+            {
                 tool.Cust(darkToolY, 2000)
                 goDark()
-            case 0:
-                UserSettings.dark_mode := false
-                darkCheck.ToolTip := darkToolN
-                tool.Cust(darkToolN, 2000)
-                goDark(false, "Light")
-        }
+                return
+            }
+        ;// dark mode is false
+        tool.Cust(darkToolN, 2000)
+        goDark(false, "Light")
     }
 
     ;// run at startup
-    runStartupINI := UserSettings.run_at_startup
+    runStartupINI     := UserSettings.run_at_startup
     StartupCheckTitle := "Run at Startup"
-    StartupCheck := settingsGUI.Add("Checkbox", "Checked" runStartupINI " Y+5", StartupCheckTitle)
-    startToolY := "My scripts will automatically run at PC startup"
-    startToolN := "My scripts will no longer run at PC startup"
+    StartupCheck      := settingsGUI.Add("Checkbox", "Checked" runStartupINI " Y+5", StartupCheckTitle)
+    startToolY        := "My scripts will automatically run at PC startup"
+    startToolN        := "My scripts will no longer run at PC startup"
     switch runStartupINI {
         case true:  StartupCheck.ToolTip := startToolY
         case false: StartupCheck.ToolTip := startToolN
@@ -253,23 +251,18 @@ settingsGUI()
                 toolFalse := startToolN
         }
 
-        ;// toggling the checkboxes
-        toggleVal := script.Value
+        ;// toggling the checkboxes & setting values based off checkbox state
         iniVar := StrReplace(ini, A_Space, "_")
-        switch toggleVal {
-            case 1:
-                UserSettings.%iniVar% := true
-                script.ToolTip := toolTrue
-                tool.Cust(toolTrue, 2000)
-            case 0:
-                UserSettings.%iniVar% := false
-                script.ToolTip := toolFalse
-                tool.Cust(toolFalse, 2000)
-        }
+        UserSettings.%iniVar% := (script.Value = 1) ? true : false
+        script.ToolTip := (script.Value = 1) ? toolTrue : toolFalse
+        if script.value = 1
+            tool.Cust(toolTrue, 2.0)
+        else
+            tool.Cust(toolFalse, 2.0)
         ;// custom logic for the run at startup option
         if ini = "run at startup"
             {
-                switch toggleVal {
+                switch script.Value {
                     case 1:
                         startupScript := ptf.rootDir "\PC Startup\PC Startup.ahk"
                         FileCreateShortcut(startupScript, ptf["scriptStartup"])
@@ -303,7 +296,7 @@ settingsGUI()
     waitToolY := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
     waitToolN := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
     switch checklistWait {
-        case true:    checkWait.ToolTip := waitToolY
+        case true:  checkWait.ToolTip := waitToolY
         case false: checkWait.ToolTip := waitToolN
     }
     checkWait.OnEvent("Click", msgboxToggle.Bind("checklist wait"))
@@ -327,22 +320,16 @@ settingsGUI()
                 toolFalse := checkToolN
             }
         msgboxText := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
-        checkWaitVal := script.Value
         iniVar := StrReplace(ini, A_Space, "_")
-        switch checkWaitVal {
-            case 1:
-                UserSettings.%iniVar% := true
-                checkWait.ToolTip := toolTrue
-                tool.Cust(toolTrue, 2.0)
-                if WinExist("checklist.ahk - AutoHotkey")
-                    MsgBox(msgboxtext,, "48 4096")
-            case 0:
-                UserSettings.%iniVar% := false
-                checkWait.ToolTip := toolFalse
-                tool.Cust(toolFalse, 2.0)
-                if WinExist("checklist.ahk - AutoHotkey")
-                    MsgBox(msgboxtext,, "48 4096")
-        }
+        ;// setting values based on the state of the checkbox
+        UserSettings.%iniVar% := (script.Value = 1) ? true : false
+        checkWait.ToolTip := (script.Value = 1) ? toolTrue : toolFalse
+        if script.value = 1
+            tool.Cust(toolTrue, 2.0)
+        else
+            tool.Cust(toolFalse, 2.0)
+        if WinExist("checklist.ahk - AutoHotkey")
+            MsgBox(msgboxtext,, "48 4096")
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -387,10 +374,7 @@ settingsGUI()
 
     buttons(which, button, *)
     {
-        if which = "adobe"
-            buttonTitle := "adobeTemp()"
-        if which = "first"
-            buttonTitle := "firstCheck()"
+        buttonTitle := (which = "adobe") ? "adobeTemp()" : "firstCheck()"
         switch button.text {
             case buttonTitle: button.Text := "undo?"
             case "undo?":     button.Text := buttonTitle
@@ -408,10 +392,7 @@ settingsGUI()
     SetTimer(statecheck, -100)
     statecheck(*)
     {
-        if A_IsSuspended = 0
-            state := "Active"
-        else
-            state := "Suspended"
+        state := (A_IsSuspended = 0) ? "Active" : "Suspended"
         SB.SetText(" Scripts " state, 2)
         SetTimer(, -1000)
     }
@@ -442,23 +423,26 @@ settingsGUI()
     {
         SetTimer(statecheck, 0)
         SetTimer(iniWait, 0)
-        if !IsSet(butt) ;have to do it this way instead of using `butt.text` because hitting the X to close would cause an error doing that. Binding the function is the only way
+        /* if !IsSet(butt) ;have to do it this way instead of using `butt.text` because hitting the X to close would cause an error doing that. Binding the function is the only way
             {
                 ;check
                 if betaStart = true
                     Run(A_ScriptFullPath)
-            }
+            } */
         ;check to see if the user wants to reset adobeTemp()
         if adobeToggle.Text = "undo?"
-            UserSettings.adobe_temp := ""
+            UserSettings.adobe_temp := 0
         ;check to see if the user wants to reset firstCheck()
         if firstToggle.Text = "undo?"
-            UserSettings.first_check := ""
+            UserSettings.first_check := 0
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         if IsSet(butt) && butt = "hard"
-            reload_reset_exit("reset")
+            {
+                reload_reset_exit("reset")
+                return ;// this is necessary
+            }
         ;// has to reload at a minimum to refresh any settings changes
         reload_reset_exit("reload")
         ;before finally closing
@@ -522,24 +506,20 @@ settingsGUI()
         if !WinWait("settings.ini",, 3)
             return
         WinMove(x+width-8, y, 322, height-2, "settings.ini")
-        SetTimer(iniWait, -100)
+        SetTimer(iniWait, 100)
     }
     iniWait()
     {
         if !WinExist("Settings " version)
             {
                 SetTimer(, 0)
-                goto end
-            }
-        if WinExist("settings.ini")
-            {
-                SetTimer(, -1000)
-                goto end
+                return
             }
         if !WinExist("settings.ini") && WinExist("Settings " version)
-            settingsGUI.Opt("+AlwaysOnTop")
-        SetTimer(, 0)
-        end:
+            {
+                settingsGUI.Opt("+AlwaysOnTop")
+                SetTimer(, 0)
+            }
     }
 
     /**
@@ -549,6 +529,7 @@ settingsGUI()
         ;// setting values depending on which program settings the user wishes to change
         switch program {
             case "Premiere":
+                short := "prem"
                 shortcutName := "Adobe Premiere Pro.exe"
                 adobeFullName := "Adobe Premiere Pro"
                 title := program " Pro Settings"
@@ -560,6 +541,7 @@ settingsGUI()
                 imageLoc := ptf.premIMGver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
             case "AE":
+                short := "ae"
                 shortcutName := "AfterFX.exe"
                 adobeFullName := "Adobe After Effects"
                 title := "After Effects Settings"
@@ -581,14 +563,18 @@ settingsGUI()
 
         ;// start defining the gui
         adobeGui.AddText("Section", "Year: ")
-        year := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W100 Number Limit4", iniInitYear)
+        year := adobeGui.Add("Edit", "x" ctrlX " ys r1 W100 Number Limit4", iniInitYear)
         year.OnEvent("Change", yearEvent)
         adobeGui.AddText("xs y+10", "Version: ")
         generateDrop(genProg, &ver, ctrlX)
-
+        adobeGui.AddText("xs y+10 Section", "Cache Dir: ")
+        cacheInit := short "cache"
+        cache := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W150 ReadOnly", UserSettings.%cacheInit%)
+        cacheSelect := adobeGui.Add("Button", "x+5 w60 h27", "select")
+        cacheSelect.OnEvent("Click", cacheslct.Bind(adobeFullName))
 
         ;// warning & save button
-        adobeGui.AddText("xs y+15", "*some settings will require`na full reload to take effect").SetFont("s9 italic")
+        adobeGui.AddText("xs+50 y+15", "*some settings will require`na full reload to take effect").SetFont("s9 italic")
         saveBut := adobeGui.Add("Button", "x+-10", "save")
         saveBut.OnEvent("Click", saveVer)
 
@@ -622,9 +608,7 @@ settingsGUI()
          * This function handles the logic for what happens when the adobeGui save button is checked
          * It is currently reserved for future use and has no current function besides destroying the gui
          */
-        saveVer(*) {
-            adobeGui.Destroy()
-        }
+        saveVer(*) => adobeGui.Destroy()
 
         /**
          * This function handles the logic behind what happens when the user types in a new year value
@@ -633,26 +617,25 @@ settingsGUI()
             if StrLen(year.Value) != 4
                 return
             if (year.Value > A_Year + 1 || year.Value < 2013) {
-                    ver.Delete()
-                    return
-                }
+                ver.Delete()
+                return
+            }
             if SubStr(ver.value, 3, 2) != SubStr(year.Value, 3, 2)
                 ver.Delete()
             new := []
             loop files ptf.ImgSearch "\" program "\*", "D" {
-                    if InStr(A_LoopFileName, "v" SubStr(year.Value, 3, 2))
-                        new.Push(A_LoopFileName)
-                }
+                if InStr(A_LoopFileName, "v" SubStr(year.Value, 3, 2))
+                    new.Push(A_LoopFileName)
+            }
             ver.Add(new)
             if new.Has(1)
                 ver.Choose(1)
             UserSettings.%yearIniName% := year.value
-            editCtrl(verIniName, ver) ;// call the func to reassign the settings value
-            ;// C:\Program Files\Adobe\Adobe Premiere Pro 2022
+            editCtrl(verIniName, ver) ;// call the func to reassign the settings values
             switch adobeFullName {
                 case "Adobe Premiere Pro":
                     FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.Value "\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
-                    case "Adobe After Effects":
+                case "Adobe After Effects":
                     FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.Value "\Support Files\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
             }
         }
@@ -662,29 +645,46 @@ settingsGUI()
          */
         generateDrop(program, &ver, ctrlX) {
             if (program != "AE" && program != "Premiere") {
-                    ;// throw
-                    errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
-                }
+                ;// throw
+                errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
+            }
             if !DirExist(ptf.ImgSearch "\" program "\") {
-                    ;// throw
-                    errorLog(ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program),,, 1)
-                }
+                ;// throw
+                errorLog(ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program),,, 1)
+            }
             supportedVers := []
             loop files ptf.ImgSearch "\" program "\*", "D" {
-                    if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
-                        supportedVers.Push(A_LoopFileName)
-                }
+                if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
+                    supportedVers.Push(A_LoopFileName)
+            }
+
             for value in supportedVers {
-                    if value = imageLoc
-                        {
-                            defaultIndex := A_Index
-                            break
-                        }
-                }
+                if value = imageLoc
+                    {
+                        defaultIndex := A_Index
+                        break
+                    }
+            }
             if !IsSet(defaultIndex)
                 defaultIndex := 1
             ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
             ver.OnEvent("Change", editCtrl.bind(verIniName))
+        }
+
+        cacheslct(progName, *) {
+            WinSetAlwaysOnTop(0, "Settings " version)
+            settingsGUI.Opt("+Disabled")
+            slct := FileSelect("D",, "Select " progName " Cache Folder")
+            if slct = ""
+                {
+                    if WinExist("Settings " version)
+                        settingsGUI.Opt("-Disabled")
+                    return
+                }
+            UserSettings.%cacheInit% := slct
+            cache.Text := slct
+            if WinExist("Settings " version)
+                settingsGUI.Opt("-Disabled")
         }
     }
 }
