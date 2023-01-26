@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.30.2
+;\\v2.30.3
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -417,6 +417,8 @@ $^f::VSCode.search()
 $^x::VSCode.cut()
 ;vscodeCopyHotkey;
 $^c::VSCode.copy()
+;vscodeHideBar;
+^b::delaySI(15, KSA.hideSideBar, KSA.hideActivityBar)
 
 #HotIf WinActive(browser.firefox.winTitle)
 ;pauseyoutubeHotkey;
