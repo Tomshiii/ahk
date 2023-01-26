@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/01/26
- * @version 1.4.2
+ * @version 1.4.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -650,12 +650,15 @@ class Startup {
     trayMen() {
         check := UserSettings.update_check
         A_TrayMenu.Insert("7&") ;adds a divider bar
-        A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
-        A_TrayMenu.Insert("9&", "Active Scripts", (*) => activeScripts())
-        A_TrayMenu.Insert("10&", "Check for Updates", checkUp)
-        A_TrayMenu.Insert("11&") ;adds a divider bar
-        A_TrayMenu.Insert("12&", "allKeyUp()", (*) => allKeyUp())
+        A_TrayMenu.Insert("8&", "allKeyUp()", (*) => allKeyUp())
+        A_TrayMenu.Insert("9&", "Settings", (*) => settingsGUI())
+        A_TrayMenu.Insert("10&", "Active Scripts", (*) => activeScripts())
+        A_TrayMenu.Insert("11&", "Check for Updates", checkUp)
+        A_TrayMenu.Insert("15&", "Open All", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
         A_TrayMenu.Insert("16&", "Close All", (*) => reload_reset_exit("exit"))
+        A_TrayMenu.Delete("&Window Spy")
+        A_TrayMenu.Delete("&Edit Script")
+        A_TrayMenu.Delete("3&")
         if check =  true
             A_TrayMenu.Check("Check for Updates")
         checkUp(*)

@@ -332,16 +332,16 @@ save()
      */
     if WinExist(editors.AE.winTitle) && aeVal.saveCheck = true
         {
+            if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
+                {
+                    avoid := 1
+                    block.Off()
+                    tool.Wait()
+                    errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
+                    goto end
+                }
             if origWind != WinGetProcessName(editors.AE.winTitle)
                 {
-                    if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
-                        {
-                            avoid := 1
-                            block.Off()
-                            tool.Wait()
-                            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
-                            goto end
-                        }
                     tool.Wait()
                     tool.Cust("Saving AE")
                     WinSetTransparent(0, editors.AE.winTitle)
@@ -360,21 +360,18 @@ save()
                     aeVal.SaveTrack := 1
                     goto end
                 }
-            else if origWind = WinGetProcessName(editors.AE.winTitle)
+            if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
                 {
-                    if WinExist("ahk_class #32770 ahk_exe AfterFX.exe")
-                        {
-                            SetTimer(, -ms)
-                            block.Off()
-                            tool.Wait()
-                            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
-                            goto end
-                        }
+                    SetTimer(, -ms)
+                    block.Off()
                     tool.Wait()
-                    tool.Cust("Saving AE")
-                    SendInput("^s")
-                    WinWaitClose("Save Project",, 3)
+                    errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
+                    goto end
                 }
+            tool.Wait()
+            tool.Cust("Saving AE")
+            SendInput("^s")
+            WinWaitClose("Save Project",, 3)
         }
 
         ;// double checking to see if the saves worked
