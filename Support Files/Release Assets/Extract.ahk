@@ -9,6 +9,10 @@ path := A_WorkingDir "\yes.value.zip"
 SplitPath(path,, &dirDir)
 inputNeeded := false
 
+;// this function gets added to this script during `generateUpdate.ahk`
+if unzip(path, A_WorkingDir)
+    return
+
 ;// checking to see if the user has 7zip installed - if they do, we can use thqby's 7zip library to extract the zip folder
 try {
     path   := RegRead("HKEY_CURRENT_USER\Software\7-Zip", "Path", 0)

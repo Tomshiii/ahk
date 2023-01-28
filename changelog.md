@@ -15,11 +15,12 @@
     - Will now only run after a symlink has been properly generated
 
 ## > Functions
-- Fix `errorLog()` not logging the current date
+- Fix `errorLog()` not correctly logging the current date
 - Fix `prem.movepreview()` sometimes getting stuck in the `Effect Controls` window
 - `prem.preset("loremipsum")` now checks for images multiple times to avoid erroring out earlier than necessary
 - Add `runcmd()` as a wrapper function to quickly send a command to the command line
     - Added Streamdeck scripts `ffmpeg.ahk` & `yt-dlp.ahk` to check for updates for both utilities
+- Add `unzip()` to unzip a `.zip` folder using a `ComObject`
 - Moved `getcmd()` out of `Extract.ahk` and into its own function file
 - `switchTo.AE()` & `New Premiere.ahk` now specifically run the shortcuts for their respective programs found in `..\Support Files\shortcuts\` instead of defaulting to the latest version of either program
 - `dark.allButtons()` can now pass an object to customise the background colours of the GUI/GUI buttons

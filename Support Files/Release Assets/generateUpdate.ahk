@@ -175,8 +175,12 @@ deleting()
 
 ;// copying over a script that will be used to extract the .zip file
 FileCopy(ptf.SupportFiles "\Release Assets\Extract.ahk", A_WorkingDir "\release")
-cmdFunctoAppend := FileRead(ptf.lib "\Functions\getCMD.ahk")
-FileAppend("`n`n" cmdFunctoAppend, A_WorkingDir "\release\Extract.ahk")
+appendTo(readFile, script) {
+    funcToAppend := FileRead(readFile)
+    FileAppend("`n`n" funcToAppend, script)
+}
+appendTo(ptf.lib "\Functions\getCMD.ahk", A_WorkingDir "\release\Extract.ahk")
+appendTo(ptf.lib "\Functions\unzip.ahk", A_WorkingDir "\release\Extract.ahk")
 
 ;// copying over thqby's 7zip lib in case it's useful
 FileCopy(ptf.lib "\Other\7zip\7-zip32.dll", A_WorkingDir "\release")

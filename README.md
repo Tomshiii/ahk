@@ -38,7 +38,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 
 > #### The Release Install `.exe`
 > If you're a little unsure about running the install .exe (as you should be!) feel free to take a look at [`generateUpdate.ahk`](https://github.com/Tomshiii/ahk/blob/main/Support%20Files/Release%20Assets/generateUpdate.ahk) - this is the script I use to generate each release! As you'll be able to see within that script, I use a [7zip lib](https://github.com/thqby/ahk2_lib/blob/master/7Zip/SevenZip.ahk) from [thqby](https://github.com/thqby) to compress my entire repo into a `.zip` file, then I use the standard `ahk2exe` script that comes with AHK itself to compile a `.exe` of that `.zip` file alongside that same `7zip lib` to automatically unzip it once you install.
->> The install process will require either `7zip` to be installed, or `Powershell 5+` and `.Net4.5 (or greater)`. If the user does not have either installed, the install process will step through installing `PowerShell 7` and `.Net7`
+>> If the install process fails to unzip the repo using a `ComObject`, the install process will require either `7zip` to be installed, if it's not, it will fall back to using `Powershell 5+` and `.Net4.5 (or greater)`. If the user does not have either installed, the install process will step through installing `PowerShell 7` and `.Net7`.
 
 Indepth instructions on how to get started with my repo, as well as complete definitions of everything can be found [over on the wiki page](https://github.com/Tomshiii/ahk/wiki).
 ***

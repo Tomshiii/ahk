@@ -19,7 +19,7 @@ if FileExist(A_WorkingDir "\My Scripts.ahk") || FileExist(A_WorkingDir "\right c
     }
 
 ;// alerting the user before starting
-alert := MsgBox("This install process requires either 7zip to be installed, or PowerShell 5+ and .Net4.5 (or greater)`n`nIf you do not have either installed, this installer will step you through obtaining PowerShell 7 and .Net7", "Notice", "1 64 256 4096")
+alert := MsgBox("If this install process runs into an issue, it may require the install of either 7zip, or PowerShell 5+ and .Net4.5 (or greater)`n`nIf you do not have either installed, this installer will step you through obtaining PowerShell 7 and .Net7", "Notice", "1 64 256 4096")
 if alert = "Cancel"
     return
 check := MsgBox("This install process will dump my entire repo in the current directory.`n`nDo you wish to continue?", "Do you wish to continue?", "4 32 256 4096")
