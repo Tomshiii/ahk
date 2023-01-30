@@ -38,7 +38,7 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 
 > #### The Release Install `.exe`
 > If you're a little unsure about running the install .exe (as you should be!) feel free to take a look at [`generateUpdate.ahk`](https://github.com/Tomshiii/ahk/blob/main/Support%20Files/Release%20Assets/generateUpdate.ahk) - this is the script I use to generate each release! As you'll be able to see within that script, I use a [7zip lib](https://github.com/thqby/ahk2_lib/blob/master/7Zip/SevenZip.ahk) from [thqby](https://github.com/thqby) to compress my entire repo into a `.zip` file, then I use the standard `ahk2exe` script that comes with AHK itself to compile a `.exe` of that `.zip` file alongside that same `7zip lib` to automatically unzip it once you install.
->> If the install process fails to unzip the repo using a `ComObject`, the install process will require either `7zip` to be installed, if it's not, it will fall back to using `Powershell 5+` and `.Net4.5 (or greater)`. If the user does not have either installed, the install process will step through installing `PowerShell 7` and `.Net7`.
+>> If the install process fails to unzip the repo using a `ComObject`, the install process will require `7zip` to be installed. If it's not, it will fall back to using `Powershell 5+` and `.Net4.5 (or greater)`. If the user does not have either installed, the install process will step through installing `PowerShell 7` and `.Net7`.
 
 Indepth instructions on how to get started with my repo, as well as complete definitions of everything can be found [over on the wiki page](https://github.com/Tomshiii/ahk/wiki).
 ***
@@ -52,7 +52,7 @@ An ini file/ahk script combo for defining all keyboard shortcuts for programs th
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
 
 This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional;
-- `generate()` - Handles creating a `settings.ini` file in `A_MyDocuments \tomshi\` directory that handles a few user adjustable settings in my scripts. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings` or by pulling up `settingsGUI()` (default hotkey is `win + F1`)
+- `generate()` - Handles creating a new `settings.ini` file each new release. The `settings.ini` file will be located in `A_MyDocuments \tomshi\`. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings` or by pulling up `settingsGUI()` (default hotkey is `win + F1`)
 - `locationReplace()` - Handles replacing any instance of either my original working directory, or yours if you move my scripts to a new location. eg. on first run by the user this function will replace all instances of `E:\Github\ahk` with the directory you run the script
 - `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
 - `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as backup your current script directory

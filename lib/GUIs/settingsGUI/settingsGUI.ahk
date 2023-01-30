@@ -564,19 +564,19 @@ settingsGUI()
         ;// start defining the gui
         adobeGui.AddText("Section", "Year: ")
         year := adobeGui.Add("Edit", "x" ctrlX " ys r1 W100 Number Limit4", iniInitYear)
-        year.OnEvent("Change", yearEvent)
+        year.OnEvent("Change", __yearEvent)
         adobeGui.AddText("xs y+10", "Version: ")
-        generateDrop(genProg, &ver, ctrlX)
+        __generateDrop(genProg, &ver, ctrlX)
         adobeGui.AddText("xs y+10 Section", "Cache Dir: ")
         cacheInit := short "cache"
         cache := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W150 ReadOnly", UserSettings.%cacheInit%)
         cacheSelect := adobeGui.Add("Button", "x+5 w60 h27", "select")
-        cacheSelect.OnEvent("Click", cacheslct.Bind(adobeFullName))
+        cacheSelect.OnEvent("Click", __cacheslct.Bind(adobeFullName))
 
         ;// warning & save button
         adobeGui.AddText("xs+50 y+15", "*some settings will require`na full reload to take effect").SetFont("s9 italic")
         saveBut := adobeGui.Add("Button", "x+-10", "save")
-        saveBut.OnEvent("Click", saveVer)
+        saveBut.OnEvent("Click", __saveVer)
 
         ;// show
         adobeGui.Show()
@@ -595,7 +595,7 @@ settingsGUI()
         /**
          * This function handles the logic for saving the adobe version number
          */
-        editCtrl(ini, ctrl, *)
+        __editAdobeVer(ini, ctrl, *)
         {
             iniVar := StrReplace(ini, A_Space, "_")
             ;// we don't want the version ini value to change unless it's actually a new version number
@@ -608,12 +608,12 @@ settingsGUI()
          * This function handles the logic for what happens when the adobeGui save button is checked
          * It is currently reserved for future use and has no current function besides destroying the gui
          */
-        saveVer(*) => adobeGui.Destroy()
+        __saveVer(*) => adobeGui.Destroy()
 
         /**
          * This function handles the logic behind what happens when the user types in a new year value
          */
-        yearEvent(*) {
+        __yearEvent(*) {
             if StrLen(year.Value) != 4
                 return
             if (year.Value > A_Year + 1 || year.Value < 2013) {
@@ -631,7 +631,7 @@ settingsGUI()
             if new.Has(1)
                 ver.Choose(1)
             UserSettings.%yearIniName% := year.value
-            editCtrl(verIniName, ver) ;// call the func to reassign the settings values
+            __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
             switch adobeFullName {
                 case "Adobe Premiere Pro":
                     FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.Value "\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
@@ -643,7 +643,7 @@ settingsGUI()
         /**
          * This function generates the version dropdown selector
          */
-        generateDrop(program, &ver, ctrlX) {
+        __generateDrop(program, &ver, ctrlX) {
             if (program != "AE" && program != "Premiere") {
                 ;// throw
                 errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
@@ -671,7 +671,7 @@ settingsGUI()
             ver.OnEvent("Change", editCtrl.bind(verIniName))
         }
 
-        cacheslct(progName, *) {
+        __cacheslct(progName, *) {
             WinSetAlwaysOnTop(0, "Settings " version)
             settingsGUI.Opt("+Disabled")
             slct := FileSelect("D",, "Select " progName " Cache Folder")

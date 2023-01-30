@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <checklist\generateIni>
+; }
+
 /**
  * This function is called when the contents of the current checklist.ini file needs to be read and then regenerated
  * @param {String} which dictates what version is written in the .ini file

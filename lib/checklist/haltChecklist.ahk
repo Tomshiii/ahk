@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <Functions\detect>
+; }
+
 /**
  * This function will run `waitUntil.ahk` and then close `checklist.ahk` if it is open
  */

@@ -1,3 +1,6 @@
+#SingleInstance Force
+#Requires AutoHotkey v2.0
+
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -9,12 +12,10 @@
 #Include <Functions\allKeyWait>
 ; }
 
-SetWorkingDir(ptf.rootDir) ; Ensures a consistent starting directory.
-SetDefaultMouseSpeed 0
-#SingleInstance Force
-#Requires AutoHotkey v2.0
-; SetNumLockState "AlwaysOn" ;uncomment if you want numlock to always be ON. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
-; SetCapsLockState "AlwaysOff" ;uncomment if you want capslock to always be OFF. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
+SetWorkingDir(ptf.rootDir)      ; Ensures a consistent starting directory.
+SetDefaultMouseSpeed(0)
+; SetNumLockState("AlwaysOn")    ;uncomment if you want numlock to always be ON. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
+; SetCapsLockState("AlwaysOff")  ;uncomment if you want capslock to always be OFF. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 TraySetIcon(ptf.Icons "\resolve.png")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version

@@ -64,44 +64,48 @@ Rbutton::
 	}
 	;getting base information
 	MouseGetPos(&xpos, &ypos)
-	;this block until `skip:` is getting & storing the x/y values of the timeline
+	;//! this code block until `skip:` is getting & storing the x/y values of the timeline
 	;we do this so we can check later if the playhead is currently on the screen - if it is we'll do a shuttle stop
 	;if it isn't we won't
-	;the reason we don't want to if the playhead isn't on the screen is because if you hit shuttlestop when it's now
+	;the reason we don't want to if the playhead isn't on the screen is because if you hit shuttlestop when it's not
 	;your view of the timeline will snap to the playhead
 	static xValue := 0
     static yValue := 0
     static xControl := 0
     static yControl := 0
+	getValues(&xValue, &yValue, &xControl, &yControl) {
+		try {
+			SendInput(KSA.timelineWindow)
+			effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+			ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+			xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
+			yValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
+			xControl := x + 238 ;accounting for the column to the left of the timeline
+			yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
+			SetTimer(tools, -100)
+			return true
+			tools() {
+				tool.Wait()
+				script := obj.SplitPath(A_LineFile)
+				tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 2.0)
+			}
+		} catch as e {
+			tool.Wait()
+			tool.Cust("Couldn't find the ClassNN value")
+			errorLog(e)
+			return false
+		}
+	}
     if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
         {
-            try {
-                SendInput(KSA.timelineWindow)
-                effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
-                static xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
-                static yValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
-                static xControl := x + 238 ;accounting for the column to the left of the timeline
-                static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
-				SetTimer(tools, -100)
-				tools() {
-					tool.Wait()
-					script := obj.SplitPath(A_LineFile)
-					tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 2.0)
-				}
-            } catch as e {
-                tool.Wait()
-                tool.Cust("Couldn't find the ClassNN value")
-                errorLog(e)
-                goto skip
-            }
-        }
-    if xpos > xValue || xpos < xControl || ypos < yValue || ypos > yControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
+			if !getValues(&xValue, &yValue, &xControl, &yControl)
+				return
+		}
+    if ((xpos > xValue) || (xpos < xControl) || (ypos < yValue) || (ypos > yControl)) ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
         {
 			SendInput("{Rbutton}")
 			return
 		}
-    skip:
 
 	Color := PixelGetColor(xpos, ypos)
 	color2 := PixelGetColor(xpos + 1, ypos)
@@ -126,8 +130,8 @@ Rbutton::
 			colourOrNorm := "" ;we use this variable to cut reduce code and track whether the playhead will be moved via leftclicking it or using the "move playhead to cursor" keyboard shortcut
 			; //
 			; click("middle") ;sends the middle mouse button to BRING FOCUS TO the timeline, WITHOUT selecting any clips or empty spaces between clips. very nice!
-			;   -- while as stated above, middle clicking the mouse does indeed bring focus to the timeline, for whatever reason having that line active made it so that
-			;   -- if I ever click RButton and an XButton at the same time, the script would sorta lag and then get stuck in it's loop unable to tell that RButton isn't being held
+			;   - while as stated above, middle clicking the mouse does indeed bring focus to the timeline, for whatever reason having that line active made it so that
+			;   - if I ever click RButton and an XButton at the same time, the script would sorta lag and then get stuck in it's loop unable to tell that RButton isn't being held
 			; //
 			SendInput(KSA.timelineWindow) ;so we'll do this instead
 			if Color = playhead ;this block of code ensures that you can still right click a track even if you're directly hovering over the playhead

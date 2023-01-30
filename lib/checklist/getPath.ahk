@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <checklist\generateIni>
+; }
+
 /**
  * Getting the path of the project using the title of Premiere Pro/After Effects
  * @param {String} name is the title of the program you have to pass into the funtion

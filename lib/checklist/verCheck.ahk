@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <checklist\trythenDel>
+; }
+
 localVer := IniRead(checklist, "Info", "ver")
 problemDir("v2.6")
 
