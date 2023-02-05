@@ -37,7 +37,7 @@ reload_reset_exit(which, includeChecklist?) {
                 name := WinGettitle(this_value,, browser.vscode.winTitle)
                 path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
                 script := obj.SplitPath(path)
-                if all != true && (script.Name = "checklist.ahk" || ignoreScript.Has(script.Name))
+                if all != true && (script.Name = "checklist.ahk" || script.Name = "test.ahk" ||ignoreScript.Has(script.Name))
                     continue
                 if all = true && (ignoreScript.Has(script.Name))
                     continue

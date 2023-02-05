@@ -1,20 +1,32 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/01/26
- * @version 1.0.3
+ * @date 2023/02/05
+ * @version 1.0.4
  ***********************************************************************/
 
 class UserPref {
     __New() {
         if !FileExist(this.SettingsFile)
-            this.__createIni("true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, A_WorkingDir, "false", "false", 0, "v2.0")
+            {
+                SplitPath(A_WorkingDir, &name)
+                if name = "classes"
+                    {
+                        SetWorkingDir("..\..\")
+                        this.workingDir := A_WorkingDir
+                    }
+                this.__createIni(this.defaults[1], this.defaults[2], this.defaults[3], this.defaults[4], this.defaults[5], this.defaults[6], this.defaults[7], this.defaults[8], this.defaults[9], this.defaults[10], this.defaults[11], this.defaults[12], this.defaults[13], this.defaults[14], this.defaults[15], this.defaults[16], this.defaults[17], this.defaults[18], this.defaults[19], this.defaults[20], this.defaults[21], this.defaults[22], this.workingDir, this.defaults[24], this.defaults[25], this.defaults[26], this.defaults[27])
+                Run(A_ScriptFullPath)
+            }
         ;// initialise settings variables
         this.__setSett()
         this.__setAdjust()
         this.__setTrack()
     }
 
+    ;// defaults
+    workingDir := A_WorkingDir
+    defaults := ["true", "false", "", "false", "true", "true", "true", "false", 45, 5, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -163,16 +175,16 @@ class UserPref {
 
     /**
      * This function generates a baseline settings.ini file
-     * @param {params1-25} settingsIni these are the settings.ini entries in order
+     * @param {params1-27} settingsIni these are the settings.ini entries in order
      */
     __createIni(params*) {
-        if params.Length > 25
+        if params.Length > this.defaults.Length
             throw (ValueError("Incorrect number of Parameters passed to function.", -1)) ;// don't add errorlog to this function, keep it no dependencies
         if !DirExist(this.SettingsDir)
             DirCreate(this.SettingsDir)
         if FileExist(this.SettingsFile)
             FileDelete(this.SettingsFile)
-        FileAppend(Format("
+        FileAppend("
                 (
                     [Settings]
                     update check={}
@@ -206,11 +218,17 @@ class UserPref {
                     block aware={}
                     monitor alert={}
                     version={}
-                )", params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9],
-                    params[10], params[11], params[12], params[13], params[14], params[15], params[16], params[17], params[18],
-                    params[19], params[20], params[21], params[22], params[23], params[24], params[25]
-            ), this.SettingsFile
-        )
+                )", this.SettingsFile)
+                ;// replace {}
+                workingFile := FileRead(this.SettingsFile)
+                loop this.defaults.Length {
+                    workingFile := StrReplace(workingFile, "{}", params[A_Index],,, 1)
+                    if A_Index = this.defaults.Length
+                        {
+                            FileDelete(this.SettingsFile)
+                            FileAppend(workingFile, this.SettingsFile)
+                        }
+                }
     }
 }
 

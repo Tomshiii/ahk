@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/01/26
- * @version 1.4.5
+ * @date 2023/02/05
+ * @version 1.4.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -48,10 +48,11 @@ class Startup {
             {
                 UserSettings.dark_mode := "disabled"
                 reload_reset_exit("reset")
+                return "disabled"
             }
         UserSettings.dark_mode := true
-        reload_reset_exit("reset")
-        return
+        UserSettings.__Delete()
+        return "true"
     }
 
     /**
@@ -73,32 +74,32 @@ class Startup {
         allAdjust := genNewMap()
         allTrack  := genNewMap()
 ;//     VarName         //             MapKey           //         MapValue+Default
-        UPDATE          := allSett.Set("update_check",             IniRead(ptf["settings"], "Settings", "update check", "true"))
-        BETAUPDATE      := allSett.Set("beta_update_check",        IniRead(ptf["settings"], "Settings", "beta update check", "false"))
+        UPDATE          := allSett.Set("update_check",             IniRead(ptf["settings"], "Settings", "update check", UserSettings.defaults[1]))
+        BETAUPDATE      := allSett.Set("beta_update_check",        IniRead(ptf["settings"], "Settings", "beta update check", UserSettings.defaults[2]))
         DARK            := allSett.Set("dark_mode",                IniRead(ptf["settings"], "Settings", "dark mode", darkCheck))
-        RUNSTARTUP      := allSett.Set("run_at_startup",           IniRead(ptf["settings"], "Settings", "run at startup", "true"))
-        CHECKCHECK      := allSett.Set("autosave_check_checklist", IniRead(ptf["settings"], "Settings", "autosave check checklist", "true"))
-        TOOLS           := allSett.Set("tooltip",                  IniRead(ptf["settings"], "Settings", "tooltip", "true"))
-        CHECKTOOL       := allSett.Set("checklist_tooltip",        IniRead(ptf["settings"], "Settings", "checklist tooltip", "true"))
-        WAIT            := allSett.Set("checklist_wait",           IniRead(ptf["settings"], "Settings", "checklist wait", "false"))
-        ADOBE_GB        := allAdjust.Set("adobe_GB",               IniRead(ptf["settings"], "Adjust", "adobe GB", 45))
-        ADOBE_FS        := allAdjust.Set("adobe_FS",               IniRead(ptf["settings"], "Adjust", "adobe FS", 5))
-        AUTOMIN         := allAdjust.Set("autosave_MIN",           IniRead(ptf["settings"], "Adjust", "autosave MIN", 5))
-        GAMESEC         := allAdjust.Set("game_SEC",               IniRead(ptf["settings"], "Adjust", "game SEC", 2.5))
-        MULTI           := allAdjust.Set("multi_SEC",              IniRead(ptf["settings"], "Adjust", "multi SEC", 5))
-        PREMYEARVER     := allAdjust.Set("prem_year",              IniRead(ptf["settings"], "Adjust", "prem year", "2022"))
-        AEYEARVER       := allAdjust.Set("ae_year",                IniRead(ptf["settings"], "Adjust", "ae year", "2022"))
-        premVer         := allAdjust.Set("premVer",                IniRead(ptf["settings"], "Adjust", "premVer", "v22.3.1"))
-        aeVer           := allAdjust.Set("aeVer",                  IniRead(ptf["settings"], "Adjust", "aeVer", "v22.6"))
-        psVer           := allAdjust.Set("psVer",                  IniRead(ptf["settings"], "Adjust", "psVer", "v24.0.1"))
-        resolveVer      := allAdjust.Set("resolveVer",             IniRead(ptf["settings"], "Adjust", "resolveVer", "v18.0.4"))
-        premCache       := allAdjust.Set("premCache",              IniRead(ptf["settings"], "Adjust", "premCache", "F:\Adobe Cache\Prem"))
-        aeCache         := allAdjust.Set("aeCache",                IniRead(ptf["settings"], "Adjust", "aeCache", "F:\Adobe Cache\AE"))
-        ADOBE           := allTrack.Set("adobe_temp",              IniRead(ptf["settings"], "Track", "adobe temp", ""))
-        WORK            := allTrack.Set("working_dir",             IniRead(ptf["settings"], "Track", "working dir", "E:\Github\ahk"))
-        FC              := allTrack.Set("first_check",             IniRead(ptf["settings"], "Track", "first check", "false"))
-        BLOCKAWARE      := allTrack.Set("block_aware",             IniRead(ptf["settings"], "Track", "block aware", "false"))
-        MONITORALERT    := allTrack.Set("monitor_alert",           IniRead(ptf["settings"], "Track", "monitor alert", 0))
+        RUNSTARTUP      := allSett.Set("run_at_startup",           IniRead(ptf["settings"], "Settings", "run at startup", UserSettings.defaults[4]))
+        CHECKCHECK      := allSett.Set("autosave_check_checklist", IniRead(ptf["settings"], "Settings", "autosave check checklist", UserSettings.defaults[5]))
+        TOOLS           := allSett.Set("tooltip",                  IniRead(ptf["settings"], "Settings", "tooltip", UserSettings.defaults[6]))
+        CHECKTOOL       := allSett.Set("checklist_tooltip",        IniRead(ptf["settings"], "Settings", "checklist tooltip", UserSettings.defaults[7]))
+        WAIT            := allSett.Set("checklist_wait",           IniRead(ptf["settings"], "Settings", "checklist wait", UserSettings.defaults[8]))
+        ADOBE_GB        := allAdjust.Set("adobe_GB",               IniRead(ptf["settings"], "Adjust", "adobe GB", UserSettings.defaults[9]))
+        ADOBE_FS        := allAdjust.Set("adobe_FS",               IniRead(ptf["settings"], "Adjust", "adobe FS", UserSettings.defaults[10]))
+        AUTOMIN         := allAdjust.Set("autosave_MIN",           IniRead(ptf["settings"], "Adjust", "autosave MIN", UserSettings.defaults[11]))
+        GAMESEC         := allAdjust.Set("game_SEC",               IniRead(ptf["settings"], "Adjust", "game SEC", UserSettings.defaults[12]))
+        MULTI           := allAdjust.Set("multi_SEC",              IniRead(ptf["settings"], "Adjust", "multi SEC", UserSettings.defaults[13]))
+        PREMYEARVER     := allAdjust.Set("prem_year",              IniRead(ptf["settings"], "Adjust", "prem year", UserSettings.defaults[14]))
+        AEYEARVER       := allAdjust.Set("ae_year",                IniRead(ptf["settings"], "Adjust", "ae year", UserSettings.defaults[15]))
+        premVer         := allAdjust.Set("premVer",                IniRead(ptf["settings"], "Adjust", "premVer", UserSettings.defaults[16]))
+        aeVer           := allAdjust.Set("aeVer",                  IniRead(ptf["settings"], "Adjust", "aeVer", UserSettings.defaults[17]))
+        psVer           := allAdjust.Set("psVer",                  IniRead(ptf["settings"], "Adjust", "psVer", UserSettings.defaults[18]))
+        resolveVer      := allAdjust.Set("resolveVer",             IniRead(ptf["settings"], "Adjust", "resolveVer", UserSettings.defaults[19]))
+        premCache       := allAdjust.Set("premCache",              IniRead(ptf["settings"], "Adjust", "premCache", UserSettings.defaults[20]))
+        aeCache         := allAdjust.Set("aeCache",                IniRead(ptf["settings"], "Adjust", "aeCache", UserSettings.defaults[21]))
+        ADOBE           := allTrack.Set("adobe_temp",              IniRead(ptf["settings"], "Track", "adobe temp", UserSettings.defaults[22]))
+        WORK            := allTrack.Set("working_dir",             IniRead(ptf["settings"], "Track", "working dir", UserSettings.defaults[23]))
+        FC              := allTrack.Set("first_check",             IniRead(ptf["settings"], "Track", "first check", UserSettings.defaults[24]))
+        BLOCKAWARE      := allTrack.Set("block_aware",             IniRead(ptf["settings"], "Track", "block aware", UserSettings.defaults[25]))
+        MONITORALERT    := allTrack.Set("monitor_alert",           IniRead(ptf["settings"], "Track", "monitor alert", UserSettings.defaults[26]))
         allTrack.Set("version", this.MyRelease)
 
         ;// checking to see if the settings folder location exists
@@ -138,9 +139,21 @@ class Startup {
                 case true:
                     for k, v in userSettingsArr {
                         ;// set version number
-                        if k = "version"
+                        if v = "version"
                             {
                                 UserSettings.%v% := this.MyRelease
+                                continue
+                            }
+                        if v = "first_check" || v = "block_aware"
+                            {
+                                returnBool(input) {
+                                    switch input {
+                                        case "true":      return true
+                                        case "false":     return false
+                                        default:          return input
+                                    }
+                                }
+                                UserSettings.%v% := returnBool(startupArr.Get(v))
                                 continue
                             }
                         UserSettings.%v% := startupArr.Get(v)
@@ -154,7 +167,7 @@ class Startup {
         setSection(UserSettings.Settings_, allSett, "Settings")
         setSection(UserSettings.Adjust_, allAdjust, "Adjust")
         setSection(UserSettings.Track_, allTrack, "Track", true)
-        reload_reset_exit("reset")
+        UserSettings.__Delete()
     }
 
     /**
@@ -415,8 +428,7 @@ class Startup {
             return
         if WinExist("Scripts Release ")
             WinWaitClose("Scripts Release ")
-        check := UserSettings.first_check
-        if check != false ;how the function tracks whether this is the first time the user is running the script or not
+        if UserSettings.first_check != false ;how the function tracks whether this is the first time the user is running the script or not
             return
         firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " this.MyRelease)
         ;set title
