@@ -6,6 +6,16 @@
 #Include <Functions\detect>
 ; }
 
+;// this portion of the code defines scripts to ignore within the below function
+ignoreScript := Map()
+ignoreScript.CaseSense := "Off"
+ignoreScript.Set("PC Startup.ahk", 1, "PC Startup2.ahk", 1, "My Scripts.ahk", 1, "launcher.ahk", 1)
+;// here we're adding all ahk files within `..\Streamdeck AHK\` to the ignore list
+loop files ptf.rootDir "\Streamdeck AHK\*.ahk", "R F" {
+    if !ignoreScript.Has(A_LoopFileName)
+        ignoreScript.Set(A_LoopFileName, 1)
+}
+
 /**
  * A function to loop through and either reload or hard reset all* active ahk scripts
  * If this function attempts a reload and fails, it will attempt to read a registry value that contains the users default editor. This value "should" be set after installing ahk. If it isn't, this function will default to VSCode
@@ -15,7 +25,7 @@ reload_reset_exit(which, includeChecklist?) {
     if IsSet(includeChecklist)
         all := true
     switch which {
-        case "reload": tool.Cust("all active ahk scripts reloading", 500)
+        case "reload": tool.Cust("All active ahk scripts reloading")
         case "reset":  tool.Cust("All active ahk scripts are being rerun")
         case "exit":   tool.Cust("All active ahk scripts are being CLOSED")
     }
@@ -23,21 +33,23 @@ reload_reset_exit(which, includeChecklist?) {
     value := WinGetList("ahk_class AutoHotkey")
     for this_value in value
         {
-            name := WinGettitle(this_value,, browser.vscode.winTitle)
-            path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
-            script := obj.SplitPath(path)
-            if all != true && (script.Name = "checklist.ahk" || script.Name = "My Scripts.ahk" || script.Name = "launcher.ahk")
-                continue
-            if all = true && (script.Name = "My Scripts.ahk" || script.Name = "launcher.ahk")
-                continue
-            PID := WinGetPID(script.Name)
-            switch which {
-                case "reload":
-                    PostMessage(0x0111, 65303,,, script.Name " - AutoHotkey")
-                case "reset":
-                    Run(path)
-                case "exit":
-                    ProcessClose(PID)
+            try {
+                name := WinGettitle(this_value,, browser.vscode.winTitle)
+                path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
+                script := obj.SplitPath(path)
+                if all != true && (script.Name = "checklist.ahk" || ignoreScript.Has(script.Name))
+                    continue
+                if all = true && (ignoreScript.Has(script.Name))
+                    continue
+                PID := WinGetPID(script.Name)
+                switch which {
+                    case "reload":
+                        PostMessage(0x0111, 65303,,, script.Name " - AutoHotkey")
+                    case "reset":
+                        Run(path)
+                    case "exit":
+                        ProcessClose(PID)
+                }
             }
         }
     detect(false)
@@ -98,7 +110,7 @@ reload_reset_exit(which, includeChecklist?) {
                 {
                     set := true
                     Run(VSCode.path,,, &pid2)
-                    if !WinWait("ahk_pid " pid2)
+                    if !WinWait("ahk_pid " pid2,, 5)
                         Run(defaultEditor)
                     sleep 1000
                 }
@@ -109,4 +121,5 @@ reload_reset_exit(which, includeChecklist?) {
                     return
                 }
     }
+    ToolTip("")
 }

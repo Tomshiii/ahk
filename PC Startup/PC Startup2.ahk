@@ -1,4 +1,9 @@
+#Include <Functions\detect>
+
 ;// PC Startup2 is for me, this is just a few things I need done at startup to make life easier
+detect()
+if WinExist("PC Startup.ahk")
+    WinWaitClose("PC Startup.ahk")
 
 if !WinExist("ahk_exe Creative Cloud.exe")
     Run("C:\Program Files\Adobe\Adobe Creative Cloud\ACC\Creative Cloud.exe")

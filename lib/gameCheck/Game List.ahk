@@ -4,4 +4,5 @@ GroupAdd("games", "Minecraft ahk_exe javaw.exe") ;minecraft
 GroupAdd("games", "Terraria ahk_exe Terraria.exe") ;terraria
 GroupAdd("games", "Overwatch ahk_exe Overwatch.exe") ;overwatch
 GroupAdd("games", "Sector's Edge ahk_exe sectorsedge.exe") ;sectorsedge
+GroupAdd("games", "Left 4 Dead 2 ahk_exe left4dead2.exe") ;lfd2
 ; -- leave this line it gets used and is needed in settingsGUI()

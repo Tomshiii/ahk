@@ -87,7 +87,8 @@ Rbutton::
 			tools() {
 				tool.Wait()
 				script := obj.SplitPath(A_LineFile)
-				tool.Cust("``" script.Name "`` found the coordinates of the timeline.`nThis macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 2.0)
+				tool.Cust("``" script.Name "`` found the coordinates of the timeline.", 2.0)
+				tool.Cust("This macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0,,, 30, 2)
 			}
 		} catch as e {
 			tool.Wait()
