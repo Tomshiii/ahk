@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.30.3
+;\\v2.30.4
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -602,6 +602,9 @@ F23::SendInput(KSA.nextKeyframe) ;check the keyboard shortcut ini file to adjust
 
 ;stopTabHotkey;
 Tab::return
+
+;linkActivateHotkey;
+~^l::SendInput(KSA.selectAtPlayhead)
 
 ;prem^DeleteHotkey;
 Ctrl & BackSpace::

@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
- * @date 2023/01/26
- * @version 1.3.1
+ * @date 2023/02/06
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -831,6 +831,11 @@ class Prem {
                 SendInput(KSA.cutPrem)
                 start := A_TickCount
                 sec := 0
+                clear() {
+                    ToolTip("")
+                    ToolTip("",,, 2)
+                    ToolTip("",,, 3)
+                }
                 loop {
                     ;check to see if the user wants the bleep on a track between 1-9
                     getlastHotkey := A_PriorKey
@@ -838,11 +843,17 @@ class Prem {
                         goto skip
                     if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
                         trackNumber := getlastHotkey
+                    if GetKeyState("Esc", "P") || getlastHotkey = "Escape"
+                        {
+                            clear()
+                            return
+                        }
                     skip:
                     sleep 50
                     if A_Index > 160 ;built in timeout
                         {
                             block.Off()
+                            clear()
                             errorLog(IndexError(A_ThisFunc "() timed out due to no user interaction", -1),, 1)
                             return
                         }
@@ -852,9 +863,12 @@ class Prem {
                             sec += 1
                         }
                     secRemain := 8 - sec
-                    ToolTip("This function will attempt to drag your bleep to:`n" A_Tab A_Tab "Track " trackNumber "`n`nPress another number key to move to a different track`nThe function will continue once you've cut the track`n" secRemain "s remaining")
+                    mousegetpos(, &ypos)
+                    ToolTip("This function will attempt to drag your bleep to:`n" A_Tab A_Tab "Track " trackNumber)
+                    ToolTip("Press another number key to move to a different track`nThe function will continue once you've cut the track`n" secRemain "s remaining",, ypos+15, 2)
+                    ToolTip("Cancel with: Esc",, ypos-50, 3)
                 } until GetKeyState("LButton", "P")
-                ToolTip("")
+                clear()
                 block.On()
                 sleep 50
                 SendInput(KSA.selectionPrem)

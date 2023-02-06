@@ -1,3 +1,4 @@
+#Requires AutoHotkey v2.0
 #Include <Functions\detect>
 
 ;// PC Startup2 is for me, this is just a few things I need done at startup to make life easier

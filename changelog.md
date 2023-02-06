@@ -1,6 +1,4 @@
-# <> Release 2.10.0.1 - Hotfix
-- Fix failure to generate a new `settings.ini` file
-- `startup.generate()` no longer *requires* a restart of all scripts
+# <> Release 2.10.x - 
 
-## > Functions
-- `reload_reset_exit()` now ignores all `Streamdeck AHK` scripts
+## Functions
+- `prem.audioDrag()` `bleep` can now be cancelled by pressing <kbd>Esc</kbd>

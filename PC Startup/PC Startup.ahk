@@ -1,4 +1,5 @@
 #Warn VarUnset, StdOut
+#Requires AutoHotkey v2.0
 #Include *i <Classes\ptf>
 
 ;// if the user has not generated the symlink yet this script will return
