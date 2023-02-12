@@ -67,7 +67,7 @@ else
                 if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
                     {
                         block.Off()
-                        errorLog(UnsetError("Variable hasn't been assigned a value.", -1, titlecheck),, 1)
+                        errorLog(UnsetError("Variable hasn't been assigned a value.", -1),, 1)
                         premNotOpen(&checklist, &logs, &path)
                         if WinExist("Select commission folder")
                             WinWaitClose("Select commission folder")
