@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
- * @date 2023/02/06
- * @version 1.3.2
+ * @date 2023/02/13
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,6 +29,32 @@ class Prem {
 
     ;// variables used in functions
     static timer := false
+
+    class ClientInfo {
+        ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
+
+        alex := {
+            1: [2064, -26, 215],
+            2: [3467, 339, 390]
+        }
+        d0yle := {
+            /* 1: [-78, -53, 210],
+            2: [-833, -462, 288] */
+            ;// sm64
+            1: [2013, 1128, 210],
+            2: [2759, 1547, 288]
+        }
+        chloe := {
+            ;// below contains temp changes, orig; [-426, -238, 267], [-1679, -854, 486]
+            1: [1727, 304, 267],
+            2: [3070, 139, 486],
+            3: [632, 278, 292]
+        }
+        emerldd := {
+            1: [1913, 67, 200],
+            2: [2873, -436, 300]
+        }
+    }
 
     /**
      * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
@@ -250,7 +276,7 @@ class Prem {
     /**
      * This function on first run will ask you to select a clip with the exact zoom you wish to use for the current session. Any subsequent activations of the script will simply zoom the current clip to that zoom amount. You can reset this zoom by refreshing the script.
      *
-     * If a specified client name is in the title of the window (usually in the url project path) this function will set predefined zooms
+     * If a specified client name is in the title of the window (usually in the url project path) this function will set predefined zooms. These clients can be defined within the neseted class `Prem.ClientInfo`
      */
     static zoom()
     {
@@ -273,36 +299,16 @@ class Prem {
                 {
                     tool.Cust("zoom toggle reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.355, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
                     this.timer := false
-                    Tog := 0
+                    Tog := 1
                     SetTimer(, 0)
                     return
                 }
         }
 
-        ;we'll put all our values at the top so they can be easily changed. First value is your X coord, second value is your Y coord, third value is your Scale value
-        ;// alex
-        alexXYS := [2064, -26, 215]
-        alexZoomXYS := [3467, 339, 390]
-
-        ;// d0yle
-        d0yleXYS := [-78, -53, 210]
-        d0yleZoomXYS := [-833, -462, 288]
-
-        ;// chloe
-        ;// below contains temp changes, orig; [-426, -238, 267], [-1679, -854, 486]
-        chloeXYS := [1727, 304, 267]
-        chloeZoomXYS := [3070, 139, 486]
-        chloeExtraZoom := [632, 278, 292]
-
-        ;// emerldd
-        emerlddXYS := [1913, 67, 200]
-        emerlddZoomXYS := [2873, -436, 300]
-
+        ;// assign the nested class to an object
+        clientList := this.ClientInfo()
         ;then we'll define the values that will allow us to change things depending on the project
-        static x := 0
-        static y := 0
-        static scale := 0
-        static Tog := 0
+        static x := 0, y := 0, scale := 0, Tog := 1
 
         allKeyWait()
         coord.s()
@@ -335,57 +341,49 @@ class Prem {
                 tool.Cust("Couldn't get the client name")
                 return
             }
-        ;// check if clientname is defined above
-        if IsSet(%ClientName%XYS)
-            {
-                x := %ClientName%XYS[1]
-                y := %ClientName%XYS[2]
-                scale := %ClientName%XYS[3]
-            }
-        if IsSet(%ClientName%ZoomXYS)
-            {
-                if !this.timer
-                    {
-                        this.timer := true
-                        SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
-                    }
-                else
-                    {
-                        ;// if the timer is already active, we first have to stop it before restarting it
-                        ;// since the timer checks the state of `this.timer` which is a variable at the top of this class, we simply set that variable to false
-                        ;// sleep for a fraction of a second so the timer has time to notice the change
-                        ;// then reset the value and reset the timer
-                        ;// otherwise you end up with multiple tooltip stating that toggles have been reset
-                        this.timer := false
-                        sleep 50
-                        this.timer := true
-                        SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
-                    }
-                if IsSet(%ClientName%ExtraZoom)
-                    tool.Cust("zoom " Tog+1 "/3")
-                else
-                    tool.Cust("zoom " Tog+1 "/2")
-                switch Tog {
-                    case 0:
-                        x := %ClientName%XYS[1]
-                        y := %ClientName%XYS[2]
-                        scale := %ClientName%XYS[3]
-                    case 1:
-                        x := %ClientName%ZoomXYS[1]
-                        y := %ClientName%ZoomXYS[2]
-                        scale := %ClientName%ZoomXYS[3]
-                        ;// if there isn't a 3rd zoom for the current client, reset toggle
-                        if !IsSet(%ClientName%ExtraZoom)
-                            tog := -1
-                    case 2:
-                        x := %ClientName%ExtraZoom[1]
-                        y := %ClientName%ExtraZoom[2]
-                        scale := %ClientName%ExtraZoom[3]
+        ;// check to see if the clientlist contains the current client name
+        if clientList.HasOwnProp(ClientName) {
+            count := ObjOwnPropCount(clientList.%ClientName%)
+            if clientList.%ClientName%.HasOwnProp("1") && count = 1
+                {
+                    x := clientList.%ClientName%.punchIn[1]
+                    y := clientList.%ClientName%.punchIn[2]
+                    scale := clientList.%ClientName%.punchIn[3]
                 }
-                Tog++
-                if Tog > 2
-                    Tog := 0
-            }
+            else if count > 1
+                {
+                    if !this.timer
+                        {
+                            this.timer := true
+                            SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
+                        }
+                    else
+                        {
+                            ;// if the timer is already active, we first have to stop it before restarting it
+                            ;// since the timer checks the state of `this.timer` which is a variable at the top of this class, we simply set that variable to false
+                            ;// sleep for a fraction of a second so the timer has time to notice the change
+                            ;// then reset the value and reset the timer
+                            ;// otherwise you end up with multiple tooltip stating that toggles have been reset
+                            this.timer := false
+                            sleep 50
+                            this.timer := true
+                            SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
+                        }
+                    tool.Cust("zoom " Tog "/" count)
+                    ;// this for loop stops the need to hard code each potential toggle
+                    ;// as long as the object contains '1' & more than 1 property, this will function correctly
+                    for Name in clientList.%ClientName%.OwnProps() {
+                        if A_Index != Tog
+                            continue
+                        x := clientList.%ClientName%.%Name%[1]
+                        y := clientList.%ClientName%.%Name%[2]
+                        scale := clientList.%ClientName%.%Name%[3]
+                    }
+                    Tog++
+                    if Tog > count
+                        Tog := 1
+                }
+        }
         if scale = 0
             {
                 block.Off()
