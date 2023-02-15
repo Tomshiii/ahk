@@ -145,7 +145,7 @@ if psver = 0
         ;// .Net7
         net7:
         ;// retrieve installed versions of .net sdk
-        dotnetvers := getcmd("dotnet --list-sdks")
+        dotnetvers := cmd.result("dotnet --list-sdks")
         loop {
             if !InStr(dotnetvers, "[",,, 1)
                 break
@@ -198,4 +198,4 @@ TrayTip()
 if inputNeeded = true
     MsgBox("Extraction complete!", "Install Complete")
 
-;// `getcmd.ahk` gets appended to the end of this file during `generateUpdate.ahk`
+;// `cmd.ahk` gets appended to the end of this file during `generateUpdate.ahk`

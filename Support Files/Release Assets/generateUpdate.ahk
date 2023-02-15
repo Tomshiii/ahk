@@ -179,7 +179,7 @@ appendTo(readFile, script) {
     funcToAppend := FileRead(readFile)
     FileAppend("`n`n" funcToAppend, script)
 }
-appendTo(ptf.lib "\Functions\getCMD.ahk", A_WorkingDir "\release\Extract.ahk")
+appendTo(ptf.lib "\Classes\cmd.ahk", A_WorkingDir "\release\Extract.ahk")
 appendTo(ptf.lib "\Functions\unzip.ahk", A_WorkingDir "\release\Extract.ahk")
 
 ;// copying over thqby's 7zip lib in case it's useful

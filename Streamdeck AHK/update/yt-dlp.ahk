@@ -1,6 +1,6 @@
 ; { \\ #Includes
-#Include <Functions\runcmd>
+#Include <Classes\cmd>
 ; }
 
 ;// this script requires the user to be using chocolatey
-runcmd(true, true, "choco upgrade yt-dlp")
+cmd.run(true, true, "choco upgrade yt-dlp")

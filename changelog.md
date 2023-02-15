@@ -1,4 +1,5 @@
 # <> Release 2.10.x - 
+- Combined `getcmd()` & `runcmd()` into `class cmd {`
 
 ## > Functions
 `Prem()`

@@ -1,6 +1,6 @@
 ; { \\ #Includes
-#Include <Functions\runcmd>
+#Include <Classes\cmd>
 ; }
 
 ;// this script will only work properly if powershel was initially installed via winget
-runcmd(true, true, "winget install microsoft.powershell")
+cmd.run(true, true, "winget install microsoft.powershell")

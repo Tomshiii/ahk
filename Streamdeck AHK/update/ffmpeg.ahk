@@ -1,6 +1,6 @@
 ; { \\ #Includes
-#Include <Functions\runcmd>
+#Include <Classes\cmd>
 ; }
 
 ;// this script requires the user to be using chocolatey
-runcmd(true, false,"choco upgrade ffmpeg")
+cmd.run(true, false,"choco upgrade ffmpeg")
