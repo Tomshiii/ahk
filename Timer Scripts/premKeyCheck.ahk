@@ -3,7 +3,7 @@
 ListLines(0)
 
 ; { \\ #Includes
-#Include <Functions\checkKey>
+#Include <Classes\keys>
 #Include <Classes\ptf>
 ; }
 
@@ -31,8 +31,8 @@ doCheck()
             SetTimer(, 0)
             Reload
         }
-    checkKey("RButton")
-    ;checkKey("LButton") ;don't do this, things break
-    checkKey("XButton2")
-    checkKey("\")
+    keys.check("RButton")
+    ;keys.check("LButton") ;don't do this, things break
+    keys.check("XButton2")
+    keys.check("\")
 }

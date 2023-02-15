@@ -1,5 +1,6 @@
 # <> Release 2.10.x - 
 - Combined `getcmd()` & `runcmd()` into `class cmd {`
+- Combined `allKeyUp()`, `allKeyWait()` & `checkKey()` into `class keys {`
 
 ## > Functions
 `Prem()`

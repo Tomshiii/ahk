@@ -9,7 +9,7 @@
 #Include <Classes\coord>
 #Include <Classes\block>
 #Include <Classes\tool>
-#Include <Functions\allKeyWait>
+#Include <Classes\keys>
 ; }
 
 SetWorkingDir(ptf.rootDir)      ; Ensures a consistent starting directory.
@@ -19,7 +19,7 @@ SetDefaultMouseSpeed(0)
 TraySetIcon(ptf.Icons "\resolve.png")
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9
+;\\v2.9.1
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.10.0.1
@@ -167,7 +167,7 @@ Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as poss
                     SendInput("{Click Down}")
                     MouseMove(xpos, ypos)
                     block.Off()
-                    allKeyWait()
+                    keys.allWait()
                     SendInput("{Click Up}")
                     return
                 }

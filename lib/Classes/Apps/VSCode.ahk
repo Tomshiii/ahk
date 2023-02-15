@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/01/25
- * @version 1.2.0.1
+ * @date 2023/02/15
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,9 +11,9 @@
 #Include <Classes\coord>
 #Include <Classes\ptf>
 #Include <Classes\tool>
+#Include <Classes\keys>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
-#Include <Functions\allKeyWait>
 #Include <Functions\delaySI>
 ; }
 
@@ -70,7 +70,7 @@ class VSCode {
      */
     static script(script := 0)
     {
-        allKeyWait("first")
+        keys.allWait("first")
         block.On()
         sleep 50
         delaySI(50, KSA.focusExplorerWin, KSA.focusExplorerWin, KSA.focusWork, KSA.collapseFold, KSA.collapseFold, "{Up 2}", "{Enter}")

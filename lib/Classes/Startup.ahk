@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/02/05
- * @version 1.4.6
+ * @date 2023/02/15
+ * @version 1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include <Classes\tool>
 #Include <Classes\Dark>
 #Include <Classes\winget>
+#Include <Classes\keys>
 #Include <Functions\errorLog>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
@@ -23,7 +24,6 @@
 #Include <Other\print>
 ; // libs
 #Include <Other\_DLFile>
-#Include <Functions\allKeyUp>
 ; }
 
 class Startup {
@@ -666,7 +666,7 @@ class Startup {
         check := UserSettings.update_check
         A_TrayMenu.Insert("7&") ;adds a divider bar
         A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
-        A_TrayMenu.Insert("9&", "allKeyUp()", (*) => allKeyUp())
+        A_TrayMenu.Insert("9&", "keys.allUp()", (*) => keys.allUp())
         A_TrayMenu.Insert("10&", "Active Scripts", (*) => activeScripts())
         A_TrayMenu.Insert("11&", "Check for Updates", checkUp)
         A_TrayMenu.Insert("13&", "Open All", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))

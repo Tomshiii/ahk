@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.30.4
+;\\v2.31
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -41,8 +41,7 @@
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
 #Include <Functions\getHotkeys>
-#Include <Functions\allKeyUp>
-#Include <Functions\allKeyWait>
+#Include <Classes\keys>
 #Include <Functions\delaySI>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
@@ -135,7 +134,7 @@ F12::KeyHistory  ;debugging
 #+^r::reload_reset_exit("reset") ;this will hard rerun all active ahk scripts
 
 ;unstickKeysHotkey;
-#F11::allKeyUp() ;this function will attempt to unstick as many keys as possible
+#F11::keys.allUp() ;this function will attempt to unstick as many keys as possible
 ;panicExitHotkey;
 #F12::reload_reset_exit("exit") ;this is a panic button and will shutdown all active ahk scripts
 ;panicExitALLHotkey;
@@ -493,7 +492,7 @@ Numpad9::
 ;pinfirefoxHotkey;
 RAlt & p:: ;This hotkey is to pin the first two tabs
 {
-	allKeyWait("first")
+	keys.allWait("first")
 	Send("!d") ;opens the alt context menu to begin detatching the firefox tab
 	sleep 100
 	delaySI(50, "+{TAB 3}", "+{F10}", "p", "{Right}", "+{F10}" "p" "{Left}")
@@ -618,7 +617,7 @@ Ctrl & BackSpace::
 		Send("{Left}")
 		Send("{Shift Up}{Ctrl Up}")
 	}
-	allKeyWait("second")
+	keys.allWait("second")
 	sendLeft()
 	store := clip.clear()
 	Send("^c")

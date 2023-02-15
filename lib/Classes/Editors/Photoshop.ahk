@@ -2,8 +2,8 @@
  * @description A library of useful Photoshop functions to speed up common tasks
  * Last tested in v24.0.1 of Photoshop
  * @author tomshi
- * @date 2023/01/19
- * @version 1.2.0
+ * @date 2023/02/15
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,8 +12,8 @@
 #Include <Classes\coord>
 #Include <Classes\ptf>
 #Include <Classes\tool>
+#Include <Classes\keys>
 #Include <Functions\errorLog>
-#Include <Functions\allKeyWait>
 ; }
 
 class PS {
@@ -69,7 +69,7 @@ class PS {
                 return
             }
         block.Off()
-        allKeyWait()
+        keys.allWait()
         SendInput("{Click Up}")
         MouseMove(xpos, ypos)
     }

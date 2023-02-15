@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2023/01/19
- * @version 1.4.0
+ * @date 2023/02/15
+ * @version 1.5.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,9 +15,9 @@
 #Include <Classes\winget>
 #Include <Classes\clip>
 #Include <Classes\obj>
+#Include <Classes\keys>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
-#Include <Functions\allKeyWait>
 ; }
 
 class Resolve {
@@ -102,7 +102,7 @@ class Resolve {
      */
     static scale(value, property, plus := 0)
     {
-        allKeyWait("second")
+        keys.allWait("second")
         coord.w()
         block.On()
         SendInput(KSA.resolveSelectPlayhead)
@@ -164,7 +164,7 @@ class Resolve {
     ;Open or close/reopen the search bar
     ;Search for your effect of choice, then drag back to the click you were hovering over originally
     {
-        allKeyWait("second")
+        keys.allWait("second")
         if !winget.isFullscreen(&title, this.winTitle)
         {
             SplitPath(A_LineFile, &filename)
@@ -262,7 +262,7 @@ class Resolve {
                 return
             }
         block.Off()
-        allKeyWait()
+        keys.allWait()
         SendInput("{Click Up}")
         MouseMove(orig.x, orig.y)
     }

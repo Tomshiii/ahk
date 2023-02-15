@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/01/21
- * @version 1.1.2
+ * @date 2023/02/15
+ * @version 1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,10 +15,10 @@
 #Include <Classes\Editors\After Effects>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\Editors\Photoshop>
+#Include <Classes\keys>
 ;funcs
 #Include <Functions\getHotkeys>
 #Include <Functions\errorLog>
-#Include <Functions\allKeyWait>
 ; }
 
 class switchTo {
@@ -91,7 +91,7 @@ class switchTo {
      */
     static newWin(classorexe, activate, runval)
     {
-        allKeyWait("second")
+        keys.allWait("second")
         if !WinExist("ahk_" classorexe . activate)
             {
                 Run(runval)

@@ -15,7 +15,7 @@ CoordMode("Pixel", "screen")
 #Include <Classes\ptf>
 #Include <Classes\obj>
 #Include <Functions\errorLog>
-#Include <Functions\checkKey>
+#Include <Classes\keys>
 ; }
 
 
@@ -165,9 +165,9 @@ Rbutton::
 				{
 					SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 					;The below checks are to ensure no buttons end up stuck
-					checkKey("LButton")
-					checkKey("XButton1")
-					checkKey("XButton2")
+					keys.check("LButton")
+					keys.check("XButton1")
+					keys.check("XButton2")
 					return
 				}
 			while GetKeyState("Rbutton", "P")
