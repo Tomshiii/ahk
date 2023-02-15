@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/01/14
- * @version 1.5.2
+ * @date 2023/02/15
+ * @version 1.5.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -150,6 +150,38 @@ class WinGet {
     }
 
     /**
+     * This function is to reduce repeat code for the adobe name functions below.
+     * @param {String} which is defining whether after effects or premiere should be checked
+     */
+    __AdobeName(which, &progCheck?, &titleCheck?, &saveCheck?) {
+        switch which {
+            case "AE":
+                adobeWinTitle := editors.AE.winTitle
+                class := editors.AE.class
+                title := "Adobe After Effects 20" ptf.AEYearVer " -"
+            default:
+                winTitle := editors.Premiere.winTitle
+                class := editors.Premiere.class
+                title := "Adobe Premiere Pro 20" ptf.PremYearVer " -"
+        }
+        try {
+            if !WinExist(adobeWinTitle)
+                return {winTitle: false, titleCheck: unset, saveCheck: unset}
+            progCheck := WinGetTitle(class)
+            if progCheck = ""
+                progCheck := WinGetTitle(adobeWinTitle)
+            titleCheck := InStr(progCheck, title) ;we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            saveCheck := (SubStr(progCheck, -1, 1) = "*") ? true : false
+            return {winTitle: progCheck, titleCheck: true, saveCheck: saveCheck}
+        } catch as e {
+            block.Off()
+            tool.Cust("Couldn't determine the titles of Adobe programs")
+            errorLog(e)
+            return {winTitle: false, titleCheck: unset, saveCheck: unset}
+        }
+    }
+
+    /**
      * This function will grab the title of premiere if it exists and check to see if a save is necessary
      * @param {VarRef} premCheck is the complete title of premiere
      * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return unset if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
@@ -162,24 +194,7 @@ class WinGet {
      * prem.saveCheck       ;// a boolean value of if a save is currently necessary
      * ```
      */
-    static PremName(&premCheck?, &titleCheck?, &saveCheck?)
-    {
-        try {
-            if !WinExist(editors.Premiere.winTitle)
-                return {winTitle: false, titleCheck: unset, saveCheck: unset}
-            premCheck := WinGetTitle(editors.Premiere.class)
-            if premCheck = ""
-                premCheck := WinGetTitle(editors.Premiere.winTitle)
-            titleCheck := InStr(premCheck, "Adobe Premiere Pro 20" ptf.PremYearVer " -") ;we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-            saveCheck := (SubStr(premCheck, -1, 1) = "*") ? true : false
-            return {winTitle: premCheck, titleCheck: true, saveCheck: saveCheck}
-        } catch as e {
-            block.Off()
-            tool.Cust("Couldn't determine the titles of Adobe programs")
-            errorLog(e)
-            return {winTitle: false, titleCheck: unset, saveCheck: unset}
-        }
-    }
+    static PremName(&premCheck?, &titleCheck?, &saveCheck?) => premiere := this().__AdobeName("premiere", &premCheck?, &titleCheck?, &saveCheck?)
 
     /**
      * This function will grab the title of after effects if it exists and check to see if a save is necessary
@@ -194,22 +209,7 @@ class WinGet {
      * ae.saveCheck       ;// a boolean value of if a save is currently necessary
      * ```
      */
-    static AEName(&aeCheck?, &titleCheck?, &saveCheck?)
-    {
-        try {
-            if !WinExist(editors.AE.winTitle)
-                return {winTitle: false, titleCheck: unset, saveCheck: unset}
-            aeCheck := WinGetTitle(editors.AE.winTitle)
-            titleCheck := InStr(aeCheck, "Adobe After Effects 20" ptf.AEYearVer " -") ;we add the " -" to accomodate a window that is literally just called "Adobe After Effects [Year]"
-            saveCheck := (SubStr(aeCheck, -1, 1) = "*") ? true : false
-            return {winTitle: aeCheck, titleCheck: true, saveCheck: saveCheck}
-        } catch as e {
-            block.Off()
-            tool.Cust("Couldn't determine the titles of Adobe programs")
-            errorLog(e)
-            return {winTitle: false, titleCheck: unset, saveCheck: unset}
-        }
-    }
+    static AEName(&aeCheck?, &titleCheck?, &saveCheck?) => ae := this().__AdobeName("AE", &aeCheck?, &titleCheck?, &saveCheck?)
 
     /**
      * This function is designed to retrieve the name of the client using some string manipulation of the dir path within Premiere's title. It uses `ptf.comms` as the "root" dir and expects the next folder in the path to be the client name.

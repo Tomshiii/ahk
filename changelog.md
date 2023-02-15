@@ -3,6 +3,8 @@
 - Combined `allKeyUp()`, `allKeyWait()` & `checkKey()` into `class keys {`
 
 ## > Functions
+- Fix `winGet.AEName()` failing to get winTitle when After Effects is in the background
+
 `Prem()`
 
 - `zoom()`
@@ -11,4 +13,5 @@
 - `audioDrag("bleep")` can now be cancelled by pressing <kbd>Esc</kbd>
 
 ## > Other Changes
+- Fix `Settings.ahk` failing to properly set `Adjust` values if set to `1/0`
 - Fix `checklist.ahk` throwing when title can't be found
