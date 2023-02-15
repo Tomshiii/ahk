@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord
  * @author tomshi
- * @date 2023/01/19
- * @version 1.2.0
+ * @date 2023/02/15
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -213,7 +213,15 @@ class discord {
                     SendInput(char)
                 return
             }
-        A_Clipboard := char1 A_Clipboard char2
+        ;// clearing the clipboard again in an attempt to fix this function sometimes hanging and sending keys seemingly randomly
+        middle := A_Clipboard
+        clip.clear()
+        A_Clipboard := char1 middle char2
+        if !ClipWait(0.25)
+            {
+                clip.delayReturn(store.storedClip)
+                return
+            }
         SendInput("^v")
         clip.delayReturn(store.storedClip)
     }

@@ -64,8 +64,7 @@ class Prem {
     {
         if Type(item) != "string" {
             ;// throw
-            errorLog(TypeError("Incorrect value type in Parameter #1", -1, item)
-                        ,,, 1)
+            errorLog(TypeError("Incorrect value type in Parameter #1", -1, item),,, 1)
         }
         allKeyWait()
         ToolTip("Your Preset is being dragged")
