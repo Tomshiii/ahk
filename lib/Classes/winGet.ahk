@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2023/02/16
- * @version 1.5.5
+ * @version 1.5.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -154,22 +154,20 @@ class WinGet {
      * @param {String} which is defining whether after effects or premiere should be checked
      */
     __AdobeName(which, &progCheck?, &titleCheck?, &saveCheck?) {
-        switch which {
-            case "AE":
-                adobeWinTitle := editors.AE.winTitle
-                class := editors.AE.class
-                title := "Adobe After Effects 20" ptf.AEYearVer " -"
-            case "Premiere":
-                adobeWinTitle := editors.Premiere.winTitle
-                class := editors.Premiere.class
-                title := "Adobe Premiere Pro 20" ptf.PremYearVer " -"
+        if (which != "AE" && which != "Premiere") {
+            ;// throw
+            errorLog(ValueError("Incorrect Parameter (#1) Passed to function", -1, which), "Parameter must be 'AE' or 'Premiere'",, 1)
         }
         try {
-            if !WinExist(adobeWinTitle)
+            if !WinExist(editors.%which%.winTitle)
                 return {winTitle: false, titleCheck: unset, saveCheck: unset}
-            progCheck := WinGetTitle(class)
+            switch which {
+                case "AE":       title := "Adobe After Effects 20" ptf.AEYearVer " -"
+                case "Premiere": title := "Adobe Premiere Pro 20" ptf.PremYearVer " -"
+            }
+            progCheck := WinGetTitle(editors.%which%.class)
             if progCheck = ""
-                progCheck := WinGetTitle(adobeWinTitle)
+                progCheck := WinGetTitle(editors.%which%.winTitle)
             titleCheck := InStr(progCheck, title) ;we add the " -" to accomodate a window that is literally just called "Adobe -- [Year]"
             saveCheck := (SubStr(progCheck, -1, 1) = "*") ? true : false
             return {winTitle: progCheck, titleCheck: true, saveCheck: saveCheck}
@@ -186,8 +184,9 @@ class WinGet {
      * @param {VarRef} premCheck is the complete title of premiere
      * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return unset if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
      * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return unset if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
-     * @returns {Object}
+     * @returns {Object/Boolean}
      * ```
+     * ;// if Premiere isn't open `winget.PremName()` will return 0/false
      * prem := winget.PremName()
      * prem.winTitle        ;// is the current title of the open premiere window
      * prem.titleCheck      ;// a boolean value of if the window is available to save
@@ -196,6 +195,8 @@ class WinGet {
      */
     static PremName(&premCheck?, &titleCheck?, &saveCheck?) {
         premiere := this().__AdobeName("Premiere", &premCheck?, &titleCheck?, &saveCheck?)
+        if !premiere.winTitle
+            return false
         return {winTitle: premiere.winTitle, titleCheck: (IsSet(titleCheck) ? premiere.titleCheck : unset), saveCheck: (IsSet(saveCheck) ? premiere.saveCheck : unset)}
     }
 
@@ -204,8 +205,9 @@ class WinGet {
      * @param {VarRef} aeCheck is the complete title of after effects
      * @param {VarRef} titleCheck is checking to see if the after effects window is available to save based off what's found in the current title. Will return unset if after effects cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
      * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary.  Will return unset if after effects cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
-     * @returns {Object}
+     * @returns {Object/Boolean}
      * ```
+     * ;// if AE isn't open `winget.AE()` will return 0/false
      * ae := winget.AEName()
      * ae.winTitle        ;// is the current title of the open ae window
      * ae.titleCheck      ;// a boolean value of if the window is available to save
@@ -214,6 +216,8 @@ class WinGet {
      */
     static AEName(&aeCheck?, &titleCheck?, &saveCheck?) {
         ae := this().__AdobeName("AE", &aeCheck?, &titleCheck?, &saveCheck?)
+        if !ae.winTitle
+            return false
         return {winTitle: ae.winTitle, titleCheck: (IsSet(titleCheck) ? ae.titleCheck : unset), saveCheck: (IsSet(saveCheck) ? ae.saveCheck : unset)}
     }
 
@@ -228,11 +232,11 @@ class WinGet {
                 errorLog(TargetError("Couldn't determine an editor window", -1),, 1)
                 return false
             }
-        ;// if PremName fails to grab the title
-        if !this.PremName(&premCheck, &titleCheck) && !this.AEName(&aeCheck) {
-                errorLog(TargetError("Unable to determine the client as the title is unable to be obtained", -1),, 1)
-                return false
-            }
+        ;// attempt to grab title
+        if !this.PremName(&premCheck) && !this.AEName(&aeCheck) {
+            errorLog(TargetError("Unable to determine the client as the title is unable to be obtained", -1),, 1)
+            return false
+        }
         path := IsSet(premCheck) ? obj.SplitPath(premCheck) : obj.SplitPath(aeCheck)
         ;// if the comms folder isn't in the title path
         if !InStr(path.dir, ptf.comms) {
