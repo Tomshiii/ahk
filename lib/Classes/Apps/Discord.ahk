@@ -1,5 +1,5 @@
 /************************************************************************
- * @description Speed up interactions with discord
+ * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
  * @date 2023/02/15
  * @version 1.3

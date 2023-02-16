@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/02/15
- * @version 1.5.3
+ * @date 2023/02/16
+ * @version 1.5.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -159,8 +159,8 @@ class WinGet {
                 adobeWinTitle := editors.AE.winTitle
                 class := editors.AE.class
                 title := "Adobe After Effects 20" ptf.AEYearVer " -"
-            default:
-                winTitle := editors.Premiere.winTitle
+            case "Premiere":
+                adobeWinTitle := editors.Premiere.winTitle
                 class := editors.Premiere.class
                 title := "Adobe Premiere Pro 20" ptf.PremYearVer " -"
         }
@@ -170,7 +170,7 @@ class WinGet {
             progCheck := WinGetTitle(class)
             if progCheck = ""
                 progCheck := WinGetTitle(adobeWinTitle)
-            titleCheck := InStr(progCheck, title) ;we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
+            titleCheck := InStr(progCheck, title) ;we add the " -" to accomodate a window that is literally just called "Adobe -- [Year]"
             saveCheck := (SubStr(progCheck, -1, 1) = "*") ? true : false
             return {winTitle: progCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
@@ -194,7 +194,10 @@ class WinGet {
      * prem.saveCheck       ;// a boolean value of if a save is currently necessary
      * ```
      */
-    static PremName(&premCheck?, &titleCheck?, &saveCheck?) => premiere := this().__AdobeName("premiere", &premCheck?, &titleCheck?, &saveCheck?)
+    static PremName(&premCheck?, &titleCheck?, &saveCheck?) {
+        premiere := this().__AdobeName("Premiere", &premCheck?, &titleCheck?, &saveCheck?)
+        return {winTitle: premiere.winTitle, titleCheck: premiere.titleCheck, saveCheck: premiere.saveCheck}
+    }
 
     /**
      * This function will grab the title of after effects if it exists and check to see if a save is necessary
@@ -209,7 +212,10 @@ class WinGet {
      * ae.saveCheck       ;// a boolean value of if a save is currently necessary
      * ```
      */
-    static AEName(&aeCheck?, &titleCheck?, &saveCheck?) => ae := this().__AdobeName("AE", &aeCheck?, &titleCheck?, &saveCheck?)
+    static AEName(&aeCheck?, &titleCheck?, &saveCheck?) {
+        ae := this().__AdobeName("AE", &aeCheck?, &titleCheck?, &saveCheck?)
+        return {winTitle: ae.winTitle, titleCheck: ae.titleCheck, saveCheck: ae.saveCheck}
+    }
 
     /**
      * This function is designed to retrieve the name of the client using some string manipulation of the dir path within Premiere's title. It uses `ptf.comms` as the "root" dir and expects the next folder in the path to be the client name.
