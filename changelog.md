@@ -14,4 +14,8 @@
 
 ## > Other Changes
 - Fix `Settings.ahk` failing to properly set `Adjust` values if set to `1/0`
-- Fix `checklist.ahk` throwing when title can't be found
+
+`checklist.ahk`
+- Fix throwing when title can't be found
+- Fix bug causing `VSCode` to get closed if open when checklist attempts to open
+- Cut repeat code in main script file

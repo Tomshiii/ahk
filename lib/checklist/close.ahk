@@ -27,8 +27,8 @@ close(*) {
 closeWaitUntil()
 {
     detect()
-    if WinExist("waitUntil.ahk",, browser.vscode.winTitle)
-        ProcessClose(WinGetPID("waitUntil.ahk",, browser.vscode.winTitle))
+    if WinExist("waitUntil.ahk",, "- Visual Studio Code " browser.vscode.winTitle)
+        ProcessClose(WinGetPID("waitUntil.ahk",, "- Visual Studio Code " browser.vscode.winTitle))
 }
 
 checklistGUI.OnEvent("Close", ExitFunc.Bind(""))

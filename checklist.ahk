@@ -30,7 +30,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.12.1"
+version := "v2.12.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -60,55 +60,26 @@ else
                 goto end
             }
         dashLocation := unset
-        dashLocationAE := unset
-        if WinExist(Editors.Premiere.winTitle)
+        openProg := WinExist(Editors.Premiere.winTitle) ? winget.PremName(, &titleCheck)
+                                                        : winget.AEName(, &titleCheck)
+        if !IsSet(titleCheck)
             {
-                winget.PremName(&Nameprem, &titlecheck, &savecheck) ;first we grab some information about the premiere pro window
-                if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
-                    {
-                        block.Off()
-                        errorLog(UnsetError("Variable hasn't been assigned a value.", -1),, 1)
-                        premNotOpen(&checklist, &logs, &path)
-                        if WinExist("Select commission folder")
-                            WinWaitClose("Select commission folder")
-                        if WinExist("Wait or Continue?")
-                            WinWaitClose("Wait or Continue?")
-                    }
-                dashLocation := InStr(Nameprem, "-")
-                if dashLocation = 0
-                    dashLocation := unset
+                block.Off()
+                errorLog(UnsetError("Variable hasn't been assigned a value.", -1),, 1)
+                premNotOpen(&checklist, &logs, &path)
+                if WinExist("Select commission folder")
+                    WinWaitClose("Select commission folder")
+                if WinExist("Wait or Continue?")
+                    WinWaitClose("Wait or Continue?")
             }
-        else if WinExist(editors.AE.winTitle)
-            {
-                aeCheck := WinGetTitle(editors.AE.winTitle)
-                if !IsSet(aeCheck) ;we ensure the title variable has been assigned before proceeding forward
-                    {
-                        block.Off()
-                        errorLog(UnsetError("Variable hasn't been assigned a value.", -1, aeCheck),, 1)
-                        premNotOpen(&checklist, &logs, &path)
-                        if WinExist("Select commission folder")
-                            WinWaitClose("Select commission folder")
-                        if WinExist("Wait or Continue?")
-                            WinWaitClose("Wait or Continue?")
-                        goto end
-                    }
-                if !InStr(aeCheck, ":`\")
-                    {
-                        try {
-                            aeCheck := WinGetTitle("Adobe After Effects")
-                        }
-                        if !InStr(aeCheck, ":`\")
-                            dashLocationAE := unset
-                        else
-                            dashLocationAE := InStr(aeCheck, ":`\")
-                    }
-                else
-                    dashLocationAE := InStr(aeCheck, ":`\")
-                /* MsgBox("aeCheck " aeCheck)
-                if IsSet(dashLocationAE)
-                    MsgBox("dash " dashLocationAE) */
-            }
-        if !IsSet(dashLocation) && !IsSet(dashLocationAE)
+        if InStr(openProg.winTitle, "Adobe After Effects 20" ptf.AEYearVer, 1, 1, 1) {
+            dashLocation := InStr(openProg.winTitle, ":`\") ? InStr(openProg.winTitle, "-") : unset
+        }
+        else
+            dashLocation := InStr(openProg.winTitle, "-")
+        if IsSet(dashLocation) && dashLocation = 0
+            dashLocation := unset
+        if !IsSet(dashLocation)
             {
                 detect()
                 if FileExist(UserSettings.SettingsFile) ;checks to see if the user wants to always wait until they open a project
@@ -138,12 +109,7 @@ else
                     }
             }
         if IsSet(dashLocation)
-            getPath(Nameprem, dashLocation, &checklist, &logs, &path)
-        else if IsSet(dashLocationAE)
-            {
-                getaeDash := InStr(aeCheck, "-")
-                getPath(aeCheck, getaeDash, &checklist, &logs, &path)
-            }
+            getPath(openProg.winTitle, dashLocation, &checklist, &logs, &path)
         end:
     }
 

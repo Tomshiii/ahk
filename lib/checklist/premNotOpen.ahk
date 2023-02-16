@@ -10,8 +10,8 @@ premNotOpen(&checklist, &logs, &path)
     if findFile = ""
         {
             detect()
-            if WinExist("checklist.ahk",, browser.vscode.winTitle)
-                ProcessClose(WinGetPID("checklist.ahk",, browser.vscode.winTitle))
+            if WinExist("checklist.ahk",, "- Visual Studio Code " browser.vscode.winTitle)
+                ProcessClose(WinGetPID("checklist.ahk",, "- Visual Studio Code " browser.vscode.winTitle))
         }
     checklist := findFile "\checklist.ini"
     logs := findFile "\checklist_logs.txt"

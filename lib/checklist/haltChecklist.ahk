@@ -9,6 +9,6 @@ haltChecklist()
 {
     Run(ptf.lib "\checklist\waitUntil.ahk")
     detect()
-    if WinExist("checklist.ahk",, browser.vscode.winTitle)
-        ProcessClose(WinGetPID("checklist.ahk",, browser.vscode.winTitle))
+    if WinExist("checklist.ahk",, "- Visual Studio Code " browser.vscode.winTitle)
+        ProcessClose(WinGetPID("checklist.ahk",, "- Visual Studio Code " browser.vscode.winTitle))
 }
