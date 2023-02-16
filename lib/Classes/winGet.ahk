@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2023/02/16
- * @version 1.5.4
+ * @version 1.5.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -196,7 +196,7 @@ class WinGet {
      */
     static PremName(&premCheck?, &titleCheck?, &saveCheck?) {
         premiere := this().__AdobeName("Premiere", &premCheck?, &titleCheck?, &saveCheck?)
-        return {winTitle: premiere.winTitle, titleCheck: premiere.titleCheck, saveCheck: premiere.saveCheck}
+        return {winTitle: premiere.winTitle, titleCheck: (IsSet(titleCheck) ? premiere.titleCheck : unset), saveCheck: (IsSet(saveCheck) ? premiere.saveCheck : unset)}
     }
 
     /**
@@ -214,7 +214,7 @@ class WinGet {
      */
     static AEName(&aeCheck?, &titleCheck?, &saveCheck?) {
         ae := this().__AdobeName("AE", &aeCheck?, &titleCheck?, &saveCheck?)
-        return {winTitle: ae.winTitle, titleCheck: ae.titleCheck, saveCheck: ae.saveCheck}
+        return {winTitle: ae.winTitle, titleCheck: (IsSet(titleCheck) ? ae.titleCheck : unset), saveCheck: (IsSet(saveCheck) ? ae.saveCheck : unset)}
     }
 
     /**
