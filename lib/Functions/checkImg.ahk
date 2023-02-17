@@ -12,14 +12,15 @@
  * @param {String} checkfilepath the path of the file you wish to check/imagesearch
  * @param {VarRef} returnX/Y are the return x/y values you wish to pass back
  * @param {Integer} x1/2&y1/2 are the coordinates you wish to search
+ * @param {Boolean/Object} tooltips whether you want `errorLog()` to produce tooltips if it runs into an error. This parameter can be a simple true/false or an object that errorLog is capable of understanding
  */
-checkImg(checkfilepath, &returnX?, &returnY?, x1 := 0, y1 := 0, x2 := A_ScreenWidth, y2 := A_ScreenHeight) {
+checkImg(checkfilepath, &returnX?, &returnY?, x1 := 0, y1 := 0, x2 := A_ScreenWidth, y2 := A_ScreenHeight, tooltips := false) {
     fileCheck := (check := InStr(checkfilepath, "*",, -1, -1))
                  ? SubStr(checkfilepath, (space := InStr(checkfilepath, " ",, check, 1)+1))
                  : checkfilepath
     if !FileExist(fileCheck)
         {
-            errorLog(ValueError("Desired file could not be found", -1, fileCheck),, -1)
+            errorLog(ValueError("Desired file could not be found", -1, fileCheck),, tooltips)
             return false
         }
     imgCheck := (IsSet(check) && check != 0)
@@ -27,7 +28,7 @@ checkImg(checkfilepath, &returnX?, &returnY?, x1 := 0, y1 := 0, x2 := A_ScreenWi
                 : "*2 "
     if !ImageSearch(&returnX, &returnY, x1, y1, x2, y2, imgCheck fileCheck)
         {
-            errorLog(Error("Could not locate the requested image on the screen", -1),, 1)
+            errorLog(Error("Could not locate the requested image on the screen", -1),, tooltips)
             return false
         }
     return true

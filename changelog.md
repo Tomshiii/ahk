@@ -4,6 +4,7 @@
 
 ## > Functions
 - Fix `winGet.AEName()` failing to get winTitle when After Effects is in the background
+- `checkImg()`/`obj.imgSrch()` now have a parameter to determine whether tooltips will fire when running into errors
 
 `Prem()`
 

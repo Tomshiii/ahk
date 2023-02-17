@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2023/01/06
- * @version 1.0.2
+ * @date 2023/02/17
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -79,6 +79,7 @@ class obj {
      * This function supports all imagesearch options
      * @param {Integer} x1/2&y1/2 are the coordinates you wish to check
      * @param {String} imgFile is the path to the file you wish to search for
+     * @param {Boolean/Object} tooltips whether you want `errorLog()` to produce tooltips if it runs into an error. This parameter can be a simple true/false or an object that errorLog is capable of understanding
      * @returns {Object} containing the x&y coordinates of the located image
      * ```
      * img := obj.imgSrch(,,,, "image.png")
@@ -86,8 +87,8 @@ class obj {
      * img.y
      * ```
      */
-    static imgSrch(x1 := 0, y1 := 0, x2 := A_ScreenWidth, y2 := A_ScreenHeight, imgFile := "") {
-        if !checkImg(imgFile, &x, &y, x1, y1, x2, y2)
+    static imgSrch(x1 := 0, y1 := 0, x2 := A_ScreenWidth, y2 := A_ScreenHeight, imgFile := "", tooltips := false) {
+        if !checkImg(imgFile, &x, &y, x1, y1, x2, y2, tooltips)
             return false
         return {x: x, y: y}
     }
