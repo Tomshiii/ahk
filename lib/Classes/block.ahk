@@ -1,25 +1,26 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2023/01/17
- * @version 1.3.2
+ * @date 2023/02/17
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\Settings>
+#Include <Classes\Mip>
 #Include <Functions\errorLog>
 ; }
 
+
 class block {
+    choices := Mip("send", 1, "mouse", 1, "sendandmouse", 1, "default", 1, "on", 1, "mousemove", 1, "mousemoveoff", 1, "off", 1)
+
     /**
      * This function is designed to be internal to the class and isn't intended to be manually called. It checks the users custom input settings to make sure they're a usable option. This function will also alert the user about the intricacies of using `BlockInput("On"/"Off")`
      * @param {String} args is the users passed in custom option
      */
     __inputs(args) {
-        choices := Map()
-        choices.CaseSense := "Off"
-        choices.Set("send", 1, "mouse", 1, "sendandmouse", 1, "default", 1, "on", 1, "mousemove", 1, "mousemoveoff", 1, "off", 1)
-        if !choices.Has(args) {
+        if !this.choices.Has(args) {
                 ;// throw
                 errorLog(ValueError("Incorrect value in parameter #1", -2, args),,, 1)
             }
@@ -30,7 +31,7 @@ class block {
                     {
                         alert := MsgBox("
                         (
-                            Using ``BlockInput("On")/BlockInput("Off")`` may not work as expected if you're using windows UAC and this script hasn't been run as admin. Consider using a different block mode for more usable code.
+                            Using ``BlockInput("On")/BlockInput("Off")`` may not work as expected if you're using windows UAC and this script hasn't been run as admin. Consider using a different block mode for more usable & shareable code.
 
                             Would you like to be alerted of this again in the future?
                         )", "Block Mode Warning", "4 48 4096")

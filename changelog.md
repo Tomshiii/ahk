@@ -3,6 +3,7 @@
 - Combined `allKeyUp()`, `allKeyWait()` & `checkKey()` into `class keys {`
 
 ## > Functions
+- Add `Mip {` to automatically create a `Map()` with `CaseSense`set to false
 - Fix `winGet.AEName()` failing to get winTitle when After Effects is in the background
 - `checkImg()`/`obj.imgSrch()` now have a parameter to determine whether tooltips will fire when running into errors
 

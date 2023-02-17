@@ -14,12 +14,12 @@ class cmd {
     /**
      * A wrapper function to quickly send custom commands to the command line
      * @param {Boolean} admin is whether you want the commandline to be run elevated
-     * @param {Boolean} wait whether you want this function to use `RunWait` or `Run`. It will default to `RunWait`
-     * @param {Varadic - String} runParams* the paramaters you wish to pass to run
+     * @param {Boolean} wait whether you want this function to use `RunWait()` or `Run()`. It will default to `RunWait()`
+     * @param {Varadic - String} runParams* the paramaters you wish to pass to run()
      * ```
-     * runParams[1] ;// the command you wish to pass to run
-     * runParams[2] ;// the workind dir you wish run to use
-     * runParams[3] ;// any options you wish to pass to run
+     * runParams[1] ;// the command you wish to pass to run()
+     * runParams[2] ;// the workingdir you wish run() to use
+     * runParams[3] ;// any options you wish to pass to run()
      * ```
      */
     static run(admin := false, wait := true, runParams*) {
