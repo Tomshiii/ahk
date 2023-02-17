@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.31
+;\\v2.31.1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -751,14 +751,14 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 	;MsgBox("x " toolx "`ny " tooly "`nwidth " width "`nheight " height "`nclass " ClassNN) ;debugging
 	block.On()
 	try {
-		if ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, toolx - "5", tooly - "20", toolx + "1000", tooly + "100", "*2 " ptf.Premiere "project2.png") ;searches for the project window to grab the track
+		if ImageSearch(&prx, &pry, toolx - 5, tooly - 20, toolx + 1000, tooly + 100, "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, toolx - 5, tooly - 20, toolx + 1000, tooly + 100, "*2 " ptf.Premiere "project2.png") ;searches for the project window to grab the track
 			goto move
 		/* else if ImageSearch(&prx, &pry, toolx, tooly, width, height, "*2 " ptf.Premiere "project2.png") ;I honestly have no idea what the original purpose of this line was
 			goto bin */
 		else
 			{
 				coord.s()
-				if ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, sanX - "5", sanY - "20", sanX + "1000", sanY + "100", "*2 " ptf.Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
+				if ImageSearch(&prx, &pry, sanX - 5, sanY - 20, sanX + 1000, sanY + 100, "*2 " ptf.Premiere "project.png") || ImageSearch(&prx, &pry, sanX - 5, sanY - 20, sanX + 1000, sanY + 100, "*2 " ptf.Premiere "project2.png") ;This is the fallback code if you have it on a different monitor
 					goto move
 				else
 					throw Error("Couldn't find the project window", -1)
@@ -769,7 +769,7 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 		return
 	}
 	move:
-	MouseMove(prx + "5", pry +"3")
+	MouseMove(prx+5, pry+3)
 	SendInput("{Click Down}")
 	coord.s()
 	Sleep 100
@@ -826,11 +826,11 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 				return
 			}
 	}
-	MouseMove(foldx + "9", foldy + "5", 2)
+	MouseMove(foldx + 9, foldy + 5, 2)
 	SendInput("{Click Down}")
 	;sleep 2000
 	coord.s()
-	MouseMove(3240, 564, "2")
+	MouseMove(3240, 564, 2)
 	SendInput("{Click Up}")
 	switchTo.Premiere()
 	WinWait("Import Files",, 2)
@@ -851,13 +851,13 @@ RAlt & p:: ;This hotkey pulls out the project window and moves it to my second m
 			errorLog(TargetError("Couldn't find the sfx folder in Premiere Pro", -1),, 1)
 			return
 		}
-	MouseMove(fold2x + "5", fold2y + "2")
+	MouseMove(fold2x + 5, fold2y + 2)
 	SendInput("{Click 2}")
 	sleep 100
 	loop {
 		if ImageSearch(&fold3x, &fold3y, 10, 0, 1038, 1072, "*2 " ptf.Premiere "binsfx.png")
 			{
-				MouseMove(fold3x + "20", fold3y + "4", 2)
+				MouseMove(fold3x + 20, fold3y + 4, 2)
 				SendInput("{Click Down}")
 				MouseMove(772, 993, 2)
 				sleep 250
@@ -909,7 +909,6 @@ LAlt & Xbutton2:: ;this is necessary for the below function to work
 Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 #Include *i right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
-;auto excecuting stuff will no longer function below this^ include
 
 ;bonkHotkey;
 F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20

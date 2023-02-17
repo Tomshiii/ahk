@@ -106,7 +106,7 @@ class VSCode {
     /**
      * I have a habit of always trying to ^f in the explorer window instead of the code window
      *
-     * This macro REQUIRES `editor.emptySelectionClipboard` to be set to false within VSCode (if you use vscode)
+     * This macro REQUIRES `editor.emptySelectionClipboard` to be set to false within VSCode
      */
     static search() {
         this().__getHighlightState(&orig)
@@ -122,7 +122,7 @@ class VSCode {
     }
 
     /**
-     * This function is only REQUIRED because I have `editor.emptySelectionClipboard` set to false within VSCode because of the above function.
+     * This function is only REQUIRED because I have `editor.emptySelectionClipboard` set to false within VSCode because of `VSCode.search()`.
      *
      * It recreates the usual ability to completely remove a line by pressed ^x
      */
@@ -145,7 +145,7 @@ class VSCode {
     }
 
     /**
-     * This function is only REQUIRED because I have `editor.emptySelectionClipboard` set to false within VSCode because of the above function.
+     * This function is only REQUIRED because I have `editor.emptySelectionClipboard` set to false within VSCode because of `VSCode.search()`.
      *
      * It recreates the usual ability to copy a line by pressed ^c
      */
