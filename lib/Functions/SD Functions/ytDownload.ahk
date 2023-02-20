@@ -108,4 +108,5 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
                 }
         }
     clip.returnClip(oldClip)
+    ; A_Clipboard := command
 }

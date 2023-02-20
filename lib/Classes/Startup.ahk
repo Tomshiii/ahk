@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/02/15
- * @version 1.5
+ * @date 2023/02/20
+ * @version 1.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include <Classes\Dark>
 #Include <Classes\winget>
 #Include <Classes\keys>
+#Include <Classes\Mip>
 #Include <Functions\errorLog>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
@@ -65,14 +66,9 @@ class Startup {
         ;// checking to see if the users OS version is high enough to support dark mode
         darkCheck := this.__checkDark()
 
-        genNewMap() {
-            newMap := Map()
-            newMap.CaseSense := "Off"
-            return newMap
-        }
-        allSett   := genNewMap()
-        allAdjust := genNewMap()
-        allTrack  := genNewMap()
+        genNewMap() => newMap := Mip()
+
+        allSett   := genNewMap(), allAdjust := genNewMap(), allTrack  := genNewMap()
 ;//     VarName         //             MapKey           //         MapValue+Default
         UPDATE          := allSett.Set("update_check",             IniRead(ptf["settings"], "Settings", "update check", UserSettings.defaults[1]))
         BETAUPDATE      := allSett.Set("beta_update_check",        IniRead(ptf["settings"], "Settings", "beta update check", UserSettings.defaults[2]))

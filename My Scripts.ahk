@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.31.1
+;\\v2.31.2
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -594,13 +594,14 @@ F23::SendInput(KSA.nextKeyframe) ;check the keyboard shortcut ini file to adjust
 ;		Premiere
 ;
 ;=============================================================================================================================================
+#HotIf WinActive("Adobe Premiere Pro 20" ptf.PremYearVer) && !GetKeyState("F24")
+;stopTabHotkey;
+Tab::return
+
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 ;There use to be a lot of macros about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
 ;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
 ;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
-
-;stopTabHotkey;
-Tab::return
 
 ;linkActivateHotkey;
 ~^l::SendInput(KSA.selectAtPlayhead)

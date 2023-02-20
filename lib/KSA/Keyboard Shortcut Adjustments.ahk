@@ -1,12 +1,13 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2023/01/21
- * @version 1.0.1
+ * @date 2023/02/20
+ * @version 1.0.2
  ***********************************************************************/
 
 ;{ \\ #Includes
 #Include <Classes\ptf>
+#Include <Classes\Mip>
 ; #Include <Other\print>
 ; }
 
@@ -34,8 +35,7 @@ class KeyShortAdjust {
         }
         ;// splitting the section into an array
         arr := StrSplit(getSection, ["=", "`n", "`r"])
-        newMap := Map()
-        newMap.CaseSense := "Off"
+        newMap := Mip()
         for i, v in arr {
             if Mod(i, 2) = 0
                 continue

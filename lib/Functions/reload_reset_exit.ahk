@@ -3,13 +3,12 @@
 #Include <Classes\tool>
 #Include <Classes\Apps\VSCode> ;// only to easy grab the path/wintitle information
 #Include <Classes\obj>
+#Include <Classes\Mip>
 #Include <Functions\detect>
 ; }
 
 ;// this portion of the code defines scripts to ignore within the below function
-ignoreScript := Map()
-ignoreScript.CaseSense := "Off"
-ignoreScript.Set("PC Startup.ahk", 1, "PC Startup2.ahk", 1, "My Scripts.ahk", 1, "launcher.ahk", 1)
+ignoreScript := Mip("PC Startup.ahk", 1, "PC Startup2.ahk", 1, "My Scripts.ahk", 1, "launcher.ahk", 1)
 ;// here we're adding all ahk files within `..\Streamdeck AHK\` to the ignore list
 loop files ptf.rootDir "\Streamdeck AHK\*.ahk", "R F" {
     if !ignoreScript.Has(A_LoopFileName)

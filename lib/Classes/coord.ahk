@@ -1,11 +1,12 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2023/01/18
- * @version 1.2.4
+ * @date 2023/02/20
+ * @version 1.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
+#Include <Classes\Mip>
 #Include <Functions\errorLog>
 ; }
 
@@ -16,9 +17,7 @@ class coord {
      * @param {Boolean} mouse is the passed in boolean dictating if the user wants the function to adjust the mouse to screen as well
     */
     __errorChecks(target, mouse?) {
-        targets := Map()
-        targets.CaseSense:= "Off"
-        targets.Set("tooltip", 1, "pixel", 1, "mouse", 1, "caret", 1, "menu", 1)
+        targets := Mip("tooltip", 1, "pixel", 1, "mouse", 1, "caret", 1, "menu", 1)
         ;// checking that the passed parameter is a string
         if Type(target) != "string"
             {
@@ -42,9 +41,7 @@ class coord {
      * @param {String} relative is the passed in `relativeTo` parameter of `CoordMode`
     */
     __caretErrorCheck(relative) {
-        relativeTo := Map()
-        relativeTo.CaseSense:= "Off"
-        relativeTo.Set("screen", 1, "window", 1, "client", 1)
+        relativeTo := Mip("screen", 1, "window", 1, "client", 1)
         ;// checking that the passed parameter is a string
         if Type(relative) != "string" {
                 ;// throw
