@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/02/15
- * @version 1.2
+ * @date 2023/02/21
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -198,10 +198,11 @@ class switchTo {
 
     /**
      * This switchTo function will quickly switch to the specified program. If there isn't an open window of the desired program, this function will open one
+     * @param {Integer} x/y/width/height the coordinates you wish to move discord too. Will default to the values listed at the top of the `discord {` class
      */
-    static Disc()
+    static Disc(x := discord.x, y := discord.y, width := discord.width, height := discord.height)
     {
-        move() => WinMove(discord.x, discord.y, discord.width, discord.height, discord.winTitle) ;cut repeat visual clutter. Values assigned in discord class
+        move() => WinMove(x, y, width, height, discord.winTitle) ;cut repeat visual clutter. Values assigned in discord class
         if WinExist(discord.winTitle)
             {
                 WinActivate(discord.winTitle)

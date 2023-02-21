@@ -87,7 +87,17 @@ h:: ;opens the directory for the current premiere/ae project
 	WinActivate("ahk_class CabinetWClass", path.NameNoExt, "Adobe")
 }
 n::unassigned()
-Space::switchTo.Disc()
+Space::
+{
+	;// if slack isn't open, simply call function
+	if !WinExist("ahk_exe slack.exe") {
+		switchTo.Disc()
+		return
+	}
+	;// if slack is open I want them both in a different position
+	WinMove(discord.slackX, -219, discord.slackWidth, 840, "ahk_exe slack.exe")
+	switchTo.Disc(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight)
+}
 Right & Space::switchTo.newWin("exe", "msedge.exe", "msedge.exe")
 Enter & Space::switchTo.closeOtherWindow(browser.edge.winTitle)
 

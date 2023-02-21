@@ -16,6 +16,7 @@
 
 ## > Other Changes
 - Fix `Settings.ahk` failing to properly set `Adjust` values if set to `1/0`
+- Fix `tiktok project.ahk` not properly using `ptf` values
 
 `checklist.ahk`
 - Fix throwing when title can't be found
