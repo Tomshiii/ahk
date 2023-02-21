@@ -423,12 +423,6 @@ settingsGUI()
     {
         SetTimer(statecheck, 0)
         SetTimer(iniWait, 0)
-        /* if !IsSet(butt) ;have to do it this way instead of using `butt.text` because hitting the X to close would cause an error doing that. Binding the function is the only way
-            {
-                ;check
-                if betaStart = true
-                    Run(A_ScriptFullPath)
-            } */
         ;check to see if the user wants to reset adobeTemp()
         if adobeToggle.Text = "undo?"
             UserSettings.adobe_temp := 0
@@ -443,6 +437,7 @@ settingsGUI()
                 reload_reset_exit("reset")
                 return ;// this is necessary
             }
+        sleep 500
         ;// has to reload at a minimum to refresh any settings changes
         reload_reset_exit("reload")
         ;before finally closing

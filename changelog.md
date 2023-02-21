@@ -16,6 +16,7 @@
 
 ## > Other Changes
 - Fix `Settings.ahk` failing to properly set `Adjust` values if set to `1/0`
+- Fix some settings not being properly set within `settingsGUI()`
 - Fix `tiktok project.ahk` not properly using `ptf` values
 
 `checklist.ahk`
