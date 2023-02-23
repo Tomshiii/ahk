@@ -145,7 +145,7 @@ if psver = 0
         ;// .Net7
         net7:
         ;// retrieve installed versions of .net sdk
-        dotnetvers := cmd.result("dotnet --list-sdks")
+        dotnetvers := result("dotnet --list-sdks")
         loop {
             if !InStr(dotnetvers, "[",,, 1)
                 break

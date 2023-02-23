@@ -198,8 +198,12 @@ appendTo(readFile, script) {
     funcToAppend := FileRead(readFile)
     FileAppend("`n`n" funcToAppend, script)
 }
-appendTo(ptf.lib "\Classes\cmd.ahk", A_WorkingDir "\release\Extract.ahk")
 appendTo(ptf.lib "\Functions\unzip.ahk", A_WorkingDir "\release\Extract.ahk")
+
+;//cmd has errorLog in it so we only want the one function
+; appendTo(ptf.lib "\Classes\cmd.ahk", A_WorkingDir "\release\Extract.ahk")
+addCMD := SubStr(cmdRead := FileRead(ptf.lib "\Classes\cmd.ahk"), startPos := (InStr(cmdRead, "static result(command)",, 1, 1) + 7), (InStr(cmdRead, "}",, startPos, 1) - startPos)+1)
+FileAppend("`n`n" addCMD, A_WorkingDir "\release\Extract.ahk")
 
 ;// copying over thqby's 7zip lib in case it's useful
 FileCopy(ptf.lib "\Other\7zip\7-zip32.dll", A_WorkingDir "\release")
@@ -282,6 +286,7 @@ SendInput("{Enter}")
 
 currentDir := ""
 verNum := Trim(verNew, "vprebetaalpha")
+verNum := SubStr(verNum, 1, InStr(verNum, ".",, 1, 2)-1)
 
 ;// using logic to determine where to place this release
 if !DirExist(A_WorkingDir "\" verNum ".x")
