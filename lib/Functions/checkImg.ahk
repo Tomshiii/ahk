@@ -26,7 +26,7 @@ checkImg(checkfilepath, &returnX?, &returnY?, coords := {x1: 0, y1: 0, x2: A_Scr
     imgCheck := (IsSet(check) && check != 0)
                 ? SubStr(checkfilepath, 1, space-1)
                 : "*2 "
-    if !ImageSearch(&returnX, &returnY, x1, y1, x2, y2, imgCheck fileCheck)
+    if !ImageSearch(&returnX, &returnY, coords.x1, coords.y1, coords.x2, coords.y2, imgCheck fileCheck)
         {
             errorLog(Error("Could not locate the requested image on the screen", -1),, tooltips)
             return false

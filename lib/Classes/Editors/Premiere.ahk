@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
  * @date 2023/02/23
- * @version 1.4.1
+ * @version 1.4.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -350,8 +350,8 @@ class Prem {
         if clientList.HasOwnProp(ClientName) {
             this.presses++
 
-            ;// giving the user 400ms to increment the zoom
-            waitms := 400
+            ;// giving the user 250ms to increment the zoom
+            waitms := 250
             startTime := A_TickCount
             SetTimer(waitTimer.Bind(startTime), 25)
             waitTimer(time) {
@@ -371,6 +371,8 @@ class Prem {
                 SetTimer(, 0)
             }
 
+            block.On()
+            MouseGetPos(&xpos, &ypos)
             loop {
                 if A_ThisHotkey != "" {
                     if GetKeyState(A_ThisHotkey, "P")
@@ -380,8 +382,6 @@ class Prem {
                     break
             }
             this.isWaiting := true
-            block.On()
-            MouseGetPos(&xpos, &ypos)
 
             ;// debug func
             /* check(block, other := "") {
