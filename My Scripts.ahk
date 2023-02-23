@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.31.2
+;\\v2.31.3
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -644,8 +644,6 @@ Ctrl & BackSpace::
 	clip.returnClip(store.storedClip)
 }
 
-;premzoomoutHotkey;
-SC03A & z::SendInput(KSA.zoomOut) ;\\set zoom out in the keyboard shortcuts ini ;idk why tf I need the scancode for capslock here but I blame premiere
 ;premselecttoolHotkey;
 SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 {
