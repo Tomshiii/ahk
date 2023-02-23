@@ -1,4 +1,4 @@
-# <> Release 2.10.x - 
+# <> Release 2.10.1 - Stability Update
 - Combined `getcmd()` & `runcmd()` into `class cmd {`
 - Combined `allKeyUp()`, `allKeyWait()` & `checkKey()` into `class keys {`
 
@@ -17,7 +17,8 @@
 ## > Other Changes
 - Fix `Settings.ahk` failing to properly set `Adjust` values if set to `1/0`
 - Fix some settings not being properly set within `settingsGUI()`
-- Fix `tiktok project.ahk` not properly using `ptf` values
+- `tiktok project.ahk` now prompts the user with a GUI to determine what resolution they wish the project to be changed to
+    - Will now <kbd>Tab</kbd> through the `Sequence Settings` menu instead of trying to use `ImageSearch`
 
 `checklist.ahk`
 - Fix throwing when title can't be found

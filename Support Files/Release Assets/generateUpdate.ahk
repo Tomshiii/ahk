@@ -82,7 +82,15 @@ loop files ptf.rootDir "\Backups\Changelogs\*", "F"
         name := A_LoopFileName
         loopDir := A_LoopFileFullPath
         newFileDir := A_LoopFileDir
-        if InStr(name, oldVer, 1, 1, 1)
+        /* MsgBox(Format("
+        (
+            name: {}
+            loopDir: {}
+            newFileDir: {}
+            oldVer: {}
+
+        )", name, loopDir, newFileDir, oldVer)) */
+        if InStr(name, LTrim(oldVer, "v"), 1, 1, 1)
             break
     }
 ;// dealing with file names
@@ -96,8 +104,19 @@ if pre := InStr(yes.value, "pre",, 1, 1) || beta := InStr(yes.value, "beta",, 1,
 else
     {
         removeFiletype := StrReplace(name, ".md", "")
-        verChangeLog   := InStr(removeFiletype, ".",, 1, 2) ? SubStr(name, 1, (InStr(yes.value, ".",, 1, 2)-1))    : removeFiletype
+        verChangeLog   := InStr(removeFiletype, "-",, 1, 1) ? SubStr(removeFiletype, 1, (InStr(removeFiletype, "-",, 1, 1)-1))    : removeFiletype
         verNew         := InStr(yes.value, ".",, 1, 2)      ? SubStr(yes.value, 1, InStr(yes.value, ".",, 1, 2)-1) : yes.value
+        /* MsgBox(Format("
+        (
+            name: {}
+            loopDir: {}
+            newFileDir: {}
+            oldVer: {}
+            removeFiletype: {}
+            verChangeLog: {}
+            verNew: {}
+
+        )", name, loopDir, newFileDir, oldVer, removeFiletype, verChangeLog, verNew)) */
     }
 
 if !pre && !InStr(yes.value, "alpha") && !beta && !alpha && !InStr(name, Trim(yes.value, "v"), 1, 1, 1)
