@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
  * @date 2023/02/23
- * @version 1.4.2
+ * @version 1.4.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,7 +31,7 @@ class Prem {
     static timer := false
     static isWaiting := true
     static presses := 0
-    static newNumb := 0
+    static zoomToggle := 0
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -49,7 +49,7 @@ class Prem {
             ;// polar bowler
             1: [1677, 933, 175],
             3: [2013, 1128, 210],
-            2: [500, 369, 150]
+            2: [615, 369, 150]
         }
         chloe := {
             ;// below contains temp changes, orig; [-426, -238, 267], [-1679, -854, 486]
@@ -288,6 +288,29 @@ class Prem {
     {
         keys.allWait()
 
+        this.presses++
+
+        ;// giving the user 250ms to increment the zoom
+        waitms := 250
+        startTime := A_TickCount
+        SetTimer(waitTimer.Bind(startTime), 16)
+        waitTimer(time) {
+            if A_ThisHotkey != "" {
+                if GetKeyState(A_ThisHotkey, "P")
+                    {
+                        ToolTip("")
+                        SetTimer(, 0)
+                        return
+                    }
+            }
+            ToolTip("Presses: " this.presses "`nWill reset in: " waitms - (A_TickCount - time) "ms")
+            if (A_TickCount - time) < waitms
+                return
+            this.isWaiting := false
+            ToolTip("")
+            SetTimer(, 0)
+        }
+
         resetTime := 5 * 1000 ;convert ms to s
         /**
          * This function is for a timer we activate anytime a client's zoom has a toggle
@@ -306,7 +329,7 @@ class Prem {
             if ((A_TickCount - time) >= resetTime) || GetKeyState("F5", "P")
                 {
                     tool.Cust("zoom toggle reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.355, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
-                    this.timer := false, this.presses := 0, this.newNumb := 0
+                    this.timer := false, this.presses := 0, this.zoomToggle := 0
                     Tog := 1
                     SetTimer(, 0)
                     return
@@ -320,6 +343,7 @@ class Prem {
 
         coord.s()
         if !WinActive(this.winTitle) {
+            block.Off()
             errorLog(Error("Premiere is not the active window", -1),, 1)
             return
         }
@@ -348,35 +372,14 @@ class Prem {
             }
         ;// check to see if the clientlist contains the current client name
         if clientList.HasOwnProp(ClientName) {
-            this.presses++
-
-            ;// giving the user 250ms to increment the zoom
-            waitms := 250
-            startTime := A_TickCount
-            SetTimer(waitTimer.Bind(startTime), 25)
-            waitTimer(time) {
-                if A_ThisHotkey != "" {
-                    if GetKeyState(A_ThisHotkey, "P")
-                        {
-                            ToolTip("")
-                            SetTimer(, 0)
-                            return
-                        }
-                }
-                ToolTip("Will reset in: " waitms - (A_TickCount - time) "ms")
-                if (A_TickCount - time) < waitms
-                    return
-                this.isWaiting := false
-                ToolTip("")
-                SetTimer(, 0)
-            }
-
             block.On()
             MouseGetPos(&xpos, &ypos)
             loop {
                 if A_ThisHotkey != "" {
-                    if GetKeyState(A_ThisHotkey, "P")
+                    if GetKeyState(A_ThisHotkey, "P") {
+                        block.Off()
                         return
+                    }
                 }
                 if this.isWaiting = false
                     break
@@ -400,9 +403,9 @@ class Prem {
 
             ;// logic for the toggle using a class variable
             loop this.presses {
-                this.newNumb++
-                if this.newNumb > count
-                    this.newNumb := 1
+                this.zoomToggle++
+                if this.zoomToggle > count
+                    this.zoomToggle := 1
             }
 
             this.presses := 0
@@ -431,11 +434,11 @@ class Prem {
                             this.timer := true
                             SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
                         }
-                    tool.Cust("zoom " this.newNumb "/" count)
+                    tool.Cust("zoom " this.zoomToggle "/" count, 2.0)
                     ;// this for loop stops the need to hard code each potential toggle
                     ;// as long as the object contains '1' & more than 1 property, this will function correctly
                     for Name in clientList.%ClientName%.OwnProps() {
-                        if A_Index != this.newNumb
+                        if A_Index != this.zoomToggle
                             continue
                         x := clientList.%ClientName%.%Name%[1]
                         y := clientList.%ClientName%.%Name%[2]
@@ -447,7 +450,10 @@ class Prem {
             {
                 setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
                 if setValue = "No"
-                    return
+                    {
+                        block.Off()
+                        return
+                    }
             }
         block.On()
         MouseGetPos(&xpos, &ypos)
@@ -493,8 +499,8 @@ class Prem {
                 SendInput("{Tab}")
                 cleanCopy()
                 scale := A_Clipboard
-                block.Off()
                 SendInput("{Enter}")
+                block.Off()
                 tool.Cust("Setting up your zoom has completed")
                 return
             }
