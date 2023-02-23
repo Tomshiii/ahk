@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2023/02/21
- * @version 1.3.1
+ * @date 2023/02/23
+ * @version 1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -174,8 +174,8 @@ class discord {
             }
         if (
             (
-                !checkImg(ptf.Discord "\unread" which "_1.png", &x, &y, 0 + x2, 0, 50 + y2, height) &&
-                !checkImg(ptf.Discord "\unread" which "_2.png", &x, &y, 0 + x2, 0, 50 + y2, height)
+                !checkImg(ptf.Discord "\unread" which "_1.png", &x, &y, {x1:0 + x2, y1:0, x2:50 + y2, y2:height}) &&
+                !checkImg(ptf.Discord "\unread" which "_2.png", &x, &y, {x1:0 + x2, y1:0, x2:50 + y2, y2:height})
             )
         )
             {

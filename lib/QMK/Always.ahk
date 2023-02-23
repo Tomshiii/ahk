@@ -90,7 +90,7 @@ n::unassigned()
 Space::
 {
 	;// if slack isn't open, simply call function
-	if !WinExist("ahk_exe slack.exe") {
+	if !WinExist("ahk_exe slack.exe") || (WinGetMinMax("ahk_exe slack.exe") = -1) {
 		switchTo.Disc()
 		return
 	}

@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2023/02/17
- * @version 1.0.3
+ * @date 2023/02/23
+ * @version 1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -77,18 +77,28 @@ class obj {
      *
      * By default this function will have an option "*2 " but can be overridden by placing a new option at the beginning of `imgFile`
      * This function supports all imagesearch options
-     * @param {Integer} x1/2&y1/2 are the coordinates you wish to check
      * @param {String} imgFile is the path to the file you wish to search for
+     * @param {Object} x1/2&y1/2 are the coordinates you wish to check
      * @param {Boolean/Object} tooltips whether you want `errorLog()` to produce tooltips if it runs into an error. This parameter can be a simple true/false or an object that errorLog is capable of understanding
      * @returns {Object} containing the x&y coordinates of the located image
+     *
+     * ***
+     * Example #1
      * ```
-     * img := obj.imgSrch(,,,, "image.png")
+     * img := obj.imgSrch("image.png")
+     * img.x
+     * img.y
+     * ```
+     * ***
+     * Example #2
+     * ```
+     * img := obj.imgSrch("image.png", {x1: 0, y1: 0, x2: 20, y2: 100})
      * img.x
      * img.y
      * ```
      */
-    static imgSrch(x1 := 0, y1 := 0, x2 := A_ScreenWidth, y2 := A_ScreenHeight, imgFile := "", tooltips := false) {
-        if !checkImg(imgFile, &x, &y, x1, y1, x2, y2, tooltips)
+    static imgSrch(imgFile := "", coords := {x1: 0, y1: 0, x2: A_ScreenWidth, y2: A_ScreenHeight}, tooltips := false) {
+        if !checkImg(imgFile, &x, &y, {x1:coords.x1, y1:coords.y1, x2:coords.x2, y2:coords.y2}, tooltips)
             return false
         return {x: x, y: y}
     }

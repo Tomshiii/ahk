@@ -10,11 +10,11 @@
  * This function defaults to `"*2 "` but you can override this by placing a new choice at the beginning of `checkfilepath`.
  * This function supports as many options as you wish
  * @param {String} checkfilepath the path of the file you wish to check/imagesearch
- * @param {VarRef} returnX/Y are the return x/y values you wish to pass back
- * @param {Integer} x1/2&y1/2 are the coordinates you wish to search
+ * @param {VarRef} returnX/returnY are the return x/y values you wish to pass back
+ * @param {Object} x1/x2/y1/y2 are the coordinates you wish to search
  * @param {Boolean/Object} tooltips whether you want `errorLog()` to produce tooltips if it runs into an error. This parameter can be a simple true/false or an object that errorLog is capable of understanding
  */
-checkImg(checkfilepath, &returnX?, &returnY?, x1 := 0, y1 := 0, x2 := A_ScreenWidth, y2 := A_ScreenHeight, tooltips := false) {
+checkImg(checkfilepath, &returnX?, &returnY?, coords := {x1: 0, y1: 0, x2: A_ScreenWidth, y2: A_ScreenHeight}, tooltips := false) {
     fileCheck := (check := InStr(checkfilepath, "*",, -1, -1))
                  ? SubStr(checkfilepath, (space := InStr(checkfilepath, " ",, check, 1)+1))
                  : checkfilepath

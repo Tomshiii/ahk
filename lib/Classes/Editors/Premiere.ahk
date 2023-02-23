@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
- * @date 2023/02/15
- * @version 1.4
+ * @date 2023/02/23
+ * @version 1.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,6 +29,9 @@ class Prem {
 
     ;// variables used in functions
     static timer := false
+    static isWaiting := true
+    static presses := 0
+    static newNumb := 0
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -41,8 +44,12 @@ class Prem {
             /* 1: [-78, -53, 210],
             2: [-833, -462, 288] */
             ;// sm64
-            1: [2013, 1128, 210],
-            2: [2759, 1547, 288]
+            /* 1: [2013, 1128, 210],
+            2: [2759, 1547, 288] */
+            ;// polar bowler
+            1: [1677, 933, 175],
+            3: [2013, 1128, 210],
+            2: [500, 369, 150]
         }
         chloe := {
             ;// below contains temp changes, orig; [-426, -238, 267], [-1679, -854, 486]
@@ -279,6 +286,8 @@ class Prem {
      */
     static zoom()
     {
+        keys.allWait()
+
         resetTime := 5 * 1000 ;convert ms to s
         /**
          * This function is for a timer we activate anytime a client's zoom has a toggle
@@ -297,7 +306,7 @@ class Prem {
             if ((A_TickCount - time) >= resetTime) || GetKeyState("F5", "P")
                 {
                     tool.Cust("zoom toggle reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.355, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
-                    this.timer := false
+                    this.timer := false, this.presses := 0, this.newNumb := 0
                     Tog := 1
                     SetTimer(, 0)
                     return
@@ -306,13 +315,10 @@ class Prem {
 
         ;// assign the nested class to an object
         clientList := this.ClientInfo()
-        ;then we'll define the values that will allow us to change things depending on the project
-        static x := 0, y := 0, scale := 0, Tog := 1
+        ;// then we'll define the values that will allow us to change things depending on the project
+        static x := 0, y := 0, scale := 0
 
-        keys.allWait()
         coord.s()
-        MouseGetPos(&xpos, &ypos)
-        block.On()
         if !WinActive(this.winTitle) {
             errorLog(Error("Premiere is not the active window", -1),, 1)
             return
@@ -342,11 +348,68 @@ class Prem {
             }
         ;// check to see if the clientlist contains the current client name
         if clientList.HasOwnProp(ClientName) {
+            this.presses++
+
+            ;// giving the user 400ms to increment the zoom
+            waitms := 400
+            startTime := A_TickCount
+            SetTimer(waitTimer.Bind(startTime), 25)
+            waitTimer(time) {
+                if A_ThisHotkey != "" {
+                    if GetKeyState(A_ThisHotkey, "P")
+                        {
+                            ToolTip("")
+                            SetTimer(, 0)
+                            return
+                        }
+                }
+                ToolTip("Will reset in: " waitms - (A_TickCount - time) "ms")
+                if (A_TickCount - time) < waitms
+                    return
+                this.isWaiting := false
+                ToolTip("")
+                SetTimer(, 0)
+            }
+
+            loop {
+                if A_ThisHotkey != "" {
+                    if GetKeyState(A_ThisHotkey, "P")
+                        return
+                }
+                if this.isWaiting = false
+                    break
+            }
+            this.isWaiting := true
+            block.On()
+            MouseGetPos(&xpos, &ypos)
+
+            ;// debug func
+            /* check(block, other := "") {
+                MsgBox(Format("
+                (
+                    block: {}
+                    orig: {}
+                    tog {}
+                    count: {}
+                    presses: {}
+                    math: {}
+                )", block, origtog, tog, count, this.presses, other)
+                )
+            } */
             count := ObjOwnPropCount(clientList.%ClientName%)
+
+            ;// logic for the toggle using a class variable
+            loop this.presses {
+                this.newNumb++
+                if this.newNumb > count
+                    this.newNumb := 1
+            }
+
+            this.presses := 0
             if clientList.%ClientName%.HasOwnProp("1") && count = 1
                 {
-                    x := clientList.%ClientName%.punchIn[1]
-                    y := clientList.%ClientName%.punchIn[2]
+                    x     := clientList.%ClientName%.punchIn[1]
+                    y     := clientList.%ClientName%.punchIn[2]
                     scale := clientList.%ClientName%.punchIn[3]
                 }
             else if count > 1
@@ -368,28 +431,26 @@ class Prem {
                             this.timer := true
                             SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
                         }
-                    tool.Cust("zoom " Tog "/" count)
+                    tool.Cust("zoom " this.newNumb "/" count)
                     ;// this for loop stops the need to hard code each potential toggle
                     ;// as long as the object contains '1' & more than 1 property, this will function correctly
                     for Name in clientList.%ClientName%.OwnProps() {
-                        if A_Index != Tog
+                        if A_Index != this.newNumb
                             continue
                         x := clientList.%ClientName%.%Name%[1]
                         y := clientList.%ClientName%.%Name%[2]
                         scale := clientList.%ClientName%.%Name%[3]
                     }
-                    Tog++
-                    if Tog > count
-                        Tog := 1
                 }
         }
         if scale = 0
             {
-                block.Off()
                 setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
                 if setValue = "No"
                     return
             }
+        block.On()
+        MouseGetPos(&xpos, &ypos)
         SendInput(KSA.timelineWindow)
         if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
@@ -402,14 +463,15 @@ class Prem {
                         return
                     }
             }
-        if !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") && !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png")
+        if (!ImageSearch(&motionX, &motionY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") &&
+            !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png"))
             {
                 MouseMove(xpos, ypos)
                 block.Off()
                 errorLog(Error("Couldn't find the video section", -1),, 1)
                 return
             }
-        MouseMove(motionX + "10", motionY + "10")
+        MouseMove(motionX + 10, motionY + 10)
         SendInput("{Click}")
         MouseMove(xpos, ypos)
         SendInput("{Tab 2}")
