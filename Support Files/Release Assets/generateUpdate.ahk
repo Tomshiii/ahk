@@ -285,8 +285,7 @@ SendInput("{Enter}")
 
 
 currentDir := ""
-verNum := Trim(verNew, "vprebetaalpha")
-verNum := SubStr(verNum, 1, InStr(verNum, ".",, 1, 2)-1)
+verNum := SubStr(vertrim := Trim(yes.Value, "vprebetaalpha"), 1, InStr(vertrim, ".",, 1, 2)-1)
 
 ;// using logic to determine where to place this release
 if !DirExist(A_WorkingDir "\" verNum ".x")
