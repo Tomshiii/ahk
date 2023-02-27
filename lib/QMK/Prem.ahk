@@ -51,7 +51,9 @@ m::prem.gain("6") ;INCREASE GAIN BY 6db
 
 y::prem.valuehold("opacity")
 ;h::unassigned()
+#MaxThreadsBuffer True
 n::prem.zoom()
+#MaxThreadsBuffer false
 ;Space::unassigned()
 
 t:: ;preset for applying an eq effect to lessen harshness of clipping

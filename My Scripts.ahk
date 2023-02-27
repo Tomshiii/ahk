@@ -87,16 +87,20 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ;
 ; ============================================================================================================================================
 
-; A chunk of the code in the original versions of this script was either directly inspired by, or originally copied from Taran from LTT (https://github.com/TaranVH/) before
-; I eventually modified it to work with v2.0 of ahk and made a bunch of other changes. His videos on the subject are what got me into AHK to begin with and what brought the foundation of the original
-; version of this script to life.
+; A chunk of the code in the original versions of this script was either directly inspired by, or originally copied from Taran, a previous editor for LTT (https://github.com/TaranVH/)
+; I eventually modified some of his code to work with v2.0 of ahk and continued to adapt and modify things for my own workflow. His videos on the subject are what got me into AHK to begin with and what brought the foundation of the original version of this script to life.
+; These scripts now contain mostly my own work with some code from others here and there, this code is usually referenced/linked in comments.
+
 ; I use a streamdeck to run a lot of my scripts which is why a bunch of them are separated out into their own scripts in the \Streamdeck AHK\ folder.
 
 ; I use to use notepad++ to edit this script, if you want proper syntax highlighting in notepad++ for ahk go here: https://www.autohotkey.com/boards/viewtopic.php?t=50
 ; I now use VSCode which can be found here: https://code.visualstudio.com/
 ; AHK (and v2.0) syntax highlighting can be installed within the program itself.
 
-; If you EVER get stuck in some code within any of these scripts REFRESH THE SCRIPT - by default I have it set to win + shift + r - and it will work anywhere (unless you're clicked on a program run as admin) if refreshing doesn't work open up task manager with ctrl + shift + esc and use your keyboard to find all instances of autohotkey and force close them.
+; If you EVER get stuck in some code within any of these scripts REFRESH THE SCRIPT - by default I have it set to `win + shift + r` - and it will work anywhere (unless you're clicked on a program run as admin) if refreshing doesn't work open up task manager with ctrl + shift + esc and use your keyboard to find all instances of autohotkey and force close them.
+
+; If you encounter any issues with these scripts, feel free to submit an issue on the github repo: https://www.github.com/tomshiii/ahk/
+; If you wish to contribute to these scripts, feel free to submit a pull request on the repo (fork the repo, then submitt a pull request of your fork)
 
 ; =======================================================================================================================================
 ;
