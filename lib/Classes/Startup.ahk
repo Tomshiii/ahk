@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/02/20
- * @version 1.5.1
+ * @version 1.5.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -550,11 +550,14 @@ class Startup {
             alerted := false
             for v, p in cacheFolders
                 {
-                    if !DirExist(p) && alerted = false
+                    if !DirExist(p)
                         {
-                            errorLog(TargetError(A_ThisFunc "() could not find one or more of the specified folders, therefore making it unable to calculate the total cache size", -1), A_ScriptName "`nLine: " A_LineNumber, {time: 4.0})
-                            alerted := true
-                            tool.Wait()
+                            if alerted = false
+                                {
+                                    errorLog(TargetError(A_ThisFunc "() could not find one or more of the specified folders, therefore making it unable to calculate the total cache size", -1), A_ScriptName "`nLine: " A_LineNumber, {time: 4.0})
+                                    alerted := true
+                                    tool.Wait()
+                                }
                             continue
                         }
                     CacheSize := CacheSize + winget.FolderSize(p, 2)
