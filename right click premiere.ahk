@@ -1,5 +1,6 @@
 ﻿/*
 #SingleInstance force ; only 1 instance of this script may run at a time.
+#HotIf WinActive(editors.Premiere.winTitle)
 InstallMouseHook
 InstallKeybdHook
 TraySetIcon(ptf.Icons "\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
@@ -17,7 +18,6 @@ CoordMode("Pixel", "screen")
 #Include <Functions\errorLog>
 #Include <Classes\keys>
 ; }
-
 
 ; Please note this script was originally written by taran in ahk v1.1 so any of his comment ramblings will go on about code that might not function in ahk v2.0 -Tomshi
 ; A lot of this script has been adapted and changed by me, keeping track of it all has gotten too confusing and convoluted. Feel free to check out TaranVH on githhub to see his version of this script for ahk v1.1 -Tomshi
@@ -55,7 +55,6 @@ loop {
 	timelineCol.Push(Format("{:#x}", %"timeline" A_Index%))
 }
 
-#HotIf WinActive(editors.Premiere.winTitle)
 ;--------EVERYTHING BELOW THIS LINE WILL ONLY WORK INSIDE PREMIERE PRO!----------
 
 Rbutton::

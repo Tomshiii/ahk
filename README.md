@@ -23,6 +23,16 @@ You can watch me use some of these scripts in action whilst I edit away on twitc
 [![](https://user-images.githubusercontent.com/53557479/149135097-0f9ae87a-5157-4524-ae75-34b6aaf81c30.png) ![](https://img.shields.io/twitch/status/botshiii)](https://www.twitch.tv/botshiii)
 </div>
 
+***
+
+<div align="center">
+
+## Keep up to date:
+[Known issues](https://github.com/users/Tomshiii/projects/2) and [desired upcoming features](https://github.com/users/Tomshiii/projects/1) can be tracked from the [Projects](https://github.com/Tomshiii/ahk/projects?query=is%3Aopen) page.
+</div>
+
+***
+
 ### AHK Version Information:
 This repo is to maintain work on the `ahk v2.0` versions of my scripts. These scripts **_will not_** work in `ahk v1.1`, the only versions of these scripts that will work with `ahk v1.1` are Releases [1.0](https://github.com/Tomshiii/ahk/releases/tag/v1.0)/[1.1](https://github.com/Tomshiii/ahk/releases/tag/v1.1)/[1.2](https://github.com/Tomshiii/ahk/releases/tag/v1.2) in this repo. They are _severely_ outdated, are practically missing everything found in the current versions of scripts, and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
 
