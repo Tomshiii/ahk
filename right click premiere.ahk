@@ -59,6 +59,11 @@ loop {
 
 Rbutton::
 {
+	if !IsSet(timelineCol)
+		{
+			SendInput("{RButton Up}")
+			return
+		}
 	if GetKeyState("Ctrl") || GetKeyState("Shift") {
 		SetTimer(checkStuck, -1)
 	}

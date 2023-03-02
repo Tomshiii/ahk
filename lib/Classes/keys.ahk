@@ -2,8 +2,8 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2023/02/15
- * @version 1.0.0
+ * @date 2023/03/02
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,25 +13,67 @@
 ; }
 
 class keys {
+
+    /**
+     * This function is a wrapper function for the loops in `keys.allUp()` and is to cut repeat code
+     * @param {String} form is the string that will be used in `Format()`
+     * @param {Integer} loopNum is the amount of loops that will occur
+     */
+    __cycle(form, loopNum) {
+        loop loopNum {
+            which := Format(form, A_Index)
+            if which = ""
+                continue
+            Send("{Blind}{" which " Up}") ;// send Up keystroke
+            Send("{Blind}{Esc}") ;// try to mitigate any damage from an UP keystroke doing something
+            ToolTip("Sending " GetKeyName(which) " Up")
+        }
+    }
+
+    /**
+     * This function is a wrapper function for the loops in `keys.allCheck()` and is to cut repeat code
+     * @param {String} form is the string that will be used in `Format()`
+     * @param {Integer} loopNum is the amount of loops that will occur
+     */
+    __check(form, loopNum) {
+        loop loopNum {
+            which := GetKeyName(Format(form, A_Index))
+            if which = ""
+                continue
+            if (GetKeyState(which) && !GetKeyState(which, "P"))
+                {
+                    Send("{Blind}{" which " Up}") ;// send Up keystroke
+                    Send("{Blind}{Esc}") ;// try to mitigate any damage from an UP keystroke doing something
+                    ToolTip("Sending " GetKeyName(which) " Up")
+                }
+        }
+    }
+
     /**
      * This function loops through as many possible SC and vk keys and sends the {Up} keystroke for it.
      * Originally from: 東方永夜抄#4008 in the ahk discord
      * this link may die: https://discord.com/channels/115993023636176902/1057690143231840347/1057704109408522240
      */
     static allUp() {
-        loop 128 {
-            which := Format("sc{:x}", A_Index)
-            Send("{Blind}{" which " Up}") ;// send Up keystroke
-            Send("{Blind}{Esc}") ;// try to mitigate any damage from an UP keystroke doing something
-            ToolTip("Sending " GetKeyName(which) " Up")
+        SetTimer(check, -1)
+        check() {
+            this().__cycle("sc{:x}", 128)
+            this().__cycle("vk{:x}", 256)
+            tool.Cust("Sending {Up} commands complete")
         }
-        loop 256 {
-            which := Format("vk{:x}", A_Index)
-            Send("{Blind}{" which " Up}") ;// send Up keystroke
-            Send("{Blind}{Esc}") ;// try to mitigate any damage from an UP keystroke doing something
-            ToolTip("Sending " GetKeyName(which) " Up")
+    }
+
+    /**
+     * This function loops through as many possible SC and vk keys and checks whether they are stuck down. If they are, an {UP} keystroke will be sent.
+     * This function is a variation of `allUp()`
+     */
+    static allCheck() {
+        SetTimer(check, -1)
+        check() {
+            this().__check("sc{:x}", 128)
+            this().__check("vk{:x}", 256)
+            tool.Cust("Checking keys complete")
         }
-        tool.Cust("Sending {Up} commands complete")
     }
 
     /**
