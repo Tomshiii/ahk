@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/02/21
- * @version 1.2.1
+ * @date 2023/03/03
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include <Classes\Editors\Premiere>
 #Include <Classes\Editors\Photoshop>
 #Include <Classes\keys>
+#Include <Classes\winget>
 ;funcs
 #Include <Functions\getHotkeys>
 #Include <Functions\errorLog>
@@ -116,7 +117,9 @@ class switchTo {
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program.
-     * This function will run AE using the after effects version defined within `settingsGUI()`
+     * This function will run AE using the after effects version defined within `settingsGUI()`.
+     *
+     * If AE is already open, this function will also check to make sure AE isn't transparent.
      */
     static AE()
     {
@@ -129,19 +132,18 @@ class switchTo {
         premTitle() ;pulls dir url from prem title and runs ae project in that dir
         {
             try {
-                Name := WinGetTitle("Adobe Premiere Pro")
-                titlecheck := InStr(Name, "Adobe Premiere Pro 20" ptf.PremYearVer " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Premiere Pro [Year]"
-                dashLocation := InStr(Name, "-")
-                length := StrLen(Name) - dashLocation
-                if !titlecheck
+
+                Name := WinGet.PremName()
+                dashLocation := InStr(Name.winTitle, "-")
+                length := StrLen(Name.winTitle) - dashLocation
+                if !Name.titlecheck
                     {
                         runae()
                         return
                     }
-                entirePath := SubStr(name, dashLocation + "2", length)
-                pathlength := StrLen(entirePath)
-                finalSlash := InStr(entirePath, "\",, -1)
-                path := SubStr(entirePath, 1, finalSlash - "1")
+                path := SubStr(entirePath := SubStr(name.winTitle, dashLocation + 2, length) ;// string
+                                , 1                                                          ;// startpos
+                                , InStr(entirePath, "\",, -1) - 1)                           ;// length
                 if !FileExist(path "\*.aep")
                     {
                         runae()
@@ -177,23 +179,43 @@ class switchTo {
                 return
             }
         }
-        if !WinExist(AE.winTitle) && WinExist(prem.winTitle) ;if prem is open but AE isn't
-            premTitle()
-        else if WinExist(AE.winTitle) && WinExist(prem.winTitle) ;if both are open
-            {
-                try {
-                    Name := WinGetTitle("Adobe After Effects")
-                    titlecheck := InStr(Name, "Adobe After Effects 20" ptf.AEYearVer " -") ;change this year value to your own year. | we add the " -" to accomodate a window that is literally just called "Adobe Program [Year]"
-                    if slash := InStr(Name, "\",, -1) ;if there's a slash in the title, it means a project is open
-                        WinActivate(AE.winTitle)
-                    else
+
+        premExist := WinExist(prem.winTitle)
+        aeExist   := WinExist(AE.winTitle)
+
+        switch aeExist {
+            case false:
+                if premExist
+                    {
                         premTitle()
+                        return
+                    }
+                runae()
+            default:
+                checkTrans() {
+                    checkTran := WinGetTransparent(editors.AE.winTitle)
+                    if IsInteger(checkTran) && checkTran != 255
+                        {
+                            WinMoveBottom(AE.winTitle)
+                            WinSetTransparent(255, AE.winTitle)
+                        }
+                    WinActivate(AE.winTitle)
                 }
-            }
-        else if WinExist(AE.winTitle) && !WinExist(prem.winTitle)
-            WinActivate(AE.winTitle)
-        else
-            runae()
+
+                if premExist
+                    {
+                        try {
+                            Name := WinGet.AEName()
+                            if InStr(Name.winTitle, "\",, -1) ;if there's a slash in the title, it means a project is open
+                                checkTrans()
+                            else
+                                premTitle()
+                        }
+                        return
+                    }
+                ;// if prem doesn't exist
+                checkTrans()
+        }
     }
 
     /**

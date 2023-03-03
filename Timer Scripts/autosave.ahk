@@ -139,13 +139,13 @@ check() {
             SetTimer(StopWatch, 0) ;for tray function
             global timer := false
             SetTimer(, -msChecklist)
-            goto end3
+            return
         }
     detect()
     if WinExist("Editing Checklist -")
         {
             SetTimer(, -msChecklist)
-            goto end3
+            return
         }
     if WinExist("Wait or Continue?")
         WinWaitClose("Wait or Continue?")
@@ -153,7 +153,7 @@ check() {
     if WinExist("waitUntil.ahk")
         {
             SetTimer(, -msChecklist)
-            goto end3
+            return
         }
     if !WinExist("Select commission folder")
         Run(ptf["checklist"])
@@ -163,7 +163,6 @@ check() {
     if !WinExist("Editing Checklist -")
         tool.Cust("Don't forget to start the checklist for this project!", 2000)
     SetTimer(, -msChecklist) ;I don't want this to continue checking every minute once it's open so I'm using the larger timer here.
-    end3:
 }
 
 /**
@@ -355,8 +354,10 @@ save()
                         else
                             WinActivate("ahk_exe " origWind)
                     }
-                    WinMoveBottom(editors.AE.winTitle)
-                    WinSetTransparent(255, editors.AE.winTitle)
+                    try {
+                        WinMoveBottom(editors.AE.winTitle)
+                        WinSetTransparent("Off", editors.AE.winTitle)
+                    }
                     aeVal.SaveTrack := 1
                     goto end
                 }
@@ -438,7 +439,7 @@ save()
         ignore:
         ;// resetting values and windows
         if WinExist(editors.AE.winTitle)
-            WinSetTransparent(255, editors.AE.winTitle) ;just incase
+            WinSetTransparent("Off", editors.AE.winTitle) ;just incase
         block.Off()
         tool.Wait()
         ToolTip("")
@@ -450,7 +451,7 @@ save()
 
         theEnd:
         if WinExist(editors.AE.winTitle)
-            WinSetTransparent(255, editors.AE.winTitle) ;just incase
+            WinSetTransparent("Off", editors.AE.winTitle) ;just incase
         block.Off()
         tool.Wait()
         global ElapsedTime := 0
