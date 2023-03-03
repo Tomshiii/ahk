@@ -3,6 +3,7 @@
 
 ## > Functions
 - Add `keys.allCheck()`
+- Add `winget.ProjPath()`
 - `delaySI()` can now send `Numbers` instead of only `Strings`
 - `switchTo.AE()` will now check the transparency of `After Effects` and set it to opaque before swapping to it
 
@@ -18,3 +19,4 @@
 `autosave.ahk`
 - Attempt to fix erroring while setting AE transparency (#17)
 - Attempt to fix causing a cut on `Premiere` timeline (#19)
+- Will now backup the project files & checklist files in `..\projFolder\Backups\`

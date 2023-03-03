@@ -55,26 +55,7 @@ h:: ;opens the directory for the current premiere/ae project
 			errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
 			return
 		}
-	;// attempt to get the editors name
-	try {
-		if WinExist("Adobe Premiere Pro")
-			WinGet.PremName(&Name, &titlecheck)
-		else if WinExist("Adobe After Effects")
-			WinGet.AEName(&Name, &titlecheck)
-	}
-	;// if the name returns blank
-	if !titlecheck
-		{
-			tool.Cust("You're on a part of Premiere that won't contain the project path", 2000)
-			return
-		}
-	;// string manipulation to get the path
-	;// getting the path
-	entirePath := SubStr(name							                ;// string
-						, dashLocation := InStr(Name, "-") + 2			;// start location
-						, StrLen(Name) - dashLocation)                  ;// length
-	;// splitting the path
-	path := obj.SplitPath(entirePath)
+	path := WinGet.ProjPath()
 	;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
 	if WinExist("ahk_class CabinetWClass", path.NameNoExt, "Adobe" "Editing Checklist", "Adobe")
 		{

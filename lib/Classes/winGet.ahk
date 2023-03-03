@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/02/16
- * @version 1.5.6
+ * @date 2023/03/03
+ * @version 1.5.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -248,6 +248,47 @@ class WinGet {
             start := (InStr(premCheck, ptf.comms) + StrLen(ptf.comms) + 1), ;// starting pos
             InStr(premCheck, "\",, start, 1) - start                        ;// length
         )
+    }
+
+    /**
+     * A function to recover the path within the title of either `Premiere Pro` or `After Effects`
+     * @returns {Object}
+     * ```
+     * projPath := obj.SplitPath("E:\comms\tomshi\video\project.prproj")
+     * projPath.Path       ; E:\comms\tomshi\video\project.prproj
+     * projPath.Name       ; project.prproj
+     * projPath.Dir        ; E:\comms\tomshi\video
+     * projPath.Ext        ; proj
+     * projPath.NameNoExt  ; project
+     * projPath.Drive      ; E:
+     * ```
+     */
+    static ProjPath()
+    {
+        if !WinExist(Editors.Premiere.winTitle) && !WinExist(Editors.AE.winTitle)
+            return false
+        ;// attempt to get the editors name
+        try {
+            if WinExist("Adobe Premiere Pro")
+                WinGet.PremName(&Name, &titlecheck)
+            else if WinExist("Adobe After Effects")
+                WinGet.AEName(&Name, &titlecheck)
+        }
+        ;// if the name returns blank
+        if !titlecheck
+            {
+                tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
+                return false
+            }
+        ;// string manipulation to get the path
+        ;// getting the path
+        entirePath := SubStr(name							                ;// string
+            , dashLocation := InStr(Name, "-") + 2			;// start location
+            , StrLen(Name) - dashLocation)                  ;// length
+        ;// splitting the path
+        path := obj.SplitPath(entirePath)
+        ;// return object
+        return {Path: entirePath, Name: path.Name, Dir: path.Dir, Ext: path.Ext, NameNoExt: path.NameNoExt, Drive: path.Drive}
     }
 
     /**

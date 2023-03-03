@@ -254,6 +254,31 @@ save()
             stop := "no"
     }
 
+    ;// backing up files
+    time := Format("{}_{}_{}-{}-{}", A_MM, A_DD, A_Hour, A_Min, A_Sec)
+    path := WinGet.ProjPath()
+    if !DirExist(path.Dir "\Backup")
+        DirCreate(path.Dir "\Backup")
+    else
+        {
+            loop files path.Dir "\Backup\*"
+                FileDelete(A_LoopFileFullPath)
+        }
+    try {
+        loop files path.Dir "\*.prproj", "F" {
+            FileCopy(A_LoopFileFullPath, path.Dir "\Backup\*_" time ".*", 1)
+        }
+        loop files path.Dir "\*.aep", "F" {
+            FileCopy(A_LoopFileFullPath, path.Dir "\Backup\*_" time ".*", 1)
+        }
+        if FileExist(path.Dir "\checklist_logs.txt")
+            FileCopy(path.Dir "\checklist_logs.txt", path.Dir "\Backup\*_" time ".*", 1)
+        if FileExist(path.Dir "\checklist.ini")
+            FileCopy(path.Dir "\checklist.ini", path.Dir "\Backup\*_" time ".*", 1)
+    }
+
+    ;//! main bulk of the timer
+
     /**
      * This part of the script will check to see if Premiere requires a save
      * If it does and isn't the active window, it will controlsend ^s
