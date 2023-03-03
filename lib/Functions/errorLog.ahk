@@ -13,7 +13,7 @@
  * @param {String} optMessage An optional message you wish to append alongside the error. This message will be tabbed in to visually distinguish it
  * @param {Boolean/Object} toolCust Allows the user to determine if they wish for a tooltip of the current error to be automatically generated. This parameter can either be a passed as a `true` boolean, or an object to determine a custom tooltip. If you wish to pass an object, follow the naming below:
  * ```
- * {x: '*desired x value', y: '*desired y value', time: '*desired time', ttip: '*desired WhichTooltip value'}
+ * {x: 0, y: 0, time: 3.0, ttip: 2}
  * ```
  * @param {Boolean} doThrow Determines whether you want for errorLog to throw for you. This is simply to save the need to manually throw
  */

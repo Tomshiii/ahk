@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
- * @date 2023/02/23
- * @version 1.4.3
+ * @date 2023/03/03
+ * @version 1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,6 +32,8 @@ class Prem {
     static isWaiting := true
     static presses := 0
     static zoomToggle := 0
+    static zToolX := 0
+    static zToolY := 0
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -64,6 +66,48 @@ class Prem {
     }
 
     /**
+     * This variable contains a map of all relevant colour values for audioDrag() to work correctly
+     */
+    static dragColour := Map(
+        ;// colours for a green audio track
+        0x156B4C, 1, 0x1B8D64, 1, 0x1c7d5a, 1, 0x1D7E5B, 1, 0x1D986C, 1, 0x1E7F5C, 1, 0x1F805D, 1, 0x1FA072, 1, 0x1FA373, 1, 0x20815E, 1, 0x21825F, 1, 0x23AB83, 1, 0x248562, 1, 0x258663, 1, 0x268764, 1,  0x298A67, 1, 0x29D698, 1, 0x2A8B68, 1, 0x2A8D87, 1, 0x2B8C69, 1, 0x3A9B78, 1, 0x3DFFE4, 1, 0x44A582, 1, 0x457855, 1, 0x47A582, 1, 0x4AAB88, 1, 0x5C67F9, 1, 0x5D68FB, 1, 0x5D68FC, 1, 0xD0E1DB, 1, 0xD4F7EA, 1, 0xFDFDFD, 1, 0xFEFEFE, 1, 0xFFFFFF, 1, 0x3AAA59, 1,
+        ;// colours for the red box
+        0xE40000, 1, 0xEEE1E1, 1,
+        ;// colours for the fx symbol box
+        0x292929, 1, 0x2D2D2D, 1, 0x3B3B3B, 1, 0x404040, 1, 0x454545, 1, 0x4A4A4A, 1, 0x585858, 1, 0x606060, 1, 0x646464, 1, 0xA7ADAB, 1, 0xB1B1B1, 1, 0xCCCCCC, 1, 0xD2D2D2, 1, 0xEFEFEF, 1
+    )
+
+    __fxPanel() => (SendInput(KSA.effectControls), SendInput(KSA.effectControls))
+
+    /**
+     * This function cuts repeat code. It activates the findbox and waits for the carot to appear.
+     */
+    __findBox() {
+        SendInput(KSA.findBox)
+        tool.Cust("if you hear windows, blame premiere")
+        CaretGetPos(&findx)
+        if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
+            {
+                loop {
+                        if A_Index > 5
+                            {
+                                SendInput(KSA.findBox) ;adjust this in the ini file
+                                tool.Cust("if you hear windows, blame adobe", 2000)
+                            }
+                        sleep 30
+                        CaretGetPos(&findx)
+                        if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
+                            {
+                                block.Off()
+                                errorLog(IndexError("Couldn't find the findbox", -1),, 1)
+                                return false
+                            }
+                    } until findx != "" ; as soon as premiere has found the find box, this will populate and break the loop
+            }
+        return findx
+    }
+
+    /**
      * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
      * @param {String} item in this function defines what it will type into the search box (the name of your preset within premiere)
      */
@@ -78,8 +122,7 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        SendInput(KSA.effectControls) ;highlights the effect controls panel
-        SendInput(KSA.effectControls) ;premiere is dumb, focus things twice
+        this().__fxPanel()
         try {
             loop {
                 if (A_Index > 3 && (!IsSet(classX) || width = 0))
@@ -132,28 +175,10 @@ class Prem {
             }
         effectbox() ;this is simply to cut needing to repeat this code below
         {
-            delaySI(50, KSA.effectsWindow, KSA.effectsWindow, KSA.findBox)
-            tool.Cust("if you hear windows, blame premiere")
-            CaretGetPos(&findx)
-            if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-                {
-                    loop {
-                            if A_Index > 5
-                                {
-                                    SendInput(KSA.findBox) ;adjust this in the ini file
-                                    tool.Cust("if you hear windows, blame adobe", 2000)
-                                }
-                            sleep 30
-                            CaretGetPos(&findx)
-                            if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
-                                {
-                                    block.Off()
-                                    errorLog(IndexError("Couldn't find the findbox", -1),, 1)
-                                    return
-                                }
-                        } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                }
-            SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+            delaySI(50, KSA.effectsWindow, KSA.effectsWindow)
+            if !this().__findBox()
+                return
+            SendInput(KSA.effectsWindow)
             SendInput("^a" "+{BackSpace}")
             SetTimer(delete, -250)
             delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
@@ -162,25 +187,10 @@ class Prem {
                     {
                         SendInput("{Esc}")
                         sleep 100
-                        SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
-                        SendInput(KSA.findBox)
-                        tool.Cust("if you hear windows, blame premiere", 2000)
-                        CaretGetPos(&find2x)
-                        if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-                            {
-                                loop {
-                                        sleep 30
-                                        SendInput(KSA.findBox)
-                                        tool.Cust("if you hear windows, blame premiere", 2000)
-                                        CaretGetPos(&find2x)
-                                        if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
-                                            {
-                                                block.Off()
-                                                errorLog(IndexError("Couldn't find the findbox", -1),, 1)
-                                            }
-                                    } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                            }
-                        SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+                        SendInput(KSA.effectsWindow)
+                        if !this().__findBox()
+                            return
+                        SendInput(KSA.effectsWindow)
                         SendInput("^a" "+{BackSpace}")
                         sleep 60
                         if WinExist("Delete Item")
@@ -224,24 +234,10 @@ class Prem {
     {
         coord.s()
         block.On()
-        SendInput(KSA.effectsWindow)
-        SendInput(KSA.effectsWindow) ;adjust this in the ini file
-        SendInput(KSA.findBox) ;adjust this in the ini file
-        CaretGetPos(&findx)
-        if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-            {
-                loop 40 {
-                        sleep 30
-                        CaretGetPos(&findx)
-                        if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
-                            {
-                                block.Off()
-                                errorLog(IndexError("Couldn't find the findbox", -1),, 1)
-                                return
-                            }
-                    } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-            }
-        SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+        this().__fxPanel()
+        if !this().__findBox()
+            return
+        this().__fxPanel()
         SendInput("^a" "+{BackSpace}")
         SetTimer(delete, -250)
         delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
@@ -250,23 +246,10 @@ class Prem {
                 {
                     SendInput("{Esc}")
                     sleep 100
-                    SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
-                    SendInput(KSA.findBox)
-                    CaretGetPos(&find2x)
-                    if find2x = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-                        {
-                            loop 40 {
-                                    sleep 30
-                                    CaretGetPos(&find2x)
-                                    if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
-                                        {
-                                            block.Off()
-                                            errorLog(IndexError("Couldn't find the findbox", -1),, 1)
-                                            return
-                                        }
-                                } until find2x != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                        }
-                    SendInput(KSA.effectsWindow) ;adjust this in the ini file ;second attempt to stop ahk deleting all clips on the timeline
+                    this().__fxPanel()
+                    if !this().__findBox()
+                        return
+                    this().__fxPanel()
                     SendInput("^a" "+{BackSpace}")
                     sleep 60
                     if WinExist("Delete Item")
@@ -287,7 +270,23 @@ class Prem {
     static zoom()
     {
         keys.allWait()
+        ;// get coordinates for a tooltip that appears to alert the user that toggles have reset
+        if this.zToolX = 0 || this.zToolY = 0
+            {
+                tool.Cust("Retrieving tooltip location",,,-40, 20, 4)
+                SendInput(KSA.programMonitor)
+                SendInput(KSA.programMonitor)
+                try {
+                    if !classNN := obj.ctrlPos()
+                        return
+                }
+                this.zToolX := (classNN.x+15)
+                this.zToolY := (classNN.y+classNN.height) - (classNN.height/5)
+                ToolTip("",,, 4)
+                tool.Cust("Some tooltips for this function will appear here",,, this.zToolX, this.zToolY, 4)
+            }
 
+        ;// start bulk of function
         this.presses++
 
         ;// giving the user 250ms to increment the zoom
@@ -328,7 +327,7 @@ class Prem {
                 }
             if ((A_TickCount - time) >= resetTime) || GetKeyState("F5", "P")
                 {
-                    tool.Cust("zoom toggle reset",,, A_ScreenWidth*0.947, A_ScreenHeight*0.355, 2) ;this just puts the tooltip in a certain empty spot on my screen, feel free to adjust
+                    tool.Cust("zoom toggle reset",,, this.zToolX, this.zToolY, 2)
                     this.timer := false, this.presses := 0, this.zoomToggle := 0
                     Tog := 1
                     SetTimer(, 0)
@@ -348,8 +347,7 @@ class Prem {
             return
         }
         sleep 50
-        SendInput(KSA.effectControls)
-        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        this().__fxPanel()
         sleep 50
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
@@ -505,12 +503,7 @@ class Prem {
                 return
             }
         ;// the user HAS set up zooms for the current client
-        SendInput(x)
-        SendInput("{Tab}")
-        SendInput(y)
-        SendInput("{Tab}")
-        SendInput(scale)
-        SendInput("{Enter}")
+        delaySI(0, x, "{Tab}", y, "{Tab}", scale, "{Enter}")
         block.Off()
     }
 
@@ -529,8 +522,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         ;tool.Cust("x " xpos "`ny " ypos) ;testing stuff
         block.On()
-        SendInput(KSA.effectControls)
-        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        this().__fxPanel()
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -566,8 +558,7 @@ class Prem {
             if A_Index > 1
                 {
                     ToolTip(A_Index)
-                    SendInput(KSA.effectControls)
-                    SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+                    this().__fxPanel()
                     try {
                         ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
                         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -580,14 +571,9 @@ class Prem {
                     }
                 }
             checkImg(checkfilepath) {
-                blendheight := filepath = "blend\blendmode" ? 50 : 0
-                if FileExist(checkfilepath)
-                    {
-                        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height + blendheight, "*2 " checkfilepath)
-                            return true
-                        else
-                            return false
-                    }
+                blendheight := (filepath = "blend\blendmode") ? 50 : 0
+                if FileExist(checkfilepath) && ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height + blendheight, "*2 " checkfilepath)
+                    return true
                 return false
             }
             if ( ;finds the value you want to adjust, then finds the value adjustment to the right of it
@@ -690,8 +676,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        SendInput(KSA.effectControls)
-        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        this().__fxPanel()
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -734,8 +719,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        SendInput(KSA.effectControls)
-        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        this().__fxPanel()
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -757,25 +741,22 @@ class Prem {
                         return
                     }
             }
-        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") || ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
-                goto next
-        else if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath ".png") || ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "3.png")
-            {
-                MouseMove(x + "5", y + "5")
-                Click()
-                goto end
-            }
-        else
+        if (
+            !checkImg(ptf.Premiere filepath ".png", &x, &y, {x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}) &&
+            !checkImg(ptf.Premiere filepath "2.png", &x, &y, {x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}) &&
+            !checkImg(ptf.Premiere filepath "3.png", &x, &y, {x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}) &&
+            !checkImg(ptf.Premiere filepath "4.png", &x, &y, {x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height})
+        )
             {
                 block.Off()
                 errorLog(Error("Couldn't find the desired value", -1),, 1)
                 return
             }
-        next:
-        if ImageSearch(&keyx, &keyy, x, y, x + "500", y + "20", "*2 " ptf.Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, x, y, x + "500", y + "20", "*2 " ptf.Premiere "keyframeButton2.png")
-            MouseMove(keyx + "3", keyy)
-        Click()
-        end:
+        if ImageSearch(&keyx, &keyy, x, y, x + 500, y + 20, "*2 " ptf.Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, x, y, x + 500, y + 20, "*2 " ptf.Premiere "keyframeButton2.png")
+            MouseMove(keyx + 3, keyy)
+       else
+            MouseMove(x + 5, y + 5)
+        SendInput("{Click}")
         SendInput(KSA.timelineWindow) ;focuses the timeline
         MouseMove(xpos, ypos)
         block.Off()
@@ -789,7 +770,24 @@ class Prem {
      */
     static audioDrag(sfxName)
     {
-        ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk
+        ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk & additional hard coded values
+
+        /**
+         * A function to cut repeat code. Checks the state of the cursor
+         */
+        cursorCheck() {
+            if A_Cursor != "Arrow"
+                loop 12 {
+                    MouseMove(5, 0, 2, "R")
+                    if A_Cursor = "Arrow"
+                        {
+                            MouseMove(5, 0, 2, "R")
+                            sleep 25
+                            break
+                        }
+                    sleep 50
+                }
+        }
         coord.s()
         SendInput(KSA.selectionPrem)
         if !ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " ptf.Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
@@ -810,21 +808,8 @@ class Prem {
             SendInput(KSA.projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
             SendInput(KSA.projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
             ;keys.allWait() ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
-            SendInput(KSA.findBox)
-            CaretGetPos(&findx)
-            if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-                {
-                    loop 40 {
-                            sleep 30
-                            CaretGetPos(&findx)
-                            if A_Index > 40 ;if this loop fires 40 times and premiere still hasn't caught up, the function will cancel itself
-                                {
-                                    block.Off()
-                                    errorLog(Error("Couldn't determine the location of the findbox", -1),, 1)
-                                    return
-                                }
-                        } until findx != "" ;!= means "not-equal" so as soon as premiere has found the find box, this will populate and break the loop
-                }
+            if !this().__findBox()
+                return
             SendInput("^a" "+{BackSpace}")
             SendInput(sfxName)
             sleep 250 ;the project search is pretty slow so you might need to adjust this
@@ -845,18 +830,9 @@ class Prem {
             MouseMove(xpos, ypos)
             SendInput("{Click Up}")
             SendInput(KSA.timelineWindow)
-            ;MouseMove(30,0,, "R")
             sleep 50
-            ;MouseGetPos(&colourX, &colourY)
             colour := PixelGetColor(xpos + 10, ypos)
-            if (
-                colour = 0x156B4C || colour = 0x1B8D64 || colour = 0x1c7d5a|| colour = 0x1D7E5B || colour = 0x1D986C || colour = 0x1E7F5C || colour = 0x1F805D || colour = 0x1FA072 || colour = 0x1FA373 || colour = 0x20815E || colour = 0x21825F || colour = 0x23AB83 || colour = 0x248562 || colour = 0x258663 || colour = 0x268764 || colour = 0x298A67 || colour = 0x29D698 || colour = 0x2A8B68 || colour = 0x2A8D87 || colour = 0x2B8C69 || colour = 0x3A9B78 || colour = 0x3DFFE4 || colour = 0x44A582 || colour = 0x457855 || colour = 0x47A582 || colour = 0x4AAB88 || colour = 0x5C67F9 || colour = 0x5D68FB || colour = 0x5D68FC || colour = 0xD0E1DB || colour = 0xD4F7EA || colour = 0xFDFDFD || colour = 0xFEFEFE || colour = 0xFFFFFF  || colour - 0x3AAA59 ||
-                ;there needs to be a trailing || for any block that isn't the final
-
-                colour = 0xE40000 || colour = 0xEEE1E1  || ;colours for the red box
-
-                colour = 0x292929 || colour = 0x2D2D2D || colour = 0x3B3B3B || colour = 0x404040 || colour = 0x454545 || colour = 0x4A4A4A || colour = 0x585858 || colour = 0x606060 || colour = 0x646464 || colour = 0xA7ADAB || colour = 0xB1B1B1 || colour = 0xCCCCCC|| colour = 0xD2D2D2 || colour = 0xEFEFEF  ;colours for the fx symbol box
-            )
+            if !this.dragColour.Has(colour)
                 break
             if A_Index > 2
                 {
@@ -865,6 +841,7 @@ class Prem {
                     return
                 }
         }
+        ;// out of loop
         block.Off()
         if sfxName = "bleep"
             {
@@ -873,17 +850,7 @@ class Prem {
                 MouseGetPos(&delx, &dely)
                 MouseMove(10, 0,, "R")
                 sleep 50
-                if A_Cursor != "Arrow"
-                    loop 12 {
-                        MouseMove(5, 0, 2, "R")
-                        if A_Cursor = "Arrow"
-                            {
-                                MouseMove(5, 0, 2, "R")
-                                sleep 25
-                                break
-                            }
-                        sleep 50
-                    }
+                cursorCheck()
                 SendInput("{Click}")
                 sleep 50
                 SendInput(KSA.gainAdjust)
@@ -933,6 +900,7 @@ class Prem {
                     ToolTip("Press another number key to move to a different track`nThe function will continue once you've cut the track`n" secRemain "s remaining",, ypos+15, 2)
                     ToolTip("Cancel with: Esc",, ypos-50, 3)
                 } until GetKeyState("LButton", "P")
+                ;// out of loop
                 clear()
                 block.On()
                 sleep 50
@@ -953,32 +921,12 @@ class Prem {
                 sleep 50
                 MouseMove(delx + 10, dely, 2)
                 sleep 200
-                if A_Cursor != "Arrow"
-                    loop 12 {
-                        MouseMove(5, 0, 2, "R")
-                        if A_Cursor = "Arrow"
-                            {
-                                MouseMove(5, 0, 2, "R")
-                                sleep 25
-                                break
-                            }
-                        sleep 50
-                    }
+                cursorCheck()
                 SendInput("{Click}")
                 SendInput("{BackSpace}")
                 MouseMove(xpos + 10, ypos)
                 Sleep(25)
-                if A_Cursor != "Arrow"
-                    loop 12 {
-                        MouseMove(5, 0, 2, "R")
-                        if A_Cursor = "Arrow"
-                            {
-                                MouseMove(5, 0, 2, "R")
-                                sleep 25
-                                break
-                            }
-                        sleep 50
-                    }
+                cursorCheck()
                 block.Off()
                 ToolTip("")
                 return
@@ -992,7 +940,7 @@ class Prem {
     static wheelEditPoint(direction)
     {
         SendInput(KSA.timelineWindow) ;focuses the timeline
-        SendInput(direction) ;Set these shortcuts in the keyboards shortcut ini file
+        SendInput(direction)
         keys.allWait() ;prevents hotkey spam
     }
 
@@ -1128,14 +1076,6 @@ class Prem {
             MouseGetPos(&colX, &colY)
             if PixelGetColor(colX, colY) != 0x000000
                 break
-            if A_Index = 1
-                MouseMove(startX + 150, startY + 100)
-            if A_Index = 2
-                MouseMove(startX - 150, startY + 100)
-            if A_Index = 3
-                MouseMove(startX - 150, startY - 100)
-            if A_Index = 4
-                MouseMove(startX + 150, startY - 100)
             if A_Index > 4
                 {
                     if !fallback()
@@ -1145,6 +1085,12 @@ class Prem {
                         }
                     break
                 }
+            switch A_Index {
+                case 1: MouseMove(startX + 150, startY + 100)
+                case 2: MouseMove(startX - 150, startY + 100)
+                case 3: MouseMove(startX - 150, startY - 100)
+                case 4: MouseMove(startX + 150, startY - 100)
+            }
         }
         SendInput("{Click Down}")
         sleep 50
@@ -1162,8 +1108,7 @@ class Prem {
         keys.allWait()
         coord.s()
         block.On()
-        SendInput(KSA.effectControls)
-        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        this().__fxPanel()
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -1199,7 +1144,7 @@ class Prem {
         SendInput(KSA.timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
         if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " ptf.Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
             MouseMove(xcol, ycol)
-        click
+        SendInput("{Click}")
         MouseMove(xpos, ypos)
         block.Off()
     }
@@ -1215,8 +1160,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        SendInput(KSA.effectControls)
-        SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+        this().__fxPanel()
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
@@ -1263,7 +1207,7 @@ class Prem {
         ToolTip("")
         SendInput("{Enter}")
         MouseMove(xpos, ypos)
-        Click("middle")
+        SendInput("{MButton}")
         block.Off()
     }
 
@@ -1273,80 +1217,77 @@ class Prem {
      */
     static gain(amount)
     {
-        if !IsNumber(amount)
-            {
+        if !IsNumber(amount) {
                 ;// throw
                 errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
             }
         keys.allWait()
         Critical
         ToolTip("Adjusting Gain")
-        BlockInput(1)
+        block.On()
         coord.s()
-        ClassNN := ""
-        start:
-        try {
-            loop {
-                SendInput(KSA.effectControls)
-                SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
-                winget.Title(&check)
-                if check = "Audio Gain"
-                    {
-                        SendInput(amount "{Enter}")
-                        ToolTip("")
-                        block.Off()
-                        return
+        ClassNN := getClass(&classX, &classY, &width, &height)
+        getClass(&classX, &classY, &width, &height) {
+            try {
+                loop {
+                    this().__fxPanel()
+                    check := winget.Title()
+                    if check = "Audio Gain"
+                        {
+                            SendInput(amount "{Enter}")
+                            ToolTip("")
+                            block.Off()
+                            return -1
+                        }
+                    try {
+                        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+                    } catch as e {
+                        block.Off() ;just incase
+                        tool.Cust("Couldn't get the ClassNN of the desired panel")
+                        errorLog(e)
+                        return false
                     }
-                try {
-                    ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                    ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-                } catch as e {
-                    block.Off() ;just incase
-                    tool.Cust("Couldn't get the ClassNN of the desired panel")
-                    errorLog(e)
-                    return
+                    if ClassNN != "DroverLord - Window Class3" || ClassNN != "DroverLord - Window Class1"
+                        break
+                    sleep 30
+                    if A_Index != 100
+                        {
+                            tool.Cust("Waiting for gain window timed out")
+                            block.Off()
+                            return false
+                        }
                 }
-                if ClassNN != "DroverLord - Window Class3" || ClassNN != "DroverLord - Window Class1"
-                    break
-                sleep 30
-                if A_Index != 100
-                    {
-                        tool.Cust("Waiting for gain window timed out")
-                        block.Off()
-                        return
-                    }
             }
         }
-        if ClassNN = ""
-            goto start
-        /* if ClassNN = "DroverLord - Window Class3"
-            goto start */
-            SendInput(KSA.timelineWindow)
-            try {
-                if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-                    {
-                        SendInput(KSA.timelineWindow KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
-                        goto inputs
-                    }
-            } catch as e {
-                ToolTip("")
+        if ClassNN = -1 || !IsSet(ClassNN)
+            return
+        SendInput(KSA.timelineWindow)
+        try {
+            if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                {
+                    SendInput(KSA.timelineWindow KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
+                    goto inputs
+                }
+        } catch as e {
+            ToolTip("")
+            block.Off()
+            tool.Cust("ClassNN wasn't given a value")
+            errorLog(e)
+            return
+        }
+        inputs:
+        SendInput(KSA.gainAdjust)
+        if !WinWait("Audio Gain",, 3)
+            {
+                tool.Cust("Waiting for gain window timed out")
                 block.Off()
-                tool.Cust("ClassNN wasn't given a value")
-                errorLog(e)
                 return
             }
-            inputs:
-            SendInput("g")
-            if !WinWait("Audio Gain",, 3)
-                {
-                    tool.Cust("Waiting for gain window timed out")
-                    block.Off()
-                    return
-                }
-            SendInput("+{Tab}{UP 3}{DOWN}{TAB}" amount "{ENTER}")
-            WinWaitClose("Audio Gain")
-            block.Off()
-            ToolTip("")
+        SendInput("+{Tab}{UP 3}{DOWN}{TAB}" amount "{ENTER}")
+        WinWaitClose("Audio Gain")
+        block.Off()
+        ToolTip("")
     }
 
     /**
@@ -1372,10 +1313,7 @@ class Prem {
             SetTimer(rdisable, -50)
         }
         MouseGetPos(&x, &y) ;from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
-        static xValue := 0
-        static yValue := 0
-        static xControl := 0
-        static yControl := 0
+        static xValue := 0, yValue := 0, xControl := 0, yControl := 0
         if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
             {
                 try {
