@@ -305,8 +305,8 @@ save()
                         ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, title)
                         ; appendCheck("3_bg", premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "premsave() bg") ;// debugging
                 }
-                if WinWait("Save Project",, 2)
-                    WinWaitClose("Save Project",, 2)
+                if WinWait("Save Project " Editors.Premiere.winTitle,, 2)
+                    WinWaitClose("Save Project " Editors.Premiere.winTitle,, 4)
                 premSaveTrack := 1
             }
             if premVal.saveCheck = true && origWind = "Adobe Premiere Pro.exe"

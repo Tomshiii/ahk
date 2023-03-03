@@ -14,4 +14,7 @@
 
 ## > Other Changes
 - Fixed `right click premiere.ahk` erroring out if hotkey attempts to fire before the array of colours has been set
-- Attempt to fix (#17) `autosave.ahk` erroring while setting AE transparency
+
+`autosave.ahk`
+- Attempt to fix erroring while setting AE transparency (#17)
+- Attempt to fix causing a cut on `Premiere` timeline (#19)
