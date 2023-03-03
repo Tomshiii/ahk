@@ -18,5 +18,5 @@
 
 `autosave.ahk`
 - Attempt to fix erroring while setting AE transparency (#17)
-- Attempt to fix causing a cut on `Premiere` timeline (#19)
+- Attempt to fix save process causing a cut on `Premiere` timeline (#19)
 - Will now backup the project files & checklist files in `..\projFolder\Backups\`

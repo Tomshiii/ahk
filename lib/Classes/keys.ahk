@@ -2,8 +2,8 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2023/03/02
- * @version 1.0.1
+ * @date 2023/03/03
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -35,18 +35,25 @@ class keys {
      * @param {String} form is the string that will be used in `Format()`
      * @param {Integer} loopNum is the amount of loops that will occur
      */
-    __check(form, loopNum) {
+    __check(form, loopNum, sendUp) {
+        arr := []
         loop loopNum {
             which := GetKeyName(Format(form, A_Index))
             if which = ""
                 continue
             if (GetKeyState(which) && !GetKeyState(which, "P"))
                 {
-                    Send("{Blind}{" which " Up}") ;// send Up keystroke
-                    Send("{Blind}{Esc}") ;// try to mitigate any damage from an UP keystroke doing something
-                    ToolTip("Sending " GetKeyName(which) " Up")
+                    if sendUp = true
+                        {
+                            Send("{Blind}{" which " Up}") ;// send Up keystroke
+                            Send("{Blind}{Esc}") ;// try to mitigate any damage from an UP keystroke doing something
+                            ToolTip("Sending " GetKeyName(which) " Up")
+                            continue
+                        }
+                    arr.Push(which)
                 }
         }
+        return arr
     }
 
     /**
@@ -66,14 +73,21 @@ class keys {
     /**
      * This function loops through as many possible SC and vk keys and checks whether they are stuck down. If they are, an {UP} keystroke will be sent.
      * This function is a variation of `allUp()`
+     * @param {Boolean} sendUp If this variable is set to true it will send an UP keystroke to all keys. If it is set to false the function will instead return an array containing the KeyName of all keys that are potentially stuck down
+     * @return {Array} returns an array containing the names of all keys that are potentially stuck down
      */
-    static allCheck() {
-        SetTimer(check, -1)
-        check() {
-            this().__check("sc{:x}", 128)
-            this().__check("vk{:x}", 256)
-            tool.Cust("Checking keys complete")
-        }
+    static allCheck(sendUp := true) {
+        sc := this().__check("sc{:x}", 128, sendUp)
+        vk := this().__check("vk{:x}", 256, sendUp)
+        tool.Cust("Checking keys complete")
+        if sendUp
+            return true
+        arr := []
+        for v in sc
+            arr.Push(v)
+        for v in vk
+            arr.Push(v)
+        return arr
     }
 
     /**
