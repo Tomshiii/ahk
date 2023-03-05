@@ -1,4 +1,4 @@
-# <> Release 2.10.x - 
+# <> Release 2.10.2 - Stability & QoL
 - `tomshiBasic {` will now force `"Segoe UI Variable"` as the font to ensure proper scaling if the user has changed their system font (#16)
 
 ## > Functions
