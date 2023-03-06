@@ -15,6 +15,8 @@ convert2(command)
             hwnd := WinExist("A")
             expPath := WinGet.ExplorerPath(hwnd)
             cmd.run(false, true, command, expPath)
-            WinActivate(hwnd)
+            try {
+                WinActivate(hwnd)
+            }
         }
 }

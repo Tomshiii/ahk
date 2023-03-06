@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2023/02/23
- * @version 1.1
+ * @date 2023/03/06
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,8 @@ class obj {
     static winText := ""
     static exTitle := ""
     static exText := ""
+
+    static x1 := 0, y1 := 0, x2 := A_ScreenWidth, y2 := A_ScreenHeight
 
     /**
      * This function turns the inbuilt function `SplitPath` into a function that returns an object.
@@ -97,8 +99,14 @@ class obj {
      * img.y
      * ```
      */
-    static imgSrch(imgFile := "", coords := {x1: 0, y1: 0, x2: A_ScreenWidth, y2: A_ScreenHeight}, tooltips := false) {
-        if !checkImg(imgFile, &x, &y, {x1:coords.x1, y1:coords.y1, x2:coords.x2, y2:coords.y2}, tooltips)
+    static imgSrch(imgFile := "", coords := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}, tooltips := false) {
+        for v in coords.OwnProps() {
+            coord := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}
+            for key, value in coords.OwnProps() {
+                coord.%key% := value
+            }
+        }
+        if !checkImg(imgFile, &x, &y, {x1: coord.x1, y1: coord.y1, x2: coord.x2, y2: coord.y2}, tooltips)
             return false
         return {x: x, y: y}
     }
