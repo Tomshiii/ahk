@@ -2,8 +2,8 @@
  * @description A library of useful After Effects functions to speed up common tasks
  * Tested on and designed for v22.6 of After Effects
  * @author tomshi
- * @date 2023/02/15
- * @version 1.2.1
+ * @date 2023/03/09
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -343,7 +343,7 @@ class AE {
             if !InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYearVer " -")
                 return
             tool.Cust(A_ThisFunc "() is grabbing the timeline coords")
-            if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph.png") || ImageSearch(&graphX, &graphY, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph2.png")
+            if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph.png") || ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph2.png")
                 {
                     graphX := x + 30
                     graphY := y + 8
