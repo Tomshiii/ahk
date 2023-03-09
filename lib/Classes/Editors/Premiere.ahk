@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
- * @date 2023/03/03
- * @version 1.5
+ * @date 2023/03/09
+ * @version 1.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,6 +34,12 @@ class Prem {
     static zoomToggle := 0
     static zToolX := 0
     static zToolY := 0
+
+    ;// variables for `getTimeline()`
+    static timelineXValue := 0
+    static timelineYValue := 0
+    static timelineXControl := 0
+    static timelineYControl := 0
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -1313,30 +1319,12 @@ class Prem {
             SetTimer(rdisable, -50)
         }
         MouseGetPos(&x, &y) ;from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
-        static xValue := 0, yValue := 0, xControl := 0, yControl := 0
-        if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
+        if this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0
             {
-                try {
-                    SendInput(KSA.timelineWindow)
-                    effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                    ControlGetPos(&xpos, &ypos, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
-                    static xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
-                    static yValue := ypos + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
-                    static xControl := xpos + 238 ;accounting for the column to the left of the timeline
-                    static yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
-                    SetTimer(tools, -100)
-                    tools() {
-                        tool.Wait()
-                        tool.Cust(A_ThisFunc "() found the coordinates of the timeline.`nThis function will not check coordinates again until a script refresh")
-                    }
-                } catch as e {
-                    tool.Wait()
-                    tool.Cust("Couldn't find the ClassNN value")
-                    errorLog(e)
+                if !this.getTimeline()
                     goto skip
-                }
             }
-        if x > xValue || x < xControl || y < yValue || y > yControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
+        if x > this.timelineXValue || x < this.timelineXControl || y < this.timelineYValue || y > this.timelineYControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
             {
                 SetTimer(rdisable, 0)
                 return
@@ -1371,5 +1359,33 @@ class Prem {
         }
         SetTimer(again, -400)
         again()
+    }
+
+    /**
+     * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
+     */
+    static getTimeline() {
+        try {
+            SendInput(KSA.timelineWindow)
+            effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+            this.timelineXValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
+            this.timelineYValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
+            this.timelineXControl := x + 238 ;accounting for the column to the left of the timeline
+            this.timelineYControl := y + height + 40 ;accounting for the scroll bars at the bottom of the timeline
+            SetTimer(tools, -100)
+            return true
+            tools() {
+                tool.Wait()
+                script := obj.SplitPath(A_LineFile)
+                tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 2.0)
+                tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0,,, 30, 2)
+            }
+        } catch as e {
+            tool.Wait()
+            tool.Cust("Couldn't find the ClassNN value")
+            errorLog(e)
+            return false
+        }
     }
 }

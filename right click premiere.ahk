@@ -11,6 +11,7 @@ CoordMode("Pixel", "screen")
 
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\Editors\Premiere>
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\ptf>
@@ -74,40 +75,13 @@ Rbutton::
 	;if it isn't we won't
 	;the reason we don't want to if the playhead isn't on the screen is because if you hit shuttlestop when it's not
 	;your view of the timeline will snap to the playhead
-	static xValue := 0
-    static yValue := 0
-    static xControl := 0
-    static yControl := 0
-	getValues(&xValue, &yValue, &xControl, &yControl) {
-		try {
-			SendInput(KSA.timelineWindow)
-			effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-			ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
-			xValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
-			yValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
-			xControl := x + 238 ;accounting for the column to the left of the timeline
-			yControl := height + 40 ;accounting for the scroll bars at the bottom of the timeline
-			SetTimer(tools, -100)
-			return true
-			tools() {
-				tool.Wait()
-				script := obj.SplitPath(A_LineFile)
-				tool.Cust("``" script.Name "`` found the coordinates of the timeline.", 2.0)
-				tool.Cust("This macro will not check coordinates again until a script refresh`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0,,, 30, 2)
-			}
-		} catch as e {
-			tool.Wait()
-			tool.Cust("Couldn't find the ClassNN value")
-			errorLog(e)
-			return false
-		}
-	}
-    if xValue = 0 || yValue = 0 || xControl = 0 || yControl = 0
+
+    if prem.timelineXValue = 0 || prem.timelineYValue = 0 || prem.timelineXControl = 0 || prem.timelineYControl = 0
         {
-			if !getValues(&xValue, &yValue, &xControl, &yControl)
+			if !prem.getTimeline()
 				return
 		}
-    if ((xpos > xValue) || (xpos < xControl) || (ypos < yValue) || (ypos > yControl)) ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
+    if ((xpos > prem.timelineXValue) || (xpos < prem.timelineXControl) || (ypos < prem.timelineYValue) || (ypos > prem.timelineYControl)) ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
         {
 			SendInput("{Rbutton}")
 			return
@@ -154,7 +128,7 @@ Rbutton::
 					return
 				}
 			}
-			if PixelSearch(&throwx, &throwy, xValue, ypos, xControl, ypos, playhead) ;checking to see if the playhead is on the screen
+			if PixelSearch(&throwx, &throwy, prem.timelineXValue, ypos, prem.timelineXControl, ypos, playhead) ;checking to see if the playhead is on the screen
 				SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stop
 			if PixelSearch(&xcol, &ycol, xpos - 4, ypos, xpos + 6, ypos, playhead)
 				{
