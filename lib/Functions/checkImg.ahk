@@ -11,10 +11,13 @@
  * This function supports as many options as you wish
  * @param {String} checkfilepath the path of the file you wish to check/imagesearch
  * @param {VarRef} returnX/returnY are the return x/y values you wish to pass back
- * @param {Object} x1/x2/y1/y2 are the coordinates you wish to search
+ * @param {Object} coords are the coordinates you wish to search. Defaults to:
+     * ```
+     * coords := {x1: 0, y1:0, x2: A_ScreenWidth, y2: A_ScreenHeight}
+     * ```
  * @param {Boolean/Object} tooltips whether you want `errorLog()` to produce tooltips if it runs into an error. This parameter can be a simple true/false or an object that errorLog is capable of understanding
  */
-checkImg(checkfilepath, &returnX?, &returnY?, coords := {x1: 0, y1: 0, x2: A_ScreenWidth, y2: A_ScreenHeight}, tooltips := false) {
+checkImg(checkfilepath, &returnX?, &returnY?, coords?, tooltips := false) {
     fileCheck := (check := InStr(checkfilepath, "*",, -1, -1))
                  ? SubStr(checkfilepath, (space := InStr(checkfilepath, " ",, check, 1)+1))
                  : checkfilepath
@@ -23,10 +26,18 @@ checkImg(checkfilepath, &returnX?, &returnY?, coords := {x1: 0, y1: 0, x2: A_Scr
             errorLog(ValueError("Desired file could not be found", -1, fileCheck),, tooltips)
             return false
         }
+    coord := {x1: 0, y1: 0, x2: A_ScreenWidth, y2: A_ScreenHeight}
+    if IsSet(coords) {
+        for v in coords.OwnProps() {
+            for key, value in coords.OwnProps() {
+                coord.%key% := value
+            }
+        }
+    }
     imgCheck := (IsSet(check) && check != 0)
                 ? SubStr(checkfilepath, 1, space-1)
                 : "*2 "
-    if !ImageSearch(&returnX, &returnY, coords.x1, coords.y1, coords.x2, coords.y2, imgCheck fileCheck)
+    if !ImageSearch(&returnX, &returnY, coord.x1, coord.y1, coord.x2, coord.y2, imgCheck fileCheck)
         {
             errorLog(Error("Could not locate the requested image on the screen", -1),, tooltips)
             return false

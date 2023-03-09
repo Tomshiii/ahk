@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2023/03/06
- * @version 1.1.1
+ * @date 2023/03/09
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -80,7 +80,10 @@ class obj {
      * By default this function will have an option "*2 " but can be overridden by placing a new option at the beginning of `imgFile`
      * This function supports all imagesearch options
      * @param {String} imgFile is the path to the file you wish to search for
-     * @param {Object} x1/2&y1/2 are the coordinates you wish to check
+     * @param {Object} x1/2&y1/2 are the coordinates you wish to check. Defaults to:
+     * ```
+     * coords := {x1: 0, y1:0, x2: A_ScreenWidth, y2: A_ScreenHeight}
+     * ```
      * @param {Boolean/Object} tooltips whether you want `errorLog()` to produce tooltips if it runs into an error. This parameter can be a simple true/false or an object that errorLog is capable of understanding
      * @returns {Object} containing the x&y coordinates of the located image
      *
@@ -99,11 +102,13 @@ class obj {
      * img.y
      * ```
      */
-    static imgSrch(imgFile := "", coords := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}, tooltips := false) {
-        for v in coords.OwnProps() {
-            coord := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}
-            for key, value in coords.OwnProps() {
-                coord.%key% := value
+    static imgSrch(imgFile := "", coords?, tooltips := false) {
+        coord := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}
+        if IsSet(coords) {
+            for v in coords.OwnProps() {
+                for key, value in coords.OwnProps() {
+                    coord.%key% := value
+                }
             }
         }
         if !checkImg(imgFile, &x, &y, {x1: coord.x1, y1: coord.y1, x2: coord.x2, y2: coord.y2}, tooltips)
@@ -140,5 +145,69 @@ class obj {
             errorLog(UnsetError("Couldn't find the ClassNN value", -1, ctrl),, 1)
             return false
         }
+    }
+
+    /**
+     * This function allows you to search for an image over a custom length of time.
+     * ### How many times this function searches and how fast it can do so is completely depend on the size of the area you wish to search.
+     * ### The bigger the area, the slower/less times the function will search for your image.
+     * ##### for example: searching the entire screen is incredibly slow and may take multiple seconds just to check once
+     * @param {Object} options an object containing potential options. See Examples below for all options. Defaults to:
+     * ```
+     * options := {wait: 1000, tooltips: false, imgFile: "null"}
+     * ```
+     * @param {Object} coords an object containing all coord points you wish to monitor. Defaults to:
+     * ```
+     * coords := {x1: 0, y1:0, x2: A_ScreenWidth, y2: A_ScreenHeight}
+     * ```
+     * @returns {Object} the x/y position the image is found
+     *
+     * Example #1
+     * ```
+     * img := obj.imgWait({wait: 2000, imgFile: "F:/untitled.png", tooltips: true})
+     * ;// wait: time in ms you wish the function to search for the image
+     *      ;// default: 1000
+     * ;// imgFile: the filepath of the image you wish to search for
+     * ;// tooltips: the parameter you with to pass to `obj.imgSrch()`
+     *      ;// default: false
+     * ```
+     * ***
+     * Example #2
+     * ```
+     * img := obj.imgWait({imgFile: "F:/untitled.png"}, {x1: 0, x2: A_ScreenWidth, y1: 0, y2: A_ScreenHeight})
+     * ```
+     */
+    static imgWait(options, coords?) {
+        start := A_TickCount
+        var := false
+        if (IsSet(options) && !IsObject(options)) || (IsSet(coords) && !IsObject(coords)) {
+            ;// throw
+            errorLog(ValueError("Expected an Object", -1),,, 1)
+        }
+        ;// default values
+        opt := {wait: 1000, tooltips: false, imgFile: "null"}
+        coord := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}
+
+        ;// if any values aren't passed to the function, they will be set to default
+        for v in options.OwnProps() {
+            for key, value in options.OwnProps() {
+                opt.%key% := value
+            }
+        }
+        if IsSet(coords) {
+            for v in coords.OwnProps() {
+                for key, value in coords.OwnProps() {
+                    coord.%key% := value
+                }
+            }
+        }
+
+        SetTimer(() => var := "timed out", -options.wait)
+        while !var || var = "" {
+            var := this.imgSrch(opt.imgFile, {x1: coord.x1, y1: coord.y1, x2: coord.x2, y2: coord.y2}, opt.tooltips)
+        }
+        if var = "timed out"
+            return false
+        return {x: var.x, y: var.y}
     }
 }
