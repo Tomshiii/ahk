@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
- * @date 2023/03/09
- * @version 1.5.1
+ * @date 2023/03/11
+ * @version 1.5.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1369,9 +1369,9 @@ class Prem {
             SendInput(KSA.timelineWindow)
             effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
-            this.timelineXValue := width - 22 ;accounting for the scroll bars on the right side of the timeline
+            this.timelineXValue := x + width - 22 ;accounting for the scroll bars on the right side of the timeline
             this.timelineYValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
-            this.timelineXControl := x + 238 ;accounting for the column to the left of the timeline
+            this.timelineXControl := x + 236 ;accounting for the column to the left of the timeline
             this.timelineYControl := y + height + 40 ;accounting for the scroll bars at the bottom of the timeline
             SetTimer(tools, -100)
             return true

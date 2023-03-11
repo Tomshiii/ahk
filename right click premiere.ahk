@@ -1,24 +1,23 @@
-﻿/*
-#SingleInstance force ; only 1 instance of this script may run at a time.
-#HotIf WinActive(editors.Premiere.winTitle)
-InstallMouseHook
-InstallKeybdHook
-TraySetIcon(ptf.Icons "\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
-CoordMode("Mouse", "screen")
-CoordMode("Pixel", "screen")
-*/
-; I NO LONGER RUN THIS SCRIPT SEPARATELY. I was running into issues with scripts loading after this one and it then breaking so to compensate I run it WITHIN the `My Scripts.ahk` so it never breaks -Tomshi
-
-; { \\ #Includes
+﻿; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\settings>
+#Include <Classes\ptf>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\tool>
 #Include <Classes\block>
-#Include <Classes\ptf>
 #Include <Classes\obj>
 #Include <Functions\errorLog>
 #Include <Classes\keys>
 ; }
+
+;//! if you wish to run this script separately, uncomment the below block of text
+/*
+#SingleInstance force ; only 1 instance of this script may run at a time.
+#HotIf WinActive(editors.Premiere.winTitle)
+TraySetIcon(ptf.Icons "\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
+*/
+;//! - I NO LONGER RUN THIS SCRIPT SEPARATELY. I was running into issues with scripts loading after this one and it then breaking so to compensate I run it WITHIN the `My Scripts.ahk` so it never breaks -Tomshi
+
 
 ; Please note this script was originally written by taran in ahk v1.1 so any of his comment ramblings will go on about code that might not function in ahk v2.0 -Tomshi
 ; A lot of this script has been adapted and changed by me, keeping track of it all has gotten too confusing and convoluted. Feel free to check out TaranVH on githhub to see his version of this script for ahk v1.1 -Tomshi
@@ -27,7 +26,10 @@ CoordMode("Pixel", "screen")
 ;VIDEO EXPLANATION:  https://youtu.be/O6ERELse_QY?t=23m40s
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; NOTE THAT YOU MUST ASSIGN "Move playhead to cursor" in Premiere's keyboard shortcuts panel as well as "Playhead to Cursor" in KSA.ini in this directory to the same thing for this script to function properly! -Tomshi
+; NOTE!!
+; YOU MUST ASSIGN ALL VARIABLES THAT START WITH `KSA.` with their proper values within `KSA.ini`
+; THESE THEN ALSO NEED TO BE SET CORRECTLY WITHIN PREMIERE TO WORK CORRECTLY
+; -Tomshi
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ;NOTE: This does not, and cannot work on the timeline where there are no tracks visible.
@@ -68,6 +70,7 @@ Rbutton::
 	if GetKeyState("Ctrl") || GetKeyState("Shift") {
 		SetTimer(checkStuck, -1)
 	}
+	coord.s()
 	;getting base information
 	MouseGetPos(&xpos, &ypos)
 	;//! this code block until `skip:` is getting & storing the x/y values of the timeline
@@ -86,7 +89,6 @@ Rbutton::
 			SendInput("{Rbutton}")
 			return
 		}
-
 	Color := PixelGetColor(xpos, ypos)
 	color2 := PixelGetColor(xpos + 1, ypos)
 	;now we begin checking colours
