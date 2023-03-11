@@ -11,3 +11,6 @@
     - Coordinates now stored within `Prem {` class and can be shared between functions
     	- `right click premiere.ahk` & `prem.mousedrag()` now share those coordinates
 - `Discord {` functions will now alert the user if the logo has changed and may require new screenshots
+
+## > Other Changes
+- Add `mov2mp4.ahk`
