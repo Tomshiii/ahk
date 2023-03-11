@@ -10,6 +10,7 @@
 #Include <Functions\errorLog>
 #Include <Functions\detect>
 #Include <Functions\isReload>
+#Include <Functions\change_msgButton>
 #Include <GUIs\tomshiBasic>
 ; <checklist funcs> ;everything in <lib\checklist\> is needed for this script
 ;but these are just the ones that can be defined anywhere
@@ -22,7 +23,6 @@
 #Include <checklist\log>
 #Include <checklist\getPath>
 #Include <checklist\haltChecklist>
-#Include <checklist\msgButton>
 ; }
 
 TraySetIcon(ptf.Icons "\checklist.ico")
@@ -30,7 +30,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.12.2"
+version := "v2.12.3"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -96,8 +96,9 @@ else
                     {
                         tool.Wait()
                         WaitTrack := 1
-                        SetTimer(change_msgButton, 50)
-                        Result := MsgBox("You haven't opened a project yet, do you want ``" A_ScriptName "`` to wait until you have?`nOr would you like to select the checklist file now?", "Wait or Continue?", "4 32 4096")
+                        msgTitle := "Wait or Continue?"
+                        SetTimer(change_msgButton.Bind(msgTitle, "Wait", "Select Now"), 50)
+                        Result := MsgBox("You haven't opened a project yet, do you want ``" A_ScriptName "`` to wait until you have?`nOr would you like to select the checklist file now?", msgTitle, "4 32 4096")
                         if Result = "Yes"
                             haltChecklist()
                         else

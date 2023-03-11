@@ -2,7 +2,7 @@
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
  * @date 2023/02/23
- * @version 1.4
+ * @version 1.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,9 +15,12 @@
 #Include <Classes\keys>
 #Include <Functions\errorLog>
 #Include <Functions\checkImg>
+#Include <Functions\change_msgButton>
 ; }
 
 class discord {
+
+    static logoCheck := false
 
     ;// position you keep it
     static x := -1080
@@ -37,6 +40,37 @@ class discord {
     static path := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
 
     /**
+     * This function is called by a few other User facing functions and is designed to alert the user when discord has gone and changed the logo button within the main UI. This logo changing breaks those functions in certain ways.
+     */
+    __logoCheck() {
+        WinGetPos(&nx, &ny, &width, &height, discord.winTitle)
+        if !ImageSearch(&x, &y, 0, 0, 100, 100, "*2 " ptf.Discord "dm1.png") && !ImageSearch(&x, &y, 0, 0, 100, 100, "*2 " ptf.Discord "dm2.png")
+            {
+                title := "Logo Match Not Found"
+                SetTimer(change_msgButton.Bind(title, "OK", "Open Dir"), 25) ;// calls change_msgButton()
+                alert := MsgBox(Format("
+                (
+                    Discord's logo button appears to have changed (very first button on the left of the UI to get to dms/friends). This logo is needed for a few scripts to function correctly.`n
+                    Please take new screenshots and replace:
+                    - {1}\dm1.png
+                    - {1}\dm2.png"
+
+                    Then reload all scripts.
+                )", ptf.Discord), title, "4 48 4096")
+                if alert = "No" {
+                    if WinExist(ptf.Discord)
+                        {
+                            WinActivate(ptf.Discord)
+                            return
+                        }
+                    Run(ptf.Discord)
+                }
+                Exit()
+            }
+        discord.logoCheck := true
+    }
+
+    /**
      * This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in \Support Files\ImageSearch\disc[button].png
      *
      * This function is constantly being broken as discord updates their logo/the @ reply ping button. When this happens you can try taking new screenshots to see if that fixes the issue.
@@ -54,10 +88,12 @@ class discord {
      */
     static button(button)
     {
+        if !this.logoCheck
+            this().__logoCheck()
         yheight := 400
         keys.allWait("second")
         MouseGetPos(&x, &y)
-        WinGetPos(&nx, &ny, &width, &height, "A") ;gets the width and height to help this function work no matter how you have discord
+        WinGetPos(&nx, &ny, &width, &height, this.winTitle) ;gets the width and height to help this function work no matter how you have discord
         block.On()
         SendInput("{RButton}") ;this opens the right click context menu on the message you're hovering over
         sleep 50 ;sleep required so the right click context menu has time to open
@@ -130,6 +166,8 @@ class discord {
      */
     static Unread(which := "")
     {
+        if !this.logoCheck
+            this().__logoCheck()
         end(var := 20) {
             MouseMove(x + var, y, 2)
             SendInput("{Click}")

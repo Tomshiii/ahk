@@ -324,6 +324,7 @@ save()
                             switchTo.Premiere()
                         SendInput(KSA.timelineWindow)
                         SendInput(KSA.timelineWindow)
+                        sleep 50
                         SendInput("{Ctrl Down}s{Ctrl Up}")
                         ; appendCheck("3_focus", premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "premsave() swap: " swap) ;// debugging
                     default:
@@ -332,6 +333,7 @@ save()
                 }
                 if WinWait("Save Project " Editors.Premiere.winTitle,, 2)
                     WinWaitClose("Save Project " Editors.Premiere.winTitle,, 4)
+                sleep 100
                 premSaveTrack := 1
             }
             if premVal.saveCheck = true && origWind = "Adobe Premiere Pro.exe"
@@ -397,7 +399,9 @@ save()
             tool.Wait()
             tool.Cust("Saving AE")
             SendInput("^s")
-            WinWaitClose("Save Project",, 3)
+            if WinWait("Save Project",, 3)
+                WinWaitClose("Save Project",, 3)
+            sleep 100
         }
 
         ;// double checking to see if the saves worked
