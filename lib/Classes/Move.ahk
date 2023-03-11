@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2023/01/23
- * @version 1.2.2
+ * @date 2023/03/11
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -290,5 +290,38 @@ class Move {
         oneAxis(sc)
         if GetKeyState(fr, "P")
             goto start
+    }
+
+    /**
+     * This function allows the minorly adjust the width/height & x/y values of the active window
+     * @param {String} xORy determining which axis you wish to adjust
+     * @param {String} window the title of the window you wish to adjust
+     */
+    static Adjust(xORy := "x", window := "A") {
+        keys.allWait("second")
+        WinGetPos(&x, &y, &w, &h,
+                    title := (window = "A") ? WinGetTitle(window) : title)
+        hotkeys := getHotkeys()
+        switch xORy {
+            case "y":
+                switch hotkeys.second {
+                    case "-":WinMove(,,, h -50, title)
+                    case "=":WinMove(,,, h +50, title)
+                    case "Up":WinMove(, y-50,,, title)
+                    case "Down":WinMove(, y+50,,, title)
+                }
+            case "x":
+                switch hotkeys.second {
+                    case "-":WinMove(,, w -50,, title)
+                    case "=":WinMove(,, w +50,, title)
+                    case "Left":WinMove(x -50,,,, title)
+                    case "Right":WinMove(x +50,,,, title)
+                }
+            default:
+                if !hotkeys.second || hotkeys.second = ""
+                    SendInput(A_ThisHotkey)
+                else
+                    MsgBox("Unexpected activation hotkey")
+        }
     }
 }

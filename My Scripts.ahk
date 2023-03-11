@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.31.3
+;\\v2.31.4
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -933,6 +933,17 @@ XButton2::move.Window("#{Left}") ;snap left
 XButton1::move.Window("#{Right}") ;snap right
 ;winminHotkey;
 RButton::move.Window() ;minimise
+
+z & -::
+z & =::
+z & Up::
+z & Down::move.adjust("y")
+z::z
+x & -::
+x & =::
+x & Left::
+x & Right::move.adjust()
+x::x
 
 ;alwaysontopHotkey;
 ^SPACE::
