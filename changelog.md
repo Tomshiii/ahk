@@ -7,6 +7,7 @@
 - Add `obj.imgWait()`
 - Add `move.Adjust()`
 - Add `change_msgButton()`
+- `ytDownload()` can now download twitch clips
 - Moved function to retrieve `Premiere` `Timeline coordinates` => `prem.getTimeline()`
     - Fix function not using the correct coordinates and breaking unless the user's workspace was similar to my own
     - Coordinates now stored within `Prem {` class and can be shared between functions

@@ -9,7 +9,7 @@
 
 /**
  * This function requires [yt-dlp](https://github.com/yt-dlp/yt-dlp) to be installed correctly on the users system
- * It will then read the users highlighted text and if a youtube (or twitch) link is found, download that link with whatever arguments are passed, if the user isn't highlighting any text or a youtube/twitch link isn't found, it will check the users clipboard instead
+ * It will then read the users highlighted text and if a youtube (or twitch video/clip) link is found, download that link with whatever arguments are passed, if the user isn't highlighting any text or a youtube/twitch link isn't found, it will check the users clipboard instead
  *
  * @param {String} args is any arguments you wish to pass to yt-dlp
  * @param {String} folder is the folder you wish the files to save. By default it's this scripts directory
@@ -28,25 +28,33 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
             ;// throw
             errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
         }
+    check := false
+    links := ["https://www.youtube.com/", "https://www.twitch.tv/", "https://clips.twitch.tv/"]
     if !DirExist(folder) ;saftey check
         folder := A_ScriptDir
     oldClip := clip.clear()
     SendInput("^c")
     if ClipWait(0.3)
         {
-            if !InStr(A_Clipboard, "https://www.youtube.com/") && !InStr(A_Clipboard, "https://www.twitch.tv/")
-                goto attempt
+            for v in links {
+                if InStr(A_Clipboard, v) {
+                    check := true
+                    break
+                }
+                if InStr(oldClip.storedClip, v)
+                    goto attempt
+            }
+            if !check
+                {
+                    tool.Cust("Clipboard doesn't contain a downloadable link")
+                    return
+                }
             command := Format('yt-dlp {} -P `"{}`" `"{}`"'
                      , args, folder, A_Clipboard
                     )
             goto run
         }
     attempt:
-    if !InStr(oldClip.storedClip, "https://www.youtube.com/") && !InStr(oldClip.storedClip, "https://www.twitch.tv/")
-        {
-            tool.Cust("Clipboard doesn't contain a youtube link")
-            return
-        }
     command := Format('yt-dlp {} -P `"{}`" `"{}`"'
                      , args, folder, oldClip.storedClip
                     )
