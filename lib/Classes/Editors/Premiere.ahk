@@ -1,5 +1,5 @@
 /************************************************************************
- * @description A library of useful Premiere functions to speed up common tasks
+ * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
  * @date 2023/03/11
@@ -1297,6 +1297,7 @@ class Prem {
     }
 
     /**
+     * ### This function contains `KSA` values that need to be set correctly
      * Press a button(ideally a mouse button), this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
 
      * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.

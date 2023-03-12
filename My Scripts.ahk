@@ -934,7 +934,7 @@ XButton1::move.Window("#{Right}") ;snap right
 ;winminHotkey;
 RButton::move.Window() ;minimise
 
-z & -::
+/* z & -::
 z & =::
 z & Up::
 z & Down::move.adjust("y")
@@ -943,7 +943,7 @@ x & -::
 x & =::
 x & Left::
 x & Right::move.adjust()
-x::x
+x::x */
 
 ;alwaysontopHotkey;
 ^SPACE::
@@ -964,7 +964,7 @@ x::x
 
 	}
 	tool.Cust(tooltipVal, 2.0)
-	WinSetAlwaysOnTop -1, "A" ; will toggle the current window to remain on top
+	WinSetAlwaysOnTop(-1, "A") ;will toggle whether the current window will remain on top
 }
 
 ;searchgoogleHotkey;

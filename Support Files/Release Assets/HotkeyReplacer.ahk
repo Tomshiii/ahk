@@ -12,7 +12,7 @@
 
 if !IsSet(UserSettings)
     {
-        MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease run ``CreateSymLink.ahk`` to do so and then try running this script again again.", "HotkeyReplacer.ahk requires SymLink")
+        MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease run ``CreateSymLink.ahk`` to do so and then try running this script again.", "HotkeyReplacer.ahk requires SymLink")
         return
     }
 
@@ -181,7 +181,7 @@ title.SetFont("S15 Bold")
 text := ReplacerGui.Add("Text", "X15 W530 Y+5 Center", "
 (
     HotkeyReplacer is only designed to be used if you already have a version of my scripts in use. If you don't, feel free to exit out of this script.`n
-    This script is designed to replace all of the hotkeys in the release version of ``My Scripts.ahk`` with the hotkeys you have in your own local copy. It also replaces any custom values set within ``Keyboard Shortcuts.ini```n
+    This script is designed to replace most* of the hotkeys in the release version of ``My Scripts.ahk`` with the hotkeys you have in your own local copy. It also replaces any custom values set within ``Keyboard Shortcuts.ini```n
     This script works by detecting the ``;xHotkey;`` tag I have above every hotkey and doing some string replacement to replace the release version with any you've changed locally.`n
     Please be aware that any hotkeys you've added yourself will not be transfered over and there may still be some manual adjustment needed in that case.
 )")

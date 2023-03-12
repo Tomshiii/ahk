@@ -28,10 +28,8 @@ checkImg(checkfilepath, &returnX?, &returnY?, coords?, tooltips := false) {
         }
     coord := {x1: 0, y1: 0, x2: A_ScreenWidth, y2: A_ScreenHeight}
     if IsSet(coords) {
-        for v in coords.OwnProps() {
-            for key, value in coords.OwnProps() {
-                coord.%key% := value
-            }
+        for key, value in coords.OwnProps() {
+            coord.%key% := value
         }
     }
     imgCheck := (IsSet(check) && check != 0)

@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2023/03/09
- * @version 1.1.2
+ * @date 2023/03/12
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -189,16 +189,12 @@ class obj {
         coord := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}
 
         ;// if any values aren't passed to the function, they will be set to default
-        for v in options.OwnProps() {
-            for key, value in options.OwnProps() {
-                opt.%key% := value
-            }
+        for key, value in options.OwnProps() {
+            opt.%key% := value
         }
         if IsSet(coords) {
-            for v in coords.OwnProps() {
-                for key, value in coords.OwnProps() {
-                    coord.%key% := value
-                }
+            for key, value in coords.OwnProps() {
+                coord.%key% := value
             }
         }
 
