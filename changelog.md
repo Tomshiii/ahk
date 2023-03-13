@@ -1,4 +1,4 @@
-# <> Release 2.10.x
+# <> Release 2.10.3 - Fixes and Features
 
 ## > Functions
 - Fix `obj.imgSrch()` throwing if some object parameters were not set

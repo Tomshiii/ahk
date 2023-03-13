@@ -325,6 +325,8 @@ save()
                         SendInput(KSA.timelineWindow)
                         SendInput(KSA.timelineWindow)
                         sleep 50
+                        if GetKeyState("Shift")
+                            SendInput("{Shift Up}")
                         SendInput("{Ctrl Down}s{Ctrl Up}")
                         ; appendCheck("3_focus", premTitleCheck, premTitleCheck2, premWinCheck, premVal.winTitle, "premsave() swap: " swap) ;// debugging
                     default:
