@@ -14,6 +14,7 @@
  * @param {String} args is any arguments you wish to pass to yt-dlp
  * @param {String} folder is the folder you wish the files to save. By default it's this scripts directory
  * @param {Object/Boolean} conv2 determines whether you wish for the function to convert a downloaded file to another filetype. If this value is simply set to true, it will default to converting a downloaded `mkv` file to an `mp4` file. If you wish to customise this, use the below syntax
+ * @return the url
  * ```
  * ytDownload("", "download\path", {from: "webm", to: "mkv", delete: true})
  * ;//! this will download the highest quality file (usually a webm file BUT MIGHT NOT BE SO BE CAREFUL), and attempt to convert it to an mkv file
@@ -33,16 +34,20 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
     if !DirExist(folder) ;saftey check
         folder := A_ScriptDir
     oldClip := clip.clear()
+    URL := ""
     SendInput("^c")
     if ClipWait(0.3)
         {
             for v in links {
                 if InStr(A_Clipboard, v) {
                     check := true
+                    URL := A_Clipboard
                     break
                 }
-                if InStr(oldClip.storedClip, v)
+                if InStr(oldClip.storedClip, v) {
+                    URL := oldClip.storedClip
                     goto attempt
+                }
             }
             if !check
                 {
@@ -68,10 +73,10 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
         WinActivate(name " ahk_exe explorer.exe")
     else
         RunWait("explore " folder)
-    getId := WinGetID("A")
     ;// the below block converts the downloaded file from mkv to mp4 if the user has it set to true
     if (conv2 = true || IsObject(conv2))
         {
+            getId := WinGetID("A")
             knownTypes := ["mkv", "mp4", "webm"]
             dlFileType   := (IsObject(conv2) && conv2.HasOwnProp("from"))   ? conv2.from   : "mkv"
             convFileType := (IsObject(conv2) && conv2.HasOwnProp("to"))     ? conv2.to     : "mp4"
@@ -97,7 +102,7 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
             ;// get the path of the explorer window
             expPath := WinGet.ExplorerPath(getId)
             ;// get title of url
-            URLTitle := RTrim(getHTMLTitle(A_Clipboard), " - YouTube")
+            URLTitle := StrReplace(getHTMLTitle(A_Clipboard), " - YouTube", "")
             ;// determine if title is a full length video or a short
             if InStr(URLTitle, "watch?v=")
                 fileTitle := URLTitle " [" SubStr(A_Clipboard, InStr(A_Clipboard, "=",, 1, 1) + 1) "]"
@@ -116,5 +121,5 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
                 }
         }
     clip.returnClip(oldClip)
-    ; A_Clipboard := command
+    return URL
 }
