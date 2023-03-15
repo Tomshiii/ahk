@@ -7,7 +7,7 @@
 #Include <Classes\tool>
 #Include <Classes\ptf>
 #Include <Classes\obj>
-#Include <Functions\On_WM_MOUSEMOVE>
+#Include <Classes\WM>
 #Include <Functions\reload_reset_exit>
 #Include <Functions\refreshWin>
 #Include <Functions\detect>
@@ -354,8 +354,10 @@ settingsGUI()
         detect()
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := ctrl.value
-        if WinExist(script " - AutoHotkey")
-            PostMessage 0x0111, 65303,,, script " - AutoHotkey"
+        if WinExist(script " - AutoHotkey") {
+            WM.Send_WM_COPYDATA(iniVar "_" ctrl.Value, script)
+        }
+            ; PostMessage 0x0111, 65303,,, script " - AutoHotkey"
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -439,14 +441,14 @@ settingsGUI()
             }
         sleep 500
         ;// has to reload at a minimum to refresh any settings changes
-        reload_reset_exit("reload")
+        ; reload_reset_exit("reload")
         ;before finally closing
         settingsGUI.Destroy()
     }
 
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
-    OnMessage(0x0200, On_WM_MOUSEMOVE)
+    OnMessage(0x0200, WM.On_WM_MOUSEMOVE.Bind(""))
 
     ;this variable gets defined at the top of the script
     if darkMode = true

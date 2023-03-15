@@ -3,8 +3,8 @@
 #Include <GUIs\tomshiBasic>
 #Include <Classes\dark>
 #Include <Classes\ptf>
+#Include <Classes\WM>
 #Include <Functions\getLocalVer>
-#Include <Functions\On_WM_MOUSEMOVE>
 #Include <Functions\detect>
 ;
 
@@ -127,7 +127,7 @@ activeScripts()
 
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
-    OnMessage(0x0200, On_WM_MOUSEMOVE)
+    OnMessage(0x0200, WM.On_WM_MOUSEMOVE.Bind(""))
 
     ;below is all of the callback functions
     myClick(*) => Suspend(-1)

@@ -12,6 +12,7 @@ KeyHistory(0)
 #Include <Classes\block>
 #Include <Classes\winget>
 #Include <Classes\switchTo>
+#Include <Classes\WM>
 #Include <Functions\detect>
 #Include <Functions\errorLog>
 ; }
@@ -58,15 +59,35 @@ global retry := secondsRetry * 1000
 ;// DETERMINES WHETHER YOU WANT THE SCRIPT TO SHOW TOOLTIPS AS IT APPROACHES A SAVE ATTEMPT
 tools := UserSettings.tooltip ;This value can be adjusted at any time by right clicking the tray icon for this script
 
+;// check checklist
+chkCheck := UserSettings.autosave_check_checklist
+
 ;// setting some default values
 timer := false
 half := false
+UserSettings := ""
+
+OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
+changeVar(wParam, lParam, msg, hwnd) {
+    ; try {
+        UserSettings := UserPref()
+        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+        ;// UserSettings.autosave_MIN_ 5
+        lastUnd := InStr(res, "_", 1, -1)
+        var := SubStr(res, 1, lastUnd-1)
+        val := SubStr(res, lastUnd+1)
+        UserSettings.%var% := val
+        Reload()
+    ; }
+    return
+}
 
 A_TrayMenu.Insert("9&", "Tooltip Countdown", tooltipCount)
 if tools = true
     A_TrayMenu.Check("Tooltip Countdown")
 tooltipCount(*)
 {
+    UserSettings := UserPref()
     switch tools {
         case true:
             UserSettings.tooltip := false
@@ -75,6 +96,7 @@ tooltipCount(*)
             UserSettings.tooltip := true
             A_TrayMenu.Check("Tooltip Countdown")
         }
+    sleep 50
     reload
 }
 
@@ -121,7 +143,7 @@ if WinExist(editors.Premiere.winTitle) || WinExist(editors.AE.winTitle)
         global StartTickCount := A_TickCount ;for tray function
         SetTimer(StopWatch, 10) ;for tray function
         global timer := true
-        if UserSettings.autosave_check_checklist = true
+        if chkCheck = true
             SetTimer(check, -msChecklist) ;if you do not wish to use the checklist script, simply comment out this timer
     }
 else
