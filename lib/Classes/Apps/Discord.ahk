@@ -103,6 +103,12 @@ class discord {
                     MouseMove(xpos, ypos)
                     break
                 }
+            if (button == "DiscDelete.png" || button == "DiscEdit.png") && ImageSearch(&xpos, &ypos, x-200, y-400,  x+200, y + yheight, "*2 " ptf.Discord "report.png") ;searches for the button you've requested
+                {
+                    block.Off()
+                    errorLog(ValueError("User isn't hovering a message they sent.", -1),, 1)
+                    return
+                }
             ;// if the button isn't found, we increase the search area
             sleep 50
             yheight += 100
