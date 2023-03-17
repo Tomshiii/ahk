@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos
- * @date 2023/03/16
- * @version 1.0.0
+ * @date 2023/03/17
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,11 +12,21 @@
 
 class WM {
     /**
-     * This is a function designed to allow tooltips to appear while hovering over certain GUI elements. Use `OnMessage(0x0200, On_WM_MOUSEMOVE)` & `GuiCtrl.ToolTip := ""` to make this function work
+     * This is a function designed to allow tooltips to appear while hovering over certain GUI elements. Use the example listed below & `GuiCtrl.ToolTip := "desired tooltip"` to make this function work
      *
      * code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
+     *
+     * ```
+     * ;// This function needs to be called differenctly to other functions in this class
+     * move := WM()
+     * mv := ObjBindMethod(move, "On_WM_MOUSEMOVE")
+     * OnMessage(0x0200, mv)
+     *
+     * ;// or the below as a one liner
+     * OnMessage(0x0200, ObjBindMethod(WM(), "On_WM_MOUSEMOVE"))
+     * ```
      */
-    static On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
+    On_WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
         ListLines(0)
         static PrevHwnd := 0
         if (Hwnd != PrevHwnd)

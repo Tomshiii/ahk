@@ -127,7 +127,7 @@ activeScripts()
 
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
-    OnMessage(0x0200, WM.On_WM_MOUSEMOVE.Bind(""))
+    OnMessage(0x0200, ObjBindMethod(WM(), "On_WM_MOUSEMOVE"))
 
     ;below is all of the callback functions
     myClick(*) => Suspend(-1)
