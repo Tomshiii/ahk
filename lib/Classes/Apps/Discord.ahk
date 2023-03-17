@@ -24,14 +24,14 @@ class discord {
 
     ;// position you keep it
     static x := -1080
-    static y := -270
+    static y := -209
     static width := 1080
     static height := 1600
 
     static slackX := -1068
-    static slackY := 644
+    static slackY := -187
     static slackWidth := 1058
-    static slackHeight := 911
+    static slackHeight := 840
 
     ;// other
     static exeTitle := "ahk_exe Discord.exe"

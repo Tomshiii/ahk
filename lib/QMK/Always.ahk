@@ -76,8 +76,8 @@ Space::
 		return
 	}
 	;// if slack is open I want them both in a different position
-	WinMove(discord.slackX, -219, discord.slackWidth, 840, "ahk_exe slack.exe")
-	switchTo.Disc(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight)
+	WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, "ahk_exe slack.exe")
+	switchTo.Disc(discord.slackX, 669, discord.slackWidth, discord.slackHeight)
 }
 Right & Space::switchTo.newWin("exe", "msedge.exe", "msedge.exe")
 Enter & Space::switchTo.closeOtherWindow(browser.edge.winTitle)
