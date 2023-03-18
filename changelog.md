@@ -1,4 +1,4 @@
-# <> Release 2.10.x
+# <> Release 2.10.4 - Settings.ahk Changes
 - `UserSettings` is no longer automatically set alongside `UserPref {` and now requires manual initialisation
     - Scripts with settings that can be adjusted by `settingsGUI()` now use `OnMessage()` to know when their settings have been changed (#18)
 

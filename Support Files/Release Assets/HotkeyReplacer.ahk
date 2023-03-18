@@ -11,7 +11,7 @@
 ; }
 
 try {
-    UserSettings := UserPref() ?? false
+    UserSettings := UserPref()
 }
 
 if !IsSet(UserSettings)
