@@ -44,7 +44,7 @@
         cancelButton := this.Add("Button", "xs+175 ys", "cancel")
         cancelButton.OnEvent("Click", cancelButton_Click)
 
-        if darkmode = "true"
+        if darkmode = true
             {
                 dark.titleBar(this.Hwnd)
                 dark.allButtons(this)

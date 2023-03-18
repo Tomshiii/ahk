@@ -1,6 +1,5 @@
 ﻿; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\settings>
 #Include <Classes\ptf>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\tool>

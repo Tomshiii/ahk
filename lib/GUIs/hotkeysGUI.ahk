@@ -117,7 +117,7 @@ hotkeysGUI() {
     ;onEvent Functions
 	close(*) => hotGUI.Destroy()
 
-    if UserSettings.dark_mode = true
+    if hotGUI.UserSettings.dark_mode = true
         dark.allButtons(hotGUI)
 
     ;Show the GUI

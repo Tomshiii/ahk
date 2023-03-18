@@ -8,6 +8,7 @@ KeyHistory(0)
 #Include <Classes\ptf>
 #Include <Classes\winget>
 #Include <Classes\timer>
+#Include <Classes\WM>
 #Include <Functions\errorLog>
 ; }
 
@@ -19,6 +20,9 @@ GroupAdd("adobe", editors.Premiere.winTitle)
 GroupAdd("adobe", editors.AE.winTitle)
 ;GroupAdd("adobe", editors.Photoshop.winTitle) ;photoshop changes it's window title to the name of the file you're working on and omits "Adobe Photoshop [A_Year]" unlike premiere and ae. Typical
 
+;// open settings instance
+UserSettings := UserPref()
+
 /*
 There are sometimes where Premiere Pro will put itself in an even more "fullscreen" mode when you lose access to the window controls and all your coordinates get messed up.
 This scrip is to quickly detect and correct that.
@@ -29,6 +33,23 @@ I have \ set in premiere to "Move playhead to cursor" and use it in `right click
 ;//enter your desired frequency in SECONDS in `fire_frequency` then leave `fire` as it is. By default you will see this script checks every 2s
 fire_frequency := UserSettings.adobe_FS
 fire := fire_frequency * 1000
+UserSettings := "" ;// close settings instances
+
+OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
+changeVar(wParam, lParam, msg, hwnd) {
+    try {
+        UserSettings := UserPref()
+        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+        ;// UserSettings.autosave_MIN_ 5
+        lastUnd := InStr(res, "_", 1, -1)
+        var := SubStr(res, 1, lastUnd-1)
+        val := SubStr(res, lastUnd+1)
+        UserSettings.%var% := val
+        UserSettings.__Delete()
+        SetTimer((*) => reload(), -500)
+    }
+    return
+}
 
 ;// initialise timer
 adobeCheck := adobeTimer(fire)

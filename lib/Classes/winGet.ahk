@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/03/03
- * @version 1.5.7
+ * @date 2023/03/19
+ * @version 1.5.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -275,14 +275,14 @@ class WinGet {
                 WinGet.AEName(&Name, &titlecheck)
         }
         ;// if the name returns blank
-        if !titlecheck
+        if !titlecheck || !IsSet(titlecheck)
             {
                 tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
                 return false
             }
         ;// string manipulation to get the path
         ;// getting the path
-        entirePath := SubStr(name							                ;// string
+        entirePath := SubStr(name							;// string
             , dashLocation := InStr(Name, "-") + 2			;// start location
             , StrLen(Name) - dashLocation)                  ;// length
         ;// splitting the path
@@ -355,10 +355,10 @@ class WinGet {
     static FolderSize(path, option?) {
         if !IsSet(option)
             return ComObject("Scripting.FileSystemObject").GetFolder(path).Size
-        if option > 3
+        if option > 3 || option < 1
             {
                 ;// throw
-                errorLog(ValueError("Parameter #2 invalid - Value Too High", -1, option),,, 1)
+                errorLog(ValueError("Parameter #2 invalid - Value Out of Range", -1, option),,, 1)
             }
         ;// you convert bytes to another unit by x / (1024^y)
         ;// ie. bytes => MB ; x / (1024x1024x1024) OR x / 1024^2

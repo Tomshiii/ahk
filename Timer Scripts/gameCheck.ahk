@@ -9,6 +9,7 @@ KeyHistory(0)
 #Include <Classes\ptf>
 #Include <Classes\pause>
 #Include <Classes\winget>
+#Include <Classes\WM>
 #Include <GUIs\gameCheckGUI>
 #Include <gameCheck\Game List> ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
 ; }
@@ -16,6 +17,8 @@ KeyHistory(0)
 TraySetIcon(ptf.Icons "\game.png")
 SetTitleMatchMode(2) ;this is necessary to detect open .ahk scripts
 
+;// open settings instance
+UserSettings := UserPref()
 
 ;// Set seconds delay
 sec := UserSettings.game_SEC
@@ -24,6 +27,23 @@ secms := sec * 1000
 ;// getting info from settings
 darkMode := UserSettings.dark_mode
 version := UserSettings.version
+UserSettings := "" ;// closing settings instance
+
+OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
+changeVar(wParam, lParam, msg, hwnd) {
+    try {
+        UserSettings := UserPref()
+        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+        ;// UserSettings.autosave_MIN_ 5
+        lastUnd := InStr(res, "_", 1, -1)
+        var := SubStr(res, 1, lastUnd-1)
+        val := SubStr(res, lastUnd+1)
+        UserSettings.%var% := val
+        UserSettings.__Delete()
+        SetTimer((*) => reload(), -500)
+    }
+    return
+}
 
 ;// defining a GUI the user can access by right clicking the script
 A_TrayMenu.Insert("7&") ;adds a divider bar

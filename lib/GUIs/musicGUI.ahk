@@ -50,7 +50,7 @@ musicGUI()
 
     ;#finished with definitions
 
-    if UserSettings.dark_mode = true
+    if mygui.UserSettings.dark_mode = true
         dark.allButtons(MyGui)
 
     MyGui.Show()

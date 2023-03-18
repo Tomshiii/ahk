@@ -10,6 +10,10 @@
 ; #Include *i <Other\print>
 ; }
 
+try {
+    UserSettings := UserPref() ?? false
+}
+
 if !IsSet(UserSettings)
     {
         MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease run ``CreateSymLink.ahk`` to do so and then try running this script again.", "HotkeyReplacer.ahk requires SymLink")

@@ -64,7 +64,9 @@ errorLog(err, optMessage?, toolCust := false, doThrow := false) {
                 Memory := Round(Response, 2)
                 FreePhysMem := Round(Response2, 2)
                 ;// check for the latest versions of these scripts
+                UserSettings := UserPref()
                 InstalledVersion := UserSettings.version
+                UserSettings := ""
                 LatestReleaseBeta := ""
                 LatestReleaseMain := ""
                 if checkInternet() {

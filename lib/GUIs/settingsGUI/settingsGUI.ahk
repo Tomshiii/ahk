@@ -57,6 +57,7 @@ settingsGUI()
     ;this function is needed to reload some scripts
     detect()
 
+    UserSettings := UserPref()
     ;// menubar
     FileMenu := Menu()
     FileMenu.Add("&Add Game to ``gameCheck.ahk```tCtrl+A", menu_AddGame)
@@ -131,7 +132,7 @@ settingsGUI()
 
     adjustText := settingsGUI.Add("Text", "W100 H20 x+125", "Adjust")
     adjustText.SetFont("S13 Bold")
-    decimalText := settingsGUI.Add("Text", "W180 H20 x+-40 Y+-18", "(decimals adjustable in .ini)")
+    ; decimalText := settingsGUI.Add("Text", "W180 H20 x+-40 Y+-18", "(decimals adjustable in .ini)")
 
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -276,10 +277,6 @@ settingsGUI()
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := (script.Value = 1) ? true : false
         script.ToolTip := (script.Value = 1) ? toolTrue : toolFalse
-        if script.value = 1
-            tool.Cust(toolTrue, 2.0)
-        else
-            tool.Cust(toolFalse, 2.0)
         ;// custom logic for the run at startup option
         if ini = "run at startup"
             {
@@ -293,9 +290,9 @@ settingsGUI()
                 }
                 return
             }
-        ;// reloading autosave
-        if WinExist("autosave.ahk - AutoHotkey")
-            PostMessage 0x0111, 65303,,, "autosave.ahk - AutoHotkey"
+        ;// reloading autosave & updating setting value
+        if InStr(script.text, "autosave") && WinExist("autosave.ahk - AutoHotkey")
+            WM.Send_WM_COPYDATA(iniVar "_" script.Value, "autosave.ahk")
     }
 
     ;// checklist tooltip
@@ -329,10 +326,6 @@ settingsGUI()
         ;// setting values based on the state of the checkbox
         UserSettings.%iniVar% := (script.Value = 1) ? true : false
         checkWait.ToolTip := (script.Value = 1) ? toolTrue : toolFalse
-        if script.value = 1
-            tool.Cust(toolTrue, 2.0)
-        else
-            tool.Cust(toolFalse, 2.0)
         if WinExist("checklist.ahk - AutoHotkey")
             MsgBox(msgboxtext,, "48 4096")
     }
@@ -369,7 +362,6 @@ settingsGUI()
         if WinExist(script " - AutoHotkey") {
             WM.Send_WM_COPYDATA(iniVar "_" ctrl.Value, script)
         }
-            ; PostMessage 0x0111, 65303,,, script " - AutoHotkey"
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -448,9 +440,7 @@ settingsGUI()
                 reload_reset_exit("reset")
                 return ;// this is necessary
             }
-        sleep 500
-        ;// has to reload at a minimum to refresh any settings changes
-        ; reload_reset_exit("reload")
+        UserSettings := "" ;// close the settings instance
         ;before finally closing
         settingsGUI.Destroy()
     }

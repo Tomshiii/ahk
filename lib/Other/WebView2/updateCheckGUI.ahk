@@ -11,7 +11,7 @@
 SetWorkingDir(ptf.lib)
 TraySetIcon(ptf.Icons "\update.png")
 
-
+UserSettings := UserPref()
 if UserSettings.beta_update_check = true
 	{ ;if the user wants to check for beta updates instead, this block will fire
 		version := getScriptRelease(true, &changeVer)
@@ -19,7 +19,7 @@ if UserSettings.beta_update_check = true
 	}
 else
 	version := getScriptRelease(, &changeVer) ;getting non beta latest release
-
+UserSettings := ""
 
 main := tomshiBasic(,, "-Resize", "Latest Update - " version)
 main.OnEvent("Close", closeit)

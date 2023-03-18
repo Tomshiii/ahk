@@ -55,7 +55,8 @@ h:: ;opens the directory for the current premiere/ae project
 			errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
 			return
 		}
-	path := WinGet.ProjPath()
+	if !path := WinGet.ProjPath()
+		return
 	;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
 	if WinExist("ahk_class CabinetWClass", path.NameNoExt, "Adobe" "Editing Checklist", "Adobe")
 		{

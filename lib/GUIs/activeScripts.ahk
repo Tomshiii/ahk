@@ -122,7 +122,7 @@ activeScripts()
     closeButton := MyGui.Add("Button", "X" buttonX " Y" buttonHeight, "Close")
     closeButton.OnEvent("Click", escape)
 
-    if UserSettings.dark_mode = true
+    if MyGui.UserSettings.dark_mode = true
         dark.button(closeButton.Hwnd)
 
     ;the below code allows for the tooltips on hover

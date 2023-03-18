@@ -9,6 +9,14 @@
 #Include <Functions\refreshWin>
 ; }
 
+;// initialise settings instance
+UserSettings := UserPref()
+checklist_tooltip := UserSettings.checklist_tooltip
+dark_mode := UserSettings.dark_mode
+settingsFile := UserSettings.SettingsFile
+scriptVersion := UserSettings.version
+UserSettings := "" ;// closing settings instance
+
 ;define menu
 ;file menus
 FileMenu := Menu()
@@ -32,12 +40,12 @@ settingsToolTrack := 0
 if IniRead(checklist, "Info", "tooltip") = "1"
     {
         SettingsMenu.Check("&Tooltips")
-        if UserSettings.checklist_tooltip != 0
+        if checklist_tooltip != 0
             settingsToolTrack := 1
         else
             settingsToolTrack := 0
     }
-if UserSettings.checklist_tooltip = 0
+if checklist_tooltip = 0
     SettingsMenu.Disable("&Tooltips")
 else
     SettingsMenu.Enable("&Tooltips")
@@ -46,12 +54,12 @@ darkToolTrack := 0
 if IniRead(checklist, "Info", "dark") = "1"
 {
     SettingsMenu.Check("&Dark Mode")
-    if UserSettings.dark_mode != false
+    if dark_mode != false
         darkToolTrack := 1
     else
         darkToolTrack := 0
 }
-if UserSettings.dark_mode = false
+if dark_mode = false
     SettingsMenu.Disable("&Dark Mode")
 else
     SettingsMenu.Enable("&Dark Mode")
@@ -70,6 +78,7 @@ bar := MenuBar()
 bar.Add("&File", FileMenu)
 bar.Add("&Settings", SettingsMenu)
 bar.Add("&Help", HelpMenu)
+
 
 
 /**
@@ -163,7 +172,7 @@ updateCheck(Item, *)
         tree := "main"
     if Item = "&Beta"
         tree := "dev"
-    if !FileExist(UserSettings.SettingsFile)
+    if !FileExist(settingsFile)
         {
             string := getHTML("https://raw.githubusercontent.com/Tomshiii/ahk/" tree "/checklist.ahk")
             if string = 0
@@ -189,7 +198,6 @@ updateCheck(Item, *)
                 tool.Cust("You are up to date!")
             return
         }
-    currentVer := UserSettings.version
     if tree = "main"
         latestVer := getScriptRelease()
     if tree = "dev"
@@ -199,14 +207,14 @@ updateCheck(Item, *)
             tool.Cust("You are up to date!") ;if getScriptRelease fails, default to being up to date
             return
         }
-    if VerCompare(latestVer, currentVer) > 0
+    if VerCompare(latestVer, scriptVersion) > 0
         {
             Run("https://github.com/Tomshiii/ahk/releases")
-            tool.Cust("There's a more up to date version!`nCurrent Release: " currentVer "`nLatest Release: " latestVer, 5.0)
+            tool.Cust("There's a more up to date version!`nCurrent Release: " scriptVersion "`nLatest Release: " latestVer, 5.0)
         }
-    if VerCompare(latestVer, currentVer) < 0
+    if VerCompare(latestVer, scriptVersion) < 0
         tool.Cust("It appears you've travelled through time and put yourself on a newer version...`nor you're just on a beta release and comparing to main", 5.0)
-    if VerCompare(latestVer, currentVer) = 0 && tree = "dev"
+    if VerCompare(latestVer, scriptVersion) = 0 && tree = "dev"
         { ;if the user is on the latest pre release but checks for an update on the beta channel
             try { ;we then compare the local ver of checklist.ahk to the local ver on github
                 main := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -235,7 +243,7 @@ updateCheck(Item, *)
             else
                 tool.Cust("You are up to date!")
         }
-    if VerCompare(latestVer, currentVer) = 0
+    if VerCompare(latestVer, scriptVersion) = 0
         tool.Cust("You are up to date!")
 }
 

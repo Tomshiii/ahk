@@ -40,6 +40,9 @@ timeRemain(*)
 
 ;// SET THE AMOUNT OF MINUTES YOU WANT THIS SCRIPT TO WAIT BEFORE SAVING WITHIN `settings.ini` OR BY PULLING UP THE SETTINGSGUI() WINDOW (by default #F1 or right clicking on `My Scripts.ahk`). (note: adjusting this value to be higher will not change the tooltips that appear every minute towards a save attempt)
 
+;// open settings instance
+UserSettings := UserPref()
+
 ;// if a save attempt occurs and is deemed not necessary, the following attempt will happen in 1/2 the amount of time set below. Once a save happens, the script will return to this value
 minutes := UserSettings.autosave_MIN
 global ms := minutes * 60000
@@ -65,11 +68,12 @@ chkCheck := UserSettings.autosave_check_checklist
 ;// setting some default values
 timer := false
 half := false
-UserSettings := ""
+
+UserSettings := "" ;// closing the settings instance
 
 OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
 changeVar(wParam, lParam, msg, hwnd) {
-    ; try {
+    try {
         UserSettings := UserPref()
         res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
         ;// UserSettings.autosave_MIN_ 5
@@ -77,8 +81,9 @@ changeVar(wParam, lParam, msg, hwnd) {
         var := SubStr(res, 1, lastUnd-1)
         val := SubStr(res, lastUnd+1)
         UserSettings.%var% := val
-        Reload()
-    ; }
+        UserSettings.__Delete()
+        SetTimer((*) => reload(), -500)
+    }
     return
 }
 

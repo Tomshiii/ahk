@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/03/18
- * @version 1.5.3
+ * @date 2023/03/19
+ * @version 1.6.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,9 +30,11 @@
 class Startup {
     __New() {
         this.MyRelease := this.__getMainRelease()
+        this.UserSettings := UserPref()
     }
 
     MyRelease := 0
+    UserSettings := ""
 
     /**
      * This function retrieves the release version the user is currently running
@@ -43,16 +45,15 @@ class Startup {
      * This function checks whether the user is on a late enough version of windows to use dark mode
      */
     __checkDark() {
-        if UserSettings.dark_mode != ""
-            return UserSettings.dark_mode
+        if this.UserSettings.dark_mode != ""
+            return this.UserSettings.dark_mode
         if (VerCompare(A_OSVersion, "10.0.17763") < 0)
             {
-                UserSettings.dark_mode := "disabled"
+                this.UserSettings.dark_mode := "disabled"
                 reload_reset_exit("reset")
                 return "disabled"
             }
-        UserSettings.dark_mode := true
-        UserSettings.__Delete()
+        this.UserSettings.dark_mode := true
         return "true"
     }
 
@@ -70,43 +71,43 @@ class Startup {
 
         allSett   := genNewMap(), allAdjust := genNewMap(), allTrack  := genNewMap()
 ;//     VarName         //             MapKey           //         MapValue+Default
-        UPDATE          := allSett.Set("update_check",             IniRead(ptf["settings"], "Settings", "update check", UserSettings.defaults[1]))
-        BETAUPDATE      := allSett.Set("beta_update_check",        IniRead(ptf["settings"], "Settings", "beta update check", UserSettings.defaults[2]))
+        UPDATE          := allSett.Set("update_check",             IniRead(ptf["settings"], "Settings", "update check", this.UserSettings.defaults[1]))
+        BETAUPDATE      := allSett.Set("beta_update_check",        IniRead(ptf["settings"], "Settings", "beta update check", this.UserSettings.defaults[2]))
         DARK            := allSett.Set("dark_mode",                IniRead(ptf["settings"], "Settings", "dark mode", darkCheck))
-        RUNSTARTUP      := allSett.Set("run_at_startup",           IniRead(ptf["settings"], "Settings", "run at startup", UserSettings.defaults[4]))
-        CHECKCHECK      := allSett.Set("autosave_check_checklist", IniRead(ptf["settings"], "Settings", "autosave check checklist", UserSettings.defaults[5]))
-        TOOLS           := allSett.Set("tooltip",                  IniRead(ptf["settings"], "Settings", "tooltip", UserSettings.defaults[6]))
-        CHECKTOOL       := allSett.Set("checklist_tooltip",        IniRead(ptf["settings"], "Settings", "checklist tooltip", UserSettings.defaults[7]))
-        WAIT            := allSett.Set("checklist_wait",           IniRead(ptf["settings"], "Settings", "checklist wait", UserSettings.defaults[8]))
-        ADOBE_GB        := allAdjust.Set("adobe_GB",               IniRead(ptf["settings"], "Adjust", "adobe GB", UserSettings.defaults[9]))
-        ADOBE_FS        := allAdjust.Set("adobe_FS",               IniRead(ptf["settings"], "Adjust", "adobe FS", UserSettings.defaults[10]))
-        AUTOMIN         := allAdjust.Set("autosave_MIN",           IniRead(ptf["settings"], "Adjust", "autosave MIN", UserSettings.defaults[11]))
-        GAMESEC         := allAdjust.Set("game_SEC",               IniRead(ptf["settings"], "Adjust", "game SEC", UserSettings.defaults[12]))
-        MULTI           := allAdjust.Set("multi_SEC",              IniRead(ptf["settings"], "Adjust", "multi SEC", UserSettings.defaults[13]))
-        PREMYEARVER     := allAdjust.Set("prem_year",              IniRead(ptf["settings"], "Adjust", "prem year", UserSettings.defaults[14]))
-        AEYEARVER       := allAdjust.Set("ae_year",                IniRead(ptf["settings"], "Adjust", "ae year", UserSettings.defaults[15]))
-        premVer         := allAdjust.Set("premVer",                IniRead(ptf["settings"], "Adjust", "premVer", UserSettings.defaults[16]))
-        aeVer           := allAdjust.Set("aeVer",                  IniRead(ptf["settings"], "Adjust", "aeVer", UserSettings.defaults[17]))
-        psVer           := allAdjust.Set("psVer",                  IniRead(ptf["settings"], "Adjust", "psVer", UserSettings.defaults[18]))
-        resolveVer      := allAdjust.Set("resolveVer",             IniRead(ptf["settings"], "Adjust", "resolveVer", UserSettings.defaults[19]))
-        premCache       := allAdjust.Set("premCache",              IniRead(ptf["settings"], "Adjust", "premCache", UserSettings.defaults[20]))
-        aeCache         := allAdjust.Set("aeCache",                IniRead(ptf["settings"], "Adjust", "aeCache", UserSettings.defaults[21]))
-        ADOBE           := allTrack.Set("adobe_temp",              IniRead(ptf["settings"], "Track", "adobe temp", UserSettings.defaults[22]))
-        WORK            := allTrack.Set("working_dir",             IniRead(ptf["settings"], "Track", "working dir", UserSettings.defaults[23]))
-        FC              := allTrack.Set("first_check",             IniRead(ptf["settings"], "Track", "first check", UserSettings.defaults[24]))
-        BLOCKAWARE      := allTrack.Set("block_aware",             IniRead(ptf["settings"], "Track", "block aware", UserSettings.defaults[25]))
-        MONITORALERT    := allTrack.Set("monitor_alert",           IniRead(ptf["settings"], "Track", "monitor alert", UserSettings.defaults[26]))
+        RUNSTARTUP      := allSett.Set("run_at_startup",           IniRead(ptf["settings"], "Settings", "run at startup", this.UserSettings.defaults[4]))
+        CHECKCHECK      := allSett.Set("autosave_check_checklist", IniRead(ptf["settings"], "Settings", "autosave check checklist", this.UserSettings.defaults[5]))
+        TOOLS           := allSett.Set("tooltip",                  IniRead(ptf["settings"], "Settings", "tooltip", this.UserSettings.defaults[6]))
+        CHECKTOOL       := allSett.Set("checklist_tooltip",        IniRead(ptf["settings"], "Settings", "checklist tooltip", this.UserSettings.defaults[7]))
+        WAIT            := allSett.Set("checklist_wait",           IniRead(ptf["settings"], "Settings", "checklist wait", this.UserSettings.defaults[8]))
+        ADOBE_GB        := allAdjust.Set("adobe_GB",               IniRead(ptf["settings"], "Adjust", "adobe GB", this.UserSettings.defaults[9]))
+        ADOBE_FS        := allAdjust.Set("adobe_FS",               IniRead(ptf["settings"], "Adjust", "adobe FS", this.UserSettings.defaults[10]))
+        AUTOMIN         := allAdjust.Set("autosave_MIN",           IniRead(ptf["settings"], "Adjust", "autosave MIN", this.UserSettings.defaults[11]))
+        GAMESEC         := allAdjust.Set("game_SEC",               IniRead(ptf["settings"], "Adjust", "game SEC", this.UserSettings.defaults[12]))
+        MULTI           := allAdjust.Set("multi_SEC",              IniRead(ptf["settings"], "Adjust", "multi SEC", this.UserSettings.defaults[13]))
+        PREMYEARVER     := allAdjust.Set("prem_year",              IniRead(ptf["settings"], "Adjust", "prem year", this.UserSettings.defaults[14]))
+        AEYEARVER       := allAdjust.Set("ae_year",                IniRead(ptf["settings"], "Adjust", "ae year", this.UserSettings.defaults[15]))
+        premVer         := allAdjust.Set("premVer",                IniRead(ptf["settings"], "Adjust", "premVer", this.UserSettings.defaults[16]))
+        aeVer           := allAdjust.Set("aeVer",                  IniRead(ptf["settings"], "Adjust", "aeVer", this.UserSettings.defaults[17]))
+        psVer           := allAdjust.Set("psVer",                  IniRead(ptf["settings"], "Adjust", "psVer", this.UserSettings.defaults[18]))
+        resolveVer      := allAdjust.Set("resolveVer",             IniRead(ptf["settings"], "Adjust", "resolveVer", this.UserSettings.defaults[19]))
+        premCache       := allAdjust.Set("premCache",              IniRead(ptf["settings"], "Adjust", "premCache", this.UserSettings.defaults[20]))
+        aeCache         := allAdjust.Set("aeCache",                IniRead(ptf["settings"], "Adjust", "aeCache", this.UserSettings.defaults[21]))
+        ADOBE           := allTrack.Set("adobe_temp",              IniRead(ptf["settings"], "Track", "adobe temp", this.UserSettings.defaults[22]))
+        WORK            := allTrack.Set("working_dir",             IniRead(ptf["settings"], "Track", "working dir", this.UserSettings.defaults[23]))
+        FC              := allTrack.Set("first_check",             IniRead(ptf["settings"], "Track", "first check", this.UserSettings.defaults[24]))
+        BLOCKAWARE      := allTrack.Set("block_aware",             IniRead(ptf["settings"], "Track", "block aware", this.UserSettings.defaults[25]))
+        MONITORALERT    := allTrack.Set("monitor_alert",           IniRead(ptf["settings"], "Track", "monitor alert", this.UserSettings.defaults[26]))
         allTrack.Set("version", this.MyRelease)
 
         ;// checking to see if the settings folder location exists
-        if FileExist(UserSettings.SettingsFile)
+        if FileExist(this.UserSettings.SettingsFile)
             {
                 ;// this check ensures that the function will only prematurely return if the release version in the settings.ini is the same as the current release AND
                 ;// that the amount of settings all line up, otherwise the function will continue so that it may add missing settings values
-                if !VerCompare(this.MyRelease, UserSettings.version) > 0 &&
-                    UserSettings.Settings_.Length = allSett.Count &&
-                    UserSettings.Adjust_.Length = allAdjust.Count &&
-                    UserSettings.Track_.Length = allTrack.Count
+                if !VerCompare(this.MyRelease, this.UserSettings.version) > 0 &&
+                    this.UserSettings.Settings_.Length = allSett.Count &&
+                    this.UserSettings.Adjust_.Length = allAdjust.Count &&
+                    this.UserSettings.Track_.Length = allTrack.Count
                     return
             }
 
@@ -127,7 +128,7 @@ class Startup {
                 if tempSett.Count > 0
                     {
                         for k, v in tempSett {
-                            IniWrite(startupArr.Get(k), UserSettings.SettingsFile, iniSection, k)
+                            IniWrite(startupArr.Get(k), this.UserSettings.SettingsFile, iniSection, k)
                         }
                     }
             }
@@ -137,7 +138,7 @@ class Startup {
                         ;// set version number
                         if v = "version"
                             {
-                                UserSettings.%v% := this.MyRelease
+                                this.UserSettings.%v% := this.MyRelease
                                 continue
                             }
                         if v = "first_check" || v = "block_aware"
@@ -149,21 +150,20 @@ class Startup {
                                         default:          return input
                                     }
                                 }
-                                UserSettings.%v% := returnBool(startupArr.Get(v))
+                                this.UserSettings.%v% := returnBool(startupArr.Get(v))
                                 continue
                             }
-                        UserSettings.%v% := startupArr.Get(v)
+                        this.UserSettings.%v% := startupArr.Get(v)
                     }
                 default:
                     for k, v in userSettingsArr {
-                        UserSettings.%v% := startupArr.Get(v)
+                        this.UserSettings.%v% := startupArr.Get(v)
                     }
             }
         }
-        setSection(UserSettings.Settings_, allSett, "Settings")
-        setSection(UserSettings.Adjust_, allAdjust, "Adjust")
-        setSection(UserSettings.Track_, allTrack, "Track", true)
-        UserSettings.__Delete()
+        setSection(this.UserSettings.Settings_, allSett, "Settings")
+        setSection(this.UserSettings.Adjust_, allAdjust, "Adjust")
+        setSection(this.UserSettings.Track_, allTrack, "Track", true)
     }
 
     /**
@@ -177,9 +177,9 @@ class Startup {
         if isReload() ;checks if script was reloaded
             return
         ;checking to see if the user wishes to check for updates
-        if UserSettings.update_check = "stop"
+        if this.UserSettings.update_check = "stop"
             return
-        version := (UserSettings.beta_update_check = true) ? getScriptRelease(true, &changeVer) : getScriptRelease(, &changeVer)
+        version := (this.UserSettings.beta_update_check = true) ? getScriptRelease(true, &changeVer) : getScriptRelease(, &changeVer)
         if version = 0
             return
         tool.Wait()
@@ -187,9 +187,9 @@ class Startup {
             tool.Cust("Current Installed Version = " this.MyRelease "`nCurrent Github Release = " version, 5000)
         else
             tool.Cust("You are currently up to date", 2000)
-        switch UserSettings.update_check {
+        switch this.UserSettings.update_check {
             default:
-                errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, UserSettings.update_check),, 1)
+                errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, this.UserSettings.update_check),, 1)
                 return
             case false:
                 tool.Wait()
@@ -238,12 +238,12 @@ class Startup {
                 noprompt := MyGui.Add("Checkbox", "xs-175 Ys-10", "Don't prompt again")
                 noprompt.OnEvent("Click", prompt)
                 ;set beta checkbox
-                betaCheck := (UserSettings.beta_update_check = true)
+                betaCheck := (this.UserSettings.beta_update_check = true)
                            ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
                            : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
                 betaCheck.OnEvent("Click", prompt)
 
-                if UserSettings.dark_mode = true
+                if this.UserSettings.dark_mode = true
                     goDark()
                 goDark()
                 {
@@ -256,15 +256,15 @@ class Startup {
                     if InStr(guiCtrl.Text, "prompt")
                         {
                             switch guiCtrl.Value {
-                                case 0: UserSettings.update_check := true
-                                case 1: UserSettings.update_check := false
+                                case 0: this.UserSettings.update_check := true
+                                case 1: this.UserSettings.update_check := false
                             }
                         }
                     if InStr(guiCtrl.Text, "beta")
                         {
                             switch guiCtrl.Value {
-                                case 1: UserSettings.beta_update_check := true
-                                case 0: UserSettings.beta_update_check := false
+                                case 1: this.UserSettings.beta_update_check := true
+                                case 0: this.UserSettings.beta_update_check := false
                             }
                             Run(A_ScriptFullPath)
                         }
@@ -424,7 +424,7 @@ class Startup {
             return
         if WinExist("Scripts Release ")
             WinWaitClose("Scripts Release ")
-        if UserSettings.first_check != false ;how the function tracks whether this is the first time the user is running the script or not
+        if this.UserSettings.first_check != false ;how the function tracks whether this is the first time the user is running the script or not
             return
         firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " this.MyRelease)
         ;set title
@@ -466,7 +466,7 @@ class Startup {
         firstCheckGUI.OnEvent("Escape", close)
         firstCheckGUI.OnEvent("Close", close)
         close(*) {
-            UserSettings.first_check := true ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
+            this.UserSettings.first_check := true ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
             firstCheckGUI.Destroy()
             RunWait(A_ScriptFullPath)
             return
@@ -487,7 +487,7 @@ class Startup {
             firstCheckGUI.Opt("-Disabled")
         }
 
-        if UserSettings.dark_mode = true
+        if this.UserSettings.dark_mode = true
             goDark()
         goDark()
         {
@@ -529,20 +529,20 @@ class Startup {
         tool.Wait()
         if WinExist("Scripts Release " this.MyRelease) ;checks to make sure firstCheck() isn't still running
             WinWaitClose("Scripts Release " this.MyRelease)
-        day := UserSettings.adobe_temp
+        day := this.UserSettings.adobe_temp
         if day = A_YDay ;checks to see if the function has already run today
             return
 
         ;SET HOW BIG YOU WANT IT TO WAIT FOR IN THE `settings.ini` FILE (IN GB) -- IT WILL DEFAULT TO 45GB
-        largestSize := UserSettings.adobe_GB
+        largestSize := this.UserSettings.adobe_GB
 
         ;first we set our counts to 0
         CacheSize := 0
         ;// the below filelocations are custom and will NOT work out of the box
         ;// can be set within settingGUI()
         cacheFolders := Map(
-            "Prem", UserSettings.premCache,
-            "AE",  UserSettings.aeCache,
+            "Prem", this.UserSettings.premCache,
+            "AE",  this.UserSettings.aeCache,
             ;// add any more here
         )
         try {
@@ -565,7 +565,7 @@ class Startup {
             if CacheSize = 0
                 {
                     tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0)
-                    UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
+                    this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
                     return
                 }
             ;// `winget.FolderSize()` returns it's value in GB, we simply want to round it to 2dp
@@ -584,7 +584,7 @@ class Startup {
                     }
                 }
         }
-        UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
+        this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
     }
 
     /**
@@ -598,7 +598,7 @@ class Startup {
         if isReload()
             return
         tool.Wait()
-        checkDir := UserSettings.working_dir
+        checkDir := this.UserSettings.working_dir
         if checkDir = A_WorkingDir
             return
 
@@ -654,7 +654,7 @@ class Startup {
         end() {
             TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
         }
-        UserSettings.working_dir := A_WorkingDir
+        this.UserSettings.working_dir := A_WorkingDir
         RunWait(A_ScriptFullPath)
     }
 
@@ -662,7 +662,7 @@ class Startup {
      * This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
      */
     trayMen() {
-        check := UserSettings.update_check
+        check := this.UserSettings.update_check
         A_TrayMenu.Insert("7&") ;adds a divider bar
         A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
         A_TrayMenu.Insert("9&", "keys.allUp()", (*) => keys.allUp())
@@ -677,13 +677,13 @@ class Startup {
             A_TrayMenu.Check("Check for Updates")
         checkUp(*)
         {
-            check := UserSettings.update_check ;has to be checked everytime you wish to toggle
+            check := this.UserSettings.update_check ;has to be checked everytime you wish to toggle
             switch check {
                 case true:
-                    UserSettings.update_check := false
+                    this.UserSettings.update_check := false
                     A_TrayMenu.Uncheck("Check for Updates")
                 case false:
-                    UserSettings.update_check := true
+                    this.UserSettings.update_check := true
                     A_TrayMenu.Check("Check for Updates")
             }
         }
@@ -696,7 +696,7 @@ class Startup {
         __New() {
             this.__defControls()
         }
-        ; static init() => this().__defControls(this)
+
         __defControls() {
             for v in this.objs {
                 for name, val in v.OwnProps() {
@@ -704,6 +704,7 @@ class Startup {
                 }
             }
         }
+
         webView2 := {
             name: "WebView2",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/WebView2/WebView2.ahk",
             scriptPos: ptf.lib "\Other\WebView2"
@@ -735,7 +736,7 @@ class Startup {
             return
         if !checkInternet()
             return
-        check := UserSettings.update_check
+        check := this.UserSettings.update_check
         if check = "stop"
             return
         allLibs := Startup.libs()
@@ -805,7 +806,7 @@ class Startup {
     updateAHK() {
         if isReload() ;checks if script was reloaded
             return
-        settingsCheck := UserSettings.update_check
+        settingsCheck := this.UserSettings.update_check
         if settingsCheck = "stop"
             return
         /**
@@ -924,6 +925,8 @@ class Startup {
      * This is important as it can seriously mess up any scripts that contain hard coded pixel coords
      */
     monitorAlert() {
+        if this.UserSettings.monitor_alert = A_YDay
+            return
         save := false
 
         ;// get initial values
@@ -960,7 +963,7 @@ class Startup {
             switch check {
                 case "Retry": return 0 ;// "No"
                 case "Ignore": ;// "Mute Alert"
-                    UserSettings.monitor_alert := A_YDay
+                    this.UserSettings.monitor_alert := A_YDay
                     return 0
                 default:      return 1
             }
@@ -983,7 +986,7 @@ class Startup {
         ;// if something has changed alert the user
         if (readCount != MonitorCount) || (readPrimary != MonitorPrimary)
             {
-                if UserSettings.monitor_alert = A_YDay
+                if this.UserSettings.monitor_alert = A_YDay
                     return
                 if !alrtmsgbox()
                     return
@@ -1007,7 +1010,7 @@ class Startup {
                 continue
             ;// if the user hasn't been alerted yet, they will be alerted now
             if !save {
-                if UserSettings.monitor_alert = A_YDay
+                if this.UserSettings.monitor_alert = A_YDay
                     return
                 if !alrtmsgbox()
                     return
@@ -1016,5 +1019,9 @@ class Startup {
             ;// log new values
             write(WL, WT, WR, WB)
         }
+    }
+
+    __Delete() {
+        this.UserSettings.__Delete()
     }
 }

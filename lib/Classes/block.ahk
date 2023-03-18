@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2023/02/17
- * @version 1.3.3
+ * @date 2023/03/19
+ * @version 1.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,8 @@
 class block {
     choices := Mip("send", 1, "mouse", 1, "sendandmouse", 1, "default", 1, "on", 1, "mousemove", 1, "mousemoveoff", 1, "off", 1)
 
+    UserSettings := UserPref()
+
     /**
      * This function is designed to be internal to the class and isn't intended to be manually called. It checks the users custom input settings to make sure they're a usable option. This function will also alert the user about the intricacies of using `BlockInput("On"/"Off")`
      * @param {String} args is the users passed in custom option
@@ -26,7 +28,7 @@ class block {
             }
         if args = "on" || args = "off"
             {
-                checkIni := UserSettings.block_aware
+                checkIni := this().UserSettings.block_aware
                 if checkIni = "false"
                     {
                         alert := MsgBox("
@@ -36,7 +38,10 @@ class block {
                             Would you like to be alerted of this again in the future?
                         )", "Block Mode Warning", "4 48 4096")
                         if alert = "No"
-                            UserSettings.block_aware := true
+                            {
+                                this().UserSettings.block_aware := true
+                                this().UserSettings.__Delete()
+                            }
                     }
             }
         BlockInput(args)

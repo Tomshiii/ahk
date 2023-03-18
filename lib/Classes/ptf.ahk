@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/01/15
- * @version 1.1.0
+ * @date 2023/03/19
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,8 +10,9 @@
 ; }
 
 class ptf {
+    UserSettings := UserPref()
     ;general
-    static rootDir           := UserSettings.working_dir
+    static rootDir           := this().UserSettings.working_dir
     static SupportFiles      := this.rootDir "\Support Files"
     static Backups           := this.rootDir "\Backups"
     static Stream            := this.rootDir "\Stream"
@@ -32,10 +33,10 @@ class ptf {
     static musicDir          := "S:\Program Files\User\Music\"
 
     ;ImageSearch
-    static premIMGver        := UserSettings.premVer
-    static aeIMGver          := UserSettings.aeVer
-    static psIMGver          := UserSettings.psVer
-    static resolveIMGver     := UserSettings.resolveVer
+    static premIMGver        := this().UserSettings.premVer
+    static aeIMGver          := this().UserSettings.aeVer
+    static psIMGver          := this().UserSettings.psVer
+    static resolveIMGver     := this().UserSettings.resolveVer
     static ImgSearch         := this.SupportFiles "\ImageSearch"
     static Discord           := this.ImgSearch "\Discord\"
     static Premiere          := this.ImgSearch "\Premiere\" this.premIMGver "\"
@@ -81,8 +82,8 @@ class ptf {
 
     ;complete file links
     static __Item := Map(
-        "settings",        UserSettings.SettingsFile,
-        "monitorsINI",     UserSettings.SettingsDir "\monitors.ini",
+        "settings",        this().UserSettings.SettingsFile,
+        "monitorsINI",     this().UserSettings.SettingsDir "\monitors.ini",
         "KSAini",          this.lib "\KSA\Keyboard Shortcuts.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",

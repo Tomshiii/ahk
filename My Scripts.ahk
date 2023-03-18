@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.31.4
+;\\v2.31.5
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -119,7 +119,7 @@ start.adobeTemp()              ;runs the loop to delete cache files
 start.libUpdateCheck()         ;runs a loop to check for lib updates
 start.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
 start.monitorAlert()           ;checks the users monitor work area for any changes
-
+start.__Delete()
 ;=============================================================================================================================================
 ;
 ;		Windows

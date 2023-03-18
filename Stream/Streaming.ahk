@@ -2,7 +2,6 @@
 #Requires AutoHotkey v2.0 ;this script requires AutoHotkey v2.0
 
 ; { \\ #Includes
-#Include <Classes\Settings>
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\ptf>
 ; }

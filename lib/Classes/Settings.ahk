@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/02/15
- * @version 1.0.5
+ * @date 2023/03/19
+ * @version 1.1.0
  ***********************************************************************/
 
 class UserPref {
@@ -231,5 +231,3 @@ class UserPref {
                 }
     }
 }
-
-UserSettings := UserPref()
