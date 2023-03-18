@@ -14,6 +14,41 @@
 #Include <Functions\checkInternet>
 ;}
 
+class SettingsToolTips {
+    updateCheck := {
+        true: "Scripts will check for updates",
+        false: "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available",
+        stop: "Scripts will NOT check for updates"
+    }
+    dark := {
+        Yes: "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect",
+        No: "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect",
+        disabled: "The users OS version is too low for this feature"
+    }
+    startup := {
+        Yes: "My scripts will automatically run at PC startup",
+        No: "My scripts will no longer run at PC startup"
+    }
+    autosaveCheck := {
+        Yes: "``autosave.ahk`` will check to ensure you have ``checklist.ahk`` open",
+        No: "``autosave.ahk`` will no longer check to ensure you have ``checklist.ahk`` open"
+    }
+    autosaveTooltip := {
+        Yes: "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up",
+        No: "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
+    }
+    checklistTooltip := {
+        Yes: "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer",
+        No: "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
+    }
+    checklistWait := {
+        Yes: "``checklist.ahk`` will always wait for you to open a premiere project before opening",
+        No: "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
+    }
+}
+
+toolT := SettingsToolTips()
+
 /**
  * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
  */
@@ -107,13 +142,13 @@ settingsGUI()
     switch checkVal {
         case true:
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs+1 Y+5", "Check for Updates")
-            updateCheckToggle.ToolTip := "Scripts will check for updates"
+            updateCheckToggle.ToolTip := toolT.updateCheck.true
         case false:
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs+1 Y+5", "Check for Updates")
-            updateCheckToggle.ToolTip := "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available"
+            updateCheckToggle.ToolTip :=toolT.updateCheck.false
         case "stop":
             updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked0 section xs+1 Y+5", "Check for Updates")
-            updateCheckToggle.ToolTip := "Scripts will NOT check for updates"
+            updateCheckToggle.ToolTip :=toolT.updateCheck.stop
     }
     updateCheckToggle.OnEvent("Click", update)
     update(*)
@@ -124,18 +159,18 @@ settingsGUI()
         switch updateVal {
             case 1: ;true
                 UserSettings.update_check := true
-                tool.Cust("Scripts will check for updates", 2000)
+                updateCheckToggle.ToolTip := toolT.updateCheck.true
                 if betaCheck = true
                     betaupdateCheckToggle.Value := 1
             case -1: ;false
                 UserSettings.update_check := false
-                tool.Cust("Scripts will still check for updates but will not present the user`nwith a GUI when an update is available", 2000)
+                updateCheckToggle.ToolTip :=toolT.updateCheck.false
                 if betaCheck = true
                     betaupdateCheckToggle.Value := 1
             case 0: ;stop
                 betaupdateCheckToggle.Value := 0
                 UserSettings.update_check := "stop"
-                tool.Cust("Scripts will NOT check for updates", 2000)
+                updateCheckToggle.ToolTip :=toolT.updateCheck.stop
         }
     }
 
@@ -162,13 +197,11 @@ settingsGUI()
     ;// dark mode toggle
     darkINI   := UserSettings.dark_mode
     darkCheck := settingsGUI.Add("Checkbox", "Checked" darkINI " Y+5", "Dark Mode")
-    darkToolY := "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
-    darkToolN := "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect"
     switch darkINI {
-        case true:  darkCheck.ToolTip := darkToolY
-        case false: darkCheck.ToolTip := darkToolN
+        case true:  darkCheck.ToolTip := toolT.dark.Yes
+        case false: darkCheck.ToolTip := toolT.dark.No
         case "disabled":
-            darkCheck.ToolTip := "The users OS version is too low for this feature"
+            darkCheck.ToolTip := toolT.dark.disabled
             darkCheck.Opt("+Disabled")
     }
     darkCheck.OnEvent("Click", darkToggle)
@@ -177,15 +210,15 @@ settingsGUI()
         ToolTip("")
         darkToggleVal := darkCheck.Value
         UserSettings.dark_mode := (darkCheck.Value = 1) ? true : false
-        darkCheck.ToolTip := (darkCheck.Value = 1) ? darkToolY : darkToolN
+        darkCheck.ToolTip := (darkCheck.Value = 1) ? toolT.dark.Yes : toolT.dark.No
         if (darkCheck.Value = 1)
             {
-                tool.Cust(darkToolY, 2000)
+                tool.Cust(toolT.dark.Yes, 2000)
                 goDark()
                 return
             }
         ;// dark mode is false
-        tool.Cust(darkToolN, 2000)
+        tool.Cust(toolT.dark.No, 2000)
         goDark(false, "Light")
     }
 
@@ -193,11 +226,9 @@ settingsGUI()
     runStartupINI     := UserSettings.run_at_startup
     StartupCheckTitle := "Run at Startup"
     StartupCheck      := settingsGUI.Add("Checkbox", "Checked" runStartupINI " Y+5", StartupCheckTitle)
-    startToolY        := "My scripts will automatically run at PC startup"
-    startToolN        := "My scripts will no longer run at PC startup"
     switch runStartupINI {
-        case true:  StartupCheck.ToolTip := startToolY
-        case false: StartupCheck.ToolTip := startToolN
+        case true:  StartupCheck.ToolTip := toolT.startup.Yes
+        case false: StartupCheck.ToolTip := toolT.startup.No
     }
     StartupCheck.OnEvent("Click", toggle.Bind("run at startup"))
 
@@ -208,24 +239,14 @@ settingsGUI()
     ascheckCheck := UserSettings.autosave_check_checklist
     ascheckCheckTitle := "``autosave.ahk`` check for`n ``checklist.ahk``"
     ascheckToggle := settingsGUI.Add("Checkbox", "Checked" ascheckCheck " Y+20", ascheckCheckTitle)
-    ascheckCheckY := "``autosave.ahk`` will check to ensure you have ``checklist.ahk`` open"
-    ascheckCheckN := "``autosave.ahk`` will no longer check to ensure you have ``checklist.ahk`` open"
-    switch ascheckCheck {
-        case true:    ascheckToggle.ToolTip := ascheckCheckY
-        case false:   ascheckToggle.ToolTip := ascheckCheckN
-    }
     ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist"))
+    autosaveCheck := (ascheckCheck = true) ? toolT.autosaveCheck.Yes : toolT.autosaveCheck.No
 
     ;// autosave tooltips
     tooltipCheck := UserSettings.tooltip
     tooltipCheckTitle := "``autosave.ahk`` tooltips"
     toggleToggle := settingsGUI.Add("Checkbox", "Checked" tooltipCheck " Y+5", tooltipCheckTitle)
-    toggleToolY := "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
-    toggleToolN := "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
-    switch tooltipCheck {
-        case true:  toggleToggle.ToolTip := toggleToolY
-        case false: toggleToggle.ToolTip := toggleToolN
-    }
+    toggleToggle.ToolTip := (tooltipCheck = true) ? toolT.autosaveTooltip.Yes : toolT.autosaveTooltip.No
     toggleToggle.OnEvent("Click", toggle.Bind("tooltip"))
 
 
@@ -241,14 +262,14 @@ settingsGUI()
         ;// each switch here goes off the TITLE variable we created
         switch script.text {
             case tooltipCheckTitle:
-                toolTrue := toggleToolY
-                toolFalse := toggleToolN
+                toolTrue := toolT.autosaveTooltip.Yes
+                toolFalse := toolT.autosaveTooltip.No
             case ascheckCheckTitle:
-                toolTrue := ascheckCheckY
-                toolFalse := ascheckCheckN
+                toolTrue := toolT.autosaveCheck.Yes
+                toolFalse := toolT.autosaveCheck.No
             case StartupCheckTitle:
-                toolTrue := startToolY
-                toolFalse := startToolN
+                toolTrue := toolT.startup.Yes
+                toolFalse := toolT.startup.No
         }
 
         ;// toggling the checkboxes & setting values based off checkbox state
@@ -281,24 +302,14 @@ settingsGUI()
     checklistTooltip := UserSettings.checklist_tooltip
     checklistTooltipTitle := "``checklist.ahk`` tooltips"
     checkTool := settingsGUI.Add("Checkbox", "Checked" checklistTooltip " Y+5", checklistTooltipTitle)
-    checkToolY := "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer"
-    checkToolN := "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
-    switch checklistTooltip {
-        case true:    checkTool.ToolTip := checkToolY
-        case false:   checkTool.ToolTip := checkToolN
-    }
+    checkTool.ToolTip := (checklistTooltip = true) ? toolT.checklistTooltip.Yes : toolT.checklistTooltip.No
     checkTool.OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
 
     ;// checklist wait
     checklistWait := UserSettings.checklist_wait
     checklistWaitTitle := "``checklist.ahk`` always wait"
     checkWait := settingsGUI.Add("Checkbox", "Checked" checklistWait " Y+5", checklistWaitTitle)
-    waitToolY := "``checklist.ahk`` will always wait for you to open a premiere project before opening"
-    waitToolN := "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
-    switch checklistWait {
-        case true:  checkWait.ToolTip := waitToolY
-        case false: checkWait.ToolTip := waitToolN
-    }
+    checkWait.ToolTip := (checklistWait = true) ? toolT.checklistWait.Yes : toolT.checklistWait.No
     checkWait.OnEvent("Click", msgboxToggle.Bind("checklist wait"))
 
 
@@ -311,14 +322,8 @@ settingsGUI()
     {
         detect()
         ToolTip("")
-        switch script.text {
-            case checklistWaitTitle:
-                toolTrue := waitToolY
-                toolFalse := waitToolN
-            case checklistTooltipTitle:
-                toolTrue := checkToolY
-                toolFalse := checkToolN
-            }
+        toolTrue := (script.text == checklistWaitTitle) ? toolT.checklistWait.Yes : toolT.checklistTooltip.Yes
+        toolFalse := (script.text == checklistWaitTitle) ? toolT.checklistWait.No : toolT.checklistTooltip.No
         msgboxText := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
         iniVar := StrReplace(ini, A_Space, "_")
         ;// setting values based on the state of the checkbox
@@ -336,17 +341,24 @@ settingsGUI()
     ;//! EDIT BOXES
     premInitYear := UserSettings.prem_year
     AEInitYear   := UserSettings.ae_year
-    ;this loop auto generates the edit boxes using "..\settingsGUI\editValues.ahk"
+
+    ;// this loop auto generates the edit boxes using "..\settingsGUI\editValues.ahk"
     set_Edit_Val.init()
     loop set_Edit_Val().objs.Length {
         initValVar := StrReplace(set_Edit_Val.iniInput[A_Index], A_Space, "_")
         initVal := UserSettings.%initValVar%
-        settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])
+        settingsGUI.Add("Edit",
+                             set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])
         settingsGUI.Add("UpDown",, initVal)
-        settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
+        settingsGUI.Add("Text",
+                            set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index],
+                            set_Edit_Val.scriptText[A_Index])
         settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
-        settingsGUI.Add("Text", set_Edit_Val.otherTextPos[A_Index], set_Edit_Val.otherText[A_Index])
-        settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index], set_Edit_Val.iniInput[A_Index]))
+        settingsGUI.Add("Text",
+                            set_Edit_Val.otherTextPos[A_Index],
+                            set_Edit_Val.otherText[A_Index])
+        settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index],
+                                                                                    set_Edit_Val.iniInput[A_Index]))
     }
 
     editCtrl(script, ini, ctrl, *)
@@ -377,10 +389,7 @@ settingsGUI()
     buttons(which, button, *)
     {
         buttonTitle := (which = "adobe") ? "adobeTemp()" : "firstCheck()"
-        switch button.text {
-            case buttonTitle: button.Text := "undo?"
-            case "undo?":     button.Text := buttonTitle
-        }
+        button.Text := (button.Text = buttonTitle) ? "undo?" : buttonTitle
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -665,7 +674,7 @@ settingsGUI()
             if !IsSet(defaultIndex)
                 defaultIndex := 1
             ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
-            ver.OnEvent("Change", editCtrl.bind(verIniName))
+            ver.OnEvent("Change", editCtrl.bind("", verIniName))
         }
 
         __cacheslct(progName, *) {
