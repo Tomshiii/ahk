@@ -18,7 +18,7 @@ getHTML(url) {
     ;// attempting to get url
     try {
         if !checkInternet()
-            return 0
+            return false
         main := ComObject("WinHttp.WinHttpRequest.5.1")
         main.Open("GET", url)
         main.Send()
@@ -27,7 +27,7 @@ getHTML(url) {
     }  catch as e {
         tool.Cust("Couldn't get version info`nYou may not be connected to the internet")
         errorLog(e)
-        return 0
+        return false
     }
     return string
 }

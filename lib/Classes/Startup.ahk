@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/02/20
- * @version 1.5.2
+ * @date 2023/03/18
+ * @version 1.5.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -808,8 +808,18 @@ class Startup {
         settingsCheck := UserSettings.update_check
         if settingsCheck = "stop"
             return
-        latestVer := getHTML("https://www.autohotkey.com/download/2.0/version.txt")
-        if latestVer = 0
+        /**
+         * A wrapper function to retrieve the latest release of ahk
+         * This was put in place instead of reading the .txt file of the ahk website because it started using ddos protection
+         */
+        __getahk() {
+            response := getHTML("https://api.github.com/repos/AutoHotkey/AutoHotkey/releases/latest")
+            if !response
+                return false
+            RegExMatch(response, "v\K[\d.]+", &match)
+            return match[0]
+        }
+        if !latestVer := __getahk()
             return
         if VerCompare(latestVer, A_AhkVersion) <= 0
             {
