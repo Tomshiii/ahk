@@ -74,7 +74,7 @@ try {
  */
 class adobeVers {
     Premiere := Map(
-        "v23.1",    "v22.2.1",
+        "v23.1",    "v22.3.1",
         "v23.2",    "v22.3.1"
     )
     AE := Map(

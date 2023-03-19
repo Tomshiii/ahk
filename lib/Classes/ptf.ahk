@@ -2,7 +2,7 @@
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
  * @date 2023/03/19
- * @version 1.1.1
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -138,7 +138,7 @@ class Editors {
         winTitle: "ahk_exe Adobe Premiere Pro.exe",   class: "ahk_class Premiere Pro"
     }
     static AE := {
-        winTitle: "ahk_exe AfterFX.exe",              class: "ahk_class AE_CApplication_22.6"
+        winTitle: "ahk_exe AfterFX.exe",              class: "ahk_class AE_CApplication_" SubStr(ptf().UserSettings.aeVer, 2, 4)
     }
     static Photoshop := {
         winTitle: "ahk_exe Photoshop.exe",            class: "ahk_class Photoshop"

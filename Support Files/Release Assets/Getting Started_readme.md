@@ -7,9 +7,13 @@ ___
 
 **Symlink:**
 
-Will create a symlink between ``A_MyDocuments \AutoHotkey\`` & the ``..\lib\`` folder in these scripts. This symlink is essential for correct opperation but only needs to be created once (or if the user moves the repo to a new directory. *This means that if you download a **new** release and don't put it in the same file directory, the symlink will need to be regenerated.*)
+Will create a symlink between ``A_MyDocuments \AutoHotkey\`` & the ``..\lib\`` folder in these scripts. This symlink is essential for correct opperation but only needs to be created once (or if the user moves the repo to a new directory.)  
+> *This means that if you download a **new** release and don't put it in the same file directory, the symlink will need to be regenerated.*  
 
-**note: selecting this option will ask for elevation, this is necessary as cmd needs to be elevated to create symlinks. This option should also not be selected if the current directory is not the final destination for this repo*
+This script will also generate some symlink folders within ``..\Support Files\ImageSearch\(AE/Premiere)`` to partially support more versions.  
+> *These folders being generated does not mean those versions are completely compatible with my scripts. I do not have the time or man power to support versions that I do not use. The version I'm currently using will be listed at the top of the class file fould in ``..\lib\Classes\Editors\(After Effects.ahk/Premiere.ahk)``*
+
+#### note: selecting this option will ask for elevation, this is necessary as cmd needs to be elevated to create symlinks. This option should also *not* be selected if the current directory is *not* the final destination for this repo
 ___
 
 **Hotkey Replacer:**

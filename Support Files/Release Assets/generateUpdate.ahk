@@ -185,6 +185,10 @@ deleting() {
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Wiki")
     ;// deleting the `RODECaster` backup folder
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\RODECaster")
+    ;// deleting the `Old Code` backup folder
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Old Code")
+    ;// deleting the `VSCode` backup folder
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\VSCode")
     ;// deleting the full res images
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\og")
     ;// deleting folder I store in repo that isn't needed
