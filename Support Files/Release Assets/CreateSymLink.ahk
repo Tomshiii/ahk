@@ -5,6 +5,7 @@ if !DirExist(A_MyDocuments "\AutoHotkey")
 
 ahklib := A_MyDocuments '\AutoHotkey\Lib'
 path := A_ScriptDir '\..\..\Lib'
+imgsrchPath := A_ScriptDir '\..\..\Support Files\ImageSearch'
 temp := false
 
 cmdLine := Format('mklink /D `"{}`" `"{}`"'
@@ -37,7 +38,18 @@ if DirExist(ahklib)
         }
     }
 
-RunWait("*RunAs " A_ComSpec " /c " cmdLine)
+adobecmd := cmdLine " && "
+
+for k, v in adobeVers().Premiere {
+    adobecmd := Format('{1} mklink /D "{2}\Premiere\{3}" "{2}\Premiere\{4}" && ', adobecmd, imgsrchPath, k, v)
+}
+for k, v in adobeVers().AE {
+    adobecmd := Format('{1} mklink /D "{2}\AE\{3}" "{2}\AE\{4}" && ', adobecmd, imgsrchPath, k, v)
+}
+adobecmd := SubStr(adobecmd, 1, StrLen(adobecmd) - 4)
+
+RunWait("*RunAs " A_ComSpec " /c " adobecmd)
+
 if !DirExist(ahklib)
     {
         MsgBox("Something went wrong", "Error", "16 4096")
@@ -51,4 +63,21 @@ if !temp
 try {
     DirMove(A_Temp "\tomshi\UserBackup", ahklib "\UserBackup", 1)
     MsgBox("SymLink generated successfully!", "Success", "64 4096")
+}
+
+
+/**
+ * Values of adobe versions that share their images with each other.
+ * Versions being listed here do NOT ensure they are completely compatible with my scripts, I do not have the manpower to extensively test version I do not use consistently
+ * @param firstvalue is the NEW version
+ * @param secondvalue is the version it's copying (so the ACTUAL folder)
+ */
+class adobeVers {
+    Premiere := Map(
+        "v23.1",    "v22.2.1",
+        "v23.2",    "v22.3.1"
+    )
+    AE := Map(
+        "v23.2.1",  "v22.6"
+    )
 }

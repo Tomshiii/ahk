@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/03/03
- * @version 1.2.2
+ * @date 2023/03/19
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -201,7 +201,6 @@ class switchTo {
                         }
                     WinActivate(AE.winTitle)
                 }
-
                 if premExist
                     {
                         try {
@@ -210,6 +209,8 @@ class switchTo {
                                 checkTrans()
                             else
                                 premTitle()
+                        } catch {
+                            WinActivate(AE.winTitle)
                         }
                         return
                     }
