@@ -51,6 +51,7 @@ class WM {
      * @param {String} str is the string you wish to send
      * @param {String} scriptTitle the title of the script you wish to target. The passed string must be the entire filename (including the `.ahk` extension)
      * @param {Integer} timeout time in `ms` you want the function to wait before timing out
+     * @return the response from the target window
      */
     static Send_WM_COPYDATA(str, scriptTitle, timeout := 4000) {
         CopyDataStruct := Buffer(3*A_PtrSize)  ; Set up the structure's memory area.
@@ -83,8 +84,8 @@ class WM {
      * ```
      * OnMessage(0x004A, test)  ; 0x004A is WM_COPYDATA
      * test(wParam, lParam, msg, hwnd) {
-     * res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
-     * MsgBox("smelly" res)
+     *    res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+     *    MsgBox("smelly" res)
      * }
      * ```
      */

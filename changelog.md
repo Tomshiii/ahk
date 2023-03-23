@@ -7,7 +7,7 @@
 - Fix `winget.ProjPath()` throwing if program is on a part where the filepath cannot be found
 - Fix `gameCheckGUI()` not launching in dark mode
 - Add `WM {`
-- `discord.button()` will now alert the user if they aren't hovering over a message they sent when trying to use `Edit` or `Delete`
+- `discord.button()` will now alert the user if they aren't hovering over a message they have sent when trying to use `Edit` or `Delete`
 
 `ytDownload()`
 - Now returns the url
@@ -19,3 +19,4 @@
 
 ## > Other Changes
 - `CreateSymLink.ahk` will now also generate Symlinks for adobe folders to partially support more versions
+    > - _This change does **NOT** guarantee all functions will work flawlessly_

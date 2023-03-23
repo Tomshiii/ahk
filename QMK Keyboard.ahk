@@ -18,7 +18,7 @@ TraySetIcon(ptf.Icons "\keyboard.ico")
 ;\\v2.13.7
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.10.3
+;\\v2.10.4
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE REWORKED IT TO WORK IN AHK v2.0 and then completely changed it to be for my workflow
