@@ -47,7 +47,7 @@ class WM {
 
     /**
      * Sends the specified string to the specified window and returns the reply.
-     * If the reply is 1 if the target window processed the message, or 0 if it ignored it.
+     * The reply is 1 if the target window processed the message, or 0 if it ignored it.
      * @param {String} str is the string you wish to send
      * @param {String} scriptTitle the title of the script you wish to target. The passed string must be the entire filename (including the `.ahk` extension)
      * @param {Integer} timeout time in `ms` you want the function to wait before timing out
@@ -74,12 +74,12 @@ class WM {
     }
 
     /**
-     * Recieves a custom string send by `WM.Send_WM_COPYDATA()`
+     * Recieves a custom string sent by `WM.Send_WM_COPYDATA()`
      * @param {} wParam
      * @param {} lParam
      * @param {} msg
      * @param {} hwnd
-     * @return returns `True` upon completion
+     * @return returns `true` upon completion
      * ```
      * OnMessage(0x004A, test)  ; 0x004A is WM_COPYDATA
      * test(wParam, lParam, msg, hwnd) {

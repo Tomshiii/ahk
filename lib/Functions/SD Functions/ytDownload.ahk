@@ -30,7 +30,7 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
             errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
         }
     check := false
-    links := ["https://www.youtube.com/", "https://www.twitch.tv/", "https://clips.twitch.tv/"]
+    links := ["https://www.youtube.com/", "https://www.twitch.tv/", "https://clips.twitch.tv/", "https://youtu.be/"]
     if !DirExist(folder) ;saftey check
         folder := A_ScriptDir
     oldClip := clip.clear()
