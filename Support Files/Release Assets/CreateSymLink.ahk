@@ -38,16 +38,14 @@ if DirExist(ahklib)
         }
     }
 
-adobecmd := cmdLine " && "
+adobecmd := cmdLine A_Space
 
-for k, v in adobeVers().Premiere {
-    adobecmd := Format('{1} mklink /D "{2}\Premiere\{3}" "{2}\Premiere\{4}" && ', adobecmd, imgsrchPath, k, v)
+for k, v in adobeVers.maps {
+    which := adobeVers.which[k]
+    for k2, v2 in v {
+        adobecmd := Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}" ', adobecmd, imgsrchPath, k2, v2, which)
+    }
 }
-for k, v in adobeVers().AE {
-    adobecmd := Format('{1} mklink /D "{2}\AE\{3}" "{2}\AE\{4}" && ', adobecmd, imgsrchPath, k, v)
-}
-adobecmd := SubStr(adobecmd, 1, StrLen(adobecmd) - 4)
-
 RunWait("*RunAs " A_ComSpec " /c " adobecmd)
 
 if !DirExist(ahklib)
@@ -75,9 +73,19 @@ try {
 class adobeVers {
     Premiere := Map(
         "v23.1",    "v22.3.1",
-        "v23.2",    "v22.3.1"
+        "v23.2",    "v22.3.1",
     )
     AE := Map(
-        "v23.2.1",  "v22.6"
+        "v23.2.1",  "v22.6",
     )
+    PS := Map(
+        "v24.0.1",  "v24.3",
+        "v24.1",    "v24.3",
+        "v24.1.1",  "v24.3",
+        "v24.2",    "v24.3",
+        "v24.2.1",  "v24.3",
+    )
+
+    static maps := [this().Premiere, this().AE, this().PS]
+    static which := ["Premiere", "AE", "Photoshop"]
 }
