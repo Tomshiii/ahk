@@ -1,3 +1,5 @@
+#Include *i Adobe SymVers\adobeVers.ahk
+
 SetWorkingDir(A_ScriptDir)
 
 if !DirExist(A_MyDocuments "\AutoHotkey")
@@ -40,12 +42,18 @@ if DirExist(ahklib)
 
 adobecmd := cmdLine A_Space
 
-for k, v in adobeVers.maps {
-    which := adobeVers.which[k]
-    for k2, v2 in v {
-        adobecmd := Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}" ', adobecmd, imgsrchPath, k2, v2, which)
+if IsSet(adobeVers) && IsObject(adobeVers) {
+    for k, v in adobeVers.maps {
+        which := adobeVers.which[k]
+        for k2, v2 in v {
+            ;// will remove any symlinks before attempting to create it so that it doesn't error out
+            if DirExist(path := imgsrchPath "\" which "\" k2) && InStr(FileGetAttrib(path), "l") ;// checks to make sure it's still a symbolic link
+                DirDelete(path)
+            adobecmd := Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}" ', adobecmd, imgsrchPath, k2, v2, which)
+        }
     }
 }
+
 RunWait("*RunAs " A_ComSpec " /c " adobecmd)
 
 if !DirExist(ahklib)
@@ -61,31 +69,4 @@ if !temp
 try {
     DirMove(A_Temp "\tomshi\UserBackup", ahklib "\UserBackup", 1)
     MsgBox("SymLink generated successfully!", "Success", "64 4096")
-}
-
-
-/**
- * Values of adobe versions that share their images with each other.
- * Versions being listed here do NOT ensure they are completely compatible with my scripts, I do not have the manpower to extensively test version I do not use consistently
- * @param firstvalue is the NEW version
- * @param secondvalue is the version it's copying (so the ACTUAL folder)
- */
-class adobeVers {
-    Premiere := Map(
-        "v23.1",    "v22.3.1",
-        "v23.2",    "v22.3.1",
-    )
-    AE := Map(
-        "v23.2.1",  "v22.6",
-    )
-    PS := Map(
-        "v24.0.1",  "v24.3",
-        "v24.1",    "v24.3",
-        "v24.1.1",  "v24.3",
-        "v24.2",    "v24.3",
-        "v24.2.1",  "v24.3",
-    )
-
-    static maps := [this().Premiere, this().AE, this().PS]
-    static which := ["Premiere", "AE", "Photoshop"]
 }
