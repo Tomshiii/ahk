@@ -92,7 +92,7 @@ settingsGUI()
                 if !checkInt
                     {
                         tool.Cust("It doesn't appear like you have an active internet connection", 2.0)
-                        tool.Cust("The page will run just incase", 2.0,,, 20, 2)
+                        tool.Cust("The page will run just incase", 2.0,, 20, 2)
                     }
                 if WinExist("Home · Tomshiii/ahk Wik")
                     WinActivate("Home · Tomshiii/ahk Wik")

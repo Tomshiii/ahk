@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2023/02/23
- * @version 1.4.1
+ * @date 2023/03/25
+ * @version 1.4.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -223,7 +223,7 @@ class discord {
             )
         )
             {
-                tool.Cust("any unread " message,, 1)
+                tool.Cust("Couldn't find any unread " message)
                 return
             }
         end()

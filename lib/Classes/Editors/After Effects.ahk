@@ -2,8 +2,8 @@
  * @description A library of useful After Effects functions to speed up common tasks
  * Tested on and designed for v22.6 of After Effects
  * @author tomshi
- * @date 2023/03/09
- * @version 1.2.2
+ * @date 2023/03/25
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -415,7 +415,7 @@ class AE {
         CaretGetPos(&findx)
         if findx = ""
             {
-                tool.Cust("the caret which indicates you aren't ready to type something`nTo prevent any unintended inputs being sent to AE none will be sent", 3.0, 1)
+                tool.Cust("Couldn't find the caret which indicates you aren't ready to type something`nTo prevent any unintended inputs being sent to AE none will be sent", 3.0)
                 errorLog(UnsetError("Couldn't determine the caret position.", -1, findx)
                             , "This indicates the user isn't ready to type anything.")
                 return

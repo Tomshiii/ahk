@@ -12,7 +12,7 @@ SetDefaultMouseSpeed 0
 ;
 ; This script is designed for Windows 11 and its settings menu. Older win10 compatible scripts can be seen backed up in the Win10 folder.
 ;
-firetip() => tool.Cust("firefox",, 1)
+firetip() => tool.Cust("Couldn't find firefox")
 
 pause.pause("autosave")
 pause.pause("adobe fullscreen check")

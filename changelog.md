@@ -5,5 +5,9 @@
 - Add `tool.tray()`
     - `convert2()` & `ytDownload()` now use `tool.tray()` to alert the user that the process has completed
 
+`tool.cust()`
+- `find` parameter has been removed
+- Cleaned up function
+
 ## > Other Changes
 - Cleaned up `Move project.ahk`

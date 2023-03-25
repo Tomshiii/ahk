@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
- * @date 2023/03/17
- * @version 1.5.3
+ * @date 2023/03/25
+ * @version 1.5.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -279,7 +279,7 @@ class Prem {
         ;// get coordinates for a tooltip that appears to alert the user that toggles have reset
         if this.zToolX = 0 || this.zToolY = 0
             {
-                tool.Cust("Retrieving tooltip location",,,-40, 20, 4)
+                tool.Cust("Retrieving tooltip location",,-40, 20, 4)
                 SendInput(KSA.programMonitor)
                 SendInput(KSA.programMonitor)
                 try {
@@ -289,7 +289,7 @@ class Prem {
                 this.zToolX := (classNN.x+15)
                 this.zToolY := (classNN.y+classNN.height) - (classNN.height/5)
                 ToolTip("",,, 4)
-                tool.Cust("Some tooltips for this function will appear here",,, this.zToolX, this.zToolY, 4)
+                tool.Cust("Some tooltips for this function will appear here",, this.zToolX, this.zToolY, 4)
             }
 
         ;// start bulk of function
@@ -333,7 +333,7 @@ class Prem {
                 }
             if ((A_TickCount - time) >= resetTime) || GetKeyState("F5", "P")
                 {
-                    tool.Cust("zoom toggle reset",,, this.zToolX, this.zToolY, 2)
+                    tool.Cust("zoom toggle reset",, this.zToolX, this.zToolY, 2)
                     this.timer := false, this.presses := 0, this.zoomToggle := 0
                     Tog := 1
                     SetTimer(, 0)
@@ -629,7 +629,7 @@ class Prem {
         if !PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
             {
                 block.Off()
-                tool.Cust("the blue text",, 1) ;useful tooltip to help you debug when it can't find what it's looking for
+                tool.Cust("Couldn't find the blue text") ;useful tooltip to help you debug when it can't find what it's looking for
                 errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
                 keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)

@@ -355,7 +355,7 @@ openLog(*)
 {
     if !FileExist(logs)
         {
-            tool.Cust("the log file", 2000, 1)
+            tool.Cust("Couldn't find the log file", 2000)
             return
         }
     if WinExist("checklist_logs.txt")

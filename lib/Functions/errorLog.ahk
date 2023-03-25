@@ -152,7 +152,7 @@ errorLog(err, optMessage?, toolCust := false, doThrow := false) {
                 if defaults.y = "null"
                     y := unset
                 ;// generate tooltip
-                tool.Cust(err.Message scndLine, defaults.time,, x?, y?, defaults.ttip)
+                tool.Cust(err.Message scndLine, defaults.time, x?, y?, defaults.ttip)
                 return
             }
         ;// if only a boolean value has been passed we'll generate a standard tooltip
