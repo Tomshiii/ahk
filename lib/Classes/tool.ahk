@@ -1,8 +1,8 @@
 /************************************************************************
- * @description A class to contain often used tooltip functions for easier coding.
+ * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2023/01/20
- * @version 1.1.3
+ * @date 2023/03/25
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -181,5 +181,24 @@ class tool {
             WinWaitClose("ahk_class tooltips_class32",, timeout?)
         DetectHiddenWindows(dct.Windows)
         this().__returnLines(priorLines)
+    }
+
+    /**
+     * This function is simply a wrapper function to quickly and easily generate & deal with a traytip
+     * @param {Object} TrayParams an object containing the paramaters you wish to pass to `TrayTip`. This includes `{text: "", title: "", options: ""}
+     * @param {Integer} timeout the time in `ms` you wish to wait before the traytip times out. Pass `0` to disable this function attempting a timeout. *note: this timeout may not work as intended due to windows/if your script is persistent*
+     */
+    static tray(TrayParams?, timeout := 5000) {
+        A_IconTip := "Tomshi AHK Scripts"
+        if !A_IconFile && FileExist(ptf.Icons "\myscript.ico")
+            TraySetIcon(ptf.Icons "\myscript.ico")
+        def := {text: "", title: "", options: ""}
+        for k, v in TrayParams.OwnProps() {
+            def.%k% := v
+        }
+        TrayTip(def.text, def.title, def.options)
+        if timeout = 0
+            return
+        SetTimer((*) => TrayTip(), -timeout)
     }
 }

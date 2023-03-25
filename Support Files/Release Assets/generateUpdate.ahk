@@ -11,7 +11,7 @@
 ; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep its code open so you can make sure the install exe isn't too scary)
 
 ;// setting our working dir to the release folder
-SetWorkingDir("E:\Github\ahk\releases") ;this folder isn't included in the public version of my repo as it simply acts as a backup place for all the releases
+SetWorkingDir(ptf.rootDir "\releases") ;this folder isn't included in the public version of my repo as it simply acts as a backup place for all the releases
 
 ;// cleanup incase this script was interrupted
 if DirExist(ptf.rootDir "\releases\release")
@@ -25,7 +25,9 @@ loop files ptf.rootDir "\Error Logs\*.txt"
     FileDelete(A_LoopFileFullPath)
 
 ;// ask what version we're bumping to
-yes := InputBox("", "version", "W100 H80", "v2.x.x")
+currentVer := getLocalVer()
+initialValue := SubStr(currentVer, 1, InStr(currentVer, ".",,, -1)) "x"
+yes := InputBox("", "version", "W100 H80", initialValue)
 if yes.Result = "Cancel"
     return
 if !DirExist(A_WorkingDir "\release\" yes.Value)

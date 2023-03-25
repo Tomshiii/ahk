@@ -121,5 +121,6 @@ ytDownload(args := "", folder := A_ScriptDir, conv2 := true) {
                 }
         }
     clip.returnClip(oldClip)
+    tool.tray({text: "ytdlp process has finished", title: A_ThisFunc "()", options: 1}, 2000)
     return URL
 }

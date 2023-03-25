@@ -771,7 +771,9 @@ class Prem {
     /**
      * This function pulls an audio file out of a separate bin from the project window and back to the cursor (premiere pro)
      *
-     * If `sfxName` is "bleep" there is extra code that automatically moves it to your track of choice
+     * If `sfxName` is "bleep" there is extra code that automatically moves it to your track of choice.
+     *
+     * This function uses hard coded position values for where it expects the sfx bin to be. You may need to change these values.
      * @param {String} sfxName is the name of whatever sound you want the function to pull onto the timeline
      */
     static audioDrag(sfxName)

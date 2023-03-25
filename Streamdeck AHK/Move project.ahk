@@ -24,32 +24,18 @@ if Move = SelectedFolder
     }
 
 ;;this part deletes the proxies folder and the draft folder if they exist
-if DirExist(SelectedFolder "\proxies")
-    DirDelete(SelectedFolder "\proxies", 1)
-if DirExist(SelectedFolder "\Proxies")
-    DirDelete(SelectedFolder "\Proxies", 1)
-if DirExist(SelectedFolder "\renders\draft")
-    DirDelete(SelectedFolder "\renders\draft", 1)
-if DirExist(SelectedFolder "\renders\Draft")
-    DirDelete(SelectedFolder "\renders\Draft", 1)
-if DirExist(SelectedFolder "\Adobe Premiere Pro Auto-Save")
-    DirDelete(SelectedFolder "\Adobe Premiere Pro Auto-Save", 1)
-if DirExist(SelectedFolder "\Adobe After Effects Auto-Save")
-    DirDelete(SelectedFolder "\Adobe After Effects Auto-Save", 1)
-if DirExist(SelectedFolder "\Adobe Premiere Pro Audio Previews")
-    DirDelete(SelectedFolder "\Adobe Premiere Pro Audio Previews", 1)
-if DirExist(SelectedFolder "\Premiere Composer Files")
-    DirDelete(SelectedFolder "\Premiere Composer Files", 1)
+folders := ["\proxies", "\renders\draft", "\Adobe Premiere Pro Audio Previews", "\Adobe Premiere Pro Video Previews", "\Adobe Premiere Pro Auto-Save", "\Adobe After Effects Auto-Save", "\Premiere Composer Files"]
+for v in folders {
+    if DirExist(SelectedFolder v)
+        DirDelete(SelectedFolder v, 1)
+}
 
 ;;this part deletes any temp files if you have premiere/after effects set to save them next to their media
-FileDelete(SelectedFolder "\videos\*.pek")
-FileDelete(SelectedFolder "\videos\*.pkf")
-FileDelete(SelectedFolder "\audio\*.pek")
-FileDelete(SelectedFolder "\audio\*.pkf")
-FileDelete(SelectedFolder "\*.cfa")
-FileDelete(SelectedFolder "\*.pek")
-;delete any mkv files I might still have lying around in the videos folder (premiere can't use mkv files anyway so there's a 0% changce I haven't remuxed them into mp4's)
-FileDelete(SelectedFolder "\videos\*.mkv")
+;and also deletes any mkv files that might still be lying around in the videos folder (premiere can't use mkv files anyway so there's a 0% changce I haven't remuxed them into mp4's)
+files := ["\videos\*.pek", "\videos\*.pkf", "\audio\*.pek", "\audio\*.pkf", "\*.cfa", "\*.pek", "\videos\*.mkv"]
+for v in files {
+    FileDelete(SelectedFolder v)
+}
 
 ;the below loop will go through and delete any files that are larger than 2GB (default) as I don't need to store anything larger than that
 maxFileSizeGB := 2
@@ -66,3 +52,4 @@ DirMove(SelectedFolder, Move "\" splitSelected.name)
 
 ;;this part just opens the final directory
 Run(Move "\" splitSelected.name)
+tool.tray({text: "Moving: " SelectedFolder "`nComplete"})

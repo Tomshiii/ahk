@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/03/19
- * @version 1.6.0
+ * @date 2023/03/25
+ * @version 1.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -289,12 +289,7 @@ class Startup {
                     downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
                     if downloadLocation = ""
                         return
-                    ;ToolTip("Updated scripts are downloading")
-                    TrayTip("Updated scripts are downloading", "Downloading...", 17)
-                    SetTimer(HideTrayTip, -5000)
-                    HideTrayTip() {
-                        TrayTip()
-                    }
+                    tool.tray({text: "Updated scripts are downloading", title: "Downloading...", options: 17})
                     type := ""
                     exeOrzip(filetype, &found)
                     {
@@ -393,8 +388,7 @@ class Startup {
                                 }
                         }
                     try {
-                        TrayTip("Your current scripts are being backed up!", "Backing Up...", 17)
-                        SetTimer(HideTrayTip, -5000)
+                        tool.tray({text: "Your current scripts are being backed up!", title: "Backing Up...", options: 17})
                         DirCopy(ptf.rootDir, A_Temp "\" this.MyRelease)
                         DirMove(A_Temp "\" this.MyRelease, ptf.rootDir "\Backups\Script Backups\" this.MyRelease, "1")
                         if DirExist(A_Temp "\" this.MyRelease)
@@ -633,8 +627,8 @@ class Startup {
             }
         if found = false
             return
-        TrayTip(funcTray "is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir,, 17)
-        SetTimer(end, -2000)
+        tool.tray({text: funcTray "is attempting to replace references to installation directory with user installation directory:`n" A_WorkingDir, options: 17}, 2000)
+        SetTimer((*) => tool.tray({text: funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check", options: 17}, 2000), -2000)
         if tomshiOrUser = "t"
             dir := "E:\Github\ahk"
         else if tomshiOrUser = "u"
@@ -651,9 +645,6 @@ class Startup {
                         FileAppend(read2, A_LoopFileFullPath)
                     }
             }
-        end() {
-            TrayTip(funcTray "has finished attempting to replace references to the installation directory.`nDouble check " "'" "location :=" "'" " variables to sanity check",, 1)
-        }
         this.UserSettings.working_dir := A_WorkingDir
         RunWait(A_ScriptFullPath)
     }

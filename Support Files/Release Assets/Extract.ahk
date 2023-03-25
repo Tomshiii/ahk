@@ -1,6 +1,8 @@
 #Include *i SevenZip.ahk
-#Include *i <Classes\Settings> ;// will attempt to generate a settings file
-
+#Include *i <Classes\Settings>
+try { ;// will attempt to generate a settings file
+    UserSettings := UserPref()
+}
 ;// all references to `yes (dot) value` get automatically replaced with the latest version number by `generateUpdate.ahk` - this saves me from needing to manually change it each release
 
 ;// doing some setup

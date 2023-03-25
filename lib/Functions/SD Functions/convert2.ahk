@@ -20,5 +20,6 @@ convert2(command)
             try {
                 WinActivate(hwnd)
             }
+            tool.tray({text: "ffmpeg process has finished", title: A_ThisFunc "()", options: 1})
         }
 }
