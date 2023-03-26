@@ -2,8 +2,8 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2023/03/03
- * @version 1.0.2
+ * @date 2023/03/26
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,14 @@
 ; }
 
 class keys {
+
+    static modifiers := Map(
+        "#", 1,     "!", 1,
+        "^", 1,     "+", 1,
+        "&", 1,     "<", 1,
+        ">", 1,     "*", 1,
+        "~", 1,     "$", 1,
+    )
 
     /**
      * This function is a wrapper function for the loops in `keys.allUp()` and is to cut repeat code
@@ -119,7 +127,9 @@ class keys {
             ;// throw
             errorLog(ValueError("Incorrect Value in Parameter #1", -1, which),,, 1)
         }
-        if (A_ThisHotkey != "" && !InStr(A_ThisHotkey, "&")) && StrLen(A_ThisHotkey) != 2
+        if ((A_ThisHotkey != "" && !InStr(A_ThisHotkey, "&")) &&
+            (StrLen(A_ThisHotkey) != 2 || (!this.modifiers.Has(SubStr(A_ThisHotkey, 1, 1)) && !this.modifiers.Has(SubStr(A_ThisHotkey, 2, 1))))
+        )
             KeyWait(A_ThisHotkey)
         else if A_ThisHotkey != ""
             {

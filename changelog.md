@@ -10,4 +10,5 @@
 - Cleaned up function
 
 ## > Other Changes
+- Added `prem(previous/next)Keyframe` hotkeys to `My Scripts.ahk`/`KSA.ini`
 - Cleaned up `Move project.ahk`

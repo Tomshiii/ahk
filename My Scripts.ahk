@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.31.5
+;\\v2.31.6
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -898,10 +898,15 @@ PgUp::
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
+;previouspremkeyframeHotkey;
+Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "second") ;goes to the next keyframe point towards the left
+;nextpremkeyframeHotkey;
+Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second") ;goes to the next keyframe towards the right
+
 ;previouseditHotkey;
-F21::prem.wheelEditPoint(KSA.previousEditPoint) ;goes to the next edit point towards the left
+F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint) ;goes to the next edit point towards the left
 ;nexteditHotkey;
-F23::prem.wheelEditPoint(KSA.nextEditPoint) ;goes to the next edit point towards the right
+F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint) ;goes to the next edit point towards the right
 ;playstopHotkey;
 F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
 ;nudgedownHotkey;

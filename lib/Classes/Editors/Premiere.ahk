@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
  * @author tomshi
  * @date 2023/03/25
- * @version 1.5.4
+ * @version 1.5.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -945,11 +945,16 @@ class Prem {
      * Move back and forth between edit points from anywhere in premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
      */
-    static wheelEditPoint(direction)
+    static wheelEditPoint(window, direction, keyswait := "all")
     {
-        SendInput(KSA.timelineWindow) ;focuses the timeline
+        SendInput(window) ;focuses the timeline
         SendInput(direction)
-        keys.allWait() ;prevents hotkey spam
+        switch keyswait {
+            case "second":keys.allWait("second")
+            case "first":keys.allWait("first")
+            default:
+                keys.allWait() ;prevents hotkey spam
+        }
     }
 
     /**
@@ -1384,7 +1389,7 @@ class Prem {
                 tool.Wait()
                 script := obj.SplitPath(A_LineFile)
                 tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 2.0)
-                tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0,,, 30, 2)
+                tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0,, 30, 2)
             }
         } catch as e {
             tool.Wait()
