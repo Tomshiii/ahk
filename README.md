@@ -61,11 +61,11 @@ An ini file/ahk script combo for defining all keyboard shortcuts for programs th
 #### [My Scripts.ahk](https://github.com/Tomshiii/ahk/blob/main/My%20Scripts.ahk)
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
 
-This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional;
+This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional. These `startup` functions are contained within a class `startup {` and are as follows;
 - `generate()` - Handles creating a new `settings.ini` file each new release. The `settings.ini` file will be located in `A_MyDocuments \tomshi\`. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings` or by pulling up `settingsGUI()` (default hotkey is <kbd>win + F1</kbd>)
 - `locationReplace()` - Handles replacing any instance of either my original working directory, or yours if you move my scripts to a new location. eg. on first run by the user this function will replace all instances of `E:\Github\ahk` with the directory you run the script
-- `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
 - `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as backup your current script directory
+- `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
 - `firstCheck()` - Will check to see if this is the first time you're running my scripts and offer a helpful GUI to run you through a few things to get you going.
 - `oldError()` - Will remove logs in `A_ScriptDir \Error Logs\` older than 30 days
 - `adobeTemp()` - Will scan your adobe temp folders and delete them if they're larger than the user adjustable setting. This function also contains a custom folder for `After Effects` and will require the user to meddle with it for full functionality
