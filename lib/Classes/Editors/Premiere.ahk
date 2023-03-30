@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
- * @date 2023/03/30
- * @version 1.5.5
+ * @date 2023/03/31
+ * @version 1.5.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1377,9 +1377,11 @@ class Prem {
      */
     static getTimeline() {
         try {
+            if WinGetClass("A") = "DroverLord - Window Class" ;// if you're focused on a window that isn't the main premiere window, controlgetclassnn will retrieve different values
+                switchTo.Premiere() ;// so we have to bring focus back to the main window first
             SendInput(KSA.timelineWindow)
             SendInput(KSA.timelineWindow)
-            sleep 50
+            sleep 75
             effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
             this.timelineXValue := x + width - 22 ;accounting for the scroll bars on the right side of the timeline

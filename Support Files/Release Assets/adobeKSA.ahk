@@ -2,13 +2,11 @@
 
 ;// This script is designed to assist the user of my repo in getting their feet off the ground by parsing through their keyboard shortcut file and attempting to auto assign KSA.ini values based on it.
 
-;//! GUI is currently functional -- no logic for actual KSA values yet.
-
 ; { \\ #Includes
 #Include *i <Classes\settings>
 #Include *i <Classes\ptf>
 #Include *i <Classes\Dark>
-#Include *I <GUIs\tomshiBasic>
+#Include *i <GUIs\tomshiBasic>
 ; }
 
 try {
@@ -38,6 +36,9 @@ class adobeKSA extends tomshiBasic {
     PremiereExclude := 0
     AEExclude := 0
 
+    PremErr := 0
+    AEErr := 0
+
     /**
      * This function is called to generate the main section of the GUI
      */
@@ -48,6 +49,7 @@ class adobeKSA extends tomshiBasic {
 
         this.__indivSection(this.defaultPremiereFolder, "Premiere")
         this.__indivSection(this.defaultAEFolder, "AE")
+        this.AddButton("y+20", "Submit").OnEvent("Click", this.__submit.Bind(this))
     }
 
     /**
@@ -81,8 +83,50 @@ class adobeKSA extends tomshiBasic {
         changePath := FileSelect("D", defaultFolder, "Select " which " directory, including version.")
         if changePath = ""
             return
-        ; this.default%which%Folder := changePath
+        this.default%which%Folder := changePath
         this.%which%Folder.Text := SubStr(changePath, InStr(changePath, "Adobe")-1)
+    }
+
+    __findFolder(startDir, name) {
+        loop files startDir "*.*", "D R" {
+            if A_LoopFileName != name
+                continue
+            return A_LoopFileFullPath
+        }
+
+        throw IndexError("Function could not determine the location of the ``" name "`` folder within the selected directory. Please provide the proper path and try again.", name, -1)
+    }
+
+    __findFile(loopDir, filetype) {
+        amount := 0
+        loop files loopDir "\*." filetype, "F" {
+            amount++
+            filepath := A_LoopFileFullPath
+        }
+        if amount = 1
+            return filepath
+
+        PremiereShortcut := FileSelect("3", filepath, "Select Your Keyboard Shortcut File", "*." filetype)
+        if PremiereShortcut != ""
+            return PremiereShortcut
+
+        this.PremErr := true
+    }
+
+    __findPremiereShortcut() {
+        foundPath := this.__findFolder(this.defaultPremiereFolder, "Win")
+        return this.__findFile(foundPath, "kys")
+    }
+
+    __findAEShortcut() {
+        foundPath := this.__findFolder(this.defaultAEFolder, "aeks")
+        return this.__findFile(foundPath, "txt")
+    }
+
+    __submit(*) {
+        PremiereShortcut := this.__findPremiereShortcut()
+        AEShortcut := this.__findAEShortcut()
+
     }
 
 }
