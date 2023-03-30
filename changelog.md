@@ -3,7 +3,7 @@
 
 ## > Functions
 - Add `tool.tray()`
-    - `convert2()` & `ytDownload()` now use `tool.tray()` to alert the user that the process has completed
+    - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
 
 `tool.cust()`
 - `find` parameter has been removed

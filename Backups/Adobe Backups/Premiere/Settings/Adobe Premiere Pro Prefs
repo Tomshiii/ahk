@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PremiereData Version="3">
+	<Preferences ObjectRef="1"/>
+	<Preferences ObjectID="1" ClassID="f06902ec-e637-4744-a586-c26202143e36" Version="30">
+		<Properties Version="1">
+			<recent.sequence.lutinterpolationmethod>0</recent.sequence.lutinterpolationmethod>
+			<recent.sequence.graphicswhiteluminance>203</recent.sequence.graphicswhiteluminance>
+			<recent.sequence.workingcolorspace>{"baseColorProfile":{"colorProfileName":"BT.709 RGB Full"},"baseProfileType":1}</recent.sequence.workingcolorspace>
+			<recent.sequence.audio.channeltype>1</recent.sequence.audio.channeltype>
+			<recent.sequence.audio.framerate>5292000</recent.sequence.audio.framerate>
+			<recent.sequence.fieldtype>0</recent.sequence.fieldtype>
+			<recent.sequence.video.par.denominator>1</recent.sequence.video.par.denominator>
+			<recent.sequence.video.par.numerator>1</recent.sequence.video.par.numerator>
+			<recent.sequence.video.framerate.dropness>false</recent.sequence.video.framerate.dropness>
+			<recent.sequence.video.framerate>4233600000</recent.sequence.video.framerate>
+			<recent.sequence.video.frame.height>1080</recent.sequence.video.frame.height>
+			<recent.sequence.video.frame.width>1920</recent.sequence.video.frame.width>
+			<MZ.Prefs.Export.Media.Path>E:\comms\d0yle\dlc 2\renders\draft\</MZ.Prefs.Export.Media.Path>
+			<be.prefs.timeline.showworkareadefaultoff>false</be.prefs.timeline.showworkareadefaultoff>
+			<ML.Player.StopPlaybackOnAppSuspended>false</ML.Player.StopPlaybackOnAppSuspended>
+			<ScopesEnabledKey>false</ScopesEnabledKey>
+			<FE.Prefs.Shortcuts.Filename>Mine.kys</FE.Prefs.Shortcuts.Filename>
+			<be.prefs.font.mru>{"mruVector":[]}</be.prefs.font.mru>
+			<App.Prefs.AudioHardwareSetup>{"abe.io.audio.classes":[{"abe.io.audio.asio.inputdevicename":"Realtek ASIO","abe.io.audio.asio.inputdeviceuid":"A80362FF-CE76-4DD9-874A-704C57BF0D6A","abe.io.audio.asio.ioblocksize":512,"abe.io.audio.asio.masterdevice":false,"abe.io.audio.asio.max.ioblocksize":512,"abe.io.audio.asio.min.ioblocksize":512,"abe.io.audio.asio.outputdevicename":"Realtek ASIO","abe.io.audio.asio.outputdeviceuid":"A80362FF-CE76-4DD9-874A-704C57BF0D6A","abe.io.audio.asio.samplerate":44100,"abe.io.audio.asio.srvalue":[44100],"abe.io.audio.class.default":false,"abe.io.audio.class.id":1634953583},{"abe.io.audio.class.default":true,"abe.io.audio.class.id":1835885856,"abe.io.audio.mme.inputdevicename":"System Default - Microphone (RODECaster Pro II Main Stereo)","abe.io.audio.mme.inputdeviceuid":"22222222-2222-2222-2222-22222222","abe.io.audio.mme.latency":200,"abe.io.audio.mme.masterdevice":false,"abe.io.audio.mme.outputdevicename":"System Default - Speakers (RODECaster Pro II Main Stereo)","abe.io.audio.mme.outputdeviceuid":"11111111-1111-1111-1111-11111111","abe.io.audio.mme.samplerate":48000}],"abe.io.audio.outputonly":false,"abe.io.audio.userdata":{"PrefDontShowAgain_DeviceListChange":{"type":"bool","value":true},"abe.io.audio.DefaultDeviceClassID":{"type":"std::uint32_t","value":1835885856},"abe.io.audio.UseDocumentSamplerate":{"type":"bool","value":false}}}</App.Prefs.AudioHardwareSetup>
+			<BE.Prefs.ProjectLockFile.Paths></BE.Prefs.ProjectLockFile.Paths>
+			<ImportProjectDialog.CreateFolderState>false</ImportProjectDialog.CreateFolderState>
+			<BE.Project.CreateDupesOnImportPropertyKey>false</BE.Project.CreateDupesOnImportPropertyKey>
+			<MZ.SQShowDuplicateMarkers>true</MZ.SQShowDuplicateMarkers>
+			<MZ.SQShowMarkers>true</MZ.SQShowMarkers>
+			<ATE.Shape.MiterLimit>2.5</ATE.Shape.MiterLimit>
+			<ATE.Shape.LineCap>0</ATE.Shape.LineCap>
+			<ATE.Shape.LineJoin>0</ATE.Shape.LineJoin>
+			<ATE.Text.BackgroundFillMode>0</ATE.Text.BackgroundFillMode>
+			<ATE.Text.MiterLimit>2.5</ATE.Text.MiterLimit>
+			<ATE.Text.LineCap>0</ATE.Text.LineCap>
+			<ATE.Text.LineJoin>0</ATE.Text.LineJoin>
+			<BE.Prefs.Display.EnableExtendedDynamicRangeMonitoring2>false</BE.Prefs.Display.EnableExtendedDynamicRangeMonitoring2>
+			<BE.Prefs.SharedProjects.AutoHideDependentClips>false</BE.Prefs.SharedProjects.AutoHideDependentClips>
+			<BE.Prefs.ProjectLocking.UserName>Tom</BE.Prefs.ProjectLocking.UserName>
+			<BE.Prefs.ProjectLocking.EnableProjectLocking>false</BE.Prefs.ProjectLocking.EnableProjectLocking>
+			<BE.Prefs.Multicam.TransmitGridView>false</BE.Prefs.Multicam.TransmitGridView>
+			<Project.Prefs.EnableProxies>true</Project.Prefs.EnableProxies>
+			<Project.Prefs.EnableNvidiaDecode>true</Project.Prefs.EnableNvidiaDecode>
+			<Project.Prefs.EnableIntelDecode>true</Project.Prefs.EnableIntelDecode>
+			<Project.Prefs.EnablehAMDDecode>true</Project.Prefs.EnablehAMDDecode>
+			<Project.Prefs.EnablehHWAcceleratedProResEncode>false</Project.Prefs.EnablehHWAcceleratedProResEncode>
+			<Project.Prefs.EnablehHWAcceleratedEncode>true</Project.Prefs.EnablehHWAcceleratedEncode>
+			<Project.Prefs.Enableh264Acceleration>true</Project.Prefs.Enableh264Acceleration>
+			<BE.Prefs.GrowingFilesInterval>60</BE.Prefs.GrowingFilesInterval>
+			<BE.Prefs.EnableGrowingFilesResumePlayback>false</BE.Prefs.EnableGrowingFilesResumePlayback>
+			<BE.Prefs.EnableGrowingFiles>true</BE.Prefs.EnableGrowingFiles>
+			<FE.Prefs.ImportWorkspace>false</FE.Prefs.ImportWorkspace>
+			<BE.Prefs.PhotoshopImporter.DisplayDialog>true</BE.Prefs.PhotoshopImporter.DisplayDialog>
+			<HSL.ProjectManager.CopyToPreventAlphaLoss>true</HSL.ProjectManager.CopyToPreventAlphaLoss>
+			<HSL.ProjectManager.ConvertAECompsToClips>false</HSL.ProjectManager.ConvertAECompsToClips>
+			<HSL.ProjectManager.ConvertImageSequenceToClips>false</HSL.ProjectManager.ConvertImageSequenceToClips>
+			<HSL.ProjectManager.TranscodePresetPath>\\?\C:\Program Files\Adobe\Adobe Premiere Pro 2022\Settings\EncoderPresets\ConsolidateAndTranscode\Match Source - DNxHD.epr</HSL.ProjectManager.TranscodePresetPath>
+			<HSL.ProjectManager.DestinationPath>\\?\F:\pass off</HSL.ProjectManager.DestinationPath>
+			<HSL.ProjectManager.RenameMedia>true</HSL.ProjectManager.RenameMedia>
+			<HSL.ProjectManager.IncludeConformedAudio>true</HSL.ProjectManager.IncludeConformedAudio>
+			<HSL.ProjectManager.IncludePreviews>false</HSL.ProjectManager.IncludePreviews>
+			<HSL.ProjectManager.HandleAmount>60</HSL.ProjectManager.HandleAmount>
+			<HSL.ProjectManager.IncludeHandles>true</HSL.ProjectManager.IncludeHandles>
+			<HSL.ProjectManager.Online>true</HSL.ProjectManager.Online>
+			<HSL.ProjectManager.ExcludeUnused>true</HSL.ProjectManager.ExcludeUnused>
+			<HSL.ProjectManager.ClipTransferOption>0</HSL.ProjectManager.ClipTransferOption>
+			<HSL.ProjectManager.ClipTranscodeOption>1</HSL.ProjectManager.ClipTranscodeOption>
+			<FE.Prefs.Timeline.SequenceMarker.Ripple.Mode>true</FE.Prefs.Timeline.SequenceMarker.Ripple.Mode>
+			<FE.Prefs.Timeline.Video.Keyframes.Display.Mode>0</FE.Prefs.Timeline.Video.Keyframes.Display.Mode>
+			<FE.Prefs.Timeline.Audio.Keyframes.Display.Mode>0</FE.Prefs.Timeline.Audio.Keyframes.Display.Mode>
+			<FE.Prefs.Timeline.MouseScroll.Vertically>0</FE.Prefs.Timeline.MouseScroll.Vertically>
+			<FE.Prefs.Debug.PlayScroll.Mode>0</FE.Prefs.Debug.PlayScroll.Mode>
+			<FE.Prefs.Monitor.Source.ViewCaptionStreamEnabled>false</FE.Prefs.Monitor.Source.ViewCaptionStreamEnabled>
+			<FE.Prefs.Monitor.TimecodeOverlay>true</FE.Prefs.Monitor.TimecodeOverlay>
+			<FE.Prefs.Timeline.LargeVolumeAdjustment.dB>6</FE.Prefs.Timeline.LargeVolumeAdjustment.dB>
+			<FE.Prefs.Trim.With.Selection.Tool.Modifier>false</FE.Prefs.Trim.With.Selection.Tool.Modifier>
+			<FE.Prefs.Monitor.Trim.LargeOffset.Units>100</FE.Prefs.Monitor.Trim.LargeOffset.Units>
+			<FE.Prefs.Monitor.Trim.LargeOffset.Frame>5</FE.Prefs.Monitor.Trim.LargeOffset.Frame>
+			<BE.Prefs.DefaultAudioTransitionDurationUnit>0</BE.Prefs.DefaultAudioTransitionDurationUnit>
+			<BE.Prefs.DefaultAudioTransitionDurationInFrames>7</BE.Prefs.DefaultAudioTransitionDurationInFrames>
+			<BE.Prefs.DefaultAudioTransitionDurationInSeconds>7</BE.Prefs.DefaultAudioTransitionDurationInSeconds>
+			<BE.Prefs.DefaultVideoTransitionDurationUnit>0</BE.Prefs.DefaultVideoTransitionDurationUnit>
+			<BE.Prefs.DefaultVideoTransitionDuration>22</BE.Prefs.DefaultVideoTransitionDuration>
+			<BE.Prefs.DefaultAudioTransition>Constant Power</BE.Prefs.DefaultAudioTransition>
+			<BE.Prefs.DefaultVideoTransition>AE.ADBE Cross Dissolve New</BE.Prefs.DefaultVideoTransition>
+			<FE.Prefs.Titler.MissingFontReplacement>AlphaTaurusPro</FE.Prefs.Titler.MissingFontReplacement>
+			<FE.Prefs.Titler.ShowTextBaselines>true</FE.Prefs.Titler.ShowTextBaselines>
+			<FE.Prefs.Titler.ShowTimelineVideo>true</FE.Prefs.Titler.ShowTimelineVideo>
+			<FE.Prefs.Titler.ParagraphDirection>false</FE.Prefs.Titler.ParagraphDirection>
+			<FE.Prefs.Titler.HindiDigits>false</FE.Prefs.Titler.HindiDigits>
+			<FE.Prefs.Titler.LigaturesDefaultTrue>true</FE.Prefs.Titler.LigaturesDefaultTrue>
+			<FE.Prefs.Titler.Indic>false</FE.Prefs.Titler.Indic>
+			<FE.Prefs.Titler.FontBrowserText>AaegZz</FE.Prefs.Titler.FontBrowserText>
+			<FE.Prefs.Titler.StyleSwatchText>Aa</FE.Prefs.Titler.StyleSwatchText>
+			<FE.Prefs.Titler.ShowSafeActionTitleMargin>true</FE.Prefs.Titler.ShowSafeActionTitleMargin>
+			<FE.Prefs.Titler.ShowSafeTitleMargin>true</FE.Prefs.Titler.ShowSafeTitleMargin>
+			<BE.Prefs.PlaybackSettings.StepForwardBackMany>5</BE.Prefs.PlaybackSettings.StepForwardBackMany>
+			<BE.Prefs.PlaybackSettings.PlayerMode>9728470b-5ee7-4e96-9921-630dea0af639</BE.Prefs.PlaybackSettings.PlayerMode>
+			<BE.Prefs.Audio.AutoPeakGeneration>true</BE.Prefs.Audio.AutoPeakGeneration>
+			<BE.Prefs.Audio.Automute.Voiceover>true</BE.Prefs.Audio.Automute.Voiceover>
+			<BE.Prefs.Audio.Automation.Thinning.IntervalMSec>20</BE.Prefs.Audio.Automation.Thinning.IntervalMSec>
+			<BE.Prefs.Audio.Automation.Thinning.UseInterval>false</BE.Prefs.Audio.Automation.Thinning.UseInterval>
+			<BE.Prefs.Audio.Automation.Thinning.UseLinear>true</BE.Prefs.Audio.Automation.Thinning.UseLinear>
+			<BE.Prefs.Audio.Shuttling.MaintainPitch>true</BE.Prefs.Audio.Shuttling.MaintainPitch>
+			<BE.Prefs.Audio.Scrubbing>false</BE.Prefs.Audio.Scrubbing>
+			<BE.Prefs.Audio.MixdownClipsToStereo>true</BE.Prefs.Audio.MixdownClipsToStereo>
+			<BE.Prefs.Audio.MixdownType>2</BE.Prefs.Audio.MixdownType>
+			<BE.Prefs.AudioMixer.AutomatchTimeRate>1</BE.Prefs.AudioMixer.AutomatchTimeRate>
+			<EA.Prefs.Collaboration.DoShareReminderInterval>2</EA.Prefs.Collaboration.DoShareReminderInterval>
+			<EA.Prefs.Collaboration.DoShareReminder>true</EA.Prefs.Collaboration.DoShareReminder>
+			<EA.Prefs.Collaboration.ShouldShowUnsharedChangesDialog>true</EA.Prefs.Collaboration.ShouldShowUnsharedChangesDialog>
+			<ML.Prefs.Capture.PreferDeviceControlTimecode>false</ML.Prefs.Capture.PreferDeviceControlTimecode>
+			<ML.Prefs.Capture.BatchLogOnlyOnError>true</ML.Prefs.Capture.BatchLogOnlyOnError>
+			<ML.Prefs.Capture.ReportOnDroppedFrames>true</ML.Prefs.Capture.ReportOnDroppedFrames>
+			<ML.Prefs.Capture.Limit>2540160000000</ML.Prefs.Capture.Limit>
+			<ML.Prefs.Capture.UseLimit>false</ML.Prefs.Capture.UseLimit>
+			<ML.Prefs.Capture.AbortOnDroppedFrames>false</ML.Prefs.Capture.AbortOnDroppedFrames>
+			<BE.Prefs.Captioning.EnableScanningOnImport>true</BE.Prefs.Captioning.EnableScanningOnImport>
+			<ML.Prefs.TouchAndOverlay.ShowPlayback>true</ML.Prefs.TouchAndOverlay.ShowPlayback>
+			<ML.Prefs.TouchAndOverlay.ShowOverlay>false</ML.Prefs.TouchAndOverlay.ShowOverlay>
+			<ML.DeviceControl.Plugin.Name>DV Device Control</ML.DeviceControl.Plugin.Name>
+			<ML.Prefs.DeviceControl.TimecodeOffset>0</ML.Prefs.DeviceControl.TimecodeOffset>
+			<ML.Prefs.DeviceControl.TimecodeOffsetInQuarterFrames>0</ML.Prefs.DeviceControl.TimecodeOffsetInQuarterFrames>
+			<ML.Prefs.DeviceControl.CaptureLimitTimeInSeconds>600</ML.Prefs.DeviceControl.CaptureLimitTimeInSeconds>
+			<ML.Prefs.DeviceControl.PrerollTimeinSeconds>2</ML.Prefs.DeviceControl.PrerollTimeinSeconds>
+			<BE.Prefs.LabelDefaults.Captions>7</BE.Prefs.LabelDefaults.Captions>
+			<BE.Prefs.LabelDefaults.DynamicLink>6</BE.Prefs.LabelDefaults.DynamicLink>
+			<BE.Prefs.LabelDefaults.Still>3</BE.Prefs.LabelDefaults.Still>
+			<BE.Prefs.LabelDefaults.AV>1</BE.Prefs.LabelDefaults.AV>
+			<BE.Prefs.LabelDefaults.Audio>2</BE.Prefs.LabelDefaults.Audio>
+			<BE.Prefs.LabelDefaults.Video>0</BE.Prefs.LabelDefaults.Video>
+			<BE.Prefs.LabelDefaults.Sequence>5</BE.Prefs.LabelDefaults.Sequence>
+			<BE.Prefs.LabelDefaults.Bin>7</BE.Prefs.LabelDefaults.Bin>
+			<BE.Prefs.LabelColors.Unknown>16777215</BE.Prefs.LabelColors.Unknown>
+			<BE.Prefs.LabelColors.15>6611682</BE.Prefs.LabelColors.15>
+			<BE.Prefs.LabelColors.14>4342481</BE.Prefs.LabelColors.14>
+			<BE.Prefs.LabelColors.13>2191389</BE.Prefs.LabelColors.13>
+			<BE.Prefs.LabelColors.12>9814478</BE.Prefs.LabelColors.12>
+			<BE.Prefs.LabelColors.11>15151847</BE.Prefs.LabelColors.11>
+			<BE.Prefs.LabelColors.10>8421376</BE.Prefs.LabelColors.10>
+			<BE.Prefs.LabelColors.9>16727100</BE.Prefs.LabelColors.9>
+			<BE.Prefs.LabelColors.8>9896087</BE.Prefs.LabelColors.8>
+			<BE.Prefs.LabelColors.7>3909357</BE.Prefs.LabelColors.7>
+			<BE.Prefs.LabelColors.6>10776567</BE.Prefs.LabelColors.6>
+			<BE.Prefs.LabelColors.5>5814353</BE.Prefs.LabelColors.5>
+			<BE.Prefs.LabelColors.4>14597935</BE.Prefs.LabelColors.4>
+			<BE.Prefs.LabelColors.3>14910691</BE.Prefs.LabelColors.3>
+			<BE.Prefs.LabelColors.2>10016297</BE.Prefs.LabelColors.2>
+			<BE.Prefs.LabelColors.1>13408882</BE.Prefs.LabelColors.1>
+			<BE.Prefs.LabelColors.0>14717094</BE.Prefs.LabelColors.0>
+			<BE.Prefs.LabelNames.15>Yellow</BE.Prefs.LabelNames.15>
+			<BE.Prefs.LabelNames.14>Brown</BE.Prefs.LabelNames.14>
+			<BE.Prefs.LabelNames.13>Green</BE.Prefs.LabelNames.13>
+			<BE.Prefs.LabelNames.12>Tan</BE.Prefs.LabelNames.12>
+			<BE.Prefs.LabelNames.11>Magenta</BE.Prefs.LabelNames.11>
+			<BE.Prefs.LabelNames.10>Teal</BE.Prefs.LabelNames.10>
+			<BE.Prefs.LabelNames.9>Blue</BE.Prefs.LabelNames.9>
+			<BE.Prefs.LabelNames.8>Purple</BE.Prefs.LabelNames.8>
+			<BE.Prefs.LabelNames.7>Mango</BE.Prefs.LabelNames.7>
+			<BE.Prefs.LabelNames.6>Rose</BE.Prefs.LabelNames.6>
+			<BE.Prefs.LabelNames.5>Forest</BE.Prefs.LabelNames.5>
+			<BE.Prefs.LabelNames.4>Cerulean</BE.Prefs.LabelNames.4>
+			<BE.Prefs.LabelNames.3>Lavender</BE.Prefs.LabelNames.3>
+			<BE.Prefs.LabelNames.2>Caribbean</BE.Prefs.LabelNames.2>
+			<BE.Prefs.LabelNames.1>Iris</BE.Prefs.LabelNames.1>
+			<BE.Prefs.LabelNames.0>Violet</BE.Prefs.LabelNames.0>
+			<BE.Prefs.MediaCache.FilesSideBySide>false</BE.Prefs.MediaCache.FilesSideBySide>
+			<BE.Prefs.ScratchDisks.MinFreeBeforeOverflow>3</BE.Prefs.ScratchDisks.MinFreeBeforeOverflow>
+			<BE.Prefs.ScratchDisks.TransferMediaFolder>SameAsProject</BE.Prefs.ScratchDisks.TransferMediaFolder>
+			<BE.Prefs.ScratchDisks.FirstDVDEncodingFolder>SameAsProject</BE.Prefs.ScratchDisks.FirstDVDEncodingFolder>
+			<BE.Prefs.ScratchDisks.FirstCapsuleMediaFolder>SameAsProject</BE.Prefs.ScratchDisks.FirstCapsuleMediaFolder>
+			<BE.Prefs.ScratchDisks.FirstCCLibrariesFolder>SameAsProject</BE.Prefs.ScratchDisks.FirstCCLibrariesFolder>
+			<BE.Prefs.ScratchDisks.FirstAutoSaveFolder>SameAsProject</BE.Prefs.ScratchDisks.FirstAutoSaveFolder>
+			<BE.Prefs.ScratchDisks.FirstAudioPreviewFolder>SameAsProject</BE.Prefs.ScratchDisks.FirstAudioPreviewFolder>
+			<BE.Prefs.ScratchDisks.FirstVideoPreviewFolder>SameAsProject</BE.Prefs.ScratchDisks.FirstVideoPreviewFolder>
+			<BE.Prefs.ScratchDisks.FirstAudioCaptureFolder>SameAsProject</BE.Prefs.ScratchDisks.FirstAudioCaptureFolder>
+			<BE.Prefs.ScratchDisks.FirstVideoCaptureFolder>SameAsProject</BE.Prefs.ScratchDisks.FirstVideoCaptureFolder>
+			<BE.Prefs.Undo.MaxLevels>32</BE.Prefs.Undo.MaxLevels>
+			<BE.Prefs.AutoSave.AlsoSaveCurrentProject>false</BE.Prefs.AutoSave.AlsoSaveCurrentProject>
+			<BE.Prefs.AutoSave.DoSaveToCloud>false</BE.Prefs.AutoSave.DoSaveToCloud>
+			<BE.Prefs.AutoSave.MaxProjectVersions>20</BE.Prefs.AutoSave.MaxProjectVersions>
+			<BE.Prefs.AutoSave.Interval>5</BE.Prefs.AutoSave.Interval>
+			<BE.Prefs.AutoSave.DoSave>true</BE.Prefs.AutoSave.DoSave>
+			<BE.Prefs.SyntheticMedia.DefaultIsDropFrame>false</BE.Prefs.SyntheticMedia.DefaultIsDropFrame>
+			<BE.Prefs.SyntheticMedia.DefaultFramerate>4233600000</BE.Prefs.SyntheticMedia.DefaultFramerate>
+			<BE.Prefs.StillImages.InterpretAlpha>AskUser</BE.Prefs.StillImages.InterpretAlpha>
+			<BE.Prefs.StillImages.DefaultIsDropFrame>false</BE.Prefs.StillImages.DefaultIsDropFrame>
+			<BE.Prefs.StillImages.DefaultFramerate>4233600000</BE.Prefs.StillImages.DefaultFramerate>
+			<BE.Prefs.StillImages.ScaleToProject>false</BE.Prefs.StillImages.ScaleToProject>
+			<BE.Prefs.StillImages.LockAspectRatio>false</BE.Prefs.StillImages.LockAspectRatio>
+			<BE.Prefs.General.ShowProjectLoadErrorDialog>true</BE.Prefs.General.ShowProjectLoadErrorDialog>
+			<BE.Prefs.General.OpenProject.OptClickBehavior>0</BE.Prefs.General.OpenProject.OptClickBehavior>
+			<BE.Prefs.General.OpenProject.DoubleClickBehavior>1</BE.Prefs.General.OpenProject.DoubleClickBehavior>
+			<BE.Prefs.Flexbin.AltClickBehavior>0</BE.Prefs.Flexbin.AltClickBehavior>
+			<BE.Prefs.Flexbin.ControlClickBehavior>1</BE.Prefs.Flexbin.ControlClickBehavior>
+			<BE.Prefs.Flexbin.DoubleClickBehavior>2</BE.Prefs.Flexbin.DoubleClickBehavior>
+			<BE.Prefs.General.WriteClipMarkers>false</BE.Prefs.General.WriteClipMarkers>
+			<BE.Prefs.General.PrerollBeforePlaybackStarts>false</BE.Prefs.General.PrerollBeforePlaybackStarts>
+			<BE.Prefs.General.RenderAudioWithVideoPreviews>false</BE.Prefs.General.RenderAudioWithVideoPreviews>
+			<BE.Prefs.General.RenderOptimization>0</BE.Prefs.General.RenderOptimization>
+			<BE.Prefs.StillImages.DurationUnit>1</BE.Prefs.StillImages.DurationUnit>
+			<BE.Prefs.StillImages.DurationInSeconds>3</BE.Prefs.StillImages.DurationInSeconds>
+			<BE.Prefs.StillImages.Duration>150</BE.Prefs.StillImages.Duration>
+			<BE.Prefs.General.DefaultSetToFrameSize>false</BE.Prefs.General.DefaultSetToFrameSize>
+			<BE.Prefs.General.DefaultScaleToFrameSize>false</BE.Prefs.General.DefaultScaleToFrameSize>
+			<BE.Prefs.General.PlayWorkareaAfterPreviewRender>false</BE.Prefs.General.PlayWorkareaAfterPreviewRender>
+			<BE.Prefs.General.MetadataPropertyLinking>false</BE.Prefs.General.MetadataPropertyLinking>
+			<BE.Prefs.General.ClipMediaFrameCountOffset>0</BE.Prefs.General.ClipMediaFrameCountOffset>
+			<BE.Prefs.General.ClipInOutWithMediaOffset>false</BE.Prefs.General.ClipInOutWithMediaOffset>
+			<BE.Prefs.General.PostrollSeconds>2</BE.Prefs.General.PostrollSeconds>
+			<BE.Prefs.General.PrerollSeconds>3</BE.Prefs.General.PrerollSeconds>
+			<BE.Prefs.General.VoiceOverEnablePostrollSeconds>true</BE.Prefs.General.VoiceOverEnablePostrollSeconds>
+			<BE.Prefs.General.VoiceOverEnablePrerollSeconds>true</BE.Prefs.General.VoiceOverEnablePrerollSeconds>
+			<BE.Prefs.General.VoiceOverSilentPrerollBeepSeconds>1</BE.Prefs.General.VoiceOverSilentPrerollBeepSeconds>
+			<BE.Prefs.General.VoiceOverEnablePrerollBeep>false</BE.Prefs.General.VoiceOverEnablePrerollBeep>
+			<BE.Prefs.General.VoiceOverAllowFocusChange>true</BE.Prefs.General.VoiceOverAllowFocusChange>
+			<BE.Prefs.General.ShortcutsInToolTips>true</BE.Prefs.General.ShortcutsInToolTips>
+			<BE.Prefs.DefaultProjectSettings ClassID="50c16708-a1a1-4d2f-98d5-4e283ae28353" Version="18">
+				<ColorManagementSettings>{"autoToneMapEnabled":true,"graphicsWhiteLuminance":203,"lutInterpolationMethod":1}</ColorManagementSettings>
+				<UsePreviewCache>false</UsePreviewCache>
+				<PreviewFileFormatID>00000000-0000-0000-0000-000000000000</PreviewFileFormatID>
+				<EditingModeID>00000000-0000-0000-0000-000000000000</EditingModeID>
+				<ShouldScaleMedia>false</ShouldScaleMedia>
+				<TitleSafeHeight>20.</TitleSafeHeight>
+				<TitleSafeWidth>20.</TitleSafeWidth>
+				<ActionSafeHeight>10.</ActionSafeHeight>
+				<ActionSafeWidth>10.</ActionSafeWidth>
+				<AudioTimeDisplay>200</AudioTimeDisplay>
+				<VideoTimeDisplayInitial>102</VideoTimeDisplayInitial>
+				<VideoTimeDisplay>102</VideoTimeDisplay>
+				<VideoSettings ObjectRef="1"/>
+				<DefaultSequenceSettings ObjectRef="8"/>
+				<VideoCompileSettings ObjectRef="3"/>
+				<AudioCompileSettings ObjectRef="5"/>
+				<AudioSettings ObjectRef="2"/>
+				<CaptureSettings ObjectRef="7"/>
+				<VideoSettings ObjectID="1" ClassID="58474264-30c4-43a2-bba5-dc0812df8a3a" Version="9">
+					<MaximumBitDepth>false</MaximumBitDepth>
+					<PixelAspectRatio>10,11</PixelAspectRatio>
+					<FrameSize>0,0,720,480</FrameSize>
+					<FrameRate>8475667200</FrameRate>
+				</VideoSettings>
+				<AudioSettings ObjectID="2" ClassID="6baf5521-b132-4634-840e-13cec5bc86a4" Version="7">
+					<FrameRate>5292000</FrameRate>
+					<ChannelType>1</ChannelType>
+				</AudioSettings>
+				<VideoCompileSettings ObjectID="3" ClassID="db372db5-7de2-4d3c-98ae-f42659d77b22" Version="9">
+					<RelativeFrameSize>1</RelativeFrameSize>
+					<AddKeyframesAtEdits>false</AddKeyframesAtEdits>
+					<AddKeyframesAtMarkers>false</AddKeyframesAtMarkers>
+					<DoKeyframeEveryNFramesValue>0</DoKeyframeEveryNFramesValue>
+					<DoKeyframeEveryNFrames>false</DoKeyframeEveryNFrames>
+					<VideoFieldType>0</VideoFieldType>
+					<RealTimePreview>true</RealTimePreview>
+					<FramesAtMarkers>false</FramesAtMarkers>
+					<OptimizeStills>false</OptimizeStills>
+					<IgnoreVideoFilters>false</IgnoreVideoFilters>
+					<Deinterlace>false</Deinterlace>
+					<ForceRecompressValue>2</ForceRecompressValue>
+					<ForceRecompress>true</ForceRecompress>
+					<DataRate>3500</DataRate>
+					<UseDataRate>false</UseDataRate>
+					<Quality>100</Quality>
+					<Aspect43>false</Aspect43>
+					<RenderDepth>0</RenderDepth>
+					<Depth>24</Depth>
+					<VideoFileTypeFourCC>1096173910</VideoFileTypeFourCC>
+					<VideoCompilerClassIDFourCC>1061109567</VideoCompilerClassIDFourCC>
+					<VideoSettings ObjectRef="4"/>
+					<Compressor>1685288558</Compressor>
+				</VideoCompileSettings>
+				<VideoSettings ObjectID="4" ClassID="58474264-30c4-43a2-bba5-dc0812df8a3a" Version="9">
+					<MaximumBitDepth>false</MaximumBitDepth>
+					<PixelAspectRatio>10,11</PixelAspectRatio>
+					<FrameSize>0,0,720,480</FrameSize>
+					<FrameRate>8475667200</FrameRate>
+				</VideoSettings>
+				<AudioCompileSettings ObjectID="5" ClassID="34b10007-ab6d-49a7-bac5-7b60d919e387" Version="6">
+					<Interleave>1</Interleave>
+					<Compressor>1380013856</Compressor>
+					<AudioSettings ObjectRef="6"/>
+					<SampleType>3</SampleType>
+				</AudioCompileSettings>
+				<AudioSettings ObjectID="6" ClassID="6baf5521-b132-4634-840e-13cec5bc86a4" Version="7">
+					<FrameRate>5292000</FrameRate>
+					<ChannelType>1</ChannelType>
+				</AudioSettings>
+				<CaptureSettings ObjectID="7" ClassID="328c2aa2-47f9-4211-805b-b6a6dbd4ca29" Version="10">
+					<RecorderID>0ae2b9b7-6efc-424f-aadf-1a2dedd5e8ff</RecorderID>
+					<AbortCaptureOnDroppedFrames>false</AbortCaptureOnDroppedFrames>
+					<AudioChannelType>1</AudioChannelType>
+					<AudioSampleType>3</AudioSampleType>
+					<AudioFrameRate>7938000</AudioFrameRate>
+					<AudioCompressorDisplayName>Uncompressed</AudioCompressorDisplayName>
+					<AudioCompressorFourCC>1380013856</AudioCompressorFourCC>
+					<VideoCompressorDisplayName></VideoCompressorDisplayName>
+					<VideoCompressorFourCC>0</VideoCompressorFourCC>
+					<VideoFrameSize>0,0,720,480</VideoFrameSize>
+					<VideoFrameRate>8475667200</VideoFrameRate>
+					<SupportedFileExtension>avi</SupportedFileExtension>
+					<RecordModuleDisplayName>DV</RecordModuleDisplayName>
+				</CaptureSettings>
+				<DefaultSequenceSettings ObjectID="8" ClassID="567bdf53-d6d9-4d61-b2f1-f4834bebea9b" Version="2">
+					<DefaultAudioSubmix51Tracks>0</DefaultAudioSubmix51Tracks>
+					<DefaultAudioSubmixStereoTracks>0</DefaultAudioSubmixStereoTracks>
+					<DefaultAudioSubmixMonoTracks>0</DefaultAudioSubmixMonoTracks>
+					<DefaultAudioStandard51Tracks>0</DefaultAudioStandard51Tracks>
+					<DefaultAudioStandardStereoTracks>1</DefaultAudioStandardStereoTracks>
+					<DefaultAudioStandardMonoTracks>0</DefaultAudioStandardMonoTracks>
+					<TotalVideoTracks>1</TotalVideoTracks>
+				</DefaultSequenceSettings>
+			</BE.Prefs.DefaultProjectSettings>
+			<BE.Preferences.ScaleMotionOnSequenceSizeChange>true</BE.Preferences.ScaleMotionOnSequenceSizeChange>
+			<VisualShortcuts.dialog.ModifiersTree.ModifiersColumnWidth>125</VisualShortcuts.dialog.ModifiersTree.ModifiersColumnWidth>
+			<VisualShortcuts.dialog.ShortcutsTree.CommandColumnWidth>362</VisualShortcuts.dialog.ShortcutsTree.CommandColumnWidth>
+			<LinkMedia.dialog.height>484</LinkMedia.dialog.height>
+			<LinkMedia.dialog.width>946</LinkMedia.dialog.width>
+			<LinkMedia.dialog.top>458</LinkMedia.dialog.top>
+			<LinkMedia.dialog.left>807</LinkMedia.dialog.left>
+			<LinkMedia.AdditionalMetadataIndex>0</LinkMedia.AdditionalMetadataIndex>
+			<LinkMedia.MatchAdditionalMetadata>false</LinkMedia.MatchAdditionalMetadata>
+			<LinkMedia.MatchClipID>false</LinkMedia.MatchClipID>
+			<LinkMedia.MatchLogNote>false</LinkMedia.MatchLogNote>
+			<LinkMedia.MatchShotTake>false</LinkMedia.MatchShotTake>
+			<LinkMedia.MatchScene>false</LinkMedia.MatchScene>
+			<LinkMedia.MatchDescription>false</LinkMedia.MatchDescription>
+			<LinkMedia.MatchTapeName>false</LinkMedia.MatchTapeName>
+			<LinkMedia.MatchMediaStart>false</LinkMedia.MatchMediaStart>
+			<LinkMedia.MatchFileExtension>true</LinkMedia.MatchFileExtension>
+			<LinkMedia.MatchFileName>true</LinkMedia.MatchFileName>
+			<LinkMedia.PreserveInterpretFootage>true</LinkMedia.PreserveInterpretFootage>
+			<LinkMedia.UseMediaBrowser>true</LinkMedia.UseMediaBrowser>
+			<LinkMedia.RelinkAutomatically>true</LinkMedia.RelinkAutomatically>
+			<fe.status.showErrorOverlay>true</fe.status.showErrorOverlay>
+			<fe.color.highlightscc9.0>{"contrasts":{"focus_indicators":0.5,"interactive_controls":0.5},"version":"V5"}</fe.color.highlightscc9.0>
+			<fe.color.brightnesscc8.1>0</fe.color.brightnesscc8.1>
+			<DLG.PrefsAudioOutputMappingSelection>Adobe Desktop Audio</DLG.PrefsAudioOutputMappingSelection>
+			<be.prefs.mediabrowser.favorites>[]</be.prefs.mediabrowser.favorites>
+			<mediabrowser.container.current>[{"mName":"Projects","mPath":"\\\\?\\E:\\Projects"},{"mName":"E: (Editing)","mPath":"\\\\?\\E:\\"},{"mName":"Local Drives","mPath":"volumes:"}]</mediabrowser.container.current>
+			<Library.SharedView.ThumbnailScaleRatio>1</Library.SharedView.ThumbnailScaleRatio>
+			<monitor.program.show.safe.margins>false</monitor.program.show.safe.margins>
+			<monitor.program.spatial.zoom>0</monitor.program.spatial.zoom>
+			<MZ.Sequence.ScrubbingFractionalResolution>1</MZ.Sequence.ScrubbingFractionalResolution>
+			<MZ.Sequence.PlaybackFractionalResolution>1</MZ.Sequence.PlaybackFractionalResolution>
+			<MZ.Prefs.RestoreOpenSequencesWhenOpeningProjects>true</MZ.Prefs.RestoreOpenSequencesWhenOpeningProjects>
+			<MZ.Prefs.ProjectsOpenAtLastShutdown>{"Projects":["\\\\?\\E:\\comms\\Chloe\\draw pokemon from memory\\draw pokemon from memory.prproj"]}</MZ.Prefs.ProjectsOpenAtLastShutdown>
+			<MZ.Prefs.PauseAMEDuringPlayback>true</MZ.Prefs.PauseAMEDuringPlayback>
+			<MZ.Prefs.SelectionFollowsPlayhead>true</MZ.Prefs.SelectionFollowsPlayhead>
+			<MZ.Prefs.PlayheadPositionLoopPlayback>false</MZ.Prefs.PlayheadPositionLoopPlayback>
+			<MZ.Prefs.RippleTrimShiftsOverlappingClips>false</MZ.Prefs.RippleTrimShiftsOverlappingClips>
+			<MZ.Prefs.AllowTrimTypeChangeToSelectedEditPoint2>true</MZ.Prefs.AllowTrimTypeChangeToSelectedEditPoint2>
+			<MZ.Prefs.MatchFrameSetsInPoint>false</MZ.Prefs.MatchFrameSetsInPoint>
+			<MZ.Prefs.FitClipDialogChoice>0</MZ.Prefs.FitClipDialogChoice>
+			<MZ.Prefs.DontShowWelcomeScreenOnOpen>true</MZ.Prefs.DontShowWelcomeScreenOnOpen>
+			<MZ.Prefs.ShowQuickstartDialog>true</MZ.Prefs.ShowQuickstartDialog>
+			<MZ.Prefs.DisplayOutOfSyncForUnlinked>true</MZ.Prefs.DisplayOutOfSyncForUnlinked>
+			<MZ.Prefs.PlaybackEndReturnToBeginning>false</MZ.Prefs.PlaybackEndReturnToBeginning>
+			<MZ.Prefs.SnapPlayhead>false</MZ.Prefs.SnapPlayhead>
+			<MZ.Prefs.InsertFocusesTimeline>false</MZ.Prefs.InsertFocusesTimeline>
+			<MZ.Prefs.UseProjectItemOrMasterClipProperiesForTrackItems>false</MZ.Prefs.UseProjectItemOrMasterClipProperiesForTrackItems>
+			<MZ.Prefs.ShowProjectAndBinLabelInTab>true</MZ.Prefs.ShowProjectAndBinLabelInTab>
+			<MZ.Prefs.ShowToolTips>true</MZ.Prefs.ShowToolTips>
+			<MZ.Prefs.AlwaysAskToReplaceSequence>true</MZ.Prefs.AlwaysAskToReplaceSequence>
+			<Prefs.MediaCache.PurgePolicy>1</Prefs.MediaCache.PurgePolicy>
+			<MZ.LinkMedia.AlignTimecode>true</MZ.LinkMedia.AlignTimecode>
+			<MZ.Prefs.Export.Media.UsePreviewFiles>false</MZ.Prefs.Export.Media.UsePreviewFiles>
+			<ML.DeviceControl.Plugin.Selected>DV Device Control</ML.DeviceControl.Plugin.Selected>
+			<be.prefs.timeline.videotrackheader.layout.3>{"mToolBarItemsInfo":[{"mActiveControl":true,"mColumn":0,"mControlSize":{"size":{"x":28,"y":25},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":0,"mRow":0,"mToolID":5241,"mToolIcons":[{"mDark":"kTLSyncLockNormalDecal","mNormal":"kTLSyncLockNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":1,"mControlSize":{"size":{"x":28,"y":25},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":0,"mRow":0,"mToolID":5242,"mToolIcons":[{"mDark":"kTLVideoMuteButtonNormalDecal","mNormal":"kTLVideoMuteButtonNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":0,"mControlSize":{"size":{"x":84,"y":25},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":84,"mItemType":2,"mMinimumVisibleWidth":56,"mPaletteColumn":0,"mPaletteRow":1,"mRow":1,"mToolID":5248,"mToolIcons":[{"mDark":"kTLVideoNameButtonNormalDecal","mNormal":"kTLVideoNameButtonNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":true},{"mActiveControl":true,"mColumn":0,"mControlSize":{"size":{"x":28,"y":25},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":2,"mRow":2,"mToolID":5190,"mToolIcons":[{"mDark":"kKeyPrevNavButtonNormalDecal","mNormal":"kKeyPrevNavButtonNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":1,"mControlSize":{"size":{"x":28,"y":25},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":2,"mRow":2,"mToolID":5192,"mToolIcons":[{"mDark":"kKeyCurrentNavButtonNormalDecal","mNormal":"kKeyCurrentNavButtonNormalDecal"},{"mDark":"kKeyCurrentNavButtonSelectedDecal","mNormal":"kKeyCurrentNavButtonSelectedDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":2,"mControlSize":{"size":{"x":28,"y":25},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":2,"mPaletteRow":2,"mRow":2,"mToolID":5191,"mToolIcons":[{"mDark":"kKeyNextNavButtonNormalDecal","mNormal":"kKeyNextNavButtonNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false}]}</be.prefs.timeline.videotrackheader.layout.3>
+			<TL.PREFShowThroughEditsState>1</TL.PREFShowThroughEditsState>
+			<be.prefs.source.showtimerulernumbers>false</be.prefs.source.showtimerulernumbers>
+			<be.prefs.source.transport.layout>{"mToolBarItemsInfo":[{"mActiveControl":true,"mColumn":-3,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":0,"mRow":0,"mToolID":12065,"mToolIcons":[{"mDark":"kSetInPointNormalDecal","mNormal":"kSetInPointNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-2,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":0,"mRow":0,"mToolID":12066,"mToolIcons":[{"mDark":"kSetOutPointNormalDecal","mNormal":"kSetOutPointNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":2,"mPaletteRow":0,"mRow":0,"mToolID":12069,"mToolIcons":[{"mDark":"kClearInPointNormalDecal","mNormal":"kClearInPointNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":3,"mPaletteRow":0,"mRow":0,"mToolID":12070,"mToolIcons":[{"mDark":"kClearOutPointNormalDecal","mNormal":"kClearOutPointNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-1,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":4,"mPaletteRow":0,"mRow":0,"mToolID":12067,"mToolIcons":[{"mDark":"kGotoInNormalDecal","mNormal":"kGotoInNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":1,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":5,"mPaletteRow":0,"mRow":0,"mToolID":12068,"mToolIcons":[{"mDark":"kGotoOutNormalDecal","mNormal":"kGotoOutNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-4,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":1,"mRow":0,"mToolID":12072,"mToolIcons":[{"mDark":"kMarkerNormalDecal","mNormal":"kMarkerNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":1,"mRow":0,"mToolID":11732,"mToolIcons":[{"mDark":"kNextMarkerNormalDecal","mNormal":"kNextMarkerNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":2,"mPaletteRow":1,"mRow":0,"mToolID":11733,"mToolIcons":[{"mDark":"kPrevMarkerNormalDecal","mNormal":"kPrevMarkerNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":-1,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":3,"mPaletteRow":1,"mRow":0,"mToolID":12050,"mToolIcons":[{"mDark":"kPrevFrameNormalDecal","mNormal":"kPrevFrameNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":1,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":4,"mPaletteRow":1,"mRow":0,"mToolID":12051,"mToolIcons":[{"mDark":"kNextFrameNormalDecal","mNormal":"kNextFrameNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":5,"mPaletteRow":1,"mRow":0,"mToolID":12052,"mToolIcons":[{"mDark":"kPlayNormalDecal","mNormal":"kPlayNormalDecal"},{"mDark":"kStopNormalDecal","mNormal":"kStopNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":2,"mRow":0,"mToolID":11936,"mToolIcons":[{"mDark":"kLoopNormalDecal","mNormal":"kLoopNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":2,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":2,"mRow":0,"mToolID":11510,"mToolIcons":[{"mDark":"kInsertNormalDecal","mNormal":"kInsertNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":3,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":2,"mPaletteRow":2,"mRow":0,"mToolID":11512,"mToolIcons":[{"mDark":"kOverlayNormalDecal","mNormal":"kOverlayNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":3,"mPaletteRow":2,"mRow":0,"mToolID":6702,"mToolIcons":[{"mDark":"kSafeAreaNormalDecal","mNormal":"kSafeAreaNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-5,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":4,"mPaletteRow":2,"mRow":0,"mToolID":11513,"mToolIcons":[{"mDark":"kMonitorExportFrameNormalDecal","mNormal":"kMonitorExportFrameNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":4,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":5,"mPaletteRow":2,"mRow":0,"mToolID":11435,"mToolIcons":[{"mDark":"kShowProxyDecal","mNormal":"kShowProxyDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":6,"mPaletteRow":2,"mRow":0,"mToolID":23219,"mToolIcons":[{"mDark":"kToggleMulticamViewNormalDecalDimmed","mNormal":"kToggleMulticamViewNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":3,"mRow":0,"mToolID":6050,"mToolIcons":[{"mDark":"kToggleVRViewerDecalDimmed","mNormal":"kToggleVRViewerDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":3,"mRow":0,"mToolID":6187,"mToolIcons":[{"mDark":"kCTILinkNormalDecal","mNormal":"kCTILinkNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-3,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":0,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":0,"mRow":0,"mToolID":4294967289,"mToolIcons":[{"mDark":"","mNormal":""}],"mToolTip":"TOOLBAR SPACER","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":3,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":0,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":0,"mRow":0,"mToolID":4294967288,"mToolIcons":[{"mDark":"","mNormal":""}],"mToolTip":"TOOLBAR SPACER","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":0,"mMinimumVisibleWidth":0,"mPaletteColumn":6,"mPaletteRow":3,"mRow":0,"mToolID":4294967287,"mToolIcons":[{"mDark":"","mNormal":""}],"mToolTip":"PALETTE SPACER","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":6,"mPaletteRow":1,"mRow":0,"mToolID":12059,"mToolIcons":[{"mDark":"kPlayEditNormalDecal","mNormal":"kPlayEditNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":6,"mPaletteRow":0,"mRow":0,"mToolID":12081,"mToolIcons":[{"mDark":"kPlayInToOutNormalDecal","mNormal":"kPlayInToOutNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false}]}</be.prefs.source.transport.layout>
+			<Project.PreviewView.Visible>false</Project.PreviewView.Visible>
+			<Project.ContentView.LastViewed>1</Project.ContentView.LastViewed>
+			<be.prefs.program.showtimerulernumbers>false</be.prefs.program.showtimerulernumbers>
+			<be.prefs.program.transport.layout.3>{"mToolBarItemsInfo":[{"mActiveControl":true,"mColumn":-2,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":0,"mRow":0,"mToolID":12065,"mToolIcons":[{"mDark":"kSetInPointNormalDecal","mNormal":"kSetInPointNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-1,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":0,"mRow":0,"mToolID":12066,"mToolIcons":[{"mDark":"kSetOutPointNormalDecal","mNormal":"kSetOutPointNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":2,"mPaletteRow":0,"mRow":0,"mToolID":12069,"mToolIcons":[{"mDark":"kClearInPointNormalDecal","mNormal":"kClearInPointNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":3,"mPaletteRow":0,"mRow":0,"mToolID":12070,"mToolIcons":[{"mDark":"kClearOutPointNormalDecal","mNormal":"kClearOutPointNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":-1,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":4,"mPaletteRow":0,"mRow":0,"mToolID":12067,"mToolIcons":[{"mDark":"kGotoInNormalDecal","mNormal":"kGotoInNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":3,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":5,"mPaletteRow":0,"mRow":0,"mToolID":12068,"mToolIcons":[{"mDark":"kGotoOutNormalDecal","mNormal":"kGotoOutNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":6,"mPaletteRow":0,"mRow":0,"mToolID":11641,"mToolIcons":[{"mDark":"kNextEditNormalDecal","mNormal":"kNextEditNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":7,"mPaletteRow":0,"mRow":0,"mToolID":11648,"mToolIcons":[{"mDark":"kPrevEditNormalDecal","mNormal":"kPrevEditNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-3,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":1,"mRow":0,"mToolID":12072,"mToolIcons":[{"mDark":"kMarkerNormalDecal","mNormal":"kMarkerNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":1,"mRow":0,"mToolID":11732,"mToolIcons":[{"mDark":"kNextMarkerNormalDecal","mNormal":"kNextMarkerNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":2,"mPaletteRow":1,"mRow":0,"mToolID":11733,"mToolIcons":[{"mDark":"kPrevMarkerNormalDecal","mNormal":"kPrevMarkerNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":-1,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":3,"mPaletteRow":1,"mRow":0,"mToolID":12050,"mToolIcons":[{"mDark":"kPrevFrameNormalDecal","mNormal":"kPrevFrameNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":2,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":4,"mPaletteRow":1,"mRow":0,"mToolID":12051,"mToolIcons":[{"mDark":"kNextFrameNormalDecal","mNormal":"kNextFrameNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":5,"mPaletteRow":1,"mRow":0,"mToolID":12052,"mToolIcons":[{"mDark":"kPlayNormalDecal","mNormal":"kPlayNormalDecal"},{"mDark":"kStopNormalDecal","mNormal":"kStopNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-4,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":7,"mPaletteRow":1,"mRow":0,"mToolID":11936,"mToolIcons":[{"mDark":"kLoopNormalDecal","mNormal":"kLoopNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":8,"mPaletteRow":1,"mRow":0,"mToolID":11510,"mToolIcons":[{"mDark":"kInsertNormalDecal","mNormal":"kInsertNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":2,"mRow":0,"mToolID":11512,"mToolIcons":[{"mDark":"kOverlayNormalDecal","mNormal":"kOverlayNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":4,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":2,"mRow":0,"mToolID":11611,"mToolIcons":[{"mDark":"kLiftNormalDecal","mNormal":"kLiftNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":5,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":2,"mPaletteRow":2,"mRow":0,"mToolID":11612,"mToolIcons":[{"mDark":"kExtractNormalDecal","mNormal":"kExtractNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":1,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":3,"mPaletteRow":2,"mRow":0,"mToolID":6702,"mToolIcons":[{"mDark":"kSafeAreaNormalDecal","mNormal":"kSafeAreaNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":6,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":4,"mPaletteRow":2,"mRow":0,"mToolID":11513,"mToolIcons":[{"mDark":"kMonitorExportFrameNormalDecal","mNormal":"kMonitorExportFrameNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":5,"mPaletteRow":2,"mRow":0,"mToolID":21057,"mToolIcons":[{"mDark":"kCaptureRecordOffDecalDimmed","mNormal":"kCaptureRecordOffDecal"},{"mDark":"kCaptureRecordNormalDecalDimmed","mNormal":"kCaptureRecordNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":6,"mPaletteRow":2,"mRow":0,"mToolID":23219,"mToolIcons":[{"mDark":"kToggleMulticamViewNormalDecalDimmed","mNormal":"kToggleMulticamViewNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":7,"mPaletteRow":2,"mRow":0,"mToolID":11013,"mToolIcons":[{"mDark":"kRollbackTrimButton","mNormal":"kRollbackTrimButton"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":2,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":8,"mPaletteRow":2,"mRow":0,"mToolID":11435,"mToolIcons":[{"mDark":"kShowProxyDecal","mNormal":"kShowProxyDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":3,"mRow":0,"mToolID":6050,"mToolIcons":[{"mDark":"kToggleVRViewerDecalDimmed","mNormal":"kToggleVRViewerDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":4,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":1,"mPaletteRow":3,"mRow":0,"mToolID":6060,"mToolIcons":[{"mDark":"kEffectControlsOnToggleNormalDecal","mNormal":"kEffectControlsOnToggleNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":2,"mPaletteRow":3,"mRow":0,"mToolID":6071,"mToolIcons":[{"mDark":"kToggleDMRulersDecal","mNormal":"kToggleDMRulersDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":3,"mPaletteRow":3,"mRow":0,"mToolID":6072,"mToolIcons":[{"mDark":"kToggleDMGuidesDecal","mNormal":"kToggleDMGuidesDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":4,"mPaletteRow":3,"mRow":0,"mToolID":6070,"mToolIcons":[{"mDark":"kToggleDMSnapDecal","mNormal":"kToggleDMSnapDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":6,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":5,"mPaletteRow":3,"mRow":0,"mToolID":6181,"mToolIcons":[{"mDark":"kTransportSplitScreenDecal","mNormal":"kTransportSplitScreenDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":6,"mPaletteRow":3,"mRow":0,"mToolID":6187,"mToolIcons":[{"mDark":"kCTILinkNormalDecal","mNormal":"kCTILinkNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":-3,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":0,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":0,"mRow":0,"mToolID":4294967295,"mToolIcons":[{"mDark":"","mNormal":""}],"mToolTip":"TOOLBAR SPACER","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":true,"mColumn":3,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":0,"mMinimumVisibleWidth":0,"mPaletteColumn":0,"mPaletteRow":0,"mRow":0,"mToolID":4294967294,"mToolIcons":[{"mDark":"","mNormal":""}],"mToolTip":"TOOLBAR SPACER","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":0,"mMinimumVisibleWidth":0,"mPaletteColumn":8,"mPaletteRow":3,"mRow":0,"mToolID":4294967293,"mToolIcons":[{"mDark":"","mNormal":""}],"mToolTip":"PALETTE SPACER","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":6,"mPaletteRow":1,"mRow":0,"mToolID":12059,"mToolIcons":[{"mDark":"kPlayEditNormalDecal","mNormal":"kPlayEditNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false},{"mActiveControl":false,"mColumn":0,"mControlSize":{"size":{"x":0,"y":0},"topleft":{"x":0,"y":0}},"mDefaultButtonWidth":36,"mItemType":1,"mMinimumVisibleWidth":0,"mPaletteColumn":8,"mPaletteRow":0,"mRow":0,"mToolID":12081,"mToolIcons":[{"mDark":"kPlayInToOutNormalDecal","mNormal":"kPlayInToOutNormalDecal"}],"mToolTip":"","mVariableHeight":false,"mVariableWidth":false}]}</be.prefs.program.transport.layout.3>
+			<Monitor.CurrentReferenceMonitorOutputMode>1986228077</Monitor.CurrentReferenceMonitorOutputMode>
+			<HandlerProgram.FXMute>false</HandlerProgram.FXMute>
+			<be.prefs.effectcontrols.showtimerulernumbers>true</be.prefs.effectcontrols.showtimerulernumbers>
+			<ColorParametersView.expanded.states>fttttfttfftttfff</ColorParametersView.expanded.states>
+			<Capture.SceneDetect>false</Capture.SceneDetect>
+			<WorkspaceSwitcher.Data>{"alwaysConfirmDoubleClickWorkspaceReset":true,"hidden":[],"overflow":["All Panels","Metalogging","Production"],"shown":["Learning","Assembly","Editing","Color","Effects","Audio","Captions and Graphics","Review","Libraries","2021-2","2022-01","2023_work","Dual Monitors","Graphics","Strim","testing","Titles"],"switcherwidth":-1,"version":"V5"}</WorkspaceSwitcher.Data>
+			<FE.Application.LastWorkspaceName>2023_work</FE.Application.LastWorkspaceName>
+			<be.Prefs.Timeline.Show.Audio.Keyframes>false</be.Prefs.Timeline.Show.Audio.Keyframes>
+			<be.prefs.timeline.showtimerulernumbers>true</be.prefs.timeline.showtimerulernumbers>
+			<BE.Prefs.MRU.Document.1>\\?\E:\comms\Chloe\draw pokemon from memory\draw pokemon from memory.prproj</BE.Prefs.MRU.Document.1>
+			<BE.Prefs.MRU.Document.Size.0>802229</BE.Prefs.MRU.Document.Size.0>
+			<BE.Prefs.MRU.Document.Date.1>2023-03-29T09:46:09Z</BE.Prefs.MRU.Document.Date.1>
+			<BE.Prefs.MRU.Document.Size.1>17054</BE.Prefs.MRU.Document.Size.1>
+			<BE.Prefs.MRU.Document.0>\\?\E:\comms\d0yle\midnight stream\midnight stream.prproj</BE.Prefs.MRU.Document.0>
+			<BE.Prefs.MRU.Document.Date.3>2023-03-25T03:53:14Z</BE.Prefs.MRU.Document.Date.3>
+			<BE.Prefs.MRU.Document.2>\\?\E:\comms\d0yle\dlc 2\dlc 2.prproj</BE.Prefs.MRU.Document.2>
+			<BE.Prefs.MRU.Document.Date.2>2023-03-26T07:02:28Z</BE.Prefs.MRU.Document.Date.2>
+			<BE.Prefs.MRU.Document.Size.2>531613</BE.Prefs.MRU.Document.Size.2>
+			<BE.Prefs.MRU.Document.Date.0>2023-03-30T02:11:05Z</BE.Prefs.MRU.Document.Date.0>
+			<BE.Prefs.MRU.Document.Size.3>651063</BE.Prefs.MRU.Document.Size.3>
+			<BE.Prefs.MRU.Document.3>\\?\E:\comms\Emerldd\24h challenge\24h challenge.prproj</BE.Prefs.MRU.Document.3>
+			<FE.DocumentManager.MRUImportFile6>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_015726_000014.mhbricks</FE.DocumentManager.MRUImportFile6>
+			<FE.DocumentManager.MRUImportFile1>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_020101_000019.mhbricks</FE.DocumentManager.MRUImportFile1>
+			<FE.DocumentManager.MRUImportFile3>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_020058_000017.mhbricks</FE.DocumentManager.MRUImportFile3>
+			<FE.DocumentManager.MRUImportFile2>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_020058_000018.mhbricks</FE.DocumentManager.MRUImportFile2>
+			<FE.DocumentManager.MRUImportFile0>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_020101_000020.mhbricks</FE.DocumentManager.MRUImportFile0>
+			<FE.DocumentManager.MRUImportFile5>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_015726_000015.mhbricks</FE.DocumentManager.MRUImportFile5>
+			<FE.DocumentManager.MRUImportFile4>\\?\E:\_Editing stuff\sfx\come on and slam.mp3</FE.DocumentManager.MRUImportFile4>
+			<FE.DocumentManager.MRUImportFile7>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_015317_000013.mhbricks</FE.DocumentManager.MRUImportFile7>
+			<FE.DocumentManager.MRUImportFile9>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_014446_000010.mhbricks</FE.DocumentManager.MRUImportFile9>
+			<FE.DocumentManager.MRUImportFile8>\\?\C:\Users\Tom\AppData\Local\MisterHorse\PremiereTemp\Preview 20230330_014446_000011.mhbricks</FE.DocumentManager.MRUImportFile8>
+			<HSL.TimelinePatchingAndTargeting.AudioPatches405230c6_45_7438_45_1002_45_93de_45_aac30000000f>[{"mNumber":0,"mState":0},{"mNumber":1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0}]</HSL.TimelinePatchingAndTargeting.AudioPatches405230c6_45_7438_45_1002_45_93de_45_aac30000000f>
+			<HSL.TimelinePatchingAndTargeting.AudioPatches4b7f66de_45_1bb0_45_cba9_45_abba_45_e67900000017>[{"mNumber":0,"mState":2},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0}]</HSL.TimelinePatchingAndTargeting.AudioPatches4b7f66de_45_1bb0_45_cba9_45_abba_45_e67900000017>
+			<HSL.TimelinePatchingAndTargeting.AudioPatches6c122094_45_eabb_45_ddc9_45_aef8_45_b8ee00000017>[{"mNumber":0,"mState":2},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0}]</HSL.TimelinePatchingAndTargeting.AudioPatches6c122094_45_eabb_45_ddc9_45_aef8_45_b8ee00000017>
+			<HSL.TimelinePatchingAndTargeting.AudioPatchesa11dd6a4_45_2808_45_d6b5_45_525f_45_1cac00000017>[{"mNumber":0,"mState":2},{"mNumber":1,"mState":2},{"mNumber":2,"mState":2},{"mNumber":3,"mState":2},{"mNumber":4,"mState":2},{"mNumber":5,"mState":2}]</HSL.TimelinePatchingAndTargeting.AudioPatchesa11dd6a4_45_2808_45_d6b5_45_525f_45_1cac00000017>
+			<HSL.TimelinePatchingAndTargeting.DataPatches405230c6_45_7438_45_1002_45_93de_45_aac30000000f>[]</HSL.TimelinePatchingAndTargeting.DataPatches405230c6_45_7438_45_1002_45_93de_45_aac30000000f>
+			<HSL.TimelinePatchingAndTargeting.VideoPatches405230c6_45_7438_45_1002_45_93de_45_aac30000000f>[{"mNumber":-1,"mState":0},{"mNumber":0,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0}]</HSL.TimelinePatchingAndTargeting.VideoPatches405230c6_45_7438_45_1002_45_93de_45_aac30000000f>
+			<HSL.TimelinePatchingAndTargeting.VideoPatches4b7f66de_45_1bb0_45_cba9_45_abba_45_e67900000017>[{"mNumber":0,"mState":2},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0}]</HSL.TimelinePatchingAndTargeting.VideoPatches4b7f66de_45_1bb0_45_cba9_45_abba_45_e67900000017>
+			<HSL.TimelinePatchingAndTargeting.VideoPatches750a0d02_45_4f23_45_4cc2_45_c568_45_b1bd00000017>[{"mNumber":1,"mState":2},{"mNumber":-1,"mState":0},{"mNumber":0,"mState":2},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0}]</HSL.TimelinePatchingAndTargeting.VideoPatches750a0d02_45_4f23_45_4cc2_45_c568_45_b1bd00000017>
+			<TransmitSerializedDataC_58__92_Program_32_Files_92_Adobe_92_Adobe_32_Premiere_32_Pro_32_2022_92_Plug_45_Ins_92_Common_92_TransmitDesktopAudio.prm0EnabledAudio>true</TransmitSerializedDataC_58__92_Program_32_Files_92_Adobe_92_Adobe_32_Premiere_32_Pro_32_2022_92_Plug_45_Ins_92_Common_92_TransmitDesktopAudio.prm0EnabledAudio>
+			<TransmitSerializedDataC_58__92_Program_32_Files_92_Adobe_92_Adobe_32_Premiere_32_Pro_32_2022_92_Plug_45_Ins_92_Common_92_TransmitDV.prm0EnabledAudio>false</TransmitSerializedDataC_58__92_Program_32_Files_92_Adobe_92_Adobe_32_Premiere_32_Pro_32_2022_92_Plug_45_Ins_92_Common_92_TransmitDV.prm0EnabledAudio>
+			<MZ.Prefs.UserProfile_95_AutoClearOnQuit>false</MZ.Prefs.UserProfile_95_AutoClearOnQuit>
+			<MZ.Prefs.UserProfile_95_AutoResolveConflictType>0</MZ.Prefs.UserProfile_95_AutoResolveConflictType>
+			<MZ.Prefs.UserProfileCategories_95_Workspaces>true</MZ.Prefs.UserProfileCategories_95_Workspaces>
+			<ECP.Filter.ExpandedAE.ADBE_32_Opacity>true</ECP.Filter.ExpandedAE.ADBE_32_Opacity>
+			<ECP.Filter.ExpandedAE.ADBE_32_Motion>true</ECP.Filter.ExpandedAE.ADBE_32_Motion>
+			<BE.Prefs.DefaultChannelMapID_95_Stereo>0551e2a0-6da1-4691-800e-b3ded5ca94f7</BE.Prefs.DefaultChannelMapID_95_Stereo>
+			<BE.Prefs.DefaultChannelMapID_95_MultiMono>0551e2a0-6da1-4691-800e-b3ded5ca94f7</BE.Prefs.DefaultChannelMapID_95_MultiMono>
+			<BE.Prefs.DefaultChannelMapID_95_Mono>0551e2a0-6da1-4691-800e-b3ded5ca94f7</BE.Prefs.DefaultChannelMapID_95_Mono>
+			<ECP.Filter.ExpandedInternal_32_Volume_32_Stereo>true</ECP.Filter.ExpandedInternal_32_Volume_32_Stereo>
+			<BE.Prefs.DefaultChannelMapID_95_51>0551e2a0-6da1-4691-800e-b3ded5ca94f7</BE.Prefs.DefaultChannelMapID_95_51>
+			<HSL.TimelinePatchingAndTargeting.VideoPatches6c122094_45_eabb_45_ddc9_45_aef8_45_b8ee00000017>[{"mNumber":0,"mState":2},{"mNumber":1,"mState":2},{"mNumber":2,"mState":2},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0},{"mNumber":-1,"mState":0}]</HSL.TimelinePatchingAndTargeting.VideoPatches6c122094_45_eabb_45_ddc9_45_aef8_45_b8ee00000017>
+			<TransmitSerializedDataC_58__92_Program_32_Files_92_Adobe_92_Adobe_32_Premiere_32_Pro_32_2022_92_Plug_45_Ins_92_Common_92_TransmitScopes.prm0 Encoding="base64" Checksum="1499057935">AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEBAQUAAAAAAQEAAA==</TransmitSerializedDataC_58__92_Program_32_Files_92_Adobe_92_Adobe_32_Premiere_32_Pro_32_2022_92_Plug_45_Ins_92_Common_92_TransmitScopes.prm0>
+			<Output0944b9d6_45_720b_45_ead6_45_dd47_45_701d00000060>0</Output0944b9d6_45_720b_45_ead6_45_dd47_45_701d00000060>
+			<MZ.Prefs.UserProfileCategories_95_PreferencesAndSettings>true</MZ.Prefs.UserProfileCategories_95_PreferencesAndSettings>
+			<Outputb81e1dd0_45_40cc_45_28b0_45_3838_45_6ed0000000c8>5</Outputb81e1dd0_45_40cc_45_28b0_45_3838_45_6ed0000000c8>
+			<Output95a80690_45_c996_45_ecf3_45_a43f_45_56f200000060>3</Output95a80690_45_c996_45_ecf3_45_a43f_45_56f200000060>
+			<Outputa1809557_45_0786_45_b5de_45_dff1_45_d727000000c8>25</Outputa1809557_45_0786_45_b5de_45_dff1_45_d727000000c8>
+			<Outputa01d3641_45_9a93_45_4b5f_45_6100_45_405900000060>5</Outputa01d3641_45_9a93_45_4b5f_45_6100_45_405900000060>
+			<Output555158f6_45_6432_45_cf91_45_c23a_45_3a34000000c8>16</Output555158f6_45_6432_45_cf91_45_c23a_45_3a34000000c8>
+			<Output1586d161_45_f6e6_45_607a_45_006f_45_fab80000005a>1</Output1586d161_45_f6e6_45_607a_45_006f_45_fab80000005a>
+			<Outputba642642_45_5760_45_3587_45_0b0c_45_996c000000c8>6</Outputba642642_45_5760_45_3587_45_0b0c_45_996c000000c8>
+			<Outputd71cc8c4_45_7658_45_8142_45_5fde_45_75f2000000c8>12</Outputd71cc8c4_45_7658_45_8142_45_5fde_45_75f2000000c8>
+			<Output1894cd43_45_0ba3_45_a7d4_45_03d1_45_4d0d000000c8>27</Output1894cd43_45_0ba3_45_a7d4_45_03d1_45_4d0d000000c8>
+			<Outputd08579a5_45_970c_45_a54c_45_e246_45_54aa000000c8>11</Outputd08579a5_45_970c_45_a54c_45_e246_45_54aa000000c8>
+			<Outputd06e3cd4_45_ebd7_45_9ba7_45_1607_45_e30b000000c8>14</Outputd06e3cd4_45_ebd7_45_9ba7_45_1607_45_e30b000000c8>
+			<Outputf9f3f73d_45_ac1a_45_2325_45_2ea7_45_745f000000c8>0</Outputf9f3f73d_45_ac1a_45_2325_45_2ea7_45_745f000000c8>
+			<Outputeb121a47_45_8885_45_d92d_45_4ee0_45_450a000000c8>31</Outputeb121a47_45_8885_45_d92d_45_4ee0_45_450a000000c8>
+			<Outputdc05a819_45_bf6f_45_4498_45_ef5e_45_2e0500000060>2</Outputdc05a819_45_bf6f_45_4498_45_ef5e_45_2e0500000060>
+			<Outpute6d95cd9_45_5bcd_45_f4e1_45_782c_45_a6b4000000c8>9</Outpute6d95cd9_45_5bcd_45_f4e1_45_782c_45_a6b4000000c8>
+			<Output2975fa13_45_ec3f_45_c356_45_cf5f_45_8007000000c8>10</Output2975fa13_45_ec3f_45_c356_45_cf5f_45_8007000000c8>
+			<Outputcc04c595_45_4dfd_45_ff55_45_cc9b_45_e2e6000000c8>18</Outputcc04c595_45_4dfd_45_ff55_45_cc9b_45_e2e6000000c8>
+			<Output1e9c67e8_45_1830_45_af1d_45_49ae_45_cb77000000c8>2</Output1e9c67e8_45_1830_45_af1d_45_49ae_45_cb77000000c8>
+			<MZ.Prefs.UserProfileCategories_95_KeyboardShortcuts>true</MZ.Prefs.UserProfileCategories_95_KeyboardShortcuts>
+			<Output7f3bead0_45_098d_45_7eac_45_4128_45_027200000060>1</Output7f3bead0_45_098d_45_7eac_45_4128_45_027200000060>
+			<Output850ccb54_45_b0e4_45_05ad_45_88aa_45_6f05000000c8>13</Output850ccb54_45_b0e4_45_05ad_45_88aa_45_6f05000000c8>
+			<Output764d09e3_45_ab13_45_52d6_45_1065_45_249e00000050>1</Output764d09e3_45_ab13_45_52d6_45_1065_45_249e00000050>
+			<Output77b82276_45_f659_45_f26f_45_b80e_45_87ed000000c8>7</Output77b82276_45_f659_45_f26f_45_b80e_45_87ed000000c8>
+			<Output793e6482_45_169c_45_0e21_45_a72e_45_b562000000c8>19</Output793e6482_45_169c_45_0e21_45_a72e_45_b562000000c8>
+			<Output93271726_45_57be_45_f932_45_4257_45_813d000000c8>24</Output93271726_45_57be_45_f932_45_4257_45_813d000000c8>
+			<ML.DeviceControl.Plugin.PrivateData.DV_32_Device_32_Control Encoding="base64" Checksum="176932690">CAAAAAAAAAAAAAAAAAAAADCy/YMAAAAA0AlpawAAAAABAAEAAQEAAAAAAAAAAAAAAE5UU0MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABHZW5lcmljAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU3RhbmRhcmQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP////8AAAAAAADwvwAAAAAAAAAAdoMN9PUhlD4AAAAAAAAAAA==</ML.DeviceControl.Plugin.PrivateData.DV_32_Device_32_Control>
+			<Outputacf87040_45_ee2b_45_9b38_45_822c_45_c8e7000000c8>29</Outputacf87040_45_ee2b_45_9b38_45_822c_45_c8e7000000c8>
+			<Outputab262438_45_0f33_45_43b4_45_3ba2_45_32ce00000050>0</Outputab262438_45_0f33_45_43b4_45_3ba2_45_32ce00000050>
+			<Outputad6b0883_45_215d_45_ba47_45_ad16_45_a3e700000060>4</Outputad6b0883_45_215d_45_ba47_45_ad16_45_a3e700000060>
+			<Outputd5f2af18_45_df1d_45_b0fd_45_02f6_45_3919000000c8>21</Outputd5f2af18_45_df1d_45_b0fd_45_02f6_45_3919000000c8>
+			<Output0253b266_45_34cb_45_0772_45_85dc_45_57a9000000c8>15</Output0253b266_45_34cb_45_0772_45_85dc_45_57a9000000c8>
+			<Output02f0b56b_45_3385_45_d692_45_b30b_45_1a83000000c8>22</Output02f0b56b_45_3385_45_d692_45_b30b_45_1a83000000c8>
+			<Output17451821_45_34ac_45_738b_45_154c_45_3154000000c8>28</Output17451821_45_34ac_45_738b_45_154c_45_3154000000c8>
+			<Output4f4c983b_45_6163_45_320c_45_50d5_45_a94c000000c8>3</Output4f4c983b_45_6163_45_320c_45_50d5_45_a94c000000c8>
+			<Output73ddcdf5_45_58cb_45_6ee3_45_4581_45_0242000000c8>20</Output73ddcdf5_45_58cb_45_6ee3_45_4581_45_0242000000c8>
+			<Output71a81136_45_06b1_45_3c76_45_f814_45_c220000000c8>23</Output71a81136_45_06b1_45_3c76_45_f814_45_c220000000c8>
+			<Output3eb88c65_45_b829_45_54ac_45_c6b5_45_af6d0000005a>0</Output3eb88c65_45_b829_45_54ac_45_c6b5_45_af6d0000005a>
+			<Output3e9cc1c6_45_c370_45_dfc7_45_39c9_45_24c5000000c8>26</Output3e9cc1c6_45_c370_45_dfc7_45_39c9_45_24c5000000c8>
+			<Output5a3cba20_45_089d_45_f562_45_9ff8_45_a7ab000000c8>1</Output5a3cba20_45_089d_45_f562_45_9ff8_45_a7ab000000c8>
+			<Output2712e4e2_45_e85b_45_4682_45_1b36_45_c492000000c8>4</Output2712e4e2_45_e85b_45_4682_45_1b36_45_c492000000c8>
+			<Output53cf3861_45_161b_45_6953_45_d6f0_45_28e5000000c8>8</Output53cf3861_45_161b_45_6953_45_d6f0_45_28e5000000c8>
+			<Output2023e9e5_45_d779_45_ae7e_45_2c25_45_61eb000000c8>30</Output2023e9e5_45_d779_45_ae7e_45_2c25_45_61eb000000c8>
+			<Output3d3dd739_45_e324_45_259b_45_d643_45_1e1b000000c8>17</Output3d3dd739_45_e324_45_259b_45_d643_45_1e1b000000c8>
+		</Properties>
+	</Preferences>
+</PremiereData>
