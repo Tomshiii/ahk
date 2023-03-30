@@ -1,9 +1,9 @@
 /************************************************************************
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
- * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23.1
+ * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
- * @date 2023/03/25
- * @version 1.5.4.1
+ * @date 2023/03/30
+ * @version 1.5.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -836,7 +836,10 @@ class Prem {
             sleep 100
             coord.s()
             MouseMove(xpos, ypos)
+            if GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")
+                SendInput("{Ctrl Up}") ;// a check to make sure premiere doesn't `insert` the clip
             SendInput("{Click Up}")
+            sleep 75
             SendInput(KSA.timelineWindow)
             sleep 50
             colour := PixelGetColor(xpos + 10, ypos)

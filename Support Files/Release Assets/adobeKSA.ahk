@@ -42,7 +42,9 @@ class adobeKSA extends tomshiBasic {
      * This function is called to generate the main section of the GUI
      */
     __generate() {
-        this.AddText(this.Xmargin, "Please select the root directory locations for where each program keeps its keyboard shortcut file.`nPlease include your version number && profile folder if applicible.`n")
+        this.AddText(this.Xmargin, "Please select the root directory locations for where each program keeps its keyboard shortcut file.")
+        this.AddText(this.Xmargin " r1 w500", "Please include your version number && profile folder if applicible.").SetFont("bold")
+        this.AddText(this.Xmargin, "example: " this.defaultPremiereFolder "22.0\Profile-Tom`n").SetFont("s8")
 
         this.__indivSection(this.defaultPremiereFolder, "Premiere")
         this.__indivSection(this.defaultAEFolder, "AE")
