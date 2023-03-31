@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
  * @date 2023/03/31
- * @version 1.5.6
+ * @version 1.5.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -54,16 +54,11 @@ class Prem {
             ;// sm64
             /* 1: [2013, 1128, 210],
             2: [2759, 1547, 288] */
-            ;// polar bowler
-            /* 1: [1677, 933, 175],
-            3: [2013, 1128, 210],
-            2: [615, 369, 150] */
         }
         chloe := {
-            ;// below contains temp changes, orig; [-426, -238, 267], [-1679, -854, 486]
-            1: [-643, -356, 267],
-            2: [-2821, -1500, 500],
-            ; 3: [632, 278, 292]
+            1: [-426, -238, 267],
+            2: [-1776, -932, 495],
+            3: [632, 278, 292]
         }
         emerldd := {
             1: [1913, 67, 200],
@@ -331,7 +326,7 @@ class Prem {
                     SetTimer(, 0)
                     return
                 }
-            if ((A_TickCount - time) >= resetTime) || GetKeyState("F5", "P")
+            if ((A_TickCount - time) >= resetTime) || GetKeyState("Esc", "P")
                 {
                     tool.Cust("zoom toggle reset",, this.zToolX, this.zToolY, 2)
                     this.timer := false, this.presses := 0, this.zoomToggle := 0
