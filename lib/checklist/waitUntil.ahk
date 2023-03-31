@@ -29,7 +29,7 @@ waitUntil()
             if !IsSet(titlecheck) ;we ensure the title variable has been assigned before proceeding forward
                 {
                     block.Off()
-                    errorLog(UnsetError("Variable wasn't assigned a value.", -1, titlecheck),, 1)
+                    errorLog(UnsetError("Variable wasn't assigned a value.", -1),, 1)
                     SetTimer(, -1000)
                 }
             dashLocationAgain := InStr(Namepremdash, "-")

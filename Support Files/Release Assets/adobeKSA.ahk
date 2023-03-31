@@ -33,6 +33,8 @@ class adobeKSA extends tomshiBasic {
     defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\"
     defaultAEFolder := A_AppData "\Adobe\After Effects\"
 
+    KSA => ptf.rootDir "\lib\KSA\Keyboard Shortcuts.ini"
+
     PremiereExclude := 0
     AEExclude := 0
 
@@ -123,9 +125,20 @@ class adobeKSA extends tomshiBasic {
         return this.__findFile(foundPath, "txt")
     }
 
+    __parsePrem(location) {
+        premSection := IniRead(this.KSA, "Premiere")
+        premShortcut := FileRead(location)
+
+        splitSection := StrSplit(premSection, ["=", "`n", "`r"])
+    }
+
     __submit(*) {
         PremiereShortcut := this.__findPremiereShortcut()
         AEShortcut := this.__findAEShortcut()
+
+        if this.PremErr = false {
+            this.__parsePrem(PremiereShortcut)
+        }
 
     }
 

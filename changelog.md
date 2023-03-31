@@ -1,4 +1,4 @@
-# <> Release 2.11 - Auto Generate KSA.ini
+# <> Release 2.11 - adobeKSA.ahk
 - Fix install process potentially not generating a `settings.ini` file if one does not already exist
 
 ## > Functions
@@ -13,5 +13,6 @@
 - Cleaned up function
 
 ## > Other Changes
+- Fix `waitUntil.ahk` throwing
 - Added `prem(previous/next)Keyframe` hotkeys to `My Scripts.ahk`/`KSA.ini`
 - Cleaned up `Move project.ahk`
