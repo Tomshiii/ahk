@@ -173,11 +173,11 @@ settingsGUI()
         }
     }
 
-    ;// check for beta updates
+    ;// check for PreReleases
     betaStart := false ;if the user enables the check for beta updates, we want my main script to reload on exit.
     betaupdateCheckToggle := (UserSettings.beta_update_check = true && updateCheckToggle.Value != 0)
-                            ? settingsGUI.Add("Checkbox", "Checked1 xs Y+5", "Check for Beta Updates")
-                            : settingsGUI.Add("Checkbox", "Checked0 xs Y+5", "Check for Beta Updates")
+                            ? settingsGUI.Add("Checkbox", "Checked1 xs Y+5", "Check for Pre-Releases")
+                            : settingsGUI.Add("Checkbox", "Checked0 xs Y+5", "Check for Pre-Releases")
     betaupdateCheckToggle.OnEvent("Click", betaupdate)
     betaupdate(*)
     {

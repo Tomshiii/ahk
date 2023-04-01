@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/04/01
- * @version 1.6.2
+ * @version 1.6.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -239,8 +239,8 @@ class Startup {
                 noprompt.OnEvent("Click", prompt)
                 ;set beta checkbox
                 betaCheck := (this.UserSettings.beta_update_check = true)
-                           ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Beta Updates")
-                           : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Beta Updates")
+                           ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
+                           : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Pre-Releases")
                 betaCheck.OnEvent("Click", prompt)
 
                 if this.UserSettings.dark_mode = true
