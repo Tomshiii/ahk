@@ -36,7 +36,10 @@ class adobeKSA extends tomshiBasic {
     KSA => ptf.rootDir "\lib\KSA\Keyboard Shortcuts.ini"
 
     PremiereExclude := 0
-    AEExclude := 0
+    AEExclude := 1
+
+    PremiereDisable := 0
+    AEDisable := 1
 
     PremErr := 0
     AEErr := 0
@@ -62,15 +65,22 @@ class adobeKSA extends tomshiBasic {
     __indivSection(defaultFolder, which) {
         this.AddText(this.Xmargin " r1 w120", which " Folder: ").SetFont("bold")
         this.%which%Folder := this.Add("Text", this.Xmargin " Section ", defaultFolder)
-        this.AddCheckbox("x" this.Xclude " ys-25", "Exclude").OnEvent("Click", this.__exclude.Bind(this, which))
+        this.AddCheckbox("x" this.Xclude " ys-25 Checked" this.%which%Exclude, "Exclude").OnEvent("Click", this.__exclude.Bind(this, which))
         this.AddButton("y+7", "Change").OnEvent("Click", this.__changePath.Bind(this, which, defaultFolder))
-
+        if this.%which%Disable = 1 {
+            this.%which%Folder.SetFont("strike")
+            return
+        }
     }
 
     /**
      * This function is called when the exclude checkboxes are clicked
      */
     __exclude(which, guiObj, *) {
+        if this.%which%Disable = 1 {
+            guiObj.Value := 1
+            return
+        }
         this.%which%Exclude := guiObj.Value
         switch guiObj.Value {
             case 1: this.%which%Folder.SetFont("strike")
@@ -81,6 +91,8 @@ class adobeKSA extends tomshiBasic {
      * This function is called when the change buttons are clicked
      */
     __changePath(which, defaultFolder, *) {
+        if this.%which%Disable = 1
+            return
         which := InStr(defaultFolder, "Premiere Pro", 1, 1, 1) ? "Premiere" : "AE"
         changePath := FileSelect("D", defaultFolder, "Select " which " directory, including version.")
         if changePath = ""
@@ -99,7 +111,7 @@ class adobeKSA extends tomshiBasic {
         throw IndexError("Function could not determine the location of the ``" name "`` folder within the selected directory. Please provide the proper path and try again.", name, -1)
     }
 
-    __findFile(loopDir, filetype) {
+    __findFile(loopDir, filetype, which) {
         amount := 0
         loop files loopDir "\*." filetype, "F" {
             amount++
@@ -108,43 +120,88 @@ class adobeKSA extends tomshiBasic {
         if amount = 1
             return filepath
 
-        PremiereShortcut := FileSelect("3", filepath, "Select Your Keyboard Shortcut File", "*." filetype)
-        if PremiereShortcut != ""
-            return PremiereShortcut
+        shortcutDir := FileSelect("3", filepath, "Select Your Keyboard Shortcut File", "*." filetype)
+        if shortcutDir != ""
+            return shortcutDir
 
-        this.PremErr := true
+        this.%which% := true
+        return ""
     }
 
     __findPremiereShortcut() {
         foundPath := this.__findFolder(this.defaultPremiereFolder, "Win")
-        return this.__findFile(foundPath, "kys")
+        return this.__findFile(foundPath, "kys", "Prem")
     }
 
     __findAEShortcut() {
         foundPath := this.__findFolder(this.defaultAEFolder, "aeks")
-        return this.__findFile(foundPath, "txt")
+        return this.__findFile(foundPath, "txt", "AE")
     }
 
     __parsePrem(location) {
-        premSection := IniRead(this.KSA, "Premiere")
+        premSection  := IniRead(this.KSA, "Premiere")
+        KSARead      := FileRead(this.KSA)
         premShortcut := FileRead(location)
 
         splitSection := StrSplit(premSection, ["=", "`n", "`r"])
+        for k, v in splitSection {
+            if Mod(k, 2) = 0
+                continue
+            if InStr(v, "label", 1, 1, 1)
+                continue
+            commandName := SubStr(KSARead
+                                , start := InStr(KSARead, ";[",
+                                                , InStr(KSARead, v, 1,, 1)
+                                                , 1) +2
+                                , InStr(KSARead, "]",, start, 1) - start
+                            )
+            context     := SubStr(KSARead
+                                , start := InStr(KSARead, ";{",
+                                                , InStr(KSARead, v, 1,, 1)
+                                                , 1) +2
+                                , InStr(KSARead, "}",, start, 1) - start
+                            )
+            hotkeyVal := xml(premShortcut).__buildHotkey(context, commandName)
+            if hotkeyVal = false
+                continue
+            msgbox commandName "`n" hotkeyVal
+            ;//! write to .ini file from here:
+        }
+    }
+
+    __parseAE() {
+
     }
 
     __submit(*) {
-        PremiereShortcut := this.__findPremiereShortcut()
-        AEShortcut := this.__findAEShortcut()
+        PremiereShortcut := (this.PremiereExclude = 0) ? this.__findPremiereShortcut() : false
+        AEShortcut       := (this.AEExclude = 0)       ? this.__findAEShortcut()       : false
 
-        if this.PremErr = false {
+        if this.PremErr = false && PremiereShortcut != "" && this.PremiereExclude = 0 {
             this.__parsePrem(PremiereShortcut)
+        }
+        if this.AEErr = false && AEShortcut != "" && this.AEExclude = 0 {
+            this.__parseAE()
         }
 
     }
 
 }
 
+
+/**
+ * Examples:
+ * ```
+ * xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]/virtualkey').text
+ * xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]').nodename
+```
+ */
 class xml {
+    __New(file) {
+        this.xml := this.__loadXML(file)
+    }
+    xml := ""
+
     /**
      * takes an xml formatted string and returns a comobject
      * @param {String} xml the fileread xml file (ie, premiere's keyboard shortcut file)
@@ -163,7 +220,7 @@ class xml {
      * @return {Boolean/String} returns `false` on failure or a string containing the name of the key
      */
     __convVirtToKey(virtualKey) {
-        if virtualKey < 8
+        if StrLen(virtualKey) < 8
             return false
         val := Format("{:X}", virtualKey)
         return GetKeyName("vk" SubStr(val, -2))
@@ -171,32 +228,30 @@ class xml {
 
     /**
      * retrieves the modifiers for the given hotkey
-     * @param {Object} xml the xml comobject
      * @param {String} path the xml path for the desired hotkey
      * @return {String} returns a string containing the modifiers for the given hotkey or a blank string if none
      */
-    __retriveModifiers(xml, path) {
-        ctrl  := (xml.selectSingleNode(path "/modifier.ctrl").text  = "true") ? "^" : ""
-        alt   := (xml.selectSingleNode(path "/modifier.alt").text   = "true") ? "!" : ""
-        shift := (xml.selectSingleNode(path "/modifier.shift").text = "true") ? "+" : ""
+    __retriveModifiers(path) {
+        ctrl  := (this.xml.selectSingleNode(path "/modifier.ctrl").text  = "true") ? "^" : ""
+        alt   := (this.xml.selectSingleNode(path "/modifier.alt").text   = "true") ? "!" : ""
+        shift := (this.xml.selectSingleNode(path "/modifier.shift").text = "true") ? "+" : ""
         return (ctrl alt shift)
     }
 
     /**
      * Builds the hotkey for the desired xml path
-     * @param {String} shortcutPath the filepath to the keyboard shortcut file
      * @param {String} start the xml path of the desired hotkey. eg. `'/PremiereData/shortcuts/context.global'`
      * @param {String} codename the xml `codename` for the desired hotkey. eg. `"cmd.clip.scaletoframesize"`
      */
-    __buildHotkey(shortcutPath, start, codename) {
-        short := FileRead(shortcutPath)
-        xml := this.__loadXML(short)
-
+    __buildHotkey(start, codename) {
+        if InStr(this.xml.text, codename,,, 2)
+            return false
         firstPrompt := Format('{}/*[commandname="{}"]', start, codename)
-        getItemNum := xml.selectSingleNode(firstPrompt).nodename
+        getItemNum := this.xml.selectSingleNode(firstPrompt).nodename
         secondPrompt := Format('{}[commandname="{}"]', start "/" getItemNum, codename)
-        getModifiers := this.__retriveModifiers(xml, secondPrompt)
-        getKey := (result := this.__convVirtToKey(xml.selectSingleNode(secondPrompt "/virtualkey").text) != false) ? result : "false"
+        getModifiers := this.__retriveModifiers(secondPrompt)
+        virtkey := this.__convVirtToKey(this.xml.selectSingleNode(secondPrompt "/virtualkey").text)
+        getKey := (virtkey != false) ? virtkey : "false"
         if getKey == "false"
             return false
         return (getModifiers getKey)
