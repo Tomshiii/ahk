@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/04/01
- * @version 1.6.2.1
+ * @version 1.6.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -236,12 +236,12 @@ class Startup {
                 cancelbutt.OnEvent("Click", closegui)
                 ;set "don't prompt again" checkbox
                 noprompt := MyGui.Add("Checkbox", "xs-175 Ys-10", "Don't prompt again")
-                noprompt.OnEvent("Click", prompt)
+                noprompt.OnEvent("Click", prompt.bind("prompt"))
                 ;set beta checkbox
                 betaCheck := (this.UserSettings.beta_update_check = true)
                            ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
                            : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Pre-Releases")
-                betaCheck.OnEvent("Click", prompt)
+                betaCheck.OnEvent("Click", prompt.bind("prerelease"))
 
                 if this.UserSettings.dark_mode = true
                     goDark()
@@ -252,22 +252,14 @@ class Startup {
                 }
 
                 MyGui.Show()
-                prompt(guiCtrl, RowNumber) {
-                    if InStr(guiCtrl.Text, "prompt")
-                        {
-                            switch guiCtrl.Value {
-                                case 0: this.UserSettings.update_check := true
-                                case 1: this.UserSettings.update_check := false
-                            }
-                        }
-                    if InStr(guiCtrl.Text, "beta")
-                        {
-                            switch guiCtrl.Value {
-                                case 1: this.UserSettings.beta_update_check := true
-                                case 0: this.UserSettings.beta_update_check := false
-                            }
+                prompt(which, guiCtrl, *) {
+                    switch which {
+                        case "prompt": this.UserSettings.update_check := (guiCtrl.Value = 0) ? true : false
+                        case "prerelease":
+                            this.UserSettings.beta_update_check := (guiCtrl.value = 0) ? false : true
+                            this.UserSettings.__delAll()
                             Run(A_ScriptFullPath)
-                        }
+                    }
                 }
                 githubButton(*) {
                     if WinExist("Tomshiii/ahk")
@@ -278,6 +270,7 @@ class Startup {
                     Run("https://github.com/tomshiii/ahk/releases")
                 }
                 down(*) {
+                    this.UserSettings.__delAll()
                     MyGui.Opt("Disabled -AlwaysOnTop")
                     yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
                     if yousure = "Cancel"
@@ -403,6 +396,7 @@ class Startup {
                     return
                 }
                 closegui(*) {
+                    this.UserSettings.__delAll()
                     MyGui.Destroy()
                     return
                 }

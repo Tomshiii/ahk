@@ -7,6 +7,7 @@
 - Fix `prem.getTimeline()` from retrieving the incorrect coordinates if a second window is in focus when called
 - Fix `startup.updateChecker()` treating `alpha` updates as full releases
     - Change `beta` verbage to `Pre-Releases`
+    - Fix the `new release GUI` not updating settings values
 - Add `tool.tray()`
     - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
 - `prem.zoom()` cancel hotkey changed to <kbd>Esc</kbd> instead of <kbd>F5</kbd>
