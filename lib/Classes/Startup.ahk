@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/03/25
- * @version 1.6.1
+ * @date 2023/04/01
+ * @version 1.6.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1013,6 +1013,6 @@ class Startup {
     }
 
     __Delete() {
-        this.UserSettings.__Delete()
+        this.UserSettings.__delAll()
     }
 }

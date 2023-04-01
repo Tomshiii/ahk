@@ -47,16 +47,16 @@ class SettingsToolTips {
     }
 }
 
-toolT := SettingsToolTips()
 
 /**
  * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
- */
+*/
 settingsGUI()
 {
     ;this function is needed to reload some scripts
     detect()
 
+    toolT := SettingsToolTips()
     UserSettings := UserPref()
     ;// menubar
     FileMenu := Menu()
@@ -155,23 +155,21 @@ settingsGUI()
     update(*)
     {
         ToolTip("")
-        betaCheck := UserSettings.beta_update_check ;storing the beta check value so we can toggle it back on if it was on originally
-        updateVal := updateCheckToggle.Value
-        switch updateVal {
+        switch updateCheckToggle.Value {
             case 1: ;true
                 UserSettings.update_check := true
                 updateCheckToggle.ToolTip := toolT.updateCheck.true
-                if betaCheck = true
+                if UserSettings.beta_update_check = true
                     betaupdateCheckToggle.Value := 1
             case -1: ;false
                 UserSettings.update_check := false
-                updateCheckToggle.ToolTip :=toolT.updateCheck.false
-                if betaCheck = true
+                updateCheckToggle.ToolTip := toolT.updateCheck.false
+                if UserSettings.beta_update_check = true
                     betaupdateCheckToggle.Value := 1
             case 0: ;stop
                 betaupdateCheckToggle.Value := 0
                 UserSettings.update_check := "stop"
-                updateCheckToggle.ToolTip :=toolT.updateCheck.stop
+                updateCheckToggle.ToolTip := toolT.updateCheck.stop
         }
     }
 
@@ -183,7 +181,6 @@ settingsGUI()
     betaupdateCheckToggle.OnEvent("Click", betaupdate)
     betaupdate(*)
     {
-        updateVal := betaupdateCheckToggle.Value
         switch betaupdateCheckToggle.Value {
             case 1 && (updateCheckToggle.Value != 0):
                 betaStart := true
@@ -435,12 +432,12 @@ settingsGUI()
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
+        UserSettings.__delAll() ;// close the settings instance
         if IsSet(butt) && butt = "hard"
             {
                 reload_reset_exit("reset")
                 return ;// this is necessary
             }
-        UserSettings := "" ;// close the settings instance
         ;before finally closing
         settingsGUI.Destroy()
     }

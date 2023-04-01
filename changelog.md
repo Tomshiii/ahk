@@ -1,5 +1,6 @@
 # <> Release 2.11 - adobeKSA.ahk
 - Fix install process potentially not generating a `settings.ini` file if one does not already exist
+- Further fix settings changes not sticking when adjusted in `settingsGUI()`
 
 ## > Functions
 - Fix `prem.audioDrag()` from `inserting` clip - caused by pressing <kbd>Ctrl</kbd> before the clip has finished being placed

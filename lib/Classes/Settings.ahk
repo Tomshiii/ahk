@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/03/19
- * @version 1.1.0
+ * @date 2023/04/01
+ * @version 1.1.1
  ***********************************************************************/
 
 class UserPref {
@@ -167,7 +167,7 @@ class UserPref {
         }
     }
 
-    __Delete() {
+    __delAll() {
         this.__del(this.Settings_, "Settings")
         this.__del(this.Adjust_, "Adjust")
         this.__del(this.Track_, "Track")

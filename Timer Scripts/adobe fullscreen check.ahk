@@ -33,7 +33,7 @@ I have \ set in premiere to "Move playhead to cursor" and use it in `right click
 ;//enter your desired frequency in SECONDS in `fire_frequency` then leave `fire` as it is. By default you will see this script checks every 2s
 fire_frequency := UserSettings.adobe_FS
 fire := fire_frequency * 1000
-UserSettings := "" ;// close settings instances
+UserSettings := ""
 
 OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
 changeVar(wParam, lParam, msg, hwnd) {
@@ -45,7 +45,8 @@ changeVar(wParam, lParam, msg, hwnd) {
         var := SubStr(res, 1, lastUnd-1)
         val := SubStr(res, lastUnd+1)
         UserSettings.%var% := val
-        UserSettings.__Delete()
+        UserSettings.__delAll()
+        UserSettings := ""
         SetTimer((*) => reload(), -500)
     }
     return

@@ -39,7 +39,8 @@ changeVar(wParam, lParam, msg, hwnd) {
         var := SubStr(res, 1, lastUnd-1)
         val := SubStr(res, lastUnd+1)
         UserSettings.%var% := val
-        UserSettings.__Delete()
+        UserSettings.__delAll()
+        UserSettings := ""
         SetTimer((*) => reload(), -500)
     }
     return
