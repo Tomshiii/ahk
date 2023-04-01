@@ -164,7 +164,19 @@ class tool {
     /**
      * This function is simply a wrapper function to quickly and easily generate & deal with a traytip
      * @param {Object} TrayParams an object containing the paramaters you wish to pass to `TrayTip`. This includes `{text: "", title: "", options: ""}`
-     * @param {Integer} timeout the time in `ms` you wish to wait before the traytip times out. Pass `0` to disable this function attempting a timeout. *note: this timeout may not work as intended due to windows/if your script is persistent*
+     * @param {Integer} timeout the time in `ms` you wish to wait before the traytip times out. Pass `0` to disable this function attempting a timeout.
+     * > ##### *note: this timeout may not work as intended due to windows/if your script is persistent*
+```markdown
+# TrayParams 'Options'
+ |       Function        | Dec | Hex  | String |
+ |       --------        | --- | ---  | ------ |
+ |      Info Icon        |  1  | 0x1  | Iconi  |
+ |     Warning Icon      |  2  | 0x2  | Icon!  |
+ |      Error Icon       |  3  | 0x3  | Iconx  |
+ |      Tray Icon        |  4  | 0x4  | N/A    |
+ | no notification sound | 16  | 0x10 | Mute   |
+ |     Use large icon    | 32  | 0x20 | N/A    |
+ ```
      */
     static Tray(TrayParams?, timeout := 5000) {
         A_IconTip := "Tomshi AHK Scripts"

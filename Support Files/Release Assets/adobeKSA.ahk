@@ -144,5 +144,64 @@ class adobeKSA extends tomshiBasic {
 
 }
 
+class xml {
+    /**
+     * takes an xml formatted string and returns a comobject
+     * @param {String} xml the fileread xml file (ie, premiere's keyboard shortcut file)
+     * @return {Object} returns a comobject
+     */
+    __loadXML(xml) {
+        xmldoc := ComObject("MSXML2.DOMDocument.6.0")
+        xmldoc.async := false
+        xmldoc.loadXML(xml)
+        return xmldoc
+    }
+
+    /**
+     * takes premiere's virtual key value and returns they key
+     * @param {Integer} virtualKey the virtual key value retrieved from the xml file
+     * @return {Boolean/String} returns `false` on failure or a string containing the name of the key
+     */
+    __convVirtToKey(virtualKey) {
+        if virtualKey < 8
+            return false
+        val := Format("{:X}", virtualKey)
+        return GetKeyName("vk" SubStr(val, -2))
+    }
+
+    /**
+     * retrieves the modifiers for the given hotkey
+     * @param {Object} xml the xml comobject
+     * @param {String} path the xml path for the desired hotkey
+     * @return {String} returns a string containing the modifiers for the given hotkey or a blank string if none
+     */
+    __retriveModifiers(xml, path) {
+        ctrl  := (xml.selectSingleNode(path "/modifier.ctrl").text  = "true") ? "^" : ""
+        alt   := (xml.selectSingleNode(path "/modifier.alt").text   = "true") ? "!" : ""
+        shift := (xml.selectSingleNode(path "/modifier.shift").text = "true") ? "+" : ""
+        return (ctrl alt shift)
+    }
+
+    /**
+     * Builds the hotkey for the desired xml path
+     * @param {String} shortcutPath the filepath to the keyboard shortcut file
+     * @param {String} start the xml path of the desired hotkey. eg. `'/PremiereData/shortcuts/context.global'`
+     * @param {String} codename the xml `codename` for the desired hotkey. eg. `"cmd.clip.scaletoframesize"`
+     */
+    __buildHotkey(shortcutPath, start, codename) {
+        short := FileRead(shortcutPath)
+        xml := this.__loadXML(short)
+
+        firstPrompt := Format('{}/*[commandname="{}"]', start, codename)
+        getItemNum := xml.selectSingleNode(firstPrompt).nodename
+        secondPrompt := Format('{}[commandname="{}"]', start "/" getItemNum, codename)
+        getModifiers := this.__retriveModifiers(xml, secondPrompt)
+        getKey := (result := this.__convVirtToKey(xml.selectSingleNode(secondPrompt "/virtualkey").text) != false) ? result : "false"
+        if getKey == "false"
+            return false
+        return (getModifiers getKey)
+    }
+}
+
 adobegui := adobeKSA()
 adobegui.Show()

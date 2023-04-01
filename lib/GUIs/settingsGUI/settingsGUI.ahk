@@ -113,9 +113,8 @@ settingsGUI()
     version := UserSettings.version
 
     ;gameCheckGUI
-    gameTitle := "Add game to gameCheck.ahk"
-    gameCheckSettingGUI := gameCheckGUI(darkMode, version, winTitle, winProcc, "AlwaysOnTop", gameTitle)
-
+    gameTitle := "Add game to gameCheck.ahk" ;// used in winwaits
+    gameCheckSettingGUI := gameCheckGUI(version, winTitle, winProcc)
     if WinExist("Settings " version)
         return
     settingsGUI := tomshiBasic(,, "+Resize +MinSize250x AlwaysOnTop", "Settings " version)

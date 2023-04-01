@@ -25,7 +25,6 @@ sec := UserSettings.game_SEC
 secms := sec * 1000
 
 ;// getting info from settings
-darkMode := UserSettings.dark_mode
 version := UserSettings.version
 UserSettings := "" ;// closing settings instance
 
@@ -63,7 +62,7 @@ gameAdd(*) {
                 continue
             else
                 {
-                    gameGUI := gameCheckGUI(darkMode, version, WinGetTitle(this_value), WinGetProcessName(this_value), "AlwaysOnTop", "Add game to gameCheck.ahk")
+                    gameGUI := gameCheckGUI(, WinGetTitle(this_value), WinGetProcessName(this_value))
                     gameGUI.Show("AutoSize")
                     break
                 }

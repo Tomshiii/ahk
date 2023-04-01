@@ -1,156 +1,159 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\Dark>
+#Include <GUIs\tomshiBasic>
 #Include <Functions\detect>
 ; }
 
 /**
- * A class to define the gameCheck add GUI window
- *
- * @param dark is passing in whether dark mode is enabled or not
- * @param version is passing in the current version number
- * @param wintitle is passing in the originally active winTitle when `settingsGUI()` was called
- * @param process is passing in the originally active winProcess when `settingsGUI()` was called
- * @param options is defining any GUI options
- * @param title is to set a title for the GUI
+ * @param {String} version if called from `settingsGUI()` this value needs to be passed in so the function can return proper functionality to that window
+ * @param {String} winTitle the wintitle of the active window that will be auto filled into the respective edit box
+ * @param {String} process the process name of the active window that will be auto filled into the respective edit box
  */
- class gameCheckGUI extends Gui {
-    __new(darkmode, version, wintitle, process, options?, title:="") {
-        super.__new(options?, title, this)
-        this.BackColor := 0xF0F0F0
-        this.SetFont("S11") ;Sets the size of the font
-        this.SetFont("W500") ;Sets the weight of the font (thickness)
-        this.Opt("+MinSize450x320 +MaxSize450x")
+class gameCheckGUI extends tomshiBasic {
+    __New(version := "", winTitle := WinGetTitle("A"), process := WinGetProcessName("A")) {
+        super.__New(,, "+MinSize450x320 +MaxSize450x AlwaysOnTop", "Add game to gameCheck.ahk")
+        this.winTitle := winTitle, this.process := process, this.version := version
+        this.__generate()
+    }
 
-        ;setting up
-        detect()
+    winTitle := ""
+    process := ""
+    version := ""
 
-        ;defining text
-        text1 := this.Add("Text", "W440 Center", "Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe")
-        text2 := this.Add("Text", "Y+4 W440 Center", "*try to remove any information from the title that is likely to change, eg. version numbers or extra text that isn't a part of the game title (Terraria for example adds little quotes to the title that changes everytime you run the game)")
-        text2.SetFont("S9 italic")
-        text3 := this.Add("Text", "Y+-8 W440", "This function attempted to grab the correct information from the active window before you pulled up the settings GUI and then prefilled the input boxes with that information. If it's correct hit OK, if not enter in the correct information.`n`n*If not, this info can be found using WindowSpy which comes alongside AHK")
+    __generate() {
+        this.Add("Text", "W440 Center", "Format: ``GameTitle ahk_exe game.exe```nExample: ``Minecraft ahk_exe javaw.exe")
+        this.Add("Text", "Y+4 W440 Center", "*try to remove any information from the title that is likely to change, eg. version numbers or extra text that isn't a part of the game title (Terraria for example adds little quotes to the title that changes everytime you run the game)").SetFont("S9 italic")
+        this.Add("Text", "Y+-8 W440", "This function attempted to grab the correct information from the active window before you pulled up the settings GUI and then prefilled the input boxes with that information. If it's correct hit OK, if not enter in the correct information.`n`n*If not, this info can be found using WindowSpy which comes alongside AHK")
 
-        ;defining edit boxes
-        gameTitleTitle := this.Add("Text", "Section", "Game Title: ")
-        gameTitle := this.Add("Edit", "xs+120 ys-5 r1 -WantReturn vgameTitle w300", wintitle)
+        this.Add("Text", "Section", "Game Title: ")
+        this.gameTitle := this.Add("Edit", "xs+120 ys-5 r1 -WantReturn vgameTitle w300", this.wintitle)
 
-        gameProcessText := this.Add("Text", "xs ys+25 Section", "Process Name: ")
-        gameProcess := this.Add("Edit", "xs+120 ys-5 r1 -WantReturn vgameProcess w300", "ahk_exe " process)
+        this.Add("Text", "xs ys+25 Section", "Process Name: ")
+        this.gameProcess := this.Add("Edit", "xs+120 ys-5 r1 -WantReturn vgameProcess w300", "ahk_exe " this.process)
 
-        ;defining buttons
-        addButton := this.Add("Button", "xs+187 ys+30 Section", "add to ``gameCheck.ahk``")
-        addButton.OnEvent("Click", addButton_Click.Bind(version, gameTitle.Text, gameProcess.Text))
-        cancelButton := this.Add("Button", "xs+175 ys", "cancel")
-        cancelButton.OnEvent("Click", cancelButton_Click)
+        addButton := this.Add("Button", "xs+187 ys+30 Section", "add to ``gameCheck.ahk``").OnEvent("Click", this.__addButton_Click.Bind(this, this.gameTitle.Text, this.gameProcess.Text))
+        cancelButton := this.Add("Button", "xs+175 ys", "cancel").OnEvent("Click", this.__cancelButton_Click.Bind(this))
+    }
 
-        if darkmode = true
+    /**
+     * check for game list file
+     */
+    __checkGameList() {
+        if !FileExist(ptf["Game List"])
             {
-                dark.titleBar(this.Hwnd)
-                dark.allButtons(this)
+                MsgBox("``Game List.ahk`` not found in the proper directory")
+                this.Hide()
+                this.__settingsGUIontop()
             }
+    }
 
-        /**
-         * This function handles the logic behind the add button
-         * @param {any} version is the version number that gets passed into the class
-         * @param {any} titleVal is the original title name that gets passed into the class
-         * @param {any} procVal is the process name that gets passed into the class
-         * @param {any} testButton is a default paramater
-         * @param {any} unusedInfo is a default paramater
-         */
-        addButton_Click(version, titleVal, procVal, testButton, unusedInfo) {
-            if titleVal != gameTitle.Value
-                titleVal := gameTitle.Value
-            if procVal != gameProcess.Value
-                procVal := gameProcess.Value
-            ;check for game list file
-            if !FileExist(ptf["Game List"])
-                {
-                    MsgBox("``Game List.ahk`` not found in the proper directory")
-                    this.Hide()
-                    WinSetAlwaysOnTop(1, "Settings " version)
-                    WinActivate("Settings " version)
-                }
-            ;create temp folders
-            if !DirExist(A_Temp "\tomshi")
-                DirCreate(A_Temp "\tomshi")
-            readGameCheck := FileRead(ptf["Game List"])
+    /**
+     * create temp folders
+     */
+    __generateTempDir() {
+        if !DirExist(A_Temp "\tomshi")
+            DirCreate(A_Temp "\tomshi")
+    }
 
-            ;//! what to search for
-            listFormat := Format('GroupAdd(`"games`", `"{} {}`")`n; --', titleVal, procVal)
+    /**
+     * searching for the input value in the list to check for dupes
+     * @param {String} readGameCheck the game list
+     * @param {String} listFormat the input value
+     */
+    __checkForInput(readGameCheck, listFormat) {
+        if InStr(readGameCheck, listFormat, 1,, 1)
+            {
+                this.Hide()
+                setWinExist := WinExist("Settings " this.version) ? 1 : 0
+                if setWinExist
+                    WinActivate("Settings " this.version)
+                MsgBox("The desired window is already in the list!")
+                this.__settingsGUIontop()
+                return false
+            }
+        return true
+    }
 
-            ;// searching for the input value in the list to check for dupes
-            if InStr(readGameCheck, listFormat, 1,, 1)
-                {
-                    this.Hide()
-                    setWinExist := WinExist("Settings " version) ? 1 : 0
-                    if setWinExist
-                        WinActivate("Settings " version)
-                    MsgBox("The desired window is already in the list!")
-                    if setWinExist
-                        {
-                            WinSetAlwaysOnTop(1, "Settings " version)
-                            if !WinActive("Settings " version)
-                                WinActivate("Settings " version)
-                        }
-                    return
-                }
+    /**
+     * append the user input into the gamelist file
+     * @param {String} readGameCheck the game list
+     * @param {String} listFormat the input value
+     */
+    __appendInput(readGameCheck, listFormat) {
+        ;// finding the end of the string
+        findEnd := InStr(readGameCheck, "; --", 1,, 1)
+        ;// adding the user input to the end of the string
+        addUserInput := StrReplace(readGameCheck, "; --", listFormat, 1,, 1)
+        ;// replacing the list
+        FileAppend(addUserInput, A_Temp "\tomshi\Game List.ahk")
+        FileMove(A_Temp "\tomshi\Game List.ahk", ptf["Game List"], 1)
+        ;// reloading the script
+        if WinExist("gameCheck.ahk - AutoHotkey")
+            PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
 
-            ;// finding the end of the string
-            findEnd := InStr(readGameCheck, "; --", 1,, 1)
-            ;// adding the user input to the end of the string
-            addUserInput := StrReplace(readGameCheck, "; --", listFormat, 1,, 1)
-            ;// replacing the list
-            FileAppend(addUserInput, A_Temp "\tomshi\Game List.ahk")
-            FileMove(A_Temp "\tomshi\Game List.ahk", ptf["Game List"], 1)
-            ;// reloading the script
-            if WinExist("gameCheck.ahk - AutoHotkey")
-                PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
+        ;// checking if it worked
+        readAgain := FileRead(ptf["Game List"])
+        if !InStr(readAgain, listFormat, 1,, 1)
+            {
+                this.Hide()
+                setWinExist := WinExist("Settings " this.version) ? 1 : 0
+                if setWinExist
+                    WinActivate("Settings " this.version)
+                MsgBox("Game added unsuccesfully :(")
+                if setWinExist
+                    this.__settingsGUIontop()
+                return
+            }
+    }
 
-            ;// checking if it worked
-            readAgain := FileRead(ptf["Game List"])
-            if !InStr(readAgain, listFormat, 1,, 1)
-                {
-                    this.Hide()
-                    setWinExist := WinExist("Settings " version) ? 1 : 0
-                    if setWinExist
-                        WinActivate("Settings " version)
-                    MsgBox("Game added unsuccesfully :(")
-                    if setWinExist
-                        {
-                            WinSetAlwaysOnTop(1, "Settings " version)
-                            if !WinActive("Settings " version)
-                                WinActivate("Settings " version)
-                        }
-                    return
-                }
-            this.Hide()
-            setWinExist := WinExist("Settings " version) ? 1 : 0
-            if setWinExist && !WinActive("Settings " version)
-                WinActivate("Settings " version)
-            MsgBox("Game added succesfully!")
-            if setWinExist
-                {
-                    WinSetAlwaysOnTop(1, "Settings " version)
-                    if !WinActive("Settings " version)
-                        WinActivate("Settings " version)
-                }
-        }
+    /**
+     * if the settingsGUI() window exists, it will set it back to be always on top & will activate it
+     */
+    __settingsGUIontop() {
+        if WinExist("Settings " this.version)
+            {
+                WinSetAlwaysOnTop(1, "Settings " this.version)
+                WinActivate("Settings " this.version)
+            }
+    }
 
-        /**
-         * Handles the logic behind the cancel button
-         * @param {any} testButton is a default paramater
-         * @param {any} unusedInfo is a default paramater
-         */
-        cancelButton_Click(testButton, unusedInfo) {
-            if WinExist("Settings " version)
-                {
-                    WinSetAlwaysOnTop(1, "Settings " version)
-                    WinActivate("Settings " version)
-                }
-            wintitle := ""
-            process := ""
-            this.Hide()
-        }
+    /**
+     * This function handles the logic behind the add button
+     * @param {any} version is the version number that gets passed into the class
+     * @param {any} titleVal is the original title name that gets passed into the class
+     * @param {any} procVal is the process name that gets passed into the class
+     */
+    __addButton_Click(titleVal, procVal, *) {
+        titleVal := this.gameTitle.Value
+        procVal := this.gameProcess.Value
+
+        this.__checkGameList()
+        this.__generateTempDir()
+        readGameCheck := FileRead(ptf["Game List"])
+        ;//! what to search for
+        listFormat := Format('GroupAdd(`"games`", `"{} {}`")`n; --', titleVal, procVal)
+        ;// check list for input value
+        if !this.__checkForInput(readGameCheck, listFormat)
+            return
+        ;// append input
+        this.__appendInput(readGameCheck, listFormat)
+
+        this.Hide()
+        setWinExist := WinExist("Settings " this.version) ? 1 : 0
+        if setWinExist && !WinActive("Settings " this.version)
+            WinActivate("Settings " this.version)
+        MsgBox("Game added succesfully!")
+        this.__settingsGUIontop()
+    }
+
+    /**
+     * Handles the logic behind the cancel button
+     */
+    __cancelButton_Click(*) {
+        this.__settingsGUIontop()
+        this.wintitle := ""
+        this.process := ""
+        this.Hide()
     }
 }

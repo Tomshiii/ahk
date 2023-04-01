@@ -87,7 +87,7 @@ class VSCode {
         ;// I have a dummy test .ahk file I use constantly, this is simply navigating to it
         if A_ThisHotkey = KSA.testHotkey
             {
-                delaySI(50, "{Down 5}{Enter}", "{Down 16}{Enter}")
+                delaySI(50, "{Down 5}{Enter}", "{Down 17}{Enter}")
                 sleep 50
                 block.Off()
                 tool.Wait()
