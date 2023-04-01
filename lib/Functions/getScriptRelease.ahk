@@ -29,7 +29,7 @@ getScriptRelease(beta := false, &changeVer := "", user := "Tomshiii", repo := "a
         ver := Trim(SubStr(html, foundpos, endpos - foundpos))
         if InStr(ver, "<",, 1, 1)
             ver := SubStr(ver, 1, InStr(ver, "<",, 1, 1)-1)
-        if !InStr(ver, "pre") && !InStr(ver, "beta")
+        if !InStr(ver, "pre") && !InStr(ver, "beta") && !InStr(ver, "alpha")
             {
                 changeVer := "main"
                 break
