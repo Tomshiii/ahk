@@ -19,5 +19,6 @@
 
 ## > Other Changes
 - Fix `waitUntil.ahk` throwing
+- Fix `New Premiere.ahk` not including `switchTo {`
 - Added `prem(previous/next)Keyframe` hotkeys to `My Scripts.ahk`/`KSA.ini`
 - Cleaned up `Move project.ahk`

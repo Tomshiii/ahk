@@ -5,6 +5,7 @@ SetDefaultMouseSpeed(0)
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\ptf>
+#Include <Classes\switchTo>
 #Include <Classes\pause>
 #Include <Classes\coord>
 #Include <Classes\block>
