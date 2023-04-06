@@ -25,15 +25,17 @@ class adobeKSA extends tomshiBasic {
         this.__generate()
         if UserSettings.dark_mode = true
             Dark.allButtons(this)
+        this.Opt("-resize")
     }
 
     Xmargin := "x" 8
     Xclude := 500
 
-    defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\"
-    defaultAEFolder := A_AppData "\Adobe\After Effects\"
+    defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\"
+    defaultAEFolder := A_AppData "\Adobe\After Effects\" LTrim(ptf.aeIMGver, "v") "\aeks\"
 
-    KSA => ptf.rootDir "\lib\KSA\Keyboard Shortcuts.ini"
+    KSADir => ptf.rootDir "\lib\KSA"
+    KSA => this.KSADir "\Keyboard Shortcuts.ini"
 
     PremiereExclude := 0
     AEExclude := 1
@@ -111,6 +113,13 @@ class adobeKSA extends tomshiBasic {
         throw IndexError("Function could not determine the location of the ``" name "`` folder within the selected directory. Please provide the proper path and try again.", name, -1)
     }
 
+    __backupKSA() {
+        if !DirExist(this.KSADir "\backup")
+            DirCreate(this.KSADir "\backup")
+        datetime := Format("{}_{}_{}", A_Hour, A_Min, A_Sec)
+        FileCopy(this.KSA, this.KSADir "\backup\ksa_backup_" datetime ".ini")
+    }
+
     __findFile(loopDir, filetype, which) {
         amount := 0
         loop files loopDir "\*." filetype, "F" {
@@ -161,11 +170,10 @@ class adobeKSA extends tomshiBasic {
                                                 , 1) +2
                                 , InStr(KSARead, "}",, start, 1) - start
                             )
-            hotkeyVal := xml(premShortcut).__buildHotkey(context, commandName)
+            hotkeyVal := adobeXML(premShortcut).__buildHotkey(context, commandName)
             if hotkeyVal = false
                 continue
-            msgbox commandName "`n" hotkeyVal
-            ;//! write to .ini file from here:
+            IniWrite(Format('"{}"', hotkeyVal), this.KSA, "Premiere", v)
         }
     }
 
@@ -174,6 +182,13 @@ class adobeKSA extends tomshiBasic {
     }
 
     __submit(*) {
+        this.__backupKSA()
+        MsgBox("
+        (
+            Please be aware this process is not perfect. The way adobe store's their hotkey values is a mess and incredibly confusing to parse. Some values retrieved may either be incorrect or simply skipped all together.
+            A backup of your current KSA.ini file will be generated.
+            While this script is designed to speed up the process of starting with my scripts, I highly recommend NOT solely relying on this script and still double checking the values.
+        )", "Warning", 0x30)
         PremiereShortcut := (this.PremiereExclude = 0) ? this.__findPremiereShortcut() : false
         AEShortcut       := (this.AEExclude = 0)       ? this.__findAEShortcut()       : false
 
@@ -190,17 +205,32 @@ class adobeKSA extends tomshiBasic {
 
 
 /**
+ * @param file a filepath to the xml file you wish to parse
+ * @returns {Object} returns an xml comobj to allow the user
  * Examples:
- * ```
- * xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]/virtualkey').text
- * xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]').nodename
+```
+xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]/virtualkey').text
+xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]').nodename
 ```
  */
-class xml {
+class adobeXML {
     __New(file) {
         this.xml := this.__loadXML(file)
     }
     xml := ""
+
+    /**
+     * haven't quite figured out why some keys provide different values than most. until the day that the math adds up, here's a list of keys that provide a different result alongside their actual values (on my pc atleast, who knows with adobe)
+     */
+    knownKeys := Map(
+        "2147483713",     "d",
+
+        "14",             "{F8}",
+        "42",             "{Left}",
+        "43",             "{Right}",
+        "44",             "{Up}",
+        "45",             "{Down}",
+    )
 
     /**
      * takes an xml formatted string and returns a comobject
@@ -217,13 +247,15 @@ class xml {
     /**
      * takes premiere's virtual key value and returns they key
      * @param {Integer} virtualKey the virtual key value retrieved from the xml file
-     * @return {Boolean/String} returns `false` on failure or a string containing the name of the key
+     * @returns {Boolean/String} returns `false` on failure or a string containing the name of the key
      */
     __convVirtToKey(virtualKey) {
+        if this.knownKeys.Has(virtualKey)
+            return this.knownKeys.Get(virtualKey)
         if StrLen(virtualKey) < 8
             return false
-        val := Format("{:X}", virtualKey)
-        return GetKeyName("vk" SubStr(val, -2))
+        val := SubStr((Format("{:x}", virtualKey)), -2)
+        return StrLower(Chr(Integer("0x" . val)))
     }
 
     /**
@@ -242,6 +274,7 @@ class xml {
      * Builds the hotkey for the desired xml path
      * @param {String} start the xml path of the desired hotkey. eg. `'/PremiereData/shortcuts/context.global'`
      * @param {String} codename the xml `codename` for the desired hotkey. eg. `"cmd.clip.scaletoframesize"`
+     * @returns {String} returns complete hotkey
      */
     __buildHotkey(start, codename) {
         if InStr(this.xml.text, codename,,, 2)

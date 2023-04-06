@@ -1,4 +1,5 @@
 # <> Release 2.11 - adobeKSA.ahk
+- Added `adobeKSA.ahk` to parse through a user's `Premiere` keyboard shortcut file & automatically assign values to `KSA.ini` values
 - Fix install process potentially not generating a `settings.ini` file if one does not already exist
 - Further fix settings changes not sticking when adjusted in `settingsGUI()`
 - Refactored `gameCheckGUI()` to better make use of the fact that it's a class
