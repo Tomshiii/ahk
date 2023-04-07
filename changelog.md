@@ -20,7 +20,9 @@
 - Refactored `generate()` to no longer require manual definition of all possible settings options
 
 `tool.cust()`
-- `find` parameter has been removed
+- Removed `find` parameter
+- Passing `0` to `timout` will now stop the desired tooltip
+    - Calling the same `WhichToolTip` will stop the previous instance, replacing it
 - Cleaned up function
 
 ## > Other Changes

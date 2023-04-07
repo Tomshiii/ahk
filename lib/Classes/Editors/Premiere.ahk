@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
- * @date 2023/03/31
- * @version 1.5.6.1
+ * @date 2023/04/07
+ * @version 1.5.6.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -274,7 +274,7 @@ class Prem {
         ;// get coordinates for a tooltip that appears to alert the user that toggles have reset
         if this.zToolX = 0 || this.zToolY = 0
             {
-                tool.Cust("Retrieving tooltip location",,-40, 20, 4)
+                tool.Cust("Retrieving tooltip location",, -40, 20, 4)
                 SendInput(KSA.programMonitor)
                 SendInput(KSA.programMonitor)
                 try {
@@ -282,7 +282,7 @@ class Prem {
                         return
                 }
                 this.zToolX := (classNN.x+15)
-                this.zToolY := (classNN.y+classNN.height) - (classNN.height/5)
+                this.zToolY := (classNN.y+classNN.height+13)
                 ToolTip("",,, 4)
                 tool.Cust("Some tooltips for this function will appear here",, this.zToolX, this.zToolY, 4)
             }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2023/03/25
- * @version 1.1.5
+ * @date 2023/04/07
+ * @version 1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,6 +62,18 @@ class tool {
     }
 
     /**
+     * a function used within `cust()` to check whether the current `WhichToolTip` is already active
+     * @returns {Boolean} if it's already active, returns true. else false
+     */
+    __checkIndex(classs, ttp) {
+        try {
+            if classs.%ttp% = true
+                return true
+        }
+        return false
+    }
+
+    /**
      * Create a tooltip with any message. This tooltip will then follow the cursor and only redraw itself if the user has moved the cursor.
      *
      * If you wish for the tooltip to plant next to the mouse and not follow the cursor, similar to a normal tooltip, that can be achieved with something along the lines of;
@@ -71,8 +83,10 @@ class tool {
      * - If you pass EITHER the `x` OR `y` value (but not both) this function will take that value and continuously `offset` it from the current cursor position.
      *
      * - If you wish to plant the cursor in an exact position BOTH `x & y` values must be passed
+     *
+     * If a second tooltip of the same `WhichToolTip` param is called, the first will be replaced with it
      * @param {String} message is what you want the tooltip to say
-     * @param {Integer/Float} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a floating point number, ie; `1.0`, `2.5`, etc
+     * @param {Integer/Float} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a floating point number, ie; `1.0`, `2.5`, etc. If 0 is passed, the tooltip that was called with the same `WhichToolTip` parameter will be stopped.
      * @param {Integer} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
      * @param {Integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip to operate upon. If unspecified or set larger than 20, that number is 1 (the first).
      */
@@ -81,11 +95,21 @@ class tool {
         this().__inputs({message: message, timeout: timeout, x: x?, y: y?, ttip: WhichToolTip?})
         ;// saving the previous ListLines value
         priorLines := this().__storeLines()
-        ListLines(0) ;disables line logging - this prevents the line log from getting flooded
+        ListLines(0) ;// disables line logging - this prevents the line log from getting flooded
         ;// store initial coord mode
         priorCoords := coord.store()
         ;// set coord mode
         this().__setCoords()
+
+        ;// ensuring `WhichToolTip` never goes above 20 or below 1
+        WhichToolTip := !IsSet(WhichToolTip) || (IsSet(WhichToolTip) && (WhichToolTip > 20 || WhichToolTip < 1)) ? 1 : WhichToolTip
+        ;// if the user opts to kill the tooltip, or if a new tooltip is called to be replaced
+        if timeout = 0 || this().__checkIndex(this, WhichToolTip) {
+            ToolTip("",,, WhichToolTip)
+            this.%WhichToolTip% := false
+            sleep 100 ;// timer needs ample time to recognise the change
+        }
+        this.%WhichToolTip% := true
         ;// setting values to determine where to place the tooltip
         both := (IsSet(x) && IsSet(y)) ? true : false
         none := (!IsSet(x) && !IsSet(y)) ? true : false
@@ -95,27 +119,19 @@ class tool {
         y := !IsSet(y) ? 1 : y
 
         ;// checking if user passed an integer or float
-        timeout := (!IsInteger(timeout) && IsFloat(timeout)) ? timeout * 1000 : timeout ;this allows the user to use something like 2.5 to mean 2.5 seconds instead of needing 2500
-        ;// ensuring `WhichToolTip` never goes above 20 or below 1
-        if IsSet(WhichToolTip) && (WhichToolTip > 20 || WhichToolTip < 1)
-            WhichToolTip := 1
+        timeout := (!IsInteger(timeout) && IsFloat(timeout)) ? timeout * 1000 : timeout
 
-        ;// starting the tooltip logic
-        MouseGetPos(&xpos, &ypos) ;log our starting mouse coords
+        ;// if necessary, log original mouse coords
+        origMouse := (both = false || none = true) ? obj.MousePos() : {x: 0, y:0}
         time := A_TickCount ;log our starting time
 
         ;//! creating the tooltip
-        ;// what happens when neither x or y has been assigned a value
-        if both = false || none = true
-            {
-                ToolTip(message, xpos + x, ypos + y, WhichToolTip?) ;produce the initial tooltip
-                SetTimer(moveWithMouse.Bind(x, y), 15)
-            }
-        else ;// what happens otherwise
-            {
-                ToolTip(message, x, y, WhichToolTip?) ;produce the initial tooltip
-                SetTimer(() => ToolTip("",,, WhichToolTip?), -timeout) ;otherwise we create a timer to remove the cursor after the timout period
-            }
+        ToolTip(message, origMouse.x + x, origMouse.y + y, WhichToolTip) ;// produce the initial tooltip
+        this.%WhichToolTip% := true ;// set tooltip var to true
+        if both = false || none = true ;// if the user wants the tooltip to track the mouse
+            SetTimer(moveWithMouse.Bind(x, y, WhichToolTip), 15)
+        else ;// otherwise we create a timer to remove the cursor after the timout period
+            SetTimer(() => (ToolTip("",,, WhichToolTip), this.%WhichToolTip% := false), -timeout)
 
         ;//! finally return coordmode & listlines to their previous settings before returning
         this().__returnCoords(priorCoords.Tooltip, priorCoords.Mouse, priorLines)
@@ -123,23 +139,29 @@ class tool {
 
         /**
          * This function is called by `SetTimer` and is what allows the tooltip to follow the cursor
+         * @param {Integer} x the x value that the user passed into the function (else the default)
+         * @param {Integer} y the y value that the user passed into the function (else the default)
+         * @param {Integer} ttp the `WhickToolTip` value the user passed into the function
          */
-        moveWithMouse(x, y)
+        moveWithMouse(x, y, ttp)
         {
-            ListLines(0) ;as this is a nested function, we have to disable line logging again - this prevents the line log from getting flooded
+            ListLines(0) ;// as this is a nested function, we have to disable line logging again - this prevents the line log from getting flooded
             this().__setCoords()
-            if (A_TickCount - time) >= timeout ;here we compare the current time, minus the original time and see if it's been longer than the timeout time
+            ;// compare the current time, minus the original time and see if it's been longer than the timeout time
+            ;// or if the var has been set to false (ie. the user has called for the timer to be killed)
+            if (A_TickCount - time) >= timeout || this.%ttp% = false
                 {
-                    SetTimer(, 0) ;if it has we kill the timer
-                    ToolTip("",,, WhichToolTip?) ;and kill the tooltip
+                    this.%ttp% := false
+                    ToolTip("",,, ttp)
                     this().__returnCoords(priorCoords.Tooltip, priorCoords.Mouse, priorLines)
-                    return ;then kill the function
+                    SetTimer(, 0)
+                    return
                 }
-            MouseGetPos(&newX, &newY) ;here we're grabbing new mouse coords
-            if newX != xpos || newY != ypos ;so we can compare them to the old coords
+            MouseGetPos(&newX, &newY) ;// here we're grabbing new mouse coords
+            if newX != origMouse.x || newY != origMouse.y ;// so we can compare them to the old coords
                 {
-                    MouseGetPos(&xpos, &ypos) ;if they're different we'll replace the original coords
-                    ToolTip(message, newX + x, newY + y, WhichToolTip?) ;and produce a new tooltip
+                    origMouse := obj.MousePos() ;// if they're different we'll replace the original coords and produce a new tooltip
+                    ToolTip(message, newX + x, newY + y, ttp)
                 }
         }
     }
@@ -165,7 +187,7 @@ class tool {
      * This function is simply a wrapper function to quickly and easily generate & deal with a traytip
      * @param {Object} TrayParams an object containing the paramaters you wish to pass to `TrayTip`. This includes `{text: "", title: "", options: ""}`
      * @param {Integer} timeout the time in `ms` you wish to wait before the traytip times out. Pass `0` to disable this function attempting a timeout.
-     * > ##### *note: this timeout may not work as intended due to windows/if your script is persistent*
+     * ##### *note: this timeout may not work as intended due to windows/if your script is persistent*
 ```markdown
 # TrayParams 'Options'
  |       Function        | Dec | Hex  | String |
