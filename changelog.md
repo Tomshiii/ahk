@@ -18,6 +18,7 @@
 - Fix `updateChecker()` treating `alpha` updates as full releases
 - Fix `firstCheck()` not updating settings properly and continuously opening
     - Also fixed bug causing window to remain `disabled` after opening & closing `settingsGUI()`
+- Removed `locationReplace()`
 - Refactored `generate()` to no longer require manual definition of all possible settings options
 
 `tool.cust()`
@@ -29,6 +30,11 @@
 ## > My Scripts
 - Added `prem(previous/next)Keyframe` hotkeys to `My Scripts.ahk`/`KSA.ini`
 - `alwaysontopHotkey::` now attempts to draw a border around the always on top window *(win11 only)*
+
+`Removed:`
+- `premprojectHotkey::`
+- `pinfirefoxHotkey::`
+- `showmoreHotkey::`
 
 ## > Other Changes
 - Fix `waitUntil.ahk` throwing
