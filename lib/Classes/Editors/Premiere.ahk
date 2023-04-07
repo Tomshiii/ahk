@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
  * @date 2023/04/07
- * @version 1.5.6.2
+ * @version 1.5.6.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include <Classes\winget>
 #Include <Classes\obj>
 #Include <Classes\keys>
+#Include <Classes\switchTo>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
