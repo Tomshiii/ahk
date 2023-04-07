@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/04/07
- * @version 1.6.4
+ * @version 1.6.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -242,14 +242,6 @@ class Startup {
                            : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Pre-Releases")
                 betaCheck.OnEvent("Click", prompt.bind("prerelease"))
 
-                if this.UserSettings.dark_mode = true
-                    goDark()
-                goDark()
-                {
-                    dark.titleBar(MyGui.Hwnd)
-                    dark.allButtons(MyGui)
-                }
-
                 MyGui.Show()
                 prompt(which, guiCtrl, *) {
                     switch which {
@@ -472,14 +464,6 @@ class Startup {
             WinActivate("Settings " this.MyRelease)
             WinWaitClose("Settings " this.MyRelease)
             WinSetAlwaysOnTop(1, "Scripts Release " this.MyRelease)
-        }
-
-        if this.UserSettings.dark_mode = true
-            goDark()
-        goDark()
-        {
-            dark.titleBar(firstCheckGUI.Hwnd)
-            dark.allButtons(firstCheckGUI)
         }
 
         firstCheckGUI.Show("AutoSize")

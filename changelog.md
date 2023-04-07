@@ -13,6 +13,7 @@
 - Add `tool.tray()`
     - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
 - `prem.zoom()` cancel hotkey changed to <kbd>Esc</kbd> instead of <kbd>F5</kbd>
+- `tomshiBasic {` now extends the default `gui.show()` method to automatically make all defined buttons `dark mode` if the settings is enabled
 
 `startup {`
 - Fix `updateChecker()` treating `alpha` updates as full releases

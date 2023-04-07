@@ -50,9 +50,6 @@ musicGUI()
 
     ;#finished with definitions
 
-    if mygui.UserSettings.dark_mode = true
-        dark.allButtons(MyGui)
-
     MyGui.Show()
     ;below is what happens when you click on each button
     musicRun(button, *)

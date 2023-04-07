@@ -122,9 +122,6 @@ activeScripts()
     closeButton := MyGui.Add("Button", "X" buttonX " Y" buttonHeight, "Close")
     closeButton.OnEvent("Click", escape)
 
-    if MyGui.UserSettings.dark_mode = true
-        dark.button(closeButton.Hwnd)
-
     ;the below code allows for the tooltips on hover
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
     OnMessage(0x0200, ObjBindMethod(WM(), "On_WM_MOUSEMOVE"))

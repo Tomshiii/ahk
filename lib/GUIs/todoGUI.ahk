@@ -34,7 +34,5 @@ todoGUI()
     todoGUI.OnEvent("Close", close)
     close(*) => todoGUI.Destroy()
 
-    if todoGUI.UserSettings.dark_mode = true
-        dark.button(closeButton.Hwnd)
     todoGUI.Show()
 }

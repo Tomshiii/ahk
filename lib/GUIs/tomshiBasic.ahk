@@ -22,4 +22,15 @@ class tomshiBasic extends Gui {
         if this.UserSettings.dark_mode = true
             dark.titleBar(this.Hwnd) ;// automatically make the titlebar darkmode if the setting is enabled
     }
+
+    UserSettings := ""
+
+    /**
+     * Extends the default `show()` method to automatically make all buttons dark mode if the setting is enabled
+     */
+    show(params) {
+        if this.UserSettings.dark_mode = true
+            dark.allButtons(this)
+        super.Show(params)
+    }
 }

@@ -117,9 +117,6 @@ hotkeysGUI() {
     ;onEvent Functions
 	close(*) => hotGUI.Destroy()
 
-    if hotGUI.UserSettings.dark_mode = true
-        dark.allButtons(hotGUI)
-
     ;Show the GUI
 	hotGUI.Show("AutoSize")
 }
