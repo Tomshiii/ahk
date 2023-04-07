@@ -1,6 +1,7 @@
 # <> Release 2.11 - adobeKSA.ahk
 - Added `adobeKSA.ahk` to parse through a user's `Premiere` keyboard shortcut file & automatically assign values to `KSA.ini` values
 - Fix install process potentially not generating a `settings.ini` file if one does not already exist
+- Fix install process potentially throwing during the extraction stage if the user doesn't already have symlinks properly generated
 - Further fix settings changes not sticking when adjusted in `settingsGUI()`
 - Refactored `gameCheckGUI()` to better make use of the fact that it's a class
 
@@ -25,9 +26,12 @@
     - Calling the same `WhichToolTip` will stop the previous instance, replacing it
 - Cleaned up function
 
+## > My Scripts
+- Added `prem(previous/next)Keyframe` hotkeys to `My Scripts.ahk`/`KSA.ini`
+- `alwaysontopHotkey::` now attempts to draw a border around the always on top window *(win11 only)*
+
 ## > Other Changes
 - Fix `waitUntil.ahk` throwing
 - Fix `New Premiere.ahk` not including `switchTo {`
-- Added `prem(previous/next)Keyframe` hotkeys to `My Scripts.ahk`/`KSA.ini`
 - Adjusted `ffmpeg` command for `convert (mkv/mov)2mp4.ahk` for slightly better performance
 - Cleaned up `Move project.ahk`

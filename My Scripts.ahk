@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.31.6
+;\\v2.31.7
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -953,13 +953,21 @@ x::x */
 ;alwaysontopHotkey;
 ^SPACE::
 {
+    DrawBorder(hwnd, color, enable) {
+		if VerCompare(A_OSVersion, "10.0.22000") >= 0
+			DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "int", 34, "int*", enable ? color : 0xFFFFFFFF, "int", 4)
+	}
 	tooltipVal := isOnTop()
 	isOnTop() {
 		try {
+			hwnd := WinExist("A")
 			title := WinGetTitle("A")
 			ExStyle := wingetExStyle(title)
-			if(ExStyle & 0x8) ; 0x8 is WS_EX_TOPMOST.
+			if(ExStyle & 0x8) {
+				DrawBorder(hwnd, 0x1195F5, false)
 				return "Active window no longer on top`n" '"' title '"'
+			}
+			DrawBorder(hwnd, 0x1195F5, true)
 			return "Active window now on top`n" '"' title '"'
 		} catch as e {
 			tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
