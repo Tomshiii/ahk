@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/04/01
- * @version 1.1.1
+ * @date 2023/04/07
+ * @version 1.2
  ***********************************************************************/
 
 class UserPref {
@@ -15,7 +15,7 @@ class UserPref {
                         SetWorkingDir("..\..\")
                         this.workingDir := A_WorkingDir
                     }
-                this.__createIni(this.defaults[1], this.defaults[2], this.defaults[3], this.defaults[4], this.defaults[5], this.defaults[6], this.defaults[7], this.defaults[8], this.defaults[9], this.defaults[10], this.defaults[11], this.defaults[12], this.defaults[13], this.defaults[14], this.defaults[15], this.defaults[16], this.defaults[17], this.defaults[18], this.defaults[19], this.defaults[20], this.defaults[21], this.defaults[22], this.workingDir, this.defaults[24], this.defaults[25], this.defaults[26], this.defaults[27])
+                this.__createIni()
                 Run(A_ScriptFullPath)
             }
         ;// initialise settings variables
@@ -175,15 +175,14 @@ class UserPref {
 
     /**
      * This function generates a baseline settings.ini file
-     * @param {params1-27} settingsIni these are the settings.ini entries in order
      */
-    __createIni(params*) {
-        if params.Length > this.defaults.Length
-            throw (ValueError("Incorrect number of Parameters passed to function.", -1)) ;// don't add errorlog to this function, keep it no dependencies
+    __createIni(filelocation := this.SettingsFile) {
+        /* if params.Length > this.defaults.Length
+            throw (ValueError("Incorrect number of Parameters passed to function.", -1)) ;// don't add errorlog to this function, keep it no dependencies */
         if !DirExist(this.SettingsDir)
             DirCreate(this.SettingsDir)
-        if FileExist(this.SettingsFile)
-            FileDelete(this.SettingsFile)
+        if FileExist(filelocation)
+            FileDelete(filelocation)
         FileAppend("
                 (
                     [Settings]
@@ -218,15 +217,15 @@ class UserPref {
                     block aware={}
                     monitor alert={}
                     version={}
-                )", this.SettingsFile)
+                )", filelocation)
                 ;// replace {}
-                workingFile := FileRead(this.SettingsFile)
+                workingFile := FileRead(filelocation)
                 loop this.defaults.Length {
-                    workingFile := StrReplace(workingFile, "{}", params[A_Index],,, 1)
+                    workingFile := StrReplace(workingFile, "{}", this.defaults[A_Index],,, 1)
                     if A_Index = this.defaults.Length
                         {
-                            FileDelete(this.SettingsFile)
-                            FileAppend(workingFile, this.SettingsFile)
+                            FileDelete(filelocation)
+                            FileAppend(workingFile, filelocation)
                         }
                 }
     }

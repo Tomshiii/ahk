@@ -7,12 +7,17 @@
 ## > Functions
 - Fix `prem.audioDrag()` from `inserting` clip - caused by pressing <kbd>Ctrl</kbd> before the clip has finished being placed
 - Fix `prem.getTimeline()` from retrieving the incorrect coordinates if a second window is in focus when called
-- Fix `startup.updateChecker()` treating `alpha` updates as full releases
     - Change `beta` verbage => `Pre-Releases`
     - Fix the `new release GUI` not updating settings values
 - Add `tool.tray()`
     - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
 - `prem.zoom()` cancel hotkey changed to <kbd>Esc</kbd> instead of <kbd>F5</kbd>
+
+`startup {`
+- Fix `updateChecker()` treating `alpha` updates as full releases
+- Fix `firstCheck()` not updating settings properly and continuously opening
+    - Also fixed bug causing window to remain `disabled` after opening & closing `settingsGUI()`
+- Refactored `generate()` to no longer require manual definition of all possible settings options
 
 `tool.cust()`
 - `find` parameter has been removed
