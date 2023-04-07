@@ -5,8 +5,8 @@
 ; { \\ #Includes
 #Include *i <Classes\settings>
 #Include *i <Classes\ptf>
-#Include *i <Classes\Dark>
-#Include *I <Classes\Mip>
+#Include *i <Classes\Mip>
+#Include *i <Classes\tool>
 #Include *i <GUIs\tomshiBasic>
 ; }
 
@@ -24,8 +24,6 @@ class adobeKSA extends tomshiBasic {
     __New() {
         super.__New(,,, "Adjust adobe hotkeys")
         this.__generate()
-        if UserSettings.dark_mode = true
-            Dark.allButtons(this)
         this.Opt("-resize")
     }
 
@@ -311,7 +309,8 @@ class adobeKSA extends tomshiBasic {
         if this.AEErr = false && AEShortcut != "" && this.AEExclude = 0 {
             this.__parseAE(AEShortcut)
         }
-
+        tool.tray({text: "Attempting to replace KSA values complete!`nPlease double check these values as some may have been skipped or incorrectly interprated.", title: "Success!"})
+        this.Destroy()
     }
 
 }
