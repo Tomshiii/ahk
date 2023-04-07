@@ -6,6 +6,7 @@
 #Include *i <Classes\settings>
 #Include *i <Classes\ptf>
 #Include *i <Classes\Dark>
+#Include *I <Classes\Mip>
 #Include *i <GUIs\tomshiBasic>
 ; }
 
@@ -31,17 +32,18 @@ class adobeKSA extends tomshiBasic {
     Xmargin := "x" 8
     Xclude := 500
 
-    defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\"
-    defaultAEFolder := A_AppData "\Adobe\After Effects\" LTrim(ptf.aeIMGver, "v") "\aeks\"
+    defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Win"
+    defaultAEFolder := A_AppData "\Adobe\After Effects\" LTrim(ptf.aeIMGver, "v") "\aeks"
 
     KSADir => ptf.rootDir "\lib\KSA"
     KSA => this.KSADir "\Keyboard Shortcuts.ini"
+    KSARead := ""
 
     PremiereExclude := 0
-    AEExclude := 1
+    AEExclude := 0
 
     PremiereDisable := 0
-    AEDisable := 1
+    AEDisable := 0
 
     PremErr := 0
     AEErr := 0
@@ -57,6 +59,39 @@ class adobeKSA extends tomshiBasic {
         this.__indivSection(this.defaultPremiereFolder, "Premiere")
         this.__indivSection(this.defaultAEFolder, "AE")
         this.AddButton("y+20", "Submit").OnEvent("Click", this.__submit.Bind(this))
+    }
+
+    __isFKey(key) {
+        if StrLen(key) <= 3 && SubStr(key, 1, 1) = "F"
+            return "{" key "}"
+        return key
+    }
+
+    knownKeys := Mip(
+        "BackSpace",    1,
+        "Enter",    1,
+        "Up",   1,
+        "Down", 1,
+        "Left", 1,
+        "Right",    1,
+        "Space",    1,
+        "Tab",  1,
+        "Esc",  1,
+        "Escape",   1,
+        "Insert",   1,
+        "Home", 1,
+        "End",  1,
+        "PgUp", 1,
+        "PgDown",   1
+    )
+
+    __wrapKey(key) {
+        if checkF := this.__isFKey(key)
+            return checkF
+        if this.knownKeys.Has(key)
+            return "{" key "}"
+
+        return key
     }
 
     /**
@@ -104,6 +139,9 @@ class adobeKSA extends tomshiBasic {
     }
 
     __findFolder(startDir, name) {
+        SplitPath(startDir, &dirname)
+        if startDir = name
+            return startDir
         loop files startDir "*.*", "D R" {
             if A_LoopFileName != name
                 continue
@@ -147,9 +185,18 @@ class adobeKSA extends tomshiBasic {
         return this.__findFile(foundPath, "txt", "AE")
     }
 
+    __command(v) => SubStr(this.KSARead
+                        , start := InStr(this.KSARead, ";[",, InStr(this.KSARead, v, 1,, 1), 1) +2
+                        , InStr(this.KSARead, "]",, start, 1) - start
+                    )
+
+    __context(v) => SubStr(this.KSARead
+                        , start := InStr(this.KSARead, ";{",, InStr(this.KSARead, v, 1,, 1), 1) +2
+                        , InStr(this.KSARead, "}",, start, 1) - start
+                    )
+
     __parsePrem(location) {
         premSection  := IniRead(this.KSA, "Premiere")
-        KSARead      := FileRead(this.KSA)
         premShortcut := FileRead(location)
 
         splitSection := StrSplit(premSection, ["=", "`n", "`r"])
@@ -158,18 +205,9 @@ class adobeKSA extends tomshiBasic {
                 continue
             if InStr(v, "label", 1, 1, 1)
                 continue
-            commandName := SubStr(KSARead
-                                , start := InStr(KSARead, ";[",
-                                                , InStr(KSARead, v, 1,, 1)
-                                                , 1) +2
-                                , InStr(KSARead, "]",, start, 1) - start
-                            )
-            context     := SubStr(KSARead
-                                , start := InStr(KSARead, ";{",
-                                                , InStr(KSARead, v, 1,, 1)
-                                                , 1) +2
-                                , InStr(KSARead, "}",, start, 1) - start
-                            )
+
+            commandName := this.__command(v)
+            context     := this.__context(v)
             hotkeyVal := adobeXML(premShortcut).__buildHotkey(context, commandName)
             if hotkeyVal = false
                 continue
@@ -177,12 +215,87 @@ class adobeKSA extends tomshiBasic {
         }
     }
 
-    __parseAE() {
+    AEKeyMap := Mip(
+        "Comma",        ",",
+        "LeftArrow",        "{Left}",
+        "RightArrow",       "{Right}",
+        "UpArrow",      "{Up}",
+        "DownArrow",        "{Down}",
+        "FwdDel",       "{BackSpace}",
+        "SingleQuote",      "'",
+        "Backslash",        "\",
+        "PadSlash",    "{NumpadDiv}",
+        "PadMinus",    "{NumpadSub}",
+        "PadPlus", "{NumpadAdd}",
+        "PadInsert", "{Insert}",
+        "PadDecimal",   "{NumpadDot}",
+        "PadMultiply", "{NumpadMulti}",
+    )
 
+    __clearHotkey(key) {
+        key := StrReplace(key, "Shift+", "")
+        key := StrReplace(key, "Ctrl+", "")
+        key := StrReplace(key, "Alt+", "")
+        return key
+    }
+
+    __aeBuildHotkey(hotkey) {
+        baseHotkey := SubStr(hotkey
+                        , startpos := InStr(hotkey, "(",, 1, 1) + 1
+                        , InStr(hotkey, ")",, 1, 1) - startpos
+                    )
+        ; MsgBox("1: " baseHotkey)
+        builtHotkey := InStr(baseHotkey, "Ctrl",, 1, 1) ? "^" : ""
+        builtHotkey := InStr(baseHotkey, "Alt",, 1, 1) ? builtHotkey "!" : builtHotkey
+        builtHotkey := InStr(baseHotkey, "Shift",, 1, 1) ? builtHotkey "+" : builtHotkey
+        ; MsgBox("2: " builtHotkey)
+
+        baseHotkey := this.__clearHotkey(baseHotkey)
+        ; MsgBox("3: " baseHotkey)
+        loop {
+            nextKey := (plus := InStr(baseHotkey, "+",, 1, 1)) ? SubStr(baseHotkey, 1, InStr(baseHotkey, "+",, 1, 1))
+                                                     : SubStr(baseHotkey, 1)
+            nextKey := (this.AEKeyMap.Has(nextKey)) ? this.AEKeyMap.Get(nextKey) : nextKey
+            nextKey := this.__wrapKey(nextKey)
+            if StrLen(nextKey) = 1
+                nextKey := StrLower(nextKey)
+            builtHotkey := builtHotkey nextKey
+            if !plus
+                break
+        }
+        return builtHotkey
+    }
+
+    __parseAE(location) {
+        aeSection    := IniRead(this.KSA, "After Effects")
+        aeShortcut   := FileRead(location)
+
+        aesplitSection := StrSplit(aeSection, ["=", "`n", "`r"])
+        for k, v in aesplitSection {
+            if Mod(k, 2) = 0
+                continue
+            sectionName := this.__command(v)
+            keyName     := this.__context(v)
+            if InStr(keyName, "/PremiereData/")
+                continue
+            aeHotkeyIniVal := IniRead(location, sectionName, keyName, "")
+            /* MsgBox(Format("
+            (
+                section: {}
+                key:     {}
+                initVal: {}
+            )", sectionName, keyName, aeHotkeyIniVal)) */
+            if aeHotkeyIniVal = ""
+                continue
+            buildHotkey := this.__aeBuildHotkey(aeHotkeyIniVal)
+            ; MsgBox(buildHotkey)
+            IniWrite(Format('"{}"', buildHotkey), this.KSA, "After Effects", v)
+        }
     }
 
     __submit(*) {
         this.__backupKSA()
+        this.KSARead := FileRead(this.KSA)
         MsgBox("
         (
             Please be aware this process is not perfect. The way adobe store's their hotkey values is a mess and incredibly confusing to parse. Some values retrieved may either be incorrect or simply skipped all together.
@@ -196,7 +309,7 @@ class adobeKSA extends tomshiBasic {
             this.__parsePrem(PremiereShortcut)
         }
         if this.AEErr = false && AEShortcut != "" && this.AEExclude = 0 {
-            this.__parseAE()
+            this.__parseAE(AEShortcut)
         }
 
     }
@@ -287,6 +400,7 @@ class adobeXML {
         getKey := (virtkey != false) ? virtkey : "false"
         if getKey == "false"
             return false
+        getKey := adobeKSA().__wrapKey(getKey)
         return (getModifiers getKey)
     }
 }

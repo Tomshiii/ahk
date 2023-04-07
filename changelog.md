@@ -1,5 +1,5 @@
 # <> Release 2.11 - adobeKSA.ahk
-- Added `adobeKSA.ahk` to parse through a user's `Premiere` keyboard shortcut file & automatically assign values to `KSA.ini` values
+- Added `adobeKSA.ahk` to parse through a user's `Premiere`/`After Effects` keyboard shortcut file & automatically assign values to `KSA.ini` values
 - Fix install process potentially not generating a `settings.ini` file if one does not already exist
 - Fix install process potentially throwing during the extraction stage if the user doesn't already have symlinks properly generated
 - Further fix settings changes not sticking when adjusted in `settingsGUI()`
@@ -8,8 +8,6 @@
 ## > Functions
 - Fix `prem.audioDrag()` from `inserting` clip - caused by pressing <kbd>Ctrl</kbd> before the clip has finished being placed
 - Fix `prem.getTimeline()` from retrieving the incorrect coordinates if a second window is in focus when called
-    - Change `beta` verbage => `Pre-Releases`
-    - Fix the `new release GUI` not updating settings values
 - Add `tool.tray()`
     - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
 - `prem.zoom()` cancel hotkey changed to <kbd>Esc</kbd> instead of <kbd>F5</kbd>
@@ -17,6 +15,8 @@
 
 `startup {`
 - Fix `updateChecker()` treating `alpha` updates as full releases
+    - Change `beta` verbage => `Pre-Releases`
+    - Fix the `new release GUI` not updating settings values
 - Fix `firstCheck()` not updating settings properly and continuously opening
     - Also fixed bug causing window to remain `disabled` after opening & closing `settingsGUI()`
 - Removed `locationReplace()`
