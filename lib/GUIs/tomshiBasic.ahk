@@ -8,7 +8,7 @@
  * This class is to provide a basic template for all GUIs I create to maintain a consistent theme
  *
  * @param FontSize allows you to pass in a custom default GUI font size. Defaults to 11, can be omitted
- * @param FontWeight allows you to pass in a custom default GUI font weight. Defaults to 11, can be omitted
+ * @param FontWeight allows you to pass in a custom default GUI font weight. Defaults to 500, can be omitted
  * @param options? allows you to pass in all GUI options that you would normally pass to a GUI. Can be omitted
  * @param title allows you to pass in a title for the GUI. Can be omitted
  */
@@ -28,9 +28,9 @@ class tomshiBasic extends Gui {
     /**
      * Extends the default `show()` method to automatically make all buttons dark mode if the setting is enabled
      */
-    show(params) {
+    show(params?) {
         if this.UserSettings.dark_mode = true
             dark.allButtons(this)
-        super.Show(params)
+        super.Show(params?)
     }
 }
