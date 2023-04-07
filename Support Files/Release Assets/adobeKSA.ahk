@@ -277,7 +277,7 @@ class adobeXML {
      * @returns {String} returns complete hotkey
      */
     __buildHotkey(start, codename) {
-        if InStr(this.xml.text, codename,,, 2)
+        if InStr(this.xml.text, codename,,, 2) || !InStr(this.xml.text, codename)
             return false
         firstPrompt := Format('{}/*[commandname="{}"]', start, codename)
         getItemNum := this.xml.selectSingleNode(firstPrompt).nodename

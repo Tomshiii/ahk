@@ -29,5 +29,5 @@
 - Fix `waitUntil.ahk` throwing
 - Fix `New Premiere.ahk` not including `switchTo {`
 - Added `prem(previous/next)Keyframe` hotkeys to `My Scripts.ahk`/`KSA.ini`
-- Adjusted `ffmpeg` command for `convert (mkv/mov)2mp3.ahk` for slightly better performance
+- Adjusted `ffmpeg` command for `convert (mkv/mov)2mp4.ahk` for slightly better performance
 - Cleaned up `Move project.ahk`

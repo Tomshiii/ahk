@@ -291,14 +291,30 @@ SendInput("{Enter}")
 
 
 currentDir := ""
-verNum := SubStr(vertrim := Trim(yes.Value, "vprebetaalpha"), 1, InStr(vertrim, ".",, 1, 2)-1)
+getverNum() {
+    num := LTrim(yes.value, "v")
+    dot := false
+    finalNum := ""
+    loop StrLen(num) {
+        loopField := SubStr(num, A_Index, 1)
+        if IsNumber(loopField) || (loopField = "." && dot = false) {
+            if loopField = "."
+                dot := true
+            finalNum := finalNum loopField
+        }
+        else
+            return finalNum
+    }
+}
+verNum := getverNum()
 
 ;// using logic to determine where to place this release
 if !DirExist(A_WorkingDir "\" verNum ".x")
     DirCreate(A_WorkingDir "\" verNum ".x")
-if InStr(yes.value, "pre") && !DirExist(A_WorkingDir "\" verNum ".x\pre")
+if (InStr(yes.value, "pre") || InStr(yes.value, "beta") || InStr(yes.value, "alpha")) && !DirExist(A_WorkingDir "\" verNum ".x\pre")
     DirCreate(A_WorkingDir "\" verNum ".x\pre")
-preCheck := InStr(yes.value, "pre",)
+if pre || beta || alpha
+    preCheck := true
 switch preCheck {
     case 0:
         FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\" yes.value ".exe", 1)
