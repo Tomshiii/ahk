@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.31.8
+;\\v2.32
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -41,6 +41,7 @@
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
 #Include <Functions\getHotkeys>
+#Include <Functions\alwaysOnTop>
 #Include <Classes\keys>
 #Include <Functions\delaySI>
 #Include <GUIs\settingsGUI\settingsGUI>
@@ -171,61 +172,7 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 }
 
 ;centreHotkey;
-#c:: ;this hotkey will center the active window in the middle of the active monitor
-{ ;this scripts math can act a bit funky with vertical monitors. Especially with with programs like discord that have a minimum width
-	mainMon := 1 ;set which monitor your main monitor is (usually 1, but can check in windows display settings)
-	title := ""
-	static win := "" ;a variable we'll hold the title of the window in
-	static toggle := 1 ;a variable to determine whether to centre on the current display or move to the main one
-	winget.Title(&title)
-	monitor := WinGet.WinMonitor(title) ;now we run the above function we created
-	if win = "" || win != title ;if our win variable doesn't have a title yet, or if it doesn't match the active window we run this code block to reset values
-		{
-			win := title
-			toggle := 1
-		}
-	start:
-	switch toggle {
-		case 1: ;first toggle
-			width := monitor.right - monitor.left ;determining the width of the current monitor
-			height := monitor.bottom - monitor.top ;determining the height of the current monitor
-			if winget.isFullscreen(&title2, title) ;checking if the window is fullscreen
-				WinRestore(title2,, "Editing Checklist -") ;winrestore will unmaximise it
-
-			newWidth := width / 1.6 ;determining our new width
-			newHeight := height / 1.6 ;determining our new height
-			newX := (monitor.left + (width - newWidth)/2) ;using math to centre our newly created window
-			newY := (monitor.bottom - (height + newHeight)/2) ;using math to centre our newly created window
-			;MsgBox("monitor = " monitor "`nwidth = " width "`nheight = " height "`nnewWidth = " newWidth "`nnewHeight = " newHeight "`nnewX = " newX "`nnewY = " newY "`nx = " x2 "`ny = " y2 "`nleft = " monitor.left "`nright = " right2 "`ntop = " top2 "`nbottom = " monitor.bottom) ;debugging
-			if monitor != mainMon ;if the current monitor isn't our main monitor we will increment the toggle variable
-				toggle += 1
-			else ;otherwise we reset the win variable
-				win := ""
-		case 2: ;second toggle
-			MonitorGet(mainMon, &left, &top, &right, &bottom) ;this will reset our variables with information for the main monitor
-			monitor.monitor := mainMon ;then we set the monitor value to the main monitor
-			monitor.left := left
-			monitor.top := top
-			monitor.right := right
-			monitor.bottom := bottom
-			toggle := 1 ;reset our toggle
-			win := "" ;reset our win variable
-			goto start ;and go back to the beginning
-	}
-	if InStr(title, "YouTube") && IsSet(newHeight) && monitor.monitor = mainMon ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
-		{
-			newHeight := newHeight * 1.3
-			newY := newY / 2.25
-		}
-	if InStr(title, "VLC media player") && IsSet(newHeight) && monitor.monitor = mainMon ;I want vlc to be a size for 16:9 video to get rid of any letterboxing
-		{
-			newHeight := 900
-			newWidth := 1416
-		}
-	try{
-		WinMove(newX, newY, newWidth, newHeight, title,, "Editing Checklist -") ;then we attempt to move the window
-	}
-}
+#c::move.winCenter()
 
 ;fullscreenHotkey;
 #f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
@@ -454,25 +401,13 @@ XButton2:: ;these two hotkeys are activated by right clicking on a tab then pres
 ;movetab2Hotkey;
 XButton1::move.Tab()
 
-^+d::
-{
-	if !WinActive("Google Sheets")
-		{
-			SendInput(A_ThisHotkey)
-			return
-		}
-	SendInput(A_DDD " - " FormatTime(A_Now, "d") "/" A_MM)
-}
-
 ;=============================================================================================================================================
 ;
 ;		Discord
 ;
 ;=============================================================================================================================================
 #HotIf WinActive(discord.winTitle) ;some scripts to speed up discord interactions
-;SCO3A is the scancode for the CapsLock button. Had issues with using "CapsLock" as it would require a refresh every now and then before these discord scripts would work. Currently testing using the scancodes to see if that fixes it.
-;alright scancodes didn't fix it, idk why but sometimes this function won't work until you refresh the main script. Might have to do with where I have it located in this script, maybe pulling it out into it's own script would fix it, or maybe discord is just dumb, who knows.
-;scratch that, figured out what it is, in my qmk keyboard script I also had setcapslock to off and for whatever reason if that script was reloaded, my main script would break
+
 ;disceditHotkey;
 SC03A & e::discord.button("DiscEdit.png") ;edit the message you're hovering over
 ;discreplyHotkey;
@@ -495,16 +430,8 @@ F1::discord.Unread() ;will click any unread servers
 ;discmsgHotkey;
 F2::discord.Unread(2) ;will click any unread channels
 ;discdmHotkey;
-F3:: ;this hotkey is to click the "discord" button in discord to access your dm's
-{
-	WinActivate(discord.winTitle)
-	block.On()
-	MouseGetPos(&origx, &origy)
-	MouseMove(34, 52, 2)
-	SendInput("{Click}")
-	MouseMove(origx, origy, 2)
-	block.Off()
-}
+F3::discord.DMs()
+
 
 ;=============================================================================================================================================
 ;
@@ -558,97 +485,10 @@ Tab::return
 ~^l::SendInput(KSA.selectAtPlayhead)
 
 ;prem^DeleteHotkey;
-Ctrl & BackSpace::
-{
-	;// Premiere is really dumb and doesn't let you ctrl + backspace
-	;// this hotkey is to return  that functionality
-	SendMode("Event")
-	SetKeyDelay(15)
-	sendLeft() {
-		Send("{Ctrl Down}{Shift Down}")
-		Send("{Left}")
-		Send("{Shift Up}{Ctrl Up}")
-	}
-	keys.allWait("second")
-	sendLeft()
-	store := clip.clear()
-	Send("^c")
-	if !ClipWait(0.1) || check := (StrLen(A_Clipboard) = 1) ? 1 : 0
-		{
-			additional := true
-			if IsSet(check) && check = 1
-				Send("{Right}")
-			else if A_Clipboard = A_Space
-				{
-					Send("{Right}")
-					Send("{BackSpace}")
-					additional := false
-				}
-			Send("{Space}")
-			Send("{Left}")
-			sendLeft()
-			Send("{BackSpace}")
-			if additional
-				Send("{Delete}")
-		}
-	Send("{BackSpace}")
-	clip.returnClip(store.storedClip)
-}
+Ctrl & BackSpace::prem.wordBackspace()
 
 ;premselecttoolHotkey;
-SC03A & v:: ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
-{
-	coord.s()
-	MouseGetPos(&xpos, &ypos)
-	SendInput(KSA.toolsWindow)
-	SendInput(KSA.toolsWindow)
-	sleep 50
-	try {
-        toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-		ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-    } catch as e {
-        tool.Cust("Couldn't find the ClassNN value")
-        errorLog(e)
-    }
-	if width = 0 || height = 0
-		{
-			loop {
-				;for whatever reason, if you're clicked on another panel, then try to hit this hotkey, `ControlGetPos` refuses to actually get any value, I have no idea why. This loop will attempt to get that information anyway, but if it fails will fallback to the hotkey you have set within premiere
-				;tool.Cust(A_Index "`n" width "`n" height, "100")
-				if A_Index > 3
-					{
-						SendInput(KSA.selectionPrem)
-						errorLog(UnsetError("Couldn't get dimensions of the class window", -1)
-									, "Used the selection hotkey instead", 1)
-						return
-					}
-				sleep 100
-				SendInput(KSA.toolsWindow)
-				toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-				ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-			} until (width != 0 || height != 0)
-		}
-	multiply := (height < 80) ? 3 : 1 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
-	loop {
-		if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height * multiply, "*2 " ptf.Premiere "selection.png") ;moves to the selection tool
-			{
-				MouseMove(x, y)
-				break
-			}
-		sleep 100
-		if A_Index > 3
-			{
-				SendInput(KSA.selectionPrem)
-				SendInput(KSA.programMonitor)
-				errorLog(Error("Couldn't find the selection tool", -1)
-							, "Used the selection hotkey instead", 1)
-				return
-			}
-	}
-	SendInput("{Click}")
-	MouseMove(xpos, ypos)
-	SendInput(KSA.programMonitor)
-}
+SC03A & v::prem.selectionTool()
 
 ;premprojectHotkey;
 RAlt & p::
@@ -666,19 +506,9 @@ RAlt & p::
 }
 
 ;12forwardHotkey;
-PgDn::
-{
-	SendInput(KSA.effectControls)
-	SendInput(KSA.effectControls)
-	SendInput("{Right 12}")
-}
+PgDn::prem.moveKeyframes("right", 12)
 ;12backHotkey;
-PgUp::
-{
-	SendInput(KSA.effectControls)
-	SendInput(KSA.effectControls)
-	SendInput("{Left 12}")
-}
+PgUp::prem.moveKeyframes("left", 12)
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
@@ -737,90 +567,13 @@ x & Right::move.adjust()
 x::x */
 
 ;alwaysontopHotkey;
-^SPACE::
-{
-    DrawBorder(hwnd, color, enable) {
-		if VerCompare(A_OSVersion, "10.0.22000") >= 0
-			DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "int", 34, "int*", enable ? color : 0xFFFFFFFF, "int", 4)
-	}
-	tooltipVal := isOnTop()
-	isOnTop() {
-		try {
-			hwnd := WinExist("A")
-			title := WinGetTitle("A")
-			ExStyle := wingetExStyle(title)
-			if(ExStyle & 0x8) {
-				DrawBorder(hwnd, 0x1195F5, false)
-				return "Active window no longer on top`n" '"' title '"'
-			}
-			DrawBorder(hwnd, 0x1195F5, true)
-			return "Active window now on top`n" '"' title '"'
-		} catch as e {
-			tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
-			errorLog(e)
-			Exit()
-		}
-
-	}
-	tool.Cust(tooltipVal, 2.0)
-	WinSetAlwaysOnTop(-1, "A") ;will toggle whether the current window will remain on top
-}
+^SPACE::alwaysOnTop()
 
 ;searchgoogleHotkey;
-^+c:: ;runs a google search of highlighted text
-{
-	store := clip.clear()
-	if !clip.copyWait(store.storedClip)
-		return
-	Run("https://www.google.com/search?d&q=" A_Clipboard)
-	clip.returnClip(store.storedClip)
-}
+^+c::clip.search() ;runs a google search of highlighted text
 
 ;capitaliseHotkey;
-SC03A & c:: ;will attempt to determine whether to capitilise or completely lowercase the highlighted text depending on which is more frequent
-{
-	store := clip.clear()
-	if !clip.copyWait(store.storedClip)
-		return
-	length := StrLen(A_Clipboard)
-	/* if length > 9999 ;personally I started encountering issues at about 16k characters but I'm dropping that just to be safe
-		{
-			check := MsgBox("Strings that are too large may take a long time to process and are generally unable to be stopped without using taskmanager to kill the process`n`nThey also may eventually start sending gibberish as things aren't able to keep up`n`nAre you sure you wish to continue?", "Double Check", "4 48 4096")
-			if check = "No"
-				return
-		} */
-	upperCount := 0
-	lowerCount := 0
-	nonAlphaCount := 0
-	loop length
-		{
-			test := SubStr(A_Clipboard, A_Index, 1)
-			if IsUpper(test) = true
-				upperCount += 1
-			else if IsLower(test) = true
-				lowerCount += 1
-			else if IsAlpha(test) = false
-				nonAlphaCount += 1
-		}
-	tool.Cust("Uppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
-	if upperCount >= ((length - nonAlphaCount)/2)
-		StringtoX := StrLower(A_Clipboard)
-	else if lowerCount >= ((length - nonAlphaCount)/2)
-		StringtoX := StrUpper(A_Clipboard)
-	else
-		{
-			clip.returnClip(store.storedClip)
-			msg := "Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount
-			errorLog(Error(msg, -1),, {time: 2.0})
-			return
-		}
-	SendInput("{BackSpace}")
-	A_Clipboard := ""
-	A_Clipboard := StringtoX
-	clip.Wait(store.storedClip)
-	SendInput("{ctrl down}v{ctrl up}")
-	clip.delayReturn(store.storedClip)
-}
+SC03A & c::clip.capitilise()
 
 ;timeHotkey;
 ^+t::

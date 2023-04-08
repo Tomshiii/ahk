@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
  * @date 2023/04/07
- * @version 1.5.6.3
+ * @version 1.5.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include <Classes\obj>
 #Include <Classes\keys>
 #Include <Classes\switchTo>
+#Include <Classes\clip>
 #Include <Functions\errorLog>
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
@@ -1397,6 +1398,120 @@ class Prem {
             tool.Cust("Couldn't find the ClassNN value")
             errorLog(e)
             return false
+        }
+    }
+
+    /**
+     * Premiere is really dumb and doesn't let you ctrl + backspace, this function is to return that functionality
+     */
+    static wordBackspace() {
+        SendMode("Event")
+        SetKeyDelay(15)
+        sendLeft() {
+            Send("{Ctrl Down}{Shift Down}")
+            Send("{Left}")
+            Send("{Shift Up}{Ctrl Up}")
+        }
+        keys.allWait("second")
+        sendLeft()
+        store := clip.clear()
+        Send("^c")
+        if !ClipWait(0.1) || check := (StrLen(A_Clipboard) = 1) ? 1 : 0
+            {
+                additional := true
+                if IsSet(check) && check = 1
+                    Send("{Right}")
+                else if A_Clipboard = A_Space
+                    {
+                        Send("{Right}")
+                        Send("{BackSpace}")
+                        additional := false
+                    }
+                Send("{Space}")
+                Send("{Left}")
+                sendLeft()
+                Send("{BackSpace}")
+                if additional
+                    Send("{Delete}")
+            }
+        Send("{BackSpace}")
+        clip.returnClip(store.storedClip)
+    }
+
+    /**
+     * Getting back to the selection tool while you're editing text or in other edge case scenarios can be quite painful.
+     * This function will instead attempt to warp to the selection tool on your toolbar and presses it instead. If that fails it will focus the toolbar and send the hotkey instead.
+     */
+    static selectionTool() {
+        coord.s()
+        MouseGetPos(&xpos, &ypos)
+        SendInput(KSA.toolsWindow)
+        SendInput(KSA.toolsWindow)
+        sleep 50
+        try {
+            toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+            ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+        } catch as e {
+            tool.Cust("Couldn't find the ClassNN value")
+            errorLog(e)
+        }
+        if width = 0 || height = 0
+            {
+                loop {
+                    ;for whatever reason, if you're clicked on another panel, then try to hit this hotkey, `ControlGetPos` refuses to actually get any value, I have no idea why. This loop will attempt to get that information anyway, but if it fails will fallback to the hotkey you have set within premiere
+                    ;tool.Cust(A_Index "`n" width "`n" height, "100")
+                    if A_Index > 3
+                        {
+                            SendInput(KSA.selectionPrem)
+                            errorLog(UnsetError("Couldn't get dimensions of the class window", -1)
+                                        , "Used the selection hotkey instead", 1)
+                            return
+                        }
+                    sleep 100
+                    SendInput(KSA.toolsWindow)
+                    toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+                    ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+                } until (width != 0 || height != 0)
+            }
+        multiply := (height < 80) ? 3 : 1 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
+        loop {
+            if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height * multiply, "*2 " ptf.Premiere "selection.png") ;moves to the selection tool
+                {
+                    MouseMove(x, y)
+                    break
+                }
+            sleep 100
+            if A_Index > 3
+                {
+                    SendInput(KSA.selectionPrem)
+                    SendInput(KSA.programMonitor)
+                    errorLog(Error("Couldn't find the selection tool", -1)
+                                , "Used the selection hotkey instead", 1)
+                    return
+                }
+        }
+        SendInput("{Click}")
+        MouseMove(xpos, ypos)
+        SendInput(KSA.programMonitor)
+    }
+
+    /**
+     * Quickly and easily move any number of frames in the desired direction.
+     * @param {String} direction the direction you wish to move
+     * @param {Integer} frames the amount of frames you wish to move in that direction
+     * @param {String} windowHotkey the hotkey you wish to send to premiere to focus your window of choice. Defaults to the `Effect Controls` window
+     */
+    static moveKeyframes(direction, frames, windowHotkey := KSA.effectControls) {
+        if direction != "left" && direction != "right" {
+            ;// throw
+            errorLog(ValueError("Value is not a valid direction", direction, -1),,, 1)
+        }
+        delaySI(50, windowHotkey, windowHotkey)
+        SendInput(Format("`{{} {}`}", direction, frames))
+        SendInput("{Right " frames "}")
+        switch direction {
+            case "left":
+            case "right":
         }
     }
 }

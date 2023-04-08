@@ -2,7 +2,7 @@
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
  * @date 2023/04/08
- * @version 1.4.2.1
+ * @version 1.4.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -231,6 +231,19 @@ class discord {
     }
 
     /**
+     * This function clicks the logo button in discord to access your friends/messages
+     */
+    static DMs() {
+        WinActivate(this.winTitle)
+        block.On()
+        MouseGetPos(&origx, &origy)
+        MouseMove(34, 52, 2)
+        SendInput("{Click}")
+        MouseMove(origx, origy, 2)
+        block.Off()
+    }
+
+    /**
      * This function allows the user to wrap the highlighted text with whatever characters they want (eg. ``, (), etc). I created this mostly because I got too use to VSCode offering this feature that I kept trying to do it in discord.
      * ```
      * ;// If the passed `char` variable is 2 characters long, the first character will be appended at the beginning of the highlighted text & the second character will be appended to the end of the highlighted text
@@ -269,7 +282,7 @@ class discord {
         A_Clipboard := char1 middle char2
         if !ClipWait(0.25)
             {
-                clip.delayReturn(store.storedClip)
+                clip.delayReturn(store.storedClip, 0.25)
                 return
             }
         SendInput("^v")

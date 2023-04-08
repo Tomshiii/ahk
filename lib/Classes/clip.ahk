@@ -1,8 +1,8 @@
 /************************************************************************
- * @description A class to encapsulate often used functions to manipulate the clipboard
+ * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
  * @date 2023/01/18
- * @version 1.0.3
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -75,5 +75,64 @@ class clip {
             }
         if returnClip.HasOwnProp("storedClip")
             A_Clipboard := returnClip.storedClip
+    }
+
+    /**
+     * This function runs a search of highlighted text.
+     * @param {String} url the url (search engine) you wish to use. Provide everything before the part of the url that is your search quiry
+     */
+    static search(url := "https://www.google.com/search?d&q=") {
+        store := this.clear()
+        if !this.copyWait(store.storedClip)
+            return
+        Run(url A_Clipboard)
+        this.returnClip(store.storedClip)
+    }
+
+    /**
+     * This function will attempt to determine whether to capitilise or completely lowercase the highlighted text depending on which is more frequent
+     */
+    static capitilise() {
+        store := this.clear()
+        if !this.copyWait(store.storedClip)
+            return
+        length := StrLen(A_Clipboard)
+        /* if length > 9999 ;personally I started encountering issues at about 16k characters but I'm dropping that just to be safe
+            {
+                check := MsgBox("Strings that are too large may take a long time to process and are generally unable to be stopped without using taskmanager to kill the process`n`nThey also may eventually start sending gibberish as things aren't able to keep up`n`nAre you sure you wish to continue?", "Double Check", "4 48 4096")
+                if check = "No"
+                    return
+            } */
+        upperCount := 0
+        lowerCount := 0
+        nonAlphaCount := 0
+        loop length
+            {
+                test := SubStr(A_Clipboard, A_Index, 1)
+                if IsUpper(test) = true
+                    upperCount += 1
+                else if IsLower(test) = true
+                    lowerCount += 1
+                else if IsAlpha(test) = false
+                    nonAlphaCount += 1
+            }
+        tool.Cust("Uppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount, 2000)
+        if upperCount >= ((length - nonAlphaCount)/2)
+            StringtoX := StrLower(A_Clipboard)
+        else if lowerCount >= ((length - nonAlphaCount)/2)
+            StringtoX := StrUpper(A_Clipboard)
+        else
+            {
+                this.returnClip(store.storedClip)
+                msg := "Couldn't determine whether to Uppercase or Lowercase the clipboard`nUppercase char = " upperCount "`nLowercase char = " lowerCount "`nAmount of char counted = " length - nonAlphaCount
+                errorLog(Error(msg, -1),, {time: 2.0})
+                return
+            }
+        SendInput("{BackSpace}")
+        A_Clipboard := ""
+        A_Clipboard := StringtoX
+        this.Wait(store.storedClip)
+        SendInput("{ctrl down}v{ctrl up}")
+        this.delayReturn(store.storedClip)
     }
 }

@@ -34,10 +34,21 @@
 - `alwaysontopHotkey::` now attempts to draw a border around the always on top window *(win11 only)*
 - Added option to call `Hard Reset` (`reload_reset_exit("reset")`) from the `Tray Menu`
 
+`Moved:`
+- `centreHotkey::` => `move.winCenter()`
+- `discdmHotkey::` => `discord.DMs()`
+- `prem^DeleteHotkey::` => `prem.wordBackspace()`
+- `premselecttoolHotkey::` => `prem.selectionTool()`
+- `12forward/BackHotkey(s)::` => `prem.moveKeyframes()`
+- `alwaysontopHotkey::` => `alwaysOnTop()`
+- `searchgoogleHotkey::` => `clip.search()`
+- `capitaliseHotkey::` => `clip.capitilise()`
+
 `Removed:`
 - `premprojectHotkey::`
 - `pinfirefoxHotkey::`
 - `showmoreHotkey::`
+- A few old, unused, unmarked hotkeys
 
 ## > Other Changes
 - Fix `waitUntil.ahk` throwing
