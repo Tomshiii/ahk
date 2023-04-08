@@ -67,6 +67,8 @@ class adobeKSA extends tomshiBasic {
 
     knownKeys := Mip(
         "BackSpace",    1,
+        "Del",      1,
+        "Delete",       1,
         "Enter",    1,
         "Up",   1,
         "Down", 1,
@@ -86,6 +88,18 @@ class adobeKSA extends tomshiBasic {
     __wrapKey(key) {
         if checkF := this.__isFKey(key)
             return checkF
+        if (
+            (pad := InStr(key, "Pad") || numpad := InStr(key, "Numpad")) &&
+            (IsNumber(SubStr(key, -1, 1)) || IsNumber(SubStr(key, -1, 2)))
+        ) {
+            if numpad
+                return "{" key "}"
+            if pad {
+                if this.AEKeyMap.Has(key) {
+                    return this.AEKeyMap.Get(key)
+                }
+            }
+        }
         if this.knownKeys.Has(key)
             return "{" key "}"
 
@@ -222,12 +236,19 @@ class adobeKSA extends tomshiBasic {
         "FwdDel",       "{BackSpace}",
         "SingleQuote",      "'",
         "Backslash",        "\",
+        "PadClear",     "{NumpadClear}"
         "PadSlash",    "{NumpadDiv}",
         "PadMinus",    "{NumpadSub}",
         "PadPlus", "{NumpadAdd}",
         "PadInsert", "{Insert}",
         "PadDecimal",   "{NumpadDot}",
         "PadMultiply", "{NumpadMulti}",
+        "PadHome",      "{NumpadHome}",
+        "PadEnd",       "{NumpadEnd}",
+        "PadPageUp",        "{NumpadPgUp}",
+        "PadPageDown",      "{NumpadPgDn}",
+        "PadDelete",        "{NumpadDel}",
+
     )
 
     __clearHotkey(key) {
