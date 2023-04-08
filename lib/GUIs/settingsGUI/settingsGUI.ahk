@@ -234,7 +234,7 @@ settingsGUI()
 
     ;// autosave check checklist
     ascheckCheck := UserSettings.autosave_check_checklist
-    ascheckCheckTitle := "``autosave.ahk`` check for`n ``checklist.ahk``"
+    ascheckCheckTitle := " Auto open ``checklist.ahk``"
     ascheckToggle := settingsGUI.Add("Checkbox", "Checked" ascheckCheck " Y+20", ascheckCheckTitle)
     ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist"))
     autosaveCheck := (ascheckCheck = true) ? toolT.autosaveCheck.Yes : toolT.autosaveCheck.No
@@ -287,7 +287,7 @@ settingsGUI()
                 return
             }
         ;// reloading autosave & updating setting value
-        if InStr(script.text, "autosave") && WinExist("autosave.ahk - AutoHotkey")
+        if (InStr(script.text, "autosave") || InStr(script.text,ascheckCheckTitle)) && WinExist("autosave.ahk - AutoHotkey")
             WM.Send_WM_COPYDATA(iniVar "_" script.Value, "autosave.ahk")
     }
 
