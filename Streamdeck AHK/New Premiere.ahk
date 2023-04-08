@@ -38,7 +38,17 @@ IB := InputBox("Enter the name of your project", "Project", "w100 h100", default
             return
         }
 ;// Copying over the template file
-FileCopy(ptf["premTemp"], SelectedFolder "\" IB.Value ".prproj")
+count := 0
+loop files ptf["premTemp"] "\*.prproj", "F" {
+    chosenFile := A_LoopFileFullPath
+    count++
+}
+if count > 1 {
+    chosenFile := FileSelect("2", ptf["premTemp"], "Select the desired Project Template.", "Premiere Project File (*.prproj)")
+    if chosenFile = ""
+        return
+}
+FileCopy(chosenFile, SelectedFolder "\" IB.Value ".prproj")
 Run(prem.path A_Space '"' SelectedFolder "\" IB.Value ".prproj" '"')
 if !WinWait("Open Project",, 20)
     {
@@ -56,6 +66,7 @@ if !WinWait("Open Project",, 20)
 sleep 5000
 skip:
 block.On()
+switchTo.Premiere()
 SendInput(KSA.premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
 if !WinWait("Project Settings",, 2)
     {

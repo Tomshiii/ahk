@@ -38,12 +38,13 @@ cust2    := resGUI.Add("Edit", "xs+13 ys-3 r1 w100 Limit4 Number vcust2")
 cust := ["cust1", "cust2"]
 for v in cust {
     %v%.OnEvent("Change", __custEdit.Bind(v))
+    %v%.OnEvent("Focus", __custEdit.Bind(v))
 }
 allCtrls := Mip("seven", 0, "ten", 1, "four", 0, "cust1", 0, "cust2", 0)
 numVals  := Mip("seven", "720x1280", "ten", "1080x1920", "four", "2160x3840")
 
 ;// button logic
-select   := resGUI.Add("Button", "ys-40 xs+54", "Select")
+select   := resGUI.Add("Button", "Default ys-40 xs+54", "Select")
 select.OnEvent("Click", __selectres.Bind(&finalChoice))
 
 ;// show the GUI
@@ -81,6 +82,8 @@ __selectres(&finalChoice, *) {
     contents := resGUI.Submit()
     for k, v in allCtrls {
         if v = 0
+            continue
+        if Type(k) != "String"
             continue
         if !InStr(k, "cust",, 1)
             {

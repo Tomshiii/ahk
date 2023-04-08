@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/03/19
- * @version 1.1.2
+ * @date 2023/04/08
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -92,7 +92,7 @@ class ptf {
         "textreplaceUser", this.SupportFiles "\textreplace\textreplace.ahk",
 
         ;adobe stuff
-        "premTemp",        this.Backups "\Adobe Backups\Premiere\Template\temp.prproj",
+        "premTemp",        this.Backups "\Adobe Backups\Premiere\Template\",
         "PremPresets",     A_MyDocuments "\Adobe\Premiere Pro\" this.trimAdobeYear("premiere") "\Profile-" A_UserName "\Effect Presets and Custom Items.prfpset", ;this could be named different for you depending on what your adobe username is!!
 
         ;shortcuts

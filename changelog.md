@@ -42,3 +42,9 @@
 - Fix `New Premiere.ahk` not including `switchTo {`
 - Adjusted `ffmpeg` command for `convert (mkv/mov)2mp4.ahk` for slightly better performance
 - Cleaned up `Move project.ahk`
+- `New Premiere.ahk` will now prompt the user to select the desired template if multiple are found in the template folder
+
+`tiktok project.ahk`
+- Fix `gui.ctrl` being passed to `InStr` causing it to throw
+- Edit boxes will now be prioritised as long as soon as they're focused instead of only on change
+- Set `select` button as the default input
