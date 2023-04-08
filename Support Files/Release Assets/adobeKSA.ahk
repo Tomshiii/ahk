@@ -1,6 +1,11 @@
 #Warn VarUnset, StdOut
 
 ;// This script is designed to assist the user of my repo in getting their feet off the ground by parsing through their keyboard shortcut file and attempting to auto assign KSA.ini values based on it.
+/*
+This process is **NOT** perfect, some values may still be entered incorrectly or just outright skipped due to the nature of trying to convert the way adobe stores their values to the way ahk can read them.
+It also doesn't help that Premiere & After Effects store their data differently making it even more prone to small errors.
+**Please** report any issues with this process or any errors you come across, making sure to provide as much information as possible.
+*/
 
 ; { \\ #Includes
 #Include *i <Classes\settings>
@@ -317,9 +322,11 @@ class adobeKSA extends tomshiBasic {
         this.KSARead := FileRead(this.KSA)
         MsgBox("
         (
-            Please be aware this process is not perfect. The way adobe store's their hotkey values is a mess and incredibly confusing to parse. Some values retrieved may either be incorrect or simply skipped all together.
+            Please be aware this process is not perfect. The way adobe store's their hotkey values is a mess and incredibly difficult to parse. Some values retrieved may either be incorrect or simply skipped all together.
             A backup of your current KSA.ini file will be generated.
             While this script is designed to speed up the process of starting with my scripts, I highly recommend NOT solely relying on this script and still double checking the values.
+
+            Please report any issues/errors and provide as much detail as possible!
         )", "Warning", 0x30)
         PremiereShortcut := (this.PremiereExclude = 0) ? this.__findPremiereShortcut() : false
         AEShortcut       := (this.AEExclude = 0)       ? this.__findAEShortcut()       : false

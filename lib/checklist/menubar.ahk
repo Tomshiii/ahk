@@ -7,6 +7,7 @@
 #Include <GUIs\tomshiBasic>
 #Include <Functions\getScriptRelease>
 #Include <Functions\refreshWin>
+#Include <GUIs\settingsGUI\settingsGUI>
 ; }
 
 ;// initialise settings instance
@@ -36,6 +37,7 @@ FileMenu.Add("E&xit", close)
 SettingsMenu := Menu()
 SettingsMenu.Add("&Tooltips", menuTooltips.bind(&settingsToolTrack))
 SettingsMenu.Add("&Dark Mode", goDark.bind(&darkToolTrack))
+SettingsMenu.Add("&More Settings...", (*) => settingsGUI())
 settingsToolTrack := 0
 if IniRead(checklist, "Info", "tooltip") = "1"
     {
