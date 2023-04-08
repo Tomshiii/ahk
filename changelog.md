@@ -11,7 +11,7 @@
 - Add `tool.tray()`
     - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
 - `prem.zoom()` cancel hotkey changed to <kbd>Esc</kbd> instead of <kbd>F5</kbd>
-- `tomshiBasic {` now extends the default `gui.show()` method to automatically make all defined buttons `dark mode` if the settings is enabled
+- `tomshiBasic {` now extends the default `gui.show()` method to automatically make all defined buttons `dark mode` if the setting is enabled
 
 `startup {`
 - Fix `updateChecker()` treating `alpha` updates as full releases
@@ -31,6 +31,7 @@
 ## > My Scripts
 - Added `prem(previous/next)Keyframe` hotkeys to `My Scripts.ahk`/`KSA.ini`
 - `alwaysontopHotkey::` now attempts to draw a border around the always on top window *(win11 only)*
+- Added option to call `Hard Reset` (`reload_reset_exit("reset")`) from the `Tray Menu`
 
 `Removed:`
 - `premprojectHotkey::`
@@ -40,9 +41,10 @@
 ## > Other Changes
 - Fix `waitUntil.ahk` throwing
 - Fix `New Premiere.ahk` not including `switchTo {`
-- Adjusted `ffmpeg` command for `convert (mkv/mov)2mp4.ahk` for slightly better performance
+- Adjusted `ffmpeg` command for `convert(mkv/mov)2mp4.ahk` for slightly better performance
 - Cleaned up `Move project.ahk`
 - `New Premiere.ahk` will now prompt the user to select the desired template if multiple are found in the template folder
+- `settingsGUI()` can now be called from the `checklist.ahk` menubar
 
 `tiktok project.ahk`
 - Fix `gui.ctrl` being passed to `InStr` causing it to throw

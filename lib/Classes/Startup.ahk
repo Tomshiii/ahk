@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/04/07
- * @version 1.6.5
+ * @date 2023/04/08
+ * @version 1.6.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -563,14 +563,17 @@ class Startup {
      */
     trayMen() {
         check := this.UserSettings.update_check
+        A_TrayMenu.Insert("6&", "Hard Reset", (*) => reload_reset_exit("reset"))
         A_TrayMenu.Insert("7&") ;adds a divider bar
         A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
         A_TrayMenu.Insert("9&", "keys.allUp()", (*) => keys.allUp())
         A_TrayMenu.Insert("10&", "Active Scripts", (*) => activeScripts())
         A_TrayMenu.Insert("11&", "Check for Updates", checkUp)
-        A_TrayMenu.Insert("13&", "Open All", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
-        A_TrayMenu.Insert("14&", "Close All", (*) => reload_reset_exit("exit"))
-        A_TrayMenu.Delete("&Window Spy")
+        A_TrayMenu.Insert("12&") ;adds a divider bar
+        A_TrayMenu.Insert("13&", "Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
+        A_TrayMenu.Insert("14&", "Close All Scripts", (*) => reload_reset_exit("exit"))
+        A_TrayMenu.Rename("&Help", "&Help/Documentation")
+        ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")
         A_TrayMenu.Delete("3&")
         if check =  true
