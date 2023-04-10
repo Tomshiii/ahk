@@ -402,15 +402,11 @@ save()
                     tool.Cust("Saving AE")
                     WinSetTransparent(0, editors.AE.winTitle)
                     ControlSend("{Ctrl Down}s{Ctrl Up}",, aeVal.winTitle)
-                    WinWaitClose("Save Project",, 3)
-                    try {
-                        if origWind = "ahk_class CabinetWClass"
-                            WinActivate("ahk_class CabinetWClass")
-                        else if origWind = "Adobe Premiere Pro.exe"
-                            switchTo.Premiere()
-                        else
-                            WinActivate("ahk_exe " origWind)
+                    if WinWait("Save As",, 0.5) {
+                        ControlSend("{Esc}",, "Save As " editors.AE.winTitle)
                     }
+                    WinWaitClose("Save Project",, 3)
+                    __switchToOrig(origWind)
                     try {
                         WinMoveBottom(editors.AE.winTitle)
                         WinSetTransparent("Off", editors.AE.winTitle)
@@ -484,12 +480,7 @@ save()
             checkWin := newid
             if origWind = newid
                 goto ignore
-            if origWind = "ahk_class CabinetWClass"
-                WinActivate("ahk_class CabinetWClass")
-            else if origWind = "Adobe Premiere Pro.exe"
-                switchTo.Premiere()
-            else
-                WinActivate("ahk_exe " origWind)
+            __switchToOrig(origWind)
         } catch as e {
             tool.Cust("couldn't activate original window")
             errorLog(e)
@@ -497,8 +488,7 @@ save()
 
         ignore:
         ;// resetting values and windows
-        if WinExist(editors.AE.winTitle)
-            WinSetTransparent("Off", editors.AE.winTitle) ;just incase
+        __aeOff()
         block.Off()
         tool.Wait()
         ToolTip("")
@@ -509,14 +499,30 @@ save()
             SetTimer(, -ms) ;reset the timer
 
         theEnd:
-        if WinExist(editors.AE.winTitle)
-            WinSetTransparent("Off", editors.AE.winTitle) ;just incase
+        __aeOff()
         block.Off()
         tool.Wait()
         global ElapsedTime := 0
         SetTimer(StopWatch, 10)
 }
 
+__aeOff() {
+    try {
+        if WinExist(editors.AE.winTitle)
+            WinSetTransparent("Off", editors.AE.winTitle) ;just incase
+    }
+}
+
+__switchToOrig(origWind) {
+    try {
+        if origWind = "ahk_class CabinetWClass"
+            WinActivate("ahk_class CabinetWClass")
+        else if origWind = "Adobe Premiere Pro.exe"
+            switchTo.Premiere()
+        else
+            WinActivate("ahk_exe " origWind)
+    }
+}
 
 ;// defining what happens if the script is somehow opened a second time and the function is forced to close
 OnExit(ExitFunc)
