@@ -337,7 +337,7 @@ settingsGUI()
         initValVar := StrReplace(set_Edit_Val.iniInput[A_Index], A_Space, "_")
         initVal := UserSettings.%initValVar%
         settingsGUI.Add("Edit",
-                             set_Edit_Val.EditPos[A_Index] " r1 W50 Number v" set_Edit_Val.control[A_Index])
+                             set_Edit_Val.EditPos[A_Index] " r1 W50 -E0200 Number v" set_Edit_Val.control[A_Index])
         settingsGUI.Add("UpDown",, initVal)
         settingsGUI.Add("Text",
                             set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index],
@@ -445,15 +445,11 @@ settingsGUI()
     ;code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
     OnMessage(0x0200, ObjBindMethod(WM(), "On_WM_MOUSEMOVE"))
 
-    ;this variable gets defined at the top of the script
-    if darkMode = true
-        goDark()
-
     goDark(darkm := true, DarkorLight := "Dark")
     {
         dark.menu(darkm)
         dark.titleBar(settingsGUI.Hwnd, darkm)
-        dark.allButtons(settingsGUI, DarkorLight, {LightColour: "F0F0F0", DarkColour: "d4d4d4"})
+        dark.allButtons(settingsGUI, DarkorLight, {LightColour: settingsGUI.LightColour, DarkColour: settingsGUI.DarkColour})
     }
 
     settingsGUI.Show("Center AutoSize")

@@ -13,24 +13,28 @@
  * @param title allows you to pass in a title for the GUI. Can be omitted
  */
 class tomshiBasic extends Gui {
-    __New(FontSize := 11, FontWeight := 500, options?, title:="") {
+    __New(FontSize := 11, FontWeight := 500, options?, title := "") {
         super.__new(options?, title, this)
-        this.BackColor := 0xF0F0F0
+        this.BackColor := this.LightColour
         this.SetFont("S" FontSize " W" FontWeight, "Segoe UI Variable") ;// sets the size of the font
         this.AddButton("Default W0 H0 X8 Y0", "_") ;// creates an invisible button to take focus away from the first defined ctrl
         this.UserSettings := UserPref()
-        if this.UserSettings.dark_mode = true
+        if this.UserSettings.dark_mode = true {
             dark.titleBar(this.Hwnd) ;// automatically make the titlebar darkmode if the setting is enabled
+            this.BackColor := "0x" this.DarkColour
+        }
     }
 
     UserSettings := ""
+    LightColour := "F0F0F0"
+    DarkColour := "d4d4d4"
 
     /**
      * Extends the default `show()` method to automatically make all buttons dark mode if the setting is enabled
      */
     show(params?) {
         if this.UserSettings.dark_mode = true
-            dark.allButtons(this)
+            dark.allButtons(this,, {LightColour: this.LightColour, DarkColour: this.DarkColour})
         super.Show(params?)
     }
 }
