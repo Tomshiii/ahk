@@ -15,6 +15,7 @@
 
 `tomshiBasic {`
 - Now extends the default `gui.show()` method to automatically make all defined buttons `dark mode` if the setting is enabled
+    - Can also pass an object containing the options you'd normally pass to `dark.allButtons()`
 - Now automatically makes menu drop down windows dark mode if setting is enabled
 
 `startup {`

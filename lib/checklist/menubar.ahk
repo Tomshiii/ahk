@@ -339,7 +339,7 @@ which(darkmode := true, DarkorLight := "Dark", menu := 1)
 {
     dark.menu(menu)
     dark.titleBar(checklistGUI.Hwnd, darkmode)
-    dark.allbuttons(checklistGUI, DarkorLight, {default: true, DarkBG: false})
+    dark.allbuttons(checklistGUI, DarkorLight, {DarkBG: false})
 }
 
 /**

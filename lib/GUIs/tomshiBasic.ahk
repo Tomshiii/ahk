@@ -32,10 +32,18 @@ class tomshiBasic extends Gui {
 
     /**
      * Extends the default `show()` method to automatically make all buttons dark mode if the setting is enabled
+     * @param {String} params? is any normal settings you'd pass to GUI.show()
+     * @param {Object} darSettings? is an object containing any custom settings you'd usually pass to `dark.allButtons()`
      */
-    show(params?) {
-        if this.UserSettings.dark_mode = true
-            dark.allButtons(this,, {LightColour: this.LightColour, DarkColour: this.DarkColour})
+    show(params?, darkSettings?) {
+        if this.UserSettings.dark_mode = true {
+            def := {LightColour: unset, DarkColour: unset, default: unset, LightBG: unset, DarkBG: unset}
+            for k, v in def.OwnProps() {
+                if !darkSettings.Has(k)
+                    def.%k% := darkSettings.%k%
+            }
+            dark.allButtons(this,, darkSettings?)
+        }
         super.Show(params?)
     }
 }
