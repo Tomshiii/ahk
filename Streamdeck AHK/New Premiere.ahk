@@ -86,27 +86,21 @@ sleep 1000
 WinActivate("Project Settings")
 coord.s()
 MouseGetPos(&x, &y)
-coord.c()
-coord.s()
 MouseMove(0, 0, 2) ;// get it out of the way
 sleep 50
-SendInput("{Tab 3}")
-sleep 500
-SendInput("{Space}")
-sleep 1000
+delaySI(500, "{Tab 3}")
+delaySI(1000, "{Space}")
 delaySI(50, "{Tab}", "{Space}", "{Down 2}", "{Space}")
 sleep 1000
-delaySI(300, "{Tab}" "{Space}", "{Down 3}" "{Space}", "{Tab 2}" "{Space}")
-SendInput("{Up}" "{Space}")
+delaySI(300, "{Tab}" "{Space}", "{Down 5}" "{Space}", "{Tab 2}" "{Space}", "{Up}" "{Space}")
 WinWait("Select Folder")
 sleep 800
 delaySI(800, "{F4}", "^a" "+{BackSpace}")
-SendText(SelectedFolder "\proxies") ;INSERT PATH AND PROXIES HERE
+SendText(SelectedFolder "\proxies")
 sleep 800
 delaySI(250, "{Enter}", "+{Tab 5}", "{Enter}")
 sleep 1750
-SendInput("{Tab}" "{Space}") ;if you're on premiere v22.5 or above you'll need 2 tabs here. I've downgraded back to 22.3.1 for stability reasons
-sleep 1000
+delaySI(1000, "{Tab}" "{Space}") ;// if you're on premiere v22.5 or above you may need 2 tabs here. I've downgraded back to 22.3.1 for stability reasons
 MouseMove(x, y, 2) ;// get it out of the way
 block.Off()
 Run(SelectedFolder) ;open an explorer window for your selected directory
