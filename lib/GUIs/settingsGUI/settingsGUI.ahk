@@ -392,7 +392,7 @@ settingsGUI()
     statecheck(*)
     {
         state := (A_IsSuspended = 0) ? "Active" : "Suspended"
-        SB.SetText(A_Tab " Scripts " state, 2, 1)
+        SB.SetText(A_Tab "Scripts " state, 2, 1)
         SetTimer(, -1000)
     }
     SB.SetFont("S9")

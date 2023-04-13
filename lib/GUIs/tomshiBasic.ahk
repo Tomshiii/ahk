@@ -21,6 +21,7 @@ class tomshiBasic extends Gui {
         this.UserSettings := UserPref()
         if this.UserSettings.dark_mode = true {
             dark.titleBar(this.Hwnd) ;// automatically make the titlebar darkmode if the setting is enabled
+            dark.menu() ;// automatically make any menu dropdowns darkmode if the setting is enabled
             this.BackColor := "0x" this.DarkColour
         }
     }

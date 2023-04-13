@@ -11,8 +11,11 @@
 - Add `tool.tray()`
     - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
 - `prem.zoom()` cancel hotkey changed to <kbd>Esc</kbd> instead of <kbd>F5</kbd>
-- `tomshiBasic {` now extends the default `gui.show()` method to automatically make all defined buttons `dark mode` if the setting is enabled
 - `settingsGUI()`checkbox verbage change `autosave.ahk check for checklist.ahk` => `Auto open checklist.ahk`
+
+`tomshiBasic {`
+- Now extends the default `gui.show()` method to automatically make all defined buttons `dark mode` if the setting is enabled
+- Now automatically makes menu drop down windows dark mode if setting is enabled
 
 `startup {`
 - Fix `updateChecker()` treating `alpha` updates as full releases
