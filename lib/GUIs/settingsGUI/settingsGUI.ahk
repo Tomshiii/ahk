@@ -384,15 +384,15 @@ settingsGUI()
     ;//! STATUS BAR
 
     workDir := UserSettings.working_dir
-    SB := settingsGUI.Add("StatusBar")
-    SB.SetText("  Current working dir: " workDir)
+    SB := settingsGUI.Add("StatusBar", "-Theme Background0xc0c0c0")
+    SB.SetText("  Current working dir: " workDir,, 1)
     checkdir := SB.GetPos(,, &width)
     parts := SB.SetParts(width + 20 + (StrLen(workDir)*5))
     SetTimer(statecheck, -100)
     statecheck(*)
     {
         state := (A_IsSuspended = 0) ? "Active" : "Suspended"
-        SB.SetText(" Scripts " state, 2)
+        SB.SetText(A_Tab " Scripts " state, 2, 1)
         SetTimer(, -1000)
     }
     SB.SetFont("S9")

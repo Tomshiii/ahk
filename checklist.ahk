@@ -30,7 +30,7 @@ TraySetIcon(ptf.Icons "\checklist.ico")
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.12.5"
+version := "v2.12.6"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -147,6 +147,7 @@ else ;* because `checklist.ahk` has it's own darkmode settings an `else` block i
     which(false, "Light", 0)
 
 checklistGUI.Show("AutoSize NoActivate")
+checklistGUI.BackColor := checklistGUI.LightColour
 checklistGUI.Move(-345, -191,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;// finish defining GUI
 

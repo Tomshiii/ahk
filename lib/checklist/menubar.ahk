@@ -138,11 +138,6 @@ aboutBox(*)
     aboutGUI.GetPos(,, &aboutwidth, &aboutheight)
     aboutGUI.Move(x - (aboutwidth/2) + (width/2), y - (aboutheight/2) + (height/2))
 
-    if darkToolTrack = 1
-        dark.titleBar(aboutGUI.Hwnd)
-    else
-        dark.titleBar(aboutGUI.Hwnd, false)
-
     aboutClose(*)
     {
         checklistGUI.Opt("-Disabled")
@@ -308,9 +303,6 @@ hours(*)
     hoursGUI.GetPos(,, &hourswidth, &hoursheight)
     hoursGUI.Move(x - (hourswidth/2) + (width/2), y - (hoursheight/2) + (height/2))
 
-    if darkToolTrack = 1
-        dark.titleBar(hoursGUI.Hwnd)
-
     hoursClose(*)
     {
         checklistGUI.Opt("-Disabled")
@@ -421,9 +413,6 @@ addNew(*)
     addGUI.Show("AutoSize")
     addGUI.GetPos(,, &addwidth, &addheight)
     addGUI.Move(x - (addwidth/2) + (width/2), y - (addheight/2) + (height/2))
-
-    if darkToolTrack = 1
-        dark.titleBar(addGUI.Hwnd)
 
     addcheckbox(*)
     {
