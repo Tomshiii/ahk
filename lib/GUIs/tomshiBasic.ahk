@@ -37,11 +37,8 @@ class tomshiBasic extends Gui {
      */
     show(params?, darkSettings?) {
         if this.UserSettings.dark_mode = true {
-            def := {LightColour: unset, DarkColour: unset, default: unset, LightBG: unset, DarkBG: unset}
-            for k, v in def.OwnProps() {
-                if !darkSettings.Has(k)
-                    def.%k% := darkSettings.%k%
-            }
+            if !IsSet(darkSettings)
+                darkSettings := {default: true}
             dark.allButtons(this,, darkSettings?)
         }
         super.Show(params?)
