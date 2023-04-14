@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32
+;\\v2.32.1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -498,7 +498,7 @@ RAlt & p::
 		WinActivate(dir.name)
 		return
 	}
-	Run(dir.dir)
+	Run(ptf.EditingStuff)
 	if !WinWaitActive(dir.name,, 3) {
 		if WinExist(dir.name)
 			WinActivate(dir.name)

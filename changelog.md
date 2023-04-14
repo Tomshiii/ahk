@@ -6,11 +6,11 @@
 - Refactored `gameCheckGUI()` to better make use of the fact that it's a class
 
 ## > Functions
-- Fix `prem.audioDrag()` from `inserting` clip - caused by pressing <kbd>Ctrl</kbd> before the clip has finished being placed
+- Fix `prem.audioDrag()` from `inserting` clip - caused by function pressing <kbd>Ctrl</kbd> before the clip has finished being placed
 - Fix `prem.getTimeline()` from retrieving the incorrect coordinates if a second window is in focus when called
 - Add `tool.tray()`
     - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
-- `prem.zoom()` cancel hotkey changed to <kbd>Esc</kbd> instead of <kbd>F5</kbd>
+- `prem.zoom()` cancel hotkey changed from <kbd>F5</kbd> to <kbd>Esc</kbd> 
 - `settingsGUI()`checkbox verbage change `autosave.ahk check for checklist.ahk` => `Auto open checklist.ahk`
 
 `tomshiBasic {`
@@ -23,7 +23,8 @@
     - Change `beta` verbage => `Pre-Releases`
     - Fix the `new release GUI` not updating settings values
 - Fix `firstCheck()` not updating settings properly and continuously opening
-    - Also fixed bug causing window to remain `disabled` after opening & closing `settingsGUI()`
+    - Fixed bug causing window to remain `disabled` after opening & closing `settingsGUI()`
+- Fix `discord.button()` searching in the incorrect position for the `@ON` ping
 - Removed `locationReplace()`
 - Refactored `generate()` to no longer require manual definition of all possible settings options
 
