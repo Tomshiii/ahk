@@ -1,5 +1,5 @@
 # <> Release 2.11 - adobeKSA.ahk
-- Added `adobeKSA.ahk` to parse through a user's `Premiere`/`After Effects` keyboard shortcut file & automatically assign values to `KSA.ini` values
+- Added `adobeKSA.ahk` to parse through a user's `Premiere`/`After Effects` keyboard shortcut file & automatically assign those values to their respective `KSA.ini` values
 - Fix install process potentially not generating a `settings.ini` file if one does not already exist
 - Fix install process potentially throwing during the extraction stage if the user doesn't already have symlinks properly generated
 - Further fix settings changes not sticking when adjusted in `settingsGUI()`
@@ -58,6 +58,7 @@
 ## > Other Changes
 - Fix `waitUntil.ahk` throwing
 - Fix `New Premiere.ahk` not including `switchTo {`
+- Added `trim {` to facilitate the creation of `trim(Audio/Video).ahk` to quickly and easily trim an audio/video file using ffmpeg
 - Adjusted `ffmpeg` command for `convert(mkv/mov)2mp4.ahk` for slightly better performance
 - Cleaned up `Move project.ahk`
 - `New Premiere.ahk` will now prompt the user to select the desired template if multiple are found in the template folder
