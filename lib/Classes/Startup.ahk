@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/04/08
- * @version 1.6.6
+ * @date 2023/04/15
+ * @version 1.6.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,6 +22,7 @@
 #Include <Functions\getHTML>
 #Include <Functions\isReload>
 #Include <Functions\getLocalVer>
+#Include <Functions\trayShortcut>
 #Include <Other\print>
 ; // libs
 #Include <Other\_DLFile>
@@ -563,15 +564,17 @@ class Startup {
      */
     trayMen() {
         check := this.UserSettings.update_check
+        shortcutLink := A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\" A_ScriptName " - Shortcut.lnk"
         A_TrayMenu.Insert("6&", "Hard Reset", (*) => reload_reset_exit("reset"))
         A_TrayMenu.Insert("7&") ;adds a divider bar
         A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
         A_TrayMenu.Insert("9&", "keys.allUp()", (*) => keys.allUp())
         A_TrayMenu.Insert("10&", "Active Scripts", (*) => activeScripts())
-        A_TrayMenu.Insert("11&", "Check for Updates", checkUp)
-        A_TrayMenu.Insert("12&") ;adds a divider bar
-        A_TrayMenu.Insert("13&", "Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
-        A_TrayMenu.Insert("14&", "Close All Scripts", (*) => reload_reset_exit("exit"))
+        startupTray(11)
+        A_TrayMenu.Insert("12&", "Check for Updates", checkUp)
+        A_TrayMenu.Insert("13&") ;adds a divider bar
+        A_TrayMenu.Insert("14&", "Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
+        A_TrayMenu.Insert("15&", "Close All Scripts", (*) => reload_reset_exit("exit"))
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")
@@ -747,10 +750,8 @@ class Startup {
         checkboxValue := 0
         runafter.OnEvent("Click", checkVal)
         ;// buttons
-        yesButt := mygui.Add("Button", "ys-10 x+25", "Yes")
-        yesButt.OnEvent("Click", downahk)
-        nobutt := mygui.Add("Button", "x+5", "No")
-        nobutt.OnEvent("Click", noclick)
+        mygui.Add("Button", "ys-10 x+25", "Yes").OnEvent("Click", downahk)
+        mygui.Add("Button", "x+5", "No").OnEvent("Click", noclick)
 
         mygui.Show()
         noclick(*) => mygui.Destroy()

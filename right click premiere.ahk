@@ -6,8 +6,10 @@
 #Include <Classes\block>
 #Include <Classes\obj>
 #Include <Functions\errorLog>
+#Include <Functions\trayShortcut>
 #Include <Classes\keys>
 ; }
+startupTray()
 
 ;//! if you wish to run this script separately, uncomment the below block of text
 /*

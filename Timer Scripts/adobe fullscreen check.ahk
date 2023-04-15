@@ -10,11 +10,13 @@ KeyHistory(0)
 #Include <Classes\timer>
 #Include <Classes\WM>
 #Include <Functions\errorLog>
+#Include <Functions\trayShortcut>
 ; }
 
 SetWorkingDir A_ScriptDir
 TraySetIcon(ptf.Icons "\fullscreen.ico") ;changes the icon this script uses in the taskbar
 InstallKeybdHook
+startupTray()
 
 GroupAdd("adobe", editors.Premiere.winTitle)
 GroupAdd("adobe", editors.AE.winTitle)

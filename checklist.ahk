@@ -11,6 +11,7 @@
 #Include <Functions\detect>
 #Include <Functions\isReload>
 #Include <Functions\change_msgButton>
+#Include <Functions\trayShortcut>
 #Include <GUIs\tomshiBasic>
 ; <checklist funcs> ;everything in <lib\checklist\> is needed for this script
 ;but these are just the ones that can be defined anywhere
@@ -26,6 +27,7 @@
 ; }
 
 TraySetIcon(ptf.Icons "\checklist.ico")
+startupTray()
 
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 

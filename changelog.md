@@ -4,6 +4,7 @@
 - Fix install process potentially throwing during the extraction stage if the user doesn't already have symlinks properly generated
 - Further fix settings changes not sticking when adjusted in `settingsGUI()`
 - Refactored `gameCheckGUI()` to better make use of the fact that it's a class
+- All scripts now contain a traymenu option to run at startup
 
 ## > Functions
 - Fix `prem.audioDrag()` from `inserting` clip - caused by function pressing <kbd>Ctrl</kbd> before the clip has finished being placed

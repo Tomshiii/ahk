@@ -15,6 +15,7 @@ KeyHistory(0)
 #Include <Classes\WM>
 #Include <Functions\detect>
 #Include <Functions\errorLog>
+#Include <Functions\trayShortcut>
 ; }
 
 TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
@@ -32,6 +33,7 @@ timeRemain(*)
         forTray := half ? "Will retry in: " Round((((minutes * 60)/2) - ElapsedTime)/ 60, 2) "min" : "Will save in: " Round(((minutes * 60) - ElapsedTime)/ 60, 2) "min"
     MsgBox(forTray, "Next Save - " A_ScriptName)
 }
+startupTray(10)
 
 ;// This script will autosave your premire pro/after effects project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 ;// It can also ensure you have the checklist script for the current project open. This can be disabled in `settingsGUI()`

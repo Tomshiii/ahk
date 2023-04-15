@@ -4,6 +4,7 @@
 
 ; { \\ #Includes
 #Include <Classes\ptf>
+#Include <Functions\trayShortcut>
 ;there are more includes down below
 ; }
 
@@ -11,6 +12,7 @@ SetWorkingDir(ptf.rootDir)
 SetDefaultMouseSpeed(0)                 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay(0)                          ;sets default WinMove speed to 0 (instant)
 TraySetIcon(ptf.Icons "\keyboard.ico")
+startupTray()
 ;SetCapsLockState("AlwaysOff")          ;having this on broke my main script for whatever reason
 ;SetNumLockState("AlwaysOn")
 
