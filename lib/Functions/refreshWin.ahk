@@ -16,13 +16,11 @@ refreshWin(window, runTarget)
     if window = "A"
         {
             window := WinGetTitle("A")
-            if WinGetProcessName(window) = "Notepad.exe"
-                {
+            switch WinGetProcessName(window) {
+                case "Notepad.exe":
                     for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where Name='notepad.exe'")
                         runTarget := process.CommandLine
-                }
-            if WinGetProcessName(window) = "explorer.exe"
-                {
+                case "explorer.exe":
                     hwnd := WinExist(window)
                     path := winget.ExplorerPath(hwnd)
                     if !path
@@ -31,7 +29,7 @@ refreshWin(window, runTarget)
                             return
                         }
                     runTarget := path
-                }
+            }
         }
     WinGetPos(&x, &y, &width, &height, window)
     WinClose(window)
@@ -42,7 +40,6 @@ refreshWin(window, runTarget)
         }
     sleep 250
     Run(runTarget)
-    ; MsgBox(runTarget)
     if !WinWait(window,, 1.5)
         {
             try {

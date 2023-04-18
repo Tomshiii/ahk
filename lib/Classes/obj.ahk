@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2023/03/12
- * @version 1.1.3
+ * @date 2023/04/18
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -80,7 +80,7 @@ class obj {
      * By default this function will have an option "*2 " but can be overridden by placing a new option at the beginning of `imgFile`
      * This function supports all imagesearch options
      * @param {String} imgFile is the path to the file you wish to search for
-     * @param {Object} x1/2&y1/2 are the coordinates you wish to check. Defaults to:
+     * @param {Object} coords an object containing the x1/2&y1/2 coordinates you wish to check. Defaults to:
      * ```
      * coords := {x1: 0, y1:0, x2: A_ScreenWidth, y2: A_ScreenHeight}
      * ```
@@ -103,17 +103,48 @@ class obj {
      * ```
      */
     static imgSrch(imgFile := "", coords?, tooltips := false) {
+        coord := this.__produceCoords(coords?)
+        if !checkImg(imgFile, &x, &y, {x1: coord.x1, y1: coord.y1, x2: coord.x2, y2: coord.y2}, tooltips)
+            return false
+        return {x: x, y: y}
+    }
+
+    /**
+     * this function takes the variable object and replaces the default coords with any the user passed into the function
+     * @param {Object} obj an object containing all the coords the user passed into the original function
+     * @returns {Object} the resulting object containing all coords
+     */
+    static __produceCoords(obj?) {
         coord := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}
-        if IsSet(coords) {
-            for v in coords.OwnProps() {
-                for key, value in coords.OwnProps() {
+        if IsSet(obj) {
+            for v in obj.OwnProps() {
+                for key, value in obj.OwnProps() {
                     coord.%key% := value
                 }
             }
         }
-        if !checkImg(imgFile, &x, &y, {x1: coord.x1, y1: coord.y1, x2: coord.x2, y2: coord.y2}, tooltips)
-            return false
-        return {x: x, y: y}
+        return coord
+    }
+
+    /**
+     * This function facilitates quickly and easily searching for multiple images at the same coordinate.
+     * @param {Object} coords an object containing the x1/2&y1/2 coordinates you wish to check. Defaults to:
+     * ```
+     * coords := {x1: 0, y1:0, x2: A_ScreenWidth, y2: A_ScreenHeight}
+     * ```
+     * @param {Boolean/Object} tooltips whether you want `errorLog()` to produce tooltips if it runs into an error. This parameter can be a simple true/false or an object that errorLog is capable of understanding
+     * @param {VarRef} x/y pass the x/y coords back as a variable instead of an object
+     * @param {String/Varadic} imgFiles any and all images you wish to search for. The image does NOT need to specifically exist
+     * @returns {Object/Boolean} if an image is found at the coordinates, passes back an `object` containing the `x/y coordinates`. if an image isn't found, passes back a `boolean false`
+     */
+    static imgSrchMulti(coords?, tooltips := false, &x?, &y?, imgFiles*) {
+        coord := this.__produceCoords(coords?)
+        for v in imgFiles {
+            if !checkImg(v, &x, &y, {x1: coord.x1, y1: coord.y1, x2: coord.x2, y2: coord.y2}, tooltips)
+                continue
+            return {x: x, y: y}
+        }
+        return false
     }
 
     /**

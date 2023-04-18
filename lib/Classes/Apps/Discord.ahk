@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2023/04/14
- * @version 1.4.4
+ * @date 2023/04/18
+ * @version 1.4.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -45,9 +45,9 @@ class discord {
      */
     __logoCheck() {
         WinGetPos(&nx, &ny, &width, &height, discord.winTitle)
-        if !ImageSearch(&x, &y, 0, 0, 100, 100, "*2 " ptf.Discord "dm1.png") && !ImageSearch(&x, &y, 0, 0, 100, 100, "*2 " ptf.Discord "dm1_2.png") &&
-            !ImageSearch(&x, &y, 0, 0, 100, 100, "*2 " ptf.Discord "dm2.png") && !ImageSearch(&x, &y, 0, 0, 100, 100, "*2 " ptf.Discord "dm2_2.png")
-
+        if !obj.imgSrchMulti({x1: 0, y1: 0, x2: 100, y2: 100},,,
+                                        , ptf.Discord "dm1.png", ptf.Discord "dm1_2.png"
+                                        , ptf.Discord "dm2.png", ptf.Discord "dm2_2.png")
             {
                 title := "Logo Match Not Found"
                 SetTimer(change_msgButton.Bind(title, "OK", "Open Dir"), 25) ;// calls change_msgButton()
@@ -214,6 +214,7 @@ class discord {
             SendInput("{Click}")
             if which = 2
                 {
+                    sleep 150
                     loop { ;// this loop will attempt to mark the channel as read
                         if A_Index > 15 ;1.5s
                             {
@@ -226,7 +227,15 @@ class discord {
                         if ImageSearch(&x2, &y2, 0, 0, width, height/3, "*2 " ptf.Discord "\markread.png")
                             break
                     }
-                    MouseMove(x2, y2, 2)
+                    sleep 100
+                    ;// sometimes if something hovers over the mouse before it can click the mark as read
+                    ;// button, it can stop the mouse from focusing on the element
+                    ;// so we jiggle it around in the hops to shake the hover element
+                    MouseMove(x2+10, y2+4, 1)
+                    sleep 500
+                    MouseMove(50, 5, 2, "R")
+                    sleep 150
+                    MouseMove(-40, -5, 2, "R")
                     SendInput("{Click}")
                 }
             MouseMove(xPos, yPos, 2)
@@ -251,14 +260,7 @@ class discord {
                 if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " ptf.Discord "\unread3.png")
                     end(-20)
             }
-        if (
-            (
-                !checkImg(ptf.Discord "\unread" which "_1.png", &x, &y, {x1:0 + x2, y1:0, x2:50 + y2, y2:height}) &&
-                !checkImg(ptf.Discord "\unread" which "_2.png", &x, &y, {x1:0 + x2, y1:0, x2:50 + y2, y2:height}) &&
-                !checkImg(ptf.Discord "\unread" which "_3.png", &x, &y, {x1:0 + x2, y1:0, x2:50 + y2, y2:height})
-            )
-        )
-            {
+        if !obj.imgSrchMulti({x1:0 + x2, y1:0, x2:50 + y2, y2:height},, &x, &y, ptf.Discord "\unread" which "_1.png", ptf.Discord "\unread" which "_2.png", ptf.Discord "\unread" which "_3.png") {
                 tool.Cust("Couldn't find any unread " message)
                 return
             }

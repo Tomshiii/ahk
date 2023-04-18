@@ -3,14 +3,15 @@
 - Fix install process potentially not generating a `settings.ini` file if one does not already exist
 - Fix install process potentially throwing during the extraction stage if the user doesn't already have symlinks properly generated
 - Further fix settings changes not sticking when adjusted in `settingsGUI()`
-- Refactored `gameCheckGUI()` to better make use of the fact that it's a class
-- All scripts now contain a traymenu option to run at startup
+- All scripts now contain a `TrayMenu` option to run at startup
 
 ## > Functions
 - Fix `prem.audioDrag()` from `inserting` clip - caused by function pressing <kbd>Ctrl</kbd> before the clip has finished being placed
 - Fix `prem.getTimeline()` from retrieving the incorrect coordinates if a second window is in focus when called
 - Add `tool.tray()`
     - `convert2()`, `ytDownload()` & `Move Project.ahk` now use `tool.tray()` to alert the user that their process has completed
+- Add `obj.imgSrchMulti()` to quickly and easily search for multiple images at the same coordinate
+- Refactored `gameCheckGUI()` to better make use of the fact that it's a class
 - `prem.zoom()` cancel hotkey changed from <kbd>F5</kbd> to <kbd>Esc</kbd> 
 - `settingsGUI()`checkbox verbage change `autosave.ahk check for checklist.ahk` => `Auto open checklist.ahk`
 
@@ -49,6 +50,8 @@
 - `alwaysontopHotkey::` => `alwaysOnTop()`
 - `searchgoogleHotkey::` => `clip.search()`
 - `capitaliseHotkey::` => `clip.capitilise()`
+- `pauseyoutubeHotkey::` => `pauseYT()`
+- `premprojectHotkey::` => `openEditingDir()`
 
 `Removed:`
 - `premprojectHotkey::`
@@ -67,5 +70,5 @@
 
 `tiktok project.ahk`
 - Fix `gui.ctrl` being passed to `InStr` causing it to throw
-- Edit boxes will now be prioritised as long as soon as they're focused instead of only on change
+- Edit boxes will now be prioritised as soon as they're focused instead of only on change
 - Set `select` button as the default input

@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.1
+;\\v2.32.2
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -42,6 +42,7 @@
 #Include <Functions\refreshWin>
 #Include <Functions\getHotkeys>
 #Include <Functions\alwaysOnTop>
+#Include <Functions\pauseYT>
 #Include <Classes\keys>
 #Include <Functions\delaySI>
 #Include <GUIs\settingsGUI\settingsGUI>
@@ -196,7 +197,7 @@ SC03A & F5::refreshWin("A", wingetProcessPath("A"))
 ;		launch programs
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-#HotIf not GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
+#HotIf !GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
 ;windowspyHotkey;
 Pause::switchTo.WindowSpy() ;run/swap to windowspy
 ;vscodeHotkey;
@@ -328,51 +329,8 @@ $^c::VSCode.copy()
 
 #HotIf WinActive(browser.firefox.winTitle)
 ;pauseyoutubeHotkey;
-Media_Play_Pause:: ;pauses youtube video if there is one.
-{
-	coord.s()
-	MouseGetPos(&x, &y)
-	coord.w()
-	SetTitleMatchMode 2
-	needle := "YouTube"
-	winget.Title(&title)
-	if InStr(title, needle)
-		{
-			if InStr(title, "Subscriptions - YouTube Mozilla Firefox", 1) || title = "YouTube Mozilla Firefox"
-				{
-					SendInput("{Media_Play_Pause}")
-					return
-				}
-			SendInput("{Space}")
-			return
-		}
-	else loop {
-		wingetPos(,, &width,, "A")
-		if ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " ptf.firefox "youtube1.png") || ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " ptf.firefox "youtube2.png")
-			{
-				MouseMove(xpos, ypos, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
-				SendInput("{Click}")
-				coord.s()
-				MouseMove(x, y, 2)
-				break
-			}
-		else
-			switchTo.OtherFirefoxWindow()
-		if A_Index > 5
-			{
-				tool.Cust("Couldn't find a youtube tab")
-				try {
-					WinActivate(title) ;reactivates the original window
-				} catch as e {
-					tool.Cust("Failed to get information on last active window")
-					errorLog(e)
-				}
-				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
-				return
-			}
-	}
-	SendInput("{Space}")
-}
+Media_Play_Pause::pauseYT() ;pauses youtube video if there is one.
+
 
 ;the below disables the numpad on youtube so you don't accidentally skip around a video
 ;numpadytHotkey;
@@ -491,19 +449,7 @@ Ctrl & BackSpace::prem.wordBackspace()
 SC03A & v::prem.selectionTool()
 
 ;premprojectHotkey;
-RAlt & p::
-{
-	dir := obj.SplitPath(ptf.EditingStuff)
-	if WinExist(dir.name) {
-		WinActivate(dir.name)
-		return
-	}
-	Run(ptf.EditingStuff)
-	if !WinWaitActive(dir.name,, 3) {
-		if WinExist(dir.name)
-			WinActivate(dir.name)
-	}
-}
+RAlt & p::prem.openEditingDir(ptf.EditingStuff)
 
 ;12forwardHotkey;
 PgDn::prem.moveKeyframes("right", 12)

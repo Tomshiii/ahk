@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
- * @date 2023/04/07
- * @version 1.5.7
+ * @date 2023/04/18
+ * @version 1.5.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1513,6 +1513,23 @@ class Prem {
         switch direction {
             case "left":
             case "right":
+        }
+    }
+
+    /**
+     * A function to simply open an asset folder
+     * @param {String} dir the path to the directory you wish to open
+     */
+    static openEditingDir(dir) {
+        dirObj := obj.SplitPath(dir)
+        if WinExist(dirObj.name) {
+            WinActivate(dirObj.name)
+            return
+        }
+        Run(dir)
+        if !WinWaitActive(dirObj.name,, 3) {
+            if WinExist(dirObj.name)
+                WinActivate(dirObj.name)
         }
     }
 }
