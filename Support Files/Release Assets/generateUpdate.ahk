@@ -26,7 +26,7 @@ loop files ptf.rootDir "\Error Logs\*.txt"
 
 ;// ask what version we're bumping to
 currentVer := getLocalVer()
-initialValue := SubStr(currentVer, 1, InStr(currentVer, ".",,, -1)) "x"
+initialValue := InStr(currentVer, ".",,, 2) ? SubStr(currentVer, 1, InStr(currentVer, ".",,, -1)) "x" : currentVer ".x"
 yes := InputBox("", "version", "W100 H80", initialValue)
 if yes.Result = "Cancel"
     return
@@ -297,14 +297,17 @@ getverNum() {
     finalNum := ""
     loop StrLen(num) {
         loopField := SubStr(num, A_Index, 1)
-        if IsNumber(loopField) || (loopField = "." && dot = false) {
-            if loopField = "."
-                dot := true
+        if IsNumber(loopField) || (loopField = ".") {
+            if loopField = "." {
+                switch dot {
+                    case true:  break
+                    case false: dot := true
+                }
+            }
             finalNum := finalNum loopField
         }
-        else
-            return finalNum
     }
+    return finalNum
 }
 verNum := getverNum()
 
@@ -313,8 +316,7 @@ if !DirExist(A_WorkingDir "\" verNum ".x")
     DirCreate(A_WorkingDir "\" verNum ".x")
 if (InStr(yes.value, "pre") || InStr(yes.value, "beta") || InStr(yes.value, "alpha")) && !DirExist(A_WorkingDir "\" verNum ".x\pre")
     DirCreate(A_WorkingDir "\" verNum ".x\pre")
-if pre || beta || alpha
-    preCheck := true
+preCheck := (pre = true || beta = true || alpha = true) ? true : false
 switch preCheck {
     case 0:
         FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\" yes.value ".exe", 1)
