@@ -1095,6 +1095,7 @@ class Prem {
                         {
                             errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
                                         , "Or the function kept finding pure black at each checking coordinate", 1)
+                            return
                         }
                     break
                 }

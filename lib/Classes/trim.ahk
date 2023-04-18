@@ -1,8 +1,16 @@
+/************************************************************************
+ * @description A script to contain classes relating to trimming audio/video files with ffmpeg
+ * @author tomshi
+ * @date 2023/04/18
+ * @version 1.0.0
+ ***********************************************************************/
+
 ;// this script requires ffmpeg to be installed correctly and to the system path
 
 ; { \\ #Includes
 #Include <GUIs\tomshiBasic>
 #Include <Classes\cmd>
+#Include <Classes\obj>
 ; }
 
 class trimGUI extends tomshiBasic {
@@ -39,6 +47,7 @@ class trimGUI extends tomshiBasic {
 class trim {
     /**
      * Get the index to append to the file if the user doesn't wish to overwrite it
+     * @param {String} path the location of the file being worked on
      */
     __getIndex(path) {
         pathobj := obj.SplitPath(path)
@@ -55,6 +64,7 @@ class trim {
 
     /**
      * Run the dir
+     * @param {Object} obj the splitpath object that contains the path of the file being worked on
      */
     __run(obj) {
         if WinExist(obj.dir)
@@ -65,6 +75,11 @@ class trim {
 
     /**
      * send the ffmpeg command to the commandline and handle overwritting the file
+     * @param {String} path the location of the file being worked on
+     * @param {Integer} startval the number of seconds into the file the user wishes to trim to
+     * @param {Integer} durationval the number of seconds from the start value the user wishes to trim the file
+     * @param {Boolean} overwrite whether the file should be overwritten
+     * @param {String} commands any further commands that will be appended to the command. The default command is `ffmpeg -ss {startval} -i "{filepath}" -t {durationval} {commands} "{outputfile}"`
      */
     __operate(path, startval, durationval, overwrite, commands, *) {
         pathobj := obj.SplitPath(path)
