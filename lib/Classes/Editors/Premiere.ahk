@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
- * @date 2023/04/18
- * @version 1.5.8
+ * @date 2023/04/22
+ * @version 1.5.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1530,6 +1530,19 @@ class Prem {
         if !WinWaitActive(dirObj.name,, 3) {
             if WinExist(dirObj.name)
                 WinActivate(dirObj.name)
+        }
+    }
+
+    /**
+     * This function handles accelorating scrolling within premiere. It specifically expects the first activation hotkey to be either `alt` or `shift`
+     * @param {Integer} altAmount the amount of accelerated scrolling you want
+     * @param {Integer} scrollAmount the amount of accelerated scrolling you want
+     */
+    static accelScroll(altAmount := 3, scrollAmount := 5) {
+        getDir := getHotkeys()
+        switch getdir.first {
+            case "Alt": SendInput(Format("!{{1} {2}}", getDir.second, altAmount))
+            default:    SendInput(Format("{{1} {2}}", getDir.second, scrollAmount))
         }
     }
 }

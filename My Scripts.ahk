@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.2
+;\\v2.32.3
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -464,6 +464,11 @@ PgUp::prem.moveKeyframes("left", 12)
 Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "second") ;goes to the next keyframe point towards the left
 ;nextpremkeyframeHotkey;
 Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second") ;goes to the next keyframe towards the right
+
+Alt & WheelUp::
+Alt & WheelDown::
+Shift & WheelUp::
+Shift & WheelDown::prem.accelScroll()
 
 ;previouseditHotkey;
 F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint) ;goes to the next edit point towards the left
