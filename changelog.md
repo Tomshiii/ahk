@@ -2,3 +2,4 @@
 
 ## > Functions
 - Add `prem.accelScroll()`
+- Add `prem.Excalibur.lockTracks()`

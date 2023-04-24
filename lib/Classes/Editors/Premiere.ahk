@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
- * @date 2023/04/22
- * @version 1.5.9
+ * @date 2023/04/23
+ * @version 1.5.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -879,16 +879,15 @@ class Prem {
                 loop {
                     ;check to see if the user wants the bleep on a track between 1-9
                     getlastHotkey := A_PriorKey
-                    if getlastHotkey = ""
-                        goto skip
-                    if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
-                        trackNumber := getlastHotkey
-                    if GetKeyState("Esc", "P") || getlastHotkey = "Escape"
-                        {
-                            clear()
-                            return
-                        }
-                    skip:
+                    if getlastHotkey != "" {
+                        if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
+                            trackNumber := getlastHotkey
+                        if (GetKeyState("Esc", "P") || getlastHotkey = "Escape")
+                            {
+                                clear()
+                                return
+                            }
+                    }
                     sleep 50
                     if A_Index > 160 ;built in timeout
                         {
@@ -1545,4 +1544,53 @@ class Prem {
             default:    SendInput(Format("{{1} {2}}", getDir.second, scrollAmount))
         }
     }
+
+
+    ;//! *** ===============================================
+
+    class Excalibur {
+
+        lockNumpadKeys := Mip("Space", ",", "Numpad0", ",", "NumpadSub", "{BackSpace}")
+        /**
+         * Sets or resets some numpad functionality for `lockTracks()`
+         */
+        __lockNumpadKeys(set_reset := "set") {
+            switch set_reset, "Off" {
+                case "set":
+                    __set(sendHotkey, *) => SendInput(sendHotkey)
+                    for k, v in this.lockNumpadKeys {
+                        Hotkey(k, __set.Bind(v))
+                    }
+                case "reset":
+                    for k2, v2 in this.lockNumpadKeys {
+                        try {
+                            Hotkey(k2, k2, "On")
+                        } catch {
+                            Hotkey(k2, "Off")
+                        }
+                    }
+            }
+        }
+
+        /**
+         * #### This function requires the premiere plugin `Excalibur` to be installed and for `KSA.excalLockVid` to be correctly set.
+         */
+        static lockTracks(which := "Video") {
+            switch which, "Off" {
+                case "audio": SendInput(KSA.excalLockAud)
+                case "video": SendInput(KSA.excalLockVid)
+
+            }
+            if !WinWait("Lock " which " Tracks",, 3)
+                return
+            sleep 200
+            SendInput("{Down}")
+            this().__lockNumpadKeys("set")
+
+            if WinWaitClose("Lock " which " Tracks") {
+                this().__lockNumpadKeys("reset")
+            }
+        }
+    }
+
 }
