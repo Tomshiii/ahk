@@ -1,6 +1,6 @@
 /************************************************************************
  * @description A library of useful Photoshop functions to speed up common tasks
- * Last tested in v24.0.1 of Photoshop
+ * Last tested in v24.4.1 of Photoshop
  * @author tomshi
  * @date 2023/02/15
  * @version 1.2.1
