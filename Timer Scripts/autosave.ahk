@@ -289,12 +289,9 @@ save()
     path := WinGet.ProjPath()
     if !DirExist(path.Dir "\Backup")
         DirCreate(path.Dir "\Backup")
-    else
-        {
-            loop files path.Dir "\Backup\*"
-                FileDelete(A_LoopFileFullPath)
-        }
     try {
+        loop files path.Dir "\Backup\*.*"
+            FileDelete(A_LoopFileFullPath)
         loop files path.Dir "\*.prproj", "F" {
             FileCopy(A_LoopFileFullPath, path.Dir "\Backup\*_" time ".*", 1)
         }
