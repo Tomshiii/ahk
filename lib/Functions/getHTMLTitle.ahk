@@ -45,6 +45,7 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
         return finalTitle ?? initialMatch
     if finalTitle = ""
         finalTitle := initialMatch
+    finalTitle := InStr(finalTitle, " - YouTube", 1,, 1) ? StrReplace(finalTitle, " - YouTube", "", 1,, 1) : finalTitle
     params.InsertAt(1, replace)
     ;// sanitising title of invalid filename characters
     if RegExMatch(finalTitle, "\\|\/|:|\*|\?|\`"|<|>|\|", &match)

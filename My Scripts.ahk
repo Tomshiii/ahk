@@ -463,8 +463,8 @@ Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "
 ;nextpremkeyframeHotkey;
 Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second") ;goes to the next keyframe towards the right
 
-Alt & WheelUp::
-Alt & WheelDown::
+/* Alt & WheelUp::
+Alt & WheelDown:: */
 Shift & WheelUp::
 Shift & WheelDown::prem.accelScroll()
 
