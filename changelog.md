@@ -11,3 +11,4 @@
 
 ## > Other Changes
 - Fix `autosave.ahk` potentially throwing during backup
+- `Settings.ahk` will now check the current `version` value for `alpha`/`beta` and ensure it's formatted correctly so any `VerCompare` work as expected

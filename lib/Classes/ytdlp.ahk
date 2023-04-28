@@ -99,7 +99,7 @@ class ytdlp {
      * @param {String} folder is the folder you wish the files to save. By default it's this scripts directory
      * @returns the url
      * ```
-     * ytDownload("", "download\path")
+     * ytdlp().download("", "download\path")
      * ;// default command with no passed args;
      * ;// yt-dlp -P "link\to\path" "URL"
      * ```

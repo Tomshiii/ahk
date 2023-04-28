@@ -63,9 +63,6 @@ startupTray()
 #HotIf getKeyState("F24", "P") and WinActive(editors.Photoshop.winTitle)
 #Include <QMK\Photoshop>
 ;===========================================================================
-#HotIf getKeyState("F24", "P") and WinActive(browser.vscode.winTitle)
-#Include <QMK\VSCode>
-;===========================================================================
 #HotIf getKeyState("F24", "P") ;these will work everywhere
 #Include <QMK\Always>
 ;===========================================================================

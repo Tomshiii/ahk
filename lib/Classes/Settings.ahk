@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/04/07
- * @version 1.2
+ * @date 2023/04/29
+ * @version 1.2.1
  ***********************************************************************/
 
 class UserPref {
@@ -132,6 +132,19 @@ class UserPref {
         }
     }
 
+    /**
+     * Checks the current version value for an `alpha` or `beta` tag and ensures it's formatted correctly so `VerCompare` will work as expected
+     */
+    __checkPreReleaseTag(value) {
+        if ((alpha := InStr(value, "alpha")) || (beta := InStr(value, "beta"))) {
+            which := (alpha != 0) ? "alpha" : "beta"
+            value := (SubStr(value, %which%-1, 1) != "-") ? SubStr(value, 1, %which%-1) "-" SubStr(value, %which%)
+                                                          : value
+            value := SubStr(value, pos := InStr(value, which)+StrLen(which)-1, 1) != "." ? SubStr(value, 1, pos) "." SubStr(value, pos+1)
+                                                          : value
+        }
+    }
+
     ;// [Settings]
     Settings_ := []
     __setSett() {
@@ -160,6 +173,12 @@ class UserPref {
             switch v {
                 case "first_check", "block_aware":
                     this.%v% := this.__convertToBool(this.__convertToKey(v), "Track")
+                case "version":
+                    default := this.__getDefault(v)
+                    value := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), default)
+                    origVal := value
+                    this.__checkPreReleaseTag(value)
+                    this.%v% := (value != origVal) ? value : origVal
                 default:
                     default := this.__getDefault(v)
                     this.%v% := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), default)
