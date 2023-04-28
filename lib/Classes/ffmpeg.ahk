@@ -2,7 +2,7 @@
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
  * @date 2023/04/27
- * @version 1.0.0
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -48,6 +48,23 @@ class ffmpeg {
     }
 
     /**
+     * Get the index to append to the file if the user doesn't wish to overwrite it
+     * @param {String} path the location of the file being worked on
+     */
+    __getIndex(path) {
+        pathobj := obj.SplitPath(path)
+        index := 1
+        loop {
+            if FileExist(pathobj.dir "\" pathobj.NameNoExt "_" index "." pathobj.ext) {
+                index++
+                continue
+            }
+            break
+        }
+        return (pathobj.dir "\" pathobj.NameNoExt "_" index "." pathobj.ext)
+    }
+
+    /**
      * Sends the desired command to the command line
      * @param {String} command the command that will be sent to the command line
      * @param {String} path the path to use as the working directory for the command
@@ -62,6 +79,17 @@ class ffmpeg {
         try {
             WinActivate(hwnd)
         }
+    }
+
+    /**
+     * Run the dir
+     * @param {Object} obj the splitpath object that contains the path of the file being worked on
+     */
+    __runDir(obj) {
+        if WinExist(obj.dir)
+            WinActivate(obj.dir)
+        else
+            Run(obj.dir)
     }
 
     /**
@@ -95,7 +123,7 @@ class ffmpeg {
      * Attempts to convert all files of the input type, to the desired type
      * @param {String} path the path of the desired files. If no path is provided this parameter defaults to the active windows explorer window
      * @param {String} from the filetype you wish to convert from
-     * @param {String} to the filetype you wish to conver to
+     * @param {String} to the filetype you wish to convert to
      */
     all_XtoY(path := "A", from := "mkv", to := "mp4") {
         path := this.__setPath(path)
@@ -108,6 +136,29 @@ class ffmpeg {
         }
         this.__runCommand(command, path.path)
         this.__activateWindow(path.hwnd)
+    }
+
+    /**
+     * Attempts to trim the specified file by the input amount.
+     * @param {String} path the location of the file being worked on
+     * @param {Integer} startval the number of seconds into the file the user wishes to trim to
+     * @param {Integer} durationval the number of seconds from the start value the user wishes to trim the file
+     * @param {Boolean} overwrite whether the file should be overwritten
+     * @param {String} commands any further commands that will be appended to the command. The default command is `ffmpeg -ss {startval} -i "{filepath}" -t {durationval} {commands} "{outputfile}"`
+     */
+    trim(path, startval, durationval, overwrite, commands) {
+        pathobj := obj.SplitPath(path)
+        outputFile := this.__getIndex(path)
+        command := Format('ffmpeg -ss {1} -i "{3}" -t {2} {5} "{4}"', startval, durationval, path, outputFile, commands)
+        cmd.run(,, command)
+        switch overwrite {
+            case 1:
+                FileDelete(path)
+                FileMove(outputFile, path)
+                this.__runDir(pathobj)
+            default:
+                this.__runDir(pathobj)
+        }
     }
 
     __Delete() {

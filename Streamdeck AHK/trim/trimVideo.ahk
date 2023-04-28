@@ -1,8 +1,7 @@
 ;// this script requires ffmpeg to be installed correctly and to the system path
 
 ; { \\ #Includes
-#Include <Classes\trim>
+#Include <GUIs\trim>
 ; }
 
-trimAud := trimGUI("video", "-c:v copy -c:a copy")
-trimAud.show()
+trimGUI("video", "-c:v copy -c:a copy -crf 17")

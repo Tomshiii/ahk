@@ -71,7 +71,7 @@ class ytdlp {
 
 
     /**
-     * Handles converting a recently downloaded file to h264. This is useful when using video editing programs such as Premiere Pro as it doesn't support the filetypes that youtube stores newer videos in (.webm & vp9/av1)
+     * Handles converting a file to h264. This is useful when using video editing programs such as Premiere Pro as it doesn't support the filetypes that youtube stores newer videos in (.webm & vp9/av1)
      * @param {String} filepath the filepath (including filename but extension type is not required)
      * @param {String} title the desired output filename. can be omitted but may encounter issues if the resulting file is the same name as the input file
      */
