@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.3
+;\\v2.32.4
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -32,7 +32,7 @@
 #Include <Classes\Startup>
 #Include <Classes\obj>
 #Include <Classes\clip>
-#Include <Functions\reload_reset_exit>
+#Include <Classes\reset>
 #Include <Functions\errorLog>
 #Include <Functions\mouseDrag>
 #Include <Functions\getLocalVer>
@@ -133,17 +133,17 @@ F11::ListLines() ;debugging
 F12::KeyHistory  ;debugging
 */
 ;reloadHotkey;
-#+r::reload_reset_exit("reload") ;this reload script will attempt to reload all* active ahk scripts, not only this main script
+#+r::reset.ext_reload() ;this reload script will attempt to reload all* active ahk scripts, not only this main script
 
 ;hardresetHotkey;
-#+^r::reload_reset_exit("reset") ;this will hard rerun all active ahk scripts
+#+^r::reset.reset() ;this will hard rerun all active ahk scripts
 
 ;unstickKeysHotkey;
 #F11::keys.allUp() ;this function will attempt to unstick as many keys as possible
 ;panicExitHotkey;
-#F12::reload_reset_exit("exit") ;this is a panic button and will shutdown all active ahk scripts
+#F12::reset.ex_exit() ;this is a panic button and will shutdown all active ahk scripts
 ;panicExitALLHotkey;
-#+F12::reload_reset_exit("exit", true) ;this is a panic button and will shutdown all active ahk scripts INCLUDING the checklist.ahk script
+#+F12::reset.ex_exit(true) ;this is a panic button and will shutdown all active ahk scripts INCLUDING the checklist.ahk script
 
 ;settingsHotkey;
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI
@@ -481,7 +481,7 @@ LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
 Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
-#Include *i right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+#Include <Classes\Editors\Premiere_RightClick> ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;bonkHotkey;
 F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20

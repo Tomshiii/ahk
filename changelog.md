@@ -1,4 +1,6 @@
 # <> Release 2.11.x - 
+- `right click premiere.ahk` has been removed and replaced with `Premiere_RightClick.ahk`
+    - Entire script refactored to be contained within a class to allow for easier handling of variables, easier bug tracking & easier expanding
 
 ## > Functions
 - Add `prem.accelScroll()`
@@ -7,6 +9,7 @@
     - All scripts that called these functions have been updated
     - Removed `trim {` from `trim.ahk` and moved to `ffmpeg {`
         - `trim.ahk` moved from `..\lib\Classes\` to `..\lib\GUIs`
+- Removed `reload_reset_exit()` and replaced with `reset {`
 - `getHTMLTitle()` will now sanitise ` - YouTube` from titles
 
 ## > Other Changes

@@ -17,6 +17,7 @@
 #Include <Classes\winget>
 #Include <Classes\keys>
 #Include <Classes\Mip>
+#Include <Classes\reset>
 #Include <Functions\errorLog>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
@@ -52,7 +53,7 @@ class Startup {
             {
                 this.UserSettings.dark_mode := "disabled"
                 this.UserSettings.__delAll()
-                reload_reset_exit("reset")
+                reset.reset()
                 return "disabled"
             }
         this.UserSettings.dark_mode := true
@@ -565,7 +566,7 @@ class Startup {
     trayMen() {
         check := this.UserSettings.update_check
         shortcutLink := A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\" A_ScriptName " - Shortcut.lnk"
-        A_TrayMenu.Insert("6&", "Hard Reset", (*) => reload_reset_exit("reset"))
+        A_TrayMenu.Insert("6&", "Hard Reset", (*) => reset.reset())
         A_TrayMenu.Insert("7&") ;adds a divider bar
         A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
         A_TrayMenu.Insert("9&", "keys.allUp()", (*) => keys.allUp())
@@ -574,7 +575,7 @@ class Startup {
         A_TrayMenu.Insert("12&", "Check for Updates", checkUp)
         A_TrayMenu.Insert("13&") ;adds a divider bar
         A_TrayMenu.Insert("14&", "Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
-        A_TrayMenu.Insert("15&", "Close All Scripts", (*) => reload_reset_exit("exit"))
+        A_TrayMenu.Insert("15&", "Close All Scripts", (*) => reset.ex_exit())
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")

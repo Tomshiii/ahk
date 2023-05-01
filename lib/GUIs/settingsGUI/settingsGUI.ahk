@@ -8,7 +8,7 @@
 #Include <Classes\ptf>
 #Include <Classes\obj>
 #Include <Classes\WM>
-#Include <Functions\reload_reset_exit>
+#Include <Classes\reset>
 #Include <Functions\refreshWin>
 #Include <Functions\detect>
 #Include <Functions\checkInternet>
@@ -434,7 +434,7 @@ settingsGUI()
         UserSettings.__delAll() ;// close the settings instance
         if IsSet(butt) && butt = "hard"
             {
-                reload_reset_exit("reset")
+                reset.reset()
                 return ;// this is necessary
             }
         ;before finally closing
