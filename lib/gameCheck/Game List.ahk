@@ -6,4 +6,6 @@ GroupAdd("games", "Overwatch ahk_exe Overwatch.exe") ;overwatch
 GroupAdd("games", "Sector's Edge ahk_exe sectorsedge.exe") ;sectorsedge
 GroupAdd("games", "Left 4 Dead 2 ahk_exe left4dead2.exe") ;lfd2
 GroupAdd("games", "Stardew Valley ahk_exe Stardew Valley.exe")
+GroupAdd("games", "Just Cause 3 ahk_exe JustCause3.exe")
+GroupAdd("games", "Halo: The Master Chief Collection   ahk_exe MCC-Win64-Shipping.exe")
 ; -- leave this line it gets used and is needed in settingsGUI()
