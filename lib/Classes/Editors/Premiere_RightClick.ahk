@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
- * @date 2023/04/22
- * @version 2.0.0
+ * @date 2023/05/05
+ * @version 2.0.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -223,7 +223,7 @@ class rbuttonPrem {
 			return
 		}
 		while GetKeyState("Rbutton", "P") {
-			if GetKeyState("Ctrl") || GetKeyState("Shift") {
+			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
 				this.__checkStuck()
 				if GetKeyState("Ctrl", "P") { ;you still want to be able to hold shift so you can cut all tracks on the timeline
 					tool.Cust("Holding control while scrubbing will cause Premiere to freak out")

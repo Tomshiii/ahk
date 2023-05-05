@@ -10,6 +10,7 @@
     - Removed `trim {` from `trim.ahk` and moved to `ffmpeg {`
         - `trim.ahk` moved from `..\lib\Classes\` to `..\lib\GUIs`
 - Removed `reload_reset_exit()` and replaced with `reset {`
+- Fix `prem.preset("loremipsum")`
 - `getHTMLTitle()` will now sanitise ` - YouTube` from titles
 
 ## > Other Changes

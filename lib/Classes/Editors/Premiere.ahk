@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
- * @date 2023/04/23
- * @version 1.5.10
+ * @date 2023/05/05
+ * @version 1.5.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -167,7 +167,9 @@ class Prem {
                         errorLog(Error("Couldn't find the eye icon", -1),, 1)
                         return
                     }
-                    if ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
+                    if A_Index > 1 && y2 < 900 ;// the y value it searches will increase as the loop index increases
+                        y2 += 100
+                    if ImageSearch(&xeye, &yeye, x2, y2, x2 + 200, y2 + 100, "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
                         break
                     sleep 100
                 }
