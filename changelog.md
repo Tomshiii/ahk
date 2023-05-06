@@ -14,6 +14,7 @@
 - Moved from `..\lib\Classes\` to `..\lib\GUIs`
 - Removed `trim {` from `trim.ahk` and moved code to `ffmpeg {`
 - If `duration` field is left blank, the trim will now assume you want the rest of the track left untouched instead of resulting in an empty file
+- Added option to select a new file
 
 ## > Other Changes
 - Fix `autosave.ahk` potentially throwing during backup

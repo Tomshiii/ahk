@@ -2,7 +2,7 @@
  * @description A script to contain classes relating to trimming audio/video files with ffmpeg
  * @author tomshi
  * @date 2023/05/06
- * @version 1.0.2
+ * @version 1.0.2.1
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -25,7 +25,7 @@ class trimGUI extends tomshiBasic {
         this.AddText("ys xs+190", "Duration:")
         this.AddEdit("ys-3 xs+250 r1 w100 Number").OnEvent("Change", this.__changeVal.bind(this, "duration"))
         this.AddCheckbox("ys xs+370 Checked" this.overwrite, "Overwrite?").OnEvent("Click", this.__changeCheck.Bind(this))
-        this.AddButton("xs+250 w100", "Select File").OnEvent("Click", this.__selectFile.Bind(this))
+        this.AddButton("xs+257 w100", "Select File").OnEvent("Click", this.__selectFile.Bind(this))
         this.AddButton("x+10 w50", "Trim").OnEvent("Click", this.__doTrim.Bind(this))
         this.commands := extraCommands
         this.show()
