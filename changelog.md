@@ -6,11 +6,10 @@
 - Add `prem.accelScroll()`
 - Add `prem.Excalibur.lockTracks()`
 - Removed `convert2()` and `ytDownload()` and replaced with `ytdlp {` & `ffmpeg {`
-    - All scripts that called these functions have been updated
     - Removed `trim {` from `trim.ahk` and moved to `ffmpeg {`
         - `trim.ahk` moved from `..\lib\Classes\` to `..\lib\GUIs`
 - Removed `reload_reset_exit()` and replaced with `reset {`
-- Fix `prem.preset("loremipsum")`
+- Fix `prem.preset("loremipsum")` not searching enough vertically
 - `getHTMLTitle()` will now sanitise ` - YouTube` from titles
 
 ## > Other Changes

@@ -3,7 +3,7 @@
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
  * @date 2023/05/06
- * @version 2.0.2
+ * @version 2.0.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -96,7 +96,10 @@ class rbuttonPrem {
 		return false
 	}
 
-	/** Checks the colour under the cursor to determine if it's one of the predetermined colours */
+	/**
+	 * Checks the colour under the cursor to determine if it's one of the predetermined colours
+	 * @returns {Boolean} if colour is not one of the predetermined values, returns `false`. Else returns `true`
+	 */
 	__checkColour(colour) {
 		loop { ;// this loop is checking to see if `colour` is one of the predetermined colours
 			if A_Index > this.timelineCol.Length
@@ -109,26 +112,10 @@ class rbuttonPrem {
 		}
 	}
 
-	/** ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (unless you make your timeline comically small, then you may encounter issues) */
-	__checkCoords(coordObj) {
-		if ((coordObj.x > prem.timelineXValue) || (coordObj.x < prem.timelineXControl) || (coordObj.y < prem.timelineYValue) || (coordObj.y > prem.timelineYControl)) {
-			SendInput("{Rbutton}")
-			this.__checkStuck()
-			return false
-		}
-		return true
-	}
-
-	/** checks to see if the timeline values within `prem {` have been set */
-	__checkTimeline() {
-		if (prem.timelineXValue = 0 || prem.timelineYValue = 0 || prem.timelineXControl = 0 || prem.timelineYControl = 0) {
-			if !prem.getTimeline()
-				return false
-		}
-		return true
-	}
-
-	/** Checks the colour under the cursor to determine if it's potentially a clip */
+	/**
+	 * Checks the colour under the cursor to determine if it's potentially a clip
+	 * @returns {Boolean} if the colour under the cursor **isn't** a predetermined value, returns `false`. Else returns `true`
+	 */
 	__checkUnderCursor(colour) {
 		if (
 			colour != this.timelineCol[1] && colour != this.timelineCol[2] &&
@@ -144,6 +131,7 @@ class rbuttonPrem {
 	/**
 	 * Checks to see wheteher the playhead can be found on the screen. If it is, `KSA.shuttleStop` is sent.
 	 * If the playhead is close to the cursor, the cursor will be moved to it and `LButton` is held down
+	 * @param {Object} coordObj an object containing the cursor coords
 	 */
 	__checkForPlayhead(coordObj) {
 		if PixelSearch(&throwx, &throwy, prem.timelineXValue, coordObj.y, prem.timelineXControl, coordObj.y, this.playhead) ;checking to see if the playhead is on the screen
@@ -159,9 +147,12 @@ class rbuttonPrem {
 			}
 	}
 
-	/** This function checks to see whether the user simply tapped the right mouse button and moves the playhead */
+	/**
+	 * This function checks to see whether the user simply tapped the right mouse button and moves the playhead
+	 * @returns {Boolean} if the user is no longer holding the `RButton`, returns `false`. Else return `true`
+	 */
 	__checkForTap() {
-		if !GetKeyState("Rbutton", "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
+		if !GetKeyState("RButton", "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
 			{
 				SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 				;The below checks are to ensure no buttons end up stuck
@@ -193,8 +184,10 @@ class rbuttonPrem {
 	 * @param {Array} arr all keys you wish to assign a function
 	 */
 	__HotkeySet(arr) {
-		for v in arr {
-			Hotkey(v, __set.Bind(v), "On")
+		try {
+			for v in arr {
+				Hotkey(v, __set.Bind(v), "On")
+			}
 		}
 
 		/**
@@ -216,7 +209,9 @@ class rbuttonPrem {
 			try {
 				Hotkey(k, k, "On")
 			} catch {
-				Hotkey(k, "Off")
+				try {
+					Hotkey(k, "Off")
+				}
 			}
 		}
 	}
@@ -231,10 +226,13 @@ class rbuttonPrem {
 		}
 		coord.s()
 		origMouse := obj.MousePos()
-		if !this.__checkTimeline()
+		if !prem.__checkTimeline()
 			return
-		if !this.__checkCoords(origMouse)
+		if !prem.__checkCoords(origMouse) {
+			SendInput("{Rbutton}")
+			this.__checkStuck()
 			return
+		}
 		this.__setColours(origMouse)
 		if this.__checkForBlank(this.colour) {
 			SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.

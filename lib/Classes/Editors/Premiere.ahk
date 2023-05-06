@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
  * @author tomshi
- * @date 2023/05/05
- * @version 1.5.11
+ * @date 2023/05/06
+ * @version 1.5.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1328,18 +1328,19 @@ class Prem {
                 }
             SetTimer(rdisable, -50)
         }
-        MouseGetPos(&x, &y) ;from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
-        if this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0
-            {
-                if !this.getTimeline()
-                    goto skip
-            }
-        if x > this.timelineXValue || x < this.timelineXControl || y < this.timelineYValue || y > this.timelineYControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
-            {
-                SetTimer(rdisable, 0)
-                return
-            }
-        skip:
+        coordObj := obj.MousePos()
+        ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
+        if !this.__checkTimeline() {
+            return
+        }
+        ;// this below line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
+        if !this.__checkCoords(coordObj) {
+            SetTimer(rdisable, 0)
+            return
+        }
+
+        SetTimer(again, -400)
+        again()
         again()
         {
             if A_ThisHotkey = KSA.DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
@@ -1367,8 +1368,6 @@ class Prem {
             SendInput(toolorig)
             SetTimer(rdisable, 0)
         }
-        SetTimer(again, -400)
-        again()
     }
 
     /**
@@ -1535,15 +1534,46 @@ class Prem {
     }
 
     /**
-     * This function handles accelorating scrolling within premiere. It specifically expects the first activation hotkey to be either `alt` or `shift`
+     * Checks to see if the timeline values within `prem {` have been set
+     * @returns {Boolean} if the timeline cannot be determined, returns `false`. Else returns `true`
+     */
+	static __checkTimeline() {
+		if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) {
+			if !this.getTimeline()
+				return false
+		}
+		return true
+	}
+
+    /**
+     * This function checks if the mouse is outside the bounds of the timeline.
+     * This code should work regardless of where you have the timeline (unless you make your timeline comically small, then you may encounter issues)
+     * @returns {Boolean} if the cursor is **not** within the timeline, returns `false`. Else returns `true`
+     */
+	static __checkCoords(coordObj) {
+		if ((coordObj.x > this.timelineXValue) || (coordObj.x < this.timelineXControl) || (coordObj.y < this.timelineYValue) || (coordObj.y > this.timelineYControl))
+			return false
+		return true
+	}
+
+    /**
+     * This function handles accelorating scrolling within premiere. It specifically expects the first activation hotkey to be either `alt` or `shift`.
+     * This function will attempt to only fire within the timeline.
+     *
+     * *Due to ahk quirkiness, this function can act incredibly laggy and cause windows to beep if it's not placed in the perfect spot in your script.*
      * @param {Integer} altAmount the amount of accelerated scrolling you want
      * @param {Integer} scrollAmount the amount of accelerated scrolling you want
      */
     static accelScroll(altAmount := 3, scrollAmount := 5) {
+        if !this.__checkTimeline()
+			return
+        origMouse := obj.MousePos()
+        if !this.__checkCoords(origMouse)
+            scrollAmount := 1, altAmount := 1
         getDir := getHotkeys()
         switch getdir.first {
-            case "Alt": SendInput(Format("!{{1} {2}}", getDir.second, altAmount))
-            default:    SendInput(Format("{{1} {2}}", getDir.second, scrollAmount))
+            case "Alt": delaySI(0, SendInput(Format("!{{1} {2}}", getDir.second, altAmount)))
+            default:    delaySI(0, SendInput(Format("{{1} {2}}", getDir.second, scrollAmount)))
         }
     }
 

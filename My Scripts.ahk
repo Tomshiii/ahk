@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.4
+;\\v2.32.5
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -463,11 +463,6 @@ Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "
 ;nextpremkeyframeHotkey;
 Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second") ;goes to the next keyframe towards the right
 
-/* Alt & WheelUp::
-Alt & WheelDown:: */
-Shift & WheelUp::
-Shift & WheelDown::prem.accelScroll()
-
 ;previouseditHotkey;
 F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint) ;goes to the next edit point towards the left
 ;nexteditHotkey;
@@ -574,3 +569,10 @@ F14::SendInput(KSA.nudgeUp) ;setting this here instead of within premiere is req
 F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
 ;speedUpHotkey;
 F14 & F23::SendInput(KSA.speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
+
+#MaxThreadsBuffer true
+Alt & WheelUp::
+Alt & WheelDown::
+Shift & WheelUp::
+Shift & WheelDown::prem.accelScroll(5, 25)
+#MaxThreadsBuffer false

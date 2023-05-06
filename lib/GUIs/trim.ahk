@@ -5,7 +5,7 @@
  * @version 1.0.1
  ***********************************************************************/
 
-;// this script requires ffmpeg to be installed correctly and to the system path
+;// this script requires ffmpeg to be installed correctly and in the system path
 
 ; { \\ #Includes
 #Include <GUIs\tomshiBasic>
