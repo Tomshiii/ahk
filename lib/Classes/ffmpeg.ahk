@@ -115,7 +115,7 @@ class ffmpeg {
     convert2_h264(videoFilePath, outputFileName?, preset := "medium", crf := "17") {
         finalPath := obj.SplitPath(videoFilePath)
         finalFileName := IsSet(outputFileName) ? outputFileName : finalPath.NameNoExt
-        ;// ffmpeg -i input.mp4 -c:v libx264 -preset ultrafast -crf 17 output.mkv
+        ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium -crf 17 output.mkv
         cmd.run(false, true, Format("ffmpeg -i `"{1}`" -c:v libx264 -preset {3} -crf {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, crf))
     }
 

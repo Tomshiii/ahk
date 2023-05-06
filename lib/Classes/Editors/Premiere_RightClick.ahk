@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
- * @date 2023/05/05
- * @version 2.0.1
+ * @date 2023/05/06
+ * @version 2.0.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -14,17 +14,19 @@
 #Include <Classes\coord>
 #Include <Classes\keys>
 #Include <Classes\obj>
-#Include <Functions\trayShortcut>
 ; }
 
 ;//! if you intend on running this as a separate script, please read the notes below and the wiki page so you're aware of the unexpected behaviours that can cause!
 ;//! then uncomment the below lines
-/* #SingleInstance force ; only 1 instance of this script may run at a time.
+/*
+#SingleInstance force
 #HotIf WinActive(editors.Premiere.winTitle)
-TraySetIcon(ptf.Icons "\mouse.ico") ;because this is now just #include(d) in the main script, if this is here it overides the icon of the main script
-startupTray() */
+#Include <Functions\trayShortcut>
+TraySetIcon(ptf.Icons "\mouse.ico")
+startupTray()
+*/
 
-;// Please note this script was originally written by TaranVH in ahk v1.1
+;// Please note the original versions of this script were originally written by TaranVH in ahk v1.1
 ;// This script has since been adapted for ahk v2.0+ and converted to a class for easier handling of variables and methods. Feel free to check out TaranVH on githhub to see his version of this script for ahk v1.1 -Tomshi
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -184,7 +186,40 @@ class rbuttonPrem {
 	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "")
 
 	/** A functon to define what should happen anytime the class is closed */
-	__exit() => (this.__resetClicks(), this.__checkStuck())
+	__exit() => (this.__HotkeyReset(), this.__resetClicks(), this.__checkStuck())
+
+	/**
+	 * Defines what happens when certain buttons are pressed while RButton is held down
+	 * @param {Array} arr all keys you wish to assign a function
+	 */
+	__HotkeySet(arr) {
+		for v in arr {
+			Hotkey(v, __set.Bind(v), "On")
+		}
+
+		/**
+		 * A function to define what each hotkey passed will do
+		 * @param {String} which the keyname
+		 */
+		__set(which, *) {
+			switch which {
+				case "LButton":  this.leftClick := true
+				case "XButton2": this.leftClick := true, this.xbuttonClick := true
+			}
+		}
+	}
+
+	/** Resets the keys used during the loop to their original functions */
+	__HotkeyReset() {
+		keyArr := ["LButton", "XButton2"]
+		for k in keyArr {
+			try {
+				Hotkey(k, k, "On")
+			} catch {
+				Hotkey(k, "Off")
+			}
+		}
+	}
 
 	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when `RButton` is pressed.
@@ -222,6 +257,7 @@ class rbuttonPrem {
 			this.__exit()
 			return
 		}
+		this.__HotkeySet(["LButton", "XButton2"])
 		while GetKeyState("Rbutton", "P") {
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
 				this.__checkStuck()
@@ -233,13 +269,8 @@ class rbuttonPrem {
 			if this.colourOrNorm != "colour"
 				SendInput(ksa.playheadtoCursor)
 			sleep 16
-			if GetKeyState("LButton", "P")
-				this.leftClick := true
-			if GetKeyState("XButton2", "P") {
-				this.leftClick    := true
-				this.xbuttonClick := true
-			}
 		}
+		this.__HotkeyReset()
 		if this.colourOrNorm = "colour" {
 			SendInput("{LButton Up}")
 		}
