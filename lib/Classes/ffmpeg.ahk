@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/04/27
- * @version 1.0.1
+ * @date 2023/05/06
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -139,16 +139,29 @@ class ffmpeg {
     }
 
     /**
+     * This function retrieves the duration of the desired file using ffmpeg
+     * @param {String} filepath is the filepath of the file you wish to retrieve the duration of
+     * @returns {String} returns the duration of the desired file as a string
+     */
+    __getDuration(filepath) {
+        command := Format('ffprobe -i "{1}" -show_entries format=duration -v quiet -of csv="p=0"', filepath)
+        value := (strPos := InStr(result := cmd.result(command), ".")) ? SubStr(result, 1, strPos-1) : result
+        return value
+    }
+
+    /**
      * Attempts to trim the specified file by the input amount.
      * @param {String} path the location of the file being worked on
      * @param {Integer} startval the number of seconds into the file the user wishes to trim to
-     * @param {Integer} durationval the number of seconds from the start value the user wishes to trim the file
+     * @param {Integer} durationval the number of seconds from the start value the user wishes to trim the file. If this value is omitted (or is 0) this function will assume you want the remainder of the track and only wish to trim the start value.
      * @param {Boolean} overwrite whether the file should be overwritten
      * @param {String} commands any further commands that will be appended to the command. The default command is `ffmpeg -ss {startval} -i "{filepath}" -t {durationval} {commands} "{outputfile}"`
      */
-    trim(path, startval, durationval, overwrite, commands) {
+    trim(path, startval := 0, durationval?, overwrite := false, commands := "") {
         pathobj := obj.SplitPath(path)
         outputFile := this.__getIndex(path)
+        if !IsSet(durationval) || durationval = 0
+            durationval := (this.__getDuration(path))- startval
         command := Format('ffmpeg -ss {1} -i "{3}" -t {2} {5} "{4}"', startval, durationval, path, outputFile, commands)
         cmd.run(,, command)
         switch overwrite {

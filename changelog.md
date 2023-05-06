@@ -6,11 +6,14 @@
 - Add `prem.accelScroll()`
 - Add `prem.Excalibur.lockTracks()`
 - Removed `convert2()` and `ytDownload()` and replaced with `ytdlp {` & `ffmpeg {`
-    - Removed `trim {` from `trim.ahk` and moved to `ffmpeg {`
-        - `trim.ahk` moved from `..\lib\Classes\` to `..\lib\GUIs`
 - Removed `reload_reset_exit()` and replaced with `reset {`
 - Fix `prem.preset("loremipsum")` not searching enough vertically
 - `getHTMLTitle()` will now sanitise ` - YouTube` from titles
+
+`trim.ahk`
+- Moved from `..\lib\Classes\` to `..\lib\GUIs`
+- Removed `trim {` from `trim.ahk` and moved code to `ffmpeg {`
+- If `duration` field is left blank, the trim will now assume you want the rest of the track left untouched instead of resulting in an empty file
 
 ## > Other Changes
 - Fix `autosave.ahk` potentially throwing during backup
