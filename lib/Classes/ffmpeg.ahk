@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/05/06
- * @version 1.0.2
+ * @date 2023/05/07
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -106,17 +106,18 @@ class ffmpeg {
     }
 
     /**
-     * Attempts to reencode the desired file into a h264 codec
+     * Attempts to reencode the desired file into the desired file codec. (h264/h265)
      * @param {String} videoFilePath the path to the desired video file
      * @param {String} outputFileName the desired output name of your file. leaving this variable blank will leave the name the same (which may fail as ffmpeg may not be able to output a file if that name is already taken)
      * @param {String} preset the desired h264 preset to use. defaults to `medium`
+     * @param {String} preset the desired h264 preset to use. defaults to `medium`
      * @param {String} crf the desired crf value to use. defaults to `17`
      */
-    convert2_h264(videoFilePath, outputFileName?, preset := "medium", crf := "17") {
+    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "medium", crf := "17") {
         finalPath := obj.SplitPath(videoFilePath)
         finalFileName := IsSet(outputFileName) ? outputFileName : finalPath.NameNoExt
         ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium -crf 17 output.mkv
-        cmd.run(false, true, Format("ffmpeg -i `"{1}`" -c:v libx264 -preset {3} -crf {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, crf))
+        cmd.run(false, true, Format("ffmpeg -i `"{1}`" -c:v {5} -preset {3} -crf {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, crf, codec))
     }
 
     /**

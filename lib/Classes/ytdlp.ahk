@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/04/25
- * @version 1.0.0
+ * @date 2023/05/07
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -87,7 +87,7 @@ class ytdlp {
                 continue
             ext := A_LoopFileExt
         }
-        ffmpeg().convert2_h264(splitFilePath.dir "\" splitFilePath.NameNoExt "." ext, splitFilePath.dir "\" ytTitle)
+        ffmpeg().reencode_h26x(splitFilePath.dir "\" splitFilePath.NameNoExt "." ext, splitFilePath.dir "\" ytTitle)
         FileDelete(splitFilePath.dir "\" splitFilePath.NameNoExt "." ext)
     }
 
