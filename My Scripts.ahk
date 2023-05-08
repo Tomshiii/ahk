@@ -3,8 +3,8 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2023/04/18
- * @version v2.11
+ * @date 2023/05/08
+ * @version v2.11.1
  * @ahk_ver 2.0.2
  ***********************************************************************/
 
@@ -48,7 +48,7 @@
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
-;#Include right click premiere.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
+;#Include Premiere_RightClick.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 
 ;//! Setting up script defaults.

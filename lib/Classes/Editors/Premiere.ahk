@@ -1317,11 +1317,11 @@ class Prem {
     */
     static mousedrag(premtool, toolorig)
     {
-        if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
+        if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
             return
         SetTimer(rdisable, -1)
         rdisable() {
-            if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
+            if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
                 {
                     SetTimer(rdisable, 0)
                     return
@@ -1606,6 +1606,7 @@ class Prem {
 
         /**
          * #### This function requires the premiere plugin `Excalibur` to be installed and for `KSA.excalLockVid` to be correctly set.
+         * Quickly and easily lock/unlock multiple audio/video tracks
          */
         static lockTracks(which := "Video") {
             switch which, "Off" {

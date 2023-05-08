@@ -1,4 +1,4 @@
-# <> Release 2.11.x - 
+# <> Release 2.11.x - Fixes & Features
 - `right click premiere.ahk` has been removed and replaced with `Premiere_RightClick.ahk`
     - Entire script refactored to be contained within a class to allow for easier handling of variables, easier bug tracking & easier expanding
 

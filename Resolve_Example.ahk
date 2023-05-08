@@ -24,7 +24,7 @@ startupTray()
 ;\\v2.9.1
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.11
+;\\v2.11.1
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
@@ -127,7 +127,7 @@ loop {
     if IsSet(%"playhead" A_Index%)
         playheadVal.Push(Format("{:#x}", %"playhead" A_Index%))
 }
-Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible.
+Rbutton:: ;ports the functionality of "Premiere_RightClick.ahk" as best as possible.
 {
     static scrub := unset
     coord.w()

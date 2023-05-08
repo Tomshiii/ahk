@@ -12,7 +12,7 @@ A_ScriptName := "yes.value"
 ;@Ahk2Exe-SetVersion yes.value
 
 ;// making sure files haven't already been extracted
-if FileExist(A_WorkingDir "\My Scripts.ahk") || FileExist(A_WorkingDir "\right click premiere.ahk") || FileExist(A_WorkingDir "\checklist.ahk") || FileExist(A_WorkingDir "\yes.value.zip")
+if FileExist(A_WorkingDir "\My Scripts.ahk") || FileExist(A_WorkingDir "\checklist.ahk") || FileExist(A_WorkingDir "\yes.value.zip")
     {
         MsgBox("There appears to already be extracted files in this directory, remove them before running this file or you may enounter issues")
         return

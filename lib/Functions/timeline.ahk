@@ -4,7 +4,7 @@
 ; }
 
 /**
- * A weaker version of the right click premiere script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
+ * A weaker version of the Premiere_RightClick.ahk script. Set this to a button (mouse button ideally, or something obscure like ctrl + capslock)
  * @param {Integer} timeline in this function defines the y pixel value of the top bar in your video editor that allows you to click it to drag along the timeline
  * @param {Integer} x1 is the furthest left pixel value of the timeline that will work with your cursor warping up to grab it
  * @param {Integer} x2 is the furthest right pixel value of the timeline that will work with your cursor warping up to grab it
