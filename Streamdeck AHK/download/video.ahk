@@ -11,7 +11,7 @@ URL := ytdlp().download('-N 8 --output "output_temp_file"', commsFolder)
 if !URL
     return
 switch InStr(URL, "twitch.tv") {
-    case 0: ytdlp().reencode(commsFolder, getHTMLTitle(URL))
+    case 0: ytdlp().reencode(commsFolder "\output_temp_file", getHTMLTitle(URL))
     default:
         newName := getHTMLTitle(URL)
         FileMove(commsFolder "\output_temp_file", commsFolder "\" newName ".mp4")

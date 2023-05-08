@@ -10,4 +10,4 @@ vfxFolder := "E:\_Editing stuff\videos"
 URL := ytdlp().download('-N 8 --output "output_temp_file"', vfxFolder)
 if !URL
     return
-ytdlp().reencode(vfxFolder, getHTMLTitle(URL))
+ytdlp().reencode(vfxFolder "\output_temp_file", getHTMLTitle(URL))

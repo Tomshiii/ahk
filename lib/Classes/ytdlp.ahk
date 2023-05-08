@@ -2,7 +2,7 @@
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
  * @date 2023/05/07
- * @version 1.0.1
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -87,7 +87,7 @@ class ytdlp {
                 continue
             ext := A_LoopFileExt
         }
-        ffmpeg().reencode_h26x(splitFilePath.dir "\" splitFilePath.NameNoExt "." ext, splitFilePath.dir "\" ytTitle)
+        ffmpeg().reencode_h26x(splitFilePath.dir "\" splitFilePath.NameNoExt "." ext, ytTitle)
         FileDelete(splitFilePath.dir "\" splitFilePath.NameNoExt "." ext)
     }
 
@@ -123,6 +123,7 @@ class ytdlp {
             this.command := Format(this.defaultCommand, args, folder, oldClip.storedClip)
             clip.returnClip(oldClip)
         }
+        this.command := Format(this.defaultCommand, args, folder, this.URL)
         cmd.run(,, this.command)
         this.__activateDir(folder)
         clip.returnClip(oldClip)
