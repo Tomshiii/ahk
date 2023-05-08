@@ -8,7 +8,10 @@
 - Removed `convert2()` and `ytDownload()` and replaced with `ytdlp {` & `ffmpeg {`
 - Removed `reload_reset_exit()` and replaced with `reset {`
 - Fix `prem.preset("loremipsum")` not searching enough vertically
-- `getHTMLTitle()` will now sanitise ` - YouTube` from titles
+
+- `getHTMLTitle()` 
+- Will now sanitise ` - YouTube` from titles
+- Will now properly retrieve `twitch` titles
 
 `trim.ahk`
 - Moved from `..\lib\Classes\` to `..\lib\GUIs`
@@ -19,3 +22,4 @@
 ## > Other Changes
 - Fix `autosave.ahk` potentially throwing during backup
 - `Settings.ahk` will now check the current `version` value for `alpha`/`beta` and ensure it's formatted correctly so any `VerCompare` work as expected
+- `videos.ahk`, `sfx` & `vfx.ahk` now pass `-N 8` to `yt-dlp` to download faster

@@ -18,15 +18,19 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
     document := ComObject("HTMLfile")
     document.write(var)
     initialMatch := document.Title
-    if initialMatch = ""
-        {
-            RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
-            initialMatch := sTitle[1]
-            if initialMatch = "" {
-                errorLog(ValueError("Couldn't determine the title", -2),, 1)
-                return false
-            }
+    if initialMatch == "Twitch" {
+        ;// twitch simply has "Twitch" as their html title and leaves the actual title in meta information
+        RegExMatch(var, "is)<meta name=`"title`" content=\K(.*?)/>", &sTitle)
+        initialMatch := SubStr(sTitle[1], 2, InStr(sTitle[1], " - ") - 2)
+    }
+    if initialMatch = "" {
+        RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
+        initialMatch := sTitle[1]
+        if initialMatch = "" {
+            errorLog(ValueError("Couldn't determine the title", -2),, 1)
+            return false
         }
+    }
 
     replaceChars := ["&#39;", "'", "&quot;", '＂']
     finalTitle := ""
