@@ -71,13 +71,15 @@ h:: ;opens the directory for the current premiere/ae project
 n::unassigned()
 Space::
 {
-	;// if slack isn't open, simply call function
-	if !WinExist("ahk_exe slack.exe") || (WinGetMinMax("ahk_exe slack.exe") = -1) {
+	;// if slack/phone link isn't open, simply call function
+	if (!WinExist("ahk_exe slack.exe") || (WinGetMinMax("ahk_exe slack.exe") = -1)) &&
+		(!WinExist("ahk_pid 11872 ahk_class WinUIDesktopWin32WindowClass") || (WinGetMinMax("ahk_pid 11872 ahk_class WinUIDesktopWin32WindowClass") = -1))  {
 		switchTo.Disc()
 		return
 	}
-	;// if slack is open I want them both in a different position
-	WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, "ahk_exe slack.exe")
+	;// if slack/phone link is open I want it & discord both in a different position
+	which := WinExist("ahk_exe slack.exe") ? "ahk_exe slack.exe" : "ahk_pid 11872 ahk_class WinUIDesktopWin32WindowClass"
+	WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, which)
 	switchTo.Disc(discord.slackX, 669, discord.slackWidth, discord.slackHeight)
 }
 Right & Space::switchTo.newWin("exe", "msedge.exe", "msedge.exe")
@@ -149,4 +151,4 @@ F16::switchTo.Edge()
 ;Tab::unassigned()
 Esc::unassigned()
 F13::unassigned()
-Home::unassigned()
+Home::switchTo.YourPhone()
