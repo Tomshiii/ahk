@@ -226,6 +226,7 @@ class rbuttonPrem {
 		}
 		coord.s()
 		origMouse := obj.MousePos()
+		this.__HotkeySet(["LButton", "XButton2"])
 		if !prem.__checkTimeline()
 			return
 		if !prem.__checkCoords(origMouse) {
@@ -255,7 +256,6 @@ class rbuttonPrem {
 			this.__exit()
 			return
 		}
-		this.__HotkeySet(["LButton", "XButton2"])
 		while GetKeyState("Rbutton", "P") {
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
 				this.__checkStuck()
@@ -278,6 +278,10 @@ class rbuttonPrem {
 		}
 		if this.leftClick
 			this.__restartPlayback()
+		this.__exit()
+	}
+
+	__Delete() {
 		this.__exit()
 	}
 }
