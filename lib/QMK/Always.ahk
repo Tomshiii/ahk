@@ -73,7 +73,7 @@ Space::
 {
 	;// if slack/phone link isn't open, simply call function
 	if (!WinExist("ahk_exe slack.exe") || (WinGetMinMax("ahk_exe slack.exe") = -1)) &&
-		(!WinExist("ahk_pid 11872 ahk_class WinUIDesktopWin32WindowClass") || (WinGetMinMax("ahk_pid 11872 ahk_class WinUIDesktopWin32WindowClass") = -1))  {
+		(!WinExist("Phone Link ahk_class WinUIDesktopWin32WindowClass") || (WinGetMinMax("Phone Link ahk_class WinUIDesktopWin32WindowClass") = -1))  {
 		switchTo.Disc()
 		return
 	}
