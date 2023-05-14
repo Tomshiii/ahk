@@ -5,3 +5,4 @@
 
 ## > Other Changes
 - Updated external lib files
+- Add `run & activate` streamdeck scripts
