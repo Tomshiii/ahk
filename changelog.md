@@ -1,4 +1,4 @@
-# <> Release 2.11.x 
+# <> Release 2.11.2 - Hotfix
 
 ## > Functions
 - Add `isDoubleClick()`
