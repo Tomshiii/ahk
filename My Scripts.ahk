@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.5
+;\\v2.32.6
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -33,6 +33,7 @@
 #Include <Classes\obj>
 #Include <Classes\clip>
 #Include <Classes\reset>
+#Include <Classes\keys>
 #Include <Functions\errorLog>
 #Include <Functions\mouseDrag>
 #Include <Functions\getLocalVer>
@@ -43,8 +44,8 @@
 #Include <Functions\getHotkeys>
 #Include <Functions\alwaysOnTop>
 #Include <Functions\pauseYT>
-#Include <Classes\keys>
 #Include <Functions\delaySI>
+#Include <Functions\isDoubleClick>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
@@ -168,8 +169,9 @@ F12::KeyHistory  ;debugging
 ;capsHotkey;
 SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We need this hotkey because I have capslock disabled by default
 {
-	if A_PriorHotkey = A_ThisHotkey && A_TimeSincePriorHotkey < 250
-		SetCapsLockState !GetKeyState("CapsLock", "T")
+	if !isDoubleClick()
+		return
+	SetCapsLockState !GetKeyState("CapsLock", "T")
 }
 
 ;centreHotkey;
@@ -432,7 +434,14 @@ F23::SendInput(KSA.nextKeyframe) ;check the keyboard shortcut ini file to adjust
 ;=============================================================================================================================================
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 ;stopTabHotkey;
-Tab::return
+Shift & Tab::
+$Tab::
+{
+	if !isDoubleClick()
+		return
+	sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+	SendInput(sendMod "{Tab}")
+}
 
 F1::prem.excalibur.lockTracks()
 F2::prem.excalibur.lockTracks("Audio")
@@ -475,8 +484,6 @@ Xbutton1::SendInput(KSA.nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
 Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
-
-#Include <Classes\Editors\Premiere_RightClick> ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;bonkHotkey;
 F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
@@ -576,3 +583,6 @@ Alt & WheelDown::
 Shift & WheelUp::
 Shift & WheelDown::prem.accelScroll(5, 25)
 #MaxThreadsBuffer false
+
+;// I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+#Include <Classes\Editors\Premiere_RightClick>

@@ -1,6 +1,8 @@
 # <> Release 2.11.x 
 
 ## > Functions
+- Add `isDoubleClick()`
+    - `stopTabHotkey::` now allows the user to still use <kbd>Tab</kbd> in premiere by double tapping
 
 `Premiere_RightClick.ahk`
 - Fix function failing to resume playback if <kbd>RButton</kbd> & <kbd>LButton</kbd>/<kbd>XButton2</kbd> are rapidly pressed & released
