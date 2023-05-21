@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
- * @date 2023/05/06
- * @version 2.0.3
+ * @date 2023/05/21
+ * @version 2.0.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -232,6 +232,7 @@ class rbuttonPrem {
 		if !prem.__checkCoords(origMouse) {
 			SendInput("{Rbutton}")
 			this.__checkStuck()
+			this.__exit()
 			return
 		}
 		this.__setColours(origMouse)
