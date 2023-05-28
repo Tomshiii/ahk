@@ -67,6 +67,14 @@ sleep 5000
 skip:
 block.On()
 switchTo.Premiere()
+;// only needed because ingest below is commented out
+pause.pause("autosave")
+pause.pause("adobe fullscreen check")
+block.Off()
+;//
+
+/**
+;// if you want proxies to be automatically set to be created on ingest, uncomment the below code
 SendInput(KSA.premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
 if !WinWait("Project Settings",, 2)
     {

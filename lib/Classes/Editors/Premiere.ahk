@@ -1,9 +1,9 @@
 /************************************************************************
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
- * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
+ * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
- * @date 2023/05/06
- * @version 1.5.12
+ * @date 2023/05/28
+ * @version 1.5.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -513,9 +513,61 @@ class Prem {
     }
 
     /**
+     * This function defines what `valuehold()` should do if the user wishes to adjust the `level` property.
+     * @param {Object} classCoords an object containing the classNN information
+     */
+    __vholdLevels(classCoords) {
+        ;// don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working properly
+        if ImageSearch(&vidx, &vidy, classCoords.classX, classCoords.classY, classCoords.classX + (classCoords.width/KSA.ECDivide), classCoords.classY + classCoords.height, "*2 " ptf.Premiere "video.png") {
+            block.Off()
+            errorLog(Error("The user wasn't scrolled down", -1),, 1)
+            keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+            return false
+        }
+    }
+
+    /**
+     * This function defines what `valuehold()` should do if the `blendMode` param is passed
+     * @param {String} filepath the passed in `filepath` param
+     * @param {String} blendmode the passed in `blendmode` param
+     * @param {Object} xy an object containing the x/y coordinates to search
+     * @param {Object} origCoords an object containing the original mouse x/y coordinates
+     */
+    __vholdBlend(filepath, blendmode, xy, origCoords) {
+        if !ImageSearch(&arrX, &arrY, xy.x, xy.y, xy.x+400, xy.y+40, "*2 " ptf.Premiere filepath "arrow.png")
+            {
+                errorLog(Error("Couldn't find the arrow to open the blend mode menu", -1),, 1)
+                MouseMove(origCoords.xpos, origCoords.ypos)
+                block.Off()
+                return
+            }
+        MouseMove(arrx, arrY)
+        SendInput("{Click}")
+        sleep 500
+        if (
+            ;// if the "drop down" menu goes up
+            (!ImageSearch(&modeX, &modeY, arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode "2.png")) &&
+            ;// if the "drop down" menu goes down
+            (!ImageSearch(&modeX, &modeY, arrx-400, arrY, arrx, arrY+700, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY, arrx, arrY+700, "*2 " ptf.Premiere "blend\" blendmode "2.png"))
+        )
+            {
+                errorLog(Error("Couldn't find the desired blend mode", -1),, 1)
+                MouseMove(origCoords.xpos, origCoords.ypos)
+                block.Off()
+                return
+            }
+        MouseMove(modeX, modeY)
+        SendInput("{Click}")
+        MouseMove(origCoords.xpos, origCoords.ypos)
+        block.Off()
+    }
+
+
+    /**
      * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-     * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+     * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed). If you wish to adjust the blendmode, this string needs to be `blend\blendmode`.
      * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+     * @param {String} blendMode the filename of the blend mode you wish to change the current track to.
      */
     static valuehold(filepath, optional := 0, blendMode := "")
     {
@@ -525,7 +577,6 @@ class Prem {
         xdist := 210
         coord.s()
         MouseGetPos(&xpos, &ypos)
-        ;tool.Cust("x " xpos "`ny " ypos) ;testing stuff
         block.On()
         this().__fxPanel()
         try {
@@ -549,16 +600,10 @@ class Prem {
                         return
                     }
             }
-        if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, YOUR PNG MUST BE CALLED "levels.png"
-            { ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
-                if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "video.png")
-                    {
-                        block.Off()
-                        errorLog(Error("The user wasn't scrolled down", -1),, 1)
-                        keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-                        return
-                    }
-            }
+        if filepath = "levels" {
+            if !this().__vholdLevels({classX: classX, classY: classY, width: width, height: height})
+                return
+        }
         loop {
             if A_Index > 1
                 {
@@ -599,33 +644,11 @@ class Prem {
                 }
             sleep 50
         }
-        if filepath = "blend\blendmode"
-            {
-                if !ImageSearch(&arrX, &arrY, x, y, x+400, y+40, "*2 " ptf.Premiere filepath "arrow.png")
-                    {
-                        errorLog(Error("Couldn't find the arrow to open the blend mode menu", -1),, 1)
-                        MouseMove(xpos, ypos)
-                        block.Off()
-                        return
-                    }
-                MouseMove(arrx, arrY)
-                SendInput("{Click}")
-                sleep 500
-                if !ImageSearch(&modeX, &modeY, arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode "2.png")
-                    {
-                        errorLog(Error("Couldn't find the desired blend mode", -1),, 1)
-                        MouseMove(xpos, ypos)
-                        block.Off()
-                        return
-                    }
-                MouseMove(modeX, modeY)
-                SendInput("{Click}")
-                MouseMove(xpos, ypos)
-                block.Off()
-                return
-            }
-        colour:
-        if !PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
+        if filepath = "blend\blendmode" {
+            this().__vholdBlend(filepath, blendMode, {x: x, y:y}, {xpos: xpos, ypos: ypos})
+            return
+        }
+        if !PixelSearch(&xcol, &ycol, x, y+5, x + xdist, y + 40, 0x205cce, 2)
             {
                 block.Off()
                 tool.Cust("Couldn't find the blue text") ;useful tooltip to help you debug when it can't find what it's looking for
@@ -636,40 +659,35 @@ class Prem {
             }
         MouseMove(xcol + optional, ycol)
         sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
-        ;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
-        if GetKeyState(A_ThisHotkey, "P")
-            {
-                SendInput("{Click Down}")
-                block.Off()
-                keys.allWait()
-                SendInput("{Click Up}" "{Enter}")
-                sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
-                MouseMove(xpos, ypos)
-                /* MouseGetPos(&testx, &testy) ;testing stuff
-                MsgBox("og x " xpos "`nog y " ypos "`ncurrent x " testx "`ncurrent y " testy) */
-            }
-        else
-            {
-                if !ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " ptf.Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
-                    {
-                        if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
-                            {
-                                SendInput("{Click}" "0" "{Enter}")
-                                MouseMove(xpos, ypos)
-                                block.Off()
-                                return
-                            }
-                        MouseMove(xpos, ypos)
-                        block.Off()
-                        errorLog(Error("Couldn't find the reset button", -1),, 1)
-                        return
-                    }
-                MouseMove(x2, y2)
-                SendInput("{Click}")
-                MouseMove(xpos, ypos)
-                block.Off()
-            }
         ToolTip("")
+        if !GetKeyState(A_ThisHotkey, "P") {
+            if !ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " ptf.Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
+                {
+                    if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
+                        {
+                            SendInput("{Click}" "0" "{Enter}")
+                            MouseMove(xpos, ypos)
+                            block.Off()
+                            return
+                        }
+                    MouseMove(xpos, ypos)
+                    block.Off()
+                    errorLog(Error("Couldn't find the reset button", -1),, 1)
+                    return
+                }
+            MouseMove(x2, y2)
+            SendInput("{Click}")
+            MouseMove(xpos, ypos)
+            block.Off()
+            return
+        }
+        ;// waiting for the user to release the key
+        SendInput("{Click Down}")
+        block.Off()
+        keys.allWait()
+        SendInput("{Click Up}" "{Enter}")
+        sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
+        MouseMove(xpos, ypos)
     }
 
     /**
@@ -709,7 +727,7 @@ class Prem {
                 block.Off()
                 return
             }
-        MouseMove(x + "7", y + "4")
+        MouseMove(x + 7, y + 4)
         click
         block.Off()
         MouseMove(xpos, ypos)
