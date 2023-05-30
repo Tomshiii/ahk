@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
- * @date 2023/05/21
- * @version 2.0.4
+ * @date 2023/05/30
+ * @version 2.0.5
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -47,8 +47,11 @@ startupTray()
 ;---------------------------------------------------------------------------------------
 
 RButton::rbuttonPrem().movePlayhead()
+MButton::rbuttonPrem().toggleTimelineFocus()
 
 class rbuttonPrem {
+	static focusTimelineStatus := true
+
 	leftClick    := false
 	xbuttonClick := false
 	colourOrNorm := ""
@@ -80,8 +83,7 @@ class rbuttonPrem {
 	 * This function is necessary because some of the hotkeys used in the main method may use the Ctrl(^)/Shift(+) modifiers - if the method is interupted, these modifier can get placed in a "stuck" state where it will remain "pressed"
 	 * You may be able to avoid needing this function by simply using hotkeys that do not use modifiers.
 	 */
-	__checkStuck()
-	{
+	__checkStuck() {
 		keys.check("XButton1")
 		keys.check("XButton2")
 		keys.check("Ctrl")
@@ -216,6 +218,22 @@ class rbuttonPrem {
 		}
 	}
 
+	/** This function checks the state of an internal variable and will only attempt to focus the timeline if that variable is set to `true` */
+	__focusTimeline() {
+		if rbuttonPrem.focusTimelineStatus = true
+			SendInput(KSA.timelineWindow)
+	}
+
+	/**
+	 * This function will toggle the state of an internal variable that tracks whether you user wishes for timeline focusing to be enabled or disabled.
+	 * Toggling this can help scenarios where the user has multiple sequences open and the main function would otherwise start cycling between them
+	 */
+	toggleTimelineFocus() {
+		which := (rbuttonPrem.focusTimelineStatus = true) ? "disabled" : "enabled"
+		tool.Cust(Format("Timeline focusing is now {}.", which), 2000)
+		rbuttonPrem.focusTimelineStatus := !rbuttonPrem.focusTimelineStatus
+	}
+
 	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when `RButton` is pressed.
 	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details
@@ -245,7 +263,7 @@ class rbuttonPrem {
 			this.__exit()
 			return
 		}
-		SendInput(KSA.timelineWindow)
+		this.__focusTimeline()
 		if this.colour = this.playhead {
 			if !this.__checkUnderCursor(this.colour2) {
 				this.__exit()
