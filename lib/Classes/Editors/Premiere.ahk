@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
- * @date 2023/05/28
- * @version 1.5.13
+* @date 2023/06/01
+ * @version 1.5.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -42,6 +42,9 @@ class Prem {
     static timelineYValue := 0
     static timelineXControl := 0
     static timelineYControl := 0
+
+    ;// rbuttonPrem
+    static focusTimelineStatus := true
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -1323,6 +1326,22 @@ class Prem {
         ToolTip("")
     }
 
+    /** This function checks the state of an internal variable and will only attempt to focus the timeline if that variable is set to `true` */
+	__checkTimelineFocus() {
+		if prem.focusTimelineStatus = true
+			SendInput(KSA.timelineWindow)
+	}
+
+    /**
+	 * This function will toggle the state of an internal variable that tracks whether you user wishes for timeline focusing to be enabled or disabled.
+	 * Toggling this can help scenarios where the user has multiple sequences open and the main function would otherwise start cycling between them
+	 */
+	__toggleTimelineFocus() {
+		which := (prem.focusTimelineStatus = true) ? "disabled" : "enabled"
+		tool.Cust(Format("Timeline focusing is now {}.", which), 2000)
+		prem.focusTimelineStatus := !prem.focusTimelineStatus
+	}
+
     /**
      * ### This function contains `KSA` values that need to be set correctly
      * Press a button(ideally a mouse button), this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
@@ -1376,7 +1395,7 @@ class Prem {
                     Exit()
                 }
             ; click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-            SendInput(KSA.timelineWindow) ;don't use middle click, it causes lag and keys to get stuck
+            this().__checkTimelineFocus()
             SendInput(premtool "{LButton Down}")
             if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
                 KeyWait(A_ThisHotkey, "T5")
