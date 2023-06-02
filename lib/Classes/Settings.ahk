@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/04/29
- * @version 1.2.1.1
+ * @date 2023/06/02
+ * @version 1.2.2
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "false", "true", 45, 2, 5, 2.5, 5, "2022", "2022", "v22.3.1", "v22.6", "v24.0.1", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -54,7 +54,7 @@ class UserPref {
             case "update_check":                      return "true"
             case "dark_mode":                         return ""
             case "autosave_check_checklist",
-                 "tooltip", "checklist_tooltip":
+                 "tooltip", "checklist_tooltip", "prem_Focus_Icon":
                                                       return "true"
             case "beta_update_check",
                  "run_at_startup", "checklist_wait",
@@ -213,6 +213,7 @@ class UserPref {
                     tooltip={}
                     checklist tooltip={}
                     checklist wait={}
+                    prem Focus Icon={}
 
                     [Adjust]
                     adobe GB={}

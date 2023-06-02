@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.6
+;\\v2.32.7
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -473,9 +473,17 @@ Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "
 Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second") ;goes to the next keyframe towards the right
 
 ;previouseditHotkey;
-F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint) ;goes to the next edit point towards the left
+F21::
+{
+	window := (prem.focusTimelineStatus = true) ? KSA.timelineWindow : ""
+	prem.wheelEditPoint(window, KSA.previousEditPoint) ;goes to the next edit point towards the left
+}
 ;nexteditHotkey;
-F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint) ;goes to the next edit point towards the right
+F23::
+{
+	window := (prem.focusTimelineStatus = true) ? KSA.timelineWindow : ""
+	prem.wheelEditPoint(window, KSA.nextEditPoint) ;goes to the next edit point towards the right
+}
 ;playstopHotkey;
 F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
 ;nudgedownHotkey;

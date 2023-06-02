@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
-* @date 2023/06/01
- * @version 1.5.14
+* @date 2023/06/02
+ * @version 1.5.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,8 +38,8 @@ class Prem {
     static zToolY := 0
 
     ;// variables for `getTimeline()`
-    static timelineXValue := 0
-    static timelineYValue := 0
+    static timelineXValue   := 0
+    static timelineYValue   := 0
     static timelineXControl := 0
     static timelineYControl := 0
 
@@ -969,7 +969,8 @@ class Prem {
      */
     static wheelEditPoint(window, direction, keyswait := "all")
     {
-        SendInput(window) ;focuses the timeline
+        if window != ""
+            SendInput(window) ;focuses the timeline/desired window
         SendInput(direction)
         switch keyswait {
             case "second":keys.allWait("second")

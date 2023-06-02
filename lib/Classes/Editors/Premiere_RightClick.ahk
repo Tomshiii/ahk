@@ -2,11 +2,12 @@
  * @description move the Premere Pro playhead to the cursor
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
- * @date 2023/06/01
- * @version 2.0.6
+ * @date 2023/06/02
+ * @version 2.0.7
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\tool>
@@ -288,12 +289,11 @@ class rbuttonPrem {
 }
 
 class premTimelineGUI {
-
 	timelineFocusGUI := ""
 
 	checkGUITimer := ObjBindMethod(this, '__checkGUI')
-	show_hide := ObjBindMethod(this, '__show_hide')
-	callGUI := ObjBindMethod(this, '__callGUI')
+	show_hide     := ObjBindMethod(this, '__show_hide')
+	callGUI       := ObjBindMethod(this, '__callGUI')
 
 	/**
 	 * this function acts as a timer determining when to generate & show the GUI
@@ -379,5 +379,10 @@ class premTimelineGUI {
 
 }
 
-timerSet := ObjBindMethod(premTimelineGUI(), '__callGUI')
-SetTimer(timerSet, 2000)
+UserSettings := UserPref()
+if UserSettings.prem_Focus_Icon = true {
+	timerSet := ObjBindMethod(premTimelineGUI(), '__callGUI')
+	SetTimer(timerSet, 2000)
+}
+UserSettings.__delAll()
+UserSettings := ""
