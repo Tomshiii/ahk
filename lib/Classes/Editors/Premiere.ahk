@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
-* @date 2023/06/02
- * @version 1.5.15
+* @date 2023/06/03
+ * @version 1.6.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,10 +38,13 @@ class Prem {
     static zToolY := 0
 
     ;// variables for `getTimeline()`
+    static timelineRawX     := 0
+    static timelineRawY     := 0
     static timelineXValue   := 0
     static timelineYValue   := 0
     static timelineXControl := 0
     static timelineYControl := 0
+    static focusColour      := 0x2D8CEB
 
     ;// rbuttonPrem
     static focusTimelineStatus := true
@@ -1327,10 +1330,15 @@ class Prem {
         ToolTip("")
     }
 
-    /** This function checks the state of an internal variable and will only attempt to focus the timeline if that variable is set to `true` */
+    /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
 	__checkTimelineFocus() {
-		if prem.focusTimelineStatus = true
-			SendInput(KSA.timelineWindow)
+		if prem.focusTimelineStatus != true
+            return
+        check := prem.timelineFocusStatus()
+        if check != false
+            return
+        sleep 1
+        SendEvent(KSA.timelineWindow)
 	}
 
     /**
@@ -1409,6 +1417,23 @@ class Prem {
     }
 
     /**
+     * This function will check for the blue outline around the timeline (using stored values within the class) that a focused window in premiere will ususally have.
+     * @returns {Trilean} true/false/-1. `-1` indicates that the timeline coordinates could not be determined.
+     */
+    static timelineFocusStatus() {
+        if !this.__checkTimeline()
+            return -1
+        origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
+        coord.client(, false)
+        if PixelGetColor(this.timelineRawX-1, this.timelineRawY+10) = this.focusColour {
+            returnCoord()
+            return true
+        }
+        returnCoord()
+        return false
+    }
+
+    /**
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
      */
     static getTimeline() {
@@ -1420,6 +1445,7 @@ class Prem {
             sleep 75
             effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+            this.timelineRawX := x, this.timelineRawY := y
             this.timelineXValue := x + width - 22 ;accounting for the scroll bars on the right side of the timeline
             this.timelineYValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
             this.timelineXControl := x + 236 ;accounting for the column to the left of the timeline
