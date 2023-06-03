@@ -33,7 +33,7 @@ SC027::prem.valuehold("position") ;press then hold this hotkey and drag to incre
 /::prem.valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 
-o::prem.preset("parametric")
+o::prem.preset("audio_basic")
 l::prem.valuehold("scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
 .::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values

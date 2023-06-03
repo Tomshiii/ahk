@@ -116,7 +116,7 @@ class ffmpeg {
     reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "medium", crf := "17") {
         finalPath := obj.SplitPath(videoFilePath)
         finalFileName := IsSet(outputFileName) ? outputFileName : finalPath.NameNoExt
-        ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium -crf 17 output.mkv
+        ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium -crf 17 output.mp4
         cmd.run(false, true, Format("ffmpeg -i `"{1}`" -c:v {5} -preset {3} -crf {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, crf, codec))
     }
 
