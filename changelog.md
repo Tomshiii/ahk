@@ -3,6 +3,7 @@
     - This icon can be enabled/disabled within `settingsGUI()`
 
 ## > Functions
+- Added an additional colour to `Premiere_RightClick.ahk` to give better compatibility with `v23.4`
 - `musicGUI()` will no longer throw if the user doesn't have the application installed
 
 `Prem {`

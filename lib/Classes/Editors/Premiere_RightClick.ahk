@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
- * @date 2023/06/02
- * @version 2.0.7
+ * @date 2023/06/07
+ * @version 2.0.8
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -61,19 +61,21 @@ class rbuttonPrem {
 	;First, we define all the timeline's DEFAULT possible colors.
 	;(Note that your colors will be different if you changed the UI brightness inside [preferences > appearance > brightness] OR may be different in other versions of premiere)
 	;I used Window Spy (it comes with AHK) to detect the exact colors onscreen.
-	timeline1 := 0x414141 ;timeline colour inbetween two clips inside the in/out points ON a targeted track
-	timeline2 := 0x313131 ;timeline colour of the separating LINES between targeted AND non targeted tracks inside the in/out points
-	timeline3 := 0x1b1b1b ;the timeline colour inside in/out points on a NON targeted track
-	timeline4 := 0x212121 ;the colour of the bare timeline NOT inside the in out points (a version below v22.3.1 I imagine)
-	timeline8 := 0x202020 ;the colour of the bare timeline NOT inside the in out points (v22.3.1)
-	timeline9 := 0x1C1C1C ;the colour of the bare timeline NOT inside the in out points (v23.1)
-	timeline5 := 0xDFDFDF ;the colour of a SELECTED blank space on the timeline, NOT in the in/out points
-	timeline6 := 0xE4E4E4 ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
-	timeline7 := 0xBEBEBE ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+	timeline1  := 0x414141 ;timeline colour inbetween two clips inside the in/out points ON a targeted track
+	timeline2  := 0x313131 ;timeline colour of the separating LINES between targeted AND non targeted tracks inside the in/out points
+	timeline3  := 0x1b1b1b ;the timeline colour inside in/out points on a NON targeted track
+	timeline4  := ""       ;the colour of the bare timeline NOT inside the in out points (a version below v22.3.1 I believe. originally `0x212121`)
+	timeline8  := 0x202020 ;the colour of the bare timeline NOT inside the in out points (v22.3.1)
+	timeline9  := 0x1C1C1C ;the colour of the bare timeline NOT inside the in out points (v23.1)
+	timeline10 := 0x1D1D1D ;the colour of the bare timeline NOT inside the in out points (v23.4)
+	timeline5  := 0xDFDFDF ;the colour of a SELECTED blank space on the timeline, NOT in the in/out points
+	timeline6  := 0xE4E4E4 ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+	timeline7  := 0xBEBEBE ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
 	timelineCol := [
 		this.timeline1, this.timeline2, this.timeline3,
 		this.timeline4, this.timeline5, this.timeline6,
-		this.timeline7, this.timeline8, this.timeline9
+		this.timeline7, this.timeline8, this.timeline9,
+		this.timeline10
 	]
 	playhead := 0x2D8CEB ;the colour of the playhead
 
