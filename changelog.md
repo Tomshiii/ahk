@@ -10,7 +10,8 @@
 - Using `prem.valuehold()` to adjust the `Y` coordinate should now be less prone to missing the blue text
 - Class now stores an internal value that can be toggled to determine whether the user wants some hotkeys/functions to focus the `timeline`
     - `rbuttonPrem().movePlayhead()`, `prem.mouseDrag()` & `(previous/next)editpoint::`
-- Added `timelineFocusStatus()` to check for the coloured outline of a typically focused window to determine if the timeline needs to be focused or not
+- Added `prem.timelineFocusStatus()` to check for the coloured outline of a typically focused window to determine if the timeline needs to be focused or not
+- Added `prem.Previews()` to speed up the process of generating/deleting `Render Previews`
 
 ## > Other Changes
 - `New Premiere.ahk` no longer attempts to set ingest settings

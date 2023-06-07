@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
-* @date 2023/06/03
- * @version 1.6.0
+* @date 2023/06/07
+ * @version 1.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1641,6 +1641,37 @@ class Prem {
         }
     }
 
+
+    /**
+     * This is an internal function for `prem.Previews()` simply to make code a little cleaner. It handles sending a desired hotkey to delete previews then waiting for the delete dialogue box premiere presents the user.
+     * @param {String} sendHotkey which hotkey you wish to send
+     */
+    __delprev(sendHotkey) {
+        SendInput(sendHotkey)
+        if !WinWait("Confirm Delete",, 3)
+            return
+        SendInput("{Enter}")
+    }
+
+    /**
+     * This function handles different hotkeys related to `Previews` (both rendering & deleting them). This function will attempt to save the project before doing anything.
+     * @param {String} which whether you wish to delete or render a preview. If deleting, pass `"delete"` else pass an empty string
+     * @param {String} sendHotkey which hotkey you wish to send
+     */
+    static Previews(which, sendHotkey) {
+        if !WinActive(this.exeTitle)
+            return
+        SendEvent("^s")
+        if !WinWait("Save Project",, 3) {
+            tool.Cust("Function timed out waiting for save prompt")
+            return
+        }
+        WinWaitClose("Save Project")
+        switch which {
+            case "delete": this().__delprev(sendHotkey)
+            default:       SendInput(sendHotkey)
+        }
+    }
 
     ;//! *** ===============================================
 
