@@ -64,10 +64,10 @@ class rbuttonPrem {
 	timeline1  := 0x414141 ;timeline colour inbetween two clips inside the in/out points ON a targeted track
 	timeline2  := 0x313131 ;timeline colour of the separating LINES between targeted AND non targeted tracks inside the in/out points
 	timeline3  := 0x1b1b1b ;the timeline colour inside in/out points on a NON targeted track
-	timeline4  := ""       ;the colour of the bare timeline NOT inside the in out points (a version below v22.3.1 I believe. originally `0x212121`)
+	timeline4  := 0x212121 ;the colour of the bare timeline NOT inside the in out points (above any tracks)
 	timeline8  := 0x202020 ;the colour of the bare timeline NOT inside the in out points (v22.3.1)
 	timeline9  := 0x1C1C1C ;the colour of the bare timeline NOT inside the in out points (v23.1)
-	timeline10 := 0x1D1D1D ;the colour of the bare timeline NOT inside the in out points (v23.4)
+	timeline10 := 0x1D1D1D ;the colour of the bare timeline NOT inside the in out points (v23.4) (above any tracks)
 	timeline5  := 0xDFDFDF ;the colour of a SELECTED blank space on the timeline, NOT in the in/out points
 	timeline6  := 0xE4E4E4 ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 	timeline7  := 0xBEBEBE ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track

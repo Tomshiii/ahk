@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
-* @date 2023/06/07
- * @version 1.6.1
+* @date 2023/06/14
+ * @version 1.6.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -968,18 +968,21 @@ class Prem {
 
     /**
      * Move back and forth between edit points from anywhere in premiere
+     * @param {String} window the hotkey required to focus the desired window within premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
+     * @param {String} keyswait a string you wish to pass to `keys.allWait()`'s first parameter
      */
     static wheelEditPoint(window, direction, keyswait := "all")
     {
-        if window != ""
-            SendInput(window) ;focuses the timeline/desired window
+        switch window {
+            case ksa.timelineWindow: this().__checkTimelineFocus()
+            default: SendInput(window) ;focuses the timeline/desired window
+        }
         SendInput(direction)
         switch keyswait {
-            case "second":keys.allWait("second")
-            case "first":keys.allWait("first")
-            default:
-                keys.allWait() ;prevents hotkey spam
+            case "second": keys.allWait("second")
+            case "first":  keys.allWait("first")
+            default:       keys.allWait() ;prevents hotkey spam
         }
     }
 
