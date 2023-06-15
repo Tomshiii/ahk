@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/05/07
- * @version 1.0.2
+ * @date 2023/06/15
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,6 +69,27 @@ class ytdlp {
             RunWait("explore " folder)
     }
 
+    /**
+     * Checks the desired filepath to see if a file of the desired name already exists
+     * @param {String} filename the name of the file you wish to check for (**not** including filetype)
+     * @param {String} dir the directory you wish to search within (**without** a trailing backslash)
+     * @returns {Integer} the filename index
+     */
+    __getIndex(filename, dir) {
+        if !FileExist(dir "\" filename)
+            return ""
+        newFilename := obj.SplitPath(filename)
+        index := 0
+        loop files dir "\*", "F" {
+            loopObj := obj.SplitPath(A_LoopFilePath)
+            if loopObj.NameNoExt != newFilename.NameNoExt index
+                continue
+            index++
+            newFilename.NameNoExt := newFilename.NameNoExt index
+        }
+        return index
+    }
+
 
     /**
      * Handles converting a file to h264. This is useful when using video editing programs such as Premiere Pro as it doesn't support the filetypes that youtube stores newer videos in (.webm & vp9/av1)
@@ -92,7 +113,8 @@ class ytdlp {
     }
 
     /**
-     * This function requires [yt-dlp](https://github.com/yt-dlp/yt-dlp) to be installed correctly on the users system
+     * ## This function requires [yt-dlp](https://github.com/yt-dlp/yt-dlp) to be installed correctly on the users system
+     * ### If this function is called more than once and before the previous instance is able to begin downloading, both instances may error out.
      * It will then read the users highlighted text and if a youtube (or twitch video/clip) link is found, download that link with whatever arguments are passed, if the user isn't highlighting any text or a youtube/twitch link isn't found, it will check the users clipboard instead.
      *
      * @param {String} args is any arguments you wish to pass to yt-dlp

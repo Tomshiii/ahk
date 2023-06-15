@@ -3,8 +3,12 @@
     - This icon can be enabled/disabled within `settingsGUI()`
 
 ## > Functions
-- Added an additional colour to `Premiere_RightClick.ahk` to give better compatibility with `v23.4`
+- Fix `getHTMLTitle()` no longer returning `Twitch` titles correctly
 - `musicGUI()` will no longer throw if the user doesn't have the application installed
+
+`Premiere_RightClick.ahk`
+- Fixed another bug causing `My Scripts.ahk` to crash under certain circumstances
+- Added an additional colour to give better compatibility with `v23.4`
 
 `Prem {`
 - Using `prem.valuehold()` to adjust the `Y` coordinate should now be less prone to missing the blue text
@@ -15,3 +19,4 @@
 
 ## > Other Changes
 - `New Premiere.ahk` no longer attempts to set ingest settings
+- `vfx.ahk` & `video.ahk` now attempt to check if a download process has already started to avoid erroring out

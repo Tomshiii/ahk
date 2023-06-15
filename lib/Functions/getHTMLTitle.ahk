@@ -21,7 +21,7 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
     if initialMatch == "Twitch" {
         ;// twitch simply has "Twitch" as their html title and leaves the actual title in meta information
         RegExMatch(var, "is)<meta name=`"title`" content=\K(.*?)/>", &sTitle)
-        initialMatch := SubStr(sTitle[1], 2, InStr(sTitle[1], " - ") - 2)
+        initialMatch := SubStr(sTitle[1], InStr(sTitle[1], " - ") + 3, -1)
     }
     if initialMatch = "" {
         RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
