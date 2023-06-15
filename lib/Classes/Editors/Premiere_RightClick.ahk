@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
- * @date 2023/06/07
- * @version 2.0.8
+ * @date 2023/06/15
+ * @version 2.0.9
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -181,7 +181,7 @@ class rbuttonPrem {
 	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "")
 
 	/** A functon to define what should happen anytime the class is closed */
-	__exit() => (this.__HotkeyReset(), this.__resetClicks(), this.__checkStuck())
+	__exit() => (this.__HotkeyReset(), this.__resetClicks(), this.__checkStuck(), Exit())
 
 	/**
 	 * Defines what happens when certain buttons are pressed while RButton is held down
@@ -232,34 +232,28 @@ class rbuttonPrem {
 		origMouse := obj.MousePos()
 		this.__HotkeySet(["LButton", "XButton2"])
 		if !prem.__checkTimeline()
-			return
+			this.__exit()
 		if !prem.__checkCoords(origMouse) {
 			SendInput("{Rbutton}")
-			this.__checkStuck()
 			this.__exit()
-			return
 		}
 		this.__setColours(origMouse)
 		if this.__checkForBlank(this.colour) {
 			SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
 			this.__exit()
-			return
 		}
 		if !this.__checkColour(this.colour) {
 			this.__exit()
-			return
 		}
 		prem().__checkTimelineFocus()
 		if this.colour = this.playhead {
 			if !this.__checkUnderCursor(this.colour2) {
 				this.__exit()
-				return
 			}
 		}
 		this.__checkForPlayhead(origMouse)
 		if !this.__checkForTap() {
 			this.__exit()
-			return
 		}
 		while GetKeyState("Rbutton", "P") {
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
@@ -279,7 +273,6 @@ class rbuttonPrem {
 		}
 		if !this.leftClick && !this.xbuttonClick {
 			this.__exit()
-			return
 		}
 		if this.leftClick
 			this.__restartPlayback()

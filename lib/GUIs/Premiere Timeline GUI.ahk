@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A handy GUI to give a visual indication of whether some hotkeys/functions will focus the timeline
  * @author tomshi
- * @date 2023/06/03
- * @version 1.0.0
+ * @date 2023/06/15
+ * @version 1.0.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Editors\Premiere>
@@ -10,6 +10,7 @@
 #Include <Classes\settings>
 ; }
 
+ListLines(0)
 class premTimelineGUI {
 	timelineFocusGUI := ""
 	guiTitle         := "timelineFocusStatus GUI"
