@@ -18,5 +18,6 @@
 - Added `prem.Previews()` to speed up the process of generating/deleting `Render Previews`
 
 ## > Other Changes
+- Add `remapDrive.ahk` to quickly and easily remap network drives
 - `New Premiere.ahk` no longer attempts to set ingest settings
 - `vfx.ahk` & `video.ahk` now attempt to check if a download process has already started to avoid erroring out
