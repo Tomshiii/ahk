@@ -4,6 +4,7 @@
 
 ## > Functions
 - Fix `getHTMLTitle()` no longer returning `Twitch` titles correctly
+- Fix `settingsGUI()` setting `premVer` incorrectly for `v23.0+`
 - `musicGUI()` will no longer throw if the user doesn't have the application installed
 
 `Premiere_RightClick.ahk`

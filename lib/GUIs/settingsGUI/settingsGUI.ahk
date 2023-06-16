@@ -354,9 +354,9 @@ settingsGUI()
     {
         detect()
         iniVar := StrReplace(ini, A_Space, "_")
-        UserSettings.%iniVar% := ctrl.value
+        UserSettings.%iniVar% := ctrl.text
         if WinExist(script " - AutoHotkey") {
-            WM.Send_WM_COPYDATA(iniVar "_" ctrl.Value, script)
+            WM.Send_WM_COPYDATA(iniVar "_" ctrl.text, script)
         }
     }
 
