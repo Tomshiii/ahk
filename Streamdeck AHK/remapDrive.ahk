@@ -9,10 +9,10 @@ class drivePicker extends tomshiBasic {
     __New() {
         super.__New(,,, "Pick Drive")
         this.AddText("Section", "Network Location: ")
-        this.AddEdit("xs+120 ys-3 w150", this.networkLocation).OnEvent("Change", this.__setNetLocation.Bind(this))
+        this.AddEdit("xs+120 ys-3 w150 -WantReturn", this.networkLocation).OnEvent("Change", this.__setNetLocation.Bind(this))
         this.AddText("xs Section", "Drive Location: ")
         this.AddDropDownList("xs+120 ys-3 Sort w150 Choose" this.driveLocation, this.__generateLetterArr()).OnEvent("Change", this.__setDriveLocation.Bind(this))
-        this.AddButton("xs+210", "Submit").OnEvent("Click", this.__mapDrive.Bind(this))
+        this.AddButton("xs+210 default", "Submit").OnEvent("Click", this.__mapDrive.Bind(this))
 
         this.show()
     }

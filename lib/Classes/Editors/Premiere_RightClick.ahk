@@ -49,7 +49,7 @@ startupTray()
 ;---------------------------------------------------------------------------------------
 
 RButton::rbuttonPrem().movePlayhead()
-MButton::prem().__toggleTimelineFocus()
+; MButton::prem().__toggleTimelineFocus()
 
 class rbuttonPrem {
 	leftClick    := false

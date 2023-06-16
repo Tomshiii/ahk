@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
-* @date 2023/06/14
- * @version 1.6.2
+* @date 2023/06/16
+ * @version 1.6.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1651,9 +1651,24 @@ class Prem {
      */
     __delprev(sendHotkey) {
         SendInput(sendHotkey)
-        if !WinWait("Confirm Delete",, 3)
+        if !WinWait("Confirm Delete ahk_exe Adobe Premiere Pro.exe",, 3)
             return
+        tool.Cust("found")
+        WinActivate("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+        if !WinWaitActive("Confirm Delete ahk_exe Adobe Premiere Pro.exe",, 3)
+            return
+        sleep 1000
         SendInput("{Enter}")
+        if !WinExist("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+            return
+        loop 3 {
+            WinActivate("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+            sleep 100
+            SendInput("{Enter}")
+            sleep 500
+            if !WinExist("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+                return
+        }
     }
 
     /**
