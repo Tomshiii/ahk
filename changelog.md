@@ -6,6 +6,7 @@
 - Fix `getHTMLTitle()` no longer returning `Twitch` titles correctly
 - Fix `settingsGUI()` setting `premVer` incorrectly for `v23.0+`
 - `musicGUI()` will no longer throw if the user doesn't have the application installed
+- `settingsGUI()` will now select the most recent release of `Premiere`/`AE` when the user changes their year
 
 `Premiere_RightClick.ahk`
 - Fixed another bug causing `My Scripts.ahk` to crash under certain circumstances

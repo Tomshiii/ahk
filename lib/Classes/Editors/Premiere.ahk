@@ -1717,7 +1717,7 @@ class Prem {
         }
 
         /**
-         * #### This function requires the premiere plugin `Excalibur` to be installed and for `KSA.excalLockVid` to be correctly set.
+         * #### This function requires the premiere plugin `Excalibur` to be installed and for `KSA.excalLockVid/KSA.excalLockAud` to be correctly set.
          * Quickly and easily lock/unlock multiple audio/video tracks
          */
         static lockTracks(which := "Video") {

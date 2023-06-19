@@ -622,8 +622,9 @@ settingsGUI()
                     new.Push(A_LoopFileName)
             }
             ver.Add(new)
-            if new.Has(1)
-                ver.Choose(1)
+            if !new.Has(1)
+                return
+            ver.Choose(new.Length)
             UserSettings.%yearIniName% := year.value
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
             switch adobeFullName {
