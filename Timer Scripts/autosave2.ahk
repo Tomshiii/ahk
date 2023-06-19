@@ -14,7 +14,6 @@ KeyHistory(0)
 #Include <Classes\switchTo>
 #Include <Classes\WM>
 #Include <Classes\timer>
-#Include <Functions\detect>
 #Include <Functions\errorLog>
 ; }
 
@@ -26,23 +25,24 @@ class adobeAutoSave extends count {
     __New() {
         this.UserSettings := UserPref()
         this.ms := (this.UserSettings.autosave_MIN * 60000)
-        this.Tooltip := this.UserSettings.Tooltip, this.autosave_check_checklist := this.UserSettings.autosave_check_checklist
         this.UserSettings := ""
-        super.__New(1000)
-
-        if this.autosave_check_checklist = true
-            this.checkChecklist := checkForChecklist()
+        super.__New(this.ms)
+        super.start() ;start the timer
     }
 
     UserSettings := unset
-    ms := 0
-    msChecklist := (0.5*60000) ;// 30s
-    idle := (0.5*1000)
-    retry := (2.5*1000)
-    Tooltip := false
-    autosave_check_checklist := false
-    half := false
-    active := false
+    ms           := 0
+
+    origWindow := ""
+
+    premExist := false
+    aeExist   := false
+
+    userPlayback  := false
+    filesBackedUp := false
+
+    premWindow := unset
+    aeWindow   := unset
 
     __changeVar(wParam, lParam, msg, hwnd) {
         try {
@@ -54,62 +54,137 @@ class adobeAutoSave extends count {
         }
     }
 
-    start() {
-        this.active := true
-        super.start() ;start the timer
-        ;// ...
+    __checkforEditors() {
+        this.premExist := WinExist(prem.winTitle) ? true : false
+        this.aeExist   := WinExist(AE.winTitle)   ? true : false
     }
 
-    Tick() {
-        ++this.count
-        ;// ... code here to check if it's been long enough to attempt a save
-        tool.Cust(this.count)
-    }
-}
-
-class checkForAdobe extends count {
-    __New() {
-        super.__New(1000)
-        this.adobeAS := adobeAutoSave()
-        chgeVar := ObjBindMethod(this.adobeAS, "__changeVar")
-        OnMessage(0x004A, chgeVar)  ; 0x004A is WM_COPYDATA
-
-        super.start()
+    begin() {
+        this.__checkforEditors()
+        if this.premExist = false && this.aeExist = false
+            return
+        if !this.__getOrigWindow()
+            return
+        if this.premExist = true
+            this.__savePrem()
     }
 
-    adobeAS := ""
-
-    Tick() {
-        ++this.count
-        this.__check()
-    }
-
-    __check() {
-        if (WinExist(editors.Premiere.winTitle) || WinExist(editors.AE.winTitle)) && (this.adobeAS.active = false) {
-            this.adobeAS.start()
-            this.stop()
+    /** @returns the process ID of the active window */
+    __getOrigWindow() {
+        try{
+            winget.ID(&id)
+            return id
+        } catch {
+            block.Off()
+            errorLog(TargetError("Unable to determine the active window"),, 1)
+            return false
         }
     }
-}
 
-class checkForChecklist extends count {
-    __New() {
-        super.__New(1000)
-        this.start()
+    __backupFiles() {
+        if this.filesBackedUp = true
+            return
+        try {
+            time := Format("{}_{}_{}-{}-{}", A_MM, A_DD, A_Hour, A_Min, A_Sec)
+            path := WinGet.ProjPath()
+            if !DirExist(path.Dir "\Backup")
+                DirCreate(path.Dir "\Backup")
+            loop files path.Dir "\Backup\*.*"
+                FileDelete(A_LoopFileFullPath)
+            loop files path.Dir "\*.prproj", "F" {
+                FileCopy(A_LoopFileFullPath, path.Dir "\Backup\*_" time ".*", 1)
+            }
+            loop files path.Dir "\*.aep", "F" {
+                FileCopy(A_LoopFileFullPath, path.Dir "\Backup\*_" time ".*", 1)
+            }
+            if FileExist(path.Dir "\checklist_logs.txt")
+                FileCopy(path.Dir "\checklist_logs.txt", path.Dir "\Backup\*_" time ".*", 1)
+            if FileExist(path.Dir "\checklist.ini")
+                FileCopy(path.Dir "\checklist.ini", path.Dir "\Backup\*_" time ".*", 1)
+            this.filesBackedUp := true
+        }
+    }
+
+    /**
+     * Attempts to check whether the user was playing back on the timeline within Premiere.
+     * *note: this function will only work if the user has their program monitor on their main display*
+     */
+    __checkPremPlayback() {
+        ;// if you don't have your project monitor on your main computer monitor this section of code will alwats fail
+        if !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "stop.png")
+            return
+
+        tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
+        this.userPlayback := true
+    }
+
+    __savePrem() {
+        if this.origWindow = "Adobe Premiere Pro.exe"
+            this.__checkPremPlayback()
+        this.__backupFiles()
+        if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe") {
+            block.Off()
+            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
+            return
+        }
+        this.premWindow := WinGet.PremName()
+        if this.premWindow.winTitle = "" && !IsSet(this.premWindow.titleCheck) && !IsSet(this.premWindow.saveCheck) {
+            errorLog(UnsetError("autosave.ahk was unable to determine the title of the Premiere Pro Window"), "The user may not have the correct year set within the settings", 1)
+            return
+        }
+        if !this.premWindow.saveCheck
+            return
+        ;// needs logic to determine whether to save (does it have the title at this point under certain circumstances? the original script has spaghetti code from before winget.PremName() existed)
+        ;// then needs proper code to determine how to save - originally it was determined that if the prem window is currently active, using controlsend wouldn't work
+    }
+
+    /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
+    __reactivateWindow() {
+        try {
+            WinGet.ID(&checkActive)
+            if this.origWindow = checkActive
+                return
+            switch this.origWindow {
+                case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
+                case "Adobe Premiere Pro.exe":
+                    switchTo.Premiere()
+                    if this.userPlayback = false
+                        return
+                    ;// if the user was originally playing back on the timeline
+                    ;// we resume that playback here
+                    try {
+                        sleep 250
+                        prem().__checkTimelineFocus()
+                        sleep 100
+                        SendEvent(KSA.playStop)
+                        block.Off()
+                        SendEvent(KSA.timelineWindow)
+                    }
+                default: WinActivate("ahk_exe " this.origWind)
+            }
+        } catch {
+            errorLog(TargetError("Couldn't determine the active window"),, 1)
+            return
+        }
+    }
+
+    __reset() {
+        this.count := 0
+
+        this.origWindow := ""
+
+        this.premExist := false
+        this.aeExist   := false
+
+        this.userPlayback  := false
+        this.filesBackedUp := false
+
+        this.premWindow := unset
+        this.aeWindow   := unset
     }
 
     Tick() {
-        ++this.count
-    }
-
-    start() {
-        super.start()
-
-    }
-
-    __check() {
-
+        this.begin()
+        this.count := 0
     }
 }
-
-check := checkForAdobe()
