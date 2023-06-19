@@ -21,6 +21,7 @@ class tomshiBasic extends Gui {
         this.UserSettings := UserPref()
         if this.UserSettings.dark_mode = true {
             dark.titleBar(this.Hwnd) ;// automatically make the titlebar darkmode if the setting is enabled
+            dark.menu() ;// automatically make any menu dropdowns darkmode if the setting is enabled
             this.BackColor := "0x" this.DarkColour
         }
     }
@@ -31,10 +32,15 @@ class tomshiBasic extends Gui {
 
     /**
      * Extends the default `show()` method to automatically make all buttons dark mode if the setting is enabled
+     * @param {String} params? is any normal settings you'd pass to GUI.show()
+     * @param {Object} darSettings? is an object containing any custom settings you'd usually pass to `dark.allButtons()`
      */
-    show(params?) {
-        if this.UserSettings.dark_mode = true
-            dark.allButtons(this,, {LightColour: this.LightColour, DarkColour: this.DarkColour})
+    show(params?, darkSettings?) {
+        if this.UserSettings.dark_mode = true {
+            if !IsSet(darkSettings)
+                darkSettings := {default: true}
+            dark.allButtons(this,, darkSettings?)
+        }
         super.Show(params?)
     }
 }

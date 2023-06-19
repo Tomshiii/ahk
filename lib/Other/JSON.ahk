@@ -2,8 +2,8 @@
  * @description: JSON格式字符串序列化和反序列化, 修改自[HotKeyIt/Yaml](https://github.com/HotKeyIt/Yaml)
  * 增加了对true/false/null类型的支持, 保留了数值的类型
  * @author thqby, HotKeyIt
- * @date 2023/01/08
- * @version 1.0.4
+ * @date 2023/05/12
+ * @version 1.0.5
  ***********************************************************************/
 
 class JSON {
@@ -35,7 +35,7 @@ class JSON {
 						else if InStr("{[", A_LoopField) {
 							if !A && !V
 								throw Error("Malformed JSON - missing key.", 0, t)
-							C := A_LoopField = "[" ? [] : maptype(), A ? D[L].Push(C) : D[L][K] := C, D.Has(++L) ? D[L] := C : D.Push(C), V := "", A := Type(C) = "Array"
+							C := A_LoopField = "[" ? [] : maptype(), A ? D[L].Push(C) : map_set(D[L], K, C), D.Has(++L) ? D[L] := C : D.Push(C), V := "", A := Type(C) = "Array"
 							continue
 						} else if InStr("]}", A_LoopField) {
 							if !A && V
@@ -75,7 +75,7 @@ class JSON {
 			else if A
 				LF := P A_LoopField, C.Push(InStr(LF, "\") ? UC(LF) : LF), P := ""
 			else if V
-				LF := P A_LoopField, C[K] := InStr(LF, "\") ? UC(LF) : LF, K := V := P := ""
+				LF := P A_LoopField, map_set(C, K, InStr(LF, "\") ? UC(LF) : LF), K := V := P := ""
 			else
 				LF := P A_LoopField, K := InStr(LF, "\") ? UC(LF) : LF, P := ""
 		}
@@ -96,9 +96,9 @@ class JSON {
 	 * @param expandlevel The level of JSON string need to expand, by default expand all.
 	 * @param space Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
 	 */
-	static stringify(S, expandlevel := unset, space := "  ") {
+	static stringify(obj, expandlevel := unset, space := "  ") {
 		expandlevel := IsSet(expandlevel) ? Abs(expandlevel) : 10000000
-		return Trim(CO(S, expandlevel))
+		return Trim(CO(obj, expandlevel))
 		CO(O, J := 0, R := 0, Q := 0) {
 			static M1 := "{", M2 := "}", S1 := "[", S2 := "]", N := "`n", C := ",", S := "- ", E := "", K := ":"
 			if (OT := Type(O)) = "Array" {

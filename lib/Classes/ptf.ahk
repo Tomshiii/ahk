@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/04/08
- * @version 1.1.3
+ * @date 2023/05/08
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -102,7 +102,7 @@ class ptf {
         "OBS",             this.Shortcuts "\obs64.lnk",
         "Photoshop",       this.Shortcuts "\Photoshop.exe.lnk",
         "SL_Chatbot",      this.Shortcuts "\Streamlabs Chatbot.lnk",
-        "YourPhone",       this.Shortcuts "\Your Phone.lnk",
+        "Phone Link",       this.Shortcuts "\Your Phone.lnk",
         "scriptStartup",   A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\PC Startup.ahk - Shortcut.lnk",
 
         ;programs

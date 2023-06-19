@@ -4,10 +4,12 @@ ListLines(0)
 
 ; { \\ #Includes
 #Include <Classes\keys>
+#Include <Functions\trayShortcut>
 #Include <Classes\ptf>
 ; }
 
 TraySetIcon(ptf.Icons "\premKey.png")
+startupTray()
 
 ;defining what happens if the script is somehow opened a second time and the function is forced to close
 OnExit(ExitFunc)

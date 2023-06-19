@@ -14,14 +14,13 @@ if SelectedFolder = ""
 splitSelected := obj.SplitPath(SelectedFolder)
 
 ;// selecting the destination folder directory
-move:
 Move := FileSelect("D2", "N:\_RC\Tomshi\" A_Year, "Pick the destination folder you wish everything to move to.")
 if Move = ""
     return
 if Move = SelectedFolder
     {
         MsgBox("You can't move a folder to the same dir`nYou're going to crash ahk, is that what you want?")
-        goto move
+        return
     }
 
 ;// deleting any temp directories that contain files we don't need to store

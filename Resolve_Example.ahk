@@ -10,6 +10,7 @@
 #Include <Classes\block>
 #Include <Classes\tool>
 #Include <Classes\keys>
+#Include <Functions\trayShortcut>
 ; }
 
 SetWorkingDir(ptf.rootDir)      ; Ensures a consistent starting directory.
@@ -17,12 +18,13 @@ SetDefaultMouseSpeed(0)
 ; SetNumLockState("AlwaysOn")    ;uncomment if you want numlock to always be ON. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 ; SetCapsLockState("AlwaysOff")  ;uncomment if you want capslock to always be OFF. Only have this code active in ONE SCRIPT. Having it in multiple will cause issues
 TraySetIcon(ptf.Icons "\resolve.png")
+startupTray()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
 ;\\v2.9.1
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.10.4
+;\\v2.11.2
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
@@ -125,7 +127,7 @@ loop {
     if IsSet(%"playhead" A_Index%)
         playheadVal.Push(Format("{:#x}", %"playhead" A_Index%))
 }
-Rbutton:: ;ports the functionality of "right click premiere.ahk" as best as possible.
+Rbutton:: ;ports the functionality of "Premiere_RightClick.ahk" as best as possible.
 {
     static scrub := unset
     coord.w()

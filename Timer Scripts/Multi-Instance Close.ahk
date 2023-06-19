@@ -5,6 +5,7 @@
 #Include <Classes\obj>
 #Include <Classes\WM>
 #Include <Functions\detect>
+#Include <Functions\trayShortcut>
 #Include <Multi-Instance Close\ignoreList>
 ; }
 
@@ -16,6 +17,8 @@ KeyHistory(0)
 TraySetIcon(ptf.Icons "\M-I_C.png")
 ;This script will check for and close scripts that have multiple instances open
 ;Even if you have #SingleInstance Force enabled, sometimes while reloading you can end up with a second instance of any given script, this script should hopefully negate that
+
+startupTray()
 
 ;// open settings instance
 UserSettings := UserPref()

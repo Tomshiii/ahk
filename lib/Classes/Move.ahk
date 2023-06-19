@@ -299,23 +299,22 @@ class Move {
      */
     static Adjust(xORy := "x", window := "A") {
         keys.allWait("second")
-        WinGetPos(&x, &y, &w, &h,
-                    title := (window = "A") ? WinGetTitle(window) : title)
+        WinGetPos(&x, &y, &w, &h, title := (window = "A") ? WinGetTitle(window) : title)
         hotkeys := getHotkeys()
         switch xORy {
             case "y":
                 switch hotkeys.second {
-                    case "-":WinMove(,,, h -50, title)
-                    case "=":WinMove(,,, h +50, title)
-                    case "Up":WinMove(, y-50,,, title)
-                    case "Down":WinMove(, y+50,,, title)
+                    case "-":    WinMove(,,, h -50, title)
+                    case "=":    WinMove(,,, h +50, title)
+                    case "Up":   WinMove(, y-50,,, title)
+                    case "Down": WinMove(, y+50,,, title)
                 }
             case "x":
                 switch hotkeys.second {
-                    case "-":WinMove(,, w -50,, title)
-                    case "=":WinMove(,, w +50,, title)
-                    case "Left":WinMove(x -50,,,, title)
-                    case "Right":WinMove(x +50,,,, title)
+                    case "-":     WinMove(,, w -50,, title)
+                    case "=":     WinMove(,, w +50,, title)
+                    case "Left":  WinMove(x -50,,,, title)
+                    case "Right": WinMove(x +50,,,, title)
                 }
             default:
                 if !hotkeys.second || hotkeys.second = ""

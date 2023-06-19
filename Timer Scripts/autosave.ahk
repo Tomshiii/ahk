@@ -13,8 +13,10 @@ KeyHistory(0)
 #Include <Classes\winget>
 #Include <Classes\switchTo>
 #Include <Classes\WM>
+#Include <Classes\Editors\Premiere>
 #Include <Functions\detect>
 #Include <Functions\errorLog>
+#Include <Functions\trayShortcut>
 ; }
 
 TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
@@ -32,6 +34,7 @@ timeRemain(*)
         forTray := half ? "Will retry in: " Round((((minutes * 60)/2) - ElapsedTime)/ 60, 2) "min" : "Will save in: " Round(((minutes * 60) - ElapsedTime)/ 60, 2) "min"
     MsgBox(forTray, "Next Save - " A_ScriptName)
 }
+startupTray(10)
 
 ;// This script will autosave your premire pro/after effects project every 5min (by default) since adobe refuses to actually do so consistently. Thanks adobe.
 ;// It can also ensure you have the checklist script for the current project open. This can be disabled in `settingsGUI()`
@@ -249,7 +252,7 @@ save()
     if attempt = 3
         {
             switchTo.Premiere() ; last ditch effort to get a save off properly
-            SendInput(KSA.timelineWindow)
+            prem().__checkTimelineFocus()
         }
     attempt++
 
@@ -287,12 +290,9 @@ save()
     path := WinGet.ProjPath()
     if !DirExist(path.Dir "\Backup")
         DirCreate(path.Dir "\Backup")
-    else
-        {
-            loop files path.Dir "\Backup\*"
-                FileDelete(A_LoopFileFullPath)
-        }
     try {
+        loop files path.Dir "\Backup\*.*"
+            FileDelete(A_LoopFileFullPath)
         loop files path.Dir "\*.prproj", "F" {
             FileCopy(A_LoopFileFullPath, path.Dir "\Backup\*_" time ".*", 1)
         }
@@ -350,8 +350,7 @@ save()
                     case "focus":
                         if swap
                             switchTo.Premiere()
-                        SendInput(KSA.timelineWindow)
-                        SendInput(KSA.timelineWindow)
+                        prem().__checkTimelineFocus()
                         sleep 50
                         if GetKeyState("Shift")
                             SendInput("{Shift Up}")
@@ -447,8 +446,7 @@ save()
                 if title != replayCheck.winTitle
                     title := replayCheck.winTitle
                 sleep 250
-                ControlSend(KSA.timelineWindow,, title)
-                ControlSend(KSA.timelineWindow,, title)
+                prem().__checkTimelineFocus()
                 sleep 100
                 ControlSend(KSA.playStop,, title)
                 block.Off()

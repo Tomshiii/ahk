@@ -18,15 +18,19 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
     document := ComObject("HTMLfile")
     document.write(var)
     initialMatch := document.Title
-    if initialMatch = ""
-        {
-            RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
-            initialMatch := sTitle[1]
-            if initialMatch = "" {
-                errorLog(ValueError("Couldn't determine the title", -2),, 1)
-                return false
-            }
+    if initialMatch == "Twitch" {
+        ;// twitch simply has "Twitch" as their html title and leaves the actual title in meta information
+        RegExMatch(var, "is)<meta name=`"title`" content=\K(.*?)/>", &sTitle)
+        initialMatch := SubStr(sTitle[1], InStr(sTitle[1], " - ") + 3, -1)
+    }
+    if initialMatch = "" {
+        RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
+        initialMatch := sTitle[1]
+        if initialMatch = "" {
+            errorLog(ValueError("Couldn't determine the title", -2),, 1)
+            return false
         }
+    }
 
     replaceChars := ["&#39;", "'", "&quot;", '＂']
     finalTitle := ""
@@ -45,6 +49,7 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
         return finalTitle ?? initialMatch
     if finalTitle = ""
         finalTitle := initialMatch
+    finalTitle := InStr(finalTitle, " - YouTube", 1,, 1) ? StrReplace(finalTitle, " - YouTube", "", 1,, 1) : finalTitle
     params.InsertAt(1, replace)
     ;// sanitising title of invalid filename characters
     if RegExMatch(finalTitle, "\\|\/|:|\*|\?|\`"|<|>|\|", &match)

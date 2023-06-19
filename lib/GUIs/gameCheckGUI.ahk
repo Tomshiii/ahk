@@ -81,6 +81,7 @@ class gameCheckGUI extends tomshiBasic {
      * @param {String} listFormat the input value
      */
     __appendInput(readGameCheck, listFormat) {
+        detect()
         ;// finding the end of the string
         findEnd := InStr(readGameCheck, "; --", 1,, 1)
         ;// adding the user input to the end of the string

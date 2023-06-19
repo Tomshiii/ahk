@@ -3,13 +3,13 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2023/03/23
- * @version v2.10.4
+ * @date 2023/05/21
+ * @version v2.11.2
  * @ahk_ver 2.0.2
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32
+;\\v2.32.8
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -32,7 +32,8 @@
 #Include <Classes\Startup>
 #Include <Classes\obj>
 #Include <Classes\clip>
-#Include <Functions\reload_reset_exit>
+#Include <Classes\reset>
+#Include <Classes\keys>
 #Include <Functions\errorLog>
 #Include <Functions\mouseDrag>
 #Include <Functions\getLocalVer>
@@ -42,12 +43,13 @@
 #Include <Functions\refreshWin>
 #Include <Functions\getHotkeys>
 #Include <Functions\alwaysOnTop>
-#Include <Classes\keys>
+#Include <Functions\pauseYT>
 #Include <Functions\delaySI>
+#Include <Functions\isDoubleClick>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
-;#Include right click premiere.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
+;#Include Premiere_RightClick.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 
 ;//! Setting up script defaults.
@@ -132,17 +134,17 @@ F11::ListLines() ;debugging
 F12::KeyHistory  ;debugging
 */
 ;reloadHotkey;
-#+r::reload_reset_exit("reload") ;this reload script will attempt to reload all* active ahk scripts, not only this main script
+#+r::reset.ext_reload() ;this reload script will attempt to reload all* active ahk scripts, not only this main script
 
 ;hardresetHotkey;
-#+^r::reload_reset_exit("reset") ;this will hard rerun all active ahk scripts
+#+^r::reset.reset() ;this will hard rerun all active ahk scripts
 
 ;unstickKeysHotkey;
 #F11::keys.allUp() ;this function will attempt to unstick as many keys as possible
 ;panicExitHotkey;
-#F12::reload_reset_exit("exit") ;this is a panic button and will shutdown all active ahk scripts
+#F12::reset.ex_exit() ;this is a panic button and will shutdown all active ahk scripts
 ;panicExitALLHotkey;
-#+F12::reload_reset_exit("exit", true) ;this is a panic button and will shutdown all active ahk scripts INCLUDING the checklist.ahk script
+#+F12::reset.ex_exit(true) ;this is a panic button and will shutdown all active ahk scripts INCLUDING the checklist.ahk script
 
 ;settingsHotkey;
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI
@@ -167,8 +169,9 @@ F12::KeyHistory  ;debugging
 ;capsHotkey;
 SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We need this hotkey because I have capslock disabled by default
 {
-	if A_PriorHotkey = A_ThisHotkey && A_TimeSincePriorHotkey < 250
-		SetCapsLockState !GetKeyState("CapsLock", "T")
+	if !isDoubleClick()
+		return
+	SetCapsLockState !GetKeyState("CapsLock", "T")
 }
 
 ;centreHotkey;
@@ -196,7 +199,7 @@ SC03A & F5::refreshWin("A", wingetProcessPath("A"))
 ;		launch programs
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-#HotIf not GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
+#HotIf !GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
 ;windowspyHotkey;
 Pause::switchTo.WindowSpy() ;run/swap to windowspy
 ;vscodeHotkey;
@@ -328,51 +331,8 @@ $^c::VSCode.copy()
 
 #HotIf WinActive(browser.firefox.winTitle)
 ;pauseyoutubeHotkey;
-Media_Play_Pause:: ;pauses youtube video if there is one.
-{
-	coord.s()
-	MouseGetPos(&x, &y)
-	coord.w()
-	SetTitleMatchMode 2
-	needle := "YouTube"
-	winget.Title(&title)
-	if InStr(title, needle)
-		{
-			if InStr(title, "Subscriptions - YouTube Mozilla Firefox", 1) || title = "YouTube Mozilla Firefox"
-				{
-					SendInput("{Media_Play_Pause}")
-					return
-				}
-			SendInput("{Space}")
-			return
-		}
-	else loop {
-		wingetPos(,, &width,, "A")
-		if ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " ptf.firefox "youtube1.png") || ImageSearch(&xpos, &ypos, 0, 0, width, "60", "*2 " ptf.firefox "youtube2.png")
-			{
-				MouseMove(xpos, ypos, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
-				SendInput("{Click}")
-				coord.s()
-				MouseMove(x, y, 2)
-				break
-			}
-		else
-			switchTo.OtherFirefoxWindow()
-		if A_Index > 5
-			{
-				tool.Cust("Couldn't find a youtube tab")
-				try {
-					WinActivate(title) ;reactivates the original window
-				} catch as e {
-					tool.Cust("Failed to get information on last active window")
-					errorLog(e)
-				}
-				SendInput("{Media_Play_Pause}") ;if it can't find a youtube window it will simply send through a regular play pause input
-				return
-			}
-	}
-	SendInput("{Space}")
-}
+Media_Play_Pause::pauseYT() ;pauses youtube video if there is one.
+
 
 ;the below disables the numpad on youtube so you don't accidentally skip around a video
 ;numpadytHotkey;
@@ -472,14 +432,19 @@ F23::SendInput(KSA.nextKeyframe) ;check the keyboard shortcut ini file to adjust
 ;		Premiere
 ;
 ;=============================================================================================================================================
-#HotIf WinActive("Adobe Premiere Pro 20" ptf.PremYearVer) && !GetKeyState("F24")
-;stopTabHotkey;
-Tab::return
-
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
-;There use to be a lot of macros about here in the script, they have since been removed and moved to their own individual .ahk files as launching them directly
-;via a streamdeck is far more effecient; 1. because I only ever launch them via the streamdeck anyway & 2. because that no longer requires me to eat up a hotkey
-;that I could use elsewhere, to run them. These mentioned scripts can be found in the \Streamdeck AHK\ folder.
+;stopTabHotkey;
+Shift & Tab::
+$Tab::
+{
+	if !isDoubleClick()
+		return
+	sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+	SendInput(sendMod "{Tab}")
+}
+
+F1::prem.excalibur.lockTracks()
+F2::prem.excalibur.lockTracks("Audio")
 
 ;linkActivateHotkey;
 ~^l::SendInput(KSA.selectAtPlayhead)
@@ -491,19 +456,7 @@ Ctrl & BackSpace::prem.wordBackspace()
 SC03A & v::prem.selectionTool()
 
 ;premprojectHotkey;
-RAlt & p::
-{
-	dir := obj.SplitPath(ptf.EditingStuff)
-	if WinExist(dir.name) {
-		WinActivate(dir.name)
-		return
-	}
-	Run(dir.dir)
-	if !WinWaitActive(dir.name,, 3) {
-		if WinExist(dir.name)
-			WinActivate(dir.name)
-	}
-}
+RAlt & p::prem.openEditingDir(ptf.EditingStuff)
 
 ;12forwardHotkey;
 PgDn::prem.moveKeyframes("right", 12)
@@ -523,6 +476,7 @@ Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "seco
 F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint) ;goes to the next edit point towards the left
 ;nexteditHotkey;
 F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint) ;goes to the next edit point towards the right
+
 ;playstopHotkey;
 F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
 ;nudgedownHotkey;
@@ -531,8 +485,6 @@ Xbutton1::SendInput(KSA.nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
 Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
-
-#Include *i right click premiere.ahk ;I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 
 ;bonkHotkey;
 F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
@@ -625,3 +577,13 @@ F14::SendInput(KSA.nudgeUp) ;setting this here instead of within premiere is req
 F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
 ;speedUpHotkey;
 F14 & F23::SendInput(KSA.speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
+
+#MaxThreadsBuffer true
+Alt & WheelUp::
+Alt & WheelDown::
+Shift & WheelUp::
+Shift & WheelDown::prem.accelScroll(5, 25)
+#MaxThreadsBuffer false
+
+;// I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+#Include <Classes\Editors\Premiere_RightClick>

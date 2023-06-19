@@ -1,8 +1,6 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <Functions\SD Functions\convert2>
+#Include <Classes\ffmpeg>
 ; }
 
-convert2('for /R %f IN (*.mkv) DO ffmpeg -i "%f" -map 0 -c copy "%~nf.mp4"')
-;for /R %f IN (*.mkv) DO ffmpeg -i "%f" -map 0 -c copy "%~nf.mp4"
-
+ffmpeg().all_XtoY()

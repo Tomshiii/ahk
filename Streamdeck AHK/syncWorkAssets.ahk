@@ -6,6 +6,9 @@
 
 ;// this script is designed to allow easy syncing between work and home asset folders
 
+;// I think if some files use non standard chars, it breaks this script a bit??.
+;// cool
+
 ;// select work folder
 workDir := FileSelect("D",, "Select Work Asset Folder")
 if workDir = ""
@@ -25,18 +28,23 @@ workFiles := Map()
  * @param {Map} map a previously generated map to add to
  */
 setMap(dir, map?) {
-    loop files dir, "F" {
+    loop files dir "\*.*", "F" {
         map.Set(A_LoopFileName, A_LoopFileFullPath)
-        print(A_LoopFileName " -- " A_LoopFileFullPath)
+        ; print(A_LoopFileName " -- " A_LoopFileFullPath)
     }
     return map
 }
 
 for folder in folders {
-    homeFiles := setMap(homeDir "\" folder "\*", homeFiles)
-    workFiles := setMap(workDir "\" folder "\*", workFiles)
-
+    homeFiles := setMap(homeDir "\" folder, homeFiles)
+    workFiles := setMap(workDir "\" folder, workFiles)
     copyOneWay(homeFiles, workFiles, workDir, folder)
+    homeFiles.Clear()
+    workFiles.Clear()
+
+    ;// need to regenerate the maps before going the opposite way
+    homeFiles := setMap(homeDir "\" folder, homeFiles)
+    workFiles := setMap(workDir "\" folder, workFiles)
     copyOneWay(workFiles, homeFiles, homeDir, folder)
     homeFiles.Clear()
     workFiles.Clear()
@@ -54,21 +62,18 @@ copyOneWay(arr, oppositeArr, oppositeDir, whichFolder) {
     for filename, path in arr {
         if cloneOpp.Has(filename) {
             cloneArr.Delete(filename)
-            print("deleting: " filename)
+            continue
+            ; print("deleting: " filename)
         }
-    }
+        try {
+            print("copying: " path "`nto: " oppositeDir "\" whichFolder "\" filename "`n--------")
+            FileCopy(path, oppositeDir "\" whichFolder "\" filename, 1)
+            oppositeArr.Set(filename, oppositeDir "\" whichFolder "\" filename)
+        } catch {
+            failed.Set(filename, path)
+            print("failed copying: " filename "`nto: " path "`n--------")
+        }
 
-    if cloneArr.Count != 0 {
-        for filename, path in cloneArr {
-            try {
-                print("copying: " path " to: " oppositeDir "\" whichFolder "\" filename)
-                FileCopy(path, oppositeDir "\" whichFolder "\" filename, 1)
-                oppositeArr.Set(filename, oppositeDir "\" whichFolder "\" filename)
-            } catch {
-                failed.Set(filename, path)
-                print("failed: " filename " -- " path)
-            }
-        }
     }
 }
 

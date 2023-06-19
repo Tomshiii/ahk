@@ -1,6 +1,6 @@
 #SingleInstance Off
 ; { \\ #Includes
-#Include <Functions\SD Functions\ytDownload>
+#Include <Classes\ytdlp>
 #Include <Classes\winget>
 #Include <Classes\ptf>
 ; }
@@ -12,4 +12,5 @@ ClientName := (WinExist(Editors.Premiere.winTitle) || WinExist(Editors.AE.winTit
 downloadFolder := ptf.comms "\" ClientName "\口 thumbnails"
 if !DirExist(downloadFolder)
     DirCreate(downloadFolder)
-ytDownload("--write-thumbnail --skip-download", downloadFolder)
+ytdlp().download("--write-thumbnail --skip-download", downloadFolder)
+;// ;yt-dlp --write-thumbnail --skip-download -P "link\to\path" "URL"

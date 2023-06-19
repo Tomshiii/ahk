@@ -8,7 +8,7 @@
 #Include <Classes\ptf>
 #Include <Classes\obj>
 #Include <Classes\WM>
-#Include <Functions\reload_reset_exit>
+#Include <Classes\reset>
 #Include <Functions\refreshWin>
 #Include <Functions\detect>
 #Include <Functions\checkInternet>
@@ -354,9 +354,9 @@ settingsGUI()
     {
         detect()
         iniVar := StrReplace(ini, A_Space, "_")
-        UserSettings.%iniVar% := ctrl.value
+        UserSettings.%iniVar% := ctrl.text
         if WinExist(script " - AutoHotkey") {
-            WM.Send_WM_COPYDATA(iniVar "_" ctrl.Value, script)
+            WM.Send_WM_COPYDATA(iniVar "_" ctrl.text, script)
         }
     }
 
@@ -384,15 +384,15 @@ settingsGUI()
     ;//! STATUS BAR
 
     workDir := UserSettings.working_dir
-    SB := settingsGUI.Add("StatusBar")
-    SB.SetText("  Current working dir: " workDir)
+    SB := settingsGUI.Add("StatusBar", "-Theme Background0xc0c0c0")
+    SB.SetText("  Current working dir: " workDir,, 1)
     checkdir := SB.GetPos(,, &width)
     parts := SB.SetParts(width + 20 + (StrLen(workDir)*5))
     SetTimer(statecheck, -100)
     statecheck(*)
     {
         state := (A_IsSuspended = 0) ? "Active" : "Suspended"
-        SB.SetText(" Scripts " state, 2)
+        SB.SetText(A_Tab "Scripts " state, 2, 1)
         SetTimer(, -1000)
     }
     SB.SetFont("S9")
@@ -434,7 +434,7 @@ settingsGUI()
         UserSettings.__delAll() ;// close the settings instance
         if IsSet(butt) && butt = "hard"
             {
-                reload_reset_exit("reset")
+                reset.reset()
                 return ;// this is necessary
             }
         ;before finally closing
@@ -555,6 +555,12 @@ settingsGUI()
         year.OnEvent("Change", __yearEvent)
         adobeGui.AddText("xs y+10", "Version: ")
         __generateDrop(genProg, &ver, ctrlX)
+        if program = "Premiere" {
+            adobeGui.AddText("xs y+8 Section", "Focus Timeline Icon: ")
+            timelineCheckbox := adobeGui.AddCheckbox("xs+135 ys+1 Checked" UserSettings.prem_Focus_Icon)
+            timelineCheckbox.OnEvent("Click", timelineCheckbx)
+            timelineCheckbx(guiobj, *) => UserSettings.prem_Focus_Icon := timelineCheckbox.value
+        }
         adobeGui.AddText("xs y+10 Section", "Cache Dir: ")
         cacheInit := short "cache"
         cache := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W150 ReadOnly", UserSettings.%cacheInit%)
@@ -563,7 +569,7 @@ settingsGUI()
 
         ;// warning & save button
         adobeGui.AddText("xs+50 y+15", "*some settings will require`na full reload to take effect").SetFont("s9 italic")
-        saveBut := adobeGui.Add("Button", "x+-10", "save")
+        saveBut := adobeGui.Add("Button", "x+-10", "close")
         saveBut.OnEvent("Click", __saveVer)
 
         ;// show

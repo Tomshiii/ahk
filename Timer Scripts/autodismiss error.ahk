@@ -5,10 +5,12 @@ KeyHistory(0)
 
 ; { \\ #Includes
 #Include <Classes\ptf>
+#Include <Functions\trayShortcut>
 ; }
 
 TraySetIcon(ptf.Icons "\dismiss.ico")
 A_MaxHotkeysPerInterval := 2000
+startupTray()
 
 ; you know that extremely annoying dialouge box that says,
 ; "This action will delete existing keyframes. Do you want to continue?"

@@ -10,11 +10,13 @@ KeyHistory(0)
 #Include <Classes\timer>
 #Include <Classes\WM>
 #Include <Functions\errorLog>
+#Include <Functions\trayShortcut>
 ; }
 
 SetWorkingDir A_ScriptDir
 TraySetIcon(ptf.Icons "\fullscreen.ico") ;changes the icon this script uses in the taskbar
 InstallKeybdHook
+startupTray()
 
 GroupAdd("adobe", editors.Premiere.winTitle)
 GroupAdd("adobe", editors.AE.winTitle)
@@ -27,7 +29,7 @@ UserSettings := UserPref()
 There are sometimes where Premiere Pro will put itself in an even more "fullscreen" mode when you lose access to the window controls and all your coordinates get messed up.
 This scrip is to quickly detect and correct that.
 I've learnt that it happens when you press ctrl + \
-I have \ set in premiere to "Move playhead to cursor" and use it in `right click premiere.ahk` so if a save was being attempted as I was moving the playhead it would occur.
+I have \ set in premiere to "Move playhead to cursor" and use it in `Premiere_RightClick.ahk` so if a save was being attempted as I was moving the playhead it would occur.
 */
 
 ;//enter your desired frequency in SECONDS in `fire_frequency` then leave `fire` as it is. By default you will see this script checks every 2s

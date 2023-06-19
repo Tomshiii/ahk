@@ -47,7 +47,8 @@ h:: ;opens the directory for the current premiere/ae project
 				{
 					tool.Cust("A Premiere/AE isn't open, opening the comms folder")
 					Run(ptf.comms)
-					WinWait("ahk_class CabinetWClass", "comms")
+					if !WinWait("ahk_class CabinetWClass", "comms", 2)
+						return
 					WinActivate("ahk_class CabinetWClass", "comms")
 					return
 				}
@@ -65,19 +66,24 @@ h:: ;opens the directory for the current premiere/ae project
 		}
 	;// run the path
 	RunWait(path.dir)
-	WinWait("ahk_class CabinetWClass", path.NameNoExt,, "Adobe")
+	if !WinWait("ahk_class CabinetWClass", path.NameNoExt, 2, "Adobe") {
+		tool.Cust("Waiting for project directory to open timed out")
+		return
+	}
 	WinActivate("ahk_class CabinetWClass", path.NameNoExt, "Adobe")
 }
 n::unassigned()
 Space::
 {
-	;// if slack isn't open, simply call function
-	if !WinExist("ahk_exe slack.exe") || (WinGetMinMax("ahk_exe slack.exe") = -1) {
+	;// if slack/phone link isn't open, simply call function
+	if (!WinExist("ahk_exe slack.exe") || (WinGetMinMax("ahk_exe slack.exe") = -1)) &&
+		(!WinExist("Phone Link ahk_class WinUIDesktopWin32WindowClass") || (WinGetMinMax("Phone Link ahk_class WinUIDesktopWin32WindowClass") = -1))  {
 		switchTo.Disc()
 		return
 	}
-	;// if slack is open I want them both in a different position
-	WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, "ahk_exe slack.exe")
+	;// if slack/phone link is open I want it & discord both in a different position
+	which := WinExist("ahk_exe slack.exe") ? "ahk_exe slack.exe" : "Phone Link ahk_class WinUIDesktopWin32WindowClass"
+	WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, which)
 	switchTo.Disc(discord.slackX, 669, discord.slackWidth, discord.slackHeight)
 }
 Right & Space::switchTo.newWin("exe", "msedge.exe", "msedge.exe")
@@ -87,32 +93,34 @@ t::unassigned()
 g::unassigned()
 b:: ;this macro is to find the difference between 2 24h timecodes
 {
-	calculateTime(number) ;first we create a function that will return the results the user inputs
+	calculateTime(startorend) ;first we create a function that will return the results the user inputs
 	{
-		if number = 1
-			startorend := "Start"
-		else
-			startorend := "End"
-		start1:
-		time := InputBox("Write the " startorend " hhmm time here`nDon't use ':'", "Input " startorend " Time", "w200 h110")
-		if time.Result = "Cancel"
-			return 0
-		Length1 := StrLen(time.Value)
-		if Length1 != 4 || time.Value > 2359
-			{
-				MsgBox("You didn't write in hhmm format`nTry again", startorend " Time", "16")
-				goto start1
+		getInput() {
+			/** check to ensure only numbers are passed */
+			__checkValue(value) {
+				loop StrLen(value) {
+					char := SubStr(value, A_Index, 1)
+					if !IsNumber(char)
+						return false
+				}
+				return true
 			}
-		else
-			return time.Value
+			time := InputBox("Write the " startorend " hhmm time here`nDon't use ':'", "Input " startorend " Time", "w200 h110")
+			if time.Result = "Cancel"
+				Exit()
+			if StrLen(time.Value) != 4 || time.Value > 2359 || time.value < 0 || !__checkValue(time.value) {
+				MsgBox("You didn't write in hhmm format`nTry again", startorend " Time", "16")
+				return {number: 0, value: 0}
+			}
+			return {number: StrLen(time.Value), value: time.value}
+		}
+		loop {
+			time := getInput()
+		} until time.number = 4 && time.Value <= 2359
+		return time.value
 	}
-	time1 := calculateTime("1") ;then we call it twice
-	if time1 = 0
-		return
-	time2 := calculateTime("2")
-	if time2 = 0
-		return
-	diff := DateDiff("20220101" time2, "20220101" time1, "seconds")/3600 ;do the math to determine the time difference
+	startTime := calculateTime("Start"), endTime := calculateTime("End")
+	diff  := DateDiff("20220101" endTime, "20220101" startTime, "seconds")/3600 ;do the math to determine the time difference
 	value := Round(diff, 2) ;round the result to 2dp
 	A_Clipboard := value ;copy it to the clipboard
 	tool.Cust(diff "`nor " value, 2000) ;and create a tooltip to show the user both the complete answer and the rounded answer
@@ -149,4 +157,4 @@ F16::switchTo.Edge()
 ;Tab::unassigned()
 Esc::unassigned()
 F13::unassigned()
-Home::unassigned()
+Home::switchTo.PhoneLink()

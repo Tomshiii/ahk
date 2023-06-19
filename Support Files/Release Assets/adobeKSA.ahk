@@ -1,3 +1,10 @@
+/************************************************************************
+ * @description a function designed to parse through AE and Premiere Pro keyboard shortcut files to automatically assign KSA.ini values
+ * @author tomshi
+ * @date 2023/04/18
+ * @version 1.0.0
+ ***********************************************************************/
+
 #Warn VarUnset, StdOut
 
 ;// This script is designed to assist the user of my repo in getting their feet off the ground by parsing through their keyboard shortcut file and attempting to auto assign KSA.ini values based on it.
@@ -35,7 +42,7 @@ class adobeKSA extends tomshiBasic {
     Xmargin := "x" 8
     Xclude := 500
 
-    defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Win"
+    defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-" A_UserName "\Win"
     defaultAEFolder := A_AppData "\Adobe\After Effects\" LTrim(ptf.aeIMGver, "v") "\aeks"
 
     KSADir => ptf.rootDir "\lib\KSA"
@@ -57,7 +64,7 @@ class adobeKSA extends tomshiBasic {
     __generate() {
         this.AddText(this.Xmargin, "Please select the root directory locations for where each program keeps its keyboard shortcut file.")
         this.AddText(this.Xmargin " r1 w500", "Please include your version number && profile folder if applicible.").SetFont("bold")
-        this.AddText(this.Xmargin, "example: " this.defaultPremiereFolder "22.0\Profile-Tom`n").SetFont("s8")
+        this.AddText(this.Xmargin, "example: " this.defaultPremiereFolder "\22.0\Profile-Tom`n").SetFont("s8")
 
         this.__indivSection(this.defaultPremiereFolder, "Premiere")
         this.__indivSection(this.defaultAEFolder, "AE")
@@ -90,6 +97,11 @@ class adobeKSA extends tomshiBasic {
         "PgDown",   1
     )
 
+    /**
+     * Wraps any required keys in "{}" so ahk interprets them correctly
+     * @param {String} key the hotkey string
+     * @returns {String} the final hotkey
+     */
     __wrapKey(key) {
         if checkF := this.__isFKey(key)
             return checkF
@@ -142,12 +154,13 @@ class adobeKSA extends tomshiBasic {
         }
     }
     /**
-     * This function is called when the change buttons are clicked
+     * This function is called when the change buttons are clicked and handles reassigning variables used to determine the location of the keyboard shortcut file
      */
     __changePath(which, defaultFolder, *) {
         if this.%which%Disable = 1
             return
         which := InStr(defaultFolder, "Premiere Pro", 1, 1, 1) ? "Premiere" : "AE"
+        defaultFolder := this.__checkDefaultDir(defaultFolder)
         changePath := FileSelect("D", defaultFolder, "Select " which " directory, including version.")
         if changePath = ""
             return
@@ -155,11 +168,28 @@ class adobeKSA extends tomshiBasic {
         this.%which%Folder.Text := SubStr(changePath, InStr(changePath, "Adobe")-1)
     }
 
+    /**
+     * Is called before the user is prompted with a file select window, checks to see if the default folder exist, if it doesn't, it'll change itself to a path without a version
+     * @param {String} dir the default dir you wish to check
+     * @returns {String} the resulting dir path
+     */
+    __checkDefaultDir(dir) {
+        if !DirExist(dir "\")
+            return SubStr(dir, 1, InStr(dir, "\",,, -3))
+        return dir
+    }
+
+    /**
+     * Attempt to find the folder where the keyboard shortcut file is located
+     * @param {String} startDir the directory the search begins at
+     * @returns {String} the path that the keyboard shortcut folder is found in
+     */
     __findFolder(startDir, name) {
+        startDir := this.__checkDefaultDir(startDir)
         SplitPath(startDir, &dirname)
-        if startDir = name
+        if dirname = name
             return startDir
-        loop files startDir "*.*", "D R" {
+        loop files startDir "\*.*", "D R" {
             if A_LoopFileName != name
                 continue
             return A_LoopFileFullPath
@@ -168,6 +198,9 @@ class adobeKSA extends tomshiBasic {
         throw IndexError("Function could not determine the location of the ``" name "`` folder within the selected directory. Please provide the proper path and try again.", name, -1)
     }
 
+    /**
+     * Backs up the user's ksa file
+     */
     __backupKSA() {
         if !DirExist(this.KSADir "\backup")
             DirCreate(this.KSADir "\backup")
@@ -175,6 +208,13 @@ class adobeKSA extends tomshiBasic {
         FileCopy(this.KSA, this.KSADir "\backup\ksa_backup_" datetime ".ini")
     }
 
+    /**
+     * Attempts to find the respective keyboard shortcut file
+     * @param {String} loopDir the directory to search through
+     * @param {String} filetype the respective filetype of the keyboard shortcut file
+     * @param {String} which the name of the parameter to update if something goes wrong
+     * @returns {String} the filepath of the keyboard shortcut file
+     */
     __findFile(loopDir, filetype, which) {
         amount := 0
         loop files loopDir "\*." filetype, "F" {
@@ -202,16 +242,26 @@ class adobeKSA extends tomshiBasic {
         return this.__findFile(foundPath, "txt", "AE")
     }
 
+    /**
+     * retrieves the xml command from the KSA file
+     */
     __command(v) => SubStr(this.KSARead
                         , start := InStr(this.KSARead, ";[",, InStr(this.KSARead, v, 1,, 1), 1) +2
                         , InStr(this.KSARead, "]",, start, 1) - start
                     )
 
+    /**
+     * retrieves the xml context from the KSA file
+     */
     __context(v) => SubStr(this.KSARead
                         , start := InStr(this.KSARead, ";{",, InStr(this.KSARead, v, 1,, 1), 1) +2
                         , InStr(this.KSARead, "}",, start, 1) - start
                     )
 
+    /**
+     * parse through the premiere keyboard shortcut file
+     * @param {String} location the location of the file
+     */
     __parsePrem(location) {
         premSection  := IniRead(this.KSA, "Premiere")
         premShortcut := FileRead(location)
@@ -232,6 +282,9 @@ class adobeKSA extends tomshiBasic {
         }
     }
 
+    /**
+     * A map of known replacements
+     */
     AEKeyMap := Mip(
         "Comma",        ",",
         "LeftArrow",        "{Left}",
@@ -241,7 +294,7 @@ class adobeKSA extends tomshiBasic {
         "FwdDel",       "{BackSpace}",
         "SingleQuote",      "'",
         "Backslash",        "\",
-        "PadClear",     "{NumpadClear}"
+        "PadClear",     "{NumpadClear}",
         "PadSlash",    "{NumpadDiv}",
         "PadMinus",    "{NumpadSub}",
         "PadPlus", "{NumpadAdd}",
@@ -256,6 +309,10 @@ class adobeKSA extends tomshiBasic {
 
     )
 
+    /**
+     * Clears any modifiers from the AE shortcut string
+     * @param {String} key the hotkey string to be stripped
+     */
     __clearHotkey(key) {
         key := StrReplace(key, "Shift+", "")
         key := StrReplace(key, "Ctrl+", "")
@@ -263,19 +320,20 @@ class adobeKSA extends tomshiBasic {
         return key
     }
 
+    /**
+     * Builds the AE hotkey
+     * @param {String} hotkey turns the shortcut file hotkey into an AHK readable hotkey
+     */
     __aeBuildHotkey(hotkey) {
         baseHotkey := SubStr(hotkey
                         , startpos := InStr(hotkey, "(",, 1, 1) + 1
                         , InStr(hotkey, ")",, 1, 1) - startpos
                     )
-        ; MsgBox("1: " baseHotkey)
         builtHotkey := InStr(baseHotkey, "Ctrl",, 1, 1) ? "^" : ""
         builtHotkey := InStr(baseHotkey, "Alt",, 1, 1) ? builtHotkey "!" : builtHotkey
         builtHotkey := InStr(baseHotkey, "Shift",, 1, 1) ? builtHotkey "+" : builtHotkey
-        ; MsgBox("2: " builtHotkey)
 
         baseHotkey := this.__clearHotkey(baseHotkey)
-        ; MsgBox("3: " baseHotkey)
         loop {
             nextKey := (plus := InStr(baseHotkey, "+",, 1, 1)) ? SubStr(baseHotkey, 1, InStr(baseHotkey, "+",, 1, 1))
                                                      : SubStr(baseHotkey, 1)
@@ -290,6 +348,10 @@ class adobeKSA extends tomshiBasic {
         return builtHotkey
     }
 
+    /**
+     * parse through the AE keyboard shortcut file
+     * @param {String} location the location of the keyboard shortcut file
+     */
     __parseAE(location) {
         aeSection    := IniRead(this.KSA, "After Effects")
         aeShortcut   := FileRead(location)
@@ -303,21 +365,19 @@ class adobeKSA extends tomshiBasic {
             if InStr(keyName, "/PremiereData/")
                 continue
             aeHotkeyIniVal := IniRead(location, sectionName, keyName, "")
-            /* MsgBox(Format("
-            (
-                section: {}
-                key:     {}
-                initVal: {}
-            )", sectionName, keyName, aeHotkeyIniVal)) */
             if aeHotkeyIniVal = ""
                 continue
             buildHotkey := this.__aeBuildHotkey(aeHotkeyIniVal)
-            ; MsgBox(buildHotkey)
             IniWrite(Format('"{}"', buildHotkey), this.KSA, "After Effects", v)
         }
     }
 
+    /**
+     * This function handles the logic that occurs when the submit button is pressed
+     */
     __submit(*) {
+        if this.PremiereExclude = true && this.AEExclude = true
+            ExitApp()
         this.__backupKSA()
         this.KSARead := FileRead(this.KSA)
         MsgBox("
@@ -326,7 +386,7 @@ class adobeKSA extends tomshiBasic {
             A backup of your current KSA.ini file will be generated.
             While this script is designed to speed up the process of starting with my scripts, I highly recommend NOT solely relying on this script and still double checking the values.
 
-            Please report any issues/errors and provide as much detail as possible!
+            Please report any issues/errors on github and be sure to provide as much detail as possible!
         )", "Warning", 0x30)
         PremiereShortcut := (this.PremiereExclude = 0) ? this.__findPremiereShortcut() : false
         AEShortcut       := (this.AEExclude = 0)       ? this.__findAEShortcut()       : false
@@ -375,7 +435,7 @@ class adobeXML {
     /**
      * takes an xml formatted string and returns a comobject
      * @param {String} xml the fileread xml file (ie, premiere's keyboard shortcut file)
-     * @return {Object} returns a comobject
+     * @returns {Object} returns a comobject
      */
     __loadXML(xml) {
         xmldoc := ComObject("MSXML2.DOMDocument.6.0")
@@ -401,7 +461,7 @@ class adobeXML {
     /**
      * retrieves the modifiers for the given hotkey
      * @param {String} path the xml path for the desired hotkey
-     * @return {String} returns a string containing the modifiers for the given hotkey or a blank string if none
+     * @returns {String} returns a string containing the modifiers for the given hotkey or a blank string if none
      */
     __retriveModifiers(path) {
         ctrl  := (this.xml.selectSingleNode(path "/modifier.ctrl").text  = "true") ? "^" : ""

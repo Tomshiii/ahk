@@ -18,31 +18,38 @@ musicGUI()
     if WinExist("Music to open?")
         return
 
-    aimpPath   := ptf.ProgFi32 "\AIMP3\AIMP.exe"
-    foobarPath := ptf.ProgFi32 "\foobar2000\foobar2000.exe"
-    wmpPath    := ptf.ProgFi32 "\Windows Media Player\wmplayer.exe"
-    vlcPath    := ptf.ProgFi "\VideoLAN\VLC\vlc.exe"
+    aimpObj := {
+        path: ptf.ProgFi32 "\AIMP3\AIMP.exe",                   image: ptf.guiIMG "\aimp.png",
+        opts: "x12 w25 h-1 Y9",                                 title: "AIMP",
+        buttonSize: "X40 Y7"
+    }
+    foobarObj := {
+        path: ptf.ProgFi32 "\foobar2000\foobar2000.exe",        image: ptf.guiIMG "\foobar.png",
+        opts: "w20 h-1 X14 Y40",                                 title: "Foobar",
+        buttonSize: "X40 Y40"
+    }
+    wmpObj := {
+        path: ptf.ProgFi32 "\Windows Media Player\wmplayer.exe", image: ptf.guiIMG "\wmp.png",
+        opts: "w25 h-1 X140 Y9",                                 title: "WMP",
+        buttonSize: "X170 Y7"
+    }
+    vlcObj := {
+        path: ptf.ProgFi "\VideoLAN\VLC\vlc.exe",                image: ptf.guiIMG "\vlc.png",
+        opts: "w28 h-1 X138 Y42",                                title: "VLC",
+        buttonSize: "X170 Y40"
+    }
+
+    objArr := [aimpObj, foobarObj, wmpObj, vlcObj]
 
     ;// if there is no music player open, a custom GUI window will open asking which program you'd like to open
     MyGui := tomshiBasic(10, 600, "AlwaysOnTop -Resize +MinSize260x120 +MaxSize260x120", "Music to open?") ;creates our GUI window
 
     ;// now we define the elements of the GUI window
-    ;defining AIMP
-    aimplogo := MyGui.AddPicture("x12 w25 h-1 Y9", ptf.guiIMG "\aimp.png")
-    AIMP := MyGui.Add("Button", "X40 Y7", "AIMP")
-    AIMP.OnEvent("Click", musicRun)
-    ;defining Foobar
-    foobarlogo := MyGui.AddPicture("w20 h-1 X14 Y40", ptf.guiIMG "\foobar.png")
-    foobar := MyGui.Add("Button", "X40 Y40", "Foobar")
-    foobar.OnEvent("Click", musicRun)
-    ;defining Windows Media Player
-    wmplogo := MyGui.AddPicture("w25 h-1 X140 Y9", ptf.guiIMG "\wmp.png")
-    WMP := MyGui.Add("Button", "X170 Y7", "WMP")
-    WMP.OnEvent("Click", musicRun)
-    ;defining VLC
-    vlclogo := MyGui.AddPicture("w28 h-1 X138 Y42", ptf.guiIMG "\vlc.png")
-    VLC := MyGui.Add("Button", "X170 Y40", "VLC")
-    VLC.OnEvent("Click", musicRun)
+    for musicObj in objArr {
+        MyGui.AddPicture(musicObj.opts, musicObj.image)
+        MyGui.AddButton(musicObj.buttonSize, musicObj.title).OnEvent("Click", musicRun)
+    }
+
     ;defining music folder
     folderlogo := MyGui.AddPicture("w25 h-1  X14 Y86", ptf.guiIMG "\explorer.png")
     FOLDERGUI := MyGui.Add("Button", "X42 Y85", "MUSIC FOLDER")
@@ -55,34 +62,39 @@ musicGUI()
     musicRun(button, *)
     {
         text := button.Text
-        switch button.Text {
-            case "AIMP": Run(aimpPath)
-            case "Foobar":
-                Run(foobarPath)
-                text := "foobar2000"
-            case "WMP":
-                Run(wmpPath)
-                text := "wmplayer"
-            case "VLC": Run(vlcPath)
+        try {
+            switch button.Text {
+                case "AIMP": Run(aimpObj.path)
+                case "Foobar":
+                    Run(foobarObj.path)
+                    text := "foobar2000"
+                case "WMP":
+                    Run(wmpObj.path)
+                    text := "wmplayer"
+                case "VLC": Run(vlcObj.path)
+            }
+            WinWait("ahk_exe " text ".exe")
+            WinActivate("ahk_exe " text ".exe")
+        } catch {
+            MyGui.Destroy()
+            MsgBox("Desired application not found!",, "16")
+            return
         }
-        WinWait("ahk_exe " text ".exe")
-        WinActivate("ahk_exe " text ".exe")
         MyGui.Destroy()
     }
 
     MUSICFOLDER(*) {
-        if DirExist(ptf.musicDir)
-            {
-                Run(ptf.musicDir)
-                WinWait("Music")
-                WinActivate("Music")
-            }
-        else
-            {
-                scriptPath :=  A_LineFile ;this is taking the path given from A_LineFile
-                script := obj.SplitPath(scriptPath) ;and splitting it out into just the .ahk filename
-                MsgBox("The requested music folder doesn't exist`n`nWritten dir: " ptf.musicDir "`nScript: " script.Name "`nLine: " A_LineNumber-11)
-            }
+        if !DirExist(ptf.musicDir) {
+            scriptPath :=  A_LineFile ;this is taking the path given from A_LineFile
+            script := obj.SplitPath(scriptPath) ;and splitting it out into just the .ahk filename
+            MsgBox("The requested music folder doesn't exist`n`nDesired Dir should be defined in ``ptf {``")
+            MyGui.Destroy()
+            return
+        }
+        Run(ptf.musicDir)
+        if !WinWait("Music",, 2)
+            return
+        WinActivate("Music")
         MyGui.Destroy()
     }
 }

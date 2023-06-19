@@ -1,5 +1,5 @@
 #Include <Classes\tool>
-#Include <Functions\SplitPathObj>
+#Include <Classes\obj>
 
 ; // not necessarily an "old" script, just one I used to clean up some directories on my NAS
 ; this isn't clean code at all, and some lines may seem redundant, I just wanted to be extra sure things wouldn't go wrong
@@ -10,7 +10,7 @@ if check = "No"
     return
 loop files, A_ScriptDir "\*.*", "F R"
     {
-        loops := SplitPathObj(A_LoopFileFullPath)
+        loops := obj.SplitPath(A_LoopFileFullPath)
         tool.Cust(loops.dir)
         ;maybe this needs to be something like a_loopfile in dir etc etc idk figure it out
         if !InStr(loops.dir, "\videos")

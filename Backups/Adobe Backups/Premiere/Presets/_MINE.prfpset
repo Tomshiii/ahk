@@ -56,12 +56,14 @@
 			<Item Index="3" ObjectRef="189"/>
 			<Item Index="4" ObjectRef="196"/>
 			<Item Index="5" ObjectRef="204"/>
-			<Item Index="6" ObjectRef="208"/>
-			<Item Index="7" ObjectRef="222"/>
-			<Item Index="8" ObjectRef="248"/>
+			<Item Index="6" ObjectRef="236"/>
+			<Item Index="7" ObjectRef="240"/>
+			<Item Index="8" ObjectRef="254"/>
 			<Item Index="9" ObjectRef="268"/>
-			<Item Index="10" ObjectRef="275"/>
-			<Item Index="11" ObjectRef="291"/>
+			<Item Index="10" ObjectRef="294"/>
+			<Item Index="11" ObjectRef="326"/>
+			<Item Index="12" ObjectRef="333"/>
+			<Item Index="13" ObjectRef="349"/>
 		</Items>
 	</BinTreeItem>
 	<EffectBinItem ObjectID="6" ClassID="5f513d71-0018-4405-a10b-bf5597f99960" Version="1">
@@ -3086,20 +3088,521 @@
 			<Locked>false</Locked>
 			<Data ObjectRef="205"/>
 			<Node Version="1">
+				<Properties Version="1">
+					<MZ.EffectPresets.PresetUID>ef3815ae-835e-4e31-95d7-65e57f851ca8</MZ.EffectPresets.PresetUID>
+				</Properties>
 			</Node>
-			<Name>HFLIP</Name>
+			<Name>hard limit -3_me</Name>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="205" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
 		<FilterPresets Version="1">
 			<FilterPreset Index="0" ObjectRef="206"/>
+			<FilterPreset Index="1" ObjectRef="216"/>
+			<FilterPreset Index="2" ObjectRef="226"/>
+		</FilterPresets>
+		<EffectItem Version="1">
+			<EffectIsShorcut>false</EffectIsShorcut>
+			<EffectFlavor>0</EffectFlavor>
+		</EffectItem>
+	</FilterPresetItem>
+	<FilterPreset ObjectID="206" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>111207759977688</AnchorOutPoint>
+		<AnchorInPoint>110386444862884</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="207"/>
+		<FilterMatchName>e0b23f05-f1a7-4ef7-9b50-7ec3e3002058</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="207" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[100,101],"name":"Stereo In","type":0}],"out":[{"layout":[100,101],"name":"Stereo Out","type":0}]}</ChannelConfigData>
+		<ChannelMapData Encoding="base64" Checksum="1217439510">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5JbnB1dE1hcHBpbmc8L2tleT4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5DPC9rZXk+CjxpbnQgdHlwZT0ndW5zaWduZWQnIHNpemU9JzMyJz4yPC9pbnQ+CjwvcHJvcC5wYWlyPgo8cHJvcC5wYWlyPgo8a2V5PkRfMTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjA8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+RF8yPC9rZXk+CjxpbnQgdHlwZT0nc2lnbmVkJyBzaXplPSczMic+MTwvaW50Pgo8L3Byb3AucGFpcj4KPHByb3AucGFpcj4KPGtleT5TXzE8L2tleT4KPGludCB0eXBlPSdzaWduZWQnIHNpemU9JzMyJz4wPC9pbnQ+CjwvcHJvcC5wYWlyPgo8cHJvcC5wYWlyPgo8a2V5PlNfMjwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjE8L2ludD4KPC9wcm9wLnBhaXI+CjwvcHJvcC5saXN0Pgo8L3Byb3AucGFpcj4KPHByb3AucGFpcj4KPGtleT5PdXRwdXRNYXBwaW5nPC9rZXk+Cjxwcm9wLmxpc3Q+Cjxwcm9wLnBhaXI+CjxrZXk+Qzwva2V5Pgo8aW50IHR5cGU9J3Vuc2lnbmVkJyBzaXplPSczMic+MjwvaW50Pgo8L3Byb3AucGFpcj4KPHByb3AucGFpcj4KPGtleT5EXzE8L2tleT4KPGludCB0eXBlPSdzaWduZWQnIHNpemU9JzMyJz4wPC9pbnQ+CjwvcHJvcC5wYWlyPgo8cHJvcC5wYWlyPgo8a2V5PkRfMjwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjE8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+U18xPC9rZXk+CjxpbnQgdHlwZT0nc2lnbmVkJyBzaXplPSczMic+MDwvaW50Pgo8L3Byb3AucGFpcj4KPHByb3AucGFpcj4KPGtleT5TXzI8L2tleT4KPGludCB0eXBlPSdzaWduZWQnIHNpemU9JzMyJz4xPC9pbnQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLnBhaXI+CjwvcHJvcC5saXN0Pgo8L3Byb3AubWFwPgo=</ChannelMapData>
+		<OpaqueData Encoding="base64" Checksum="2470381880">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5QYXJhbUxpc3Q8L2tleT4KPGFycmF5Pgo8YXJyYXkudHlwZT48ZmxvYXQvPjwvYXJyYXkudHlwZT4KPGZsb2F0PjAuOTcwMDAwMDM8L2Zsb2F0Pgo8ZmxvYXQ+MC42NjY2NjY5ODwvZmxvYXQ+CjxmbG9hdD4wLjEzMzMzMzAxPC9mbG9hdD4KPGZsb2F0PjAuMzc1PC9mbG9hdD4KPGZsb2F0PjE8L2Zsb2F0Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjxmbG9hdD4wPC9mbG9hdD4KPC9hcnJheT4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjA8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MjwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>e0b23f05-f1a7-4ef7-9b50-7ec3e3002058</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+					<Properties Version="1">
+						<AudioFilterWindow.Visible>false</AudioFilterWindow.Visible>
+						<AudioFilterWindow.Targeted>true</AudioFilterWindow.Targeted>
+					</Properties>
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName>Hard Limiter -6</InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="208"/>
+					<Param Index="1" ObjectRef="209"/>
+					<Param Index="2" ObjectRef="210"/>
+					<Param Index="3" ObjectRef="211"/>
+					<Param Index="4" ObjectRef="212"/>
+					<Param Index="5" ObjectRef="213"/>
+					<Param Index="6" ObjectRef="214"/>
+					<Param Index="7" ObjectRef="215"/>
+				</Params>
+				<DisplayName>Hard Limiter</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101}]</AudioChannelLayout>
+			<ChannelType>1</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="208" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+			<Properties Version="1">
+				<ECP.NonParamGroup.Expanded>false</ECP.NonParamGroup.Expanded>
+			</Properties>
+		</Node>
+		<Timestamp>137397435979300</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="209" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436000900</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.97000002861</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.97000002861,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Maximum Amplitude</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="210" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436009400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.666666984558</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.666666984558,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Input Boost</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="211" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436015400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>ms</UnitsString>
+		<CurrentValue>0.133333012462</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.133333012462,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Look-Ahead Time</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="212" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436020200</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>ms</UnitsString>
+		<CurrentValue>0.375</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.375,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Release Time</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="213" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436024100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,1.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Link Channels</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="214" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436029700</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,1.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Decay to Ceiling</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="215" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436034100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Limit True Peak</Name>
+	</AudioComponentParam>
+	<FilterPreset ObjectID="216" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>111207759977688</AnchorOutPoint>
+		<AnchorInPoint>110386444862884</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="217"/>
+		<FilterMatchName>e0b23f05-f1a7-4ef7-9b50-7ec3e3002058</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="217" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[0],"name":"","type":0}],"out":[{"layout":[0],"name":"","type":0}]}</ChannelConfigData>
+		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MjwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>e0b23f05-f1a7-4ef7-9b50-7ec3e3002058</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName></InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="218"/>
+					<Param Index="1" ObjectRef="219"/>
+					<Param Index="2" ObjectRef="220"/>
+					<Param Index="3" ObjectRef="221"/>
+					<Param Index="4" ObjectRef="222"/>
+					<Param Index="5" ObjectRef="223"/>
+					<Param Index="6" ObjectRef="224"/>
+					<Param Index="7" ObjectRef="225"/>
+				</Params>
+				<DisplayName>Hard Limiter</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":0}]</AudioChannelLayout>
+			<ChannelType>0</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="218" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+			<Properties Version="1">
+				<ECP.NonParamGroup.Expanded>false</ECP.NonParamGroup.Expanded>
+			</Properties>
+		</Node>
+		<Timestamp>137397435979300</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="219" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436000900</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.999000012875</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.999000012875,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Maximum Amplitude</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="220" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436009400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.666666984558</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.666666984558,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Input Boost</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="221" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436015400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>ms</UnitsString>
+		<CurrentValue>0.133333012462</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.133333012462,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Look-Ahead Time</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="222" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436020200</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>ms</UnitsString>
+		<CurrentValue>0.375</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.375,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Release Time</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="223" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436024100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,1.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Link Channels</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="224" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436029700</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,1.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Decay to Ceiling</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="225" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436034100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Limit True Peak</Name>
+	</AudioComponentParam>
+	<FilterPreset ObjectID="226" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>111207759977688</AnchorOutPoint>
+		<AnchorInPoint>110386444862884</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="227"/>
+		<FilterMatchName>e0b23f05-f1a7-4ef7-9b50-7ec3e3002058</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="227" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MjwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>e0b23f05-f1a7-4ef7-9b50-7ec3e3002058</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName></InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="228"/>
+					<Param Index="1" ObjectRef="229"/>
+					<Param Index="2" ObjectRef="230"/>
+					<Param Index="3" ObjectRef="231"/>
+					<Param Index="4" ObjectRef="232"/>
+					<Param Index="5" ObjectRef="233"/>
+					<Param Index="6" ObjectRef="234"/>
+					<Param Index="7" ObjectRef="235"/>
+				</Params>
+				<DisplayName>Hard Limiter</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101},{"channellabel":102},{"channellabel":103},{"channellabel":104},{"channellabel":105}]</AudioChannelLayout>
+			<ChannelType>2</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="228" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+			<Properties Version="1">
+				<ECP.NonParamGroup.Expanded>false</ECP.NonParamGroup.Expanded>
+			</Properties>
+		</Node>
+		<Timestamp>137397435979300</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="229" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436000900</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.999000012875</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.999000012875,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Maximum Amplitude</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="230" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436009400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.666666984558</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.666666984558,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Input Boost</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="231" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436015400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>ms</UnitsString>
+		<CurrentValue>0.133333012462</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.133333012462,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Look-Ahead Time</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="232" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436020200</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>ms</UnitsString>
+		<CurrentValue>0.375</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.375,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Release Time</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="233" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436024100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,1.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Link Channels</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="234" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436029700</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,1.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Decay to Ceiling</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="235" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>137397436034100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Limit True Peak</Name>
+	</AudioComponentParam>
+	<TreeItem ObjectID="236" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
+		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="237"/>
+			<Node Version="1">
+			</Node>
+			<Name>HFLIP</Name>
+		</TreeItemBase>
+	</TreeItem>
+	<FilterPresetItem ObjectID="237" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
+		<FilterPresets Version="1">
+			<FilterPreset Index="0" ObjectRef="238"/>
 		</FilterPresets>
 		<EffectItem Version="1">
 			<EffectIsShorcut>false</EffectIsShorcut>
 			<EffectFlavor>5</EffectFlavor>
 		</EffectItem>
 	</FilterPresetItem>
-	<FilterPreset ObjectID="206" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+	<FilterPreset ObjectID="238" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
@@ -3108,11 +3611,11 @@
 		<AnchorInPoint>4889808000000</AnchorInPoint>
 		<MediaType>228cda18-3625-4d2d-951e-348879e4ed93</MediaType>
 		<Type>0</Type>
-		<Component ObjectRef="207"/>
+		<Component ObjectRef="239"/>
 		<FilterMatchName>AE.ADBE Horizontal Flip</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
-	<VideoFilterComponent ObjectID="207" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
+	<VideoFilterComponent ObjectID="239" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
 		<VideoFilterType>2</VideoFilterType>
 		<MatchName>AE.ADBE Horizontal Flip</MatchName>
 		<Component Version="6">
@@ -3126,43 +3629,45 @@
 			<ID>0</ID>
 		</Component>
 	</VideoFilterComponent>
-	<TreeItem ObjectID="208" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
+	<TreeItem ObjectID="240" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
 			<Locked>false</Locked>
-			<Data ObjectRef="209"/>
+			<Data ObjectRef="241"/>
 			<Node Version="1">
+				<Properties Version="1">
+					<MZ.EffectPresets.PresetUID>da077c7f-0438-4adb-9219-41525c7f3e88</MZ.EffectPresets.PresetUID>
+				</Properties>
 			</Node>
-			<Name>Highpass Me</Name>
+			<Name>Highpass 60hz</Name>
 		</TreeItemBase>
 	</TreeItem>
-	<FilterPresetItem ObjectID="209" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
+	<FilterPresetItem ObjectID="241" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
 		<FilterPresets Version="1">
-			<FilterPreset Index="0" ObjectRef="210"/>
-			<FilterPreset Index="1" ObjectRef="214"/>
-			<FilterPreset Index="2" ObjectRef="218"/>
+			<FilterPreset Index="0" ObjectRef="242"/>
+			<FilterPreset Index="1" ObjectRef="246"/>
+			<FilterPreset Index="2" ObjectRef="250"/>
 		</FilterPresets>
 		<EffectItem Version="1">
 			<EffectIsShorcut>false</EffectIsShorcut>
 			<EffectFlavor>0</EffectFlavor>
 		</EffectItem>
 	</FilterPresetItem>
-	<FilterPreset ObjectID="210" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+	<FilterPreset ObjectID="242" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
 		<Speed>1.</Speed>
-		<AnchorOutPoint>82224650307852</AnchorOutPoint>
-		<AnchorInPoint>82072241317476</AnchorInPoint>
+		<AnchorOutPoint>1391938608354810</AnchorOutPoint>
+		<AnchorInPoint>1384216552842426</AnchorInPoint>
 		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
 		<Type>0</Type>
-		<Component ObjectRef="211"/>
+		<Component ObjectRef="243"/>
 		<FilterMatchName>Internal Highpass</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
-	<AudioFilterComponent ObjectID="211" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+	<AudioFilterComponent ObjectID="243" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
 		<FilterPreset>0</FilterPreset>
 		<ChannelConfigData>{"in":[{"layout":[100,101],"name":"Stereo In","type":0}],"out":[{"layout":[100,101],"name":"Stereo Out","type":0}]}</ChannelConfigData>
-		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
 		<FilterIndex>-1</FilterIndex>
 		<FilterMatchName>Internal Highpass</FilterMatchName>
 		<AudioComponent Version="3">
@@ -3170,11 +3675,11 @@
 				<Node Version="1">
 				</Node>
 				<ArchivedType>0</ArchivedType>
-				<InstanceName></InstanceName>
+				<InstanceName>Highpass Me</InstanceName>
 				<Intrinsic>false</Intrinsic>
 				<Params Version="1">
-					<Param Index="0" ObjectRef="212"/>
-					<Param Index="1" ObjectRef="213"/>
+					<Param Index="0" ObjectRef="244"/>
+					<Param Index="1" ObjectRef="245"/>
 				</Params>
 				<DisplayName>Highpass</DisplayName>
 				<Bypass>false</Bypass>
@@ -3186,7 +3691,7 @@
 			<ChannelType>1</ChannelType>
 		</AudioComponent>
 	</AudioFilterComponent>
-	<AudioComponentParam ObjectID="212" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+	<AudioComponentParam ObjectID="244" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
 		<Node Version="1">
 		</Node>
 		<Timestamp>10289990743300</Timestamp>
@@ -3199,34 +3704,34 @@
 		<Keyframes></Keyframes>
 		<Name>Bypass</Name>
 	</AudioComponentParam>
-	<AudioComponentParam ObjectID="213" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+	<AudioComponentParam ObjectID="245" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
 		<Node Version="1">
 		</Node>
 		<Timestamp>10289990759800</Timestamp>
 		<IsInverted>false</IsInverted>
 		<RangeLocked>true</RangeLocked>
 		<UnitsString>Hz</UnitsString>
-		<CurrentValue>0.25</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.25,0,0,0,0,0,0</StartKeyframe>
+		<CurrentValue>0.045873496681</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.045873496681,0,0,0,0,0,0</StartKeyframe>
 		<ParameterControlType>2</ParameterControlType>
 		<IsTimeVarying>false</IsTimeVarying>
 		<Keyframes></Keyframes>
 		<Name>Cutoff</Name>
 	</AudioComponentParam>
-	<FilterPreset ObjectID="214" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+	<FilterPreset ObjectID="246" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
 		<Speed>1.</Speed>
-		<AnchorOutPoint>82224650307852</AnchorOutPoint>
-		<AnchorInPoint>82072241317476</AnchorInPoint>
+		<AnchorOutPoint>1391938608354810</AnchorOutPoint>
+		<AnchorInPoint>1384216552842426</AnchorInPoint>
 		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
 		<Type>0</Type>
-		<Component ObjectRef="215"/>
+		<Component ObjectRef="247"/>
 		<FilterMatchName>Internal Highpass</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
-	<AudioFilterComponent ObjectID="215" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+	<AudioFilterComponent ObjectID="247" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
 		<FilterPreset>0</FilterPreset>
 		<ChannelConfigData>{"in":[{"layout":[0],"name":"Mono In","type":0}],"out":[{"layout":[0],"name":"Mono Out","type":0}]}</ChannelConfigData>
 		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
@@ -3240,8 +3745,8 @@
 				<InstanceName></InstanceName>
 				<Intrinsic>false</Intrinsic>
 				<Params Version="1">
-					<Param Index="0" ObjectRef="216"/>
-					<Param Index="1" ObjectRef="217"/>
+					<Param Index="0" ObjectRef="248"/>
+					<Param Index="1" ObjectRef="249"/>
 				</Params>
 				<DisplayName>Highpass</DisplayName>
 				<Bypass>false</Bypass>
@@ -3253,7 +3758,7 @@
 			<ChannelType>0</ChannelType>
 		</AudioComponent>
 	</AudioFilterComponent>
-	<AudioComponentParam ObjectID="216" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+	<AudioComponentParam ObjectID="248" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
 		<Node Version="1">
 		</Node>
 		<Timestamp>10289990743300</Timestamp>
@@ -3266,7 +3771,7 @@
 		<Keyframes></Keyframes>
 		<Name>Bypass</Name>
 	</AudioComponentParam>
-	<AudioComponentParam ObjectID="217" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+	<AudioComponentParam ObjectID="249" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
 		<Node Version="1">
 		</Node>
 		<Timestamp>10289990759800</Timestamp>
@@ -3280,20 +3785,20 @@
 		<Keyframes></Keyframes>
 		<Name>Cutoff</Name>
 	</AudioComponentParam>
-	<FilterPreset ObjectID="218" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+	<FilterPreset ObjectID="250" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
 		<Speed>1.</Speed>
-		<AnchorOutPoint>82224650307852</AnchorOutPoint>
-		<AnchorInPoint>82072241317476</AnchorInPoint>
+		<AnchorOutPoint>1391938608354810</AnchorOutPoint>
+		<AnchorInPoint>1384216552842426</AnchorInPoint>
 		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
 		<Type>0</Type>
-		<Component ObjectRef="219"/>
+		<Component ObjectRef="251"/>
 		<FilterMatchName>Internal Highpass</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
-	<AudioFilterComponent ObjectID="219" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+	<AudioFilterComponent ObjectID="251" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
 		<FilterPreset>0</FilterPreset>
 		<ChannelConfigData>{"in":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 In","type":0}],"out":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 Out","type":0}]}</ChannelConfigData>
 		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
@@ -3307,8 +3812,8 @@
 				<InstanceName></InstanceName>
 				<Intrinsic>false</Intrinsic>
 				<Params Version="1">
-					<Param Index="0" ObjectRef="220"/>
-					<Param Index="1" ObjectRef="221"/>
+					<Param Index="0" ObjectRef="252"/>
+					<Param Index="1" ObjectRef="253"/>
 				</Params>
 				<DisplayName>Highpass</DisplayName>
 				<Bypass>false</Bypass>
@@ -3320,543 +3825,10 @@
 			<ChannelType>2</ChannelType>
 		</AudioComponent>
 	</AudioFilterComponent>
-	<AudioComponentParam ObjectID="220" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
-		<Node Version="1">
-		</Node>
-		<Timestamp>10289990743300</Timestamp>
-		<IsInverted>false</IsInverted>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>4</ParameterControlType>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Bypass</Name>
-	</AudioComponentParam>
-	<AudioComponentParam ObjectID="221" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
-		<Node Version="1">
-		</Node>
-		<Timestamp>10289990759800</Timestamp>
-		<IsInverted>false</IsInverted>
-		<RangeLocked>true</RangeLocked>
-		<UnitsString>Hz</UnitsString>
-		<CurrentValue>0.25</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.25,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Cutoff</Name>
-	</AudioComponentParam>
-	<TreeItem ObjectID="222" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
-		<TreeItemBase Version="4">
-			<Locked>false</Locked>
-			<Data ObjectRef="223"/>
-			<Node Version="1">
-				<Properties Version="1">
-					<MZ.EffectPresets.PresetUID>99d7b8fc-1527-4b59-a57e-ee4892a0b456</MZ.EffectPresets.PresetUID>
-				</Properties>
-			</Node>
-			<Name>loremipsum</Name>
-		</TreeItemBase>
-	</TreeItem>
-	<FilterPresetItem ObjectID="223" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
-		<FilterPresets Version="1">
-			<FilterPreset Index="0" ObjectRef="224"/>
-		</FilterPresets>
-		<EffectItem Version="1">
-			<EffectIsShorcut>false</EffectIsShorcut>
-			<EffectFlavor>5</EffectFlavor>
-		</EffectItem>
-	</FilterPresetItem>
-	<FilterPreset ObjectID="224" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
-		<Node Version="1">
-		</Node>
-		<TransitionDuration>0</TransitionDuration>
-		<Speed>1.</Speed>
-		<AnchorOutPoint>915721968214039</AnchorOutPoint>
-		<AnchorInPoint>914454858499272</AnchorInPoint>
-		<MediaType>228cda18-3625-4d2d-951e-348879e4ed93</MediaType>
-		<Type>0</Type>
-		<Component ObjectRef="225"/>
-		<FilterMatchName>AE.ADBE Text</FilterMatchName>
-		<Description></Description>
-	</FilterPreset>
-	<VideoFilterComponent ObjectID="225" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
-		<PremiereFilterPrivateData Encoding="base64" Checksum="4294967181">AA==</PremiereFilterPrivateData>
-		<VideoFilterType>2</VideoFilterType>
-		<MatchName>AE.ADBE Text</MatchName>
-		<Component Version="6">
-			<Node Version="1">
-				<Properties Version="1">
-					<BE.VideoComponentChain.ChildPinID>5</BE.VideoComponentChain.ChildPinID>
-					<ECP.Filter.Expanded>true</ECP.Filter.Expanded>
-				</Properties>
-			</Node>
-			<ArchivedType>0</ArchivedType>
-			<InstanceName>lorem ipsum</InstanceName>
-			<Intrinsic>false</Intrinsic>
-			<Params Version="1">
-				<Param Index="0" ObjectRef="226"/>
-				<Param Index="1" ObjectRef="227"/>
-				<Param Index="2" ObjectRef="228"/>
-				<Param Index="3" ObjectRef="229"/>
-				<Param Index="4" ObjectRef="230"/>
-				<Param Index="5" ObjectRef="231"/>
-				<Param Index="6" ObjectRef="232"/>
-				<Param Index="7" ObjectRef="233"/>
-				<Param Index="8" ObjectRef="234"/>
-				<Param Index="9" ObjectRef="235"/>
-				<Param Index="10" ObjectRef="236"/>
-				<Param Index="11" ObjectRef="237"/>
-				<Param Index="12" ObjectRef="238"/>
-				<Param Index="13" ObjectRef="239"/>
-				<Param Index="14" ObjectRef="240"/>
-				<Param Index="15" ObjectRef="241"/>
-				<Param Index="16" ObjectRef="242"/>
-				<Param Index="17" ObjectRef="243"/>
-				<Param Index="18" ObjectRef="244"/>
-				<Param Index="19" ObjectRef="245"/>
-				<Param Index="20" ObjectRef="246"/>
-				<Param Index="21" ObjectRef="247"/>
-			</Params>
-			<DisplayName>Text</DisplayName>
-			<Bypass>false</Bypass>
-			<ID>0</ID>
-		</Component>
-	</VideoFilterComponent>
-	<ArbVideoComponentParam ObjectID="226" ClassID="313e54d4-6903-49ad-b0bf-8262cdd10f4e" Version="2">
-		<Node Version="1">
-			<Properties Version="1">
-				<ECP.Graphics.Expanded>true</ECP.Graphics.Expanded>
-			</Properties>
-		</Node>
-		<ParameterID>1</ParameterID>
-		<UnitsString></UnitsString>
-		<KeyframeSetSize>0</KeyframeSetSize>
-		<StartKeyframeValue Encoding="base64" Checksum="1780049391">CAEAAAAAAABEMyIRDAAAAAAABgAKAAQABgAAACwAAAAAACYAJAAIAAQAAAAAAAAAAAAAAAAAAAAAACAAHwAYAAAAFAAQAAwAJgAAAEAAAABQAAAA7omoQZiZAUG5s6RAAADIQgAAAAEcAAAAcP///wQABgAEAAAAAAAKAAgABQAGAAcACgAAAAAAAAABAAAABAAAAAUAAABCYWxvbwAAAAEAAAAMAAAACAAMAAQACAAIAAAAUAAAADQAAAAwAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAwAAAABAAAAPj////8////BAAEAAQAAAALAAAAbG9yZW0gaXBzdW0A</StartKeyframeValue>
-		<StartKeyframePosition>-91445760000000000 </StartKeyframePosition>
-		<ParameterControlType>9</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Name>Source Text</Name>
-	</ArbVideoComponentParam>
-	<VideoComponentParam ObjectID="227" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>2</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>false</UpperBound>
-		<LowerBound>false</LowerBound>
-		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>11</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Transform</Name>
-	</VideoComponentParam>
-	<PointComponentParam ObjectID="228" ClassID="ca81d347-309b-44d2-acc7-1c572efb973c" Version="3">
-		<Node Version="1">
-		</Node>
-		<ParameterID>3</ParameterID>
-		<UnitsString></UnitsString>
-		<CurrentValue>0,0</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.38445755839347839:0.52316850423812866,0,0,0,0,0,0,5,4,0,0,0,0</StartKeyframe>
-		<ParameterControlType>6</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Position</Name>
-	</PointComponentParam>
-	<VideoComponentParam ObjectID="229" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>4</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>4000.</UpperBound>
-		<LowerBound>0.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,100.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Scale</Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="230" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>5</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>4000.</UpperBound>
-		<LowerBound>0.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,100.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Horizontal Scale</Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="231" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>6</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>true</UpperBound>
-		<LowerBound>false</LowerBound>
-		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,true,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>4</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name> </Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="232" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>7</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>32767.</UpperBound>
-		<LowerBound>-32768.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>3</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Rotation</Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="233" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>8</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>100.</UpperBound>
-		<LowerBound>0.</LowerBound>
-		<CurrentValue>100.</CurrentValue>
-		<StartKeyframe>-91445760000000000,100.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Opacity</Name>
-	</VideoComponentParam>
-	<PointComponentParam ObjectID="234" ClassID="ca81d347-309b-44d2-acc7-1c572efb973c" Version="3">
-		<Node Version="1">
-		</Node>
-		<ParameterID>9</ParameterID>
-		<UnitsString></UnitsString>
-		<CurrentValue>0,0</CurrentValue>
-		<StartKeyframe>-91445760000000000,0:0,0,0,0,0,0,0,5,4,0,0,0,0</StartKeyframe>
-		<ParameterControlType>6</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Anchor Point</Name>
-	</PointComponentParam>
-	<VideoComponentParam ObjectID="235" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>10</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>false</UpperBound>
-		<LowerBound>false</LowerBound>
-		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>12</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name></Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="236" ClassID="a4ff2d6e-7ac2-44f8-9d52-17d9ca50e542" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>11</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>32768.</UpperBound>
-		<LowerBound>0.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>8</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name> </Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="237" ClassID="a4ff2d6e-7ac2-44f8-9d52-17d9ca50e542" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>12</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>32768.</UpperBound>
-		<LowerBound>0.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>8</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name> </Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="238" ClassID="a4ff2d6e-7ac2-44f8-9d52-17d9ca50e542" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>13</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>1000000000.</UpperBound>
-		<LowerBound>-100.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>8</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>start</Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="239" ClassID="a4ff2d6e-7ac2-44f8-9d52-17d9ca50e542" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>14</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>1000000000.</UpperBound>
-		<LowerBound>-100.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,11.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>8</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>end</Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="240" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>15</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>true</UpperBound>
-		<LowerBound>false</LowerBound>
-		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>4</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name> </Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="241" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>16</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>true</UpperBound>
-		<LowerBound>false</LowerBound>
-		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>4</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name> </Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="242" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>17</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>true</UpperBound>
-		<LowerBound>false</LowerBound>
-		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>4</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name> </Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="243" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>18</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>true</UpperBound>
-		<LowerBound>false</LowerBound>
-		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>4</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name> </Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="244" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>19</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>20000.</UpperBound>
-		<LowerBound>0.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Parent Width</Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="245" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>20</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>20000.</UpperBound>
-		<LowerBound>0.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Parent Height</Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="246" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>21</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>32767.</UpperBound>
-		<LowerBound>-32768.</LowerBound>
-		<CurrentValue>0.</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>3</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Parent Rotation</Name>
-	</VideoComponentParam>
-	<VideoComponentParam ObjectID="247" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
-		<Node Version="1">
-		</Node>
-		<ParameterID>22</ParameterID>
-		<RangeLocked>false</RangeLocked>
-		<UnitsString></UnitsString>
-		<UpperBound>true</UpperBound>
-		<LowerBound>false</LowerBound>
-		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>4</ParameterControlType>
-		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
-		<IsLocked>false</IsLocked>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name> </Name>
-	</VideoComponentParam>
-	<TreeItem ObjectID="248" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
-		<TreeItemBase Version="4">
-			<Locked>false</Locked>
-			<Data ObjectRef="249"/>
-			<Node Version="1">
-			</Node>
-			<Name>Parametric EQ </Name>
-		</TreeItemBase>
-	</TreeItem>
-	<FilterPresetItem ObjectID="249" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
-		<FilterPresets Version="1">
-			<FilterPreset Index="0" ObjectRef="250"/>
-			<FilterPreset Index="1" ObjectRef="256"/>
-			<FilterPreset Index="2" ObjectRef="262"/>
-		</FilterPresets>
-		<EffectItem Version="1">
-			<EffectIsShorcut>false</EffectIsShorcut>
-			<EffectFlavor>0</EffectFlavor>
-		</EffectItem>
-	</FilterPresetItem>
-	<FilterPreset ObjectID="250" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
-		<Node Version="1">
-		</Node>
-		<TransitionDuration>0</TransitionDuration>
-		<Speed>1.</Speed>
-		<AnchorOutPoint>45319392518400</AnchorOutPoint>
-		<AnchorInPoint>0</AnchorInPoint>
-		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
-		<Type>0</Type>
-		<Component ObjectRef="251"/>
-		<FilterMatchName>Internal Parametric EQ Stereo</FilterMatchName>
-		<Description></Description>
-	</FilterPreset>
-	<AudioFilterComponent ObjectID="251" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
-		<FilterPreset>0</FilterPreset>
-		<ChannelConfigData>{"in":[{"layout":[100,101],"name":"Stereo In","type":0}],"out":[{"layout":[100,101],"name":"Stereo Out","type":0}]}</ChannelConfigData>
-		<FilterIndex>-1</FilterIndex>
-		<FilterMatchName>Internal Parametric EQ Stereo</FilterMatchName>
-		<AudioComponent Version="3">
-			<Component Version="6">
-				<Node Version="1">
-				</Node>
-				<ArchivedType>0</ArchivedType>
-				<InstanceName>Simple Parametric EQ Preset</InstanceName>
-				<Intrinsic>false</Intrinsic>
-				<Params Version="1">
-					<Param Index="0" ObjectRef="252"/>
-					<Param Index="1" ObjectRef="253"/>
-					<Param Index="2" ObjectRef="254"/>
-					<Param Index="3" ObjectRef="255"/>
-				</Params>
-				<DisplayName>Simple Parametric EQ</DisplayName>
-				<Bypass>false</Bypass>
-				<ID>0</ID>
-			</Component>
-			<AudioComponentType>0</AudioComponentType>
-			<FrameRate>5292000</FrameRate>
-			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101}]</AudioChannelLayout>
-			<ChannelType>1</ChannelType>
-		</AudioComponent>
-	</AudioFilterComponent>
 	<AudioComponentParam ObjectID="252" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
 		<Node Version="1">
 		</Node>
-		<Timestamp>7230860877100</Timestamp>
+		<Timestamp>10289990743300</Timestamp>
 		<IsInverted>false</IsInverted>
 		<RangeLocked>false</RangeLocked>
 		<UnitsString></UnitsString>
@@ -3869,64 +3841,56 @@
 	<AudioComponentParam ObjectID="253" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
 		<Node Version="1">
 		</Node>
-		<Timestamp>7230860912400</Timestamp>
+		<Timestamp>10289990759800</Timestamp>
 		<IsInverted>false</IsInverted>
 		<RangeLocked>true</RangeLocked>
 		<UnitsString>Hz</UnitsString>
-		<CurrentValue>0.24010053277</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.24010053277,0,0,0,0,0,0</StartKeyframe>
+		<CurrentValue>0.25</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.25,0,0,0,0,0,0</StartKeyframe>
 		<ParameterControlType>2</ParameterControlType>
 		<IsTimeVarying>false</IsTimeVarying>
 		<Keyframes></Keyframes>
-		<Name>Center</Name>
+		<Name>Cutoff</Name>
 	</AudioComponentParam>
-	<AudioComponentParam ObjectID="254" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
-		<Node Version="1">
-		</Node>
-		<Timestamp>7230860925900</Timestamp>
-		<IsInverted>false</IsInverted>
-		<RangeLocked>true</RangeLocked>
-		<UnitsString></UnitsString>
-		<CurrentValue>0.195979908109</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.195979908109,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Q</Name>
-	</AudioComponentParam>
-	<AudioComponentParam ObjectID="255" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
-		<Node Version="1">
-		</Node>
-		<Timestamp>7230860939200</Timestamp>
-		<IsInverted>false</IsInverted>
-		<RangeLocked>true</RangeLocked>
-		<UnitsString>dB</UnitsString>
-		<CurrentValue>0.125</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.125,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Boost</Name>
-	</AudioComponentParam>
+	<TreeItem ObjectID="254" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
+		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="255"/>
+			<Node Version="1">
+			</Node>
+			<Name>Highpass Me</Name>
+		</TreeItemBase>
+	</TreeItem>
+	<FilterPresetItem ObjectID="255" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
+		<FilterPresets Version="1">
+			<FilterPreset Index="0" ObjectRef="256"/>
+			<FilterPreset Index="1" ObjectRef="260"/>
+			<FilterPreset Index="2" ObjectRef="264"/>
+		</FilterPresets>
+		<EffectItem Version="1">
+			<EffectIsShorcut>false</EffectIsShorcut>
+			<EffectFlavor>0</EffectFlavor>
+		</EffectItem>
+	</FilterPresetItem>
 	<FilterPreset ObjectID="256" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
 		<Speed>1.</Speed>
-		<AnchorOutPoint>45319392518400</AnchorOutPoint>
-		<AnchorInPoint>0</AnchorInPoint>
+		<AnchorOutPoint>82224650307852</AnchorOutPoint>
+		<AnchorInPoint>82072241317476</AnchorInPoint>
 		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
 		<Type>0</Type>
 		<Component ObjectRef="257"/>
-		<FilterMatchName>Internal Parameteric EQ</FilterMatchName>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
 	<AudioFilterComponent ObjectID="257" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
 		<FilterPreset>0</FilterPreset>
-		<ChannelConfigData>{"in":[{"layout":[0],"name":"Mono In","type":0}],"out":[{"layout":[0],"name":"Mono Out","type":0}]}</ChannelConfigData>
+		<ChannelConfigData>{"in":[{"layout":[100,101],"name":"Stereo In","type":0}],"out":[{"layout":[100,101],"name":"Stereo Out","type":0}]}</ChannelConfigData>
 		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
 		<FilterIndex>-1</FilterIndex>
-		<FilterMatchName>Internal Parameteric EQ</FilterMatchName>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
 		<AudioComponent Version="3">
 			<Component Version="6">
 				<Node Version="1">
@@ -3937,23 +3901,21 @@
 				<Params Version="1">
 					<Param Index="0" ObjectRef="258"/>
 					<Param Index="1" ObjectRef="259"/>
-					<Param Index="2" ObjectRef="260"/>
-					<Param Index="3" ObjectRef="261"/>
 				</Params>
-				<DisplayName>Simple Parametric EQ</DisplayName>
+				<DisplayName>Highpass</DisplayName>
 				<Bypass>false</Bypass>
 				<ID>0</ID>
 			</Component>
 			<AudioComponentType>0</AudioComponentType>
 			<FrameRate>5292000</FrameRate>
-			<AudioChannelLayout>[{"channellabel":0}]</AudioChannelLayout>
-			<ChannelType>0</ChannelType>
+			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101}]</AudioChannelLayout>
+			<ChannelType>1</ChannelType>
 		</AudioComponent>
 	</AudioFilterComponent>
 	<AudioComponentParam ObjectID="258" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
 		<Node Version="1">
 		</Node>
-		<Timestamp>7230860877100</Timestamp>
+		<Timestamp>10289990743300</Timestamp>
 		<IsInverted>false</IsInverted>
 		<RangeLocked>false</RangeLocked>
 		<UnitsString></UnitsString>
@@ -3966,7 +3928,7 @@
 	<AudioComponentParam ObjectID="259" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
 		<Node Version="1">
 		</Node>
-		<Timestamp>7230860912400</Timestamp>
+		<Timestamp>10289990759800</Timestamp>
 		<IsInverted>false</IsInverted>
 		<RangeLocked>true</RangeLocked>
 		<UnitsString>Hz</UnitsString>
@@ -3975,55 +3937,27 @@
 		<ParameterControlType>2</ParameterControlType>
 		<IsTimeVarying>false</IsTimeVarying>
 		<Keyframes></Keyframes>
-		<Name>Center</Name>
+		<Name>Cutoff</Name>
 	</AudioComponentParam>
-	<AudioComponentParam ObjectID="260" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
-		<Node Version="1">
-		</Node>
-		<Timestamp>7230860925900</Timestamp>
-		<IsInverted>false</IsInverted>
-		<RangeLocked>true</RangeLocked>
-		<UnitsString></UnitsString>
-		<CurrentValue>0.5</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.5,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Q</Name>
-	</AudioComponentParam>
-	<AudioComponentParam ObjectID="261" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
-		<Node Version="1">
-		</Node>
-		<Timestamp>7230860939200</Timestamp>
-		<IsInverted>false</IsInverted>
-		<RangeLocked>true</RangeLocked>
-		<UnitsString>dB</UnitsString>
-		<CurrentValue>0.5</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.5,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
-		<IsTimeVarying>false</IsTimeVarying>
-		<Keyframes></Keyframes>
-		<Name>Boost</Name>
-	</AudioComponentParam>
-	<FilterPreset ObjectID="262" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+	<FilterPreset ObjectID="260" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
 		<Speed>1.</Speed>
-		<AnchorOutPoint>45319392518400</AnchorOutPoint>
-		<AnchorInPoint>0</AnchorInPoint>
+		<AnchorOutPoint>82224650307852</AnchorOutPoint>
+		<AnchorInPoint>82072241317476</AnchorInPoint>
 		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
 		<Type>0</Type>
-		<Component ObjectRef="263"/>
-		<FilterMatchName>Internal Parameteric EQ</FilterMatchName>
+		<Component ObjectRef="261"/>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
-	<AudioFilterComponent ObjectID="263" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+	<AudioFilterComponent ObjectID="261" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
 		<FilterPreset>0</FilterPreset>
-		<ChannelConfigData>{"in":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 In","type":0}],"out":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 Out","type":0}]}</ChannelConfigData>
+		<ChannelConfigData>{"in":[{"layout":[0],"name":"Mono In","type":0}],"out":[{"layout":[0],"name":"Mono Out","type":0}]}</ChannelConfigData>
 		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
 		<FilterIndex>-1</FilterIndex>
-		<FilterMatchName>Internal Parameteric EQ</FilterMatchName>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
 		<AudioComponent Version="3">
 			<Component Version="6">
 				<Node Version="1">
@@ -4032,25 +3966,23 @@
 				<InstanceName></InstanceName>
 				<Intrinsic>false</Intrinsic>
 				<Params Version="1">
-					<Param Index="0" ObjectRef="264"/>
-					<Param Index="1" ObjectRef="265"/>
-					<Param Index="2" ObjectRef="266"/>
-					<Param Index="3" ObjectRef="267"/>
+					<Param Index="0" ObjectRef="262"/>
+					<Param Index="1" ObjectRef="263"/>
 				</Params>
-				<DisplayName>Simple Parametric EQ</DisplayName>
+				<DisplayName>Highpass</DisplayName>
 				<Bypass>false</Bypass>
 				<ID>0</ID>
 			</Component>
 			<AudioComponentType>0</AudioComponentType>
 			<FrameRate>5292000</FrameRate>
-			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101},{"channellabel":102},{"channellabel":103},{"channellabel":104},{"channellabel":105}]</AudioChannelLayout>
-			<ChannelType>2</ChannelType>
+			<AudioChannelLayout>[{"channellabel":0}]</AudioChannelLayout>
+			<ChannelType>0</ChannelType>
 		</AudioComponent>
 	</AudioFilterComponent>
-	<AudioComponentParam ObjectID="264" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+	<AudioComponentParam ObjectID="262" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
 		<Node Version="1">
 		</Node>
-		<Timestamp>7230860877100</Timestamp>
+		<Timestamp>10289990743300</Timestamp>
 		<IsInverted>false</IsInverted>
 		<RangeLocked>false</RangeLocked>
 		<UnitsString></UnitsString>
@@ -4060,10 +3992,10 @@
 		<Keyframes></Keyframes>
 		<Name>Bypass</Name>
 	</AudioComponentParam>
-	<AudioComponentParam ObjectID="265" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+	<AudioComponentParam ObjectID="263" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
 		<Node Version="1">
 		</Node>
-		<Timestamp>7230860912400</Timestamp>
+		<Timestamp>10289990759800</Timestamp>
 		<IsInverted>false</IsInverted>
 		<RangeLocked>true</RangeLocked>
 		<UnitsString>Hz</UnitsString>
@@ -4072,43 +4004,85 @@
 		<ParameterControlType>2</ParameterControlType>
 		<IsTimeVarying>false</IsTimeVarying>
 		<Keyframes></Keyframes>
-		<Name>Center</Name>
+		<Name>Cutoff</Name>
 	</AudioComponentParam>
-	<AudioComponentParam ObjectID="266" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+	<FilterPreset ObjectID="264" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
-		<Timestamp>7230860925900</Timestamp>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>82224650307852</AnchorOutPoint>
+		<AnchorInPoint>82072241317476</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="265"/>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="265" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 In","type":0}],"out":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 Out","type":0}]}</ChannelConfigData>
+		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName></InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="266"/>
+					<Param Index="1" ObjectRef="267"/>
+				</Params>
+				<DisplayName>Highpass</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101},{"channellabel":102},{"channellabel":103},{"channellabel":104},{"channellabel":105}]</AudioChannelLayout>
+			<ChannelType>2</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="266" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>10289990743300</Timestamp>
 		<IsInverted>false</IsInverted>
-		<RangeLocked>true</RangeLocked>
+		<RangeLocked>false</RangeLocked>
 		<UnitsString></UnitsString>
-		<CurrentValue>0.5</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.5,0,0,0,0,0,0</StartKeyframe>
-		<ParameterControlType>2</ParameterControlType>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
 		<IsTimeVarying>false</IsTimeVarying>
 		<Keyframes></Keyframes>
-		<Name>Q</Name>
+		<Name>Bypass</Name>
 	</AudioComponentParam>
 	<AudioComponentParam ObjectID="267" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
 		<Node Version="1">
 		</Node>
-		<Timestamp>7230860939200</Timestamp>
+		<Timestamp>10289990759800</Timestamp>
 		<IsInverted>false</IsInverted>
 		<RangeLocked>true</RangeLocked>
-		<UnitsString>dB</UnitsString>
-		<CurrentValue>0.5</CurrentValue>
-		<StartKeyframe>-91445760000000000,0.5,0,0,0,0,0,0</StartKeyframe>
+		<UnitsString>Hz</UnitsString>
+		<CurrentValue>0.25</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.25,0,0,0,0,0,0</StartKeyframe>
 		<ParameterControlType>2</ParameterControlType>
 		<IsTimeVarying>false</IsTimeVarying>
 		<Keyframes></Keyframes>
-		<Name>Boost</Name>
+		<Name>Cutoff</Name>
 	</AudioComponentParam>
 	<TreeItem ObjectID="268" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
 			<Locked>false</Locked>
 			<Data ObjectRef="269"/>
 			<Node Version="1">
+				<Properties Version="1">
+					<MZ.EffectPresets.PresetUID>99d7b8fc-1527-4b59-a57e-ee4892a0b456</MZ.EffectPresets.PresetUID>
+				</Properties>
 			</Node>
-			<Name>tint 100</Name>
+			<Name>loremipsum</Name>
 		</TreeItemBase>
 	</TreeItem>
 	<FilterPresetItem ObjectID="269" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
@@ -4125,15 +4099,973 @@
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
 		<Speed>1.</Speed>
+		<AnchorOutPoint>915721968214039</AnchorOutPoint>
+		<AnchorInPoint>914454858499272</AnchorInPoint>
+		<MediaType>228cda18-3625-4d2d-951e-348879e4ed93</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="271"/>
+		<FilterMatchName>AE.ADBE Text</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<VideoFilterComponent ObjectID="271" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
+		<PremiereFilterPrivateData Encoding="base64" Checksum="4294967181">AA==</PremiereFilterPrivateData>
+		<VideoFilterType>2</VideoFilterType>
+		<MatchName>AE.ADBE Text</MatchName>
+		<Component Version="6">
+			<Node Version="1">
+				<Properties Version="1">
+					<BE.VideoComponentChain.ChildPinID>5</BE.VideoComponentChain.ChildPinID>
+					<ECP.Filter.Expanded>true</ECP.Filter.Expanded>
+				</Properties>
+			</Node>
+			<ArchivedType>0</ArchivedType>
+			<InstanceName>lorem ipsum</InstanceName>
+			<Intrinsic>false</Intrinsic>
+			<Params Version="1">
+				<Param Index="0" ObjectRef="272"/>
+				<Param Index="1" ObjectRef="273"/>
+				<Param Index="2" ObjectRef="274"/>
+				<Param Index="3" ObjectRef="275"/>
+				<Param Index="4" ObjectRef="276"/>
+				<Param Index="5" ObjectRef="277"/>
+				<Param Index="6" ObjectRef="278"/>
+				<Param Index="7" ObjectRef="279"/>
+				<Param Index="8" ObjectRef="280"/>
+				<Param Index="9" ObjectRef="281"/>
+				<Param Index="10" ObjectRef="282"/>
+				<Param Index="11" ObjectRef="283"/>
+				<Param Index="12" ObjectRef="284"/>
+				<Param Index="13" ObjectRef="285"/>
+				<Param Index="14" ObjectRef="286"/>
+				<Param Index="15" ObjectRef="287"/>
+				<Param Index="16" ObjectRef="288"/>
+				<Param Index="17" ObjectRef="289"/>
+				<Param Index="18" ObjectRef="290"/>
+				<Param Index="19" ObjectRef="291"/>
+				<Param Index="20" ObjectRef="292"/>
+				<Param Index="21" ObjectRef="293"/>
+			</Params>
+			<DisplayName>Text</DisplayName>
+			<Bypass>false</Bypass>
+			<ID>0</ID>
+		</Component>
+	</VideoFilterComponent>
+	<ArbVideoComponentParam ObjectID="272" ClassID="313e54d4-6903-49ad-b0bf-8262cdd10f4e" Version="2">
+		<Node Version="1">
+			<Properties Version="1">
+				<ECP.Graphics.Expanded>true</ECP.Graphics.Expanded>
+			</Properties>
+		</Node>
+		<ParameterID>1</ParameterID>
+		<UnitsString></UnitsString>
+		<KeyframeSetSize>0</KeyframeSetSize>
+		<StartKeyframeValue Encoding="base64" Checksum="1780049391">CAEAAAAAAABEMyIRDAAAAAAABgAKAAQABgAAACwAAAAAACYAJAAIAAQAAAAAAAAAAAAAAAAAAAAAACAAHwAYAAAAFAAQAAwAJgAAAEAAAABQAAAA7omoQZiZAUG5s6RAAADIQgAAAAEcAAAAcP///wQABgAEAAAAAAAKAAgABQAGAAcACgAAAAAAAAABAAAABAAAAAUAAABCYWxvbwAAAAEAAAAMAAAACAAMAAQACAAIAAAAUAAAADQAAAAwAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAwAAAABAAAAPj////8////BAAEAAQAAAALAAAAbG9yZW0gaXBzdW0A</StartKeyframeValue>
+		<StartKeyframePosition>-91445760000000000 </StartKeyframePosition>
+		<ParameterControlType>9</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Name>Source Text</Name>
+	</ArbVideoComponentParam>
+	<VideoComponentParam ObjectID="273" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>2</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>false</UpperBound>
+		<LowerBound>false</LowerBound>
+		<CurrentValue>false</CurrentValue>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>11</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Transform</Name>
+	</VideoComponentParam>
+	<PointComponentParam ObjectID="274" ClassID="ca81d347-309b-44d2-acc7-1c572efb973c" Version="3">
+		<Node Version="1">
+		</Node>
+		<ParameterID>3</ParameterID>
+		<UnitsString></UnitsString>
+		<CurrentValue>0,0</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.38445755839347839:0.52316850423812866,0,0,0,0,0,0,5,4,0,0,0,0</StartKeyframe>
+		<ParameterControlType>6</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Position</Name>
+	</PointComponentParam>
+	<VideoComponentParam ObjectID="275" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>4</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>4000.</UpperBound>
+		<LowerBound>0.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,100.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Scale</Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="276" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>5</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>4000.</UpperBound>
+		<LowerBound>0.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,100.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Horizontal Scale</Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="277" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>6</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>true</UpperBound>
+		<LowerBound>false</LowerBound>
+		<CurrentValue>false</CurrentValue>
+		<StartKeyframe>-91445760000000000,true,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name> </Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="278" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>7</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>32767.</UpperBound>
+		<LowerBound>-32768.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>3</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Rotation</Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="279" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>8</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>100.</UpperBound>
+		<LowerBound>0.</LowerBound>
+		<CurrentValue>100.</CurrentValue>
+		<StartKeyframe>-91445760000000000,100.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Opacity</Name>
+	</VideoComponentParam>
+	<PointComponentParam ObjectID="280" ClassID="ca81d347-309b-44d2-acc7-1c572efb973c" Version="3">
+		<Node Version="1">
+		</Node>
+		<ParameterID>9</ParameterID>
+		<UnitsString></UnitsString>
+		<CurrentValue>0,0</CurrentValue>
+		<StartKeyframe>-91445760000000000,0:0,0,0,0,0,0,0,5,4,0,0,0,0</StartKeyframe>
+		<ParameterControlType>6</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Anchor Point</Name>
+	</PointComponentParam>
+	<VideoComponentParam ObjectID="281" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>10</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>false</UpperBound>
+		<LowerBound>false</LowerBound>
+		<CurrentValue>false</CurrentValue>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>12</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name></Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="282" ClassID="a4ff2d6e-7ac2-44f8-9d52-17d9ca50e542" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>11</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>32768.</UpperBound>
+		<LowerBound>0.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>8</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name> </Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="283" ClassID="a4ff2d6e-7ac2-44f8-9d52-17d9ca50e542" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>12</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>32768.</UpperBound>
+		<LowerBound>0.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>8</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name> </Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="284" ClassID="a4ff2d6e-7ac2-44f8-9d52-17d9ca50e542" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>13</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>1000000000.</UpperBound>
+		<LowerBound>-100.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>8</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>start</Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="285" ClassID="a4ff2d6e-7ac2-44f8-9d52-17d9ca50e542" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>14</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>1000000000.</UpperBound>
+		<LowerBound>-100.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,11.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>8</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>end</Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="286" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>15</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>true</UpperBound>
+		<LowerBound>false</LowerBound>
+		<CurrentValue>false</CurrentValue>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name> </Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="287" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>16</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>true</UpperBound>
+		<LowerBound>false</LowerBound>
+		<CurrentValue>false</CurrentValue>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name> </Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="288" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>17</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>true</UpperBound>
+		<LowerBound>false</LowerBound>
+		<CurrentValue>false</CurrentValue>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name> </Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="289" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>18</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>true</UpperBound>
+		<LowerBound>false</LowerBound>
+		<CurrentValue>false</CurrentValue>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name> </Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="290" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>19</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>20000.</UpperBound>
+		<LowerBound>0.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Parent Width</Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="291" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>20</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>20000.</UpperBound>
+		<LowerBound>0.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Parent Height</Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="292" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>21</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>32767.</UpperBound>
+		<LowerBound>-32768.</LowerBound>
+		<CurrentValue>0.</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>3</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Parent Rotation</Name>
+	</VideoComponentParam>
+	<VideoComponentParam ObjectID="293" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+		<Node Version="1">
+		</Node>
+		<ParameterID>22</ParameterID>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<UpperBound>true</UpperBound>
+		<LowerBound>false</LowerBound>
+		<CurrentValue>false</CurrentValue>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
+		<IsLocked>false</IsLocked>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name> </Name>
+	</VideoComponentParam>
+	<TreeItem ObjectID="294" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
+		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="295"/>
+			<Node Version="1">
+				<Properties Version="1">
+					<MZ.EffectPresets.PresetUID>5cae0d64-5578-4b7b-8362-f2a8a76788dc</MZ.EffectPresets.PresetUID>
+				</Properties>
+			</Node>
+			<Name>Parametric EQ</Name>
+		</TreeItemBase>
+	</TreeItem>
+	<FilterPresetItem ObjectID="295" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
+		<FilterPresets Version="1">
+			<FilterPreset Index="0" ObjectRef="296"/>
+			<FilterPreset Index="1" ObjectRef="302"/>
+			<FilterPreset Index="2" ObjectRef="308"/>
+			<FilterPreset Index="3" ObjectRef="314"/>
+			<FilterPreset Index="4" ObjectRef="318"/>
+			<FilterPreset Index="5" ObjectRef="322"/>
+		</FilterPresets>
+		<EffectItem Version="1">
+			<EffectIsShorcut>false</EffectIsShorcut>
+			<EffectFlavor>0</EffectFlavor>
+		</EffectItem>
+	</FilterPresetItem>
+	<FilterPreset ObjectID="296" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>317290839465600</AnchorOutPoint>
+		<AnchorInPoint>0</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="297"/>
+		<FilterMatchName>Internal Parametric EQ Stereo</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="297" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[100,101],"name":"Stereo In","type":0}],"out":[{"layout":[100,101],"name":"Stereo Out","type":0}]}</ChannelConfigData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>Internal Parametric EQ Stereo</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName>Parametric EQ </InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="298"/>
+					<Param Index="1" ObjectRef="299"/>
+					<Param Index="2" ObjectRef="300"/>
+					<Param Index="3" ObjectRef="301"/>
+				</Params>
+				<DisplayName>Simple Parametric EQ</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101}]</AudioChannelLayout>
+			<ChannelType>1</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="298" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860877100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="299" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860912400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>Hz</UnitsString>
+		<CurrentValue>0.228448137641</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.228448137641,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Center</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="300" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860925900</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<CurrentValue>0.195979908109</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.195979908109,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Q</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="301" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860939200</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.125</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.125,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Boost</Name>
+	</AudioComponentParam>
+	<FilterPreset ObjectID="302" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>317290839465600</AnchorOutPoint>
+		<AnchorInPoint>0</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="303"/>
+		<FilterMatchName>Internal Parameteric EQ</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="303" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[0],"name":"Mono In","type":0}],"out":[{"layout":[0],"name":"Mono Out","type":0}]}</ChannelConfigData>
+		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>Internal Parameteric EQ</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName></InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="304"/>
+					<Param Index="1" ObjectRef="305"/>
+					<Param Index="2" ObjectRef="306"/>
+					<Param Index="3" ObjectRef="307"/>
+				</Params>
+				<DisplayName>Simple Parametric EQ</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":0}]</AudioChannelLayout>
+			<ChannelType>0</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="304" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860877100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="305" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860912400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>Hz</UnitsString>
+		<CurrentValue>0.25</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.25,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Center</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="306" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860925900</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<CurrentValue>0.5</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.5,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Q</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="307" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860939200</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.5</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.5,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Boost</Name>
+	</AudioComponentParam>
+	<FilterPreset ObjectID="308" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>317290839465600</AnchorOutPoint>
+		<AnchorInPoint>0</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="309"/>
+		<FilterMatchName>Internal Parameteric EQ</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="309" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 In","type":0}],"out":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 Out","type":0}]}</ChannelConfigData>
+		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>Internal Parameteric EQ</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName></InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="310"/>
+					<Param Index="1" ObjectRef="311"/>
+					<Param Index="2" ObjectRef="312"/>
+					<Param Index="3" ObjectRef="313"/>
+				</Params>
+				<DisplayName>Simple Parametric EQ</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101},{"channellabel":102},{"channellabel":103},{"channellabel":104},{"channellabel":105}]</AudioChannelLayout>
+			<ChannelType>2</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="310" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860877100</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="311" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860912400</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>Hz</UnitsString>
+		<CurrentValue>0.25</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.25,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Center</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="312" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860925900</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString></UnitsString>
+		<CurrentValue>0.5</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.5,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Q</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="313" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>7230860939200</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>dB</UnitsString>
+		<CurrentValue>0.5</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.5,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Boost</Name>
+	</AudioComponentParam>
+	<FilterPreset ObjectID="314" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>317290839465600</AnchorOutPoint>
+		<AnchorInPoint>0</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="315"/>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="315" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[100,101],"name":"Stereo In","type":0}],"out":[{"layout":[100,101],"name":"Stereo Out","type":0}]}</ChannelConfigData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName>Highpass 60hz</InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="316"/>
+					<Param Index="1" ObjectRef="317"/>
+				</Params>
+				<DisplayName>Highpass</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101}]</AudioChannelLayout>
+			<ChannelType>1</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="316" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>10289990743300</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="317" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>10289990759800</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>Hz</UnitsString>
+		<CurrentValue>0.045873496681</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.045873496681,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Cutoff</Name>
+	</AudioComponentParam>
+	<FilterPreset ObjectID="318" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>317290839465600</AnchorOutPoint>
+		<AnchorInPoint>0</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="319"/>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="319" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[0],"name":"Mono In","type":0}],"out":[{"layout":[0],"name":"Mono Out","type":0}]}</ChannelConfigData>
+		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName></InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="320"/>
+					<Param Index="1" ObjectRef="321"/>
+				</Params>
+				<DisplayName>Highpass</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":0}]</AudioChannelLayout>
+			<ChannelType>0</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="320" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>10289990743300</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="321" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>10289990759800</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>Hz</UnitsString>
+		<CurrentValue>0.25</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.25,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Cutoff</Name>
+	</AudioComponentParam>
+	<FilterPreset ObjectID="322" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
+		<AnchorOutPoint>317290839465600</AnchorOutPoint>
+		<AnchorInPoint>0</AnchorInPoint>
+		<MediaType>80b8e3d5-6dca-4195-aefb-cb5f407ab009</MediaType>
+		<Type>0</Type>
+		<Component ObjectRef="323"/>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
+		<Description></Description>
+	</FilterPreset>
+	<AudioFilterComponent ObjectID="323" ClassID="d77a90a0-6c9e-44bf-9b20-de8c21168fe1" Version="3">
+		<FilterPreset>0</FilterPreset>
+		<ChannelConfigData>{"in":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 In","type":0}],"out":[{"layout":[100,101,102,103,104,105],"name":"Surround 5.1 Out","type":0}]}</ChannelConfigData>
+		<OpaqueData Encoding="base64" Checksum="1999709216">PD94bWwgdmVyc2lvbj0nMS4wJz8+Cjxwcm9wLm1hcCB2ZXJzaW9uPSc0Jz4KPHByb3AubGlzdD4KPHByb3AucGFpcj4KPGtleT5GYWN0b3J5UHJlc2V0PC9rZXk+Cjx1c3RyaW5nPihEZWZhdWx0KTwvdXN0cmluZz4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VHlwZTwva2V5Pgo8aW50IHR5cGU9J3NpZ25lZCcgc2l6ZT0nMzInPjI8L2ludD4KPC9wcm9wLnBhaXI+Cjxwcm9wLnBhaXI+CjxrZXk+VmVyc2lvbjwva2V5Pgo8ZmxvYXQ+MTwvZmxvYXQ+CjwvcHJvcC5wYWlyPgo8L3Byb3AubGlzdD4KPC9wcm9wLm1hcD4K</OpaqueData>
+		<FilterIndex>-1</FilterIndex>
+		<FilterMatchName>Internal Highpass</FilterMatchName>
+		<AudioComponent Version="3">
+			<Component Version="6">
+				<Node Version="1">
+				</Node>
+				<ArchivedType>0</ArchivedType>
+				<InstanceName></InstanceName>
+				<Intrinsic>false</Intrinsic>
+				<Params Version="1">
+					<Param Index="0" ObjectRef="324"/>
+					<Param Index="1" ObjectRef="325"/>
+				</Params>
+				<DisplayName>Highpass</DisplayName>
+				<Bypass>false</Bypass>
+				<ID>0</ID>
+			</Component>
+			<AudioComponentType>0</AudioComponentType>
+			<FrameRate>5292000</FrameRate>
+			<AudioChannelLayout>[{"channellabel":100},{"channellabel":101},{"channellabel":102},{"channellabel":103},{"channellabel":104},{"channellabel":105}]</AudioChannelLayout>
+			<ChannelType>2</ChannelType>
+		</AudioComponent>
+	</AudioFilterComponent>
+	<AudioComponentParam ObjectID="324" ClassID="32657501-3aa4-445f-a49b-d09ecb9fa1ae" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>10289990743300</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>false</RangeLocked>
+		<UnitsString></UnitsString>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>4</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Bypass</Name>
+	</AudioComponentParam>
+	<AudioComponentParam ObjectID="325" ClassID="a714635e-a628-4b27-9d59-77eba47dbc1a" Version="9">
+		<Node Version="1">
+		</Node>
+		<Timestamp>10289990759800</Timestamp>
+		<IsInverted>false</IsInverted>
+		<RangeLocked>true</RangeLocked>
+		<UnitsString>Hz</UnitsString>
+		<CurrentValue>0.25</CurrentValue>
+		<StartKeyframe>-91445760000000000,0.25,0,0,0,0,0,0</StartKeyframe>
+		<ParameterControlType>2</ParameterControlType>
+		<IsTimeVarying>false</IsTimeVarying>
+		<Keyframes></Keyframes>
+		<Name>Cutoff</Name>
+	</AudioComponentParam>
+	<TreeItem ObjectID="326" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
+		<TreeItemBase Version="4">
+			<Locked>false</Locked>
+			<Data ObjectRef="327"/>
+			<Node Version="1">
+			</Node>
+			<Name>tint 100</Name>
+		</TreeItemBase>
+	</TreeItem>
+	<FilterPresetItem ObjectID="327" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
+		<FilterPresets Version="1">
+			<FilterPreset Index="0" ObjectRef="328"/>
+		</FilterPresets>
+		<EffectItem Version="1">
+			<EffectIsShorcut>false</EffectIsShorcut>
+			<EffectFlavor>5</EffectFlavor>
+		</EffectItem>
+	</FilterPresetItem>
+	<FilterPreset ObjectID="328" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+		<Node Version="1">
+		</Node>
+		<TransitionDuration>0</TransitionDuration>
+		<Speed>1.</Speed>
 		<AnchorOutPoint>3992128745264059</AnchorOutPoint>
 		<AnchorInPoint>3991887189231478</AnchorInPoint>
 		<MediaType>228cda18-3625-4d2d-951e-348879e4ed93</MediaType>
 		<Type>0</Type>
-		<Component ObjectRef="271"/>
+		<Component ObjectRef="329"/>
 		<FilterMatchName>AE.ADBE Tint</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
-	<VideoFilterComponent ObjectID="271" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
+	<VideoFilterComponent ObjectID="329" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
 		<VideoFilterType>2</VideoFilterType>
 		<MatchName>AE.ADBE Tint</MatchName>
 		<Component Version="6">
@@ -4143,16 +5075,16 @@
 			<InstanceName></InstanceName>
 			<Intrinsic>false</Intrinsic>
 			<Params Version="1">
-				<Param Index="0" ObjectRef="272"/>
-				<Param Index="1" ObjectRef="273"/>
-				<Param Index="2" ObjectRef="274"/>
+				<Param Index="0" ObjectRef="330"/>
+				<Param Index="1" ObjectRef="331"/>
+				<Param Index="2" ObjectRef="332"/>
 			</Params>
 			<DisplayName>Tint</DisplayName>
 			<Bypass>false</Bypass>
 			<ID>0</ID>
 		</Component>
 	</VideoFilterComponent>
-	<VideoComponentParam ObjectID="272" ClassID="0fde4e9f-f895-4ba3-b0fe-9a6feafda583" Version="9">
+	<VideoComponentParam ObjectID="330" ClassID="0fde4e9f-f895-4ba3-b0fe-9a6feafda583" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>1</ParameterID>
@@ -4169,7 +5101,7 @@
 		<Keyframes></Keyframes>
 		<Name>Map Black To</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="273" ClassID="0fde4e9f-f895-4ba3-b0fe-9a6feafda583" Version="9">
+	<VideoComponentParam ObjectID="331" ClassID="0fde4e9f-f895-4ba3-b0fe-9a6feafda583" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>2</ParameterID>
@@ -4186,7 +5118,7 @@
 		<Keyframes></Keyframes>
 		<Name>Map White To</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="274" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+	<VideoComponentParam ObjectID="332" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>3</ParameterID>
@@ -4203,69 +5135,69 @@
 		<Keyframes></Keyframes>
 		<Name>Amount to Tint</Name>
 	</VideoComponentParam>
-	<TreeItem ObjectID="275" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
+	<TreeItem ObjectID="333" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
 			<Locked>false</Locked>
-			<Data ObjectRef="276"/>
+			<Data ObjectRef="334"/>
 			<Node Version="1">
 				<Properties Version="1">
-					<MZ.EffectPresets.PresetUID>0f151d11-e4dd-49a8-828e-8cb7ec5ce417</MZ.EffectPresets.PresetUID>
+					<MZ.EffectPresets.PresetUID>6fed834c-70e5-4522-80ff-7b4785acda73</MZ.EffectPresets.PresetUID>
 				</Properties>
 			</Node>
 			<Name>transform_MINE</Name>
 		</TreeItemBase>
 	</TreeItem>
-	<FilterPresetItem ObjectID="276" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
+	<FilterPresetItem ObjectID="334" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
 		<FilterPresets Version="1">
-			<FilterPreset Index="0" ObjectRef="277"/>
+			<FilterPreset Index="0" ObjectRef="335"/>
 		</FilterPresets>
 		<EffectItem Version="1">
 			<EffectIsShorcut>false</EffectIsShorcut>
 			<EffectFlavor>5</EffectFlavor>
 		</EffectItem>
 	</FilterPresetItem>
-	<FilterPreset ObjectID="277" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+	<FilterPreset ObjectID="335" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
 		<Speed>1.</Speed>
-		<AnchorOutPoint>118116967541400</AnchorOutPoint>
-		<AnchorInPoint>116609811969904</AnchorInPoint>
+		<AnchorOutPoint>167608224000000</AnchorOutPoint>
+		<AnchorInPoint>166998585600000</AnchorInPoint>
 		<MediaType>228cda18-3625-4d2d-951e-348879e4ed93</MediaType>
 		<Type>0</Type>
-		<Component ObjectRef="278"/>
+		<Component ObjectRef="336"/>
 		<FilterMatchName>AE.ADBE Geometry2</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
-	<VideoFilterComponent ObjectID="278" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
+	<VideoFilterComponent ObjectID="336" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
 		<VideoFilterType>2</VideoFilterType>
 		<MatchName>AE.ADBE Geometry2</MatchName>
 		<Component Version="6">
 			<Node Version="1">
 			</Node>
 			<ArchivedType>0</ArchivedType>
-			<InstanceName></InstanceName>
+			<InstanceName>transform_MINE</InstanceName>
 			<Intrinsic>false</Intrinsic>
 			<Params Version="1">
-				<Param Index="0" ObjectRef="279"/>
-				<Param Index="1" ObjectRef="280"/>
-				<Param Index="2" ObjectRef="281"/>
-				<Param Index="3" ObjectRef="282"/>
-				<Param Index="4" ObjectRef="283"/>
-				<Param Index="5" ObjectRef="284"/>
-				<Param Index="6" ObjectRef="285"/>
-				<Param Index="7" ObjectRef="286"/>
-				<Param Index="8" ObjectRef="287"/>
-				<Param Index="9" ObjectRef="288"/>
-				<Param Index="10" ObjectRef="289"/>
-				<Param Index="11" ObjectRef="290"/>
+				<Param Index="0" ObjectRef="337"/>
+				<Param Index="1" ObjectRef="338"/>
+				<Param Index="2" ObjectRef="339"/>
+				<Param Index="3" ObjectRef="340"/>
+				<Param Index="4" ObjectRef="341"/>
+				<Param Index="5" ObjectRef="342"/>
+				<Param Index="6" ObjectRef="343"/>
+				<Param Index="7" ObjectRef="344"/>
+				<Param Index="8" ObjectRef="345"/>
+				<Param Index="9" ObjectRef="346"/>
+				<Param Index="10" ObjectRef="347"/>
+				<Param Index="11" ObjectRef="348"/>
 			</Params>
 			<DisplayName>Transform</DisplayName>
 			<Bypass>false</Bypass>
 			<ID>0</ID>
 		</Component>
 	</VideoFilterComponent>
-	<PointComponentParam ObjectID="279" ClassID="ca81d347-309b-44d2-acc7-1c572efb973c" Version="3">
+	<PointComponentParam ObjectID="337" ClassID="ca81d347-309b-44d2-acc7-1c572efb973c" Version="3">
 		<Node Version="1">
 		</Node>
 		<ParameterID>1</ParameterID>
@@ -4279,7 +5211,7 @@
 		<Keyframes></Keyframes>
 		<Name>Anchor Point</Name>
 	</PointComponentParam>
-	<PointComponentParam ObjectID="280" ClassID="ca81d347-309b-44d2-acc7-1c572efb973c" Version="3">
+	<PointComponentParam ObjectID="338" ClassID="ca81d347-309b-44d2-acc7-1c572efb973c" Version="3">
 		<Node Version="1">
 		</Node>
 		<ParameterID>2</ParameterID>
@@ -4290,10 +5222,10 @@
 		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
 		<IsLocked>false</IsLocked>
 		<IsTimeVarying>true</IsTimeVarying>
-		<Keyframes>116609811969904,0.5:0.5,0,0,0,0.16666666666666666,0,0.16666666666666666,5,4,0,0,0,0;</Keyframes>
+		<Keyframes>166998585600000,0.5:0.5,0,0,0,0.16666666666666666,0,0.16666666666666666,5,4,0,0,0,0;</Keyframes>
 		<Name>Position</Name>
 	</PointComponentParam>
-	<VideoComponentParam ObjectID="281" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+	<VideoComponentParam ObjectID="339" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>11</ParameterID>
@@ -4310,7 +5242,7 @@
 		<Keyframes></Keyframes>
 		<Name></Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="282" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+	<VideoComponentParam ObjectID="340" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>3</ParameterID>
@@ -4326,10 +5258,10 @@
 		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
 		<IsLocked>false</IsLocked>
 		<IsTimeVarying>true</IsTimeVarying>
-		<Keyframes>116609811969904,100.,0,0,0,0.16666666666666666,0,0.16666666666666666;</Keyframes>
+		<Keyframes>166998585600000,100.,0,0,0,0.16666666666666666,0,0.16666666666666666;</Keyframes>
 		<Name>Scale Height</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="283" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+	<VideoComponentParam ObjectID="341" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>4</ParameterID>
@@ -4348,7 +5280,7 @@
 		<Keyframes></Keyframes>
 		<Name>Scale Width</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="284" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+	<VideoComponentParam ObjectID="342" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>5</ParameterID>
@@ -4365,7 +5297,7 @@
 		<Keyframes></Keyframes>
 		<Name>Skew</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="285" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+	<VideoComponentParam ObjectID="343" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>6</ParameterID>
@@ -4382,7 +5314,7 @@
 		<Keyframes></Keyframes>
 		<Name>Skew Axis</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="286" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+	<VideoComponentParam ObjectID="344" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>7</ParameterID>
@@ -4399,7 +5331,7 @@
 		<Keyframes></Keyframes>
 		<Name>Rotation</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="287" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+	<VideoComponentParam ObjectID="345" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>8</ParameterID>
@@ -4416,7 +5348,7 @@
 		<Keyframes></Keyframes>
 		<Name>Opacity</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="288" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
+	<VideoComponentParam ObjectID="346" ClassID="cc12343e-f113-4d3b-ae05-b287db77d461" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>9</ParameterID>
@@ -4425,7 +5357,7 @@
 		<UpperBound>true</UpperBound>
 		<LowerBound>false</LowerBound>
 		<CurrentValue>false</CurrentValue>
-		<StartKeyframe>-91445760000000000,true,0,0,0,0,0,0</StartKeyframe>
+		<StartKeyframe>-91445760000000000,false,0,0,0,0,0,0</StartKeyframe>
 		<ParameterControlType>4</ParameterControlType>
 		<DiscontinuousInterpolate>false</DiscontinuousInterpolate>
 		<IsLocked>false</IsLocked>
@@ -4433,7 +5365,7 @@
 		<Keyframes></Keyframes>
 		<Name></Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="289" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
+	<VideoComponentParam ObjectID="347" ClassID="fe47129e-6c94-4fc0-95d5-c056a517aaf3" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>10</ParameterID>
@@ -4450,7 +5382,7 @@
 		<Keyframes></Keyframes>
 		<Name>Shutter Angle</Name>
 	</VideoComponentParam>
-	<VideoComponentParam ObjectID="290" ClassID="6e02e8bb-2569-46b2-8ab1-4ab11c43e9c8" Version="9">
+	<VideoComponentParam ObjectID="348" ClassID="6e02e8bb-2569-46b2-8ab1-4ab11c43e9c8" Version="9">
 		<Node Version="1">
 		</Node>
 		<ParameterID>12</ParameterID>
@@ -4467,25 +5399,25 @@
 		<Keyframes></Keyframes>
 		<Name>Sampling</Name>
 	</VideoComponentParam>
-	<TreeItem ObjectID="291" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
+	<TreeItem ObjectID="349" ClassID="025f59ac-1f29-42c0-9897-ada1059bd547" Version="3">
 		<TreeItemBase Version="4">
 			<Locked>false</Locked>
-			<Data ObjectRef="292"/>
+			<Data ObjectRef="350"/>
 			<Node Version="1">
 			</Node>
 			<Name>vflip</Name>
 		</TreeItemBase>
 	</TreeItem>
-	<FilterPresetItem ObjectID="292" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
+	<FilterPresetItem ObjectID="350" ClassID="e56c9ba0-91cb-4f21-9174-c1b52448c6c9" Version="2">
 		<FilterPresets Version="1">
-			<FilterPreset Index="0" ObjectRef="293"/>
+			<FilterPreset Index="0" ObjectRef="351"/>
 		</FilterPresets>
 		<EffectItem Version="1">
 			<EffectIsShorcut>false</EffectIsShorcut>
 			<EffectFlavor>5</EffectFlavor>
 		</EffectItem>
 	</FilterPresetItem>
-	<FilterPreset ObjectID="293" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
+	<FilterPreset ObjectID="351" ClassID="ee52a7d2-069e-47f7-aa30-e3e3286b65a3" Version="3">
 		<Node Version="1">
 		</Node>
 		<TransitionDuration>0</TransitionDuration>
@@ -4494,11 +5426,11 @@
 		<AnchorInPoint>0</AnchorInPoint>
 		<MediaType>228cda18-3625-4d2d-951e-348879e4ed93</MediaType>
 		<Type>0</Type>
-		<Component ObjectRef="294"/>
+		<Component ObjectRef="352"/>
 		<FilterMatchName>AE.ADBE Vertical Flip</FilterMatchName>
 		<Description></Description>
 	</FilterPreset>
-	<VideoFilterComponent ObjectID="294" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
+	<VideoFilterComponent ObjectID="352" ClassID="d10da199-beea-4dd1-b941-ed3a78766d50" Version="8">
 		<VideoFilterType>2</VideoFilterType>
 		<MatchName>AE.ADBE Vertical Flip</MatchName>
 		<Component Version="6">

@@ -1,9 +1,9 @@
 /************************************************************************
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
- * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23
+ * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
- * @date 2023/04/07
- * @version 1.5.7
+* @date 2023/06/17
+ * @version 1.6.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,10 +38,16 @@ class Prem {
     static zToolY := 0
 
     ;// variables for `getTimeline()`
-    static timelineXValue := 0
-    static timelineYValue := 0
+    static timelineRawX     := 0
+    static timelineRawY     := 0
+    static timelineXValue   := 0
+    static timelineYValue   := 0
     static timelineXControl := 0
     static timelineYControl := 0
+    static focusColour      := 0x2D8CEB
+
+    ;// rbuttonPrem
+    static focusTimelineStatus := true
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -167,7 +173,9 @@ class Prem {
                         errorLog(Error("Couldn't find the eye icon", -1),, 1)
                         return
                     }
-                    if ImageSearch(&xeye, &yeye, x2, y2, x2 + "200", y2 + "100", "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
+                    if A_Index > 1 && y2 < 900 ;// the y value it searches will increase as the loop index increases
+                        y2 += 100
+                    if ImageSearch(&xeye, &yeye, x2, y2, x2 + 200, y2 + 100, "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
                         break
                     sleep 100
                 }
@@ -217,7 +225,7 @@ class Prem {
                 MouseMove(eyeX, eyeY - "5")
                 SendInput("{Click Up}")
                 effectbox()
-                SendInput(KSA.timelineWindow)
+                this().__checkTimelineFocus()
                 MouseMove(xpos, ypos)
                 block.Off()
                 return
@@ -225,7 +233,7 @@ class Prem {
         MouseMove(xpos, ypos) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
         SendInput("{Click Up}")
         effectbox() ;this will delete whatever preset it had typed into the find box
-        SendInput(KSA.timelineWindow) ;this will rehighlight the timeline after deleting the text from the find box
+        this().__checkTimelineFocus()
         block.Off()
         ToolTip("")
     }
@@ -458,7 +466,7 @@ class Prem {
             }
         block.On()
         MouseGetPos(&xpos, &ypos)
-        SendInput(KSA.timelineWindow)
+        this().__checkTimelineFocus()
         if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -511,9 +519,61 @@ class Prem {
     }
 
     /**
+     * This function defines what `valuehold()` should do if the user wishes to adjust the `level` property.
+     * @param {Object} classCoords an object containing the classNN information
+     */
+    __vholdLevels(classCoords) {
+        ;// don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working properly
+        if ImageSearch(&vidx, &vidy, classCoords.classX, classCoords.classY, classCoords.classX + (classCoords.width/KSA.ECDivide), classCoords.classY + classCoords.height, "*2 " ptf.Premiere "video.png") {
+            block.Off()
+            errorLog(Error("The user wasn't scrolled down", -1),, 1)
+            keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+            return false
+        }
+    }
+
+    /**
+     * This function defines what `valuehold()` should do if the `blendMode` param is passed
+     * @param {String} filepath the passed in `filepath` param
+     * @param {String} blendmode the passed in `blendmode` param
+     * @param {Object} xy an object containing the x/y coordinates to search
+     * @param {Object} origCoords an object containing the original mouse x/y coordinates
+     */
+    __vholdBlend(filepath, blendmode, xy, origCoords) {
+        if !ImageSearch(&arrX, &arrY, xy.x, xy.y, xy.x+400, xy.y+40, "*2 " ptf.Premiere filepath "arrow.png")
+            {
+                errorLog(Error("Couldn't find the arrow to open the blend mode menu", -1),, 1)
+                MouseMove(origCoords.xpos, origCoords.ypos)
+                block.Off()
+                return
+            }
+        MouseMove(arrx, arrY)
+        SendInput("{Click}")
+        sleep 500
+        if (
+            ;// if the "drop down" menu goes up
+            (!ImageSearch(&modeX, &modeY, arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode "2.png")) &&
+            ;// if the "drop down" menu goes down
+            (!ImageSearch(&modeX, &modeY, arrx-400, arrY, arrx, arrY+700, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY, arrx, arrY+700, "*2 " ptf.Premiere "blend\" blendmode "2.png"))
+        )
+            {
+                errorLog(Error("Couldn't find the desired blend mode", -1),, 1)
+                MouseMove(origCoords.xpos, origCoords.ypos)
+                block.Off()
+                return
+            }
+        MouseMove(modeX, modeY)
+        SendInput("{Click}")
+        MouseMove(origCoords.xpos, origCoords.ypos)
+        block.Off()
+    }
+
+
+    /**
      * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-     * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
+     * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed). If you wish to adjust the blendmode, this string needs to be `blend\blendmode`.
      * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+     * @param {String} blendMode the filename of the blend mode you wish to change the current track to.
      */
     static valuehold(filepath, optional := 0, blendMode := "")
     {
@@ -523,7 +583,6 @@ class Prem {
         xdist := 210
         coord.s()
         MouseGetPos(&xpos, &ypos)
-        ;tool.Cust("x " xpos "`ny " ypos) ;testing stuff
         block.On()
         this().__fxPanel()
         try {
@@ -535,7 +594,7 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(KSA.timelineWindow) ;focuses the timeline
+        this().__checkTimelineFocus() ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             { ;any imagesearches on the effect controls window includes a division variable (KSA.ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -547,16 +606,10 @@ class Prem {
                         return
                     }
             }
-        if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, YOUR PNG MUST BE CALLED "levels.png"
-            { ;don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working
-                if ImageSearch(&vidx, &vidy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "video.png")
-                    {
-                        block.Off()
-                        errorLog(Error("The user wasn't scrolled down", -1),, 1)
-                        keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-                        return
-                    }
-            }
+        if filepath = "levels" {
+            if !this().__vholdLevels({classX: classX, classY: classY, width: width, height: height})
+                return
+        }
         loop {
             if A_Index > 1
                 {
@@ -597,33 +650,11 @@ class Prem {
                 }
             sleep 50
         }
-        if filepath = "blend\blendmode"
-            {
-                if !ImageSearch(&arrX, &arrY, x, y, x+400, y+40, "*2 " ptf.Premiere filepath "arrow.png")
-                    {
-                        errorLog(Error("Couldn't find the arrow to open the blend mode menu", -1),, 1)
-                        MouseMove(xpos, ypos)
-                        block.Off()
-                        return
-                    }
-                MouseMove(arrx, arrY)
-                SendInput("{Click}")
-                sleep 500
-                if !ImageSearch(&modeX, &modeY, arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode "2.png")
-                    {
-                        errorLog(Error("Couldn't find the desired blend mode", -1),, 1)
-                        MouseMove(xpos, ypos)
-                        block.Off()
-                        return
-                    }
-                MouseMove(modeX, modeY)
-                SendInput("{Click}")
-                MouseMove(xpos, ypos)
-                block.Off()
-                return
-            }
-        colour:
-        if !PixelSearch(&xcol, &ycol, x, y, x + xdist, y + "40", 0x205cce, 2)
+        if filepath = "blend\blendmode" {
+            this().__vholdBlend(filepath, blendMode, {x: x, y:y}, {xpos: xpos, ypos: ypos})
+            return
+        }
+        if !PixelSearch(&xcol, &ycol, x, y+5, x + xdist, y + 40, 0x205cce, 2)
             {
                 block.Off()
                 tool.Cust("Couldn't find the blue text") ;useful tooltip to help you debug when it can't find what it's looking for
@@ -634,40 +665,35 @@ class Prem {
             }
         MouseMove(xcol + optional, ycol)
         sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
-        ;I tried messing around with "if A_TimeSincePriorHotkey < 100" instead of a sleep here but premiere would get stuck in a state of "clicking" on the field if I pressed a macro, then let go quickly but after the 100ms. Maybe there's a smarter way to make that work, but honestly just kicking this sleep down to 50 from 100 works fine enough for me and honestly isn't even really noticable.
-        if GetKeyState(A_ThisHotkey, "P")
-            {
-                SendInput("{Click Down}")
-                block.Off()
-                keys.allWait()
-                SendInput("{Click Up}" "{Enter}")
-                sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
-                MouseMove(xpos, ypos)
-                /* MouseGetPos(&testx, &testy) ;testing stuff
-                MsgBox("og x " xpos "`nog y " ypos "`ncurrent x " testx "`ncurrent y " testy) */
-            }
-        else
-            {
-                if !ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " ptf.Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
-                    {
-                        if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
-                            {
-                                SendInput("{Click}" "0" "{Enter}")
-                                MouseMove(xpos, ypos)
-                                block.Off()
-                                return
-                            }
-                        MouseMove(xpos, ypos)
-                        block.Off()
-                        errorLog(Error("Couldn't find the reset button", -1),, 1)
-                        return
-                    }
-                MouseMove(x2, y2)
-                SendInput("{Click}")
-                MouseMove(xpos, ypos)
-                block.Off()
-            }
         ToolTip("")
+        if !GetKeyState(A_ThisHotkey, "P") {
+            if !ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " ptf.Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
+                {
+                    if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
+                        {
+                            SendInput("{Click}" "0" "{Enter}")
+                            MouseMove(xpos, ypos)
+                            block.Off()
+                            return
+                        }
+                    MouseMove(xpos, ypos)
+                    block.Off()
+                    errorLog(Error("Couldn't find the reset button", -1),, 1)
+                    return
+                }
+            MouseMove(x2, y2)
+            SendInput("{Click}")
+            MouseMove(xpos, ypos)
+            block.Off()
+            return
+        }
+        ;// waiting for the user to release the key
+        SendInput("{Click Down}")
+        block.Off()
+        keys.allWait()
+        SendInput("{Click Up}" "{Enter}")
+        sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
+        MouseMove(xpos, ypos)
     }
 
     /**
@@ -689,7 +715,7 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(KSA.timelineWindow) ;focuses the timeline
+        this().__checkTimelineFocus() ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -707,7 +733,7 @@ class Prem {
                 block.Off()
                 return
             }
-        MouseMove(x + "7", y + "4")
+        MouseMove(x + 7, y + 4)
         click
         block.Off()
         MouseMove(xpos, ypos)
@@ -732,7 +758,7 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(KSA.timelineWindow) ;focuses the timeline
+        this().__checkTimelineFocus() ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -760,7 +786,7 @@ class Prem {
        else
             MouseMove(x + 5, y + 5)
         SendInput("{Click}")
-        SendInput(KSA.timelineWindow) ;focuses the timeline
+        this().__checkTimelineFocus() ;focuses the timeline
         MouseMove(xpos, ypos)
         block.Off()
     }
@@ -836,9 +862,8 @@ class Prem {
             if GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")
                 SendInput("{Ctrl Up}") ;// a check to make sure premiere doesn't `insert` the clip
             SendInput("{Click Up}")
-            sleep 75
-            SendInput(KSA.timelineWindow)
-            sleep 50
+            sleep 500
+            ; this().__checkTimelineFocus() ;// the timeline regains focus once the audio clip is dropped on the timeline
             colour := PixelGetColor(xpos + 10, ypos)
             if !this.dragColour.Has(colour)
                 break
@@ -879,16 +904,15 @@ class Prem {
                 loop {
                     ;check to see if the user wants the bleep on a track between 1-9
                     getlastHotkey := A_PriorKey
-                    if getlastHotkey = ""
-                        goto skip
-                    if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
-                        trackNumber := getlastHotkey
-                    if GetKeyState("Esc", "P") || getlastHotkey = "Escape"
-                        {
-                            clear()
-                            return
-                        }
-                    skip:
+                    if getlastHotkey != "" {
+                        if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
+                            trackNumber := getlastHotkey
+                        if (GetKeyState("Esc", "P") || getlastHotkey = "Escape")
+                            {
+                                clear()
+                                return
+                            }
+                    }
                     sleep 50
                     if A_Index > 160 ;built in timeout
                         {
@@ -943,17 +967,21 @@ class Prem {
 
     /**
      * Move back and forth between edit points from anywhere in premiere
+     * @param {String} window the hotkey required to focus the desired window within premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
+     * @param {String} keyswait a string you wish to pass to `keys.allWait()`'s first parameter
      */
     static wheelEditPoint(window, direction, keyswait := "all")
     {
-        SendInput(window) ;focuses the timeline
+        switch window {
+            case ksa.timelineWindow: this().__checkTimelineFocus()
+            default: SendInput(window) ;focuses the timeline/desired window
+        }
         SendInput(direction)
         switch keyswait {
-            case "second":keys.allWait("second")
-            case "first":keys.allWait("first")
-            default:
-                keys.allWait() ;prevents hotkey spam
+            case "second": keys.allWait("second")
+            case "first":  keys.allWait("first")
+            default:       keys.allWait() ;prevents hotkey spam
         }
     }
 
@@ -967,7 +995,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         delaySI(25, KSA.effectControls, KSA.effectControls)
         effectCtrl := obj.ctrlPos()
-        SendInput(KSA.timelineWindow) ;focuses the timeline
+        this().__checkTimelineFocus() ;focuses the timeline
         sleep 25
         if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
@@ -1095,6 +1123,7 @@ class Prem {
                         {
                             errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
                                         , "Or the function kept finding pure black at each checking coordinate", 1)
+                            return
                         }
                     break
                 }
@@ -1131,7 +1160,7 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(KSA.timelineWindow) ;focuses the timeline
+        this().__checkTimelineFocus() ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -1154,7 +1183,7 @@ class Prem {
                     return
                 }
         }
-        SendInput(KSA.timelineWindow) ;~ check the keyboard shortcut ini file to adjust hotkeys
+        this().__checkTimelineFocus() ;~ check the keyboard shortcut ini file to adjust hotkeys
         if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " ptf.Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
             MouseMove(xcol, ycol)
         SendInput("{Click}")
@@ -1183,7 +1212,7 @@ class Prem {
             errorLog(e)
             return
         }
-        SendInput(KSA.timelineWindow)
+        this().__checkTimelineFocus()
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -1275,7 +1304,7 @@ class Prem {
         }
         if ClassNN = -1 || !IsSet(ClassNN)
             return
-        SendInput(KSA.timelineWindow)
+        this().__checkTimelineFocus()
         try {
             if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                 {
@@ -1303,6 +1332,27 @@ class Prem {
         ToolTip("")
     }
 
+    /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
+	__checkTimelineFocus() {
+		if prem.focusTimelineStatus != true
+            return
+        check := prem.timelineFocusStatus()
+        if check != false
+            return
+        sleep 1
+        SendEvent(KSA.timelineWindow)
+	}
+
+    /**
+	 * This function will toggle the state of an internal variable that tracks whether you user wishes for timeline focusing to be enabled or disabled.
+	 * Toggling this can help scenarios where the user has multiple sequences open and the main function would otherwise start cycling between them
+	 */
+	__toggleTimelineFocus() {
+		which := (prem.focusTimelineStatus = true) ? "disabled" : "enabled"
+		tool.Cust(Format("Timeline focusing is now {}.", which), 2000)
+		prem.focusTimelineStatus := !prem.focusTimelineStatus
+	}
+
     /**
      * ### This function contains `KSA` values that need to be set correctly
      * Press a button(ideally a mouse button), this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
@@ -1315,29 +1365,30 @@ class Prem {
     */
     static mousedrag(premtool, toolorig)
     {
-        if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
+        if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
             return
         SetTimer(rdisable, -1)
         rdisable() {
-            if GetKeyState("RButton", "P") ;this check is to allow some code in `right click premiere.ahk` to work
+            if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
                 {
                     SetTimer(rdisable, 0)
                     return
                 }
             SetTimer(rdisable, -50)
         }
-        MouseGetPos(&x, &y) ;from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
-        if this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0
-            {
-                if !this.getTimeline()
-                    goto skip
-            }
-        if x > this.timelineXValue || x < this.timelineXControl || y < this.timelineYValue || y > this.timelineYControl ;this line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
-            {
-                SetTimer(rdisable, 0)
-                return
-            }
-        skip:
+        coordObj := obj.MousePos()
+        ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
+        if !this.__checkTimeline() {
+            return
+        }
+        ;// this below line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
+        if !this.__checkCoords(coordObj) {
+            SetTimer(rdisable, 0)
+            return
+        }
+
+        SetTimer(again, -400)
+        again()
         again()
         {
             if A_ThisHotkey = KSA.DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
@@ -1355,7 +1406,7 @@ class Prem {
                     Exit()
                 }
             ; click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-            SendInput(KSA.timelineWindow) ;don't use middle click, it causes lag and keys to get stuck
+            this().__checkTimelineFocus()
             SendInput(premtool "{LButton Down}")
             if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
                 KeyWait(A_ThisHotkey, "T5")
@@ -1365,8 +1416,23 @@ class Prem {
             SendInput(toolorig)
             SetTimer(rdisable, 0)
         }
-        SetTimer(again, -400)
-        again()
+    }
+
+    /**
+     * This function will check for the blue outline around the timeline (using stored values within the class) that a focused window in premiere will ususally have.
+     * @returns {Trilean} true/false/-1. `-1` indicates that the timeline coordinates could not be determined.
+     */
+    static timelineFocusStatus() {
+        if !this.__checkTimeline()
+            return -1
+        origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
+        coord.client(, false)
+        if PixelGetColor(this.timelineRawX-1, this.timelineRawY+10) = this.focusColour {
+            returnCoord()
+            return true
+        }
+        returnCoord()
+        return false
     }
 
     /**
@@ -1381,6 +1447,7 @@ class Prem {
             sleep 75
             effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+            this.timelineRawX := x, this.timelineRawY := y
             this.timelineXValue := x + width - 22 ;accounting for the scroll bars on the right side of the timeline
             this.timelineYValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
             this.timelineXControl := x + 236 ;accounting for the column to the left of the timeline
@@ -1514,4 +1581,161 @@ class Prem {
             case "right":
         }
     }
+
+    /**
+     * A function to simply open an asset folder
+     * @param {String} dir the path to the directory you wish to open
+     */
+    static openEditingDir(dir) {
+        dirObj := obj.SplitPath(dir)
+        if WinExist(dirObj.name) {
+            WinActivate(dirObj.name)
+            return
+        }
+        Run(dir)
+        if !WinWaitActive(dirObj.name,, 3) {
+            if WinExist(dirObj.name)
+                WinActivate(dirObj.name)
+        }
+    }
+
+    /**
+     * Checks to see if the timeline values within `prem {` have been set
+     * @returns {Boolean} if the timeline cannot be determined, returns `false`. Else returns `true`
+     */
+	static __checkTimeline() {
+		if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) {
+			if !this.getTimeline()
+				return false
+		}
+		return true
+	}
+
+    /**
+     * This function checks if the mouse is outside the bounds of the timeline.
+     * This code should work regardless of where you have the timeline (unless you make your timeline comically small, then you may encounter issues)
+     * @returns {Boolean} if the cursor is **not** within the timeline, returns `false`. Else returns `true`
+     */
+	static __checkCoords(coordObj) {
+		if ((coordObj.x > this.timelineXValue) || (coordObj.x < this.timelineXControl) || (coordObj.y < this.timelineYValue) || (coordObj.y > this.timelineYControl))
+			return false
+		return true
+	}
+
+    /**
+     * This function handles accelorating scrolling within premiere. It specifically expects the first activation hotkey to be either `alt` or `shift`.
+     * This function will attempt to only fire within the timeline.
+     *
+     * *Due to ahk quirkiness, this function can act incredibly laggy and cause windows to beep if it's not placed in the perfect spot in your script.*
+     * @param {Integer} altAmount the amount of accelerated scrolling you want
+     * @param {Integer} scrollAmount the amount of accelerated scrolling you want
+     */
+    static accelScroll(altAmount := 3, scrollAmount := 5) {
+        if !this.__checkTimeline()
+			return
+        origMouse := obj.MousePos()
+        if !this.__checkCoords(origMouse)
+            scrollAmount := 1, altAmount := 1
+        getDir := getHotkeys()
+        switch getdir.first {
+            case "Alt": delaySI(0, SendInput(Format("!{{1} {2}}", getDir.second, altAmount)))
+            default:    delaySI(0, SendInput(Format("{{1} {2}}", getDir.second, scrollAmount)))
+        }
+    }
+
+
+    /**
+     * This is an internal function for `prem.Previews()` simply to make code a little cleaner. It handles sending a desired hotkey to delete previews then waiting for the delete dialogue box premiere presents the user.
+     * @param {String} sendHotkey which hotkey you wish to send
+     */
+    __delprev(sendHotkey) {
+        SendInput(sendHotkey)
+        if !WinWait("Confirm Delete ahk_exe Adobe Premiere Pro.exe",, 3)
+            return
+        tool.Cust("found")
+        WinActivate("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+        if !WinWaitActive("Confirm Delete ahk_exe Adobe Premiere Pro.exe",, 3)
+            return
+        sleep 1000
+        SendInput("{Enter}")
+        if !WinExist("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+            return
+        loop 3 {
+            WinActivate("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+            sleep 100
+            SendInput("{Enter}")
+            sleep 500
+            if !WinExist("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+                return
+        }
+    }
+
+    /**
+     * This function handles different hotkeys related to `Previews` (both rendering & deleting them). This function will attempt to save the project before doing anything.
+     * @param {String} which whether you wish to delete or render a preview. If deleting, pass `"delete"` else pass an empty string
+     * @param {String} sendHotkey which hotkey you wish to send
+     */
+    static Previews(which, sendHotkey) {
+        if !WinActive(this.exeTitle)
+            return
+        SendEvent("^s")
+        if !WinWait("Save Project",, 3) {
+            tool.Cust("Function timed out waiting for save prompt")
+            return
+        }
+        WinWaitClose("Save Project")
+        switch which {
+            case "delete": this().__delprev(sendHotkey)
+            default:       SendInput(sendHotkey)
+        }
+    }
+
+    ;//! *** ===============================================
+
+    class Excalibur {
+
+        lockNumpadKeys := Mip("Space", ",", "Numpad0", ",", "NumpadSub", "{BackSpace}")
+        /**
+         * Sets or resets some numpad functionality for `lockTracks()`
+         */
+        __lockNumpadKeys(set_reset := "set") {
+            switch set_reset, "Off" {
+                case "set":
+                    __set(sendHotkey, *) => SendInput(sendHotkey)
+                    for k, v in this.lockNumpadKeys {
+                        Hotkey(k, __set.Bind(v))
+                    }
+                case "reset":
+                    for k2, v2 in this.lockNumpadKeys {
+                        try {
+                            Hotkey(k2, k2, "On")
+                        } catch {
+                            Hotkey(k2, "Off")
+                        }
+                    }
+            }
+        }
+
+        /**
+         * #### This function requires the premiere plugin `Excalibur` to be installed and for `KSA.excalLockVid` to be correctly set.
+         * Quickly and easily lock/unlock multiple audio/video tracks
+         */
+        static lockTracks(which := "Video") {
+            switch which, "Off" {
+                case "audio": SendInput(KSA.excalLockAud)
+                case "video": SendInput(KSA.excalLockVid)
+
+            }
+            if !WinWait("Lock " which " Tracks",, 3)
+                return
+            sleep 200
+            SendInput("{Down}")
+            this().__lockNumpadKeys("set")
+
+            if WinWaitClose("Lock " which " Tracks") {
+                this().__lockNumpadKeys("reset")
+            }
+        }
+    }
+
 }

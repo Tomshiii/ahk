@@ -4,6 +4,7 @@
 
 ; { \\ #Includes
 #Include <Classes\ptf>
+#Include <Functions\trayShortcut>
 ;there are more includes down below
 ; }
 
@@ -11,6 +12,7 @@ SetWorkingDir(ptf.rootDir)
 SetDefaultMouseSpeed(0)                 ;sets default MouseMove speed to 0 (instant)
 SetWinDelay(0)                          ;sets default WinMove speed to 0 (instant)
 TraySetIcon(ptf.Icons "\keyboard.ico")
+startupTray()
 ;SetCapsLockState("AlwaysOff")          ;having this on broke my main script for whatever reason
 ;SetNumLockState("AlwaysOn")
 
@@ -18,7 +20,7 @@ TraySetIcon(ptf.Icons "\keyboard.ico")
 ;\\v2.13.7
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.10.4
+;\\v2.11.2
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE REWORKED IT TO WORK IN AHK v2.0 and then completely changed it to be for my workflow
@@ -60,9 +62,6 @@ TraySetIcon(ptf.Icons "\keyboard.ico")
 ;===========================================================================
 #HotIf getKeyState("F24", "P") and WinActive(editors.Photoshop.winTitle)
 #Include <QMK\Photoshop>
-;===========================================================================
-#HotIf getKeyState("F24", "P") and WinActive(browser.vscode.winTitle)
-#Include <QMK\VSCode>
 ;===========================================================================
 #HotIf getKeyState("F24", "P") ;these will work everywhere
 #Include <QMK\Always>
