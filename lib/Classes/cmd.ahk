@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2023/02/15
- * @version 1.0.0
+ * @date 2023/06/19
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -60,5 +60,36 @@ class cmd {
         shell := ComObject("WScript.Shell")
         exec := shell.Exec(A_ComSpec " /C " command)
         return exec.StdOut.ReadAll()
+    }
+
+    /**
+     * This function will unmap the desired mapped drive location, then remap your desired drive letter to the desired ip address.
+     * @param {String} driveLocation the drive letter you wish to remap
+     * @param {String} networkLocation the ip location of your network drive
+     */
+    static mapDrive(driveLocation, networkLocation) {
+        ;// net use N: /delete
+        ;// net use N: \\192.168.20.5\storage
+        this.run(,, Format("net use {}: /delete", Chr(64+driveLocation)))
+        this.run(,, Format("net use {}: {}", Chr(64+driveLocation), networkLocation))
+    }
+
+    static inUseDrives() {
+        drives := Map()
+        driveList := this.result("net use")
+        loop {
+            if !colon := InStr(driveList, ":",,, A_Index)
+                break
+            letter := SubStr(driveList, colon-1, 1)
+            path   := SubStr(driveList, backslash := InStr(driveList, "\\",, colon, 1), InStr(driveList, A_Space,, backslash, 1)-backslash)
+            drives.Set(letter, path)
+        }
+        drivesArr := []
+        loop 26 {
+            indexLetter := Chr(64+A_Index)
+            toPush := drives.Has(indexLetter) ? indexLetter ": " drives.Get(indexLetter) : indexLetter ":"
+            drivesArr.Push(toPush)
+        }
+        return drivesArr
     }
 }

@@ -13,6 +13,7 @@ KeyHistory(0)
 #Include <Classes\winget>
 #Include <Classes\switchTo>
 #Include <Classes\WM>
+#Include <Classes\Editors\Premiere>
 #Include <Functions\detect>
 #Include <Functions\errorLog>
 #Include <Functions\trayShortcut>
@@ -251,7 +252,7 @@ save()
     if attempt = 3
         {
             switchTo.Premiere() ; last ditch effort to get a save off properly
-            SendInput(KSA.timelineWindow)
+            prem().__checkTimelineFocus()
         }
     attempt++
 
@@ -349,8 +350,7 @@ save()
                     case "focus":
                         if swap
                             switchTo.Premiere()
-                        SendInput(KSA.timelineWindow)
-                        SendInput(KSA.timelineWindow)
+                        prem().__checkTimelineFocus()
                         sleep 50
                         if GetKeyState("Shift")
                             SendInput("{Shift Up}")
@@ -446,8 +446,7 @@ save()
                 if title != replayCheck.winTitle
                     title := replayCheck.winTitle
                 sleep 250
-                ControlSend(KSA.timelineWindow,, title)
-                ControlSend(KSA.timelineWindow,, title)
+                prem().__checkTimelineFocus()
                 sleep 100
                 ControlSend(KSA.playStop,, title)
                 block.Off()
