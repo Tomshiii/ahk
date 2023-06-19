@@ -667,7 +667,7 @@ class Prem {
         sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
         ToolTip("")
         if !GetKeyState(A_ThisHotkey, "P") {
-            if !ImageSearch(&x2, &y2, x, y - "10", x + "1500", y + "20", "*2 " ptf.Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
+            if !ImageSearch(&x2, &y2, x, y - 10, x + 1500, y + 20, "*2 " ptf.Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
                 {
                     if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
                         {
