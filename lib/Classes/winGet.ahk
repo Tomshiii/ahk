@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/03/19
- * @version 1.5.8
+ * @date 2023/06/20
+ * @version 1.5.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -160,7 +160,7 @@ class WinGet {
         }
         try {
             if !WinExist(editors.%which%.winTitle)
-                return {winTitle: false, titleCheck: unset, saveCheck: unset}
+                return {winTitle: false, titleCheck: -1, saveCheck: -1}
             switch which {
                 case "AE":       title := "Adobe After Effects 20" ptf.AEYearVer " -"
                 case "Premiere": title := "Adobe Premiere Pro 20" ptf.PremYearVer " -"
@@ -175,15 +175,15 @@ class WinGet {
             block.Off()
             tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e)
-            return {winTitle: false, titleCheck: unset, saveCheck: unset}
+            return {winTitle: false, titleCheck: -1, saveCheck: -1}
         }
     }
 
     /**
      * This function will grab the title of premiere if it exists and check to see if a save is necessary
      * @param {VarRef} premCheck is the complete title of premiere
-     * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return unset if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
-     * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return unset if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
+     * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return `-1` if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
+     * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return `-1` if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
      * @returns {Object/Boolean}
      * ```
      * ;// if Premiere isn't open `winget.PremName()` will return 0/false
@@ -197,7 +197,7 @@ class WinGet {
         premiere := this().__AdobeName("Premiere", &premCheck?, &titleCheck?, &saveCheck?)
         if !premiere.winTitle
             return false
-        return {winTitle: premiere.winTitle, titleCheck: (IsSet(titleCheck) ? premiere.titleCheck : unset), saveCheck: (IsSet(saveCheck) ? premiere.saveCheck : unset)}
+        return {winTitle: premiere.winTitle, titleCheck: premiere.titleCheck, saveCheck: premiere.saveCheck}
     }
 
     /**
@@ -275,7 +275,7 @@ class WinGet {
                 WinGet.AEName(&Name, &titlecheck)
         }
         ;// if the name returns blank
-        if !titlecheck || !IsSet(titlecheck)
+        if (!titlecheck || titlecheck = -1)
             {
                 tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
                 return false
@@ -303,9 +303,8 @@ class WinGet {
             if WinActive("ahk_exe explorer.exe")
                 id := "ahk_class CabinetWClass"
             return true
-        } catch as e {
-            tool.Cust("couldn't grab active window")
-            errorLog(e)
+        } catch {
+            errorLog(TargetError("Couldn't grab information about the active window", -1),, 1)
             return false
         }
     }
