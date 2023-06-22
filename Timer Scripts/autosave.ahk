@@ -252,7 +252,7 @@ save()
     if attempt = 3
         {
             switchTo.Premiere() ; last ditch effort to get a save off properly
-            prem().__checkTimelineFocus()
+            prem.__checkTimelineFocus()
         }
     attempt++
 
@@ -350,7 +350,7 @@ save()
                     case "focus":
                         if swap
                             switchTo.Premiere()
-                        prem().__checkTimelineFocus()
+                        prem.__checkTimelineFocus()
                         sleep 50
                         if GetKeyState("Shift")
                             SendInput("{Shift Up}")
@@ -446,7 +446,7 @@ save()
                 if title != replayCheck.winTitle
                     title := replayCheck.winTitle
                 sleep 250
-                prem().__checkTimelineFocus()
+                prem.__checkTimelineFocus()
                 sleep 100
                 ControlSend(KSA.playStop,, title)
                 block.Off()

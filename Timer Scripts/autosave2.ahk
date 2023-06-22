@@ -1,13 +1,21 @@
+/************************************************************************
+ * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
+ * @author tomshi
+ * @date 2023/06/22
+ * @version 2.0.0-testing
+ ***********************************************************************/
+
 #SingleInstance force ;only one instance of this script may run at a time!
 #Requires AutoHotkey v2.0
 ListLines(0)
-KeyHistory(0)
+; KeyHistory(0) ;// this has to be enabled for some code relating to `mouse idle` to work
 
 ; { \\ #Includes
 #Include <Classes\Settings>
 #Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\switchTo>
 #Include <Classes\ptf>
+#Include <Classes\Editors\Premiere>
+#Include <Classes\switchTo>
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\winget>
@@ -16,18 +24,21 @@ KeyHistory(0)
 #Include <Classes\timer>
 #Include <Functions\errorLog>
 #Include <Functions\trayShortcut>
+#Include <Functions\checkStuck>
 
 #Include <Other\print>
 ; }
 
 TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
+InstallMouseHook()
 startupTray()
 #WinActivateForce
 
 class adobeAutoSave extends count {
     __New() {
         try {
+            ;// attempt to grab user settings
             this.UserSettings := UserPref()
             this.ms := (this.UserSettings.autosave_MIN * 60000)
             this.UserSettings := ""
@@ -36,12 +47,20 @@ class adobeAutoSave extends count {
         if this.ms = 0
             this.ms := (5*60000)
 
-        this.ms := 2000
+        this.ms := 10000 ;//! testing variable -- remove
 
+        ;// initialise timer
         super.__New(this.ms)
+
+        ;// defining exit func
+        OnExit(this.__exitFunc.bind(this))
+
         print("timer started for: " this.ms/60000 "min")
-        super.start() ;start the timer
+        ;// start the timer
+        super.start()
     }
+
+    ;// Class Variables
 
     UserSettings := unset
     ms           := 0
@@ -57,29 +76,34 @@ class adobeAutoSave extends count {
     premWindow := unset
     aeWindow   := unset
 
+    idleAttempt := false
+
+    /** determine whether premiere/ae is open */
     __checkforEditors() {
         this.premExist := WinExist(prem.winTitle) ? true : false
         this.aeExist   := WinExist(AE.winTitle)   ? true : false
     }
 
+    /**
+     * check whether the user has recently interacted with their computer
+     * @returns {Boolean} true/false whether the user recently interacted with their pc
+     */
     __checkIdle() {
-        attempt := false
+        if this.idleAttempt = true
+            return
         print("checking idle")
         loop 3 {
-            if (A_TimeIdleKeyboard <= 500) ||
-                ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500) ||
-            GetKeyState("RButton", "P")
-                {
+            if (A_TimeIdleKeyboard <= 500) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500) || GetKeyState("RButton", "P") {
                     tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s", 2.0)
                     sleep 2500
                     continue
                 }
-            attempt := true
+            this.idleAttempt := true
             break
         }
-        return attempt
     }
 
+    /** This function begins the saving process */
     begin() {
         print("checking for editors")
 
@@ -89,17 +113,15 @@ class adobeAutoSave extends count {
         if this.premExist = false && this.aeExist = false
             return
 
-        if !this.__checkIdle()
-            return
+        ;// begin blocking user inputs
+        block.On("SendAndMouse")
 
-        ;// grabbing originally active window
+        ;// grab originally active window
         if !this.__getOrigWindow() {
             this.__reset()
             return
         }
         print("orig window: " this.origWindow)
-
-        ; block.On()
 
         ;// save prem
         if this.premExist = true
@@ -108,10 +130,9 @@ class adobeAutoSave extends count {
         ;// save ae
         if this.aeExist = true
             this.__saveAE()
-
     }
 
-    /** @returns the process ID of the active window */
+    /** @returns {Boolean} true/false on whether it can grab the active window */
     __getOrigWindow() {
         try{
             winget.ID(&id)
@@ -123,6 +144,7 @@ class adobeAutoSave extends count {
         }
     }
 
+    /** backs up all project files in the working directory */
     __backupFiles() {
         if this.filesBackedUp = true
             return
@@ -162,6 +184,7 @@ class adobeAutoSave extends count {
     /**
      * Check for a window containing a class used by windows to denote that a file select/dir select GUI is open (ie. a save window)
      * @param {String} which denotes which application exe to check for. Defaults to `Adobe Premiere Pro` - After Effects would be `AfterFX`
+     * @returns {Boolean} true if the window **doesn't** exist or false if it does
      */
     __checkDialogueClass(which := "Adobe Premiere Pro") {
         if WinExist("ahk_class #32770 ahk_exe " which ".exe") {
@@ -171,12 +194,9 @@ class adobeAutoSave extends count {
         return true
     }
 
+    /** saves premiere */
     __savePrem() {
         print("saveprem started")
-
-        ;// checking if prem is the originally active window
-        if this.origWindow = "Adobe Premiere Pro.exe"
-            this.__checkPremPlayback()
 
         ;// backing up project files
         this.__backupFiles()
@@ -195,10 +215,23 @@ class adobeAutoSave extends count {
         tool.Cust(Format("wintitle: {}`ntitlecheck: {}`nsavecheck: {}", this.premWindow.winTitle, this.premWindow.titleCheck, this.premWindow.saveCheck), 2.0, A_ScreenWidth*.6, A_ScreenHeight*.95)
 
         ;// if save NOT required, exit early
-        if !this.premWindow.saveCheck
+        if !this.premWindow.saveCheck {
+            tool.Cust("save not required, cancelling")
+            return
+        }
+
+        ;// checking idle status
+        this.__checkIdle()
+        if this.idleAttempt = false
             return
 
+        ;// checking if prem is the originally active window
+        if this.origWindow = "Adobe Premiere Pro.exe"
+            this.__checkPremPlayback()
+
         ;// send save
+        if GetKeyState("Shift") || GetKeyState("Shift", "P")
+            SendInput("{Shift Up}")
         ControlSend("{Ctrl Down}s{Ctrl Up}")
 
         ;// waiting for save dialogue to open & close
@@ -211,6 +244,7 @@ class adobeAutoSave extends count {
         ;// then needs proper code to determine how to save - originally it was determined that if the prem window is currently active, using controlsend wouldn't work (seems to work now???)
     }
 
+    /** saves after effects */
     __saveAE() {
         print("saveae started")
 
@@ -219,6 +253,11 @@ class adobeAutoSave extends count {
 
         ;// checking for save dialogue box
         if this.__checkDialogueClass("AfterFX")
+            return
+
+        ;// checking idle status
+        this.__checkIdle()
+        if this.idleAttempt = false
             return
 
         ;// if AE is the active window, a normal save will be fine
@@ -256,22 +295,27 @@ class adobeAutoSave extends count {
     __reactivateWindow() {
         try {
             WinGet.ID(&checkActive)
-            if this.origWindow = checkActive
+            if this.origWindow = checkActive && this.userPlayback = false
                 return
             switch this.origWindow {
                 case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
                 case "Adobe Premiere Pro.exe":
-                    switchTo.Premiere()
+                    if !WinActive(prem.winTitle)
+                        switchTo.Premiere()
                     if this.userPlayback = false
                         return
+                    tool.Cust(this.userPlayback,,-50,,7)
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
                     try {
+                        if !prem.__checkTimeline()
+                            return
+                        sleep 50
+                        prem.__checkTimelineFocus()
                         sleep 250
-                        prem().__checkTimelineFocus()
-                        sleep 100
                         SendEvent(KSA.playStop)
-                        SendEvent(KSA.timelineWindow)
+                        sleep 100
+                        prem.__checkTimelineFocus()
                     }
                 default: WinActivate("ahk_exe " this.origWind)
             }
@@ -289,6 +333,9 @@ class adobeAutoSave extends count {
 
         this.premWindow := unset
         this.aeWindow   := unset
+        this.idleAttempt := false
+        checkstuck()
+        block.Off()
     }
 
     /** This function is called every increment */
@@ -299,8 +346,23 @@ class adobeAutoSave extends count {
         block.Off()
     }
 
+    /** stops the timer */
+    Stop() => super.stop()
+
+    /** defining what happens if the script is somehow opened a second time and is forced to close */
+    __exitFunc(ExitReason, ExitCode) {
+        if (ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error") {
+            this.stop()
+            checkstuck()
+            block.Off()
+        }
+    }
+
     __Delete() {
-        super.stop()
+        try {
+            super.stop()
+        }
+        checkstuck()
         block.Off()
     }
 }

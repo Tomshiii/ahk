@@ -15,6 +15,7 @@
 #Include <Classes\coord>
 #Include <Classes\keys>
 #Include <Classes\obj>
+#Include <Functions\checkStuck>
 #Include <GUIs\Premiere Timeline GUI>
 ; }
 
@@ -78,19 +79,6 @@ class rbuttonPrem {
 		this.timeline10
 	]
 	playhead := 0x2D8CEB ;the colour of the playhead
-
-
-	/**
-	 * This function is to help stop the Ctrl/Shift modifier from getting stuck which can sometimes happen while using this script.
-	 * This function is necessary because some of the hotkeys used in the main method may use the Ctrl(^)/Shift(+) modifiers - if the method is interupted, these modifier can get placed in a "stuck" state where it will remain "pressed"
-	 * You may be able to avoid needing this function by simply using hotkeys that do not use modifiers.
-	 */
-	__checkStuck() {
-		keys.check("XButton1")
-		keys.check("XButton2")
-		keys.check("Ctrl")
-		keys.check("Shift")
-	}
 
 	/** Checks to see whether the colour under the cursor indicates that it's a blank track */
 	__checkForBlank(colour) {
@@ -160,7 +148,7 @@ class rbuttonPrem {
 			{
 				SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 				;The below checks are to ensure no buttons end up stuck
-				this.__checkStuck()
+				checkstuck()
 				return false
 			}
 		return true
@@ -181,7 +169,7 @@ class rbuttonPrem {
 	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "")
 
 	/** A functon to define what should happen anytime the class is closed */
-	__exit() => (this.__HotkeyReset(), this.__resetClicks(), this.__checkStuck(), Exit())
+	__exit() => (this.__HotkeyReset(), this.__resetClicks(), checkstuck(), Exit())
 
 	/**
 	 * Defines what happens when certain buttons are pressed while RButton is held down
@@ -226,7 +214,7 @@ class rbuttonPrem {
 	 */
 	movePlayhead() {
 		if GetKeyState("Ctrl") || GetKeyState("Shift") {
-			this.__checkStuck()
+			checkstuck()
 		}
 		coord.s()
 		origMouse := obj.MousePos()
@@ -245,7 +233,7 @@ class rbuttonPrem {
 		if !this.__checkColour(this.colour) {
 			this.__exit()
 		}
-		prem().__checkTimelineFocus()
+		prem.__checkTimelineFocus()
 		if this.colour = this.playhead {
 			if !this.__checkUnderCursor(this.colour2) {
 				this.__exit()
@@ -257,7 +245,7 @@ class rbuttonPrem {
 		}
 		while GetKeyState("Rbutton", "P") {
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
-				this.__checkStuck()
+				checkstuck()
 				if GetKeyState("Ctrl", "P") { ;you still want to be able to hold shift so you can cut all tracks on the timeline
 					tool.Cust("Holding control while scrubbing will cause Premiere to freak out")
 					break
