@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.10
+;\\v2.32.11
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -462,8 +462,6 @@ RAlt & p::prem.openEditingDir(ptf.EditingStuff)
 PgDn::prem.moveKeyframes("right", 12)
 ;12backHotkey;
 PgUp::prem.moveKeyframes("left", 12)
-
-NumpadSub::return
 
 Numpad1::
 Numpad2::
