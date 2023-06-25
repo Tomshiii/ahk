@@ -1,4 +1,4 @@
-# <> autosave2 changes
+# <> Release 2.11.x - 
 
 ## > Functions
 - `checkStuck()` taken from `Premiere_RightClick()` and separated into its own function file

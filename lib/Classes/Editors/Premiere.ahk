@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
-* @date 2023/06/17
- * @version 1.6.4
+* @date 2023/06/25
+ * @version 1.6.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1260,65 +1260,46 @@ class Prem {
     static gain(amount)
     {
         if !IsNumber(amount) {
-                ;// throw
-                errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
-            }
+            ;// throw
+            errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
+        }
         keys.allWait()
         Critical
         ToolTip("Adjusting Gain")
         block.On()
         coord.s()
-        ClassNN := getClass(&classX, &classY, &width, &height)
-        getClass(&classX, &classY, &width, &height) {
-            try {
-                loop {
-                    this().__fxPanel()
-                    check := winget.Title()
-                    if check = "Audio Gain"
-                        {
-                            SendInput(amount "{Enter}")
-                            ToolTip("")
-                            block.Off()
-                            return -1
-                        }
-                    try {
-                        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-                    } catch as e {
-                        block.Off() ;just incase
-                        tool.Cust("Couldn't get the ClassNN of the desired panel")
-                        errorLog(e)
-                        return false
-                    }
-                    if ClassNN != "DroverLord - Window Class3" || ClassNN != "DroverLord - Window Class1"
-                        break
-                    sleep 30
-                    if A_Index != 100
-                        {
-                            tool.Cust("Waiting for gain window timed out")
-                            block.Off()
-                            return false
-                        }
-                }
+        this().__fxPanel()
+        check := winget.Title()
+        if check = "Audio Gain"
+            {
+                SendInput(amount "{Enter}")
+                ToolTip("")
+                block.Off()
+                return -1
             }
-        }
-        if ClassNN = -1 || !IsSet(ClassNN)
-            return
-        this.__checkTimelineFocus()
         try {
-            if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-                {
-                    SendInput(KSA.timelineWindow KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
-                    goto inputs
-                }
+            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+        } catch as e {
+            block.Off() ;just incase
+            return false
+        }
+        try {
+            if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
+                this().__fxPanel()
+                if !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio.png") && !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio1.png")
+                    return
+            }
         } catch as e {
             ToolTip("")
             block.Off()
-            tool.Cust("ClassNN wasn't given a value")
-            errorLog(e)
+            errorLog(UnsetError("ClassNN wasn't given a value", -1),, 1)
             return
         }
-        inputs:
+        sleep 100
+        this.__checkTimelineFocus()
+        sleep 100
         SendInput(KSA.gainAdjust)
         if !WinWait("Audio Gain",, 3)
             {
