@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.9
+;\\v2.32.10
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -475,8 +475,11 @@ Numpad7::
 Numpad8::
 Numpad9::
 {
+	if WinGet.Title() = "Audio Gain" {
+		SendInput("{" A_ThisHotkey "}")
+		return
+	}
 	numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
-	tool.Cust(numberToSend,,, -50, 5)
 	prem.gain(numberToSend)
 }
 ;---------------------------------------------------------------------------------------------------------------------------------------------
