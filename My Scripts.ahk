@@ -476,7 +476,6 @@ Numpad8::
 Numpad9::
 {
 	numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
-	tool.Cust(numberToSend,,, -50, 5)
 	prem.gain(numberToSend)
 }
 ;---------------------------------------------------------------------------------------------------------------------------------------------
