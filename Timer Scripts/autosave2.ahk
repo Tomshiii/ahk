@@ -47,7 +47,7 @@ class adobeAutoSave extends count {
         if this.ms = 0
             this.ms := (5*60000)
 
-        this.ms := 10000 ;//! testing variable -- remove
+        ; this.ms := 10000 ;//! testing variable -- remove
 
         ;// initialise timer
         super.__New(this.ms)
@@ -58,6 +58,7 @@ class adobeAutoSave extends count {
         print("timer started for: " this.ms/60000 "min")
         ;// start the timer
         super.start()
+        errorLog(Error("!TESTING! -- starting timer"),, 1) ;//! not an error - debugging
     }
 
     ;// Class Variables
@@ -92,6 +93,7 @@ class adobeAutoSave extends count {
         if this.idleAttempt = true
             return
         print("checking idle")
+        errorLog(Error("checking idle"),, 1) ;//! not an error - debugging
         loop 3 {
             if (A_TimeIdleKeyboard <= 500) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500) || GetKeyState("RButton", "P") {
                     tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s", 2.0)
@@ -106,10 +108,12 @@ class adobeAutoSave extends count {
     /** This function begins the saving process */
     begin() {
         print("checking for editors")
+        errorLog(Error("!TESTING! -- checking for editors"),, 1) ;//! not an error - debugging
 
         ;// check for prem/ae
         this.__checkforEditors()
         print(Format("prem:{}`nae:{}", this.premExist, this.aeExist))
+        errorLog(Error(Format("!TESTING! -- prem:{}`nae:{}", this.premExist, this.aeExist)),, 1) ;//! not an error - debugging
         if this.premExist = false && this.aeExist = false
             return
 
@@ -122,6 +126,7 @@ class adobeAutoSave extends count {
             return
         }
         print("orig window: " this.origWindow)
+        errorLog(Error("!TESTING! -- orig window: " this.origWindow),, 1) ;//! not an error - debugging
 
         ;// save prem
         if this.premExist = true
@@ -146,6 +151,7 @@ class adobeAutoSave extends count {
 
     /** backs up all project files in the working directory */
     __backupFiles() {
+        errorLog(Error("!TESTING! -- backing up project files"),, 1) ;//! not an error - debugging
         if this.filesBackedUp = true
             return
         try {
@@ -173,6 +179,7 @@ class adobeAutoSave extends count {
      * *note: this function will only work if the user has their program monitor on their main display*
      */
     __checkPremPlayback() {
+        errorLog(Error("!TESTING! -- checking if playing back on the timeline"),, 1) ;//! not an error - debugging
         ;// if you don't have your project monitor on your main computer monitor this section of code will alwats fail
         if !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "stop.png")
             return
@@ -188,7 +195,7 @@ class adobeAutoSave extends count {
      */
     __checkDialogueClass(which := "Adobe Premiere Pro") {
         if WinExist("ahk_class #32770 ahk_exe " which ".exe") {
-            errorLog(Error(A_ScriptName " save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
+            errorLog(Error("!TESTING! -- save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
             return false
         }
         return true
@@ -197,6 +204,7 @@ class adobeAutoSave extends count {
     /** saves premiere */
     __savePrem() {
         print("saveprem started")
+        errorLog(Error("!TESTING! -- saveprem started"),, 1) ;//! not an error - debugging
 
         ;// backing up project files
         this.__backupFiles()
@@ -212,11 +220,12 @@ class adobeAutoSave extends count {
             return
         }
         print(Format("wintitle: {}`ntitlecheck: {}`nsavecheck: {}", this.premWindow.winTitle, this.premWindow.titleCheck, this.premWindow.saveCheck))
-        tool.Cust(Format("wintitle: {}`ntitlecheck: {}`nsavecheck: {}", this.premWindow.winTitle, this.premWindow.titleCheck, this.premWindow.saveCheck), 2.0, A_ScreenWidth*.6, A_ScreenHeight*.95)
+        errorLog(Error(Format("!TESTING! -- wintitle: {}`ntitlecheck: {}`nsavecheck: {}", this.premWindow.winTitle, this.premWindow.titleCheck, this.premWindow.saveCheck)),, 1) ;//! not an error - debugging
 
         ;// if save NOT required, exit early
         if !this.premWindow.saveCheck {
             tool.Cust("save not required, cancelling")
+            errorLog(Error("!TESTING! -- saving not required, cancelling"),, 1)
             return
         }
 
@@ -233,6 +242,7 @@ class adobeAutoSave extends count {
         if GetKeyState("Shift") || GetKeyState("Shift", "P")
             SendInput("{Shift Up}")
         ControlSend("{Ctrl Down}s{Ctrl Up}")
+        errorLog(Error("!TESTING! -- saving prem"),, 1) ;//! not an error - debugging
 
         ;// waiting for save dialogue to open & close
         if !WinWait("Save Project",, 3)
@@ -247,6 +257,7 @@ class adobeAutoSave extends count {
     /** saves after effects */
     __saveAE() {
         print("saveae started")
+        errorLog(Error("!TESTING! -- saveae started"),, 1) ;//! not an error - debugging
 
         ;// backing up project files
         this.__backupFiles()
@@ -263,6 +274,7 @@ class adobeAutoSave extends count {
         ;// if AE is the active window, a normal save will be fine
         if this.origWindow = WinGetProcessName(editors.AE.winTitle) {
             print("ae original window -- saving")
+            errorLog(Error("!TESTING! -- ae original window -- saving"),, 1) ;//! not an error - debugging
             SendEvent("^s")
             if !WinWait("Save Project",, 3)
                 return
@@ -275,6 +287,7 @@ class adobeAutoSave extends count {
         ;// if AE ISN'T the active window, attempting to save it in the background will force it into the foreground which can be super disorienting/annoying
         ;// so we have to work around that
         print("ae background window -- saving")
+        errorLog(Error("!TESTING! -- ae background window -- saving"),, 1) ;//! not an error - debugging
 
         this.aeWindow := WinGet.AEName()
         WinSetTransparent(0, editors.AE.winTitle)
