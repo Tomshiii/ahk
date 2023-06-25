@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
-* @date 2023/06/17
- * @version 1.6.4
+* @date 2023/06/25
+ * @version 1.6.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -225,7 +225,7 @@ class Prem {
                 MouseMove(eyeX, eyeY - "5")
                 SendInput("{Click Up}")
                 effectbox()
-                this().__checkTimelineFocus()
+                this.__checkTimelineFocus()
                 MouseMove(xpos, ypos)
                 block.Off()
                 return
@@ -233,7 +233,7 @@ class Prem {
         MouseMove(xpos, ypos) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
         SendInput("{Click Up}")
         effectbox() ;this will delete whatever preset it had typed into the find box
-        this().__checkTimelineFocus()
+        this.__checkTimelineFocus()
         block.Off()
         ToolTip("")
     }
@@ -466,7 +466,7 @@ class Prem {
             }
         block.On()
         MouseGetPos(&xpos, &ypos)
-        this().__checkTimelineFocus()
+        this.__checkTimelineFocus()
         if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -594,7 +594,7 @@ class Prem {
             errorLog(e)
             return
         }
-        this().__checkTimelineFocus() ;focuses the timeline
+        this.__checkTimelineFocus() ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             { ;any imagesearches on the effect controls window includes a division variable (KSA.ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -715,7 +715,7 @@ class Prem {
             errorLog(e)
             return
         }
-        this().__checkTimelineFocus() ;focuses the timeline
+        this.__checkTimelineFocus() ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -758,7 +758,7 @@ class Prem {
             errorLog(e)
             return
         }
-        this().__checkTimelineFocus() ;focuses the timeline
+        this.__checkTimelineFocus() ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -786,7 +786,7 @@ class Prem {
        else
             MouseMove(x + 5, y + 5)
         SendInput("{Click}")
-        this().__checkTimelineFocus() ;focuses the timeline
+        this.__checkTimelineFocus() ;focuses the timeline
         MouseMove(xpos, ypos)
         block.Off()
     }
@@ -863,7 +863,7 @@ class Prem {
                 SendInput("{Ctrl Up}") ;// a check to make sure premiere doesn't `insert` the clip
             SendInput("{Click Up}")
             sleep 500
-            ; this().__checkTimelineFocus() ;// the timeline regains focus once the audio clip is dropped on the timeline
+            ; this.__checkTimelineFocus() ;// the timeline regains focus once the audio clip is dropped on the timeline
             colour := PixelGetColor(xpos + 10, ypos)
             if !this.dragColour.Has(colour)
                 break
@@ -974,7 +974,7 @@ class Prem {
     static wheelEditPoint(window, direction, keyswait := "all")
     {
         switch window {
-            case ksa.timelineWindow: this().__checkTimelineFocus()
+            case ksa.timelineWindow: this.__checkTimelineFocus()
             default: SendInput(window) ;focuses the timeline/desired window
         }
         SendInput(direction)
@@ -995,7 +995,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         delaySI(25, KSA.effectControls, KSA.effectControls)
         effectCtrl := obj.ctrlPos()
-        this().__checkTimelineFocus() ;focuses the timeline
+        this.__checkTimelineFocus() ;focuses the timeline
         sleep 25
         if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
@@ -1160,7 +1160,7 @@ class Prem {
             errorLog(e)
             return
         }
-        this().__checkTimelineFocus() ;focuses the timeline
+        this.__checkTimelineFocus() ;focuses the timeline
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -1183,7 +1183,7 @@ class Prem {
                     return
                 }
         }
-        this().__checkTimelineFocus() ;~ check the keyboard shortcut ini file to adjust hotkeys
+        this.__checkTimelineFocus() ;~ check the keyboard shortcut ini file to adjust hotkeys
         if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " ptf.Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
             MouseMove(xcol, ycol)
         SendInput("{Click}")
@@ -1212,7 +1212,7 @@ class Prem {
             errorLog(e)
             return
         }
-        this().__checkTimelineFocus()
+        this.__checkTimelineFocus()
         if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -1260,65 +1260,46 @@ class Prem {
     static gain(amount)
     {
         if !IsNumber(amount) {
-                ;// throw
-                errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
-            }
+            ;// throw
+            errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
+        }
         keys.allWait()
         Critical
         ToolTip("Adjusting Gain")
         block.On()
         coord.s()
-        ClassNN := getClass(&classX, &classY, &width, &height)
-        getClass(&classX, &classY, &width, &height) {
-            try {
-                loop {
-                    this().__fxPanel()
-                    check := winget.Title()
-                    if check = "Audio Gain"
-                        {
-                            SendInput(amount "{Enter}")
-                            ToolTip("")
-                            block.Off()
-                            return -1
-                        }
-                    try {
-                        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-                        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-                    } catch as e {
-                        block.Off() ;just incase
-                        tool.Cust("Couldn't get the ClassNN of the desired panel")
-                        errorLog(e)
-                        return false
-                    }
-                    if ClassNN != "DroverLord - Window Class3" || ClassNN != "DroverLord - Window Class1"
-                        break
-                    sleep 30
-                    if A_Index != 100
-                        {
-                            tool.Cust("Waiting for gain window timed out")
-                            block.Off()
-                            return false
-                        }
-                }
+        this().__fxPanel()
+        check := winget.Title()
+        if check = "Audio Gain"
+            {
+                SendInput(amount "{Enter}")
+                ToolTip("")
+                block.Off()
+                return -1
             }
-        }
-        if ClassNN = -1 || !IsSet(ClassNN)
-            return
-        this().__checkTimelineFocus()
         try {
-            if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-                {
-                    SendInput(KSA.timelineWindow KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
-                    goto inputs
-                }
+            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+        } catch as e {
+            block.Off() ;just incase
+            return false
+        }
+        try {
+            if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
+                this().__fxPanel()
+                if !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio.png") && !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio1.png")
+                    return
+            }
         } catch as e {
             ToolTip("")
             block.Off()
-            tool.Cust("ClassNN wasn't given a value")
-            errorLog(e)
+            errorLog(UnsetError("ClassNN wasn't given a value", -1),, 1)
             return
         }
-        inputs:
+        sleep 100
+        this.__checkTimelineFocus()
+        sleep 100
         SendInput(KSA.gainAdjust)
         if !WinWait("Audio Gain",, 3)
             {
@@ -1333,7 +1314,7 @@ class Prem {
     }
 
     /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
-	__checkTimelineFocus() {
+	static __checkTimelineFocus() {
 		if prem.focusTimelineStatus != true
             return
         check := prem.timelineFocusStatus()
@@ -1406,7 +1387,7 @@ class Prem {
                     Exit()
                 }
             ; click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-            this().__checkTimelineFocus()
+            this.__checkTimelineFocus()
             SendInput(premtool "{LButton Down}")
             if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
                 KeyWait(A_ThisHotkey, "T5")

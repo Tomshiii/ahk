@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.8
+;\\v2.32.9
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -462,6 +462,23 @@ RAlt & p::prem.openEditingDir(ptf.EditingStuff)
 PgDn::prem.moveKeyframes("right", 12)
 ;12backHotkey;
 PgUp::prem.moveKeyframes("left", 12)
+
+NumpadSub::return
+
+Numpad1::
+Numpad2::
+Numpad3::
+Numpad4::
+Numpad5::
+Numpad6::
+Numpad7::
+Numpad8::
+Numpad9::
+{
+	numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
+	tool.Cust(numberToSend,,, -50, 5)
+	prem.gain(numberToSend)
+}
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
