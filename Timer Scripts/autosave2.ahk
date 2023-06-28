@@ -85,56 +85,24 @@ class adobeAutoSave extends count {
         this.aeExist   := WinExist(AE.winTitle)   ? true : false
     }
 
-    /**
-     * check whether the user has recently interacted with their computer
-     * @returns {Boolean} true/false whether the user recently interacted with their pc
-     */
+    /** check whether the user has recently interacted with their computer */
     __checkIdle() {
         if this.idleAttempt = true
             return
         print("checking idle")
-        errorLog(Error("checking idle"),, 1) ;//! not an error - debugging
-        loop 3 {
+        errorLog(Error("checking idle -- A_PriorKey = " A_PriorKey),, 1) ;//! not an error - debugging
+        loop 5 {
+            ;// if the user has interacted with the keyboard recently
+            ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
+            ;// the save attempt will be paused and retried
             if (A_TimeIdleKeyboard <= 500) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500) || GetKeyState("RButton", "P") {
-                    tool.Cust(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s", 2.0)
-                    sleep 2500
-                    continue
-                }
+                errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s"),, {time: 2.0})
+                sleep 2500
+                continue
+            }
             this.idleAttempt := true
             break
         }
-    }
-
-    /** This function begins the saving process */
-    begin() {
-        print("checking for editors")
-        errorLog(Error("!TESTING! -- checking for editors"),, 1) ;//! not an error - debugging
-
-        ;// check for prem/ae
-        this.__checkforEditors()
-        print(Format("prem:{}`nae:{}", this.premExist, this.aeExist))
-        errorLog(Error(Format("!TESTING! -- prem:{}`nae:{}", this.premExist, this.aeExist)),, 1) ;//! not an error - debugging
-        if this.premExist = false && this.aeExist = false
-            return
-
-        ;// begin blocking user inputs
-        block.On("SendAndMouse")
-
-        ;// grab originally active window
-        if !this.__getOrigWindow() {
-            this.__reset()
-            return
-        }
-        print("orig window: " this.origWindow)
-        errorLog(Error("!TESTING! -- orig window: " this.origWindow),, 1) ;//! not an error - debugging
-
-        ;// save prem
-        if this.premExist = true
-            this.__savePrem()
-
-        ;// save ae
-        if this.aeExist = true
-            this.__saveAE()
     }
 
     /** @returns {Boolean} true/false on whether it can grab the active window */
@@ -199,6 +167,39 @@ class adobeAutoSave extends count {
             return false
         }
         return true
+    }
+
+    /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
+    __reactivateWindow() {
+        try {
+            WinGet.ID(&checkActive)
+            if this.origWindow = checkActive && this.userPlayback = false
+                return
+            switch this.origWindow {
+                case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
+                case "Adobe Premiere Pro.exe":
+                    if !WinActive(prem.winTitle)
+                        switchTo.Premiere()
+                    if this.userPlayback = false
+                        return
+                    ;// if the user was originally playing back on the timeline
+                    ;// we resume that playback here
+                    try {
+                        if !prem.__checkTimeline()
+                            return
+                        sleep 50
+                        prem.__checkTimelineFocus()
+                        sleep 250
+                        SendEvent(KSA.playStop)
+                        sleep 100
+                        prem.__checkTimelineFocus()
+                    }
+                default: WinActivate("ahk_exe " this.origWind)
+            }
+        } catch {
+            errorLog(TargetError("Couldn't determine the active window"),, 1)
+            return
+        }
     }
 
     /** saves premiere */
@@ -304,38 +305,36 @@ class adobeAutoSave extends count {
         }
     }
 
-    /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
-    __reactivateWindow() {
-        try {
-            WinGet.ID(&checkActive)
-            if this.origWindow = checkActive && this.userPlayback = false
-                return
-            switch this.origWindow {
-                case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
-                case "Adobe Premiere Pro.exe":
-                    if !WinActive(prem.winTitle)
-                        switchTo.Premiere()
-                    if this.userPlayback = false
-                        return
-                    tool.Cust(this.userPlayback,,-50,,7)
-                    ;// if the user was originally playing back on the timeline
-                    ;// we resume that playback here
-                    try {
-                        if !prem.__checkTimeline()
-                            return
-                        sleep 50
-                        prem.__checkTimelineFocus()
-                        sleep 250
-                        SendEvent(KSA.playStop)
-                        sleep 100
-                        prem.__checkTimelineFocus()
-                    }
-                default: WinActivate("ahk_exe " this.origWind)
-            }
-        } catch {
-            errorLog(TargetError("Couldn't determine the active window"),, 1)
+    /** This function begins the saving process */
+    begin() {
+        print("checking for editors")
+        errorLog(Error("!TESTING! -- checking for editors"),, 1) ;//! not an error - debugging
+
+        ;// check for prem/ae
+        this.__checkforEditors()
+        print(Format("prem:{}`nae:{}", this.premExist, this.aeExist))
+        errorLog(Error(Format("!TESTING! -- prem:{}`nae:{}", this.premExist, this.aeExist)),, 1) ;//! not an error - debugging
+        if this.premExist = false && this.aeExist = false
+            return
+
+        ;// begin blocking user inputs
+        block.On("SendAndMouse")
+
+        ;// grab originally active window
+        if !this.__getOrigWindow() {
+            this.__reset()
             return
         }
+        print("orig window: " this.origWindow)
+        errorLog(Error("!TESTING! -- orig window: " this.origWindow),, 1) ;//! not an error - debugging
+
+        ;// save prem
+        if this.premExist = true
+            this.__savePrem()
+
+        ;// save ae
+        if this.aeExist = true
+            this.__saveAE()
     }
 
     /** resets all internal variables */

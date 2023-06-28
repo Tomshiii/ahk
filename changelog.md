@@ -1,5 +1,6 @@
 # <> Release 2.11.x - New autosave.ahk
-`autosave.ahk` has been rewritten from the ground up to follow cleaner code patterns allowing for easier expandability, easier debugging and allowing the script to do what it's designed to do and not encounter issue after issue as more and more responsibilities got attached to the one script.
+`autosave.ahk` has been rewritten from the ground up to follow cleaner code patterns allowing for easier expandability, easier debugging and allowing the script to do what it's designed to do and not encounter issue after issue as more and more responsibilities got attached to the one script.  
+The purpose of this update is to smooth out the experience of using the script and allow it to do what it was always supposed to do; do it's thing in the background without interupting the user.
 
 ## > Functions
 - `checkStuck()` taken from `Premiere_RightClick()` and separated into its own function file
