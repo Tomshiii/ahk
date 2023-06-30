@@ -2,8 +2,8 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi
-* @date 2023/06/25
- * @version 1.6.6
+* @date 2023/06/30
+ * @version 1.6.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1313,6 +1313,19 @@ class Prem {
         block.Off()
         return true
     }
+
+    /** This function once bound to `Numpad1-9` allows the user to quickly adjust the gain of a selected track by simply pressing `NumpadSub/NumpadAdd` then their desired value */
+    static numpadGain() {
+		title := WinGet.Title()
+		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 {
+			SendInput("{" A_ThisHotkey "}")
+			return
+		}
+		if A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd"
+			return
+		numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
+		prem.gain(numberToSend)
+	}
 
     /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
 	static __checkTimelineFocus() {
