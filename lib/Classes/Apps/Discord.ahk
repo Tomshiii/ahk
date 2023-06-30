@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2023/04/18
- * @version 1.4.5
+ * @date 2023/06/30
+ * @version 1.4.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,7 +13,7 @@
 #Include <Classes\tool>
 #Include <Classes\clip>
 #Include <Classes\keys>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\checkImg>
 #Include <Functions\change_msgButton>
 ; }

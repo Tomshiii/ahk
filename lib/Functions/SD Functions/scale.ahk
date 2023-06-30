@@ -4,7 +4,7 @@
 #Include <Classes\block>
 #Include <Classes\coord>
 #Include <Classes\tool>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Classes\keys>
 ; }
 

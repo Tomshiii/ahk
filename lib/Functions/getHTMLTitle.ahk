@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\errorLog>
 #Include <Functions\getHTML>
 ; }
 

@@ -1,6 +1,6 @@
 ; { \\ #Includes
 #Include <Functions\getHotkeys>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 /**

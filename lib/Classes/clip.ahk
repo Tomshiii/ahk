@@ -1,12 +1,12 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
- * @date 2023/01/18
- * @version 1.0.4
+ * @date 2023/06/30
+ * @version 1.0.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 class clip {

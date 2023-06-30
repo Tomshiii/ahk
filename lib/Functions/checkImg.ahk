@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 /**

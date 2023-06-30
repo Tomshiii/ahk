@@ -4,7 +4,7 @@
 #Include <Classes\block>
 #Include <Classes\ptf>
 #Include <Classes\winget>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <QMK\unassigned>
 
 BackSpace & SC027::prem.keyframe("position")

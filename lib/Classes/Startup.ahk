@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/04/15
- * @version 1.6.7
+ * @date 2023/06/30
+ * @version 1.6.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,7 +18,7 @@
 #Include <Classes\keys>
 #Include <Classes\Mip>
 #Include <Classes\reset>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
 #Include <Functions\isReload>

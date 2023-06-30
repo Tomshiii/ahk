@@ -6,9 +6,9 @@ The purpose of this update is to smooth out the experience of using the script a
 - Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.5` and beyond. Code added from this release forward is no longer guaranteed to work on versions `v22.3.1(prem)/v22.6(ae)` as testing will now be conducted on newer releases of the program(s). There shouldn't be much in the way of inconsistencies for the foreseeable future but this is the offical cutoff point.
 
 ## > Functions
-- `winget.PremName/AEName()` now returns `-1` on failure instead of `unset`
+- `winget.PremName()/AEName()` now returns `-1` on failure instead of `unset`
 
-`Premiere_RightClick()`
+`Premiere_RightClick.ahk`
 - Fix script stalling if the user attempts to right click anywhere other than the timeline while its coordinates haven't been set
 - `checkStuck()` taken out and separated into its own function file
 
@@ -21,3 +21,4 @@ The purpose of this update is to smooth out the experience of using the script a
 
 ## > Other Changes
 - Added `render and replace.ahk`
+- `errorLog()` is now a `class` to allow for cleaner code and easier expandability

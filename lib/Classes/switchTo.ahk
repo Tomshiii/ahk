@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/05/08
- * @version 1.2.4
+ * @date 2023/06/30
+ * @version 1.2.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -17,9 +17,9 @@
 #Include <Classes\Editors\Photoshop>
 #Include <Classes\keys>
 #Include <Classes\winget>
+#Include <Classes\errorLog>
 ;funcs
 #Include <Functions\getHotkeys>
-#Include <Functions\errorLog>
 ; }
 
 class switchTo {

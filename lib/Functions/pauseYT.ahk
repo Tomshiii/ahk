@@ -2,6 +2,7 @@
 #Include <Classes\coord>
 #Include <Classes\winget>
 #Include <Classes\switchTo>
+#Include <Classes\errorLog>
 ; }
 
 /**

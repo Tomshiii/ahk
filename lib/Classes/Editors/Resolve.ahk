@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Tested on and designed for v18.0.4 of Resolve
  * @author tomshi
- * @date 2023/02/15
- * @version 1.5.0
+ * @date 2023/06/30
+ * @version 1.5.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,7 +16,7 @@
 #Include <Classes\clip>
 #Include <Classes\obj>
 #Include <Classes\keys>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\getHotkeys>
 ; }
 

@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.12
+;\\v2.32.12.1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -34,7 +34,7 @@
 #Include <Classes\clip>
 #Include <Classes\reset>
 #Include <Classes\keys>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\mouseDrag>
 #Include <Functions\getLocalVer>
 #Include <Functions\fastWheel>

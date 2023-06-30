@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/06/16
- * @version 1.0.4
+ * @date 2023/06/30
+ * @version 1.0.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,7 +10,7 @@
 #Include <Classes\cmd>
 #Include <Classes\obj>
 #Include <Classes\winGet>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 class ffmpeg {

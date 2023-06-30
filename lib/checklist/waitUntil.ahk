@@ -3,8 +3,8 @@
 #Include <Classes\winGet>
 #Include <Classes\tool>
 #Include <Classes\block>
+#Include <Classes\errorLog>
 #Include <Functions\detect>
-#Include <Functions\errorLog>
 ; }
 
 SetTimer(waitUntil, -1000)

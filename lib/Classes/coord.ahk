@@ -1,13 +1,13 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2023/02/20
- * @version 1.2.5
+ * @date 2023/06/30
+ * @version 1.2.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\Mip>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 class coord {

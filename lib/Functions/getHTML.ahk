@@ -1,7 +1,7 @@
 ; { \\ #Includes
-#Include <Functions\checkInternet>
 #Include <Classes\tool>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
+#Include <Functions\checkInternet>
 ; }
 
 /**

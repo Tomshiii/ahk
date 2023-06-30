@@ -3,7 +3,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\block>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 /**

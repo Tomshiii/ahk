@@ -5,7 +5,7 @@
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\obj>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\trayShortcut>
 #Include <Classes\keys>
 ; }

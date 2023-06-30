@@ -1,7 +1,7 @@
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\tool>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 /**

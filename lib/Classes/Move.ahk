@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2023/03/11
- * @version 1.2.4
+ * @date 2023/06/30
+ * @version 1.2.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,7 +12,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\winGet>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 class Move {

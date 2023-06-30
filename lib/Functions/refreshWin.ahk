@@ -2,7 +2,7 @@
 #Include <Classes\coord>
 #Include <Classes\tool>
 #Include <Classes\winget>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 /**

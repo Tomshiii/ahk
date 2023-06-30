@@ -19,10 +19,9 @@ ListLines(0)
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\winget>
-#Include <Classes\switchTo>
 #Include <Classes\WM>
 #Include <Classes\timer>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\trayShortcut>
 #Include <Functions\checkStuck>
 
@@ -353,8 +352,8 @@ class adobeAutoSave extends count {
 
     /** resets all internal variables */
     __reset() {
-        this.count := 0,             this.origWindow := ""
-        this.premExist := false,     this.aeExist   := false
+        this.count := 0,             this.origWindow := "",
+        this.premExist := false,     this.aeExist   := false,
         this.userPlayback  := false, this.filesBackedUp := false
 
         this.premWindow  := unset
@@ -366,8 +365,15 @@ class adobeAutoSave extends count {
 
     /** This function is called every increment */
     Tick() {
+        ;// start the saving process
         this.begin()
-        this.__reactivateWindow()
+
+        ;// if the above function got to the point that it was able to determine an active window and has been set
+        ;// attempt to reactivate it
+        if this.origWindow != ""
+            this.__reactivateWindow()
+
+        ;// finish up
         this.__reset()
         block.Off()
     }

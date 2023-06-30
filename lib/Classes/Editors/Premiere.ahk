@@ -5,7 +5,7 @@
  * @premVer 23.5
  * @author tomshi
  * @date 2023/06/30
- * @version 1.6.7
+ * @version 1.6.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,7 +19,7 @@
 #Include <Classes\keys>
 #Include <Classes\switchTo>
 #Include <Classes\clip>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
 ; }

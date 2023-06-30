@@ -14,8 +14,8 @@ KeyHistory(0)
 #Include <Classes\switchTo>
 #Include <Classes\WM>
 #Include <Classes\Editors\Premiere>
+#Include <Classes\errorLog>
 #Include <Functions\detect>
-#Include <Functions\errorLog>
 #Include <Functions\trayShortcut>
 ; }
 

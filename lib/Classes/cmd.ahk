@@ -2,12 +2,12 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2023/06/19
- * @version 1.0.2
+ * @date 2023/06/30
+ * @version 1.0.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 class cmd {

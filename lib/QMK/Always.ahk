@@ -3,7 +3,7 @@
 #Include <Classes\ptf>
 #Include <Classes\winget>
 #Include <Classes\obj>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\detect>
 #Include <GUIs\musicGUI>
 

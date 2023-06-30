@@ -9,7 +9,7 @@ KeyHistory(0)
 #Include <Classes\winget>
 #Include <Classes\timer>
 #Include <Classes\WM>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\trayShortcut>
 ; }
 

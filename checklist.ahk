@@ -6,8 +6,8 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\block>
+#Include <Classes\errorLog>
 #Include <Functions\floorDecimal>
-#Include <Functions\errorLog>
 #Include <Functions\detect>
 #Include <Functions\isReload>
 #Include <Functions\change_msgButton>
@@ -32,7 +32,7 @@ startupTray()
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.12.7"
+version := "v2.12.7.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 

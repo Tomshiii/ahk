@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/02/15
- * @version 1.2.1
+ * @date 2023/06/30
+ * @version 1.2.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,7 +12,7 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\keys>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
 ; }

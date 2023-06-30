@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/06/15
- * @version 1.0.3
+ * @date 2023/06/30
+ * @version 1.0.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,7 +11,7 @@
 #Include <Classes\ffmpeg>
 #Include <Classes\clip>
 #Include <Classes\obj>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\getHTMLTitle>
 ; }
 

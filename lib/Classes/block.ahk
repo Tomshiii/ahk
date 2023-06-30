@@ -1,14 +1,14 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2023/04/01
- * @version 1.3.5
+ * @date 2023/06/30
+ * @version 1.3.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\Settings>
 #Include <Classes\Mip>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 ; }
 
 

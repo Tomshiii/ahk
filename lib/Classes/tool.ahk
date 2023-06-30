@@ -1,13 +1,13 @@
 /************************************************************************
  * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2023/04/07
- * @version 1.2
+ * @date 2023/06/30
+ * @version 1.2.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\coord>
-#Include <Functions\errorLog>
+#Include <Classes\errorLog>
 #Include <Functions\detect>
 ; }
 

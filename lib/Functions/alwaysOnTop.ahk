@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <Classes\errorLog>
+; }
+
 /**
  * This function will toggle the desired window (the active window by default) and attempt to draw an orange border around it (`win11` only)
  */

@@ -7,6 +7,7 @@
  ***********************************************************************/
 
 ; { \\ #Includes
+#Include <Classes\errorLog>
 #Include <Functions\checkImg>
 ; }
 
