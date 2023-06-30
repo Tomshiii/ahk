@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
  * @author tomshi, taranVH
- * @date 2023/06/15
- * @version 2.0.9
+ * @date 2023/06/30
+ * @version 2.0.10
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -213,27 +213,47 @@ class rbuttonPrem {
 	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details
 	 */
 	movePlayhead() {
+		;// check for stuck keys
 		if GetKeyState("Ctrl") || GetKeyState("Shift") {
 			checkstuck()
 		}
+
+		;// set coord mode and grab the cursor position
 		coord.s()
 		origMouse := obj.MousePos()
+
+		;// set what `LButton` & `XButton2` do
 		this.__HotkeySet(["LButton", "XButton2"])
-		if !prem.__checkTimeline()
+
+		;// checks to see whether the timeline position has been located
+		if !prem.__checkTimeline() {
+			SendInput("{Rbutton}")
 			this.__exit()
+		}
+
+		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
+		;// only continues if the cursor is within the timeline
 		if !prem.__checkCoords(origMouse) {
 			SendInput("{Rbutton}")
 			this.__exit()
 		}
+
+		;// checks the colour at the mouse cursor and then determines whether the track is blank
 		this.__setColours(origMouse)
 		if this.__checkForBlank(this.colour) {
 			SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
 			this.__exit()
 		}
+
+		;// checks to see if the colour under the cursor is one already defined within the class
 		if !this.__checkColour(this.colour) {
 			this.__exit()
 		}
+
+		;// check whether the timeline is already in focus & focuses it if it isn't
 		prem.__checkTimelineFocus()
+
+		;// determines the position of the playhead
 		if this.colour = this.playhead {
 			if !this.__checkUnderCursor(this.colour2) {
 				this.__exit()
@@ -243,6 +263,8 @@ class rbuttonPrem {
 		if !this.__checkForTap() {
 			this.__exit()
 		}
+
+		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
 		while GetKeyState("Rbutton", "P") {
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
 				checkstuck()
@@ -255,7 +277,11 @@ class rbuttonPrem {
 				SendInput(ksa.playheadtoCursor)
 			sleep 16
 		}
+
+		;// resets `LButton` & `XButton2` to their original function
 		this.__HotkeyReset()
+
+		;// determines whether to resume playback & how fast to playback
 		if this.colourOrNorm = "colour" {
 			SendInput("{LButton Up}")
 		}
@@ -264,6 +290,8 @@ class rbuttonPrem {
 		}
 		if this.leftClick
 			this.__restartPlayback()
+
+		;// cleans up
 		this.__exit()
 	}
 
