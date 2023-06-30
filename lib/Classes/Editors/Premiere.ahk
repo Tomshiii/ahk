@@ -1,9 +1,11 @@
 /************************************************************************
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
- * Tested on and designed for v22.3.1 of Premiere. Believed to mostly work within v23+
+ * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 slowly began moving workflow to v23.5+
+ * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
+ * @premVer 23.5
  * @author tomshi
-* @date 2023/06/25
- * @version 1.6.5
+ * @date 2023/06/30
+ * @version 1.6.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1265,7 +1267,7 @@ class Prem {
         }
         keys.allWait()
         Critical
-        ToolTip("Adjusting Gain")
+        tool.Cust("Adjusting Gain", 0.5)
         block.On()
         coord.s()
         this().__fxPanel()
@@ -1273,14 +1275,14 @@ class Prem {
         if check = "Audio Gain"
             {
                 SendInput(amount "{Enter}")
-                ToolTip("")
                 block.Off()
                 return -1
             }
         try {
             ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
+        } catch {
+            errorLog(UnsetError("Couldn't find the ClassNN value of the Effect Controls window", -1),, 1)
             block.Off() ;just incase
             return false
         }
@@ -1288,11 +1290,12 @@ class Prem {
             if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                 delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                 this().__fxPanel()
-                if !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio.png") && !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio1.png")
-                    return
+                if !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio.png") && !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio1.png") {
+                    block.Off() ;just incase
+                    return false
+                }
             }
-        } catch as e {
-            ToolTip("")
+        } catch {
             block.Off()
             errorLog(UnsetError("ClassNN wasn't given a value", -1),, 1)
             return
@@ -1305,19 +1308,32 @@ class Prem {
             {
                 tool.Cust("Waiting for gain window timed out")
                 block.Off()
-                return
+                return false
             }
         SendInput("+{Tab}{UP 3}{DOWN}{TAB}" amount "{ENTER}")
         WinWaitClose("Audio Gain")
         block.Off()
-        ToolTip("")
+        return true
     }
+
+    /** This function once bound to `Numpad1-9` allows the user to quickly adjust the gain of a selected track by simply pressing `NumpadSub/NumpadAdd` then their desired value */
+    static numpadGain() {
+		title := WinGet.Title()
+		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 {
+			SendInput("{" A_ThisHotkey "}")
+			return
+		}
+		if A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd"
+			return
+		numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
+		prem.gain(numberToSend)
+	}
 
     /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
 	static __checkTimelineFocus() {
-		if prem.focusTimelineStatus != true
+		if this.focusTimelineStatus != true
             return
-        check := prem.timelineFocusStatus()
+        check := this.timelineFocusStatus()
         if check != false
             return
         sleep 1
@@ -1329,9 +1345,9 @@ class Prem {
 	 * Toggling this can help scenarios where the user has multiple sequences open and the main function would otherwise start cycling between them
 	 */
 	__toggleTimelineFocus() {
-		which := (prem.focusTimelineStatus = true) ? "disabled" : "enabled"
+		which := (this.focusTimelineStatus = true) ? "disabled" : "enabled"
 		tool.Cust(Format("Timeline focusing is now {}.", which), 2000)
-		prem.focusTimelineStatus := !prem.focusTimelineStatus
+		this.focusTimelineStatus := !this.focusTimelineStatus
 	}
 
     /**
@@ -1420,32 +1436,30 @@ class Prem {
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
      */
     static getTimeline() {
+        if WinGetClass("A") = "DroverLord - Window Class" ;// if you're focused on a window that isn't the main premiere window, controlgetclassnn will retrieve different values
+            switchTo.Premiere() ;// so we have to bring focus back to the main window first
+        SendInput(KSA.timelineWindow)
+        SendInput(KSA.timelineWindow)
+        sleep 75
         try {
-            if WinGetClass("A") = "DroverLord - Window Class" ;// if you're focused on a window that isn't the main premiere window, controlgetclassnn will retrieve different values
-                switchTo.Premiere() ;// so we have to bring focus back to the main window first
-            SendInput(KSA.timelineWindow)
-            SendInput(KSA.timelineWindow)
-            sleep 75
             effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
             ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
-            this.timelineRawX := x, this.timelineRawY := y
-            this.timelineXValue := x + width - 22 ;accounting for the scroll bars on the right side of the timeline
-            this.timelineYValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
-            this.timelineXControl := x + 236 ;accounting for the column to the left of the timeline
-            this.timelineYControl := y + height + 40 ;accounting for the scroll bars at the bottom of the timeline
-            SetTimer(tools, -100)
-            return true
-            tools() {
-                tool.Wait()
-                script := obj.SplitPath(A_LineFile)
-                tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 2.0)
-                tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0,, 30, 2)
-            }
-        } catch as e {
-            tool.Wait()
-            tool.Cust("Couldn't find the ClassNN value")
-            errorLog(e)
+        } catch {
+            errorLog(UnsetError("Couldn't find the ClassNN value of the Timeline", -1),, 1)
             return false
+        }
+        this.timelineRawX := x, this.timelineRawY := y
+        this.timelineXValue := x + width - 22 ;accounting for the scroll bars on the right side of the timeline
+        this.timelineYValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
+        this.timelineXControl := x + 236 ;accounting for the column to the left of the timeline
+        this.timelineYControl := y + height + 40 ;accounting for the scroll bars at the bottom of the timeline
+        SetTimer(tools, -100)
+        return true
+        tools() {
+            tool.Wait()
+            script := obj.SplitPath(A_LineFile)
+            tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 2.0)
+            tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0,, 30, 2)
         }
     }
 

@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.10
+;\\v2.32.12
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -463,8 +463,7 @@ PgDn::prem.moveKeyframes("right", 12)
 ;12backHotkey;
 PgUp::prem.moveKeyframes("left", 12)
 
-NumpadSub::return
-
+;premnumpadGainHotkey;
 Numpad1::
 Numpad2::
 Numpad3::
@@ -473,15 +472,8 @@ Numpad5::
 Numpad6::
 Numpad7::
 Numpad8::
-Numpad9::
-{
-	if WinGet.Title() = "Audio Gain" {
-		SendInput("{" A_ThisHotkey "}")
-		return
-	}
-	numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
-	prem.gain(numberToSend)
-}
+Numpad9::prem.numpadGain()
+
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts

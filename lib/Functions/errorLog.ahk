@@ -1,9 +1,10 @@
 ; { \\ #Includes
 #Include <Classes\Settings>
 #Include <Classes\obj>
+#Include <Classes\ptf>
+#Include *i <Other\print>
 #Include <Functions\getScriptRelease>
 #Include <Functions\checkInternet>
-#Include <Classes\ptf>
 ; }
 
 /**
@@ -115,6 +116,9 @@ errorLog(err, optMessage?, toolCust := false, doThrow := false) {
     ;// append the error and send to the debug stream
     FileAppend(append, ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
     OutputDebug(Trim(append, "``"))
+    try {
+        print(append)
+    }
     ;// if optMessage has been set, append it as an error and send it to the debug stream
     if IsSet(optMessage)
         {
