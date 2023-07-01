@@ -27,6 +27,7 @@ DirCreate(SelectedFolder "\audio") ;creates an audio folder if there isn't one a
 DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
 DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
 DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
+DirCreate(SelectedFolder "\_project files") ;creates a folder to render the final into
 
 ;// Getting the name of the project folder to use as a default for the below inputbox
 SplitPath(SelectedFolder, &default)
@@ -45,11 +46,14 @@ loop files ptf["premTemp"] "\*.prproj", "F" {
 }
 if count > 1 {
     chosenFile := FileSelect("2", ptf["premTemp"], "Select the desired Project Template.", "Premiere Project File (*.prproj)")
-    if chosenFile = ""
+    if chosenFile = "" {
+        pause.pause("autosave")
+        pause.pause("adobe fullscreen check")
         return
+    }
 }
-FileCopy(chosenFile, SelectedFolder "\" IB.Value ".prproj")
-Run(prem.path A_Space '"' SelectedFolder "\" IB.Value ".prproj" '"')
+FileCopy(chosenFile, SelectedFolder "\_project files\" IB.Value ".prproj")
+Run(prem.path A_Space '"' SelectedFolder "\_project files\" IB.Value ".prproj" '"')
 if !WinWait("Open Project",, 20)
     {
         check := MsgBox("Script didn't encounter Open Project window, can the script proceed?", "Check", "4 32 4096")

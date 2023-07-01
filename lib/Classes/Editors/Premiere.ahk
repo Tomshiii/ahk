@@ -5,7 +5,7 @@
  * @premVer 23.5
  * @author tomshi
  * @date 2023/07/01
- * @version 1.6.8
+ * @version 1.6.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1329,13 +1329,19 @@ class Prem {
 
     /** This function once bound to `Numpad1-9` allows the user to quickly adjust the gain of a selected track by simply pressing `NumpadSub/NumpadAdd` then their desired value */
     static numpadGain() {
+        if this.timelineVals = false {
+            this.__checkTimeline()
+            return
+        }
 		title := WinGet.Title()
 		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 {
 			SendInput("{" A_ThisHotkey "}")
 			return
 		}
-		if A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd"
+		if A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd" {
+            SendInput("{" A_ThisHotkey "}")
 			return
+        }
 		numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
 		prem.gain(numberToSend)
 	}
