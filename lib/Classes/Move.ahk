@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2023/06/30
- * @version 1.2.4.1
+ * @date 2023/07/01
+ * @version 1.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,9 @@
 #Include <Classes\tool>
 #Include <Classes\winGet>
 #Include <Classes\errorLog>
+#Include <Classes\switchTo>
+#Include <Classes\keys>
+#Include <Functions\getHotkeys>
 ; }
 
 class Move {
@@ -161,9 +164,9 @@ class Move {
         if monitor.monitor != 2 && monitor.monitor != 4 ;I only want this function to cycle between monitors 2 & 4
             monitor.monitor := 2 ;so I'll set the monitor number to one of the two I wish it to cycle between
         if monitor.monitor = 4
-            MouseMove(4288, -911, 2) ;if the mouse is within monitor 4, it will move it to monitor 2
+            MouseMove(4288, -911, 4) ;if the mouse is within monitor 4, it will move it to monitor 2
         if monitor.monitor = 2
-            MouseMove(4288, 164, 2) ;if the mouse is within monitor 2, it will move it to monitor 4
+            MouseMove(4288, 182, 4) ;if the mouse is within monitor 2, it will move it to monitor 4
         block.Off()
         KeyWait(A_ThisHotkey)
         thisHotkey := A_ThisHotkey ;determining which XButton the user is currently using to activate the function
@@ -174,7 +177,19 @@ class Move {
         loop 40 { ;this loop will check for 2s if the user has released the RButton, if they have, it will drop the tab and finish the function
             if !GetKeyState("RButton", "P")
                 {
-                    SendInput("{LButton}")
+                    try {
+                        ;// at some point firefox changed (or windows idk) so that if you try to drag a tab onto another window, it just might not work
+                        ;// so here we're checking for a window under the cursor and minimising it if there's one there
+                        cursor := obj.MousePos()
+                        orig := WinGetTitle(WinActive("A"))
+                        titleUnder := WinGetTitle("ahk_id " cursor.win)
+                        classUnder := WinGetClass("ahk_id " cursor.win)
+                        if orig != titleUnder && classUnder != "tooltips_class32" && "ahk_class " classUnder != browser.Firefox.class && classUnder != "Progman" {
+                            WinMinimize(titleUnder)
+                            tool.Cust("A window was minimised so that firefox would move its window`nWindow: " titleUnder, 3.0)
+                        }
+                    }
+                    SendInput("{LButton Up}")
                     break
                 }
             if GetKeyState(A_ThisHotkey, "P") ;these two getkeystates are to allow the user to reactivate the function without waiting the 2s

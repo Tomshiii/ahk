@@ -67,7 +67,8 @@ class adobeTimer extends count {
      * @param {String} progName the name of the program so a tooltip can accurately describe the program it was attempting to operate on
      */
     __fs(nameObj, progName) {
-        if !nameObj.titleCheck
+        if ((!IsObject(nameObj) || !nameObj.HasProp("winTitle") || !nameObj.HasProp("titleCheck")) ||
+            !nameObj.titleCheck)
             return
         fullscreen := winget.isFullscreen(, nameObj.winTitle)
         switch fullscreen {

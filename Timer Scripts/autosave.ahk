@@ -42,15 +42,9 @@ class adobeAutoSave extends count {
             this.ms := (this.UserSettings.autosave_MIN * 60000)
             this.UserSettings := ""
         }
-        ;// set a fallback default of 5min is usersettings doesn't work
-        if this.ms = 0
-            this.ms := (5*60000)
 
         ;// initialise timer
         super.__New(this.ms)
-
-        ;// defining exit func
-        OnExit(this.__exitFunc.bind(this))
 
         print("timer started for: " this.ms/60000 "min")
         ;// start the timer
@@ -60,21 +54,24 @@ class adobeAutoSave extends count {
 
     ;// Class Variables
 
-    UserSettings := unset
-    ms           := 0
+    UserSettings  := unset
+    ms            := (5*60000) ;// 5min
 
-    origWindow := ""
+    origWindow    := ""
 
-    premExist := false
-    aeExist   := false
+    premExist     := false
+    aeExist       := false
 
     userPlayback  := false
     filesBackedUp := false
 
-    premWindow := unset
-    aeWindow   := unset
+    premWindow    := unset
+    aeWindow      := unset
 
-    idleAttempt := false
+    idleAttempt   := false
+
+    soundName     := ""
+    currentVolume := ""
 
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */
     __changeVar(wParam, lParam, msg, hwnd) {
@@ -97,6 +94,16 @@ class adobeAutoSave extends count {
         this.aeExist   := WinExist(AE.winTitle)   ? true : false
     }
 
+    /** handles retrieving the users current sound device, then playing a beep at 50% of its current volume then returning sound back to normal. */
+    __playBeep() {
+        if this.soundName = "" || this.currentVolume = "" {
+            this.soundName := SoundGetName(), this.currentVolume := SoundGetVolume()
+        }
+        SoundSetVolume(Round(this.currentVolume/2),, this.soundName)
+        SoundBeep(400, 200)
+        SoundSetVolume(this.currentVolume,, this.soundName)
+    }
+
     /** check whether the user has recently interacted with their computer */
     __checkIdle() {
         if this.idleAttempt = true
@@ -108,6 +115,7 @@ class adobeAutoSave extends count {
             ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
             ;// the save attempt will be paused and retried
             if (A_TimeIdleKeyboard <= 500) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500) || GetKeyState("RButton", "P") {
+                this.__playBeep()
                 errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s"),, {time: 2.0})
                 sleep 2500
                 continue
@@ -351,13 +359,15 @@ class adobeAutoSave extends count {
 
     /** resets all internal variables */
     __reset() {
-        this.count := 0,             this.origWindow := "",
-        this.premExist := false,     this.aeExist   := false,
+        this.count         := 0,     this.origWindow    := "",
+        this.premExist     := false, this.aeExist       := false,
         this.userPlayback  := false, this.filesBackedUp := false
 
-        this.premWindow  := unset
-        this.aeWindow    := unset
-        this.idleAttempt := false
+        this.premWindow    := unset
+        this.aeWindow      := unset
+        this.idleAttempt   := false
+
+        this.soundName     := "",    this.currentVolume := ""
         checkstuck()
         block.Off()
     }
@@ -380,15 +390,6 @@ class adobeAutoSave extends count {
     /** stops the timer */
     Stop() => super.stop()
 
-    /** defining what happens if the script is somehow opened a second time and is forced to close */
-    __exitFunc(ExitReason, ExitCode) {
-        if (ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error") {
-            this.stop()
-            checkstuck()
-            block.Off()
-        }
-    }
-
     __Delete() {
         try {
             super.stop()
@@ -398,8 +399,19 @@ class adobeAutoSave extends count {
     }
 }
 
+;// initialising the timer
 autoSave := adobeAutoSave()
 
 ;// this is required to allow the script to have its timer adjusted with `settingsGUI()`
 changeInterval := ObjBindMethod(autoSave, '__changeVar')
 OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
+
+;// defining exit func
+OnExit(ExitFunc)
+ExitFunc(ExitReason, ExitCode) {
+    if (ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error") {
+        autoSave.stop()
+        checkstuck()
+        block.Off()
+    }
+}

@@ -235,14 +235,18 @@ settingsGUI()
     ;// autosave check checklist
     ascheckCheck := UserSettings.autosave_check_checklist
     ascheckCheckTitle := " Auto open ``checklist.ahk``"
-    ascheckToggle := settingsGUI.Add("Checkbox", "Checked" ascheckCheck " Y+20", ascheckCheckTitle)
+    ; ascheckToggle := settingsGUI.Add("Checkbox", "Checked" ascheckCheck " Y+20", ascheckCheckTitle)
+    ascheckToggle := settingsGUI.Add("Checkbox", "Checked0 Y+20", ascheckCheckTitle)
+    ascheckToggle.Opt("Disabled")
     ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist"))
     autosaveCheck := (ascheckCheck = true) ? toolT.autosaveCheck.Yes : toolT.autosaveCheck.No
 
     ;// autosave tooltips
     tooltipCheck := UserSettings.tooltip
     tooltipCheckTitle := "``autosave.ahk`` tooltips"
-    toggleToggle := settingsGUI.Add("Checkbox", "Checked" tooltipCheck " Y+5", tooltipCheckTitle)
+    ; toggleToggle := settingsGUI.Add("Checkbox", "Checked" tooltipCheck " Y+5", tooltipCheckTitle)
+    toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", tooltipCheckTitle)
+    toggleToggle.Opt("Disabled")
     toggleToggle.ToolTip := (tooltipCheck = true) ? toolT.autosaveTooltip.Yes : toolT.autosaveTooltip.No
     toggleToggle.OnEvent("Click", toggle.Bind("tooltip"))
 

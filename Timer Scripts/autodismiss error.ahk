@@ -6,6 +6,7 @@ KeyHistory(0)
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Functions\trayShortcut>
+#Include <Classes\Editors\Premiere>
 ; }
 
 TraySetIcon(ptf.Icons "\dismiss.ico")
@@ -17,11 +18,13 @@ startupTray()
 ; Well, now you can auto-dismiss it. That's not as good as WIPING IT FROM THE FACE OF THE EARTH FOREVER, but it's at least a little better.
 ; If you know how to hack it so that there is effectively a "don't ask again" checkbox functionality... let me know.
 
-;DetectHiddenText(1)
+SetTimer(detectDumbWarnings, 100)
+detectDumbWarnings() {
+    if !WinExist(prem.winTitle) || !WinActive(prem.winTitle)
+        return
+    if !WinActive("Warning ahk_exe Adobe Premiere Pro.exe",, "Clip Mismatch")
+        return
+    SendInput("{Enter}")
+}
 
-lol:
-if WinActive("Warning ahk_exe Adobe Premiere Pro.exe",, "Clip Mismatch")
-    sendinput "{enter}"
-else
-    WinWait("Warning ahk_exe Adobe Premiere Pro.exe")
-goto lol
+OnExit((*) => SetTimer(detectDumbWarnings, 0))

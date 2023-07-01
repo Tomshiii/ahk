@@ -1,7 +1,8 @@
 # <> Release 2.12 - New autosave.ahk
-- `autosave.ahk` has been rewritten from the ground up to follow cleaner code patterns allowing for easier expandability, easier debugging and allowing the script to do what it's designed to do and not encounter issue after issue as more and more responsibilities got attached to the one script.  
-The purpose of this update is to smooth out the experience of using the script and allow it to do what it was always supposed to do; do it's thing in the background without interupting the user.
-> This currently means that `autosave.ahk` will lose the ability to automatically open `checklist.ahk` (as it shouldn't have ever been its responsibility anyway) & will no longer show a countdown until the next automatic save. The removal of these features has been done after careful consideration to ensure that it doesn't end up in the same pit as before and remains clean and easily maintainable.
+`autosave.ahk` has been rewritten from the ground up to follow cleaner code patterns allowing for easier expandability, easier debugging and allowing the script to do what it was originally designed to do while not encountering issue after issue as more and more responsibilities got attached to the one script.  
+The purpose of this update is to smooth out the experience of using the script and allow it to do what it was always supposed to do; do it's thing in the background without interupting the user with countless unrecoverable errors.
+> This currently means that `autosave.ahk` will lose the ability to automatically open `checklist.ahk` (as it shouldn't have ever been its responsibility anyway) & will no longer offer a countdown until the next automatic save. The removal of these features has been done after careful consideration to ensure that it doesn't end up in the same pit as before and remains clean and easily maintainable.
+>> The settings for these features have currently been disabled within `settingsGUI()` while I decide whether I wish to bring them back in some capacity.
 
 - Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.5` and beyond. Code added from this release forward is no longer guaranteed to work on versions `v22.3.1(prem)/v22.6(ae)` as testing will now be conducted on newer releases of the program(s). There shouldn't be much in the way of inconsistencies for the foreseeable future but this is the offical cutoff point.
 
@@ -25,3 +26,9 @@ The purpose of this update is to smooth out the experience of using the script a
 - Added `render and replace.ahk`
 - `errorLog()` is now a `class` to allow for cleaner code and easier expandability
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
+- Refactored the following timer scripts;
+    - `adobe fullscreen check.ahk`
+    - `autodismiss error.ahk`
+    - `premKeyCheck.ahk`
+
+-- expand on errorlog, maybe make a class `log()` and have errorLog extend off it

@@ -1334,14 +1334,11 @@ class Prem {
             return
         }
 		title := WinGet.Title()
-		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 {
+		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 ||
+            (A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd") {
 			SendInput("{" A_ThisHotkey "}")
 			return
 		}
-		if A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd" {
-            SendInput("{" A_ThisHotkey "}")
-			return
-        }
 		numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
 		prem.gain(numberToSend)
 	}

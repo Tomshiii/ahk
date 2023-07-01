@@ -9,19 +9,9 @@ This repo is a combination of all the scripts I use almost daily to help with ei
 - Video walking through [how to make sense of this repo](https://youtu.be/4qakIF4Vins)
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
 
-<div align="center">
-
-[![](https://user-images.githubusercontent.com/53557479/149133968-6c1ff2e0-0140-4eda-95e3-e56164d263a4.png) ![](https://img.shields.io/youtube/channel/subscribers/UCJu2dToEHzuovY6suetkcdQ?style=flat)](https://www.youtube.com/c/tomshiii)
-</div>
-
 A lot of the code in the earliest versions of my scripts was either inspired by, or taken from [Taran (previous editor for LTT)](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, transformed into `ahk v2.0` compliant scripts and now mostly contains my own tinkerings. Any scripts directly from Taran are labeled as such down below in the Explanation section (do note though that I have personally gone through them to make them function in `ahk v2.0`).
 
-You can watch me use some of these scripts in action whilst I edit away on twitch when I stream on my bot account:
-
-<div align="center">
-
-[![](https://user-images.githubusercontent.com/53557479/149135097-0f9ae87a-5157-4524-ae75-34b6aaf81c30.png) ![](https://img.shields.io/twitch/status/botshiii)](https://www.twitch.tv/botshiii)
-</div>
+> A lot of the development for this repo happens in the [dev](https://github.com/Tomshiii/ahk/tree/dev) branch before making its way into a release. I recommend checking out any changes over there in case of important fixes but do be aware that branch is in active development and any amount of bugs/issues may still be present as I continue to iron things out.
 
 ***
 
@@ -34,7 +24,7 @@ You can watch me use some of these scripts in action whilst I edit away on twitc
 ***
 
 ### AHK Version Information:
-This repo is to maintain work on the `ahk v2.0` versions of my scripts. These scripts **_will not_** work in `ahk v1.1`, the only versions of these scripts that will work with `ahk v1.1` are Releases [1.0](https://github.com/Tomshiii/ahk/releases/tag/v1.0)/[1.1](https://github.com/Tomshiii/ahk/releases/tag/v1.1)/[1.2](https://github.com/Tomshiii/ahk/releases/tag/v1.2) in this repo. They are _severely_ outdated, are practically missing everything found in the current versions of scripts, and those versions are no longer being maintained but you're free to try and backport any later additions if you're willing.
+This repo is to maintain work on the `ahk v2.0.x` versions of my scripts. These scripts **_will not_** work in `ahk v1.1`, the only versions of these scripts that will work with `ahk v1.1` are Releases [1.0](https://github.com/Tomshiii/ahk/releases/tag/v1.0)/[1.1](https://github.com/Tomshiii/ahk/releases/tag/v1.1)/[1.2](https://github.com/Tomshiii/ahk/releases/tag/v1.2) in this repo. They are _severely_ outdated, are practically missing everything found in the current versions of scripts, and are no longer being maintained - you're free to try and backport any later additions if you're willing as long as the requirements of this repos license are followed.
 
 ## QMK Keyboard:
 My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) **OR** `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
@@ -43,8 +33,10 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 ## [Getting Started:](https://github.com/Tomshiii/ahk/wiki)
 
 > ### Before Getting Started
-> My scripts rely on a `SymLink` to be created in the `A_MyDocuments \AutoHotkey\` folder that links back to `..\lib`. The install `.exe` can do this during the extraction process ***OR*** you can regenerate it manually (if you move my repo this also **MUST** be regenerated) by running [`..\Support Files\Release Assets\CreateSymLink.ahk`](https://github.com/Tomshiii/ahk/wiki/CreateSymLink.ahk). My scripts will fail to load if you do not do this.  
-> My scripts also require a `settings.ini` file to be properly generated in `A_MyDocuments \tomshi\`. If you've gone through the installation process and are getting errors because this file was incorrectly generated, run `..\Support Files\Release Assets\baselineSettings.ahk` and try again.
+> My scripts rely on a `SymLink` to be created in the `A_MyDocuments \AutoHotkey\` folder that links back to `..\lib`. The install `.exe` can do this during the extraction process ***OR*** you can regenerate it manually (if you move my repo this also **MUST** be regenerated) by running [`..\Support Files\Release Assets\CreateSymLink.ahk`](https://github.com/Tomshiii/ahk/wiki/CreateSymLink.ahk). My scripts will fail to load if you do not do this.
+>> Alternatively you can copy the `lib` folder to that directory manually if you wish to avoid generating a Symlink.
+
+> My scripts also require a `settings.ini` file to be properly generated in `A_MyDocuments \tomshi\`. If you've gone through the installation process and are getting errors because this file was incorrectly generated, I recommend deleting it and manually running `..\Support Files\Release Assets\baselineSettings.ahk` before trying again.
 
 > #### The Release Install `.exe`
 > If you're a little unsure about running the install .exe (as you should be!) feel free to take a look at [`generateUpdate.ahk`](https://github.com/Tomshiii/ahk/blob/main/Support%20Files/Release%20Assets/generateUpdate.ahk) - this is the script I use to generate each release! As you'll be able to see within that script, I use a [7zip lib](https://github.com/thqby/ahk2_lib/blob/master/7Zip/SevenZip.ahk) from [thqby](https://github.com/thqby) to compress my entire repo into a `.zip` file, then I use the standard `ahk2exe` script that comes with AHK itself to compile a `.exe` of that `.zip` file alongside that same `7zip lib` to automatically unzip it once you install.
@@ -73,7 +65,7 @@ This script will also go through a lot of important functions on boot. Some go t
 - `monitorAlert()` - Will alert the user of any changes to their monitor layout so they can be aware that some hotkeys might not work as expected
 
 #### [QMK Keyboard.ahk](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk)
-A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.3+](https://github.com/Tomshiii/ahk/releases/tag/v2.3) I use a Planck Ez custom keyboard.
+A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.3+](https://github.com/Tomshiii/ahk/releases/tag/v2.3) I use a `Planck Ez` custom keyboard.
 Check out [\Secondary Keyboard Files](https://github.com/Tomshiii/ahk/tree/main/Support%20Files/Secondary%20Keyboard%20Files) for more information on how that works.
 
 #### [gameCheck.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/gameCheck.ahk)
@@ -93,27 +85,7 @@ A script that will automatically suspend `My Scripts.ahk` when a game is detecte
 ```
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/autosave.ahk)
-A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. It will also check to ensure the `checklist.ahk` for the current project is open.
-```mermaid
-  graph TD;
-      B[while Adobe Premiere/Adobe After Effects is open];
-
-      B-->|checklist.ahk|E[is checklist open?]
-      E-- yes --> H[wait 30sec]
-      E-- no --> G[open checklist for project]
-      G-->H
-      H-->E
-
-
-      B-->|autosave.ahk|F[do they have unsaved changes?]
-      F-- yes -->J[get active window]
-      F-- no -->I[wait 2.5min]
-      I-->F
-      J-->K[save unsaved work]
-      K-->L[reactivate original window]
-      L-->M[wait 5min]
-      M-->F
-```
+A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot.
 
 #### [checklist.ahk](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk)
 A script that allows me to keep informed about what I have left to do on a video editing project as well as keeping track of the hours I've put into any individual project. This file gets run from this directory and then reads an autogenerated `checklist.ini` file in your project folder. This script has an accompanying script in `\Support Files` that allows you to quickly replace any in use checklist files.
