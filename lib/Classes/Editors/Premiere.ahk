@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/06/30
- * @version 1.6.7.1
+ * @date 2023/07/01
+ * @version 1.6.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -40,6 +40,7 @@ class Prem {
     static zToolY := 0
 
     ;// variables for `getTimeline()`
+    static timelineVals     := false
     static timelineRawX     := 0
     static timelineRawY     := 0
     static timelineXValue   := 0
@@ -283,11 +284,20 @@ class Prem {
     static zoom()
     {
         keys.allWait()
+
+        ;// ensure timeline coords are set
+        if this.timelineVals = false {
+            if !this.__checkTimeline()
+                return
+            tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -59, 14)
+            return
+        }
+
         ;// get coordinates for a tooltip that appears to alert the user that toggles have reset
         if this.zToolX = 0 || this.zToolY = 0
             {
                 tool.Cust("Retrieving tooltip location",, -40, 20, 4)
-                SendInput(KSA.programMonitor)
+                this.__checkTimelineFocus()
                 SendInput(KSA.programMonitor)
                 try {
                     if !classNN := obj.ctrlPos()
@@ -469,6 +479,7 @@ class Prem {
         block.On()
         MouseGetPos(&xpos, &ypos)
         this.__checkTimelineFocus()
+        sleep 50
         if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -516,7 +527,7 @@ class Prem {
                 return
             }
         ;// the user HAS set up zooms for the current client
-        delaySI(0, x, "{Tab}", y, "{Tab}", scale, "{Enter}")
+        delaySI(1, x, "{Tab}", y, "{Tab}", scale, "{Enter}")
         block.Off()
     }
 
@@ -1338,6 +1349,7 @@ class Prem {
             return
         sleep 1
         SendEvent(KSA.timelineWindow)
+        sleep 25
 	}
 
     /**
@@ -1448,18 +1460,19 @@ class Prem {
             errorLog(UnsetError("Couldn't find the ClassNN value of the Timeline", -1),, 1)
             return false
         }
-        this.timelineRawX := x, this.timelineRawY := y
-        this.timelineXValue := x + width - 22 ;accounting for the scroll bars on the right side of the timeline
-        this.timelineYValue := y + 46 ;accounting for the area at the top of the timeline that you can drag to move the playhead
-        this.timelineXControl := x + 236 ;accounting for the column to the left of the timeline
+        this.timelineRawX     := x, this.timelineRawY := y
+        this.timelineXValue   := x + width - 22  ;accounting for the scroll bars on the right side of the timeline
+        this.timelineYValue   := y + 46          ;accounting for the area at the top of the timeline that you can drag to move the playhead
+        this.timelineXControl := x + 236         ;accounting for the column to the left of the timeline
         this.timelineYControl := y + height + 40 ;accounting for the scroll bars at the bottom of the timeline
+        this.timelineVals     := true
         SetTimer(tools, -100)
         return true
         tools() {
-            tool.Wait()
-            script := obj.SplitPath(A_LineFile)
-            tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 2.0)
-            tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 3.0,, 30, 2)
+            ; tool.Wait()
+            tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 4.0,,, 10)
+            tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 4.0,, 30, 11)
+            tool.Cust("If you had multiple sequences open, this should be the only time a script cycles through them!", 4.0,, 75, 12)
         }
     }
 
@@ -1599,7 +1612,8 @@ class Prem {
      * @returns {Boolean} if the timeline cannot be determined, returns `false`. Else returns `true`
      */
 	static __checkTimeline() {
-		if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) {
+		if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
+            (this.timelineVals = false) {
 			if !this.getTimeline()
 				return false
 		}

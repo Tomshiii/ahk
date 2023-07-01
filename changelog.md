@@ -16,6 +16,7 @@ The purpose of this update is to smooth out the experience of using the script a
 - Fixed `gain()` getting stuck if used multiple times in a row
     - Will also now double check to ensure audio is selected before attempting to open the gain window
 - Fixed `getTimeline()` stalling when it encounters an issue
+- Fixed `zoom()` cycling through timeline sequences if multiple are open
 - Added `numpadGain()` which allows `gain()` to quickly be called by pressing <kbd>NumpadSub/NumpadAdd</kbd> followed by any of the <kbd>Numpad</kbd> buttons
 - `__checkTimelineFocus()` is now static
 

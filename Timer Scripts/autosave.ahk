@@ -103,7 +103,7 @@ class adobeAutoSave extends count {
         if this.idleAttempt = true
             return
         print("checking idle")
-        errorLog(Error("checking idle -- A_PriorKey = " A_PriorKey),, 1) ;//! not an error - debugging
+        errorLog(Error("!TESTING! -- checking idle: A_PriorKey = " A_PriorKey ", mouse idle: " A_TimeIdleMouse),, 1) ;//! not an error - debugging
         loop 5 {
             ;// if the user has interacted with the keyboard recently
             ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
@@ -255,7 +255,7 @@ class adobeAutoSave extends count {
         ;// send save
         if GetKeyState("Shift") || GetKeyState("Shift", "P")
             SendInput("{Shift Up}")
-        ControlSend("{Ctrl Down}s{Ctrl Up}")
+        ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, this.premWindow.wintitle)
         errorLog(Error("!TESTING! -- saving prem"),, 1) ;//! not an error - debugging
 
         ;// waiting for save dialogue to open & close
