@@ -23,3 +23,4 @@ The purpose of this update is to smooth out the experience of using the script a
 ## > Other Changes
 - Added `render and replace.ahk`
 - `errorLog()` is now a `class` to allow for cleaner code and easier expandability
+- `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`

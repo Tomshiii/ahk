@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.12.1
+;\\v2.32.13
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -599,3 +599,6 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 
 ;// I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 #Include <Classes\Editors\Premiere_RightClick>
+
+;stopfullscreenpremHotkey;
+Ctrl & \::return

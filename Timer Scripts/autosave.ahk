@@ -1,7 +1,7 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/06/22
+ * @date 2023/07/01
  * @version 2.0.0-testing
  ***********************************************************************/
 
@@ -88,7 +88,6 @@ class adobeAutoSave extends count {
             super.stop()
             this.interval := (val*60000)
             super.start()
-            tool.Cust(this.interval)
         }
     }
 
