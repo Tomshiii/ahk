@@ -7,6 +7,7 @@ The purpose of this update is to smooth out the experience of using the script a
 
 ## > Functions
 - `winget.PremName()/AEName()` now returns `-1` on failure instead of `unset`
+- `switchTo.Explorer()` now includes `"ahk_class OperationStatusWindow"`
 
 `Premiere_RightClick.ahk`
 - Fix script stalling if the user attempts to right click anywhere other than the timeline while its coordinates haven't been set

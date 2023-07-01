@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/06/30
- * @version 1.2.4.1
+ * @date 2023/07/01
+ * @version 1.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -63,9 +63,10 @@ class switchTo {
             }
         GroupAdd("explorers", "ahk_class CabinetWClass")
         GroupAdd("explorers", "ahk_class #32770") ;these are save dialoge windows from any program
+        GroupAdd("explorers", "ahk_class OperationStatusWindow") ;these are file transfer windows
         if WinActive("ahk_exe explorer.exe")
             GroupActivate("explorers", "r")
-        else if WinExist("ahk_class CabinetWClass") || WinExist("ahk_class #32770")
+        else if WinExist("ahk_class CabinetWClass") || WinExist("ahk_class #32770") || WinExist("ahk_class OperationStatusWindow")
             WinActivate
     }
 
