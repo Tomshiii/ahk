@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/01
- * @version 1.6.9
+ * @date 2023/07/02
+ * @version 1.6.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -60,8 +60,11 @@ class Prem {
             2: [3467, 339, 390]
         }
         d0yle := {
-            1: [-78, -53, 210],
-            2: [-833, -462, 288]
+            1: [1925, 1085, 210, 1916.8, 1082],
+            2: [1917.5, 1077.5, 288, 1915, 1074.6]
+            ;// no anchor point
+            /* 1: [-78, -53, 210],
+            2: [-833, -462, 288] */
             ;// sm64
             /* 1: [2013, 1128, 210],
             2: [2759, 1547, 288] */
@@ -361,7 +364,7 @@ class Prem {
         ;// assign the nested class to an object
         clientList := this.ClientInfo()
         ;// then we'll define the values that will allow us to change things depending on the project
-        static x := 0, y := 0, scale := 0
+        static x := 0, y := 0, scale := 0, anchorX := "false", anchorY := "false"
 
         coord.s()
         if !WinActive(this.winTitle) {
@@ -435,6 +438,12 @@ class Prem {
                     x     := clientList.%ClientName%.punchIn[1]
                     y     := clientList.%ClientName%.punchIn[2]
                     scale := clientList.%ClientName%.punchIn[3]
+
+                    ;// if an anchor point has been given
+                    if clientList.%ClientName%.Length = 5 {
+                        anchorX := clientList.%ClientName%.punchIn[4]
+                        anchorY := clientList.%ClientName%.punchIn[5]
+                    }
                 }
             else if count > 1
                 {
@@ -464,6 +473,12 @@ class Prem {
                         x := clientList.%ClientName%.%Name%[1]
                         y := clientList.%ClientName%.%Name%[2]
                         scale := clientList.%ClientName%.%Name%[3]
+
+                        ;// if an anchor point has been given
+                        if clientList.%ClientName%.%Name%.Length = 5 {
+                            anchorX := clientList.%ClientName%.%Name%[4]
+                            anchorY := clientList.%ClientName%.%Name%[5]
+                        }
                     }
                 }
         }
@@ -521,13 +536,24 @@ class Prem {
                 SendInput("{Tab}")
                 cleanCopy()
                 scale := A_Clipboard
+                SendInput("{Tab 3}")
+                cleanCopy()
+                anchorX := A_Clipboard
+                SendInput("{Tab}")
+                cleanCopy()
+                anchorY := A_Clipboard
                 SendInput("{Enter}")
                 block.Off()
                 tool.Cust("Setting up your zoom has completed")
                 return
             }
         ;// the user HAS set up zooms for the current client
-        delaySI(1, x, "{Tab}", y, "{Tab}", scale, "{Enter}")
+        delaySI(1, x, "{Tab}", y, "{Tab}", scale)
+        if anchorX != "false" && anchorY != "false" {
+            delaySI(1, "{Tab 3}", anchorX, "{Tab}", anchorY)
+            anchorX := "false", anchorY := "false"
+        }
+        SendInput("{Enter}")
         block.Off()
     }
 

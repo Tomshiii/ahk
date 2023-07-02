@@ -115,7 +115,8 @@ class adobeAutoSave extends count {
             ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
             ;// the save attempt will be paused and retried
             if (A_TimeIdleKeyboard <= 500) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500) || GetKeyState("RButton", "P") {
-                this.__playBeep()
+                if A_Index > 1
+                    this.__playBeep()
                 errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s"),, {time: 2.0})
                 sleep 2500
                 continue

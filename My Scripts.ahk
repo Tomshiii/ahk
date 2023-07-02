@@ -379,7 +379,7 @@ SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering 
 ^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 ;discitalicHotkey;
-+*::discord.surround("*")
+*::discord.surround("*")
 ;discBacktickHotkey;
 `::discord.surround("``")
 ;discParenthHotkey;

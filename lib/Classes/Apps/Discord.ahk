@@ -300,7 +300,7 @@ class discord {
                 ;// throw
                 errorLog(ValueError("Incorrect String Length in Parameter #1", -1, char),,, 1)
             }
-        block.On()
+        block.On("send")
         store := clip.clear()
         if !clip.copyWait(store.storedClip, 0.05)
             {

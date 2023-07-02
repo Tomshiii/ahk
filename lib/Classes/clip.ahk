@@ -16,7 +16,7 @@ class clip {
      * @returns {Object} Alternatively returns an object containing the stored clipboard
      * ```
      * clipb := clip.clear(&stored)      ;// clear the clipboard
-     * A_Clipboard := clip.storedClip    ;// return the stored clipboard
+     * A_Clipboard := clipb.storedClip   ;// return the stored clipboard
      * A_Clipboard := stored             ;// return the stored clipboard
      * ```
      */
