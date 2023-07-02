@@ -5,11 +5,6 @@
  * @version 2.0.0-testing
  ***********************************************************************/
 
-#SingleInstance force ;only one instance of this script may run at a time!
-#Requires AutoHotkey v2.0
-ListLines(0)
-; KeyHistory(0) ;// this has to be enabled for some code relating to `mouse idle` to work
-
 ; { \\ #Includes
 #Include <Classes\Settings>
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -28,11 +23,17 @@ ListLines(0)
 #Include <Other\print>
 ; }
 
-TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
+#SingleInstance force ;only one instance of this script may run at a time!
+#Requires AutoHotkey v2.0
+#WinActivateForce
+
+ListLines(0)
+; KeyHistory(0) ;// this has to be enabled for some code relating to `mouse idle` to work
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 InstallMouseHook()
+
+TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
 startupTray()
-#WinActivateForce
 
 class adobeAutoSave extends count {
     __New() {
@@ -72,6 +73,11 @@ class adobeAutoSave extends count {
 
     soundName     := ""
     currentVolume := ""
+
+    programMonX1  := A_ScreenWidth / 2
+    programMonX2  := A_ScreenWidth
+    programMonY1  := 0
+    programMonY2  := A_ScreenHeight
 
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */
     __changeVar(wParam, lParam, msg, hwnd) {
@@ -169,12 +175,27 @@ class adobeAutoSave extends count {
      */
     __checkPremPlayback() {
         errorLog(Error("!TESTING! -- checking if playing back on the timeline"),, 1) ;//! not an error - debugging
-        ;// if you don't have your project monitor on your main computer monitor this section of code will alwats fail
-        if !ImageSearch(&x, &y, A_ScreenWidth / 2, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.Premiere "stop.png")
+        ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
+        if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
             return
 
         tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
         this.userPlayback := true
+    }
+
+    /** this function will double check to see if playback has resumed */
+    __checkPlayback() {
+        loop 3 {
+            errorLog(Error("!TESTING! -- checking the script replayed playback"),, 1) ;//! not an error - debugging
+            ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
+            if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
+                prem.__checkTimelineFocus()
+                sleep 100
+                SendEvent(KSA.playStop)
+                continue
+            }
+            return
+        }
     }
 
     /**
@@ -208,11 +229,11 @@ class adobeAutoSave extends count {
                     try {
                         if !prem.__checkTimeline()
                             return
-                        sleep 50
+                        sleep 100
                         prem.__checkTimelineFocus()
                         sleep 250
                         SendEvent(KSA.playStop)
-                        sleep 100
+                        this.__checkPlayback
                         prem.__checkTimelineFocus()
                     }
                 default: WinActivate("ahk_exe " this.origWind)
@@ -271,9 +292,6 @@ class adobeAutoSave extends count {
             return
         if !WinWaitClose("Save Project",, 3)
             return
-
-        ;// needs logic to determine whether to save (does it have the title at this point under certain circumstances? the original script has spaghetti code from before winget.PremName() existed)
-        ;// then needs proper code to determine how to save - originally it was determined that if the prem window is currently active, using controlsend wouldn't work (seems to work now???)
     }
 
     /** saves after effects */
