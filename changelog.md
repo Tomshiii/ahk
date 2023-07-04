@@ -7,6 +7,7 @@ The purpose of this update is to smooth out the experience of using the script a
 - Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.5` and beyond. Code added from this release forward is no longer guaranteed to work on versions `v22.3.1(prem)/v22.6(ae)` as testing will now be conducted on newer releases of the program(s). There shouldn't be much in the way of inconsistencies for the foreseeable future but this is the offical cutoff point.
 
 ## > Functions
+- Fixed `gamCheckGUI {` failing to produce `Msgbox` to alert the user a game has already been added to the list when the GUI is called from the tray menu.
 - `winget.PremName()/AEName()` now returns `-1` on failure instead of `unset`
 - `switchTo.Explorer()` now includes `"ahk_class OperationStatusWindow"`
 
@@ -26,7 +27,7 @@ The purpose of this update is to smooth out the experience of using the script a
 
 ## > Other Changes
 - Added `render and replace.ahk`
-- `errorLog()` is now a `class` to allow for cleaner code and easier expandability
+- `errorLog()` refactored into a `class` for cleaner code and easier expandability
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
 - Refactored the following timer scripts;
     - `adobe fullscreen check.ahk`

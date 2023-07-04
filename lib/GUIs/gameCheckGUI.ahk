@@ -68,8 +68,6 @@ class gameCheckGUI extends tomshiBasic {
                 setWinExist := WinExist("Settings " this.version) ? 1 : 0
                 if setWinExist
                     WinActivate("Settings " this.version)
-                MsgBox("The desired window is already in the list!")
-                this.__settingsGUIontop()
                 return false
             }
         return true
@@ -135,8 +133,11 @@ class gameCheckGUI extends tomshiBasic {
         ;//! what to search for
         listFormat := Format('GroupAdd(`"games`", `"{} {}`")`n; --', titleVal, procVal)
         ;// check list for input value
-        if !this.__checkForInput(readGameCheck, listFormat)
+        if !this.__checkForInput(readGameCheck, listFormat) {
+            MsgBox("The desired window is already in the list!", "Game already added! - gameCheck")
+            this.__settingsGUIontop()
             return
+        }
         ;// append input
         this.__appendInput(readGameCheck, listFormat)
 
