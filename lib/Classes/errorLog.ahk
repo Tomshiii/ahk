@@ -1,13 +1,14 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2023/06/30
- * @version 2.0.0
+ * @date 2023/07/04
+ * @version 2.1.0
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
 #Include <Classes\obj>
 #Include <Classes\ptf>
+#Include <Classes\log>
 #Include <Other\print>
 #Include <Functions\getScriptRelease>
 #Include <Functions\checkInternet>
@@ -24,16 +25,20 @@
  * ```
  * @param {Boolean} doThrow Determines whether you want for errorLog to throw for you. This is simply to save the need to manually throw
  */
-class errorLog {
+class errorLog extends log {
     __New(err, optMessage := "", toolCust := false, doThrow := false) {
-        this.err := err, this.optMessage := optMessage, this.toolCust := toolCust, this.doThrow := doThrow
-        this.logError()
+        this.err         := err,       this.optMessage := optMessage,
+        this.toolCust    := toolCust,  this.doThrow    := doThrow,
+        this.logLocation := ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt"
+
+        ;// initialise `log {` instance
+        this.logger := log(Format("{}:{}:{}.{} ", A_Hour, A_Min, A_Sec, A_MSec),, this.logLocation)
+
+        ;// append log
+        this.__logError()
     }
 
-    logError() {
-        ;// this variable is only used on the first use of a day so we have to initialise it
-        start := ""
-
+    __logError() {
         ;// throw if no error object is passed
         setVar := this.err
         if !IsSet(setVar) || !IsObject(setVar)
@@ -53,31 +58,23 @@ class errorLog {
             DirCreate(ptf.ErrorLog)
 
         ;// if a file for the day doesn't exist, create it and append the first start info
-        if !FileExist(ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
+        if !FileExist(this.logLocation)
             this.__firstError()
 
         ;// getting the name of the script that called the function
         script := obj.SplitPath(this.err.File)
 
-        ;// assigning the time to a var
-        timeString := Format("{}:{}:{}.{} ", A_Hour, A_Min, A_Sec, A_MSec)
-
         ;// assigning the log error to a variable so we can reuse it
-        append := Format("{}{}// ``{}`` encountered the following error: `"{}{}`" | Script: ``{}``, Line Number: {}`n"
-                            , start, timeString, this.err.what, beginning, error, script.Name, this.err.Line
+        append := Format("// ``{}`` encountered the following error: `"{}{}`" | Script: ``{}``, Line Number: {}"
+                            , this.err.what, beginning, error, script.Name, this.err.Line
                     )
 
         ;// append the error and send to the debug stream
-        FileAppend(append, ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-        print(append)
+        this.logger.append(append)
 
         ;// if optMessage has been set, append it as an error and send it to the debug stream
         if this.optMessage != ""
-            {
-                optAppend := Format('`t`t`t// "{}"', this.optMessage)
-                FileAppend(optAppend '`n', ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt")
-                print(optAppend)
-            }
+            this.logger.append(Format('`t`t`t// "{}"', this.optMessage))
 
         ;// if toolCust has been set to true, generate a tooltip based off the passed in error object
         if this.toolCust != false
@@ -136,8 +133,7 @@ class errorLog {
                     LatestReleaseBeta := "[No Current Beta Release]"
             }
 
-            time  := Format("{}_{}_{}, {}:{}:{}.{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec, A_MSec)
-            start := Format("
+            this.logger.append(Format("
             (
                 \\ ErrorLogs
                 \\ AutoHotkey v{}
@@ -159,8 +155,10 @@ class errorLog {
                 \\ Current DateTime - {}
                 \\ Ahk Install Path - {}`n`n
             )"
-                , A_AhkVersion, InstalledVersion, LatestReleaseMain, LatestReleaseBeta, OSName, A_OSVersion, OSArch, RTrim(CPU), Logical, Memory, FreePhysMem, time, A_AhkPath
-            )
+                , A_AhkVersion, InstalledVersion, LatestReleaseMain, LatestReleaseBeta,
+                OSName, A_OSVersion, OSArch, RTrim(CPU), Logical, Memory, FreePhysMem,
+                Format("{}_{}_{}, {}:{}:{}.{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec, A_MSec), A_AhkPath
+            ))
         }
     }
 

@@ -5,10 +5,10 @@ releases/
 ImageSearch/Premiere/reset.bmp
 Backups/OBS
 Support Files/images/og
-Error Logs/*.txt
+Logs/Error Logs/*.txt
+Logs/Other Logs/*.txt
 Support Files/replaceChecklist_log.txt
 Support Files/replaceChecklist.ahk
-Support Files/Icons/myscript.ico
 Backups/RODECaster/shows/mine/pads
 
 # adobe symlinks

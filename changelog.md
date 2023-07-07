@@ -4,7 +4,8 @@ The purpose of this update is to smooth out the experience of using the script a
 > This currently means that `autosave.ahk` will lose the ability to automatically open `checklist.ahk` (as it shouldn't have ever been its responsibility anyway) & will no longer offer a countdown until the next automatic save. The removal of these features has been done after careful consideration to ensure that it doesn't end up in the same pit as before and remains clean and easily maintainable.
 >> The settings for these features have currently been disabled within `settingsGUI()` while I decide whether I wish to bring them back in some capacity.
 
-- Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.5` and beyond. Code added from this release forward is no longer guaranteed to work on versions `v22.3.1(prem)/v22.6(ae)` as testing will now be conducted on newer releases of the program(s). There shouldn't be much in the way of inconsistencies for the foreseeable future but this is the offical cutoff point.
+Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.5` and beyond.
+- Code added from this release forward is no longer guaranteed to work on versions `v22.3.1(prem)/v22.6(ae)` as testing will now be conducted on newer releases of the program(s). *There shouldn't be much in the way of inconsistencies for the foreseeable future (as almost everything so far has worked in both versions fine) but this is the offical cutoff point.*
 
 ## > Functions
 - Fixed `gamCheckGUI {` failing to produce `Msgbox` to alert the user a game has already been added to the list when the GUI is called from the tray menu.
@@ -23,15 +24,18 @@ The purpose of this update is to smooth out the experience of using the script a
 - `__checkTimelineFocus()` is now static
 - `zoom()`
     - Fixed function cycling through timeline sequences if multiple are open
-    - Can now accept an array length of `5` to include the `Anchor Point` coordinates
+    - Preset zooms can now accept an array length of `5` to include the `Anchor Point` coordinates
 
 ## > Other Changes
 - Added `render and replace.ahk`
-- `errorLog()` refactored into a `class` for cleaner code and easier expandability
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
 - Refactored the following timer scripts;
     - `adobe fullscreen check.ahk`
     - `autodismiss error.ahk`
     - `premKeyCheck.ahk`
 
--- expand on errorlog, maybe make a class `log()` and have errorLog extend off it
+`Logs`
+- Added the class `log {` to allow for easier logging without the need for an `Error Object`
+- `errorLog()` refactored into a `class` (that extends off `log {`) for cleaner code and easier expandability
+
+> These changes do not break prior functionality of `errorLog()` and the only change necessary from a user perspective is adjusting the `#Include` location if used in any custom scripts.

@@ -2,14 +2,15 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/06/30
- * @version 1.6.7.1
+ * @date 2023/07/04
+ * @version 1.7.0
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <GUIs\todoGUI>
 #Include <GUIs\hotkeysGUI>
 #Include <GUIs\settingsGUI\settingsGUI>
+#Include <GUIs\activeScripts>
 #Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\tool>
@@ -477,14 +478,15 @@ class Startup {
     }
 
     /**
-     * This function will (on first startup, NOT a refresh of the script) delete any `\ErrorLog` files older than 30 days
+     * This function will (on first startup, NOT a refresh of the script) delete any `\.txt` files in any of the `..\Logs\` folders that are older than 30 days
      */
-    oldError() {
+    oldLogs() {
         if isReload()
             return
-        loop files, ptf.ErrorLog "\*.txt"
-        if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
-            FileDelete(A_LoopFileFullPath)
+        loop files, ptf.Logs "\*.txt", "R" {
+            if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
+                FileDelete(A_LoopFileFullPath)
+        }
     }
 
     /**

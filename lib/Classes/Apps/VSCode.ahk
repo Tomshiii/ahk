@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/06/30
- * @version 1.2.1.1
+ * @date 2023/07/04
+ * @version 1.2.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -76,7 +76,7 @@ class VSCode {
         delaySI(50, KSA.focusExplorerWin, KSA.focusExplorerWin, KSA.focusWork, KSA.collapseFold, KSA.collapseFold, "{Up 2}", "{Enter}")
         if A_ThisHotkey = KSA.functionHotkey ;this opens my \functions folder
             {
-                delaySI(50, "{Down 3}{Enter}", "{Down 2}{Enter}", "{Down 2}{Enter}")
+                delaySI(50, "{Down 2}{Enter}", "{Down 2}{Enter}", "{Down 2}{Enter}")
                 sleep 50
                 SendInput("{Up 1}{Enter}")
                 block.Off()

@@ -21,7 +21,7 @@ if WinExist("Ahk2Exe for AutoHotkey")
     WinClose("Ahk2Exe for AutoHotkey")
 
 ;// cleanup errorlog files
-loop files ptf.rootDir "\Error Logs\*.txt"
+loop files ptf.rootDir "\Logs\Error Logs\*.txt"
     FileDelete(A_LoopFileFullPath)
 
 ;// ask what version we're bumping to

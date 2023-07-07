@@ -105,7 +105,7 @@ A script from [Taran](https://github.com/TaranVH/) to disable the alt menu accel
 #### [Premiere_RightClick.ahk](https://github.com/Tomshiii/ahk/blob/main/lib/Classes/Editors/Premiere_RightClick.ahk)
 A script originally from [Taran](https://github.com/TaranVH/) to [move the playhead](https://github.com/TaranVH/2nd-keyboard/blob/master/Taran's_Premiere_Mods/PREMIERE_MOD_Right_click_timeline_to_move_playhead.ahk) in premiere with the right mouse button. This script has been heavily altered and now contains mostly my own code.
 
-#### [\Error Logs](https://github.com/Tomshiii/ahk/tree/main/Error%20Logs)
+#### [\Error Logs](https://github.com/Tomshiii/ahk/tree/main/Logs/Error%20Logs)
 Anytime a macro/script encounters an error it will be logged in a txt file in this directory to help you catch anything that isn't working as intended so that in the event that the tooltip disappears too quickly, you can still dig in and see everything going on.
 
 Eg.

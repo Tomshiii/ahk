@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/05/08
- * @version 1.1.4
+ * @date 2023/07/04
+ * @version 1.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -17,7 +17,8 @@ class ptf {
     static Backups           := this.rootDir "\Backups"
     static Stream            := this.rootDir "\Stream"
     static SongQueue         := this.Stream "\TomSongQueueue"
-    static ErrorLog          := this.rootDir "\Error Logs"
+    static Logs              := this.rootDir "\Logs"
+    static ErrorLog          := this.Logs "\Error Logs"
     static lib               := this.rootDir "\lib"
     static TimerScripts      := this.rootDir "\Timer Scripts"
     static Shortcuts         := this.SupportFiles "\shortcuts"
