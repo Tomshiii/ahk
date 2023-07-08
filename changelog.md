@@ -9,8 +9,11 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
 
 ## > Functions
 - Fixed `gamCheckGUI {` failing to produce `Msgbox` to alert the user a game has already been added to the list when the GUI is called from the tray menu.
-- `winget.PremName()/AEName()` now returns `-1` on failure instead of `unset`
 - `switchTo.Explorer()` now includes `"ahk_class OperationStatusWindow"`
+
+`WinGet`
+- `PremName()/AEName()` now returns `-1` on failure instead of `unset`
+- `title()` now has parameter `exitOut` to determine whether the user wishes for the active thread to exit if the function cannot determine the title. Defaults to `true`
 
 `Premiere_RightClick.ahk`
 - Fix script stalling if the user attempts to right click anywhere other than the timeline while its coordinates haven't been set

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/06/30
- * @version 1.5.9.1
+ * @date 2023/07/08
+ * @version 1.5.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -111,9 +111,10 @@ class WinGet {
     /**
      * This function gets and returns the title for the current active window, autopopulating the `title` variable
      * @param {VarRef} title populates with the active window
+     * @param {Boolean} exitOut determines whether the active thread will `Exit` if it cannot determine the title. Defaults to `true`
      * @returns {String} returns the title
      */
-    static Title(&title?)
+    static Title(&title?, exitOut := true)
     {
         try {
             check := WinGetProcessName("A")
@@ -125,7 +126,8 @@ class WinGet {
         } catch {
             errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
             block.Off()
-            Exit()
+            if exitOut = true
+                Exit()
         }
     }
 

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/02
- * @version 1.6.10
+ * @date 2023/07/08
+ * @version 1.6.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,6 +20,7 @@
 #Include <Classes\switchTo>
 #Include <Classes\clip>
 #Include <Classes\errorLog>
+#Include <Classes\block>
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
 ; }
@@ -1359,7 +1360,7 @@ class Prem {
             this.__checkTimeline()
             return
         }
-		title := WinGet.Title()
+		title := WinGet.Title(, false)
 		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 ||
             (A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd") {
 			SendInput("{" A_ThisHotkey "}")
@@ -1741,12 +1742,12 @@ class Prem {
                 case "set":
                     __set(sendHotkey, *) => SendInput(sendHotkey)
                     for k, v in this.lockNumpadKeys {
-                        Hotkey(k, __set.Bind(v))
+                        Hotkey(k, __set.Bind(v), "On")
                     }
                 case "reset":
                     for k2, v2 in this.lockNumpadKeys {
                         try {
-                            Hotkey(k2, k2, "On")
+                            Hotkey(k2, k2)
                         } catch {
                             Hotkey(k2, "Off")
                         }
