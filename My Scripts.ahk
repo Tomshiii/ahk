@@ -116,7 +116,7 @@ start.generate()               ;generates/replaces the `settings.ini` file every
 start.updateChecker()          ;runs the update checker
 start.trayMen()                ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
 start.firstCheck()             ;runs the firstCheck() function
-start.oldLogs()               ;runs the loop to delete old log files
+start.oldLogs()                ;runs the loop to delete old log files
 start.adobeTemp()              ;runs the loop to delete cache files
 start.libUpdateCheck()         ;runs a loop to check for lib updates
 start.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
@@ -352,8 +352,7 @@ Numpad9::
 	winget.Title(&title)
 	if (InStr(title, needle))
 		return
-	else
-		SendInput("{" A_ThisHotkey "}")
+	SendInput("{" A_ThisHotkey "}")
 }
 
 ;movetabHotkey;
@@ -577,7 +576,7 @@ F23::youMouse("l", "{Right}")
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
-;		Premiere F14 scripts
+;		Premiere F14/position specific scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;// having these scripts above with the other premiere scripts caused `wheelup` and `wheeldown` hotkeys to lag out and cause windows beeping
