@@ -257,7 +257,8 @@ class WinGet {
      * A function to recover the path within the title of either `Premiere Pro` or `After Effects`
      * @returns {Object}
      * ```
-     * projPath := obj.SplitPath("E:\comms\tomshi\video\project.prproj")
+     * ;// "E:\comms\tomshi\video\project.prproj"
+     * projPath := winget.ProjPath()
      * projPath.Path       ; E:\comms\tomshi\video\project.prproj
      * projPath.Name       ; project.prproj
      * projPath.Dir        ; E:\comms\tomshi\video
@@ -357,8 +358,7 @@ class WinGet {
     static FolderSize(path, option?) {
         if !IsSet(option)
             return ComObject("Scripting.FileSystemObject").GetFolder(path).Size
-        if option > 3 || option < 1
-            {
+        if option > 3 || option < 1 {
                 ;// throw
                 errorLog(ValueError("Parameter #2 invalid - Value Out of Range", -1, option),,, 1)
             }

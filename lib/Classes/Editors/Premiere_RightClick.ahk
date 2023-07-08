@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi, taranVH
- * @date 2023/06/30
- * @version 2.0.10
+ * @date 2023/07/08
+ * @version 2.0.11
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -66,7 +66,8 @@ class rbuttonPrem {
 	;I used Window Spy (it comes with AHK) to detect the exact colors onscreen.
 	timeline1  := 0x414141 ;timeline colour inbetween two clips inside the in/out points ON a targeted track
 	timeline2  := 0x313131 ;timeline colour of the separating LINES between targeted AND non targeted tracks inside the in/out points
-	timeline3  := 0x1b1b1b ;the timeline colour inside in/out points on a NON targeted track
+	timeline3  := 0x1b1b1b ;the timeline colour inside in/out points on a UNTARGETED track
+	timeline11 := 0x424242 ;the timeline colour inside in/out points on a TARGETED track (v23+)
 	timeline4  := 0x212121 ;the colour of the bare timeline NOT inside the in out points (above any tracks)
 	timeline8  := 0x202020 ;the colour of the bare timeline NOT inside the in out points (v22.3.1)
 	timeline9  := 0x1C1C1C ;the colour of the bare timeline NOT inside the in out points (v23.1)
@@ -75,10 +76,10 @@ class rbuttonPrem {
 	timeline6  := 0xE4E4E4 ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 	timeline7  := 0xBEBEBE ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
 	timelineCol := [
-		this.timeline1, this.timeline2, this.timeline3,
-		this.timeline4, this.timeline5, this.timeline6,
-		this.timeline7, this.timeline8, this.timeline9,
-		this.timeline10
+		this.timeline1,  this.timeline2,  this.timeline3,
+		this.timeline4,  this.timeline5,  this.timeline6,
+		this.timeline7,  this.timeline8,  this.timeline9,
+		this.timeline10, this.timeline11
 	]
 	playhead := 0x2D8CEB ;the colour of the playhead
 
@@ -114,7 +115,8 @@ class rbuttonPrem {
 		if (
 			colour != this.timelineCol[1] && colour != this.timelineCol[2] &&
 			colour != this.timelineCol[3] && colour != this.timelineCol[4] &&
-			colour != this.timelineCol[8] && colour != this.timelineCol[9]
+			colour != this.timelineCol[8] && colour != this.timelineCol[9] &&
+			colour != this.timeline[11]
 		) {
 			SendInput("{Rbutton}")
 			return false

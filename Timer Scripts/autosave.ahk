@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/07/01
- * @version 2.0.0-testing
+ * @date 2023/07/08
+ * @version 2.0.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,8 +19,6 @@
 #Include <Classes\errorLog>
 #Include <Functions\trayShortcut>
 #Include <Functions\checkStuck>
-
-#Include <Other\print>
 ; }
 
 #SingleInstance force ;only one instance of this script may run at a time!
@@ -47,10 +45,8 @@ class adobeAutoSave extends count {
         ;// initialise timer
         super.__New(this.ms)
 
-        print("timer started for: " this.ms/60000 "min")
         ;// start the timer
         super.start()
-        errorLog(Error("!TESTING! -- starting timer"),, 1) ;//! not an error - debugging
     }
 
     ;// Class Variables
@@ -114,8 +110,6 @@ class adobeAutoSave extends count {
     __checkIdle() {
         if this.idleAttempt = true
             return
-        print("checking idle")
-        errorLog(Error("!TESTING! -- checking idle: A_PriorKey = " A_PriorKey ", mouse idle: " A_TimeIdleMouse),, 1) ;//! not an error - debugging
         loop 5 {
             ;// if the user has interacted with the keyboard recently
             ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
@@ -146,7 +140,6 @@ class adobeAutoSave extends count {
 
     /** backs up all project files in the working directory */
     __backupFiles() {
-        errorLog(Error("!TESTING! -- backing up project files"),, 1) ;//! not an error - debugging
         if this.filesBackedUp = true
             return
         try {
@@ -174,7 +167,6 @@ class adobeAutoSave extends count {
      * *note: this function will only work if the user has their program monitor on their main display*
      */
     __checkPremPlayback() {
-        errorLog(Error("!TESTING! -- checking if playing back on the timeline"),, 1) ;//! not an error - debugging
         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
             return
@@ -186,7 +178,6 @@ class adobeAutoSave extends count {
     /** this function will double check to see if playback has resumed */
     __checkPlayback() {
         loop 3 {
-            errorLog(Error("!TESTING! -- checking the script replayed playback"),, 1) ;//! not an error - debugging
             ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
             if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
                 prem.__checkTimelineFocus()
@@ -205,7 +196,6 @@ class adobeAutoSave extends count {
      */
     __checkDialogueClass(which := "Adobe Premiere Pro") {
         if WinExist("ahk_class #32770 ahk_exe " which ".exe") {
-            errorLog(Error("!TESTING! -- save attempt cancelled, a window is open that may alter the saving process", -1),, 1)
             return false
         }
         return true
@@ -246,8 +236,6 @@ class adobeAutoSave extends count {
 
     /** saves premiere */
     __savePrem() {
-        print("saveprem started")
-        errorLog(Error("!TESTING! -- saveprem started"),, 1) ;//! not an error - debugging
 
         ;// backing up project files
         this.__backupFiles()
@@ -262,13 +250,10 @@ class adobeAutoSave extends count {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
             return
         }
-        print(Format("wintitle: {}`ntitlecheck: {}`nsavecheck: {}", this.premWindow.winTitle, this.premWindow.titleCheck, this.premWindow.saveCheck))
-        errorLog(Error(Format("!TESTING! -- wintitle: {}`ntitlecheck: {}`nsavecheck: {}", this.premWindow.winTitle, this.premWindow.titleCheck, this.premWindow.saveCheck)),, 1) ;//! not an error - debugging
 
         ;// if save NOT required, exit early
         if !this.premWindow.saveCheck {
             tool.Cust("save not required, cancelling")
-            errorLog(Error("!TESTING! -- saving not required, cancelling"),, 1)
             return
         }
 
@@ -285,7 +270,6 @@ class adobeAutoSave extends count {
         if GetKeyState("Shift") || GetKeyState("Shift", "P")
             SendInput("{Shift Up}")
         ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, this.premWindow.wintitle)
-        errorLog(Error("!TESTING! -- saving prem"),, 1) ;//! not an error - debugging
 
         ;// waiting for save dialogue to open & close
         if !WinWait("Save Project",, 3)
@@ -296,8 +280,6 @@ class adobeAutoSave extends count {
 
     /** saves after effects */
     __saveAE() {
-        print("saveae started")
-        errorLog(Error("!TESTING! -- saveae started"),, 1) ;//! not an error - debugging
 
         ;// backing up project files
         this.__backupFiles()
@@ -313,8 +295,6 @@ class adobeAutoSave extends count {
 
         ;// if AE is the active window, a normal save will be fine
         if this.origWindow = WinGetProcessName(editors.AE.winTitle) {
-            print("ae original window -- saving")
-            errorLog(Error("!TESTING! -- ae original window -- saving"),, 1) ;//! not an error - debugging
             SendEvent("^s")
             if !WinWait("Save Project",, 3)
                 return
@@ -326,10 +306,13 @@ class adobeAutoSave extends count {
 
         ;// if AE ISN'T the active window, attempting to save it in the background will force it into the foreground which can be super disorienting/annoying
         ;// so we have to work around that
-        print("ae background window -- saving")
-        errorLog(Error("!TESTING! -- ae background window -- saving"),, 1) ;//! not an error - debugging
 
+        ;// getting window title/information
         this.aeWindow := WinGet.AEName()
+        if ((this.aeWindow.winTitle = "" || !this.aeWindow.wintitle) && this.aeWindow.titleCheck = -1 && this.aeWindow.saveCheck = -1) || (!this.aeWindow) {
+            errorLog(UnsetError("autosave.ahk was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
+            return
+        }
         WinSetTransparent(0, editors.AE.winTitle)
         ControlSend("{Ctrl Down}s{Ctrl Up}",, this.aeWindow.winTitle)
         if WinWait("Save As",, 0.5) {
@@ -346,13 +329,8 @@ class adobeAutoSave extends count {
 
     /** This function begins the saving process */
     begin() {
-        print("checking for editors")
-        errorLog(Error("!TESTING! -- checking for editors"),, 1) ;//! not an error - debugging
-
         ;// check for prem/ae
         this.__checkforEditors()
-        print(Format("prem:{}`nae:{}", this.premExist, this.aeExist))
-        errorLog(Error(Format("!TESTING! -- prem:{}`nae:{}", this.premExist, this.aeExist)),, 1) ;//! not an error - debugging
         if this.premExist = false && this.aeExist = false
             return
 
@@ -364,8 +342,6 @@ class adobeAutoSave extends count {
             this.__reset()
             return
         }
-        print("orig window: " this.origWindow)
-        errorLog(Error("!TESTING! -- orig window: " this.origWindow),, 1) ;//! not an error - debugging
 
         ;// save prem
         if this.premExist = true

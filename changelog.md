@@ -17,6 +17,7 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
 
 `Premiere_RightClick.ahk`
 - Fix script stalling if the user attempts to right click anywhere other than the timeline while its coordinates haven't been set
+- Add additional colour to fix script failing to work on a target track within `in/out` points
 - `checkStuck()` taken out and separated into its own function file
 
 `prem {`
