@@ -11,6 +11,10 @@
 		{
 			"name": "textreplace",
 			"path": "../../../textreplace"
+		},
+		{
+			"name": "ahk_work",
+			"path": "../../../ahk_work"
 		}
 	],
 	"settings": {
