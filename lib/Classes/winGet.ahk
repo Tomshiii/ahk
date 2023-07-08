@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2023/07/08
- * @version 1.5.10
+ * @version 1.5.10.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -124,10 +124,11 @@ class WinGet {
                 throw
             return title
         } catch {
-            errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
             block.Off()
-            if exitOut = true
+            if exitOut = true {
+                errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
                 Exit()
+            }
         }
     }
 
