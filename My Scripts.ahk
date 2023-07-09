@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.14
+;\\v2.32.15
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -60,6 +60,7 @@ SetScrollLockState("AlwaysOff")        ;sets scroll lock to always off (you can 
 SetDefaultMouseSpeed(0)                ;sets default MouseMove speed to 0 (instant)
 SetWinDelay(0)                         ;sets default WinMove speed to 0 (instant)
 A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
+A_MenuMaskKey := "vkD7"				   ;necessary for `alt_menu_acceleration_disabler.ahk` to work correctly
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 

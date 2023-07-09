@@ -98,7 +98,6 @@ A_MenuMaskKey := "vkD7"
 
 
 ;;;UPDATE: Those two lines totally work, but I am now trying a slightly different thing instead:
-#HotIf !WinActive(prem.winTitle)
 ~LAlt::
 {
 	Sendinput("{Blind}{sc0E9}")

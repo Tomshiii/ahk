@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/08
- * @version 1.6.11
+ * @date 2023/07/09
+ * @version 1.6.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -288,12 +288,13 @@ class Prem {
     static zoom()
     {
         keys.allWait()
+        CoordMode("ToolTip", "Screen")
 
         ;// ensure timeline coords are set
         if this.timelineVals = false {
-            if !this.__checkTimeline()
+            if !this.__checkTimeline(false)
                 return
-            tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -59, 14)
+            tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
             return
         }
 
@@ -323,6 +324,7 @@ class Prem {
         startTime := A_TickCount
         SetTimer(waitTimer.Bind(startTime), 16)
         waitTimer(time) {
+            CoordMode("ToolTip", "Screen")
             if A_ThisHotkey != "" {
                 if GetKeyState(A_ThisHotkey, "P")
                     {
@@ -331,11 +333,11 @@ class Prem {
                         return
                     }
             }
-            ToolTip("Presses: " this.presses "`nWill reset in: " waitms - (A_TickCount - time) "ms")
+            ToolTip("Presses: " this.presses "`nWill reset in: " waitms - (A_TickCount - time) "ms", this.zToolX, this.zToolY-10, 4)
             if (A_TickCount - time) < waitms
                 return
             this.isWaiting := false
-            ToolTip("")
+            ToolTip("",,, 4)
             SetTimer(, 0)
         }
 
@@ -467,7 +469,7 @@ class Prem {
                             this.timer := true
                             SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
                         }
-                    tool.Cust("zoom " this.zoomToggle "/" count, 2.0)
+                    tool.Cust("zoom " this.zoomToggle "/" count, 2.0, this.zToolX, this.zToolY)
                     ;// this for loop stops the need to hard code each potential toggle
                     ;// as long as the object contains '1' & more than 1 property, this will function correctly
                     for Name in clientList.%ClientName%.OwnProps() {
@@ -1478,8 +1480,10 @@ class Prem {
 
     /**
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
+     * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values
+     * @returns {Boolean} `true/false`
      */
-    static getTimeline() {
+    static getTimeline(tools := true) {
         if WinGetClass("A") = "DroverLord - Window Class" ;// if you're focused on a window that isn't the main premiere window, controlgetclassnn will retrieve different values
             switchTo.Premiere() ;// so we have to bring focus back to the main window first
         SendInput(KSA.timelineWindow)
@@ -1498,9 +1502,10 @@ class Prem {
         this.timelineXControl := x + 236         ;accounting for the column to the left of the timeline
         this.timelineYControl := y + height + 40 ;accounting for the scroll bars at the bottom of the timeline
         this.timelineVals     := true
-        SetTimer(tools, -100)
+        if tools = true
+            SetTimer(tooltips, -100)
         return true
-        tools() {
+        tooltips() {
             ; tool.Wait()
             tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 4.0,,, 10)
             tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 4.0,, 30, 11)
@@ -1641,12 +1646,13 @@ class Prem {
 
     /**
      * Checks to see if the timeline values within `prem {` have been set
+     * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values
      * @returns {Boolean} if the timeline cannot be determined, returns `false`. Else returns `true`
      */
-	static __checkTimeline() {
+	static __checkTimeline(tools := true) {
 		if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
             (this.timelineVals = false) {
-			if !this.getTimeline()
+			if !this.getTimeline(tools)
 				return false
 		}
 		return true

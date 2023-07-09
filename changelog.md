@@ -26,13 +26,14 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
 - Fixed `getTimeline()` stalling when it encounters an issue
 - Added `numpadGain()` which allows `gain()` to quickly be called by pressing <kbd>NumpadSub/NumpadAdd</kbd> followed by any of the <kbd>Numpad</kbd> buttons
 - `__checkTimelineFocus()` is now static
+- `__checkTimeline` && `getTimeline` now accept a parameter to determine whether to produce tooltips
 - `zoom()`
     - Fixed function cycling through timeline sequences if multiple are open
     - Preset zooms can now accept an array length of `5` to include the `Anchor Point` coordinates
+    - All tooltips now appear at the bottom of the `Program Monitor` and no longer follow the mouse
 
 ## > Other Changes
 - Fix `Alt_menu_acceleration_DISABLER.ahk` no longer working as expected in `AHK v2.0.4`
-    - Also disabled it within `Premiere Pro` as it no longer seems to work 100% of the time and just causes more headaches
 - Added `render and replace.ahk`
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
 - Refactored the following timer scripts;
