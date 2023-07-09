@@ -31,6 +31,7 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
     - Preset zooms can now accept an array length of `5` to include the `Anchor Point` coordinates
 
 ## > Other Changes
+- Fix `Alt_menu_acceleration_DISABLER.ahk` no longer working as expected in `AHK v2.0.4`
 - Added `render and replace.ahk`
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
 - Refactored the following timer scripts;

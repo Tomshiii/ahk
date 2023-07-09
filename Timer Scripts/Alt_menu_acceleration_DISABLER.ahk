@@ -8,12 +8,15 @@ KeyHistory(0)
 #Include <Functions\trayShortcut>
 ; }
 
-InstallKeybdHook true
+InstallKeybdHook(true)
 TraySetIcon(ptf.Icons "\error.ico") ;changes the icon this script uses in the taskbar
 startupTray()
 
 ;These next two lines are very important. You have to change the "menu mask key" away from being CTRL, to something that won't result in cross-talk. Read this thread to learn the details: https://autohotkey.com/boards/viewtopic.php?f=76&t=57683
-A_MenuMaskKey := "vkE8"  ; vk07 is unassigned.
+;// this has been changed to a different key than originally because it stopped working for me in newer versions of AHK.
+;// Taran originally had `vk07` and that didn't work
+;// then for a while I had `vkE8` and that stopped working as of ahk v2.0.4
+A_MenuMaskKey := "SC09A"
 
 ; *********** IS THE WINDOWS / XBOX GAME BAR GETTING IN YOUR WAY? ************
 ; ****************** OR MAYBE IT'S THE NVIDIA SHARE OVERLAY! *****************
