@@ -1,10 +1,11 @@
 #SingleInstance force
 #Requires AutoHotkey v2.0 ;this script requires AutoHotkey v2.0
-ListLines(0)
-KeyHistory(0)
+; ListLines(0)
+; KeyHistory(0)
 
 ; { \\ #Includes
 #Include <Classes\ptf>
+#Include <Classes\Editors\Premiere>
 #Include <Functions\trayShortcut>
 ; }
 
@@ -16,7 +17,7 @@ startupTray()
 ;// this has been changed to a different key than originally because it stopped working for me in newer versions of AHK.
 ;// Taran originally had `vk07` and that didn't work
 ;// then for a while I had `vkE8` and that stopped working as of ahk v2.0.4
-A_MenuMaskKey := "SC09A"
+A_MenuMaskKey := "vkD7"
 
 ; *********** IS THE WINDOWS / XBOX GAME BAR GETTING IN YOUR WAY? ************
 ; ****************** OR MAYBE IT'S THE NVIDIA SHARE OVERLAY! *****************
@@ -97,7 +98,7 @@ A_MenuMaskKey := "SC09A"
 
 
 ;;;UPDATE: Those two lines totally work, but I am now trying a slightly different thing instead:
-
+#HotIf !WinActive(prem.winTitle)
 ~LAlt::
 {
 	Sendinput("{Blind}{sc0E9}")

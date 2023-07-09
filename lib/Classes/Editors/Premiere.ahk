@@ -302,7 +302,9 @@ class Prem {
             {
                 tool.Cust("Retrieving tooltip location",, -40, 20, 4)
                 this.__checkTimelineFocus()
+                sleep 50
                 SendInput(KSA.programMonitor)
+                sleep 50
                 try {
                     if !classNN := obj.ctrlPos()
                         return

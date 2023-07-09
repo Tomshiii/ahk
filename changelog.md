@@ -32,6 +32,7 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
 
 ## > Other Changes
 - Fix `Alt_menu_acceleration_DISABLER.ahk` no longer working as expected in `AHK v2.0.4`
+    - Also disabled it within `Premiere Pro` as it no longer seems to work 100% of the time and just causes more headaches
 - Added `render and replace.ahk`
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
 - Refactored the following timer scripts;
