@@ -95,9 +95,9 @@ A_MenuMaskKey := "vkD7"
 
 ;;;The "BLIND" is quite important. It works without it, but dang it makes it smoother, because now it doens't have to move around other modifiers before and after the SC0E9 scan code is fired off. It's great. Trust me. Use it.
 
-
-
 ;;;UPDATE: Those two lines totally work, but I am now trying a slightly different thing instead:
+
+#HotIf !WinActive(prem.winTitle)
 ~LAlt::
 {
 	Sendinput("{Blind}{sc0E9}")

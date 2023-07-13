@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/07/01
- * @version 1.2.5
+ * @date 2023/07/12
+ * @version 1.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -110,10 +110,11 @@ class switchTo {
      */
     static Premiere()
     {
-        if !WinExist(prem.class)
+        if !WinExist(prem.class) {
             Run(ptf["Premiere"])
-        else if WinExist(prem.class)
-            WinActivate(prem.class)
+            return
+        }
+        WinActivate(prem.class)
     }
 
     /**
@@ -124,34 +125,24 @@ class switchTo {
      */
     static AE()
     {
-        runae() ;cut repeat code
-        {
+        ;// cut repeat code
+        runae() {
             Run(AE.path)
             if WinWait(AE.winTitle,, 2)
                 WinActivate(AE.winTitle)
         }
-        premTitle() ;pulls dir url from prem title and runs ae project in that dir
-        {
-            try {
 
-                Name := WinGet.PremName()
-                dashLocation := InStr(Name.winTitle, "-")
-                length := StrLen(Name.winTitle) - dashLocation
-                if !Name.titlecheck
-                    {
-                        runae()
-                        return
-                    }
-                path := SubStr(entirePath := SubStr(name.winTitle, dashLocation + 2, length) ;// string
-                                , 1                                                          ;// startpos
-                                , InStr(entirePath, "\",, -1) - 1)                           ;// length
-                if !FileExist(path "\*.aep")
-                    {
-                        runae()
-                        return
-                    }
+
+        premTitle() {
+            try {
+                ;// pulls dir url from prem title and runs ae project in that dir
+                path := WinGet.ProjPath()
+                if !FileExist(path.dir "\*.aep") {
+                    runae()
+                    return
+                }
                 count := 0, foundFile := ""
-                loop files path "\*.aep", "F"
+                loop files path.dir "\*.aep", "F"
                     {
                         foundFile := A_LoopFileFullPath
                         count++
@@ -164,7 +155,7 @@ class switchTo {
                             WinActivate(AE.winTitle)
                         return
                     default:
-                        pick := FileSelect("3", path "\effects.aep", "Which project do you wish to open?", "*.aep")
+                        pick := FileSelect("3", path.dir "\effects.aep", "Which project do you wish to open?", "*.aep")
                         if pick = ""
                             return
                         Run(AE.path A_Space '"' pick '"')
@@ -221,6 +212,49 @@ class switchTo {
     }
 
     /**
+     * This function opens the current `Premiere Pro`/`After Effects` project filepath in windows explorer. If prem/ae isn't open it will attempt to open the `ptf.comms` folder.
+     * @returns {Boolean} `true/false` whether the function succeeded or failed
+     */
+    static adobeProject() {
+        ;// if an editor isn't open
+        if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects") {
+            ;// check for commissions folder
+            if DirExist(ptf.comms) {
+                tool.Cust("A Premiere/AE isn't open, opening the comms folder")
+                Run(ptf.comms)
+                commPath := obj.SplitPath(ptf.comms)
+                ;// commPath.name assumes win11 -- if you're on win10 or you've changed it so explorer titles show the full path
+                ;// simply use ptf.comms instead
+                if !WinWait(commPath.name " ahk_class CabinetWClass", "comms", 2)
+                    return false
+                WinActivate(commPath.name " ahk_class CabinetWClass", "comms")
+                return true
+            }
+            ;// if the folder doesn't exist
+            errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
+            return false
+        }
+        if !path := WinGet.ProjPath()
+            return false
+        ;// win11 by default names an explorer window the folder you're in
+        getFolderName := SubStr(path.dir, InStr(path.dir, "\",, -1)+1)
+
+        ;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
+        if WinExist(getFolderName " ahk_class CabinetWClass",, "Adobe" "Editing Checklist", "Adobe") {
+            WinActivate(getFolderName " ahk_class CabinetWClass",, "Adobe")
+            return true
+        }
+        ;// run the path
+        RunWait(path.dir)
+        if !WinWait(getFolderName " ahk_class CabinetWClass",, 2, "Adobe") {
+            tool.Cust("Waiting for project directory to open timed out")
+            return false
+        }
+        WinActivate(getFolderName " ahk_class CabinetWClass",, "Adobe")
+        return true
+    }
+
+    /**
      * This switchTo function will quickly switch to the specified program. If there isn't an open window of the desired program, this function will open one
      * @param {Integer} x/y/width/height the coordinates you wish to move discord too. Will default to the values listed at the top of the `discord {` class
      */
@@ -254,26 +288,27 @@ class switchTo {
      */
     static Firefox()
     {
-        if !WinExist(browser.firefox.class)
+        if !WinExist(browser.firefox.class) {
             Run("firefox.exe")
-        else if WinActive(browser.firefox.winTitle)
-            this.OtherFirefoxWindow()
-        else
+            return
+        }
+        if !WinActive(browser.firefox.winTitle) {
             WinActivate(browser.firefox.winTitle)
+            return
+        }
+        this().__OtherFirefoxWindow()
     }
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static OtherFirefoxWindow() ;I use this as a nested function below in firefoxTap(), you can just use this separately
+    __OtherFirefoxWindow()
     {
-        if !WinExist(browser.firefox.winTitle)
-            {
+        if !WinExist(browser.firefox.winTitle) {
                 Run("firefox.exe")
                 return
             }
-        if WinActive(browser.firefox.class)
-            {
+        if WinActive(browser.firefox.class) {
                 GroupAdd("firefoxes", browser.firefox.class)
                 GroupActivate("firefoxes", "r")
                 return
@@ -340,53 +375,15 @@ class switchTo {
                     GroupActivate "MusicPlayers", "r"
                 loop {
                     IME := WinGetTitle("A")
-                    if IME = "Default IME"
+                    if IME = "Default IME" {
                         GroupActivate "MusicPlayers", "r"
+                        continue
+                    }
                     if IME != "Default IME"
                         break
                 }
             }
         ;window := WinGetTitle("A") ;debugging
         ;tool.Cust(window) ;debugging
-    }
-}
-
-/**
- * This function will do different things depending on how many times you press the activation hotkey.
- *
- * 1 press = switchToFirefox()
- *
- *2 press = switchToOtherFirefoxWindow()
- */
-firefoxTap()
-{
-    static winc_presses := 0
-    if winc_presses > 0 ; SetTimer already started, so we log the keypress instead.
-    {
-        winc_presses += 1
-        return
-    }
-    ; Otherwise, this is the first press of a new series. Set count to 1 and start
-    ; the timer:
-    winc_presses := 1
-    SetTimer After400, -180 ; Wait for more presses within a 300 millisecond window.
-
-    After400()  ; This is a nested function.
-    {
-        if winc_presses = 1 ; The key was pressed once.
-        {
-            switchTo.Firefox()
-        }
-        else if winc_presses = 2 ; The key was pressed twice.
-        {
-            switchTo.OtherFirefoxWindow()
-        }
-        else if winc_presses > 2
-        {
-            ;
-        }
-        ; Regardless of which action above was triggered, reset the count to
-        ; prepare for the next series of presses:
-        winc_presses := 0
     }
 }

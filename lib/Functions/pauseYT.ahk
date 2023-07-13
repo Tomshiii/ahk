@@ -36,8 +36,7 @@ pauseYT() {
 				MouseMove(x, y, 2)
 				break
 			}
-		else
-			switchTo.OtherFirefoxWindow()
+		switchTo().__OtherFirefoxWindow()
 		if A_Index > 5
 			{
 				tool.Cust("Couldn't find a youtube tab")

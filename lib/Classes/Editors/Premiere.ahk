@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/09
- * @version 1.6.12
+ * @date 2023/07/12
+ * @version 1.6.12.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -559,6 +559,7 @@ class Prem {
             anchorX := "false", anchorY := "false"
         }
         SendInput("{Enter}")
+        sleep 50
         block.Off()
     }
 

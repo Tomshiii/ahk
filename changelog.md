@@ -9,7 +9,12 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
 
 ## > Functions
 - Fixed `gamCheckGUI {` failing to produce `Msgbox` to alert the user a game has already been added to the list when the GUI is called from the tray menu.
-- `switchTo.Explorer()` now includes `"ahk_class OperationStatusWindow"`
+
+`switchTo`
+- Add `adobeProject()` to open the current project in windows explorer.
+    - Code taken from `Always.ahk` and replaced with this function
+    - Fixed bug in original code that was causing the explorer window to not get focused once opened
+- `Explorer()` now includes `"ahk_class OperationStatusWindow"` (ie. transfer graph)
 
 `WinGet`
 - `PremName()/AEName()` now returns `-1` on failure instead of `unset`

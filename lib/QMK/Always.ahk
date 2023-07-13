@@ -32,46 +32,12 @@ Left::switchTo.AE()
 u::unassigned()
 j::unassigned()
 m::unassigned()
-SC149::firefoxTap()
+SC149::switchTo.Firefox()
 Enter & SC149::switchTo.closeOtherWindow(browser.firefox.class)
 Right & PgUp::switchTo.newWin("exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
-h:: ;opens the directory for the current premiere/ae project
-{
-	;// if an editor isn't open
-	if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects")
-		{
-			;// check for commissions folder
-			if DirExist(ptf.comms)
-				{
-					tool.Cust("A Premiere/AE isn't open, opening the comms folder")
-					Run(ptf.comms)
-					if !WinWait("ahk_class CabinetWClass", "comms", 2)
-						return
-					WinActivate("ahk_class CabinetWClass", "comms")
-					return
-				}
-			;// if the folder doesn't exist
-			errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
-			return
-		}
-	if !path := WinGet.ProjPath()
-		return
-	;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
-	if WinExist("ahk_class CabinetWClass", path.NameNoExt, "Adobe" "Editing Checklist", "Adobe")
-		{
-			WinActivate("ahk_class CabinetWClass", path.NameNoExt, "Adobe")
-			return
-		}
-	;// run the path
-	RunWait(path.dir)
-	if !WinWait("ahk_class CabinetWClass", path.NameNoExt, 2, "Adobe") {
-		tool.Cust("Waiting for project directory to open timed out")
-		return
-	}
-	WinActivate("ahk_class CabinetWClass", path.NameNoExt, "Adobe")
-}
+h::switchTo.adobeProject() ;opens the directory for the current premiere/ae project
 n::unassigned()
 Space::
 {
