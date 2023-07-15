@@ -8,4 +8,6 @@ GroupAdd("games", "Left 4 Dead 2 ahk_exe left4dead2.exe") ;lfd2
 GroupAdd("games", "Stardew Valley ahk_exe Stardew Valley.exe")
 GroupAdd("games", "Just Cause 3 ahk_exe JustCause3.exe")
 GroupAdd("games", "Halo: The Master Chief Collection   ahk_exe MCC-Win64-Shipping.exe")
+GroupAdd("games", "BattleBit ahk_exe BattleBit.exe")
+GroupAdd("games", "League of Legends ahk_exe League of Legends.exe")
 ; -- leave this line it gets used and is needed in settingsGUI()

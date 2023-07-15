@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.32.15
+;\\v2.33
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -123,6 +123,10 @@ start.libUpdateCheck()         ;runs a loop to check for lib updates
 start.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
 start.monitorAlert()           ;checks the users monitor work area for any changes
 start.__Delete()
+
+;// so streamdeck scripts can receive premiere timeline coords
+onMsgObj := ObjBindMethod(prem, "__recieveMessage")
+OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;=============================================================================================================================================
 ;
 ;		Windows

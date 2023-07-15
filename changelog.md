@@ -30,6 +30,7 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
     - Will also now double check to ensure audio is selected before attempting to open the gain window
 - Fixed `getTimeline()` stalling when it encounters an issue
 - Added `numpadGain()` which allows `gain()` to quickly be called by pressing <kbd>NumpadSub/NumpadAdd</kbd> followed by any of the <kbd>Numpad</kbd> buttons
+- Added `__respondMessage` & `__parseMessageResponse` to allow for scripts to easily share information relating to premiere between one another. (ie. sharing timeline coordinates between scripts)
 - `__checkTimelineFocus()` is now static
 - `__checkTimeline` && `getTimeline` now accept a parameter to determine whether to produce tooltips
 - `zoom()`
@@ -40,6 +41,7 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
 ## > Other Changes
 - Fix `Alt_menu_acceleration_DISABLER.ahk` no longer working as expected in `AHK v2.0.4`
 - Added `render and replace.ahk`
+- Added `sendtoAE.ahk`
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
 - Refactored the following timer scripts;
     - `adobe fullscreen check.ahk`

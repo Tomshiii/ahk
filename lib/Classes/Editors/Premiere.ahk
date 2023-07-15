@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/12
- * @version 1.6.12.1
+ * @date 2023/07/15
+ * @version 1.6.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -21,6 +21,7 @@
 #Include <Classes\clip>
 #Include <Classes\errorLog>
 #Include <Classes\block>
+#Include <Classes\WM>
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
 ; }
@@ -92,6 +93,40 @@ class Prem {
         ;// colours for the fx symbol box
         0x292929, 1, 0x2D2D2D, 1, 0x3B3B3B, 1, 0x404040, 1, 0x454545, 1, 0x4A4A4A, 1, 0x585858, 1, 0x606060, 1, 0x646464, 1, 0xA7ADAB, 1, 0xB1B1B1, 1, 0xCCCCCC, 1, 0xD2D2D2, 1, 0xEFEFEF, 1
     )
+
+    /**
+     * This function is to help allow for scripts to pass messages relating to premiere back and forth
+     */
+    static __recieveMessage(wParam, lParam, msg, hwnd) {
+        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+        splitMsg := StrSplit(res, ",")
+        switch splitMsg[1] {
+            case "__premTimelineCoords":
+                detect()
+                if !this.__checkTimelineValues()
+                    return
+                response := Format("__thisTimelineCoords,timelineRawX,{},timelineRawY,{},timelineXValue,{},timelineYValue,{},timelineXControl,{},timelineYControl,{},timelineVals,{}", this.timelineRawX, this.timelineRawY, this.timelineXValue, this.timelineYValue, this.timelineXControl, this.timelineYControl, true)
+                WM.Send_WM_COPYDATA(response, splitMsg[2])
+        }
+    }
+
+    /**
+     * This function is to help allow for scripts to pass messages relating to premiere back and forth
+     */
+    static __parseMessageResponse(wParam, lParam, msg, hwnd) {
+        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+        res := StrSplit(res, ",")
+        determineWhich := res[1]
+        res.RemoveAt(1)
+        switch determineWhich {
+            case "__premTimelineCoords":
+                for k, v in res {
+                    if Mod(k, 2) = 0
+                        continue
+                    this.%v% := res[k+1]
+                }
+        }
+    }
 
     __fxPanel() => (SendInput(KSA.effectControls), SendInput(KSA.effectControls))
 
@@ -1485,13 +1520,18 @@ class Prem {
      * @returns {Boolean} `true/false`
      */
     static getTimeline(tools := true) {
-        if WinGetClass("A") = "DroverLord - Window Class" ;// if you're focused on a window that isn't the main premiere window, controlgetclassnn will retrieve different values
-            switchTo.Premiere() ;// so we have to bring focus back to the main window first
+        try {
+            if WinGetClass("A") = "DroverLord - Window Class" ;// if you're focused on a window that isn't the main premiere window, controlgetclassnn will retrieve different values
+                switchTo.Premiere() ;// so we have to bring focus back to the main window first
+        } catch {
+            errorLog(UnsetError("Unable to determine the active window", -1),, 1)
+            return false
+        }
         SendInput(KSA.timelineWindow)
         SendInput(KSA.timelineWindow)
         sleep 75
         try {
-            effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            effClassNN := ControlGetClassNN(ControlGetFocus("A"), this.exeTitle) ;gets the ClassNN value of the active panel
             ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
         } catch {
             errorLog(UnsetError("Couldn't find the ClassNN value of the Timeline", -1),, 1)
@@ -1646,13 +1686,39 @@ class Prem {
     }
 
     /**
+     * This function returns whether the classes internet timeline values have been set
+     * @returns {Boolean}
+     */
+    static __checkTimelineValues() {
+        if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
+            (this.timelineVals = false)
+            return false
+        return true
+    }
+
+    /**
+     * This function waits for the timeline to be in focus
+     * @param {Integer} timout how many `seconds` you want to wait before this function times out
+     */
+    static __waitForTimeline(timeout := 5) {
+        loop (timeout*100) {
+            if this.timelineFocusStatus() != true {
+                this.__checkTimelineFocus()
+                sleep 100
+                continue
+            }
+            return true
+        }
+        return false
+    }
+
+    /**
      * Checks to see if the timeline values within `prem {` have been set
      * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values
      * @returns {Boolean} if the timeline cannot be determined, returns `false`. Else returns `true`
      */
 	static __checkTimeline(tools := true) {
-		if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
-            (this.timelineVals = false) {
+		if  !this.__checkTimelineValues() {
 			if !this.getTimeline(tools)
 				return false
 		}
@@ -1731,7 +1797,15 @@ class Prem {
             tool.Cust("Function timed out waiting for save prompt")
             return
         }
-        WinWaitClose("Save Project")
+        if !WinWaitClose("Save Project",, 5) {
+            tool.Cust("Function timed out waiting for save prompt to close")
+            return
+        }
+        sleep 500
+        if this.__checkTimelineValues() {
+            if !this.__waitForTimeline()
+                return
+        }
         switch which {
             case "delete": this().__delprev(sendHotkey)
             default:       SendInput(sendHotkey)
@@ -1785,5 +1859,4 @@ class Prem {
             }
         }
     }
-
 }

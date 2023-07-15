@@ -80,7 +80,7 @@ class WM {
      * @param {} lParam
      * @param {} msg
      * @param {} hwnd
-     * @return returns `true` upon completion
+     * @return {String}
      * ```
      * OnMessage(0x004A, test)  ; 0x004A is WM_COPYDATA
      * test(wParam, lParam, msg, hwnd) {

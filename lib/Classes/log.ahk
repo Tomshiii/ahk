@@ -14,8 +14,8 @@ class log {
 
     /**
      * @param {String} dateTime any string you wish to appear before your log message. Defaults to `YYYY_MM_DD -- HH:MM:SS.MS : `
-     * @param {Boolean} print whether you wish for the error to be send to the debug stream via `print()`. defaults to `true`
-     * @param {String} fileLocation the location (including filename/extension) of the file you wish to log to. Defaults to `ptf.Logs "\Other Logs\YYYY_MM_DD.txt"`)
+     * @param {Boolean} print whether you wish for the log to be send to the debug stream via `print()`. defaults to `true`
+     * @param {String} fileLocation the location (including filename/extension) of the file you wish to log to. Defaults to `ptf.Logs "\Other Logs\YYYY_MM_DD.txt"`
      */
     __New(dateTime?, print?, fileLocation?) {
         this.dateTime     := IsSet(dateTime)     ? dateTime     : this.dateTime
