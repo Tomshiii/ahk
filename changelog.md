@@ -11,6 +11,7 @@ Alongside `autosave.ahk` I am also slowly transitioning my `Premiere Pro/After E
 - Fixed `gamCheckGUI {` failing to produce `Msgbox` to alert the user a game has already been added to the list when the GUI is called from the tray menu.
 
 `switchTo`
+- Fixed `__Win` throwing if target doesn't exist
 - Add `adobeProject()` to open the current project in windows explorer.
     - Code taken from `Always.ahk` and replaced with this function
     - Fixed bug in original code that was causing the explorer window to not get focused once opened
