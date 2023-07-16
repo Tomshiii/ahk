@@ -97,6 +97,16 @@ A_MenuMaskKey := "vkD7"
 
 ;;;UPDATE: Those two lines totally work, but I am now trying a slightly different thing instead:
 
+;// premiere started behaving weird after ahk v2.0.4 and your LAlt click would sometimes seamingly not allow
+;// you to single click things. This is my attempt to fix that odd behaviour
+#HotIf WinActive(prem.winTitle)
+~LAlt::
+{
+	Sendinput("{Blind}{sc0E9}{LAlt Down}")
+	KeyWait("LAlt") ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
+	Sendinput("{LAlt Up}{Blind}{sc0EA}")
+}
+
 #HotIf !WinActive(prem.winTitle)
 ~LAlt::
 {
