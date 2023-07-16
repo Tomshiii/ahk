@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/07/08
- * @version 1.5.10.1
+ * @date 2023/07/16
+ * @version 1.5.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -153,6 +153,35 @@ class WinGet {
     }
 
     /**
+     * Attempts to determine the year of the current open adobe program
+     * @param {String} progCheck is a passed in parameter containing the title of the current project
+     * @param {String} which which program the user is attempting to find the name of. Must be either `AE` or `Premiere`
+     * @returns {String} the YYYY of the currently open adobe program
+     */
+    __determineAdobeYear(progCheck, which) {
+        try {
+            determineYear := SubStr(progCheck, InStr(progCheck, "20",, 1, 1), 4)
+        } catch {
+            switch which {
+                case "AE":       determineYear := "20" ptf.AEYearVer
+                case "Premiere": determineYear := "20" ptf.PremYearVer
+            }
+        }
+        return determineYear
+    }
+
+    /**
+     * Attempts to determine the title of the current open adobe program
+     * @param {String} which which program the user is attempting to find the name of. Must be either `AE` or `Premiere`
+     * @returns {String} the title of the currently open adobe program
+     */
+    __determineAdobeTitle(which) {
+        if (progCheck := WinGetTitle(editors.%which%.class)) = ""
+            progCheck := WinGetTitle(editors.%which%.winTitle)
+        return progCheck
+    }
+
+    /**
      * This function is to reduce repeat code for the adobe name functions below.
      * @param {String} which is defining whether after effects or premiere should be checked
      */
@@ -164,14 +193,14 @@ class WinGet {
         try {
             if !WinExist(editors.%which%.winTitle)
                 return {winTitle: false, titleCheck: -1, saveCheck: -1}
+            progCheck := this.__determineAdobeTitle(which)
+            adobeYear := this.__determineAdobeYear(progCheck, which)
             switch which {
-                case "AE":       title := "Adobe After Effects 20" ptf.AEYearVer " -"
-                case "Premiere": title := "Adobe Premiere Pro 20" ptf.PremYearVer " -"
+                ;// we add the " -" to accomodate a window that is literally just called "Adobe -- [Year]"
+                case "AE":       title := "Adobe After Effects " adobeYear " -"
+                case "Premiere": title := "Adobe Premiere Pro " adobeYear " -"
             }
-            progCheck := WinGetTitle(editors.%which%.class)
-            if progCheck = ""
-                progCheck := WinGetTitle(editors.%which%.winTitle)
-            titleCheck := InStr(progCheck, title) ;we add the " -" to accomodate a window that is literally just called "Adobe -- [Year]"
+            titleCheck := InStr(progCheck, title)
             saveCheck := (SubStr(progCheck, -1, 1) = "*") ? true : false
             return {winTitle: progCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
@@ -273,17 +302,16 @@ class WinGet {
             return false
         ;// attempt to get the editors name
         try {
-            if WinExist("Adobe Premiere Pro")
+            if WinExist(Editors.Premiere.winTitle)
                 WinGet.PremName(&Name, &titlecheck)
-            else if WinExist("Adobe After Effects")
+            else if WinExist(Editors.AE.winTitle)
                 WinGet.AEName(&Name, &titlecheck)
         }
         ;// if the name returns blank
-        if (!titlecheck || titlecheck = -1)
-            {
-                tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
-                return false
-            }
+        if (!titlecheck || titlecheck = -1) {
+            tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
+            return false
+        }
         ;// string manipulation to get the path
         ;// getting the path
         entirePath := SubStr(name							;// string
