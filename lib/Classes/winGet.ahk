@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/07/16
- * @version 1.5.11
+ * @date 2023/07/17
+ * @version 1.5.11.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -160,8 +160,10 @@ class WinGet {
      */
     __determineAdobeYear(progCheck, which) {
         try {
-            determineYear := SubStr(progCheck, InStr(progCheck, "20",, 1, 1), 4)
+            ;// attempt to pull the year from the title
+            determineYear := SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), "20",, 1, 1), 4)
         } catch {
+            ;// fallback to `ptf {`
             switch which {
                 case "AE":       determineYear := "20" ptf.AEYearVer
                 case "Premiere": determineYear := "20" ptf.PremYearVer
