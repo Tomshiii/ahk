@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/07/04
- * @version 1.7.0
+ * @date 2023/07/16
+ * @version 1.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -630,8 +630,16 @@ class Startup {
             name: "JSON",                                       url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
             scriptPos: ptf.lib "\Other"
         }
+        UIA := {
+            name: "UIA",                                       url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA.ahk",
+            scriptPos: ptf.lib "\Other\UIA"
+        }
+        UIA_Browser := {
+            name: "UIA_Browser",                                       url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA_Browser.ahk",
+            scriptPos: ptf.lib "\Other\UIA"
+        }
 
-        objs := [this.webView2, this.comVar, this.SevenZip, this.JSON]
+        objs := [this.webView2, this.comVar, this.SevenZip, this.JSON, this.UIA, this.UIA_Browser]
         name        := []
         url         := []
         scriptPos   := []

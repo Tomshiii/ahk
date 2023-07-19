@@ -10,6 +10,9 @@ Logs/Other Logs/*.txt
 Support Files/replaceChecklist_log.txt
 Support Files/replaceChecklist.ahk
 Backups/RODECaster/shows/mine/pads
+lib/Other/UIA/Examples
+lib/Other/UIA/.gitignore
+lib/Other/UIA/UIATreeInspector.ahk
 
 # adobe symlinks
 Support Files/ImageSearch/AE/v23.0
