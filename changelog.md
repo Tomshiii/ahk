@@ -14,6 +14,7 @@ I am slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.
 
 ## > Functions
 - Fixed `gamCheckGUI {` failing to produce a `Msgbox` to alert the user a game has already been added to the list when the GUI is called from the tray menu.
+- Fixed `startup.generate()` incorrectly generating new settings entries
 
 `switchTo {`
 - Fixed `__Win` throwing if target doesn't exist

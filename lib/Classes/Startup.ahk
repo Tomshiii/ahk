@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/07/16
- * @version 1.7.1
+ * @date 2023/07/22
+ * @version 1.7.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -73,7 +73,7 @@ class Startup {
         darkCheck := this.__checkDark()
 
         genNewMap() => newMap := Mip()
-        noSpace(inpString) => StrReplace(inpString, A_Space, "_")
+        ensureSpaces(inpString) => StrReplace(inpString, "_", A_Space)
         result(res) {
             switch res {
                 case true: return "true"
@@ -87,7 +87,7 @@ class Startup {
             for k, v2 in valArr := StrSplit(IniRead(ptf["settings"], v), ["=", "`n", "`r"]) {
                 if Mod(k, 2) = 0
                     continue
-                all%v%.Set(noSpace(v2), result(valArr.Get(k+1)))
+                all%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
             }
         }
 
@@ -104,7 +104,7 @@ class Startup {
                         for k, v2 in valArr := StrSplit(IniRead(tempFile, v), ["=", "`n", "`r"]) {
                             if Mod(k, 2) = 0
                                 continue
-                            temp%v%.Set(noSpace(v2), result(valArr.Get(k+1)))
+                            temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
                         }
                     }
                     FileDelete(tempFile)
