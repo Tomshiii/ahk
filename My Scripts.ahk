@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33
+;\\v2.33.1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -325,6 +325,8 @@ F21::SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
 !c::VSCode.script(12) ;clicks on my `changelog` file in vscode
 ;vscodeTestHotkey;
 !t::VSCode.script()
+;vscodeTodoHotkey;
+!d::VSCode.script()
 ;vscodesearchHotkey;
 $^f::VSCode.search()
 ;vscodecutHotkey;

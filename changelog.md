@@ -1,5 +1,5 @@
 # <> Release 2.12 - New autosave.ahk
-- `autosave.ahk` has been rewritten from the ground up to follow cleaner code patterns allowing for easier expandability, easier debugging and allowing the script to do what it was originally designed to do while not encountering issue after issue as more and more responsibilities got attached to the one script.  
+- `autosave.ahk` has been rewritten from the ground up to follow cleaner coding patterns allowing for easier expandability, easier debugging and allowing the script to do what it was originally designed to do while not encountering issue after issue as more and more responsibilities got attached to the one script.  
 The purpose of this update is to smooth out the experience of using the script and allow it to do what it was always supposed to do; do it's thing in the background without interupting the user with countless unrecoverable errors.
 > This currently means that `autosave.ahk` will lose the ability to automatically open `checklist.ahk` (as it shouldn't have ever been its responsibility anyway) and will no longer offer a countdown until the next automatic save. The removal of these features has been done after careful consideration to ensure that it doesn't end up in the same pit as before and remains clean and easily maintainable.
 >> The settings for these features have currently been disabled within `settingsGUI()` while I decide whether I wish to bring them back in some capacity.
@@ -51,6 +51,7 @@ I am slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.
 - Fix `Alt_menu_acceleration_DISABLER.ahk` no longer working as expected in `AHK v2.0.4`
 - Added `render and replace.ahk`
 - Added `sendtoAE.ahk`
+- Added `;vscodeTodoHotkey;`
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
 - `checklist.ahk` will now create a `Hotkey` <kbd>Shift & Media_Play_Pause</kbd> to start/stop the timer
 - Refactored the following timer scripts;

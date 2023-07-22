@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2023/07/07
- * @version 1.2.1.3
+ * @date 2023/07/22
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -74,33 +74,26 @@ class VSCode {
         block.On()
         sleep 50
         delaySI(50, KSA.focusExplorerWin, KSA.focusExplorerWin, KSA.focusWork, KSA.collapseFold, KSA.collapseFold, "{Up 3}", "{Enter}")
-        if A_ThisHotkey = KSA.functionHotkey ;this opens my \functions folder
-            {
-                delaySI(50, "{Down 2}{Enter}", "{Down 2}{Enter}", "{Down 2}{Enter}")
-                sleep 50
-                SendInput("{Up 1}{Enter}")
-                block.Off()
-                tool.Wait()
-                tool.Cust("The function folder has been expanded", 2.0)
+        __closeOut(ttp) => (sleep(50), block.Off(), tool.Wait(), tool.Cust(ttp, 2.0))
+        switch A_ThisHotkey {
+            case KSA.functionHotkey:   ;// this opens my ..\lib\functions folder
+                delaySI(50, "{Down 2}{Enter}", "{Down 2}{Enter}", "{Down 2}{Enter}", "{Up 1}{Enter}")
+                __closeOut("The function folder has been expanded")
                 return
-            }
-        ;// I have a dummy test .ahk file I use constantly, this is simply navigating to it
-        if A_ThisHotkey = KSA.testHotkey
-            {
+            case KSA.testHotkey:       ;// I have a dummy test .ahk file I use constantly, this is simply navigating to it
                 delaySI(50, "{Down 5}{Enter}", "{Down 17}{Enter}")
-                sleep 50
-                block.Off()
-                tool.Wait()
-                tool.Cust("The test file has been selected", 2.0)
+                __closeOut("The test file has been selected")
                 return
-            }
+            case KSA.todoHotkey: ;// Navigates to the toDo file
+                delaySI(50, "{Down 8}{Enter}", "{Down 12}{Enter}", KSA.focusExplorerWin, "{Up 12}{Enter}", KSA.focusWork)
+                __closeOut("The todo file has been selected")
+                return
+        }
         SendInput("{Down " script "}")
         sleep 25
         SendInput("{Enter}")
         SendInput(KSA.focusCode)
-        block.Off()
-        tool.Wait()
-        tool.Cust("The proper file should now be focused", 2.0)
+        __closeOut("The proper file should now be focused")
     }
 
     /**
