@@ -45,6 +45,10 @@ class SettingsToolTips {
         Yes: "``checklist.ahk`` will always wait for you to open a premiere project before opening",
         No: "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
     }
+    checklistHotkeys := {
+        Yes: "``checklist.ahk`` will create a hotkey to start/stop the timer. (Shift & Media_Play_Pause)",
+        No: "``checklist.ahk`` will no longer create a hotkey to start/stop the timer."
+    }
 }
 
 
@@ -294,6 +298,13 @@ settingsGUI()
         if (InStr(script.text, "autosave") || InStr(script.text,ascheckCheckTitle)) && WinExist("autosave.ahk - AutoHotkey")
             WM.Send_WM_COPYDATA(iniVar "_" script.Value, "autosave.ahk")
     }
+
+    ;// checklist create hotkeys
+    checklistHotkeys := UserSettings.checklist_hotkeys
+    checklistHotkeysTitle := "``checklist.ahk`` create hotkey"
+    checkTool := settingsGUI.Add("Checkbox", "Checked" checklistHotkeys " Y+5", checklistHotkeysTitle)
+    checkTool.ToolTip := (checklistHotkeys = true) ? toolT.checklistHotkeys.Yes : toolT.checklistHotkeys.No
+    checkTool.OnEvent("Click", msgboxToggle.Bind("checklist hotkeys"))
 
     ;// checklist tooltip
     checklistTooltip := UserSettings.checklist_tooltip

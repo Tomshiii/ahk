@@ -11,7 +11,12 @@ class checklistTimer extends count {
                 this.hoursAdjust := true
                 this.decimalPlace := 2
             }
+        if hotkeyCreate = true
+            Hotkey("Shift & Media_Play_Pause", this.startObj, "On")
     }
+
+    startObj := ObjBindMethod(this, 'start')
+    stopObj  := ObjBindMethod(this, 'stop')
 
     hoursAdjust := false
     decimalPlace := 3
@@ -28,6 +33,7 @@ class checklistTimer extends count {
         super.start() ;start the timer
         this.logger.start()
         this.reminder.stop()
+        Hotkey("Shift & Media_Play_Pause", this.stopObj)
     }
 
     /**
@@ -87,6 +93,7 @@ class checklistTimer extends count {
         this.logger.stop()
         this.reminder.start()
         this.count := IniRead(checklist, "Info", "time") ;then update the count so it will start from the new elapsed time instead of the original
+        Hotkey("Shift & Media_Play_Pause", this.startObj)
     }
 
     /**

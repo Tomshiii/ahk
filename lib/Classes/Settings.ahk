@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/07/08
- * @version 1.2.5
+ * @date 2023/07/22
+ * @version 1.2.6
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.5", "v23.5", "v24.5", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.5", "v23.5", "v24.5", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -54,7 +54,8 @@ class UserPref {
             case "update_check":                      return "true"
             case "dark_mode":                         return ""
             case "autosave_check_checklist",
-                 "tooltip", "checklist_tooltip", "prem_Focus_Icon":
+                 "tooltip", "checklist_tooltip",
+                 "prem_Focus_Icon", "checklist_hotkeys":
                                                       return "true"
             case "beta_update_check",
                  "run_at_startup", "checklist_wait",
@@ -160,8 +161,8 @@ class UserPref {
         this.__fillArr("Adjust", this.Adjust_)
         ;// create variables
         for v in this.Adjust_ {
-            default := this.__getDefault(v)
-            this.%v% := IniRead(this.SettingsFile, "Adjust", this.__convertToKey(v), default)
+            defaultVal := this.__getDefault(v)
+            this.%v% := IniRead(this.SettingsFile, "Adjust", this.__convertToKey(v), defaultVal)
         }
     }
     ;// [Track]
@@ -174,14 +175,14 @@ class UserPref {
                 case "first_check", "block_aware":
                     this.%v% := this.__convertToBool(this.__convertToKey(v), "Track")
                 case "version":
-                    default := this.__getDefault(v)
-                    value := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), default)
+                    defaultVal := this.__getDefault(v)
+                    value := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), defaultVal)
                     origVal := value
                     this.__checkPreReleaseTag(value)
                     this.%v% := (value != origVal) ? value : origVal
                 default:
-                    default := this.__getDefault(v)
-                    this.%v% := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), default)
+                    defaultVal := this.__getDefault(v)
+                    this.%v% := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), defaultVal)
             }
         }
     }
@@ -211,6 +212,7 @@ class UserPref {
                     run at startup={}
                     autosave check checklist={}
                     tooltip={}
+                    checklist hotkeys={}
                     checklist tooltip={}
                     checklist wait={}
                     prem Focus Icon={}

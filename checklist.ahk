@@ -32,7 +32,7 @@ startupTray()
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.12.7.1"
+version := "v2.12.8"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 

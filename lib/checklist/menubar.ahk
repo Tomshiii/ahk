@@ -16,6 +16,7 @@ checklist_tooltip := UserSettings.checklist_tooltip
 dark_mode := UserSettings.dark_mode
 settingsFile := UserSettings.SettingsFile
 scriptVersion := UserSettings.version
+hotkeyCreate := UserSettings.checklist_hotkeys
 UserSettings := "" ;// closing settings instance
 
 ;define menu
