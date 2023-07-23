@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/07/22
- * @version 1.2.6
+ * @date 2023/07/23
+ * @version 1.2.7
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.5", "v23.5", "v24.5", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.5", "v23.5", "v24.5", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -55,7 +55,8 @@ class UserPref {
             case "dark_mode":                         return ""
             case "autosave_check_checklist",
                  "tooltip", "checklist_tooltip",
-                 "prem_Focus_Icon", "checklist_hotkeys":
+                 "prem_Focus_Icon", "checklist_hotkeys",
+                 "autosave_beep":
                                                       return "true"
             case "beta_update_check",
                  "run_at_startup", "checklist_wait",
@@ -210,6 +211,7 @@ class UserPref {
                     beta update check={}
                     dark mode={}
                     run at startup={}
+                    autosave beep={}
                     autosave check checklist={}
                     tooltip={}
                     checklist hotkeys={}

@@ -29,6 +29,10 @@ class SettingsToolTips {
         Yes: "My scripts will automatically run at PC startup",
         No: "My scripts will no longer run at PC startup"
     }
+    autosaveBeep := {
+        Yes: "``autosave.ahk`` will beep to alert the user it is attempting to save",
+        No: "``autosave.ahk`` will no longer beep to alert the user that it is attempting to save"
+    }
     autosaveCheck := {
         Yes: "``autosave.ahk`` will check to ensure you have ``checklist.ahk`` open",
         No: "``autosave.ahk`` will no longer check to ensure you have ``checklist.ahk`` open"
@@ -254,6 +258,13 @@ settingsGUI()
     toggleToggle.ToolTip := (tooltipCheck = true) ? toolT.autosaveTooltip.Yes : toolT.autosaveTooltip.No
     toggleToggle.OnEvent("Click", toggle.Bind("tooltip"))
 
+    ;// autosave beep
+    asBeep := UserSettings.autosave_beep
+    asBeepTitle := "``autosave.ahk`` beep"
+    asbeepToggle := settingsGUI.Add("Checkbox", "Checked" asBeep " Y+5", asBeepTitle)
+    asbeepToggle.OnEvent("Click", toggle.Bind("autosave beep"))
+    autosaveBeep := (asBeep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
+
 
     /**
      * This function handles the logic for a few checkboxes
@@ -275,6 +286,9 @@ settingsGUI()
             case StartupCheckTitle:
                 toolTrue := toolT.startup.Yes
                 toolFalse := toolT.startup.No
+            case asBeepTitle:
+                toolTrue := toolT.autosaveBeep.Yes
+                toolFalse := toolT.autosaveBeep.No
         }
 
         ;// toggling the checkboxes & setting values based off checkbox state
@@ -302,9 +316,9 @@ settingsGUI()
     ;// checklist create hotkeys
     checklistHotkeys := UserSettings.checklist_hotkeys
     checklistHotkeysTitle := "``checklist.ahk`` create hotkey"
-    checkTool := settingsGUI.Add("Checkbox", "Checked" checklistHotkeys " Y+5", checklistHotkeysTitle)
-    checkTool.ToolTip := (checklistHotkeys = true) ? toolT.checklistHotkeys.Yes : toolT.checklistHotkeys.No
-    checkTool.OnEvent("Click", msgboxToggle.Bind("checklist hotkeys"))
+    checkHTool := settingsGUI.Add("Checkbox", "Checked" checklistHotkeys " Y+5", checklistHotkeysTitle)
+    checkHTool.ToolTip := (checklistHotkeys = true) ? toolT.checklistHotkeys.Yes : toolT.checklistHotkeys.No
+    checkHTool.OnEvent("Click", msgboxToggle.Bind("checklist hotkeys"))
 
     ;// checklist tooltip
     checklistTooltip := UserSettings.checklist_tooltip
@@ -377,7 +391,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! BOTTOM TEXT
-    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+60", "Reset")
+    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+80", "Reset")
     resetText.SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
