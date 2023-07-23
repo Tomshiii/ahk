@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2023/05/01
- * @version 1.0.0
+ * @date 2023/07/23
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,7 +23,7 @@ class reset {
         }
     }
     ;// this portion of the code defines scripts to ignore within the below function
-    ignoreScript := Mip("PC Startup.ahk", 1, "PC Startup2.ahk", 1, "My Scripts.ahk", 1, "launcher.ahk", 1)
+    ignoreScript := Mip("PC Startup.ahk", 1, "PC Startup2.ahk", 1, ptf.MainScriptName ".ahk", 1, "launcher.ahk", 1)
 
     /** @returns a list of open ahk windows */
     __getList() {
@@ -154,7 +154,7 @@ class reset {
         detect(false)
         tool.Wait()
         detect()
-        if WinExist("My Scripts.ahk")
-            ProcessClose(WinGetPID("My Scripts.ahk",, browser.vscode.winTitle))
+        if WinExist(ptf.MainScriptName ".ahk")
+            ProcessClose(WinGetPID(ptf.MainScriptName ".ahk",, browser.vscode.winTitle))
     }
 }

@@ -81,7 +81,7 @@ notActive()
 {
     if !WinActive("ahk_group games")
         {
-            pause.suspend("My Scripts.ahk", false) ;unsuspend
+            pause.suspend(ptf.MainScriptName ".ahk", false) ;unsuspend
             SetTimer(, 0) ;stop this timer
             SetTimer(check, secms)
         }
@@ -95,24 +95,24 @@ check()
     static ask := 1
     if WinActive("ahk_group games") ;if a game is active and My Scripts.ahk isn't suspended
         {
-            pause.suspend("My Scripts.ahk", true) ;suspend
+            pause.suspend(ptf.MainScriptName ".ahk", true) ;suspend
             SetTimer(notActive, secms)
             SetTimer(, 0)
         }
     else if !WinActive("ahk_group games") && ask = 1 ;if the user has suspended My Scripts.ahk manually outisde of a game, this block will fire and will prompt the user asking if they wish to unsuspend the scripts
         {
-            if pause.suspend("My Scripts.ahk", false) = 1
+            if pause.suspend(ptf.MainScriptName ".ahk", false) = 1
                 {
-                    checkMsg := MsgBox("
+                    checkMsg := MsgBox(Format("
                     (
-                        You have ``My Scripts.ahk`` suspended, do you wish to unsuspend it?
+                        You have ``{}.ahk`` suspended, do you wish to unsuspend it?
 
                         If this is not an accident, press "No" and you will not be asked again this session.
-                    )", "My Scripts.ahk is Suspended", "4 32 4096") ;prompt the user with a msgbox
+                    )", ptf.MainScriptName), ".ahk is Suspended", "4 32 4096") ;prompt the user with a msgbox
                     if checkMsg = "No"
                         {
                             ask := 0
-                            pause.suspend("My Scripts.ahk", true)
+                            pause.suspend(ptf.MainScriptName ".ahk", true)
                         }
                 }
         }
@@ -124,7 +124,7 @@ ExitFunc(ExitReason, ExitCode)
 {
     if ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error"
         {
-            pause.suspend("My Scripts.ahk", false)
+            pause.suspend(ptf.MainScriptName ".ahk", false)
             SetTimer(check, 0)
             SetTimer(notActive, 0)
         }

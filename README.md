@@ -32,17 +32,8 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 
 ## [Getting Started:](https://github.com/Tomshiii/ahk/wiki)
 
-### Before Getting Started
-> My scripts rely on a `SymLink` to be created in the `A_MyDocuments \AutoHotkey\` folder that links back to `..\lib`. The install `.exe` can do this during the extraction process ***OR*** you can regenerate it manually (if you move my repo this also **MUST** be regenerated) by running [`..\Support Files\Release Assets\CreateSymLink.ahk`](https://github.com/Tomshiii/ahk/wiki/CreateSymLink.ahk). My scripts will fail to load if you do not do this.
->> Alternatively you can copy the `lib` folder to that directory manually if you wish to avoid generating a Symlink.
-
-> My scripts also require a `settings.ini` file to be properly generated in `A_MyDocuments \tomshi\`. If you've gone through the installation process and are getting errors because this file was incorrectly generated, I recommend deleting it and manually running `..\Support Files\Release Assets\baselineSettings.ahk` before trying again.
-
-#### The Release Install `.exe`
-> If you're a little unsure about running the install .exe (as you should be!) feel free to take a look at [`generateUpdate.ahk`](https://github.com/Tomshiii/ahk/blob/main/Support%20Files/Release%20Assets/generateUpdate.ahk) - this is the script I use to generate each release! As you'll be able to see within that script, I use a [7zip lib](https://github.com/thqby/ahk2_lib/blob/master/7Zip/SevenZip.ahk) from [thqby](https://github.com/thqby) to compress my entire repo into a `.zip` file, then I use the standard `ahk2exe` script that comes with AHK itself to compile a `.exe` of that `.zip` file alongside that same `7zip lib` to automatically unzip it once you install.
->> If the install process fails to unzip the repo using a `ComObject`, the install process will require `7zip` to be installed. If it's not, it will fall back to using `Powershell 5+` and `.Net4.5 (or greater)`. If the user does not have either installed, the install process will step through installing `PowerShell 7` and `.Net7`.
-
-Indepth instructions on how to get started with my repo, as well as complete definitions of everything can be found [over on the wiki page](https://github.com/Tomshiii/ahk/wiki).
+Depending on which sections of my repo you intend to use will determine how much manual setup is required from the user; For indepth instructions on how to get started with my repo, alongside any important notices head [over on the wiki page](https://github.com/Tomshiii/ahk/wiki).  
+There you will also find complete definitions of all scripts/functions of my repo.
 ***
 
 ## Short Explanation:

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/07/04
- * @version 1.1.5
+ * @date 2023/07/23
+ * @version 1.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -25,6 +25,7 @@ class ptf {
     static textreplace       := this.SupportFiles "\textreplace"
     static Wiki              := this.Backups "\Wiki"
     static Checklist         := this.lib "\checklist"
+    static MainScriptName    := "My Scripts"
 
     ;My Stuff
     static MyDir             := "E:"

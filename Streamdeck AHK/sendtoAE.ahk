@@ -3,6 +3,7 @@
 #Include <Classes\Editors\Premiere>
 #Include <Classes\Editors\After Effects>
 #Include <Classes\switchTo>
+#Include <Classes\ptf>
 #Include <Classes\WM>
 #Include <Functions\detect>
 ; }
@@ -11,12 +12,12 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 __detectMainScript() {
     detect()
-    if !WinExist("My Scripts.ahk") {
+    if !WinExist(ptf.MainScriptName ".ahk") {
         sleep 1000
         __final()
         return
     }
-    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, "My Scripts.ahk")
+    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
 }
 
 if !WinActive(prem.winTitle)
