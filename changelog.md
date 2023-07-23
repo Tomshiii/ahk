@@ -53,6 +53,7 @@ I am slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.
 - Added `sendtoAE.ahk`
 - Added `;vscodeTodoHotkey;`
 - `adobe fullscreen check.ahk` will now work on any version of `Premiere Pro`/`After Effects` and no longer requires the correct year to be set within `settingsGUI()`
+- `Multi-Instance Close.ahk` will now ignore `Move project.ahk`
 - `checklist.ahk` will now create a `Hotkey` <kbd>Shift & Media_Play_Pause</kbd> to start/stop the timer
 - Refactored the following timer scripts;
     - `adobe fullscreen check.ahk`
