@@ -2,7 +2,7 @@
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
  * @date 2023/07/23
- * @version 1.2.7
+ * @version 1.2.7.1
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.5", "v23.5", "v24.5", "v18.0.4", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.5", "v23.5", "v24.5", "v18.5", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -44,13 +44,13 @@ class UserPref {
             case "autosave_MIN":                      return 5
             case "game_SEC":                          return 2
             case "multi_SEC":                         return 5
-            case "prem_year", "ae_year":              return 2022
+            case "prem_year", "ae_year":              return 2023
             case "version":                           return "v2.0"
             case "monitor_alert":                     return "0"
             case "premVer":                           return "v23.5"
             case "aeVer":                             return "v23.5"
             case "psVer":                             return "v24.5"
-            case "resolveVer":                        return "v18.0.4"
+            case "resolveVer":                        return "v18.5"
             case "update_check":                      return "true"
             case "dark_mode":                         return ""
             case "autosave_check_checklist",

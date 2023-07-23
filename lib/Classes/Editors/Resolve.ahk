@@ -1,9 +1,9 @@
 /************************************************************************
  * @description A library of useful Resolve functions to speed up common tasks
- * Tested on and designed for v18.0.4 of Resolve
+ * Tested on and designed for v18.5 of Resolve
  * @author tomshi
- * @date 2023/06/30
- * @version 1.5.0.1
+ * @date 2023/07/23
+ * @version 1.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -313,7 +313,7 @@ class Resolve {
         coord.w()
         block.On()
         SendInput(KSA.resolveSelectPlayhead)
-        orig := obj.MousePos()
+        origM := obj.MousePos()
         ;// open the inspector tab
         this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the audio tab
@@ -338,7 +338,7 @@ class Resolve {
         gain := A_Clipboard + value
         SendInput(gain)
         SendInput("{Enter}")
-        MouseMove(orig.x, orig.y)
+        MouseMove(origM.x, origM.y)
         SendInput("{MButton}")
         clip.returnClip(orig.storedClip)
         block.Off()
