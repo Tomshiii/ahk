@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/07/17
- * @version 1.5.11.1
+ * @date 2023/07/23
+ * @version 1.5.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -328,15 +328,15 @@ class WinGet {
     /**
      * This function will grab the proccess ID of the current active window
      * @param {VarRef} id is the processname of the active window, we want to pass this value back to the script
-     * @returns {Boolean} returns true/false on completion
+     * @returns {String} returns the processname of the active window
      */
-    static ID(&id)
+    static ID(&id?)
     {
         try {
             id := WinGetProcessName("A")
             if WinActive("ahk_exe explorer.exe")
                 id := "ahk_class CabinetWClass"
-            return true
+            return id
         } catch {
             errorLog(TargetError("Couldn't grab information about the active window", -1),, 1)
             return false

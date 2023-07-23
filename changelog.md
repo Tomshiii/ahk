@@ -17,6 +17,7 @@ I am slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.
 - Fixed `startup.generate()` incorrectly generating new settings entries
 - Added entry `MainScriptName` to `ptf {` so `My Scripts.ahk` isn't hardcoded where it doesn't need to be
 
+
 `switchTo {`
 - Fixed `__Win` throwing if target doesn't exist
 - Add `adobeProject()` to open the current project in windows explorer.
@@ -26,6 +27,7 @@ I am slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.
 
 `WinGet {`
 - `title()` now has parameter `exitOut` to determine whether the user wishes for the active thread to exit if the function cannot determine the title. Defaults to `true`
+- `id()` now returns the `id` on success instead of boolean `true`
 - `PremName()/AEName()`
     - Now returns `-1` on failure instead of `unset`
     - Now attempts to determine the `year` value of the open window from the title itself before falling back to `ptf.AEYearVer/ptf.PremYearVer`
