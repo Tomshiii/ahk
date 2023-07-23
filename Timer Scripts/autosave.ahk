@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/07/08
- * @version 2.0.0
+ * @date 2023/07/23
+ * @version 2.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -39,6 +39,7 @@ class adobeAutoSave extends count {
             ;// attempt to grab user settings
             this.UserSettings := UserPref()
             this.ms := (this.UserSettings.autosave_MIN * 60000)
+            this.beep := this.UserSettings.autosave_beep
             this.UserSettings := ""
         }
 
@@ -50,7 +51,6 @@ class adobeAutoSave extends count {
     }
 
     ;// Class Variables
-
     UserSettings  := unset
     ms            := (5*60000) ;// 5min
 
@@ -67,6 +67,7 @@ class adobeAutoSave extends count {
 
     idleAttempt   := false
 
+    beep          := true
     soundName     := ""
     currentVolume := ""
 
@@ -80,6 +81,13 @@ class adobeAutoSave extends count {
         try {
             UserSettings := UserPref()
             res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+
+            ;// if the script is attempting to receive timeline coords the below block will fire
+            ;// if this block doesn't get entered when it should, the whole script will soft crash
+            if InStr(res, "__thisTimelineCoords") {
+                prem.__parseMessageResponse(wParam, lParam, msg, hwnd)
+                return
+            }
             ;// UserSettings.autosave_MIN_ 5
             lastUnd := InStr(res, "_", 1, -1)
             var := SubStr(res, 1, lastUnd-1)
@@ -87,6 +95,7 @@ class adobeAutoSave extends count {
             super.stop()
             this.interval := (val*60000)
             super.start()
+            return
         }
     }
 
@@ -129,8 +138,7 @@ class adobeAutoSave extends count {
     /** @returns {Boolean} true/false on whether it can grab the active window */
     __getOrigWindow() {
         try{
-            winget.ID(&id)
-            this.origWindow := id
+            this.origWindow := winget.ID()
             return true
         } catch {
             errorLog(TargetError("Unable to determine the active window"),, 1)
@@ -201,10 +209,22 @@ class adobeAutoSave extends count {
         return true
     }
 
+    /** This function is fallback code for if `My Scripts.ahk` isn't currently open and autosave can't ask it for timeline coords */
+    __fallback() {
+        if !prem.__checkTimeline()
+            return
+        sleep 100
+        prem.__checkTimelineFocus()
+        sleep 250
+        SendEvent(KSA.playStop)
+        this.__checkPlayback
+        prem.__checkTimelineFocus()
+    }
+
     /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
     __reactivateWindow() {
         try {
-            WinGet.ID(&checkActive)
+            checkActive := WinGet.ID()
             if this.origWindow = checkActive && this.userPlayback = false
                 return
             switch this.origWindow {
@@ -217,14 +237,19 @@ class adobeAutoSave extends count {
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
                     try {
-                        if !prem.__checkTimeline()
-                            return
-                        sleep 100
-                        prem.__checkTimelineFocus()
-                        sleep 250
-                        SendEvent(KSA.playStop)
-                        this.__checkPlayback
-                        prem.__checkTimelineFocus()
+                        detect()
+                        if !prem.__checkTimelineValues() {
+                            if !WinExist(ptf.MainScriptName ".ahk") {
+                                this.__fallback()
+                                return
+                            }
+                            WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+                            if !prem.__waitForTimeline() {
+                                this.__fallback()
+                                return
+                            }
+                        }
+                        this.__fallback()
                     }
                 default: WinActivate("ahk_exe " this.origWind)
             }
@@ -253,7 +278,13 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.premWindow.saveCheck {
-            tool.Cust("save not required, cancelling")
+            tool.Cust("Adobe save not required, cancelling")
+            return
+        }
+
+        ;// this should cover occurrences where another window is open within premiere
+        if (currentProg := WinGet.ID() = prem.winTitle && ((name := WinGetTitle("A")) != "" && name != this.premWindow.wintitle)) {
+            errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1),, 1)
             return
         }
 
@@ -266,10 +297,16 @@ class adobeAutoSave extends count {
         if this.origWindow = "Adobe Premiere Pro.exe"
             this.__checkPremPlayback()
 
-        ;// send save
-        if GetKeyState("Shift") || GetKeyState("Shift", "P")
-            SendInput("{Shift Up}")
-        ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, this.premWindow.wintitle)
+        try {
+            ;// attempt to send save
+            if GetKeyState("Shift") || GetKeyState("Shift", "P")
+                SendInput("{Shift Up}")
+            ;// if the user manually saves inbetween grabbing the title and this timer attempting to save
+            ;// this part will throw if it's not inside a try block
+            ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, this.premWindow.wintitle)
+        } catch {
+            return
+        }
 
         ;// waiting for save dialogue to open & close
         if !WinWait("Save Project",, 3)
@@ -285,7 +322,7 @@ class adobeAutoSave extends count {
         this.__backupFiles()
 
         ;// checking for save dialogue box
-        if this.__checkDialogueClass("AfterFX")
+        if !this.__checkDialogueClass("AfterFX")
             return
 
         ;// checking idle status
@@ -313,9 +350,27 @@ class adobeAutoSave extends count {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
             return
         }
+
+        ;// if save NOT required, exit early
+        if !this.aeWindow.saveCheck {
+            tool.Cust("Adobe save not required, cancelling")
+            return
+        }
+
         WinSetTransparent(0, editors.AE.winTitle)
-        ControlSend("{Ctrl Down}s{Ctrl Up}",, this.aeWindow.winTitle)
-        if WinWait("Save As",, 0.5) {
+        try {
+            ;// attempt to send save
+            if GetKeyState("Shift") || GetKeyState("Shift", "P")
+                SendInput("{Shift Up}")
+            ;// if the user manually saves inbetween grabbing the title and this timer attempting to save
+            ;// this part will throw if it's not inside a try block
+            ControlSend("{Ctrl Down}s{Ctrl Up}",, this.aeWindow.winTitle)
+        } catch {
+            WinMoveBottom(editors.AE.winTitle)
+            WinSetTransparent("Off", editors.AE.winTitle)
+            return
+        }
+        if WinWait("Save As",, 3) {
             ControlSend("{Esc}",, "Save As " editors.AE.winTitle)
         }
         if !WinWaitClose("Save Project",, 3)
@@ -405,7 +460,9 @@ OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode) {
     if (ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error") {
-        autoSave.stop()
+        try {
+            autoSave.stop()
+        }
         checkstuck()
         block.Off()
     }
