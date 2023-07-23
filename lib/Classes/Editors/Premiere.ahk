@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/15
- * @version 1.6.13
+ * @date 2023/07/23
+ * @version 2.0.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,8 +22,11 @@
 #Include <Classes\errorLog>
 #Include <Classes\block>
 #Include <Classes\WM>
+#Include <Classes\Editors\Premiere_UIA>
+#Include <Other\UIA\UIA>
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
+#Include <Functions\detect>
 ; }
 
 class Prem {
@@ -119,7 +122,7 @@ class Prem {
         determineWhich := res[1]
         res.RemoveAt(1)
         switch determineWhich {
-            case "__premTimelineCoords":
+            case "__premTimelineCoords", "__thisTimelineCoords":
                 for k, v in res {
                     if Mod(k, 2) = 0
                         continue
@@ -178,7 +181,9 @@ class Prem {
             loop {
                 if (A_Index > 3 && (!IsSet(classX) || width = 0))
                     throw
-                ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+                premName   := WinGet.PremName()
+                AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+                ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
                 try {
                     ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
                 } catch as f {
@@ -326,11 +331,22 @@ class Prem {
         CoordMode("ToolTip", "Screen")
 
         ;// ensure timeline coords are set
-        if this.timelineVals = false {
+        detect()
+        __fallback() {
             if !this.__checkTimeline(false)
                 return
             tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
-            return
+        }
+        if !this.__checkTimelineValues() {
+            if !(A_ScriptName != ptf.MainScriptName ".ahk" && WinExist(ptf.MainScriptName ".ahk")) {
+                __fallback()
+                return
+            }
+            WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+            if !this.__waitForTimeline() {
+                __fallback()
+                return
+            }
         }
 
         ;// get coordinates for a tooltip that appears to alert the user that toggles have reset
@@ -416,12 +432,13 @@ class Prem {
         this().__fxPanel()
         sleep 50
         try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e)
+        } catch {
+            block.Off()
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
 
@@ -666,12 +683,13 @@ class Prem {
         block.On()
         this().__fxPanel()
         try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e)
+        } catch {
+            block.Off()
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
@@ -696,13 +714,14 @@ class Prem {
                     ToolTip(A_Index)
                     this().__fxPanel()
                     try {
-                        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel (effect controls)
+                        premName   := WinGet.PremName()
+                        AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+                        ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
                         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-                    } catch as e {
-                        tool.Cust("Couldn't get the ClassNN of the Effects Controls panel")
-                        errorLog(e)
-                        MouseMove(xpos, ypos)
+                    } catch {
                         block.Off()
+                        errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+                        MouseMove(xpos, ypos)
                         return
                     }
                 }
@@ -787,12 +806,13 @@ class Prem {
         block.On()
         this().__fxPanel()
         try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e)
+        } catch {
+            block.Off()
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
@@ -830,12 +850,13 @@ class Prem {
         block.On()
         this().__fxPanel()
         try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e)
+        } catch {
+            block.Off()
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
@@ -1073,8 +1094,16 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        delaySI(25, KSA.effectControls, KSA.effectControls)
-        effectCtrl := obj.ctrlPos()
+        try {
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            effClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
+            effectCtrl := obj.ctrlPos(effClassNN)
+        } catch {
+            block.Off()
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+            return
+        }
         this.__checkTimelineFocus() ;focuses the timeline
         sleep 25
         if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
@@ -1167,29 +1196,11 @@ class Prem {
             }
             return true
         }
-        /**
-         * Save repeat code
-         * @return return an object of the currently in focus control
-         */
-        projMon() {
-            delaySI(25, KSA.programMonitor, KSA.programMonitor)
-            sleep 50
-            return obj.CtrlPos()
-        }
-        previewWin := projMon()
+
+        progClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.programMon).GetControlId()) ;gets the ClassNN value of the effects control window
+        previewWin := obj.CtrlPos(progClassNN)
         if !IsObject(previewWin)
             return
-        ;// check to see if the classNN value of the current object is the same as earlier in the function
-        ;// if it is, it indicates that the function may have moved too fast so this block will try again
-        if previewWin.ctrl == effectCtrl.ctrl
-            {
-                previewWin := projMon()
-                if previewWin.ctrl == effectCtrl.ctrl
-                    {
-                        errorLog(TargetError("Function couldn't determine the difference between the Effect Controls window and the Program Monitor", 1), "This may be due to Premiere assigning them the same ClassNN value", 1)
-                        return
-                    }
-            }
         startX := (previewWin.x + (previewWin.width/2)) - 20
         startY := (previewWin.y + (previewWin.height/2)) - 10
         MouseMove(startX, startY) ;move to the preview window
@@ -1232,12 +1243,13 @@ class Prem {
         block.On()
         this().__fxPanel()
         try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e)
+        }  catch {
+            block.Off()
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
@@ -1284,12 +1296,13 @@ class Prem {
         block.On()
         this().__fxPanel()
         try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            tool.Cust("Couldn't get the ClassNN of the desired panel")
-            errorLog(e)
+        }  catch {
+            block.Off()
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus()
@@ -1357,7 +1370,9 @@ class Prem {
                 return -1
             }
         try {
-            ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
         } catch {
             errorLog(UnsetError("Couldn't find the ClassNN value of the Effect Controls window", -1),, 1)
@@ -1531,8 +1546,10 @@ class Prem {
         SendInput(KSA.timelineWindow)
         sleep 75
         try {
-            effClassNN := ControlGetClassNN(ControlGetFocus("A"), this.exeTitle) ;gets the ClassNN value of the active panel
-            ControlGetPos(&x, &y, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            timelineClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.timeline).GetControlId()) ;gets the ClassNN value of the timeline
+            ControlGetPos(&x, &y, &width, &height, timelineClassNN) ;gets the x/y value and width/height of the timeline
         } catch {
             errorLog(UnsetError("Couldn't find the ClassNN value of the Timeline", -1),, 1)
             return false
@@ -1602,11 +1619,12 @@ class Prem {
         SendInput(KSA.toolsWindow)
         sleep 50
         try {
-            toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            toolsClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.tools).GetControlId()) ;gets the ClassNN value of the tools window
             ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-        } catch as e {
-            tool.Cust("Couldn't find the ClassNN value")
-            errorLog(e)
+        } catch {
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
         }
         if width = 0 || height = 0
             {
