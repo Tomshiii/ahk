@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi, taranVH
- * @date 2023/07/08
- * @version 2.0.11
+ * @date 2023/07/24
+ * @version 2.0.12
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -81,7 +81,6 @@ class rbuttonPrem {
 		this.timeline7,  this.timeline8,  this.timeline9,
 		this.timeline10, this.timeline11
 	]
-	playhead := 0x2D8CEB ;the colour of the playhead
 
 	/** Checks to see whether the colour under the cursor indicates that it's a blank track */
 	__checkForBlank(colour) {
@@ -102,7 +101,7 @@ class rbuttonPrem {
 					SendInput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
 					return false
 				}
-			if colour = this.timelineCol[A_Index] || colour = this.playhead
+			if colour = this.timelineCol[A_Index] || colour = prem.playhead
 				return true
 		}
 	}
@@ -130,10 +129,11 @@ class rbuttonPrem {
 	 * @param {Object} coordObj an object containing the cursor coords
 	 */
 	__checkForPlayhead(coordObj) {
-		if PixelSearch(&throwx, &throwy, prem.timelineXValue, coordObj.y, prem.timelineXControl, coordObj.y, this.playhead) ;checking to see if the playhead is on the screen
-			SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stop
-		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, this.playhead)
-			{
+		;// checking to see if the playhead is on the screen
+		if prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y})
+			SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stops
+		;// then we check to see if it's relatively close to the cursors position
+		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
 				block.On()
 				SendInput(KSA.selectionPrem)
 				MouseMove(xcol, ycol)
@@ -173,19 +173,14 @@ class rbuttonPrem {
 	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "")
 
 	/** A functon to define what should happen anytime the class is closed */
-	__exit() => (this.__HotkeyReset(), this.__resetClicks(), checkstuck(), Exit())
+	__exit() => (PremHotkeys.__HotkeyReset(["LButton", "XButton2"]), this.__resetClicks(), checkstuck(), Exit())
 
 	/**
 	 * Defines what happens when certain buttons are pressed while RButton is held down
 	 * @param {Array} arr all keys you wish to assign a function
 	 */
 	__HotkeySet(arr) {
-		try {
-			for v in arr {
-				Hotkey(v, __set.Bind(v), "On")
-			}
-		}
-
+		PremHotkeys.__HotkeySet(arr, __set)
 		/**
 		 * A function to define what each hotkey passed will do
 		 * @param {String} which the keyname
@@ -194,20 +189,6 @@ class rbuttonPrem {
 			switch which {
 				case "LButton":  this.leftClick := true
 				case "XButton2": this.leftClick := true, this.xbuttonClick := true
-			}
-		}
-	}
-
-	/** Resets the keys used during the loop to their original functions */
-	__HotkeyReset() {
-		keyArr := ["LButton", "XButton2"]
-		for k in keyArr {
-			try {
-				Hotkey(k, k, "On")
-			} catch {
-				try {
-					Hotkey(k, "Off")
-				}
 			}
 		}
 	}
@@ -258,7 +239,7 @@ class rbuttonPrem {
 		prem.__checkTimelineFocus()
 
 		;// determines the position of the playhead
-		if this.colour = this.playhead {
+		if this.colour = prem.playhead {
 			if !this.__checkUnderCursor(this.colour2) {
 				this.__exit()
 			}
@@ -283,7 +264,7 @@ class rbuttonPrem {
 		}
 
 		;// resets `LButton` & `XButton2` to their original function
-		this.__HotkeyReset()
+		PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
 
 		;// determines whether to resume playback & how fast to playback
 		if this.colourOrNorm = "colour" {

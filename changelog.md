@@ -7,7 +7,7 @@ The purpose of this update is to smooth out the experience of using the script a
 ## > UIA Lib
 This update adds the `UIA` lib from [Descolada](https://www.github.com/Descolada/UIA-v2). This library will allow the user to more efficiently interact with panels in `Premiere Pro`. The addition of this library requires some manual tinkering from the user to get going however and means a few Premiere functions are no longer plug and play. Checkout the [wiki page](https://github.com/Tomshiii/ahk/wiki/UIA) for more details on how the library is utilised within this repo, as well as how to adjust the settings for your own setup.
 
-> `Premiere_UIA.ahk` has been added to help with this addition
+> `Premiere_UIA.ahk` has been added to help with the addition of the UIA lib and is where all variables required will be defined.
 
 ## > Adobe Transition
 I am slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.5` and beyond.
@@ -15,9 +15,9 @@ I am slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.
 >> *There shouldn't be much in the way of inconsistencies for the foreseeable future (as almost everything so far has worked in both versions fine) but this is the **offical cutoff point.***
 
 ## > Functions
-- Fixed `gamCheckGUI {` failing to produce a `Msgbox` to alert the user a game has already been added to the list when the GUI is called from the tray menu.
+- Fixed `gameCheckGUI {` failing to produce a `Msgbox` to alert the user a game has already been added to the list when the GUI is called from the tray menu.
 - Fixed `startup.generate()` incorrectly generating new settings entries
-- Added entry `MainScriptName` to `ptf {` so `My Scripts.ahk` isn't hardcoded where it doesn't need to be
+- Added entry `MainScriptName` to `ptf {` so `My Scripts` isn't hardcoded where it doesn't need to be
 
 
 `switchTo {`
@@ -45,6 +45,9 @@ I am slowly transitioning my `Premiere Pro/After Effects` workflow over to `v23.
 - Fixed `getTimeline()` stalling when it encounters an issue
 - Added `numpadGain()` which allows `gain()` to quickly be called by pressing <kbd>NumpadSub/NumpadAdd</kbd> followed by any of the <kbd>Numpad</kbd> buttons
 - Added `__respondMessage` & `__parseMessageResponse` to allow for scripts to easily share information relating to premiere between one another. (ie. sharing timeline coordinates between scripts)
+- Added `searchPlayhead()` to determine if the playhead is within the passed coordinates
+- Added `thumbScroll()` to grab the playhead and slowly scrub forward on the timeline
+    - Moved some code from `rbuttonPrem {` => `Prem {` to remove the need for repeat code
 - `__checkTimelineFocus()` is now static
 - `__checkTimeline()` & `getTimeline()` now accept a parameter to determine whether to produce tooltips
 - `zoom()`

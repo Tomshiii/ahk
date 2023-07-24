@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/23
- * @version 2.0.0
+ * @date 2023/07/24
+ * @version 2.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -43,6 +43,12 @@ class Prem {
     static zoomToggle := 0
     static zToolX := 0
     static zToolY := 0
+
+    ;// colour of playhead
+    static playhead := 0x2D8CEB
+
+    ;// variable for prem.searchThumb()
+    static scrollSpeed := 5
 
     ;// variables for `getTimeline()`
     static timelineVals     := false
@@ -1830,6 +1836,66 @@ class Prem {
         }
     }
 
+    /**
+     * Checks to see if the playhead is within the defined coordinates
+     * @param {Integer} xy an object containing the cursor coordinates you want pixelsearch to check
+     */
+    static searchPlayhead(coordObj, playheadCol := this.playhead) {
+        if PixelSearch(&pixX, &pixY, coordObj.x1, coordObj.y1, coordObj.x2, coordObj.y2, playheadCol)
+			return {x: pixX, y: pixY}
+        return false
+    }
+
+    /**
+     * This function will search for the playhead and then slowly begin scrubbing forward. This function was designed to make scrubbing for thumbnail screenshots easier
+     */
+    static thumbScroll() {
+        block.On()
+        ;// set coord mode and grab the cursor position
+		coord.s()
+        storeHotkey := A_ThisHotkey
+		origMouse := obj.MousePos()
+        originalSpeed := this.scrollSpeed
+        ;// checks to see whether the timeline position has been located
+        if !this.__checkTimeline() {
+            block.Off()
+			return
+        }
+		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
+		;// only continues if the cursor is within the timeline
+		if !this.__checkCoords(origMouse) {
+            block.Off()
+			return
+        }
+        ;// check whether the timeline is already in focus & focuses it if it isn't
+		this.__checkTimelineFocus()
+        ;// determines the position of the playhead
+        if !playhead := this.searchPlayhead({x1: prem.timelineXValue, y1: origMouse.y, x2: prem.timelineXControl, y2: origMouse.y}) {
+            block.Off()
+            errorLog(TargetError("Could not determine the position of the playhead", -1),, 1)
+            return
+        }
+        SendInput(KSA.shuttleStop)
+        MouseMove(playhead.x, playhead.y)
+        SendInput("{LButton Down}")
+        block.Off()
+        if !GetKeyState(storeHotkey, "P") {
+            SendInput("{LButton Up}")
+            return
+        }
+        PremHotkeys.__HotkeySetThumbScroll(["Shift", "Ctrl"])
+        while GetKeyState(storeHotkey, "P") {
+            getpos := obj.MousePos()
+            if !this.__checkCoords(getpos)
+                break
+            MouseMove(this.scrollSpeed, 0,, "R")
+            sleep 50
+        }
+        SendInput("{LButton Up}")
+        PremHotkeys.__HotkeyReset(["Shift", "Ctrl"])
+        this.scrollSpeed := originalSpeed
+    }
+
     ;//! *** ===============================================
 
     class Excalibur {
@@ -1874,6 +1940,61 @@ class Prem {
 
             if WinWaitClose("Lock " which " Tracks") {
                 this().__lockNumpadKeys("reset")
+            }
+        }
+    }
+}
+
+class PremHotkeys {
+    /**
+     * Resets an array of keys to their original `Hotkey` functions
+     * @param {Array} keyArr an array of keynames
+     */
+    static __HotkeyReset(keyArr) {
+        for k in keyArr {
+            try {
+                Hotkey(k, k)
+            } catch {
+                try {
+                    Hotkey(k, "Off")
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets an array of keys to the passed in function
+     * @param {Array} arr an array of keynames
+     * @param {FuncObj} func a passed in function that all keynames will be passed into
+     */
+    static __HotkeySet(arr, func) {
+        try {
+            for v in arr {
+                Hotkey(v, func.Bind(v), "On")
+            }
+        }
+    }
+
+    /**
+     * Function for `prem.thumbScroll()` sets hotkeys on <kbd>Shift</kbd> & <kbd>Ctrl</kbd> to speed up/slow down the cursor moving
+     * @param {Array} arr all keys you wish to assign a function
+     */
+    static __HotkeySetThumbScroll(arr) {
+        this.__HotkeySet(arr, __set)
+
+        /**
+         * A function to define what each hotkey passed will do
+         * @param {String} which the keyname
+         */
+        __set(which, *) {
+            switch which {
+                case "Shift":  prem.scrollSpeed += 5
+                case "Ctrl":
+                if prem.scrollSpeed <= 5 {
+                    prem.scrollSpeed := 1
+                    return
+                }
+                prem.scrollSpeed -= 5
             }
         }
     }

@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.1
+;\\v2.33.2
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -497,8 +497,8 @@ F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint) ;goes to the nex
 
 ;playstopHotkey;
 F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
-;nudgedownHotkey;
-Xbutton1::SendInput(KSA.nudgeDown) ;Set ctrl w to "Nudge Clip Selection Down"
+;thumbScrollHotkey;
+Xbutton1::prem.thumbScroll()
 ;mousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
@@ -589,8 +589,6 @@ F23::youMouse("l", "{Right}")
 ;// having these scripts above with the other premiere scripts caused `wheelup` and `wheeldown` hotkeys to lag out and cause windows beeping
 ;// thanks ahk :)
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
-;nudgeupHotkey;
-F14::SendInput(KSA.nudgeUp) ;setting this here instead of within premiere is required for the below hotkeys to function properly
 ;slowDownHotkey;
 F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
 ;speedUpHotkey;

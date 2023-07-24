@@ -104,7 +104,7 @@ class ptf {
         "OBS",             this.Shortcuts "\obs64.lnk",
         "Photoshop",       this.Shortcuts "\Photoshop.exe.lnk",
         "SL_Chatbot",      this.Shortcuts "\Streamlabs Chatbot.lnk",
-        "Phone Link",       this.Shortcuts "\Your Phone.lnk",
+        "Phone Link",      this.Shortcuts "\Your Phone.lnk",
         "scriptStartup",   A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\PC Startup.ahk - Shortcut.lnk",
 
         ;programs
