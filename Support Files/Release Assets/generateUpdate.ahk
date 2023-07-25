@@ -21,7 +21,7 @@ if WinExist("Ahk2Exe for AutoHotkey")
     WinClose("Ahk2Exe for AutoHotkey")
 
 ;// cleanup errorlog files
-loop files ptf.rootDir "\Logs\Error Logs\*.txt"
+loop files ptf.rootDir "\Logs\*.txt", "R"
     FileDelete(A_LoopFileFullPath)
 
 ;// ask what version we're bumping to
@@ -185,6 +185,8 @@ deleting() {
     checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\repo_social.png")
     ;// deleting the `old` wiki folder
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Wiki")
+    ;// deleting qmk images folder
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\qmk keyboard images")
     ;// deleting the `RODECaster` backup folder
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\RODECaster")
     ;// deleting the `Old Code` backup folder

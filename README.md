@@ -32,11 +32,15 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 
 ## [Getting Started:](https://github.com/Tomshiii/ahk/wiki)
 
-Depending on which sections of my repo you intend to use will determine how much manual setup is required from the user; For indepth instructions on how to get started with my repo, alongside any important notices head [over on the wiki page](https://github.com/Tomshiii/ahk/wiki).  
-There you will also find complete definitions of all scripts/functions of my repo.
+Depending on which sections of my repo you intend to use will determine how much manual setup is required from the user; For indepth instructions on how to get started with my repo, alongside any important notices head [over to the wiki page](https://github.com/Tomshiii/ahk/wiki).  
+There you will also find complete definitions of all scripts/functions of my repo as well as important prerequisite information that is required of the user before my repo will function as expected.
 ***
 
 ## Short Explanation:
+
+#### [Libs](https://github.com/Tomshiii/ahk/tree/main/lib/)
+In this section of the repo you will find a collection of lib files containing helpful functions, classes, GUIs & more! Some scripts rely on other lib files to function properly so make sure you pay attention to the top of each script, if it has any `#Include <lib\path>` then you will also need that file for the script to function properly!  
+If you ever notice any inconsistencies in any scripts (say a script *should* have an include listed but it doesn't) please be sure to raise an issue here on github so I can get it fixed.
 
 #### [Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk](https://github.com/Tomshiii/ahk/tree/main/lib/KSA)
 An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses it. You do NOT need to run this ahk file, it is [`#Include(d)`](https://lexikos.github.io/v2/docs/commands/_Include.htm) in all scripts that require it.

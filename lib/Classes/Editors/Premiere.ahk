@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/24
- * @version 2.0.1
+ * @date 2023/07/25
+ * @version 2.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,16 +33,16 @@ class Prem {
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
-    static class := Editors.Premiere.class
-    static path := ptf["Premiere"]
+    static class    := Editors.Premiere.class
+    static path     := ptf["Premiere"]
 
     ;// variables used in functions
-    static timer := false
-    static isWaiting := true
-    static presses := 0
+    static timer      := false
+    static isWaiting  := true
+    static presses    := 0
     static zoomToggle := 0
-    static zToolX := 0
-    static zToolY := 0
+    static zToolX     := 0
+    static zToolY     := 0
 
     ;// colour of playhead
     static playhead := 0x2D8CEB
@@ -204,65 +204,31 @@ class Prem {
             return
         }
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
-            {
-                sleep 100
-                delaySI(150, KSA.timelineWindow, KSA.timelineWindow, KSA.newText)
-                sleep 150
-                ;// premiere can slow down depending on the size of your project so it's best
-                ;// to build in multiple checks for most things
-                loop {
-                    if A_Index > 30 { ;// 3s
-                        block.Off()
-                        errorLog(Error("Couldn't find the graphics tab", -1),, 1)
-                        return
-                    }
-                    if ImageSearch(&x2, &y2, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
-                        break
-                    sleep 100
-                }
-                loop {
-                    if A_Index > 30 { ;// 3s
-                        block.Off()
-                        errorLog(Error("Couldn't find the eye icon", -1),, 1)
-                        return
-                    }
-                    if A_Index > 1 && y2 < 900 ;// the y value it searches will increase as the loop index increases
-                        y2 += 100
-                    if ImageSearch(&xeye, &yeye, x2, y2, x2 + 200, y2 + 100, "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
-                        break
-                    sleep 100
-                }
-                MouseMove(xeye, yeye)
-                SendInput("{Click}")
-                MouseGetPos(&eyeX, &eyeY)
-                sleep 50
-            }
-        effectbox() ;this is simply to cut needing to repeat this code below
-        {
+            this().__loremipsum({x: classX, y: classY}, {width: width, height: height}, &eyeX, &eyeY)
+        /** this is simply to cut needing to repeat this code below */
+        effectbox() {
             delaySI(50, KSA.effectsWindow, KSA.effectsWindow)
             if !this().__findBox()
                 return
             SendInput(KSA.effectsWindow)
             SendInput("^a" "+{BackSpace}")
             SetTimer(delete, -250)
-            delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
-            {
-                if WinExist("Delete Item")
-                    {
+            /** this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job */
+            delete() {
+                if WinExist("Delete Item") {
+                    SendInput("{Esc}")
+                    sleep 100
+                    SendInput(KSA.effectsWindow)
+                    if !this().__findBox()
+                        return
+                    SendInput(KSA.effectsWindow)
+                    SendInput("^a" "+{BackSpace}")
+                    sleep 60
+                    if WinExist("Delete Item") {
                         SendInput("{Esc}")
-                        sleep 100
-                        SendInput(KSA.effectsWindow)
-                        if !this().__findBox()
-                            return
-                        SendInput(KSA.effectsWindow)
-                        SendInput("^a" "+{BackSpace}")
-                        sleep 60
-                        if WinExist("Delete Item")
-                            {
-                                SendInput("{Esc}")
-                                sleep 50
-                            }
+                        sleep 50
                     }
+                }
             }
         }
         effectbox()
@@ -292,6 +258,46 @@ class Prem {
     }
 
     /**
+     * this function is called within `preset()` and is pulled out simply to make that function more readable
+     * @param {Object} classObj an object `{x: , y: }` to pass in the classNN variables
+     * @param {Object} widHeiObj an object `{width: , height: }` to pass in the classNN variables
+     * @param {VarRef} returnXY passing variables back to the function
+     */
+    __loremipsum(classObj, widHeiObj, &returnX, &returnY) {
+        sleep 100
+        delaySI(150, KSA.timelineWindow, KSA.timelineWindow, KSA.newText)
+        sleep 150
+        ;// premiere can slow down depending on the size of your project so it's best
+        ;// to build in multiple checks for most things
+        loop {
+            if A_Index > 30 { ;// 3s
+                block.Off()
+                errorLog(Error("Couldn't find the graphics tab", -1),, 1)
+                return
+            }
+            if ImageSearch(&x2, &y2, classObj.classX, classObj.classY, classObj.classX + (widHeiObj.width/KSA.ECDivide), classObj.classY + widHeiObj.height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
+                break
+            sleep 100
+        }
+        loop {
+            if A_Index > 30 { ;// 3s
+                block.Off()
+                errorLog(Error("Couldn't find the eye icon", -1),, 1)
+                return
+            }
+            if A_Index > 1 && y2 < 900 ;// the y value it searches will increase as the loop index increases
+                y2 += 100
+            if ImageSearch(&xeye, &yeye, x2, y2, x2 + 200, y2 + 100, "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
+                break
+            sleep 100
+        }
+        MouseMove(xeye, yeye)
+        SendInput("{Click}")
+        MouseGetPos(&eyeX, &eyeY)
+        sleep 50
+    }
+
+    /**
      * This function is to move to the effects window and highlight the search box to allow manual typing
      */
     static fxSearch()
@@ -304,24 +310,22 @@ class Prem {
         this().__fxPanel()
         SendInput("^a" "+{BackSpace}")
         SetTimer(delete, -250)
-        delete() ;this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job
-        {
-            if WinExist("Delete Item")
-                {
+        /** This function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job */
+        delete() {
+            if WinExist("Delete Item") {
+                SendInput("{Esc}")
+                sleep 100
+                this().__fxPanel()
+                if !this().__findBox()
+                    return
+                this().__fxPanel()
+                SendInput("^a" "+{BackSpace}")
+                sleep 60
+                if WinExist("Delete Item") {
                     SendInput("{Esc}")
-                    sleep 100
-                    this().__fxPanel()
-                    if !this().__findBox()
-                        return
-                    this().__fxPanel()
-                    SendInput("^a" "+{BackSpace}")
-                    sleep 60
-                    if WinExist("Delete Item")
-                        {
-                            SendInput("{Esc}")
-                            sleep 50
-                        }
+                    sleep 50
                 }
+            }
         }
         block.Off()
     }
@@ -545,71 +549,70 @@ class Prem {
                     }
                 }
         }
-        if scale = 0
-            {
-                setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
-                if setValue = "No"
-                    {
-                        block.Off()
-                        return
-                    }
-            }
+        if scale = 0 {
+            setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
+            if setValue = "No"
+                {
+                    block.Off()
+                    return
+                }
+        }
         block.On()
         MouseGetPos(&xpos, &ypos)
         this.__checkTimelineFocus()
         sleep 50
-        if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            {
-                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        errorLog(Error("No clips were selected", -1),, 1)
-                        block.Off()
-                        return
-                    }
-            }
-        if (!ImageSearch(&motionX, &motionY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") &&
-            !ImageSearch(&motionX, &motionY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png"))
-            {
-                MouseMove(xpos, ypos)
+        ;// searches to check if no clips are selected
+        if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") {
+            SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+            sleep 50
+            ;// checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") {
+                errorLog(Error("No clips were selected", -1),, 1)
                 block.Off()
-                errorLog(Error("Couldn't find the video section", -1),, 1)
                 return
             }
+        }
+        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}, &motionX, &motionY
+            , ptf.Premiere "motion2.png"
+            , ptf.Premiere "motion3.png")
+        {
+            MouseMove(xpos, ypos)
+            block.Off()
+            errorLog(Error("Couldn't find the video section", -1),, 1)
+            return
+        }
         MouseMove(motionX + 10, motionY + 10)
         SendInput("{Click}")
         MouseMove(xpos, ypos)
         SendInput("{Tab 2}")
         ;// the user hasn't set a zoom for the current client
-        if x = 0
+        if x = 0 {
+            cleanCopy()
             {
-                cleanCopy()
-                {
-                    A_Clipboard := ""
-                    SendInput("^c")
-                    ClipWait()
-                }
-                previousClipboard := A_Clipboard
-                cleanCopy()
-                x := A_Clipboard
-                SendInput("{Tab}")
-                cleanCopy()
-                y := A_Clipboard
-                SendInput("{Tab}")
-                cleanCopy()
-                scale := A_Clipboard
-                SendInput("{Tab 3}")
-                cleanCopy()
-                anchorX := A_Clipboard
-                SendInput("{Tab}")
-                cleanCopy()
-                anchorY := A_Clipboard
-                SendInput("{Enter}")
-                block.Off()
-                tool.Cust("Setting up your zoom has completed")
-                return
+                A_Clipboard := ""
+                SendInput("^c")
+                ClipWait()
             }
+            previousClipboard := A_Clipboard
+            cleanCopy()
+            x := A_Clipboard
+            SendInput("{Tab}")
+            cleanCopy()
+            y := A_Clipboard
+            SendInput("{Tab}")
+            cleanCopy()
+            scale := A_Clipboard
+            SendInput("{Tab 3}")
+            cleanCopy()
+            anchorX := A_Clipboard
+            SendInput("{Tab}")
+            cleanCopy()
+            anchorY := A_Clipboard
+            SendInput("{Enter}")
+            block.Off()
+            tool.Cust("Setting up your zoom has completed")
+            return
+        }
         ;// the user HAS set up zooms for the current client
         delaySI(1, x, "{Tab}", y, "{Tab}", scale)
         if anchorX != "false" && anchorY != "false" {
@@ -643,21 +646,24 @@ class Prem {
      * @param {Object} origCoords an object containing the original mouse x/y coordinates
      */
     __vholdBlend(filepath, blendmode, xy, origCoords) {
-        if !ImageSearch(&arrX, &arrY, xy.x, xy.y, xy.x+400, xy.y+40, "*2 " ptf.Premiere filepath "arrow.png")
-            {
-                errorLog(Error("Couldn't find the arrow to open the blend mode menu", -1),, 1)
-                MouseMove(origCoords.xpos, origCoords.ypos)
-                block.Off()
-                return
-            }
+        if !ImageSearch(&arrX, &arrY, xy.x, xy.y, xy.x+400, xy.y+40, "*2 " ptf.Premiere filepath "arrow.png") {
+            errorLog(Error("Couldn't find the arrow to open the blend mode menu", -1),, 1)
+            MouseMove(origCoords.xpos, origCoords.ypos)
+            block.Off()
+            return
+        }
         MouseMove(arrx, arrY)
         SendInput("{Click}")
         sleep 500
         if (
             ;// if the "drop down" menu goes up
-            (!ImageSearch(&modeX, &modeY, arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY-700, arrx, arrY, "*2 " ptf.Premiere "blend\" blendmode "2.png")) &&
+            !obj.imgSrchMulti({x1: arrx-400, y1: arrY-700, x2: arrx, y2: arrY},, &modeX, &modeY
+                , ptf.Premiere "blend\" blendmode ".png"
+                , ptf.Premiere "blend\" blendmode "2.png") &&
             ;// if the "drop down" menu goes down
-            (!ImageSearch(&modeX, &modeY, arrx-400, arrY, arrx, arrY+700, "*2 " ptf.Premiere "blend\" blendmode ".png") && !ImageSearch(&modeX, &modeY,  arrx-400, arrY, arrx, arrY+700, "*2 " ptf.Premiere "blend\" blendmode "2.png"))
+            !obj.imgSrchMulti({x1: arrx-400, y1:arrY, x2: arrx, y2: arrY+700},, &modeX, &modeY
+                , ptf.Premiere "blend\" blendmode ".png"
+                , ptf.Premiere "blend\" blendmode "2.png")
         )
             {
                 errorLog(Error("Couldn't find the desired blend mode", -1),, 1)
@@ -715,22 +721,21 @@ class Prem {
                 return
         }
         loop {
-            if A_Index > 1
-                {
-                    ToolTip(A_Index)
-                    this().__fxPanel()
-                    try {
-                        premName   := WinGet.PremName()
-                        AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-                        ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-                        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-                    } catch {
-                        block.Off()
-                        errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
-                        MouseMove(xpos, ypos)
-                        return
-                    }
+            if A_Index > 1 {
+                ToolTip(A_Index)
+                this().__fxPanel()
+                try {
+                    premName   := WinGet.PremName()
+                    AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+                    ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
+                    ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+                } catch {
+                    block.Off()
+                    errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+                    MouseMove(xpos, ypos)
+                    return
                 }
+            }
             checkImg(checkfilepath) {
                 blendheight := (filepath = "blend\blendmode") ? 50 : 0
                 if FileExist(checkfilepath) && ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height + blendheight, "*2 " checkfilepath)
@@ -744,48 +749,45 @@ class Prem {
                 checkImg(ptf.Premiere filepath "4.png")
             )
                 break
-            if A_Index > 3
-                {
-                    block.Off()
-                    errorLog(IndexError("Failed to find the requested property", -1, filepath),, 1)
-                    keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-                    MouseMove(xpos, ypos)
-                    block.Off()
-                    return
-                }
+            if A_Index > 3 {
+                block.Off()
+                errorLog(IndexError("Failed to find the requested property", -1, filepath),, 1)
+                keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+                MouseMove(xpos, ypos)
+                block.Off()
+                return
+            }
             sleep 50
         }
         if filepath = "blend\blendmode" {
             this().__vholdBlend(filepath, blendMode, {x: x, y:y}, {xpos: xpos, ypos: ypos})
             return
         }
-        if !PixelSearch(&xcol, &ycol, x, y+5, x + xdist, y + 40, 0x205cce, 2)
-            {
-                block.Off()
-                tool.Cust("Couldn't find the blue text") ;useful tooltip to help you debug when it can't find what it's looking for
-                errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
-                keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-                MouseMove(xpos, ypos)
-                return
-            }
+        if !PixelSearch(&xcol, &ycol, x, y+5, x + xdist, y + 40, 0x205cce, 2) {
+            block.Off()
+            errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
+            keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+            MouseMove(xpos, ypos)
+            return
+        }
         MouseMove(xcol + optional, ycol)
         sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
         ToolTip("")
         if !GetKeyState(A_ThisHotkey, "P") {
-            if !ImageSearch(&x2, &y2, x, y - 10, x + 1500, y + 20, "*2 " ptf.Premiere "reset.png") ;searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
-                {
-                    if filepath = "levels" ;THIS IS FOR ADJUSTING THE "LEVEL" PROPERTY, CHANGE IN THE KEYBOARD SHORTCUTS.INI FILE
-                        {
-                            SendInput("{Click}" "0" "{Enter}")
-                            MouseMove(xpos, ypos)
-                            block.Off()
-                            return
-                        }
+            ;// searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
+            if !ImageSearch(&x2, &y2, x, y - 10, x + 1500, y + 20, "*2 " ptf.Premiere "reset.png") {
+                ;// this block is for adjusting the "level" property, change in the KSA.ini file
+                if filepath = "levels" {
+                    SendInput("{Click}" "0" "{Enter}")
                     MouseMove(xpos, ypos)
                     block.Off()
-                    errorLog(Error("Couldn't find the reset button", -1),, 1)
                     return
                 }
+                MouseMove(xpos, ypos)
+                block.Off()
+                errorLog(Error("Couldn't find the reset button", -1),, 1)
+                return
+            }
             MouseMove(x2, y2)
             SendInput("{Click}")
             MouseMove(xpos, ypos)
@@ -877,12 +879,11 @@ class Prem {
                         return
                     }
             }
-        if (
-            !checkImg(ptf.Premiere filepath ".png", &x, &y, {x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}) &&
-            !checkImg(ptf.Premiere filepath "2.png", &x, &y, {x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}) &&
-            !checkImg(ptf.Premiere filepath "3.png", &x, &y, {x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}) &&
-            !checkImg(ptf.Premiere filepath "4.png", &x, &y, {x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height})
-        )
+        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}, &x, &y
+                , ptf.Premiere filepath ".png"
+                , ptf.Premiere filepath "2.png"
+                , ptf.Premiere filepath "3.png"
+                , ptf.Premiere filepath "4.png")
             {
                 block.Off()
                 errorLog(Error("Couldn't find the desired value", -1),, 1)
@@ -890,7 +891,7 @@ class Prem {
             }
         if ImageSearch(&keyx, &keyy, x, y, x + 500, y + 20, "*2 " ptf.Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, x, y, x + 500, y + 20, "*2 " ptf.Premiere "keyframeButton2.png")
             MouseMove(keyx + 3, keyy)
-       else
+        else
             MouseMove(x + 5, y + 5)
         SendInput("{Click}")
         this.__checkTimelineFocus() ;focuses the timeline
@@ -1323,11 +1324,12 @@ class Prem {
                         return
                     }
             }
-        if ( ;finds the scale value you want to adjust, then finds the value adjustment to the right of it
-            !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere property ".png") &&
-            !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere property "2.png") &&
-            !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere property "3.png") &&
-            !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere property "4.png")
+        ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
+        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height},, &x, &y
+            , ptf.Premiere property ".png"
+            , ptf.Premiere property "2.png"
+            , ptf.Premiere property "3.png"
+            , ptf.Premiere property "4.png"
         )
             {
                 block.Off()
@@ -1455,25 +1457,22 @@ class Prem {
 
     /**
      * ### This function contains `KSA` values that need to be set correctly
-     * Press a button(ideally a mouse button), this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
+     * Press a button *(ideally a mouse button)*, this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
 
      * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
 
-     * This version is specifically for Premiere Pro
+     * This function will timeout after 10s by default as a preventative measure for stuck keys
      * @param {String} tool is the hotkey you want the script to input to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
      * @param {String} toolorig is the hotkey you want the script to input to bring you back to your tool of choice (consider using KSA values)
+     * @param {Integer} timeout the number of `seconds` you want the function to wait before intentionally timing out. Defaults to `10`
     */
-    static mousedrag(premtool, toolorig)
-    {
+    static mousedrag(premtool, toolorig, timeout := 10) {
         if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
             return
         SetTimer(rdisable, -1)
         rdisable() {
             if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
-                {
-                    SetTimer(rdisable, 0)
-                    return
-                }
+                return
             SetTimer(rdisable, -50)
         }
         coordObj := obj.MousePos()
@@ -1487,31 +1486,28 @@ class Prem {
             return
         }
 
-        SetTimer(again, -400)
-        again()
-        again()
-        {
-            if A_ThisHotkey = KSA.DragKeywait ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
-                {
-                    if !GetKeyState(A_ThisHotkey, "P") ;this is here so it doesn't reactivate if you quickly let go before the timer comes back around
-                        {
-                            SetTimer(rdisable, 0)
-                            return
-                        }
-                }
-            else if !GetKeyState(KSA.DragKeywait, "P")
-                {
-                    SetTimer(again, 0)
+        SetTimer(again.Bind(timeout), -400)
+        again(timeout)
+        again(timeout) {
+            ;// we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+            if !GetKeyState(KSA.DragKeywait, "P") {
+                SetTimer(rdisable, 0)
+                return
+            }
+            if A_ThisHotkey = KSA.DragKeywait {
+                ;// this is here so it doesn't reactivate if you quickly let go before the timer comes back around
+                if !GetKeyState(A_ThisHotkey, "P") {
                     SetTimer(rdisable, 0)
-                    Exit()
+                    return
                 }
+            }
             ; click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
             this.__checkTimelineFocus()
             SendInput(premtool "{LButton Down}")
             if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
-                KeyWait(A_ThisHotkey, "T5")
+                KeyWait(A_ThisHotkey, "T" timeout)
             else if A_ThisHotkey != KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P")
-                KeyWait(KSA.DragKeywait, "T5") ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
+                KeyWait(KSA.DragKeywait, "T" timeout) ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
             SendInput("{LButton Up}")
             SendInput(toolorig)
             SetTimer(rdisable, 0)
@@ -1537,7 +1533,7 @@ class Prem {
 
     /**
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
-     * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values
+     * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values. Defaults to true. Sends tooltips on `WhichToolTip` 11/12/13
      * @returns {Boolean} `true/false`
      */
     static getTimeline(tools := true) {
@@ -1710,7 +1706,7 @@ class Prem {
     }
 
     /**
-     * This function returns whether the classes internet timeline values have been set
+     * This function returns whether the classes internal timeline values have been set
      * @returns {Boolean}
      */
     static __checkTimelineValues() {
@@ -1737,7 +1733,7 @@ class Prem {
     }
 
     /**
-     * Checks to see if the timeline values within `prem {` have been set
+     * Checks to see if the timeline values within `prem {` have been set. If not, this function will attempt to retrieve them.
      * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values
      * @returns {Boolean} if the timeline cannot be determined, returns `false`. Else returns `true`
      */
@@ -1838,7 +1834,13 @@ class Prem {
 
     /**
      * Checks to see if the playhead is within the defined coordinates
-     * @param {Integer} xy an object containing the cursor coordinates you want pixelsearch to check
+     * @param {Integer} coordObj an object containing the cursor coordinates you want pixelsearch to check. This object should contain: `{x1: , y1: , x2: , y2: }`. The default to search the timeline (assuming values have been set) can be found in the example`
+     * @param {Hexadecimal} playheadCol the colour you wish pixelsearch to look for
+     * @returns {Obj/Boolean false} if successful and the playhead is found, returns object `{x: , y: }`. Else returns `false`
+     * ```
+     * origMouse := obj.MousePos()
+     * searchPlayhead({x1: prem.timelineXValue, y1: origMouse.y, x2: prem.timelineXControl, y2: origMouse.y})
+     * ```
      */
     static searchPlayhead(coordObj, playheadCol := this.playhead) {
         if PixelSearch(&pixX, &pixY, coordObj.x1, coordObj.y1, coordObj.x2, coordObj.y2, playheadCol)

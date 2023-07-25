@@ -13,7 +13,7 @@ Will create a symlink between ``A_MyDocuments \AutoHotkey\`` & the ``..\lib\`` f
 This script will also generate some symlink folders within ``..\Support Files\ImageSearch\(AE/Premiere)`` to partially support more versions.  
 > *These folders being generated does not mean those versions are completely compatible with my scripts. I do not have the time or man power to support versions that I do not use. The version I'm currently using will be listed at the top of the class file fould in ``..\lib\Classes\Editors\(After Effects.ahk/Premiere.ahk)``*
 
-#### note: selecting this option will ask for elevation, this is necessary as cmd needs to be elevated to create symlinks. This option should also *not* be selected if the current directory is *not* the final destination for this repo
+#### note: selecting this option will ask for elevation, this is necessary as cmd needs to be elevated to create symlinks. This option should *not* be selected if the current directory is *not* the final destination for this repo
 ___
 
 **Hotkey Replacer:**
@@ -36,7 +36,7 @@ Symlink:            `..\Support Files\Release Assets\CreateSymLink.ahk`
 Hotkey Replacer:    `..\Support Files\Release Assets\HotkeyReplacer.ahk`  
 PC Startup:         `..\PC Startup\PC Startup.ahk`  
 
-Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's a compiled version of my scripts, alongside the `SevenZip.ahk` lib by `thqby` to allow me to include the repo in a .zip file that then gets automatically extracted when you run the release `.exe` you can see how this process works by looking at `..\Support Files\Release Assets\generateUpdate.ahk` in the repo ^.^
+Windows Defender might have a red hot complain about the `v2.x-.exe` file (even after you've used it) and attempt to remove it. It's a compiled copy of my scripts (basically the same as downloading the repo off github), alongside the `SevenZip.ahk` lib by `thqby` to allow me to include the repo in a .zip file that then gets automatically extracted when you run the release `.exe` you can see how this process works by looking at `..\Support Files\Release Assets\generateUpdate.ahk` in the repo ^.^
 
 If your installer fails, a `settings.ini` file may fail to generate in `A_MyDocuments\tomshi\`. If this happens you can try running `baselineSettings.ahk` found: `..\Support Files\Release Assets\baselineSettings.ahk` to get started.
 
