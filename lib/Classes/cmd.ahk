@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2023/06/30
- * @version 1.0.2.1
+ * @date 2023/07/27
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,15 +62,16 @@ class cmd {
         return exec.StdOut.ReadAll()
     }
 
+    static deleteMappedDrive(driveLocation) => this.run(,, Format("net use {}: /delete", Chr(64+driveLocation)))
+
     /**
      * This function will unmap the desired mapped drive location, then remap your desired drive letter to the desired ip address.
      * @param {String} driveLocation the drive letter you wish to remap. Do **not** include `:`
      * @param {String} networkLocation the ip location of your network drive
      */
     static mapDrive(driveLocation, networkLocation) {
-        ;// net use N: /delete
+        this.deleteMappedDrive(driveLocation)
         ;// net use N: \\192.168.20.5\storage
-        this.run(,, Format("net use {}: /delete", Chr(64+driveLocation)))
         this.run(,, Format("net use {}: {}", Chr(64+driveLocation), networkLocation))
     }
 
