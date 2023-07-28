@@ -97,41 +97,33 @@ A_MenuMaskKey := "vkD7"
 
 ;;;UPDATE: Those two lines totally work, but I am now trying a slightly different thing instead:
 
+/**
+ * A function to cut repeat code down below
+ * @param {Array} keyCombo an array containing what you wish the function to send as the key is pressed **AND** released
+ * @param {String} waitKey a string containing the key you wish for the function to wait for that will be passed into `KeyWait`
+ */
+__accelDisable(keyCombo, waitKey) {
+	if Type(keyCombo) != "array" {
+		;// throw
+		errorLog(PropertyError("Incorrect Parameter Type passed to function", -1),,, 1)
+	}
+	SendInput(keyCombo[1])
+	KeyWait(waitKey) ;// this waits for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
+	SendInput(keyCombo[2])
+}
+
 ;// premiere started behaving weird after ahk v2.0.4 and your LAlt click would sometimes seamingly not allow
 ;// you to single click things. This is my attempt to fix that odd behaviour
-#HotIf WinActive(prem.winTitle)
-~LAlt::
-{
-	Sendinput("{Blind}{sc0E9}{LAlt Down}")
-	KeyWait("LAlt") ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
-	Sendinput("{LAlt Up}{Blind}{sc0EA}")
-}
+#HotIf WinActive("ahk_group Editors")
+~LAlt::__accelDisable(["{Blind}{sc0E9}{LAlt Down}", "{LAlt Up}{Blind}{sc0EA}"], "LAlt")
 
-#HotIf !WinActive(prem.winTitle)
-~LAlt::
-{
-	Sendinput("{Blind}{sc0E9}")
-	KeyWait("LAlt") ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
-	Sendinput("{Blind}{sc0EA}")
-}
-
-~RAlt::
-{
-	Sendinput("{Blind}{sc0E9}")
-	KeyWait("RAlt") ; so that it doesn't keep spamming SC0E9
-	Sendinput("{Blind}{sc0EA}")
-}
-;this was VK07, but i want to be able to distinguish between this, and menu masking, seperately, in my debugging.
-
+#HotIf
+~LAlt::__accelDisable(["{Blind}{sc0E9}", "{Blind}{sc0EA}"], "LAlt")
+~RAlt::__accelDisable(["{Blind}{sc0E9}", "{Blind}{sc0EA}"], "RAlt")
 
 ;the below firefox snippet is by tomshi to disable firefox's annoying alt menu that is bound to f10 for whatever
 #HotIf WinActive(browser.firefox.winTitle)
-F10::
-{
-	Sendinput("{Blind}{sc0E9}")
-	KeyWait("F10") ; this wasit for the key to be RELEASED. So that it doesn't keep spamming SC0E9 (as seen from an AHK window Key history and script info... window.)
-	Sendinput("{Blind}{sc0EA}")
-}
+F10::__accelDisable(["{Blind}{sc0E9}", "{Blind}{sc0EA}"], "F10")
 
 ;below here is taran again
 
