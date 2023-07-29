@@ -18,7 +18,7 @@ class drivePicker extends tomshiBasic {
         this.AddEdit("xs+120 ys-3 w150 -WantReturn", this.networkLocation).OnEvent("Change", this.__setNetLocation.Bind(this))
         this.AddText("xs Section", "Drive Location: ")
         this.AddDropDownList("xs+120 ys-3 Sort w150 Choose" this.driveLocation, this.__driveList()).OnEvent("Change", this.__setDriveLocation.Bind(this))
-        this.AddButton("xs+210 Section", "Submit").OnEvent("Click", this.__mapDrive.Bind(this))
+        this.AddButton("xs+190 Section", "Map Drive").OnEvent("Click", this.__mapDrive.Bind(this))
         this.AddButton("xs-115 ys", "Delete Location").OnEvent("Click", (*) => cmd.deleteMappedDrive(this.driveLocation))
 
         this.show()

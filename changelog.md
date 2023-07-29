@@ -3,6 +3,7 @@
 ## > Functions
 - Added `cmd.deleteMappedDrive()`
     - `remapDrive.ahk` now has option to delete selection
+- Added `switchTo.PhoneProgs()`
 
 ## > Other Changes
 - Update discord `Delete` image

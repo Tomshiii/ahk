@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/07/15
- * @version 1.2.7
+ * @date 2023/07/30
+ * @version 1.2.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -354,6 +354,15 @@ class switchTo {
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
     static PhoneLink() => this().__Win("Phone Link ahk_exe PhoneExperienceHost.exe", ptf["Phone Link"], "PhoneLink", "ahk_class WinUIDesktopWin32WindowClass")
+
+    /**
+     * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+     */
+    static PhoneProgs(run := A_AppData "\..\Local\Programs\beeper\Beeper.exe") {
+        GroupAdd("phoneStuff", "ahk_exe PhoneExperienceHost.exe")
+        GroupAdd("phoneStuff", "ahk_exe ahk_exe Beeper.exe")
+        this().__Win("ahk_group phoneStuff", run, "phones")
+    }
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one

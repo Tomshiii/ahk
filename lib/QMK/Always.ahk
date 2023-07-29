@@ -41,15 +41,20 @@ h::switchTo.adobeProject() ;opens the directory for the current premiere/ae proj
 n::unassigned()
 Space::
 {
+	GroupAdd("phoneStuffDisc", "ahk_exe slack.exe")
+	GroupAdd("phoneStuffDisc", "Phone Link ahk_class WinUIDesktopWin32WindowClass")
+	GroupAdd("phoneStuffDisc", "ahk_exe ahk_exe Beeper.exe")
 	;// if slack/phone link isn't open, simply call function
-	if (!WinExist("ahk_exe slack.exe") || (WinGetMinMax("ahk_exe slack.exe") = -1)) &&
-		(!WinExist("Phone Link ahk_class WinUIDesktopWin32WindowClass") || (WinGetMinMax("Phone Link ahk_class WinUIDesktopWin32WindowClass") = -1))  {
+	if (!WinExist("ahk_group phoneStuffDisc")) {
 		switchTo.Disc()
 		return
 	}
-	;// if slack/phone link is open I want it & discord both in a different position
-	which := WinExist("ahk_exe slack.exe") ? "ahk_exe slack.exe" : "Phone Link ahk_class WinUIDesktopWin32WindowClass"
-	WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, which)
+	/** because this macro always ends in discord being in focus, tapping the macro repeatedly will cycle through the programs but manually clicking on the program and then activating the macro will not force a cycle */
+	if !WinActive("ahk_group phoneStuffDisc") {
+		GroupActivate("phoneStuffDisc", "r")
+		GroupActivate("phoneStuffDisc", "r")
+	}
+	WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, WinGetTitle("A") A_Space "ahk_exe " WinGetProcessName("A"))
 	switchTo.Disc(discord.slackX, 669, discord.slackWidth, discord.slackHeight)
 }
 Right & Space::switchTo.newWin("exe", "msedge.exe", "msedge.exe")
@@ -123,4 +128,4 @@ F16::switchTo.Edge()
 ;Tab::unassigned()
 Esc::unassigned()
 F13::unassigned()
-Home::switchTo.PhoneLink()
+Home::switchTo.PhoneProgs()
