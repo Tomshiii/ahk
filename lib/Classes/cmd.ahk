@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2023/07/27
- * @version 1.0.3
+ * @date 2023/07/30
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -68,11 +68,13 @@ class cmd {
      * This function will unmap the desired mapped drive location, then remap your desired drive letter to the desired ip address.
      * @param {String} driveLocation the drive letter you wish to remap. Do **not** include `:`
      * @param {String} networkLocation the ip location of your network drive
+     * @param {Boolean} persistent whether you wish for the drive mapping to remain after system events like `shutdown/restart`
      */
-    static mapDrive(driveLocation, networkLocation) {
+    static mapDrive(driveLocation, networkLocation, persistent := true) {
         this.deleteMappedDrive(driveLocation)
         ;// net use N: \\192.168.20.5\storage
-        this.run(,, Format("net use {}: {}", Chr(64+driveLocation), networkLocation))
+        keepDrive := (persistent = true) ? "/persistent:yes" : ""
+        this.run(,, Format("net use {}: {} {}", Chr(64+driveLocation), networkLocation, keepDrive))
     }
 
     /**
