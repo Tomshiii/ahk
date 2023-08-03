@@ -16,3 +16,11 @@
 `remapDrive.ahk`
 - Now has option to delete the currently selected drive letter
 - Can now toggle whether the desired mapping is `persistent`
+
+`Streamdeck AHK`
+
+Added;
+- `..\download\` `projVideo.ahk`
+- `..\lock\` `audio.ahk` & `video.ahk`
+- `..\run & activate\` `editing stuff.ahk`
+- `frame hold.ahk`
