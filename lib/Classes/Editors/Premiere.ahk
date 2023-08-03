@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/07/25
- * @version 2.0.2
+ * @date 2023/08/03
+ * @version 2.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1927,20 +1927,21 @@ class Prem {
         /**
          * #### This function requires the premiere plugin `Excalibur` to be installed and for `KSA.excalLockVid/KSA.excalLockAud` to be correctly set.
          * Quickly and easily lock/unlock multiple audio/video tracks
+         * @param {String} which determines which track you wish to adjust. Must be either `"video"` or `"audio"`
          */
         static lockTracks(which := "Video") {
             switch which, "Off" {
                 case "audio": SendInput(KSA.excalLockAud)
                 case "video": SendInput(KSA.excalLockVid)
-
+                default: return
             }
-            if !WinWait("Lock " which " Tracks",, 3)
+            if !WinWait("Lock " StrTitle(which) " Tracks",, 3)
                 return
             sleep 200
             SendInput("{Down}")
             this().__lockNumpadKeys("set")
 
-            if WinWaitClose("Lock " which " Tracks") {
+            if WinWaitClose("Lock " StrTitle(which) " Tracks") {
                 this().__lockNumpadKeys("reset")
             }
         }

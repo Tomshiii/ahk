@@ -2,6 +2,7 @@
 
 ## > Functions
 - Added `switchTo.PhoneProgs()`
+- Fixed `prem.Excalibur.lockTracks()` silently failing if the parameter passed into the function is all lowercase
 
 `cmd {`
 - Added `cmd.deleteMappedDrive()`
