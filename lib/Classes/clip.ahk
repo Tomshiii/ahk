@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
- * @date 2023/06/30
- * @version 1.0.4.1
+ * @date 2023/08/04
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,11 +30,12 @@ class clip {
      * Attempts to copy any highlighted text then waits for the clipboard to contain data
      * @param {Var} storedClip? is the variable you're storing the clipboard in. If the clipwait times out, this function will attempt to return the clipboard to this variable
      * @param {Integer} waitSec the time in `seconds` you want clipwait to wait. Defaults to `0.1s`
+     * @param {Boolean} ttip determines whether the function will produce tooltips on failure. This can be useful as doing so can add about `100ms` to the total round trip time. Defaults to `true`
      * @returns {Boolean} True/False depending on if the clipboard recieved any data
      */
-    static copyWait(storedClip?, waitSec := 0.1) {
+    static copyWait(storedClip?, waitSec := 0.1, ttip := true) {
         SendInput("^c")
-        if !this.wait(storedClip?, waitSec)
+        if !this.wait(storedClip?, waitSec, ttip)
             return false
         return true
     }
@@ -43,14 +44,15 @@ class clip {
      * This function will wait for the clipboard to contain data, if it times out, it will attempt to return the clipboard to the passed variable
      * @param {Var} storedClip? is the variable you're storing the clipboard in. If the clipwait times out, this function will attempt to return the clipboard to this variable
      * @param {Integer} waitSec the time in `seconds` you want clipwait to wait. Defaults to `0.1s`
+     * @param {Boolean} ttip determines whether the function will produce tooltips on failure. This can be useful as doing so can add about `100ms` to the total round trip time. Defaults to `true`
      * @returns {Boolean} True/False depending on if the clipboard recieved any data
      */
-    static wait(storedClip?, waitSec := 0.1) {
+    static wait(storedClip?, waitSec := 0.1, ttip := true) {
         if !ClipWait(waitSec)
             {
                 if IsSet(storedClip)
                     A_Clipboard := storedClip
-                errorLog(UnsetError("Couldn't copy data to clipboard", -1),, 1)
+                errorLog(UnsetError("Couldn't copy data to clipboard", -1),, ttip)
                 return false
             }
         return true

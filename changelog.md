@@ -3,6 +3,8 @@
 ## > Functions
 - Added `switchTo.PhoneProgs()`
 - Fixed `prem.Excalibur.lockTracks()` silently failing if the parameter passed into the function is all lowercase
+- `clip.wait()` && `clip.copyWait()` now accept parameter `ttip` to allow for disabling of tooltips on failure. This can be helpful as producing them adds about `100ms` to the total round trip of the function
+    - Fixed `discord.surround()` behaving slowly if the user isn't highlighting any text
 
 `cmd {`
 - Added `cmd.deleteMappedDrive()`
