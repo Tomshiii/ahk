@@ -26,3 +26,4 @@ Added;
 - `..\lock\` `audio.ahk` & `video.ahk`
 - `..\run & activate\` `editing stuff.ahk`
 - `frame hold.ahk`
+- `make sequence.ahk`

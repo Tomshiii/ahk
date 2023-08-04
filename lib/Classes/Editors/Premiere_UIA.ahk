@@ -30,7 +30,8 @@ class v22_3_1 {
 class v23_5 {
     timeline              := "YwYY"
     effectsControl        := "YYY"
-    tools                 :=  "YtYY"
+    tools                 := "YtYY"
+    programMon            := "YtYY"
 }
 
 premClassVer := StrReplace(ptf.premIMGver, ".", "_")
