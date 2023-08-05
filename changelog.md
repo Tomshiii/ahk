@@ -1,4 +1,6 @@
 # <> Release 2.12.x -
+> ⚠️ This release is a minor hotfix update to `v2.12` which saw massive breaking changes to the repo. If you haven't yet seen the changelog for `v2.12` please checkout those changes [**here**](https://github.com/Tomshiii/ahk/releases/tag/v2.12) ⚠️
+
 
 ## > Functions
 - Added `switchTo.PhoneProgs()`
@@ -14,6 +16,7 @@
 ## > Other Changes
 - Update discord `Delete` image
 - Extended `alt_menu_acceleration_disabler.ahk` changes from last release to all programs listed in `ahk_group Editors`
+- `trim.ahk` will now show the currently selected file
 
 `remapDrive.ahk`
 - Now has option to delete the currently selected drive letter

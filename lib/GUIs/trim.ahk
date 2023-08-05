@@ -25,12 +25,15 @@ class trimGUI extends tomshiBasic {
         this.AddText("ys xs+190", "Duration:")
         this.AddEdit("ys-3 xs+250 r1 w100 Number").OnEvent("Change", this.__changeVal.bind(this, "duration"))
         this.AddCheckbox("ys xs+370 Checked" this.overwrite, "Overwrite?").OnEvent("Click", this.__changeCheck.Bind(this))
+        this.AddText("xs", "Current File: ")
+        this.currentFileName := this.AddText("x+5 W300", this.currentFileName), this.currentFileName.SetFont("Bold")
         this.AddButton("xs+257 w100", "Select File").OnEvent("Click", this.__selectFile.Bind(this))
         this.AddButton("x+10 w50", "Trim").OnEvent("Click", this.__doTrim.Bind(this))
         this.commands := extraCommands
         this.show()
     }
     getFile := ""
+    currentFileName := ""
 
     startVal := 0
     durationVal := 0
@@ -44,11 +47,17 @@ class trimGUI extends tomshiBasic {
     __changeCheck(guiobj, *) => this.overwrite := guiobj.value
 
     /** Allows the user to change the file to operate on */
-    __selectFile(guiObj, *) {
+    __selectFile(*) {
         newFile := FileSelect(3,, "Select file to Trim")
         if newFile = ""
             return false
         this.getFile := newFile
+        filePath := obj.SplitPath(this.getFile)
+        try {
+            this.currentFileName.text := filePath.NameNoExt
+        } catch {
+            this.currentFileName := filePath.NameNoExt
+        }
         return true
     }
 

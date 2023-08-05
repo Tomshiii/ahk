@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.2
+;\\v2.33.3
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -448,9 +448,6 @@ $Tab::
 	sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
 	SendInput(sendMod "{Tab}")
 }
-
-F1::prem.excalibur.lockTracks()
-F2::prem.excalibur.lockTracks("Audio")
 
 ;linkActivateHotkey;
 ~^l::SendInput(KSA.selectAtPlayhead)
