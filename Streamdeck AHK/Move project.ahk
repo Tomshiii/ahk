@@ -6,8 +6,7 @@
 ; }
 
 ;// select the directory you wish to move
-SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Pick the folder you wish to move.")
-if SelectedFolder = ""
+if !SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Pick the folder you wish to move.")
     return
 
 ;// taking that folder directory and spliting it out to just grab the final folder in the path as we need it below
@@ -24,7 +23,7 @@ if Move = SelectedFolder
     }
 
 ;// deleting any temp directories that contain files we don't need to store
-folders := ["\proxies", "\renders\draft", "\Adobe Premiere Pro Audio Previews", "\Adobe Premiere Pro Video Previews", "\Adobe Premiere Pro Auto-Save", "\Adobe After Effects Auto-Save", "\Premiere Composer Files", "\Motion Graphics Template Media"]
+folders := ["\proxies", "\renders\draft", "\Adobe Premiere Pro Audio Previews", "\Adobe Premiere Pro Video Previews", "\Adobe Premiere Pro Auto-Save", "\Adobe After Effects Auto-Save"]
 for v in folders {
     if DirExist(SelectedFolder v)
         DirDelete(SelectedFolder v, 1)
