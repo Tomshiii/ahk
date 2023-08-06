@@ -1,4 +1,4 @@
-# <> Release 2.12.x -
+# <> Release 2.12.1 - Hotfix
 > ⚠️ This release is a minor hotfix update to `v2.12` which saw massive breaking changes to the repo. If you haven't yet seen the changelog for `v2.12` please checkout those changes [**here**](https://github.com/Tomshiii/ahk/releases/tag/v2.12) ⚠️
 
 
