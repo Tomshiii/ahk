@@ -60,6 +60,6 @@ class UserSettings {
             DirCreate(this.SettingsDir)
         if FileExist(filelocation)
             FileDelete(filelocation)
-        try FileCopy(A_LineFile "..\Settings\defaults.ini", filelocation)
+        try FileCopy(A_LineFile "\..\Settings\defaults.ini", filelocation)
     }
 }
