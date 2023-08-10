@@ -10,8 +10,7 @@ class Dark {
      * This function will convert GUI buttons to a dark/light theme.
      * @param {Integer} ctrl_hwnd is the hwnd value of the control you wish to alter
      * @param {String} DarkorLight is a toggle that allows you to call the inverse of this function and return the button to light mode. This parameter can be omitted otherwise pass "Light"
-     *
-     * https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
+     * @link https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
      */
     static button(ctrl_hwnd, DarkorLight := "Dark") => DllCall("uxtheme\SetWindowTheme", "ptr", ctrl_hwnd, "str", DarkorLight "Mode_Explorer", "ptr", 0)
 
@@ -83,8 +82,7 @@ class Dark {
 
     /**
      * This function will convert GUI menus to dark mode/light mode
-     *
-     * https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
+     * @link https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
      * @param {Boolean} DarkorLight is whether you want dark or light mode. Pass 1 for dark or 0 for light
      */
     static menu(DarkorLight := 1)
@@ -103,8 +101,7 @@ class Dark {
      * This function will convert a windows title bar to a dark/light theme if possible.
      * @param {Integer} hwnd is the hwnd value of the window you wish to alter
      * @param {Boolean} dark is a toggle that allows you to call the inverse of this function and return the title bar to light mode. This parameter can be omitted otherwise pass false
-     *
-     * https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
+     * @link https://www.autohotkey.com/boards/viewtopic.php?f=13&t=94661
      */
     static titleBar(hwnd, dark := true)
     {

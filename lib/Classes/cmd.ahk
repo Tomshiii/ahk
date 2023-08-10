@@ -53,7 +53,7 @@ class cmd {
 
     /**
      * This function sends commands to the commandline and returns the result
-     * func found here: https://lexikos.github.io/v2/docs/commands/Run.htm#Examples
+     * @link code from here: https://lexikos.github.io/v2/docs/commands/Run.htm#Examples
      * @param command is the command you wish to send to the commandline
      */
     static result(command) {

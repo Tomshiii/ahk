@@ -12,7 +12,6 @@
 class Pause {
     /**
      * This function toggles a pause on the autosave ahk script.
-     *
      * @param {String} scriptName is the name of the script you wish to pause, ie. "My Scripts" - do not include the ".ahk"
      */
     static pause(scriptName)
@@ -30,8 +29,7 @@ class Pause {
 
     /**
      * This function will suspend/unsuspend other scripts
-     * This script found here: https://stackoverflow.com/questions/14492650/check-if-script-is-suspended-in-autohotkey -- by Lexikos
-     *
+     * @link This script found here: https://stackoverflow.com/questions/14492650/check-if-script-is-suspended-in-autohotkey -- by Lexikos
      * @param {String} ScriptName is the name of the script, ie. "My Scripts.ahk"
      * @param {Boolean} SuspendOn is a true/false switch to either suspend/unsuspend the desired script
      */

@@ -71,7 +71,7 @@ class Move {
      * This function will check for 2s if you have released the RButton, if you have, it will drop the tab and finish, if you haven't it will be up to the user to press the LButton when you're done moving the tab. This function has hardcoded checks for `XButton1` & `XButton2` and is activated by having the activation hotkey as just one of those two, but then right clicking on a tab and pressing one of those two.
      *
      * As of firefox version 106, for this function to work it either requires you to follow the instructions in the link below to disable the tab search arrow, or it'll require you to make adjustments to the pixel values in this script.
-     * https://www.askvg.com/tip-remove-tabs-search-arrow-button-from-firefox-title-bar/
+     * @link https://www.askvg.com/tip-remove-tabs-search-arrow-button-from-firefox-title-bar/
      */
     static Tab()
     {

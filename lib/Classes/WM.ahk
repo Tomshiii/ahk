@@ -14,8 +14,7 @@ class WM {
     /**
      * This is a function designed to allow tooltips to appear while hovering over certain GUI elements. Use the example listed below & `GuiCtrl.ToolTip := "desired tooltip"` to make this function work
      *
-     * code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
-     *
+     * @link code can be found on the ahk website : https://lexikos.github.io/v2/docs/objects/Gui.htm#ExToolTip
      * ```
      * ;// This function needs to be called differenctly to other functions in this class
      * move := WM()

@@ -67,7 +67,7 @@ class keys {
     /**
      * This function loops through as many possible SC and vk keys and sends the {Up} keystroke for it.
      * Originally from: 東方永夜抄#4008 in the ahk discord
-     * this link may die: https://discord.com/channels/115993023636176902/1057690143231840347/1057704109408522240
+     * @link this link may die: https://discord.com/channels/115993023636176902/1057690143231840347/1057704109408522240
      */
     static allUp() {
         SetTimer(check, -1)

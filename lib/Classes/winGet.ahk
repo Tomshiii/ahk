@@ -345,8 +345,7 @@ class WinGet {
 
     /**
      * A function that returns the path of an open explorer window
-     *
-     * Original code found here by svArtist: https://www.autohotkey.com/boards/viewtopic.php?p=422751#p387113
+     * @link Original code found here by svArtist: https://www.autohotkey.com/boards/viewtopic.php?p=422751#p387113
      * @param {Integer} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
      * @returns {String} the directory path of the explorer window
      */
@@ -373,8 +372,7 @@ class WinGet {
 
     /**
      * A function to return the size of a path in `bytes` by default.
-     * Code from: `DepthTrawler` : https://discord.com/channels/115993023636176902/734109033832906874/1053085736196382771 (ahk discord)
-     *
+     * @link Code from: `DepthTrawler` : https://discord.com/channels/115993023636176902/734109033832906874/1053085736196382771 (ahk discord)
      * @param {String} path is the filepath you wish to check
      * @param {Integer} option decides if you wish for the return value to be something other than `bytes`.
      *
