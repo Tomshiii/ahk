@@ -11,3 +11,4 @@
 
 ## > Other Changes
 - Update `adobeVers.ahk`
+- Add `projAudio.ahk`

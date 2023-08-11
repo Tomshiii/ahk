@@ -10,5 +10,5 @@
 - [x] make open proj script optionally open a custom dir (ie back a dir or forward a dir)
 
 ## Streamdeck
-- [ ] change icon for download to proj to show that it's for videos
-    - [ ] make one for audio too
+- [x] change icon for download to proj to show that it's for videos
+    - [x] make one for audio too
