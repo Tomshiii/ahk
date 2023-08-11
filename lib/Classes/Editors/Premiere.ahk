@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/08/03
- * @version 2.0.3
+ * @date 2023/08/11
+ * @version 2.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1417,7 +1417,7 @@ class Prem {
         return true
     }
 
-    /** This function once bound to `Numpad1-9` allows the user to quickly adjust the gain of a selected track by simply pressing `NumpadSub/NumpadAdd` then their desired value */
+    /** This function once bound to `~Numpad1-9::` allows the user to quickly adjust the gain of a selected track by simply pressing `NumpadSub/NumpadAdd` then their desired value. It will wait for 2 keys to be pressed so that a double digit number can be inputed. If only a single digit is required, press any other key (ie. enter). If no second input is pressed, the function will continue after `2s` */
     static numpadGain() {
         if this.timelineVals = false {
             this.__checkTimeline()
@@ -1426,12 +1426,18 @@ class Prem {
 		title := WinGet.Title(, false)
 		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 ||
             (A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd") {
-			SendInput("{" A_ThisHotkey "}")
+			; SendInput("{" A_ThisHotkey "}") ;// because we preface the hotkey with `~` we no longer need this
 			return
 		}
-		numberToSend := (A_PriorKey = "NumpadSub") ? "-" SubStr(A_ThisHotkey, -1, 1) : SubStr(A_ThisHotkey, -1, 1)
-		prem.gain(numberToSend)
-	}
+        priorKey := (A_PriorKey = "NumpadSub") ? "-" : ""
+		firstKey := SubStr(A_ThisHotkey, -1, 1), secondKey := ""
+        ih := InputHook("L1 T2",, "{" A_ThisHotkey "}")
+        ih.Start()
+        ih.Wait()
+        if IsDigit(ih.Input)
+            secondKey := ih.Input
+		prem.gain(priorKey firstKey secondKey)
+    }
 
     /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
 	static __checkTimelineFocus() {

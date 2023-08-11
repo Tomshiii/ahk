@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.3
+;\\v2.33.4
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -467,15 +467,15 @@ PgDn::prem.moveKeyframes("right", 12)
 PgUp::prem.moveKeyframes("left", 12)
 
 ;premnumpadGainHotkey;
-Numpad1::
-Numpad2::
-Numpad3::
-Numpad4::
-Numpad5::
-Numpad6::
-Numpad7::
-Numpad8::
-Numpad9::prem.numpadGain()
+~Numpad1::
+~Numpad2::
+~Numpad3::
+~Numpad4::
+~Numpad5::
+~Numpad6::
+~Numpad7::
+~Numpad8::
+~Numpad9::prem.numpadGain()
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
