@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/07/23
- * @version 1.2.7.1
+ * @date 2023/08/11
+ * @version 1.2.7.2
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.5", "v23.5", "v24.5", "v18.5", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.6", "v23.6", "v24.7", "v18.5", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
