@@ -217,9 +217,17 @@ class switchTo {
 
     /**
      * This function opens the current `Premiere Pro`/`After Effects` project filepath in windows explorer. If prem/ae isn't open it will attempt to open the `ptf.comms` folder.
+     * @param {String} optionalPath allows the user to navigate to a directory beyond (or before) where the project file is located. See example #1 for more.
      * @returns {Boolean} `true/false` whether the function succeeded or failed
+     * ```
+     * ;// will open the folder before where the project file is located
+     * switchTo.adobeProject("..\")
+     *
+     * ;// will open the `videos` folder in the same dir as the project folder (if it exists)
+     * switchTo.adobeProject("\videos")
+     * ```
      */
-    static adobeProject() {
+    static adobeProject(optionalPath := "") {
         ;// if an editor isn't open
         if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects") {
             ;// check for commissions folder
@@ -240,6 +248,9 @@ class switchTo {
         }
         if !path := WinGet.ProjPath()
             return false
+        if DirExist(path.dir "\" optionalPath) {
+            path.dir := path.dir "\" optionalPath
+        }
         ;// win11 by default names an explorer window the folder you're in
         getFolderName := SubStr(path.dir, InStr(path.dir, "\",, -1)+1)
 

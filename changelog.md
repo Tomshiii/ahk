@@ -7,6 +7,7 @@
 - Pulled code out of `gameCheck.ahk` to create `WinGet.isProc()` that checks to see if a window is a common `windows explorer` element that you may want another piece of code to ignore
 - Pulled `drawBorder()` out of `alwaysOnTop()` and placed in its own function
 - `prem.numpadGain()` will now wait for a second key to be pressed to allow for double digit inputs. If only a single digit is required, press any other key to continue (ie. <kbd>NumpadEnter</kbd>)
+- `switchTo.adobeProject()` now accepts parameter `optionalPath` to navigate to a path other than just where the project file is located
 
 ## > Other Changes
 - Update `adobeVers.ahk`

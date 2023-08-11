@@ -37,7 +37,7 @@ Enter & SC149::switchTo.closeOtherWindow(browser.firefox.class)
 Right & PgUp::switchTo.newWin("exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
-h::switchTo.adobeProject() ;opens the directory for the current premiere/ae project
+h::switchTo.adobeProject("..\") ;opens the directory back from the current premiere/ae project
 n::unassigned()
 Space::
 {

@@ -7,7 +7,7 @@
 ## Functions
 - [x] make numpad gain func use ~~a timer~~ and allow a second number to be pressed
     - [x] maybe make <kbd>Enter</kbd> finish the ~~timer~~ early so it can have a good amount of time to accept the second input
-- [ ] make open proj script optionally open a custom dir (ie back a dir or forward a dir)
+- [x] make open proj script optionally open a custom dir (ie back a dir or forward a dir)
 
 ## Streamdeck
 - [ ] change icon for download to proj to show that it's for videos
