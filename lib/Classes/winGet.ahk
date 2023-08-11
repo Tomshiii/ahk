@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/07/23
- * @version 1.5.12
+ * @date 2023/08/11
+ * @version 1.5.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,9 +11,16 @@
 #Include <Classes\block>
 #Include <Classes\coord>
 #Include <Classes\errorLog>
+#Include <Classes\Mip>
 ; }
 
 class WinGet {
+    /** A map containing common win explorer class names that some functions may wish to ignore */
+    static explorerIgnoreMap := Mip(
+        "Button", 1, "Shell_TrayWnd", 1, "NotifyIconOverflowWindow", 1,
+        "Shell_SecondaryTrayWnd", 1, "Progman", 1, "TopLevelWindowForOverflowXamlIsland", 1
+    )
+
     /**
      * This function is a helper function for a few other functions down below and removes repeat code
      * It compares the coordinates passed into it, to the coordinates of all monitors connected to the system
@@ -120,7 +127,7 @@ class WinGet {
             check := WinGetProcessName("A")
             ignore := (check = "AutoHotkey64.exe") ? WinGetTitle(check) : ""
             title := WinGetTitle("A",, ignore)
-            if !IsSet(title) || title = "" || title = "Program Manager"
+            if this.isProc(title) || !IsSet(title) || title = "" || title = "Program Manager"
                 throw
             return title
         } catch {
@@ -136,12 +143,13 @@ class WinGet {
      * This function is designed to check what state the active window is in. If the window is maximised it will return 1, else it will return 0. It will also populate the `title` variable with the current active window
      * @param {VarRef} title is the active window, this function will populate the `title` variable with the active window
      * @param {String} window is if you wish to provide the function with the window instead of relying it to try and find it based off the active window, this paramater can be omitted
-     * @returns {Boolean} returns wether the desired window is maximised. A return value of 1 means it is maximised
+     * @returns {Boolean} returns whether the desired window is maximised. A return value of 1 means it is maximised
      */
     static isFullscreen(&title?, window := false)
     {
         title := (window != false) ? window : this.Title(&title)
-        if title = "Program Manager" ;this is the desktop. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
+        ;// this block checks for the desktop or some common win explorer classes we want to ignore. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
+        if (this.isProc(WinExist(title)) || (title = "Program Manager"))
             title := ""
         try {
             return WinGetMinMax(title,, "Editing Checklist -") ;a return value of 1 means it is maximised
@@ -393,5 +401,20 @@ class WinGet {
         ;// you convert bytes to another unit by x / (1024^y)
         ;// ie. bytes => MB ; x / (1024x1024x1024) OR x / 1024^2
         return (ComObject("Scripting.FileSystemObject").GetFolder(path).Size)/(1024**(option+1))
+    }
+
+    /**
+     * This function checks the desired window to see if it is `ahk_exe explorer.exe` **&&** has a class name that correlates with a known classname specified in a map contained within `WinGet` (`explorerIgnoreMap`)
+     * @param {Integer/String} hwnd the hwnd (or window parameter) of the window you wish to check. This value gets passed into `WinGetProcessName()` & `WinGetClass()` Defaults to the active window.
+     * @returns {Boolean} returns `true` if the window is one contained within the Map, else returns `false`
+     */
+    static isProc(hwnd := "A") {
+        ;// get processname/class of the first window in the list
+        proc  := WinGetProcessName(hwnd)
+        class := WinGetClass(hwnd)
+        ;// check to see if it's a win explorer process identified in a map within this class
+        if proc = "explorer.exe" && this.explorerIgnoreMap.Has(class)
+            return true
+        return false
     }
 }
