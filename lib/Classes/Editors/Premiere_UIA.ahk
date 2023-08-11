@@ -21,18 +21,29 @@
 ;// effectsControl        - The effects control panel
 ;// tools                 - The tools panel
 
-class v22_3_1 {
+class v22_base {
     timeline              := "YvYY"
     effectsControl        := "YYY"
     tools                 := "YuYY"
     programMon            := "YtYY"
 }
-class v23_5 {
+
+class v23_base {
     timeline              := "YwYY"
     effectsControl        := "YYY"
     tools                 := "YtYY"
     programMon            := "YtYY"
 }
 
-premClassVer := StrReplace(ptf.premIMGver, ".", "_")
-premUIA := %premClassVer%()
+;// if a specific version breaks anything from the base, create a new clase like;
+;// class v23_6 extends v23_base {
+;// and then setting the correct version within `settingsGUI()` ill priorities that class
+;// if it isn't set correctly/a specific class doesn't exist we fall back to the base class
+try {
+    premClassVer := StrReplace(ptf.premIMGver, ".", "_")
+    premUIA := %premClassVer%()
+} catch {
+    premGetVer := StrReplace(ptf.premIMGver, ".", "_")
+    premClassVer := SubStr(premGetVer, 1, InStr(premGetVer, "_",,, 1)-1)
+    premUIA := %premClassVer%_base()
+}

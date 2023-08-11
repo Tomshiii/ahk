@@ -58,17 +58,9 @@ gameAdd(*) {
     value := WinGetList()
     ;// A map containing various win explorer classes that the script will ignore
     ;// otherwise things like the taskbar would populate the GUI instead of the most recently active window
-    explorerMap := Mip(
-        "Button", 1, "Shell_TrayWnd", 1, "NotifyIconOverflowWindow", 1,
-        "Shell_SecondaryTrayWnd", 1, "Progman", 1, "TopLevelWindowForOverflowXamlIsland", 1
-    )
     for this_value in value {
-        ;// get processname/class of the first window in the list
-        proc  := WinGetProcessName(this_value)
-        class := WinGetClass(this_value)
-        ;// check to ensure it's not a win explorer process identified in an above map
-        if proc = "explorer.exe" && explorerMap.Has(class)
-            continue
+        if WinGet.isProc(this_value)
+            return
         ;// generate the gui
         gameGUI := gameCheckGUI(, WinGetTitle(this_value), WinGetProcessName(this_value))
         gameGUI.Show("AutoSize")
