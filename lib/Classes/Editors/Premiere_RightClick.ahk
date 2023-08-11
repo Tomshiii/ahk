@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi, taranVH
- * @date 2023/07/24
- * @version 2.0.12
+ * @date 2023/08/11
+ * @version 2.0.13
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -115,7 +115,7 @@ class rbuttonPrem {
 			colour != this.timelineCol[1] && colour != this.timelineCol[2] &&
 			colour != this.timelineCol[3] && colour != this.timelineCol[4] &&
 			colour != this.timelineCol[8] && colour != this.timelineCol[9] &&
-			colour != this.timeline[11]
+			colour != this.timelineCol[11]
 		) {
 			SendInput("{Rbutton}")
 			return false
