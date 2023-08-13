@@ -6,6 +6,7 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\Editors\Premiere>
+#Include <Classes\errorLog>
 #Include <Functions\trayShortcut>
 ; }
 

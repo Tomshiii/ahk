@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2023/06/30
- * @version 1.2.5.1
+ * @date 2023/08/13
+ * @version 1.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -129,4 +129,25 @@ class coord {
      * ```
      */
     static store() => {caret: A_CoordModeCaret, menu: A_CoordModeMenu, tooltip: A_CoordModeToolTip, mouse: A_CoordModeMouse, pixel: A_CoordModePixel}
+
+    /**
+     * Resets the values of passed in coordmodes
+     * @param {Object} coordObj an object containing any coord modes you wish to reset
+     * ```
+     * coordObjs := coord.store()
+     * ...
+     * ...
+     * coord.reset(coordObjs)
+     * ```
+     * ;// will only accept object params of;
+     *
+     * `caret`, `menu`, `tooltip`, `mouse`, `pixel`
+     */
+    static reset(coordObj) {
+        A_CoordModeCaret   := coordObj.HasOwnProp("caret")   ? coordObj.caret   : A_CoordModeCaret
+        A_CoordModeMenu    := coordObj.HasOwnProp("menu")    ? coordObj.menu    : A_CoordModeMenu
+        A_CoordModeToolTip := coordObj.HasOwnProp("tooltip") ? coordObj.tooltip : A_CoordModeToolTip
+        A_CoordModeMouse   := coordObj.HasOwnProp("mouse")   ? coordObj.mouse   : A_CoordModeMouse
+        A_CoordModePixel   := coordObj.HasOwnProp("pixel")   ? coordObj.pixel   : A_CoordModePixel
+    }
 }
