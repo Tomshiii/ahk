@@ -2,6 +2,7 @@
 
 ## > Functions
 - Added `coord.reset()`
+- Fixed `getHTMLTitle()` throwing if link provided doesn't have html tags the function is looking for
 - Replying to a message with `discord.button()` now disables the `@ON` ping by holding <kbd>Shift</kbd> instead of searching for the `@ON` text.
     - Can now be disabled by setting the internal class variable `disableAutoReplyPing` to `false`
 

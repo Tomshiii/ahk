@@ -26,7 +26,9 @@ getHTMLTitle(url, sanitise := true, replace := "_", params*) {
     }
     if initialMatch = "" {
         RegExMatch(var, "is)<title>\K(.*?)</title>", &sTitle)
-        initialMatch := sTitle[1]
+        try {
+            initialMatch := sTitle[1]
+        }
         if initialMatch = "" {
             errorLog(ValueError("Couldn't determine the title", -2),, 1)
             return false
