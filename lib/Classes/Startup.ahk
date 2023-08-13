@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/07/22
- * @version 1.7.2
+ * @date 2023/08/13
+ * @version 1.7.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,12 +32,44 @@
 
 class Startup {
     __New() {
+        ;// alert that startup functions are running
+        this.alertTimer := true
+        this.__alertTooltip()
+        ;// get release version of scripts
         this.MyRelease := this.__getMainRelease()
+        ;// populate settings variables
         this.UserSettings := UserPref()
     }
 
     MyRelease := 0
     UserSettings := ""
+
+    startupTtpNum := 12
+
+    alertTimer := false
+    alertTtipNum := 20
+
+    __alertTooltip() {
+        SetTimer(alertttp, 1)
+        alertttp() {
+            if !this.alertTimer {
+                SetTimer(, 0)
+                ToolTip("",,, this.alertTtipNum)
+                return
+            }
+            coord.s("Tooltip", false)
+            static dotAmount := 1
+            switch dotAmount {
+                case 1: dot := "."
+                case 2: dot := ".."
+                case 3: dot := "..."
+            }
+            ToolTip("Startup functions running" dot, A_ScreenWidth, A_ScreenHeight, this.alertTtipNum)
+            if ++dotAmount > 3
+                dotAmount := 1
+            sleep 750
+        }
+    }
 
     /**
      * This function retrieves the release version the user is currently running
@@ -184,9 +216,9 @@ class Startup {
         version := (this.UserSettings.beta_update_check = true) ? getScriptRelease(true, &changeVer) : getScriptRelease(, &changeVer)
         if version = 0
             return
-        tool.Wait()
+        tool.Wait(1)
         if this.MyRelease != version
-            tool.Cust("Current Installed Version = " this.MyRelease "`nCurrent Github Release = " version, 5000)
+            tool.Cust("Current Installed Version = " this.MyRelease "`nCurrent Github Release = " version, 5000,,, this.startupTtpNum)
         else
             tool.Cust("You are currently up to date", 2000)
         switch this.UserSettings.update_check {
@@ -194,13 +226,12 @@ class Startup {
                 errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, this.UserSettings.update_check),, 1)
                 return
             case false, "false":
-                tool.Wait()
                 if VerCompare(this.MyRelease, version) < 0
                     {
                         errorLog(Error("User is using an outdated version of these scripts", -1, version),, {time: 3.0})
                         return
                     }
-                tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0)
+                tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0,,, this.startupTtpNum)
                 return
             case true, "true":
                 if VerCompare(this.MyRelease, version) >= 0
@@ -380,12 +411,12 @@ class Startup {
                         DirMove(A_Temp "\" this.MyRelease, ptf.rootDir "\Backups\Script Backups\" this.MyRelease, "1")
                         if DirExist(A_Temp "\" this.MyRelease)
                             DirDelete(A_Temp "\" this.MyRelease, 1)
-                        tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" this.MyRelease "' folder", 3000)
+                        tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" this.MyRelease "' folder", 3000,,, this.startupTtpNum)
                         if WinExist("Download Progress") && g["Cancel"].Text := "Exit"
                             g.Destroy()
-                    } catch as e {
-                        tool.Cust("There was an error trying to backup your current scripts", 2000)
-                        errorLog(e)
+                    } catch {
+                        errorLog(Error("There was an error trying to backup your current scripts"),, {ttip: this.startupTtpNum})
+                        return
                     }
                     return
                 }
@@ -501,7 +532,6 @@ class Startup {
     adobeTemp() {
         if isReload()
             return
-        tool.Wait()
         if WinExist("Scripts Release " this.MyRelease) ;checks to make sure firstCheck() isn't still running
             WinWaitClose("Scripts Release " this.MyRelease)
         day := this.UserSettings.adobe_temp
@@ -531,7 +561,6 @@ class Startup {
                                 {
                                     errorLog(TargetError(A_ThisFunc "() could not find one or more of the specified folders, therefore making it unable to calculate the total cache size", -1), A_ScriptName "`nLine: " A_LineNumber, {time: 4.0})
                                     alerted := true
-                                    tool.Wait()
                                 }
                             continue
                         }
@@ -539,17 +568,17 @@ class Startup {
                 }
             if CacheSize = 0
                 {
-                    tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0)
+                    tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0,,, this.startupTtpNum)
                     this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
                     return
                 }
             ;// `winget.FolderSize()` returns it's value in GB, we simply want to round it to 2dp
-            tool.Cust("Total Adobe cache size - " Round(CacheSize, 2) "/" largestSize "GB", 3.0)
+            tool.Cust("Total Adobe cache size - " Round(CacheSize, 2) "/" largestSize "GB", 3.0,,, this.startupTtpNum)
 
             ;// if the total is bigger than the set number, we loop those directories and delete all the files
             if CacheSize >= largestSize
                 {
-                    tool.Cust(A_ThisFunc " is currently deleting temp files", 2.0)
+                    tool.Cust(A_ThisFunc " is currently deleting temp files", 2.0,,, this.startupTtpNum)
                     try {
                         for v, p in cacheFolders
                             {
@@ -697,9 +726,8 @@ class Startup {
                 { ;if the lib doesn't have a @version tag, we'll instead compare the entire file against the local copy and override it if there are differences
                     if localVersion.script !== latestVer.script
                         {
-                            tool.Wait()
                             Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                            tool.Cust(allLibs.name[A_Index] ".ahk lib file updated")
+                            tool.Cust(allLibs.name[A_Index] ".ahk lib file updated",,,, this.startupTtpNum)
                         }
                     continue
                 }
@@ -707,14 +735,12 @@ class Startup {
                 continue
             if VerCompare(latestVer.version, localVersion.version) > 0
                 {
-                    tool.Wait()
                     Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                    tool.Cust(allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version)
+                    tool.Cust(allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version,,,, this.startupTtpNum)
                     continue
                 }
         }
-        tool.Wait()
-        tool.Cust("libs up to date")
+        tool.Cust("libs up to date",,,, this.startupTtpNum)
     }
 
     /**
@@ -741,14 +767,12 @@ class Startup {
             return
         if VerCompare(latestVer, A_AhkVersion) <= 0
             {
-                tool.Wait()
-                tool.Cust("AHK up to date")
+                tool.Cust("AHK up to date",,,, this.startupTtpNum)
                 return
             }
         if settingsCheck = false
             {
-                tool.Wait()
-                tool.Cust("A new version of AHK is available")
+                tool.Cust("A new version of AHK is available",,,, this.startupTtpNum)
                 return
             }
         marg := 8
@@ -761,13 +785,13 @@ class Startup {
         checkboxValue := 0
         runafter.OnEvent("Click", checkVal)
         ;// buttons
-        mygui.Add("Button", "ys-10 x+25", "Yes").OnEvent("Click", downahk)
+        mygui.Add("Button", "ys-10 x+25", "Yes").OnEvent("Click", downahk.Bind(latestVer))
         mygui.Add("Button", "x+5", "No").OnEvent("Click", noclick)
 
         mygui.Show()
         noclick(*) => mygui.Destroy()
         checkVal(*) => checkboxValue := runafter.Value
-        downahk(*) {
+        downahk(ver, *) {
             downloadLocation := FileSelect("D", , "Where do you wish to download the latest AHK release")
             if downloadLocation = ""
                 return
@@ -780,14 +804,14 @@ class Startup {
                 }
             mygui.Destroy()
             ; #Start DLFile
-            url := "https://www.autohotkey.com/download/ahk-v2.exe"
+            url := Format("https://github.com/AutoHotkey/AutoHotkey/releases/download/v{}/AutoHotkey_{}_setup.exe", ver)
             dest := downloadLocation "\"
 
             DL := DLFile(url,dest,callback)
 
             g := Gui("+AlwaysOnTop -MaximizeBox -MinimizeBox", "Download Progress")
-            g.OnEvent("close",(*)=>g.Hide())
-            g.OnEvent("escape",(*)=>g.Hide())
+            g.OnEvent("close", (*) => g.Hide())
+            g.OnEvent("escape", (*) => g.Hide())
             g.SetFont(,"Consolas")
             g.Add("Text","w300 vText1 -Wrap")
             g.Add("Progress","w300 vProg",0)
@@ -938,5 +962,7 @@ class Startup {
 
     __Delete() {
         this.UserSettings.__delAll()
+        this.alertTimer := false
+        ToolTip("",,, this.alertTtipNum) ;// just incase
     }
 }

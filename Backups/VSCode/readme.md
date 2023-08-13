@@ -1,0 +1,1 @@
+User Settings/keybinds json files can be found: C:\Users\[USERNAME]\AppData\Roaming\Code\User

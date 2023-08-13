@@ -1,0 +1,259 @@
+{
+    "workbench.colorTheme": "One Dark Pro Darker",
+    "extensions.ignoreRecommendations": true,
+    "git.autofetch": true,
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.startupEditor": "none",
+    "extensions.autoUpdate": false,
+    "telemetry.enableCrashReporter": false,
+    "telemetry.enableTelemetry": false,
+    "diffEditor.wordWrap": "on",
+    "editor.wordWrap": "on",
+    "indentRainbow.errorColor": "rgba(128,32,32,0.4)",
+    "indentRainbow.colors": [
+
+
+        "rgba(255,255,64,0.02)",
+        "rgba(127,255,127,0.02)",
+        "rgba(255,127,255,0.02)",
+        "rgba(79,236,236,0.02)"
+    ],
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.bracketPairColorization.enabled": true,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.guides.bracketPairs": true,
+    "markdown-preview-enhanced.previewTheme": "one-dark.css",
+    "vsicons.dontShowNewVersionMessage": true,
+    "telemetry.telemetryLevel": "off",
+    "workbench.editorAssociations": {
+        "*.streamDeckProfilesBackup": "default"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "gitlens.currentLine.enabled": false,
+    "gitlens.hovers.currentLine.over": "line",
+    "gitlens.codeLens.enabled": false,
+    "gitlens.defaultDateShortFormat": "D MMM, YY",
+    "gitlens.defaultDateFormat": "Do MMMM, YYYY",
+    "editor.snippetSuggestions": "bottom",
+    "editor.hover.above": false,
+    "AutoHotkey2.completeFunctionParens": true,
+    "AutoHotkey2.InterpreterPath": "C:\\Program Files\\AutoHotkey\\v2\\AutoHotkey64.exe",
+    "editor.renderWhitespace": "trailing",
+    "explorer.autoReveal": false,
+    "AutoHotkey2.AutoLibInclude": "User and Standard",
+    "files.associations": {
+        "*.ahk": "ahk2"
+    },
+    "AutoHotkey2.SymbolFoldingFromOpenBrace": true,
+    "AutoHotkey2.FormatOptions": {
+        "indent_string": "      ",
+        "keep_array_indentation": true
+    },
+    "editor.emptySelectionClipboard": false,
+    "editor.dragAndDrop": false,
+    "files.trimTrailingWhitespace": true,
+
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "name": "commas",
+                "scope": [
+                    "punctuation.separator.comma.ahk2",
+                ],
+                "settings": {
+                    "foreground": "#FF65DB",
+                    "fontStyle": "bold"
+                }
+            },
+            {
+                "name": "comments no italic",
+                "scope": [
+                    "support.class.ahk2",
+                    "comment.block.ahk2",
+                ],
+                "settings": {
+                    "foreground": "#7F848E",
+                    "fontStyle": ""
+                }
+            },
+            {
+                "name": "comments italic",
+                "scope": [
+                    "comment.line.ahk2",
+                ],
+                "settings": {
+                    "foreground": "#7F848E",
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "name": "variables",
+                "scope": [
+                    "variable.parameter",
+                    "variable.other.ahk2",
+                    "support.function.ahk2",
+                    "variable.other.property",
+                ],
+                "settings": {
+                    "foreground": "#E06C75",
+                    "fontStyle": ""
+                }
+            },
+            {
+                "name": "string quoted",
+                "scope": [
+                    "string.quoted.ahk2",
+                ],
+                "settings": {
+                    "foreground": "#98C379",
+                    "fontStyle": ""
+                }
+            },
+            {
+                "name": "classes",
+                "scope": [
+                    "entity.name.type.class",
+                ],
+                "settings": {
+                    "foreground": "#dd78a2",
+                    "fontStyle": ""
+                }
+            },
+            {
+                "name": "numbers & stuff remove bold",
+                "scope": [
+                    "constant.numeric.ahk2",
+                    "keyword.operator.ahk2",
+                    "meta.parens.ahk2",
+                ],
+                "settings": {
+                    // "foreground": "#dd78a2",
+                    "fontStyle": ""
+                }
+            }
+        ]
+    },
+    "editor.stickyScroll.enabled": true,
+    "workbench.editor.wrapTabs": true,
+    "editor.minimap.scale": 2,
+    "editor.minimap.autohide": true,
+    "workbench.sideBar.location": "right",
+    "editor.minimap.size": "fill",
+    "editor.minimap.renderCharacters": false,
+    "better-comments.tags": [
+
+        {
+            "tag": "--",
+            "color": "#7F848E",
+            "strikethrough": true,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "!",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "?",
+            "color": "#3498DB",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "//",
+            "color": "#7F848E",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": false
+        },
+        {
+            "tag": "todo",
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "*",
+            "color": "#98C379",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        }
+    ],
+    "editor.accessibilitySupport": "off",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "githubPullRequests.queries": [
+        {
+            "label": "Waiting For My Review",
+            "query": "is:open review-requested:${user}"
+        },
+        {
+            "label": "Assigned To Me",
+            "query": "is:open assignee:${user}"
+        },
+        {
+            "label": "Created By Me",
+            "query": "is:open author:${user}"
+        }
+    ],
+    "githubIssues.assignWhenWorking": false,
+    "[markdown]": {
+        "files.trimTrailingWhitespace": false,
+        "editor.renderWhitespace": "boundary"
+    },
+    "workbench.editor.splitInGroupLayout": "vertical",
+    "AutoHotkey2.CompleteFunctionParens": true,
+    "markdown.updateLinksOnFileMove.enabled": "prompt",
+    "betterAlign.indentBase": "activeline",
+    "autoalign.moveableItems": [
+
+        ";",
+        ":=",
+        "+=",
+        "-=",
+    ],
+    "autoAlign.associations": {
+        "csv": ",",
+        "bsv": "|",
+        "ahk": ";",
+    },
+    "autoAlign.enabled": {
+        "csv": true,
+        "bsv": true,
+        "ahk": false
+    },
+    "autoAlign.extraSpace": false,
+    "window.menuBarVisibility": "compact",
+    "window.title": "${dirty}${activeEditorLong}${separator}${rootName}${separator}${appName}",
+    "window.restoreWindows": "preserve",
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "window.zoomLevel": 1,
+    "diffEditor.experimental.useVersion2": true,
+    "[css]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    },
+    "git.openRepositoryInParentFolders": "never"
+}
