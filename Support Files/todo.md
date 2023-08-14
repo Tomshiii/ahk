@@ -1,7 +1,7 @@
 > This list is mainly for tasks I intend on completing before the next release and is only meant to remind me to do certain little things. For any more major planned changes, reference the [Upcoming Changes](https://github.com/users/Tomshiii/projects/1) page
 
 ## Functions
-- [ ] open adobe proj func not working if any explorer window already open
+- [x] open adobe proj func not working if any explorer window already open
 - [ ] right clicking in the prem program monitor appears to hang everything. is it bc of right click prem?
 - [ ] autosave saving sometimes causes changing of sequence (clicking RButton at the same time?)
 

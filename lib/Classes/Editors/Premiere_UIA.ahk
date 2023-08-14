@@ -22,10 +22,10 @@
 ;// tools                 - The tools panel
 
 class v22_base {
-    timeline              := "YrYY"
+    timeline              := "YwYY"
     effectsControl        := "YYY"
-    tools                 := "Y/YY"
-    programMon            := "Yw"
+    tools                 := "YsYY"
+    programMon            := "Yq"
 }
 
 class v23_base {

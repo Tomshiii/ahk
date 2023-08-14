@@ -230,26 +230,29 @@ class switchTo {
     static adobeProject(optionalPath := "") {
         ;// if an editor isn't open
         if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects") {
-            ;// check for commissions folder
-            if DirExist(ptf.comms) {
-                tool.Cust("A Premiere/AE isn't open, opening the comms folder")
-                Run(ptf.comms)
-                commPath := obj.SplitPath(ptf.comms)
-                ;// commPath.name assumes win11 -- if you're on win10 or you've changed it so explorer titles show the full path
-                ;// simply use ptf.comms instead
-                if !WinWait(commPath.name " ahk_class CabinetWClass", "comms", 2)
-                    return false
-                WinActivate(commPath.name " ahk_class CabinetWClass", "comms")
-                return true
+            ;// if the commissions folder doesn't exist
+            if !DirExist(ptf.comms) {
+                errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
+                return false
             }
-            ;// if the folder doesn't exist
-            errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
-            return false
+            ;// opening the commissions folder
+            tool.Cust("A Premiere/AE isn't open, opening the comms folder")
+            Run(ptf.comms)
+            commPath := obj.SplitPath(ptf.comms)
+            ;// commPath.name assumes win11 -- if you're on win10 or you've changed it so explorer titles show the full path
+            ;// simply use ptf.comms instead
+            if !WinWait(commPath.name " ahk_class CabinetWClass", "comms", 2)
+                return false
+            WinActivate(commPath.name " ahk_class CabinetWClass", "comms")
+            return true
         }
         if !path := WinGet.ProjPath()
             return false
         if DirExist(path.dir "\" optionalPath) {
-            path.dir := path.dir "\" optionalPath
+            storeWorkingDir := A_WorkingDir
+            SetWorkingDir(path.dir "\" optionalPath)
+            path.dir     := A_WorkingDir
+            A_WorkingDir := storeWorkingDir
         }
         ;// win11 by default names an explorer window the folder you're in
         getFolderName := SubStr(path.dir, InStr(path.dir, "\",, -1)+1)
