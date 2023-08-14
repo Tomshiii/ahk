@@ -2,11 +2,11 @@
 
 ## Functions
 - [x] open adobe proj func not working if any explorer window already open
-- [ ] right clicking in the prem program monitor appears to hang everything. is it bc of right click prem?
+- [x] right clicking in the prem program monitor appears to hang everything. ~~is it bc of right click prem?~~ nope. just premiere being dumb
 - [ ] autosave saving sometimes causes changing of sequence (clicking RButton at the same time?)
 
 ## General
-- [ ] fix margin button swapping between open sequences
+- [x] fix margin button swapping between open sequences
 - [ ] mention this todo in the readme/wiki
 - [x] add GUI similar to `trimGUI.ahk` but for reencoding
 

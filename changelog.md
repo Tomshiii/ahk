@@ -13,5 +13,6 @@
 ## > Other Changes
 - Added additional backups for `VSCode`; `settings.json` & `keybindings.json`
 - Added `reencodeGUI.ahk` & `reencode.ahk`
-- A tooltip will now be presented at the bottom of the screen while `Startup` functions are running
 - Fixed `Alt_menu_acceleration_DISABLER.ahk` not `#Include`(ing) `errorLog {`
+- Fixed some `QMK` (`Prem.ahk`) scripts incorrectly trying to focus the timeline
+- A tooltip will now be presented at the bottom of the screen while `Startup` functions are running

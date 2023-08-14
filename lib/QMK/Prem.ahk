@@ -5,7 +5,24 @@
 #Include <Classes\ptf>
 #Include <Classes\winget>
 #Include <Classes\errorLog>
+#Include <Classes\WM>
 #Include <QMK\unassigned>
+
+premTimeline() {
+	__fallback() {
+		if !prem.__checkTimeline(false)
+			return
+		tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
+	}
+	if !prem.__checkTimelineValues() {
+		WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+		if !prem.__waitForTimeline() {
+			__fallback()
+			return
+		}
+	}
+	prem.__checkTimelineFocus()
+}
 
 BackSpace & SC027::prem.keyframe("position")
 BackSpace & /::prem.keyframe("position")
@@ -74,8 +91,7 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 }
 g:: ;this hotkey will fill the frame to fit the window
 {
-	SendInput(KSA.timelineWindow)
-	;SendInput(KSA.selectAtPlayhead)
+	premTimeline()
 	SendInput(KSA.scaleFrameSize)
 }
 b::prem.preset("transform_MINE")
@@ -83,8 +99,7 @@ b::prem.preset("transform_MINE")
 r::prem.preset("tint 100")
 f:: ;this macro is to open the speed menu
 {
-	SendInput(KSA.timelineWindow)
-	SendInput(KSA.timelineWindow)
+	premTimeline()
 	try {
 		loop 3 {
 			effClassNN := ControlGetClassNN(ControlGetFocus("A"))
@@ -102,9 +117,9 @@ f:: ;this macro is to open the speed menu
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
 	SendInput(KSA.programMonitor)
-	SendInput(KSA.programMonitor)
 	SendInput(KSA.premSafeMargins)
-	SendInput(KSA.timelineWindow)
+	sleep 100
+	premTimeline()
 }
 ;PgDn::unassigned()
 
