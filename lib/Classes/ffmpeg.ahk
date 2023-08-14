@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/06/30
- * @version 1.0.4.1
+ * @date 2023/08/14
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -157,22 +157,22 @@ class ffmpeg {
      * @param {Integer} durationval the number of seconds from the start value the user wishes to trim the file. If this value is omitted (or is 0) this function will assume you want the remainder of the track and only wish to trim the start value.
      * @param {Boolean} overwrite whether the file should be overwritten
      * @param {String} commands any further commands that will be appended to the command. The default command is `ffmpeg -ss {startval} -i "{filepath}" -t {durationval} {commands} "{outputfile}"`
+     * @param {Boolean} runDir define whether the path will but run after the function executes
      */
-    trim(path, startval := 0, durationval?, overwrite := false, commands := "") {
+    trim(path, startval := 0, durationval?, overwrite := false, commands := "", runDir := true) {
         pathobj := obj.SplitPath(path)
         outputFile := this.__getIndex(path)
         if !IsSet(durationval) || durationval = 0
             durationval := (this.__getDuration(path))- startval
         command := Format('ffmpeg -ss {1} -i "{3}" -t {2} {5} "{4}"', startval, durationval, path, outputFile, commands)
         cmd.run(,, command)
-        switch overwrite {
-            case 1:
-                FileDelete(path)
-                FileMove(outputFile, path)
-                this.__runDir(pathobj)
-            default:
-                this.__runDir(pathobj)
+        if overwrite {
+            FileDelete(path)
+            FileMove(outputFile, path)
         }
+        if !runDir
+            return
+        this.__runDir(pathobj)
     }
 
     __Delete() {

@@ -6,6 +6,7 @@
 - Attempt to fix `WinGet.isProc()` throwing if it attempts to check a window that isn't responding
 - Replying to a message with `discord.button()` now disables the `@ON` ping by holding <kbd>Shift</kbd> instead of searching for the `@ON` text.
     - Can now be disabled by setting the internal class variable `disableAutoReplyPing` to `false`
+- `ffmpeg.trim()` now offers optional parameter `runDir` to define whether the dir of the chosen file will be run after the function has executed
 
 ## > Other Changes
 - Added additional backups for `VSCode`; `settings.json` & `keybindings.json`
