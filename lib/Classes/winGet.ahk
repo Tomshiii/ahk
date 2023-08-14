@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/08/11
- * @version 1.5.13
+ * @date 2023/08/14
+ * @version 1.5.13.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -410,8 +410,12 @@ class WinGet {
      */
     static isProc(hwnd := "A") {
         ;// get processname/class of the first window in the list
-        proc  := WinGetProcessName(hwnd)
-        class := WinGetClass(hwnd)
+        try {
+            proc  := WinGetProcessName(hwnd)
+            class := WinGetClass(hwnd)
+        } catch {
+            return false
+        }
         ;// check to see if it's a win explorer process identified in a map within this class
         if proc = "explorer.exe" && this.explorerIgnoreMap.Has(class)
             return true
