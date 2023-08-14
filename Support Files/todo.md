@@ -8,7 +8,7 @@
 ## General
 - [ ] fix margin button swapping between open sequences
 - [ ] mention this todo in the readme/wiki
-- [ ] add GUI similar to `trimGUI.ahk` but for reencoding
+- [x] add GUI similar to `trimGUI.ahk` but for reencoding
 
 `adobe fullscreen check`
 - [x] throws when prem not responding

@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2023/04/18
- * @version 1.1.4
+ * @date 2023/08/14
+ * @version 1.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,6 +24,7 @@ class obj {
      * This function turns the inbuilt function `SplitPath` into a function that returns an object.
      * ```
      * script := obj.SplitPath("E:\Github\ahk\My Scripts.ahk")
+     * script.Path       ; E:\Github\ahk\My Scripts.ahk
      * script.Name       ; My Scripts.ahk
      * script.Dir        ; E:\Github\ahk
      * script.Ext        ; ahk
@@ -35,7 +36,7 @@ class obj {
      */
     static SplitPath(Path) {
         SplitPath(Path, &Name, &Dir, &Ext, &NameNoExt, &Drive)
-        return {Name: Name, Dir: Dir, Ext: Ext, NameNoExt: NameNoExt, Drive: Drive}
+        return {Path: path, Name: Name, Dir: Dir, Ext: Ext, NameNoExt: NameNoExt, Drive: Drive}
     }
 
     /**

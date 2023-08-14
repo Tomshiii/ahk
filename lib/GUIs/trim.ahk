@@ -1,5 +1,5 @@
 /************************************************************************
- * @description A script to contain classes relating to trimming audio/video files with ffmpeg
+ * @description A GUI to easily trim audio/video files using ffmpeg
  * @author tomshi
  * @date 2023/05/06
  * @version 1.0.2.1
@@ -9,7 +9,6 @@
 #SingleInstance Force
 ; { \\ #Includes
 #Include <GUIs\tomshiBasic>
-#Include <Classes\cmd>
 #Include <Classes\obj>
 #Include <Classes\ffmpeg>
 ; }
