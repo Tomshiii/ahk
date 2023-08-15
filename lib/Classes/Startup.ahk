@@ -64,7 +64,7 @@ class Startup {
                 case 2: dot := ".."
                 case 3: dot := "..."
             }
-            ToolTip("Startup functions running" dot, A_ScreenWidth, A_ScreenHeight, this.alertTtipNum)
+            ToolTip("⚠️ Startup functions running" dot, A_ScreenWidth, A_ScreenHeight, this.alertTtipNum)
             if ++dotAmount > 3
                 dotAmount := 1
             sleep 750
@@ -644,27 +644,27 @@ class Startup {
         }
 
         webView2 := {
-            name: "WebView2",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/WebView2/WebView2.ahk",
+            name: "WebView2",                        url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/WebView2/WebView2.ahk",
             scriptPos: ptf.lib "\Other\WebView2"
         }
         comVar := {
-            name: "ComVar",                                     url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/ComVar.ahk",
+            name: "ComVar",                          url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/ComVar.ahk",
             scriptPos: ptf.lib "\Other"
         }
         SevenZip := {
-            name: "SevenZip",                                   url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/7Zip/SevenZip.ahk",
+            name: "SevenZip",                        url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/7Zip/SevenZip.ahk",
             scriptPos: ptf.lib "\Other\7zip"
         }
         JSON := {
-            name: "JSON",                                       url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
+            name: "JSON",                            url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
             scriptPos: ptf.lib "\Other"
         }
         UIA := {
-            name: "UIA",                                       url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA.ahk",
+            name: "UIA",                             url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA.ahk",
             scriptPos: ptf.lib "\Other\UIA"
         }
         UIA_Browser := {
-            name: "UIA_Browser",                                       url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA_Browser.ahk",
+            name: "UIA_Browser",                     url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA_Browser.ahk",
             scriptPos: ptf.lib "\Other\UIA"
         }
 
@@ -792,8 +792,7 @@ class Startup {
         noclick(*) => mygui.Destroy()
         checkVal(*) => checkboxValue := runafter.Value
         downahk(ver, *) {
-            downloadLocation := FileSelect("D", , "Where do you wish to download the latest AHK release")
-            if downloadLocation = ""
+            if !downloadLocation := FileSelect("D", , "Where do you wish to download the latest AHK release")
                 return
             if FileExist(downloadLocation "\ahk-v2.exe")
                 {

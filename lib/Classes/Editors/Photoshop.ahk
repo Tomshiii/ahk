@@ -1,10 +1,10 @@
 /************************************************************************
  * @description A library of useful Photoshop functions to speed up common tasks
- * Last tested in v24.4.1 of Photoshop
- * @psVer 24.4.1
+ * Last tested in v24.7 of Photoshop
+ * @psVer 24.7
  * @author tomshi
- * @date 2023/06/30
- * @version 1.2.1.1
+ * @date 2023/08/14
+ * @version 1.2.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -42,6 +42,7 @@ class PS {
             {
                 block.Off()
                 errorLog(Error("Was unable to find the value the user wished to adjust"),, 1)
+                keys.allWait()
                 return
             }
         else
@@ -55,6 +56,7 @@ class PS {
                         MouseMove(xpos, ypos)
                         block.Off()
                         errorLog(Error("Was unable to find the value the user wished to adjust"),, 1)
+                        keys.allWait()
                         return
                     }
             }

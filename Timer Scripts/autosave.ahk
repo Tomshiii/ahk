@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/07/23
- * @version 2.0.1
+ * @date 2023/08/15
+ * @version 2.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -298,6 +298,7 @@ class adobeAutoSave extends count {
             this.__checkPremPlayback()
 
         try {
+            block.On()
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
                 SendInput("{Shift Up}")
@@ -305,14 +306,19 @@ class adobeAutoSave extends count {
             ;// this part will throw if it's not inside a try block
             ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, this.premWindow.wintitle)
         } catch {
+            block.Off()
             return
         }
 
         ;// waiting for save dialogue to open & close
-        if !WinWait("Save Project",, 3)
+        if !WinWait("Save Project",, 3) {
+            block.Off()
             return
-        if !WinWaitClose("Save Project",, 3)
+        }
+        if !WinWaitClose("Save Project",, 3) {
+            block.Off()
             return
+        }
     }
 
     /** saves after effects */

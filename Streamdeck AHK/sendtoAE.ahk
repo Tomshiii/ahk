@@ -1,3 +1,4 @@
+#SingleInstance Force
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Editors\Premiere>
@@ -30,10 +31,11 @@ if !WinWaitClose("Save Project",, 5)
     return
 if !WinWaitActive(prem.winTitle,, 5)
     return
-sleep 500
+sleep 750
 if !prem.__checkTimelineValues()
     __final()
-if !prem.__waitForTimeline()
+sleep 100
+if !prem.__waitForTimeline(3)
     __final()
 __final()
 

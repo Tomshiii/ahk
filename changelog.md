@@ -8,7 +8,8 @@
 - Replying to a message with `discord.button()` now disables the `@ON` ping by holding <kbd>Shift</kbd> instead of searching for the `@ON` text.
     - Can now be disabled by setting the internal class variable `disableAutoReplyPing` to `false`
 - `ffmpeg.trim()` now offers optional parameter `runDir` to define whether the dir of the chosen file will be run after the function has executed
-- `obj.SplitPath()` will now includes OwnProp `Path` containing the path that was passed into it
+- `obj.SplitPath()` will now include OwnProp `Path` containing the path that was passed into it
+- `yt-dlp {` will no longer produce a traytip saying `ffmpeg`. Oops!
 
 ## > Other Changes
 - Added additional backups for `VSCode`; `settings.json` & `keybindings.json`

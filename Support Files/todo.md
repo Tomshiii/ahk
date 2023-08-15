@@ -4,10 +4,13 @@
 - [x] open adobe proj func not working if any explorer window already open
 - [x] right clicking in the prem program monitor appears to hang everything. ~~is it bc of right click prem?~~ nope. just premiere being dumb
 - [ ] autosave saving sometimes causes changing of sequence (clicking RButton at the same time?)
+- [ ] wait for timeline focus func seems to cause endless loop failing to focus the timeline
+- [ ] qmk keyboard funcs on first use sometimes still swapping to other sequence
+- [ ] prev/next keyframe sometimes swapping sequences
 
 ## General
 - [x] fix margin button swapping between open sequences
-- [ ] mention this todo in the readme/wiki
+- [x] mention this todo in the readme/wiki
 - [x] add GUI similar to `trimGUI.ahk` but for reencoding
 
 `adobe fullscreen check`

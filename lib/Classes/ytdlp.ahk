@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/06/30
- * @version 1.0.3.1
+ * @date 2023/08/15
+ * @version 1.0.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,7 +26,7 @@ class ytdlp {
     checkClipState := false
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => tool.tray({text: "yt-dlp process has finished", title: "ffmpeg process has completed!", options: 1}, 2000)
+    __finished() => tool.tray({text: "yt-dlp process has finished", title: "yt-dlp process has completed!", options: 1}, 2000)
 
     /**
      * checks the clipboard for a valid download link
