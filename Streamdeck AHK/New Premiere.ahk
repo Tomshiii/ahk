@@ -25,6 +25,8 @@ pause.pause("adobe fullscreen check")
 DirCreate(SelectedFolder "\videos") ;creates a video folder if there isn't one already
 DirCreate(SelectedFolder "\audio") ;creates an audio folder if there isn't one already
 DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
+DirCreate(SelectedFolder "\proxies\colour renders")
+DirCreate(SelectedFolder "\proxies\timeline renders")
 DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
 DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
 DirCreate(SelectedFolder "\_project files") ;creates a folder to render the final into

@@ -1,4 +1,4 @@
-> This list is mainly for tasks I intend on completing before the next release and is only meant to remind me to do certain little things. For any more major planned changes, reference the [Upcoming Changes](https://github.com/users/Tomshiii/projects/1) page
+> This list is mainly for tasks I intend on completing before the next release, or in upcoming minor releases and is only meant to remind me to do certain little things. For any more major/breaking planned changes, reference the [Upcoming Changes](https://github.com/users/Tomshiii/projects/1) page
 
 ## Functions
 - [x] open adobe proj func not working if any explorer window already open
@@ -25,3 +25,6 @@ Error: (5) Access is denied.
 	416: If proc = "explorer.exe" && this.explorerIgnoreMap.Has(class)
 ```
 - [ ] causes cut on timeline if activates when RButton held down
+
+`textreplace.ahk`
+- [ ] make `quickHotstring()` automatically add the entry in its alphabetical spot

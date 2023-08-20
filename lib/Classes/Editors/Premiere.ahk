@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/08/11
- * @version 2.0.4
+ * @date 2023/08/18
+ * @version 2.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1727,10 +1727,14 @@ class Prem {
      * @param {Integer} timout how many `seconds` you want to wait before this function times out
      */
     static __waitForTimeline(timeout := 5) {
-        loop (timeout*100) {
+        storeTick := A_TickCount
+        loop {
+            ;// if time elapsed is greated than the timeout param
+            if A_TickCount-storeTick > (timeout*1000)
+                break
             if this.timelineFocusStatus() != true {
                 this.__checkTimelineFocus()
-                sleep 100
+                sleep 250
                 continue
             }
             return true

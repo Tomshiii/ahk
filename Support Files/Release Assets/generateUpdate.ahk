@@ -10,6 +10,9 @@
 ; // Then goes through the annoying process of generating the release
 ; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep its code open so you can make sure the install exe isn't too scary)
 
+;// delete all adobe symlinks because they may break things for the user when trying to extract them
+Run(A_ScriptDir "\Adobe SymVers\deleteAdobeSyms.ahk")
+
 ;// setting our working dir to the release folder
 SetWorkingDir(ptf.rootDir "\releases") ;this folder isn't included in the public version of my repo as it simply acts as a backup place for all the releases
 
@@ -184,7 +187,7 @@ deleting() {
     ;// deleting the repo banner image
     checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\repo_social.png")
     ;// deleting the `old` wiki folder
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Wiki")
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Wiki\Old")
     ;// deleting qmk images folder
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\qmk keyboard images")
     ;// deleting the `RODECaster` backup folder
