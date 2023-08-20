@@ -19,3 +19,4 @@
 - Fixed `Alt_menu_acceleration_DISABLER.ahk` not `#Include`(ing) `errorLog {`
 - Fixed some `QMK` (`Prem.ahk`) scripts incorrectly trying to focus the timeline
 - A tooltip will now be presented at the bottom of the screen while `Startup` functions are running
+- `textreplace.ahk` (using `quickHotstring()`) will now automatically place new additions into the correctly sorted position
