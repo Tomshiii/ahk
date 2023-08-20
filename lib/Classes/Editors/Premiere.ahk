@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/08/18
- * @version 2.0.5
+ * @date 2023/08/20
+ * @version 2.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -572,7 +572,7 @@ class Prem {
                 return
             }
         }
-        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}, &motionX, &motionY
+        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height},, &motionX, &motionY
             , ptf.Premiere "motion2.png"
             , ptf.Premiere "motion3.png")
         {
@@ -879,7 +879,7 @@ class Prem {
                         return
                     }
             }
-        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height}, &x, &y
+        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height},, &x, &y
                 , ptf.Premiere filepath ".png"
                 , ptf.Premiere filepath "2.png"
                 , ptf.Premiere filepath "3.png"

@@ -27,15 +27,13 @@ pauseYT() {
 		}
 	else loop {
 		wingetPos(,, &width,, "A")
-		if ytPos := obj.imgSrchMulti({x1: 0, y1:0, x2: width, y2: 60},,,
-                                            , ptf.firefox "youtube1.png", ptf.firefox "youtube2.png", ptf.firefox "youtube3.png")
-			{
-				MouseMove(ytPos.x, ytPos.y, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
-				SendInput("{Click}")
-				coord.s()
-				MouseMove(x, y, 2)
-				break
-			}
+		if ytPos := obj.imgSrchMulti({x1: 0, y1:0, x2: width, y2: 60},,,, ptf.firefox "youtube1.png", ptf.firefox "youtube2.png", ptf.firefox "youtube3.png") {
+			MouseMove(ytPos.x, ytPos.y, 2) ;2 speed is only necessary because of my multiple monitors - if I start my mouse in a certain position, it'll get stuck on the corner of my main monitor and close the firefox tab
+			SendInput("{Click}")
+			coord.s()
+			MouseMove(x, y, 2)
+			break
+		}
 		switchTo().__OtherFirefoxWindow()
 		if A_Index > 5
 			{
