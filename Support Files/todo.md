@@ -6,6 +6,8 @@
 - [ ] wait for timeline focus func seems to cause endless loop failing to focus the timeline
 - [ ] qmk keyboard funcs on first use sometimes still swapping to other sequence
 - [ ] prev/next keyframe sometimes swapping sequences
+- [ ] make function in addition to `prem.thumbscroll()` that moves the timeline to the left until released
+	- [ ] maybe make a third func to completely reset the playhead to the left and have `prem.thumbscroll()` optionally call it if it hits the end of the timeline 
 
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence (clicking RButton at the same time?)
@@ -16,6 +18,7 @@
 - [x] mention this todo in the readme/wiki
 - [x] add GUI similar to `trimGUI.ahk` but for reencoding
 - [x] make `quickHotstring()` automatically add the entry in its alphabetical spot
+- [ ] make screenshot script (launch from streamdeck?) for each of boys, track in class, if 0 ask for starting val, ask main script for current val, increment, then name that file and continue
 
 `adobe fullscreen check`
 - [x] throws when prem not responding
