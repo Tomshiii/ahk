@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.4
+;\\v2.33.5
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -466,6 +466,9 @@ PgDn::prem.moveKeyframes("right", 12)
 ;12backHotkey;
 PgUp::prem.moveKeyframes("left", 12)
 
+;thumbScrollHotkey;
+F12::prem.thumbScroll()
+
 ;premnumpadGainHotkey;
 ~Numpad1::
 ~Numpad2::
@@ -494,8 +497,6 @@ F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint) ;goes to the nex
 
 ;playstopHotkey;
 F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
-;thumbScrollHotkey;
-Xbutton1::prem.thumbScroll()
 ;mousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;

@@ -47,7 +47,7 @@ class Prem {
     ;// colour of playhead
     static playhead := 0x2D8CEB
 
-    ;// variable for prem.searchThumb()
+    ;// variable for prem.thumbScroll()
     static scrollSpeed := 5
 
     ;// variables for `getTimeline()`
@@ -1871,12 +1871,14 @@ class Prem {
         ;// checks to see whether the timeline position has been located
         if !this.__checkTimeline() {
             block.Off()
+            keys.allWait()
 			return
         }
 		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
 		;// only continues if the cursor is within the timeline
 		if !this.__checkCoords(origMouse) {
             block.Off()
+            keys.allWait()
 			return
         }
         ;// check whether the timeline is already in focus & focuses it if it isn't
@@ -1885,6 +1887,7 @@ class Prem {
         if !playhead := this.searchPlayhead({x1: prem.timelineXValue, y1: origMouse.y, x2: prem.timelineXControl, y2: origMouse.y}) {
             block.Off()
             errorLog(TargetError("Could not determine the position of the playhead", -1),, 1)
+            keys.allWait()
             return
         }
         SendInput(KSA.shuttleStop)
