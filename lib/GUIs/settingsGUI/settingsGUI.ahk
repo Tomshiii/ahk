@@ -131,16 +131,9 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! Top Titles
-   /*  titleText := settingsGUI.Add("Text", "section W100 H25 X9 Y7", "Settings")
-    titleText.SetFont("S15 Bold Underline") */
+    settingsGUI.AddText("W100 H20 xs Y7", "Toggle").SetFont("S13 Bold")
 
-    toggleText := settingsGUI.Add("Text", "W100 H20 xs Y7", "Toggle")
-    toggleText.SetFont("S13 Bold")
-
-    adjustText := settingsGUI.Add("Text", "W100 H20 x+125", "Adjust")
-    adjustText.SetFont("S13 Bold")
-    ; decimalText := settingsGUI.Add("Text", "W180 H20 x+-40 Y+-18", "(decimals adjustable in .ini)")
-
+    settingsGUI.AddText("W100 H20 x+125", "Adjust").SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! checkboxes
@@ -200,23 +193,21 @@ settingsGUI()
     }
 
     ;// dark mode toggle
-    darkINI   := UserSettings.dark_mode
-    darkCheck := settingsGUI.Add("Checkbox", "Checked" darkINI " Y+5", "Dark Mode")
-    switch darkINI {
-        case true:  darkCheck.ToolTip := toolT.dark.Yes
-        case false: darkCheck.ToolTip := toolT.dark.No
+    settingsGUI.AddCheckbox("vdarkCheck Checked" UserSettings.dark_mode " Y+5", "Dark Mode").OnEvent("Click", darkToggle)
+    switch UserSettings.dark_mode {
+        case true:  settingsGUI["darkCheck"].ToolTip := toolT.dark.Yes
+        case false: settingsGUI["darkCheck"].ToolTip := toolT.dark.No
         case "disabled":
-            darkCheck.ToolTip := toolT.dark.disabled
-            darkCheck.Opt("+Disabled")
+            settingsGUI["darkCheck"].ToolTip := toolT.dark.disabled
+            settingsGUI["darkCheck"].Opt("+Disabled")
     }
-    darkCheck.OnEvent("Click", darkToggle)
     darkToggle(*)
     {
         ToolTip("")
-        darkToggleVal := darkCheck.Value
-        UserSettings.dark_mode := (darkCheck.Value = 1) ? true : false
-        darkCheck.ToolTip := (darkCheck.Value = 1) ? toolT.dark.Yes : toolT.dark.No
-        if (darkCheck.Value = 1)
+        darkToggleVal := settingsGUI["darkCheck"].Value
+        UserSettings.dark_mode := (settingsGUI["darkCheck"].Value = 1) ? true : false
+        settingsGUI["darkCheck"].ToolTip := (settingsGUI["darkCheck"].Value = 1) ? toolT.dark.Yes : toolT.dark.No
+        if (settingsGUI["darkCheck"].Value = 1)
             {
                 tool.Cust(toolT.dark.Yes, 2000)
                 goDark()
@@ -228,42 +219,34 @@ settingsGUI()
     }
 
     ;// run at startup
-    runStartupINI     := UserSettings.run_at_startup
     StartupCheckTitle := "Run at Startup"
-    StartupCheck      := settingsGUI.Add("Checkbox", "Checked" runStartupINI " Y+5", StartupCheckTitle)
-    switch runStartupINI {
-        case true:  StartupCheck.ToolTip := toolT.startup.Yes
-        case false: StartupCheck.ToolTip := toolT.startup.No
+    settingsGUI.AddCheckbox("vStartupCheck Checked" UserSettings.run_at_startup " Y+5", StartupCheckTitle).OnEvent("Click", toggle.Bind("run at startup"))
+    switch UserSettings.run_at_startup {
+        case true:  settingsGUI["StartupCheck"].ToolTip := toolT.startup.Yes
+        case false: settingsGUI["StartupCheck"].ToolTip := toolT.startup.No
     }
-    StartupCheck.OnEvent("Click", toggle.Bind("run at startup"))
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
     ;// autosave check checklist
-    ascheckCheck := UserSettings.autosave_check_checklist
     ascheckCheckTitle := " Auto open ``checklist.ahk``"
-    ; ascheckToggle := settingsGUI.Add("Checkbox", "Checked" ascheckCheck " Y+20", ascheckCheckTitle)
-    ascheckToggle := settingsGUI.Add("Checkbox", "Checked0 Y+20", ascheckCheckTitle)
-    ascheckToggle.Opt("Disabled")
-    ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist", "autosave"))
-    autosaveCheck := (ascheckCheck = true) ? toolT.autosaveCheck.Yes : toolT.autosaveCheck.No
+    ;// currently disabled
+    settingsGUI.AddCheckbox("vascheckToggle Checked0 Y+20", ascheckCheckTitle).OnEvent("Click", toggle.Bind("autosave check checklist", "autosave"))
+    settingsGUI["ascheckToggle"].Opt("Disabled")
+    settingsGUI["ascheckToggle"].ToolTip := (UserSettings.autosave_check_checklist = true) ? toolT.autosaveCheck.Yes : toolT.autosaveCheck.No
 
     ;// autosave tooltips
-    tooltipCheck := UserSettings.tooltip
     tooltipCheckTitle := "``autosave.ahk`` tooltips"
-    ; toggleToggle := settingsGUI.Add("Checkbox", "Checked" tooltipCheck " Y+5", tooltipCheckTitle)
-    toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", tooltipCheckTitle)
-    toggleToggle.Opt("Disabled")
-    toggleToggle.ToolTip := (tooltipCheck = true) ? toolT.autosaveTooltip.Yes : toolT.autosaveTooltip.No
-    toggleToggle.OnEvent("Click", toggle.Bind("tooltip", "autosave"))
+    ;// currently disabled
+    settingsGUI.AddCheckbox("vtoggleToggle Checked0 Y+5", tooltipCheckTitle).OnEvent("Click", toggle.Bind("tooltip", "autosave"))
+    settingsGUI["toggleToggle"].Opt("Disabled")
+    settingsGUI["toggleToggle"].ToolTip := (UserSettings.tooltip = true) ? toolT.autosaveTooltip.Yes : toolT.autosaveTooltip.No
 
     ;// autosave beep
-    asBeep := UserSettings.autosave_beep
     asBeepTitle := "``autosave.ahk`` beep"
-    asbeepToggle := settingsGUI.Add("Checkbox", "Checked" asBeep " Y+5", asBeepTitle)
-    asbeepToggle.OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
-    autosaveBeep := (asBeep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
+    settingsGUI.AddCheckbox("vasbeepToggle Checked" UserSettings.autosave_beep " Y+5", asBeepTitle).OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
+    settingsGUI["asbeepToggle"].ToolTip := (UserSettings.autosave_beep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
 
 
     /**
@@ -314,25 +297,19 @@ settingsGUI()
     }
 
     ;// checklist create hotkeys
-    checklistHotkeys := UserSettings.checklist_hotkeys
     checklistHotkeysTitle := "``checklist.ahk`` create hotkey"
-    checkHTool := settingsGUI.Add("Checkbox", "Checked" checklistHotkeys " Y+5", checklistHotkeysTitle)
-    checkHTool.ToolTip := (checklistHotkeys = true) ? toolT.checklistHotkeys.Yes : toolT.checklistHotkeys.No
-    checkHTool.OnEvent("Click", msgboxToggle.Bind("checklist hotkeys"))
+    settingsGUI.AddCheckbox("vcheckHTool Checked" UserSettings.checklist_hotkeys " Y+5", checklistHotkeysTitle).OnEvent("Click", msgboxToggle.Bind("checklist hotkeys"))
+    settingsGUI["checkHTool"].ToolTip := (UserSettings.checklist_hotkeys = true) ? toolT.checklistHotkeys.Yes : toolT.checklistHotkeys.No
 
     ;// checklist tooltip
-    checklistTooltip := UserSettings.checklist_tooltip
     checklistTooltipTitle := "``checklist.ahk`` tooltips"
-    checkTool := settingsGUI.Add("Checkbox", "Checked" checklistTooltip " Y+5", checklistTooltipTitle)
-    checkTool.ToolTip := (checklistTooltip = true) ? toolT.checklistTooltip.Yes : toolT.checklistTooltip.No
-    checkTool.OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
+    settingsGUI.AddCheckbox("vcheckTool Checked" UserSettings.checklist_tooltip " Y+5", checklistTooltipTitle).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
+    settingsGUI["checkTool"].ToolTip := (UserSettings.checklist_tooltip = true) ? toolT.checklistTooltip.Yes : toolT.checklistTooltip.No
 
     ;// checklist wait
-    checklistWait := UserSettings.checklist_wait
     checklistWaitTitle := "``checklist.ahk`` always wait"
-    checkWait := settingsGUI.Add("Checkbox", "Checked" checklistWait " Y+5", checklistWaitTitle)
-    checkWait.ToolTip := (checklistWait = true) ? toolT.checklistWait.Yes : toolT.checklistWait.No
-    checkWait.OnEvent("Click", msgboxToggle.Bind("checklist wait"))
+    settingsGUI.AddCheckbox("vcheckWait Checked" UserSettings.checklist_wait " Y+5", checklistWaitTitle).OnEvent("Click", msgboxToggle.Bind("checklist wait"))
+    settingsGUI["checkWait"].ToolTip := (UserSettings.checklist_wait = true) ? toolT.checklistWait.Yes : toolT.checklistWait.No
 
 
     /**
@@ -350,7 +327,7 @@ settingsGUI()
         iniVar := StrReplace(ini, A_Space, "_")
         ;// setting values based on the state of the checkbox
         UserSettings.%iniVar% := (script.Value = 1) ? true : false
-        checkWait.ToolTip := (script.Value = 1) ? toolTrue : toolFalse
+        settingsGUI["checkWait"].ToolTip := (script.Value = 1) ? toolTrue : toolFalse
         if WinExist("checklist.ahk - AutoHotkey")
             MsgBox(msgboxtext,, "48 4096")
     }
@@ -396,11 +373,8 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! BUTTON TOGGLES
 
-    adobeToggle := settingsGUI.Add("Button", "w100 h30 Y+5", "adobeTemp()")
-    adobeToggle.OnEvent("Click", buttons.bind("adobe"))
-
-    firstToggle := settingsGUI.Add("Button", "w100 h30 X+15", "firstCheck()")
-    firstToggle.OnEvent("Click", buttons.bind("first"))
+    settingsGUI.Add("Button", "vadobeToggle w100 h30 Y+5", "adobeTemp()").OnEvent("Click", buttons.bind("adobe"))
+    settingsGUI.Add("Button", "vfirstToggle w100 h30 X+15", "firstCheck()").OnEvent("Click", buttons.bind("first"))
 
     buttons(which, button, *)
     {
@@ -437,12 +411,10 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! GROUP EXIT BUTTONS
 
-    group := settingsGUI.Add("GroupBox", "W201 H58 xs+270 ys+5", "Exit")
-    hardResetVar := settingsGUI.Add("Button", "W85 H30 x+-190 y+-40", "Hard Reset")
-    hardResetVar.OnEvent("Click", close.bind("hard"))
+    settingsGUI.AddGroupBox("W201 H58 xs+270 ys+5", "Exit")
+    settingsGUI.AddButton("W85 H30 x+-190 y+-40", "Hard Reset").OnEvent("Click", close.bind("hard"))
 
-    saveAndClose := settingsGUI.Add("Button", "W85 H30 x+10", "Save && Exit")
-    saveAndClose.OnEvent("Click", close)
+    settingsGUI.AddButton("W85 H30 x+10", "Save && Exit").OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
     settingsGUI.OnEvent("Close", close)
@@ -451,10 +423,10 @@ settingsGUI()
         SetTimer(statecheck, 0)
         SetTimer(iniWait, 0)
         ;check to see if the user wants to reset adobeTemp()
-        if adobeToggle.Text = "undo?"
+        if settingsGUI["adobeToggle"].Text = "undo?"
             UserSettings.adobe_temp := 0
         ;check to see if the user wants to reset firstCheck()
-        if firstToggle.Text = "undo?"
+        if settingsGUI["firstToggle"].Text = "undo?"
             UserSettings.first_check := 0
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
