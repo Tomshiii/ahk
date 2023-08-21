@@ -13,35 +13,40 @@ class set_Edit_Val {
         scriptText: "``adobeTemp()``",       textPos: "X+5 Y+-20",
         otherText: " limit (GB)",            otherTextPos: "X+1",
         iniInput: "adobe GB",                colour: "cd53c3c",
-        textControl: "adobeTempText",        Bind: "--"
+        textControl: "adobeTempText",        Bind: "--",
+        objName: "--"
     }
     adFS := {
         control: "adobeFS",                              EditPos: "xs Y+10",
         scriptText: "``adobe fullscreen check.ahk``",    textPos: "X+5 Y+-28",
         otherText: " check rate (sec)",                  otherTextPos: "Y+-1",
         iniInput: "adobe FS",                            colour: "cd53c3c",
-        textControl: "adobeFSText",                      Bind: "adobe fullscreen check.ahk"
+        textControl: "adobeFSText",                      Bind: "adobe fullscreen check.ahk",
+        objName: "adobeCheck"
     }
     autoSave := {
         control: "autoSave",                  EditPos: "xs Y+2",
         scriptText: "``autosave.ahk``",       textPos: "X+5 Y+-20",
         otherText: " save rate (min)",        otherTextPos: "X+1",
-        iniInput: "autosave MIN",                 colour: "c4141d5",
-        textControl: "autoSaveText",          Bind: "autosave.ahk"
+        iniInput: "autosave MIN",             colour: "c4141d5",
+        textControl: "autoSaveText",          Bind: "autosave.ahk",
+        objName: "autoSave"
     }
     gameCk := {
         control: "gameCheck",                  EditPos: "xs Y+10",
         scriptText: "``gameCheck.ahk``",       textPos: "X+5 Y+-20",
         otherText: " check rate (sec)",        otherTextPos: "X+1",
         iniInput: "game SEC",                  colour: "c328832",
-        textControl: "gameCheckText",          Bind: "gameCheck.ahk"
+        textControl: "gameCheckText",          Bind: "gameCheck.ahk",
+        objName: "--"
     }
     MIC := {
         control: "MIC",                                 EditPos: "xs Y+12",
         scriptText: "``Multi-Instance Close.ahk``",     textPos: "X+5 Y+-28",
         otherText: " check rate (sec)",                 otherTextPos: "Y+-1",
         iniInput: "multi SEC",                          colour: "c983d98",
-        textControl: "MICText",                         Bind: "Multi-Instance Close.ahk"
+        textControl: "MICText",                         Bind: "Multi-Instance Close.ahk",
+        objName: "--"
     }
 
     objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.MIC]
@@ -55,4 +60,5 @@ class set_Edit_Val {
     static colour := []
     static textControl := []
     static bind := []
+    static objName := []
 }

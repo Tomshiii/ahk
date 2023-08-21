@@ -246,7 +246,7 @@ settingsGUI()
     ; ascheckToggle := settingsGUI.Add("Checkbox", "Checked" ascheckCheck " Y+20", ascheckCheckTitle)
     ascheckToggle := settingsGUI.Add("Checkbox", "Checked0 Y+20", ascheckCheckTitle)
     ascheckToggle.Opt("Disabled")
-    ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist"))
+    ascheckToggle.OnEvent("Click", toggle.Bind("autosave check checklist", "autosave"))
     autosaveCheck := (ascheckCheck = true) ? toolT.autosaveCheck.Yes : toolT.autosaveCheck.No
 
     ;// autosave tooltips
@@ -256,13 +256,13 @@ settingsGUI()
     toggleToggle := settingsGUI.Add("Checkbox", "Checked0 Y+5", tooltipCheckTitle)
     toggleToggle.Opt("Disabled")
     toggleToggle.ToolTip := (tooltipCheck = true) ? toolT.autosaveTooltip.Yes : toolT.autosaveTooltip.No
-    toggleToggle.OnEvent("Click", toggle.Bind("tooltip"))
+    toggleToggle.OnEvent("Click", toggle.Bind("tooltip", "autosave"))
 
     ;// autosave beep
     asBeep := UserSettings.autosave_beep
     asBeepTitle := "``autosave.ahk`` beep"
     asbeepToggle := settingsGUI.Add("Checkbox", "Checked" asBeep " Y+5", asBeepTitle)
-    asbeepToggle.OnEvent("Click", toggle.Bind("autosave beep"))
+    asbeepToggle.OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
     autosaveBeep := (asBeep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
 
 
@@ -271,7 +271,7 @@ settingsGUI()
      * @param {any} ini is the name of the ini `Key` you wish to be toggles
      * @param {any} script the name of the guiCtrl obj that gets auto fed into this function
      */
-    toggle(ini, script, unneeded)
+    toggle(ini, objName := "", script?, unneeded?)
     {
         detect()
         ToolTip("")
@@ -310,7 +310,7 @@ settingsGUI()
             }
         ;// reloading autosave & updating setting value
         if (InStr(script.text, "autosave") || InStr(script.text,ascheckCheckTitle)) && WinExist("autosave.ahk - AutoHotkey")
-            WM.Send_WM_COPYDATA(iniVar "_" script.Value, "autosave.ahk")
+            WM.Send_WM_COPYDATA(iniVar "," script.Value "," objName, "autosave.ahk")
     }
 
     ;// checklist create hotkeys
@@ -375,17 +375,16 @@ settingsGUI()
         settingsGUI.Add("Text",
                             set_Edit_Val.otherTextPos[A_Index],
                             set_Edit_Val.otherText[A_Index])
-        settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index],
-                                                                                    set_Edit_Val.iniInput[A_Index]))
+        settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index], set_Edit_Val.iniInput[A_Index], set_Edit_Val.objName[A_Index]))
     }
 
-    editCtrl(script, ini, ctrl, *)
+    editCtrl(script, ini, objName, ctrl, *)
     {
         detect()
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := ctrl.text
         if WinExist(script " - AutoHotkey") {
-            WM.Send_WM_COPYDATA(iniVar "_" ctrl.text, script)
+            WM.Send_WM_COPYDATA(iniVar "," ctrl.text "," objName, script)
         }
     }
 

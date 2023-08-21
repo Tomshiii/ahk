@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/08/20
- * @version 2.0.6
+ * @date 2023/08/21
+ * @version 2.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,6 +62,7 @@ class Prem {
 
     ;// rbuttonPrem
     static focusTimelineStatus := true
+    static RClickIsActive := false
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -102,40 +103,6 @@ class Prem {
         ;// colours for the fx symbol box
         0x292929, 1, 0x2D2D2D, 1, 0x3B3B3B, 1, 0x404040, 1, 0x454545, 1, 0x4A4A4A, 1, 0x585858, 1, 0x606060, 1, 0x646464, 1, 0xA7ADAB, 1, 0xB1B1B1, 1, 0xCCCCCC, 1, 0xD2D2D2, 1, 0xEFEFEF, 1
     )
-
-    /**
-     * This function is to help allow for scripts to pass messages relating to premiere back and forth
-     */
-    static __recieveMessage(wParam, lParam, msg, hwnd) {
-        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
-        splitMsg := StrSplit(res, ",")
-        switch splitMsg[1] {
-            case "__premTimelineCoords":
-                detect()
-                if !this.__checkTimelineValues()
-                    return
-                response := Format("__thisTimelineCoords,timelineRawX,{},timelineRawY,{},timelineXValue,{},timelineYValue,{},timelineXControl,{},timelineYControl,{},timelineVals,{}", this.timelineRawX, this.timelineRawY, this.timelineXValue, this.timelineYValue, this.timelineXControl, this.timelineYControl, true)
-                WM.Send_WM_COPYDATA(response, splitMsg[2])
-        }
-    }
-
-    /**
-     * This function is to help allow for scripts to pass messages relating to premiere back and forth
-     */
-    static __parseMessageResponse(wParam, lParam, msg, hwnd) {
-        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
-        res := StrSplit(res, ",")
-        determineWhich := res[1]
-        res.RemoveAt(1)
-        switch determineWhich {
-            case "__premTimelineCoords", "__thisTimelineCoords":
-                for k, v in res {
-                    if Mod(k, 2) = 0
-                        continue
-                    this.%v% := res[k+1]
-                }
-        }
-    }
 
     __fxPanel() => (SendInput(KSA.effectControls), SendInput(KSA.effectControls))
 

@@ -125,7 +125,7 @@ start.monitorAlert()           ;checks the users monitor work area for any chang
 start.__Delete()
 
 ;// so streamdeck scripts can receive premiere timeline coords
-onMsgObj := ObjBindMethod(prem, "__recieveMessage")
+onMsgObj := ObjBindMethod(WM, "__recieveMessage")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;=============================================================================================================================================
 ;

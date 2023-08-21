@@ -1,4 +1,5 @@
 # <> Release 2.12.x - 
+`autosave.ahk` & `adobe fullscreen check.ahk` will now attempt to check if `Premiere_RightClick.ahk` is currently active before proceeding with their functions in an attempt to mitigate unexpected user behaviour that arises when multiple scripts clash against each other.
 
 ## > Functions
 - Added `coord.reset()`
@@ -13,6 +14,7 @@
 - `switchTo.Music()` will no longer accept a window with no title as a window
 
 `Prem {`
+- Moved `__parseMessageResponse()` && `__recieveMessage()` => `WM {`
 - Fixed a few calls to `obj.imgSrchMulti()` missing a parameter
 - Fixed `prem.thumbScroll()` spam activating if code hits a premptive end
 - Minor logic changes to `prem.__waitForTimeline()` in an attempt to stop it getting stuck in an extended loop waiting for the timeline to be brought into focus

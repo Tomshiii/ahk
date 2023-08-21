@@ -1,12 +1,13 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
- * @author lexikos
- * @date 2023/03/17
- * @version 1.0.1
+ * @author lexikos, tomshi
+ * @date 2023/08/21
+ * @version 1.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\tool>
+#Include <Classes\Editors\Premiere>
 #Include <Functions\detect>
 ; }
 
@@ -88,10 +89,55 @@ class WM {
      * }
      * ```
      */
-    static Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
-    {
+    static Receive_WM_COPYDATA(wParam, lParam, msg, hwnd) {
         StringAddress := NumGet(lParam, 2*A_PtrSize, "Ptr")  ; Retrieves the CopyDataStruct's lpData member.
         CopyOfData := StrGet(StringAddress)  ; Copy the string out of the structure.
         return CopyOfData
+    }
+
+    /**
+     * This function is to help allow for scripts to pass messages to and from the main script
+     */
+    static __recieveMessage(wParam, lParam, msg, hwnd) {
+        res := this.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+        splitMsg := StrSplit(res, ",")
+        switch splitMsg[1] {
+            case "__premTimelineCoords":
+                detect()
+                if !prem.__checkTimelineValues()
+                    return
+                response := Format("__thisTimelineCoords,timelineRawX,{},timelineRawY,{},timelineXValue,{},timelineYValue,{},timelineXControl,{},timelineYControl,{},timelineVals,{}", prem.timelineRawX, prem.timelineRawY, prem.timelineXValue, prem.timelineYValue, prem.timelineXControl, prem.timelineYControl, true)
+                this.Send_WM_COPYDATA(response, splitMsg[2])
+            case "Premiere_RightClick":
+                response := (prem.RClickIsActive = true) ? "Premiere_RightClick,true" : "Premiere_RightClick,false"
+                this.Send_WM_COPYDATA(response, splitMsg[2])
+        }
+    }
+
+    /**
+     * This function is to help allow for scripts to pass messages back and forth
+     */
+    static __parseMessageResponse(wParam, lParam, msg, hwnd) {
+        res := this.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+        res := StrSplit(res, ",")
+        determineWhich := res[1]
+        res.RemoveAt(1)
+        switch determineWhich {
+            case "__premTimelineCoords", "__thisTimelineCoords":
+                for k, v in res {
+                    if Mod(k, 2) = 0
+                        continue
+                    prem.%v% := res[k+1]
+                }
+            case "Premiere_RightClick":
+                bool := (res[1]) = "true" ? true : false
+                prem.RClickIsActive := bool
+            case "adobe_FS", "autosave_MIN":
+                %res[2]%.__changeVar(res[1]*1000)
+            case "autosave_beep":
+                %res[2]%.beep := res[1]
+            default:
+                MsgBox("A message attempt was made but a declaration for its contents hasn't been defined. This means that Tomshi has made a mistake somewhere. Please open an issue on github explaining how to reproduce this message to alert him of his mistake!`n`nFor debug purposes;`ndetermineWhich: " determineWhich)
+        }
     }
 }

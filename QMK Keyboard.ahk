@@ -17,7 +17,7 @@ startupTray()
 ;SetCapsLockState("AlwaysOff")          ;having this on broke my main script for whatever reason
 ;SetNumLockState("AlwaysOn")
 
-onMsgObj := ObjBindMethod(prem, "__parseMessageResponse")
+onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version

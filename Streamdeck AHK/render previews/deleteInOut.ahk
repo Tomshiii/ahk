@@ -4,7 +4,7 @@
 #Include <Classes\ptf>
 #Include <Classes\WM>
 ; }
-onMsgObj := ObjBindMethod(prem, "__parseMessageResponse")
+onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 detect()

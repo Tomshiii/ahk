@@ -19,6 +19,7 @@
 #Include <Classes\errorLog>
 #Include <Functions\trayShortcut>
 #Include <Functions\checkStuck>
+#Include <Functions\detect>
 ; }
 
 #SingleInstance force ;only one instance of this script may run at a time!
@@ -77,21 +78,8 @@ class adobeAutoSave extends count {
     programMonY2  := A_ScreenHeight
 
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */
-    __changeVar(wParam, lParam, msg, hwnd) {
+    __changeVar(val) {
         try {
-            UserSettings := UserPref()
-            res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
-
-            ;// if the script is attempting to receive timeline coords the below block will fire
-            ;// if this block doesn't get entered when it should, the whole script will soft crash
-            if InStr(res, "__thisTimelineCoords") {
-                prem.__parseMessageResponse(wParam, lParam, msg, hwnd)
-                return
-            }
-            ;// UserSettings.autosave_MIN_ 5
-            lastUnd := InStr(res, "_", 1, -1)
-            var := SubStr(res, 1, lastUnd-1)
-            val := SubStr(res, lastUnd+1)
             super.stop()
             this.interval := (val*60000)
             super.start()
@@ -388,6 +376,24 @@ class adobeAutoSave extends count {
         }
     }
 
+    /** checks to see if the script the user has defined as their main script is running */
+    __checkMainScript() {
+        detect()
+        if WinExist(ptf.MainScriptName ".ahk")
+            return true
+        return false
+    }
+
+    /** attempts to check if `Premiere_RightClick.ahk` is active */
+    __checkRClick() {
+        if this.__checkMainScript() {
+            WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
+            if prem.RClickIsActive = true
+                return true
+        }
+        return false
+    }
+
     /** This function begins the saving process */
     begin() {
         ;// check for prem/ae
@@ -397,6 +403,12 @@ class adobeAutoSave extends count {
 
         ;// begin blocking user inputs
         block.On("SendAndMouse")
+
+        ;// this script will attempt to NOT fire if Premiere_RightClick.ahk is active
+        if this.__checkRClick() = true {
+            this.__reset()
+            return
+        }
 
         ;// grab originally active window
         if !this.__getOrigWindow() {
@@ -459,7 +471,7 @@ class adobeAutoSave extends count {
 autoSave := adobeAutoSave()
 
 ;// this is required to allow the script to have its timer adjusted with `settingsGUI()`
-changeInterval := ObjBindMethod(autoSave, '__changeVar')
+changeInterval := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 
 ;// defining exit func

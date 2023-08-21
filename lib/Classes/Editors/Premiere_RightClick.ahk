@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi, taranVH
- * @date 2023/08/11
- * @version 2.0.13
+ * @date 2023/08/21
+ * @version 2.0.14
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -170,7 +170,7 @@ class rbuttonPrem {
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
 
 	/** Reset class variables */
-	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "")
+	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", prem.RClickIsActive := false)
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() => (PremHotkeys.__HotkeyReset(["LButton", "XButton2"]), this.__resetClicks(), checkstuck(), Exit())
@@ -198,6 +198,8 @@ class rbuttonPrem {
 	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details
 	 */
 	movePlayhead() {
+		prem.RClickIsActive := true
+
 		;// check for stuck keys
 		if GetKeyState("Ctrl") || GetKeyState("Shift") {
 			checkstuck()
