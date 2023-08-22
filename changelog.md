@@ -1,5 +1,5 @@
 # <> Release 2.12.x - 
-`autosave.ahk` & `adobe fullscreen check.ahk` will now attempt to check if `Premiere_RightClick.ahk` is currently active before proceeding with their functions in an attempt to mitigate unexpected user behaviour that arises when multiple scripts clash against each other.
+`autosave.ahk` & `adobe fullscreen check.ahk` will now attempt to check if `Premiere_RightClick.ahk` is currently active before proceeding with their functions in an attempt to mitigate unexpected behaviour that arises when multiple scripts clash against each other.
 
 ## > Functions
 - Added `coord.reset()`
@@ -24,5 +24,5 @@
 - Added `reencodeGUI.ahk` & `reencode.ahk`
 - Fixed `Alt_menu_acceleration_DISABLER.ahk` not `#Include`(ing) `errorLog {`
 - Fixed some `QMK` (`Prem.ahk`) scripts incorrectly trying to focus the timeline
-- A tooltip will now be presented at the bottom of the screen while `Startup` functions are running
+- A tooltip will now be presented at the bottom of the screen while `Startup {` functions are running
 - `textreplace.ahk` (using `quickHotstring()`) will now automatically place new additions into the correctly sorted position

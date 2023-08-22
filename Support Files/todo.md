@@ -19,6 +19,7 @@
 - [x] add GUI similar to `trimGUI.ahk` but for reencoding
 - [x] make `quickHotstring()` automatically add the entry in its alphabetical spot
 - [ ] make screenshot script (launch from streamdeck?) for each of boys, track in class, if 0 ask for starting val, ask main script for current val, increment, then name that file and continue
+- [ ] change replace with ae comp script to check if AE is open, if it isn't ask if you wanted to create a new ae proj or open an old one
 
 `adobe fullscreen check`
 - [x] throws when prem not responding
