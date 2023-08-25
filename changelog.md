@@ -3,6 +3,7 @@
 
 ## > Functions
 - Added `coord.reset()`
+- Added `multiKeyPress()`
 - Fixed `getHTMLTitle()` throwing if link provided doesn't have html tags the function is looking for
 - Fixed `switchTo.adobeProject()` not focusing the correct explorer window if parameter `optionalPath` was used
 - Attempt to fix `WinGet.isProc()` throwing if it attempts to check a window that isn't responding

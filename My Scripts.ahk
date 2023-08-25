@@ -46,6 +46,7 @@
 #Include <Functions\pauseYT>
 #Include <Functions\delaySI>
 #Include <Functions\isDoubleClick>
+#Include <Functions\multiKeyPress>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
@@ -134,6 +135,10 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;=============================================================================================================================================
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
+
+;myhkeyisbrokenfmlHotkey;
+$h::multiKeyPress((*) => SendInput("h"), (*) => Exit(), (*) => Exit(), -25)
+
 /*
 F11::ListLines() ;debugging
 F12::KeyHistory  ;debugging
