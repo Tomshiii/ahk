@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.5
+;\\v2.33.6
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -136,9 +136,6 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
 
-;myhkeyisbrokenfmlHotkey;
-$h::multiKeyPress((*) => SendInput("h"), (*) => Exit(), (*) => Exit(), -25)
-
 /*
 F11::ListLines() ;debugging
 F12::KeyHistory  ;debugging
@@ -210,6 +207,12 @@ SC03A & F5::refreshWin("A", wingetProcessPath("A"))
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 #HotIf !GetKeyState("F24", "P") ;important so certain things don't try and override my second keyboard
+
+#SuspendExempt true
+;myhkeyisbrokenfmlHotkey;
+$h::multiKeyPress((*) => SendInput("h"), (*) => Exit(), (*) => Exit(), -25)
+#SuspendExempt false
+
 ;windowspyHotkey;
 Pause::switchTo.WindowSpy() ;run/swap to windowspy
 ;vscodeHotkey;

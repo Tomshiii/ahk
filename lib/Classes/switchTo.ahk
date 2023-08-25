@@ -248,11 +248,8 @@ class switchTo {
         }
         if !path := WinGet.ProjPath()
             return false
-        if DirExist(path.dir "\" optionalPath) {
-            storeWorkingDir := A_WorkingDir
-            SetWorkingDir(path.dir "\" optionalPath)
-            path.dir     := A_WorkingDir
-            A_WorkingDir := storeWorkingDir
+        if DirExist(newPath := WinGet.pathU(path.dir "\" optionalPath)) {
+            path.dir := newPath
         }
         ;// win11 by default names an explorer window the folder you're in
         getFolderName := SubStr(path.dir, InStr(path.dir, "\",, -1)+1)

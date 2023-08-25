@@ -6,7 +6,6 @@
 - Added `multiKeyPress()`
 - Fixed `getHTMLTitle()` throwing if link provided doesn't have html tags the function is looking for
 - Fixed `switchTo.adobeProject()` not focusing the correct explorer window if parameter `optionalPath` was used
-- Attempt to fix `WinGet.isProc()` throwing if it attempts to check a window that isn't responding
 - Replying to a message with `discord.button()` now disables the `@ON` ping by holding <kbd>Shift</kbd> instead of searching for the `@ON` text.
     - Can now be disabled by setting the internal class variable `disableAutoReplyPing` to `false`
 - `ffmpeg.trim()` now offers optional parameter `runDir` to define whether the dir of the chosen file will be run after the function has executed
@@ -14,6 +13,10 @@
 - `yt-dlp {` will no longer produce a traytip saying `ffmpeg`. Oops!
 - `switchTo.Music()` will no longer accept a window with no title as a window
 - Year selector within `Premiere` & `After Effects` GUI (`settingsGUI()`) is now a `DropDownList` instead of an `Edit` control
+
+`WinGet {`
+- Added `pathU()`
+- Attempt to fix `WinGet.isProc()` throwing if it attempts to check a window that isn't responding
 
 `Prem {`
 - Moved `__parseMessageResponse()` & `__recieveMessage()` => `WM {`

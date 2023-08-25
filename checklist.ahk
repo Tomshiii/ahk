@@ -7,6 +7,7 @@
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\errorLog>
+#Include <Classes\winget>
 #Include <Functions\floorDecimal>
 #Include <Functions\detect>
 #Include <Functions\isReload>
@@ -32,7 +33,7 @@ startupTray()
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.12.9"
+version := "v2.12.10"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -123,12 +124,9 @@ else
 
 ;// getting the title
 ;// I keep my project files withhin a subfolder of the overall project folder
-;// so I use setworkingdir to get the name of the folder one folder back from the project file
+;// so I use a function to provide the path of the directory one step back from the project folder
 ;// simply make this block here `SplitPath(path, &name)` if you keep your project file in the root project directory
-saveDir := A_WorkingDir
-SetWorkingDir(path "\..\")
-SplitPath(A_WorkingDir, &name)
-A_WorkingDir := saveDir
+SplitPath(WinGet.pathU(path "\.."), &name)
 
 ;// grabbing hour information from ini file
 getTime := IniRead(checklist, "Info", "time")
