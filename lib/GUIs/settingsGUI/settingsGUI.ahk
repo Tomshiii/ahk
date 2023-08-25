@@ -614,13 +614,13 @@ settingsGUI()
             if !new.Has(1)
                 return
             ver.Choose(new.Length)
-            UserSettings.%yearIniName% := year.value
+            UserSettings.%yearIniName% := year.text
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
             switch adobeFullName {
                 case "Adobe Premiere Pro":
-                    FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.Value "\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
+                    FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
                 case "Adobe After Effects":
-                    FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.Value "\Support Files\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
+                    FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\Support Files\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
             }
         }
 
