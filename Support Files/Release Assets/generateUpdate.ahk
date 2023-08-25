@@ -186,6 +186,8 @@ deleting() {
         }
     ;// deleting the repo banner image
     checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\repo_social.png")
+    ;// deleting the todo file
+    checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\todo.md")
     ;// deleting the `old` wiki folder
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Wiki\Old")
     ;// deleting qmk images folder

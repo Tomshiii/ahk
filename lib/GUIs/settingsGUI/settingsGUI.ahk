@@ -521,7 +521,7 @@ settingsGUI()
                 shortcutName := "Adobe Premiere Pro.exe"
                 adobeFullName := "Adobe Premiere Pro"
                 title := program " Pro Settings"
-                yearIniName := "prem_year"
+                yearIniName := "prem year"
                 iniInitYear := UserSettings.prem_year
                 verIniName := "premVer"
                 genProg := program
@@ -533,7 +533,7 @@ settingsGUI()
                 shortcutName := "AfterFX.exe"
                 adobeFullName := "Adobe After Effects"
                 title := "After Effects Settings"
-                yearIniName := "ae_year"
+                yearIniName := "ae year"
                 iniInitYear := UserSettings.ae_year
                 verIniName := "aeVer"
                 genProg := "AE"
@@ -541,20 +541,18 @@ settingsGUI()
                 imageLoc := ptf.aeIMGver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
         }
-        if WinExist(title)
-            {
-                WinActivate(title)
-                return
-            }
+        if WinExist(title) {
+            WinActivate(title)
+            return
+        }
         adobeGui := tomshiBasic(,, "+MinSize275x", title)
         ctrlX := 100
 
         ;// start defining the gui
         adobeGui.AddText("Section", "Year: ")
-        year := adobeGui.Add("Edit", "x" ctrlX " ys r1 W100 Number Limit4", iniInitYear)
-        year.OnEvent("Change", __yearEvent)
+        __generateDropYear(genProg, &year, ctrlX)
         adobeGui.AddText("xs y+10", "Version: ")
-        __generateDrop(genProg, &ver, ctrlX)
+        __generateDropVer(genProg, &ver, ctrlX)
         if program = "Premiere" {
             adobeGui.AddText("xs y+8 Section", "Focus Timeline Icon: ")
             timelineCheckbox := adobeGui.AddCheckbox("xs+135 ys+1 Checked" UserSettings.prem_Focus_Icon)
@@ -578,19 +576,17 @@ settingsGUI()
         add := 0
         ;// settingsgui
         WinGetPos(&x, &y,,, "Settings " version)
-        if WinExist(otherTitle)
-            {
-                WinGetPos(,,, &yearHeight, otherTitle)
-                add := yearHeight
-            }
+        if WinExist(otherTitle) {
+            WinGetPos(,,, &yearHeight, otherTitle)
+            add := yearHeight
+        }
         adobeGui.GetPos(,, &width)
         adobeGui.Move(x-width+5, y+add)
 
         /**
          * This function handles the logic for saving the adobe version number
          */
-        __editAdobeVer(ini, ctrl, *)
-        {
+        __editAdobeVer(ini, ctrl, *) {
             iniVar := StrReplace(ini, A_Space, "_")
             ;// we don't want the version ini value to change unless it's actually a new version number
             ;// (not blank) so we do a quick check beforehand
@@ -605,20 +601,13 @@ settingsGUI()
         __saveVer(*) => adobeGui.Destroy()
 
         /**
-         * This function handles the logic behind what happens when the user types in a new year value
+         * This function handles the logic behind what happens when the user selects a new year value
          */
-        __yearEvent(*) {
-            if StrLen(year.Value) != 4
-                return
-            if (year.Value > A_Year + 1 || year.Value < 2013) {
-                ver.Delete()
-                return
-            }
-            if SubStr(ver.value, 3, 2) != SubStr(year.Value, 3, 2)
-                ver.Delete()
+        __yearEventDropDown(*) {
+            ver.Delete()
             new := []
             loop files ptf.ImgSearch "\" program "\*", "D" {
-                if InStr(A_LoopFileName, "v" SubStr(year.Value, 3, 2))
+                if InStr(A_LoopFileName, "v" SubStr(year.Text, 3, 2))
                     new.Push(A_LoopFileName)
             }
             ver.Add(new)
@@ -636,9 +625,43 @@ settingsGUI()
         }
 
         /**
+         * This function generates the year dropdown selector
+         */
+        __generateDropYear(program, &year, ctrlX) {
+            if (program != "AE" && program != "Premiere") {
+                ;// throw
+                errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
+            }
+            if !DirExist(ptf.ImgSearch "\" program "\") {
+                ;// throw
+                errorLog(ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program),,, 1)
+            }
+            supportedVers := []
+            foundYears := Map()
+            loop files ptf.ImgSearch "\" program "\*", "D" {
+                loopYear := SubStr(A_Year, 1, 2) SubStr(A_LoopFileName, 2, 2)
+                if !foundYears.Has(loopYear) {
+                    supportedVers.Push(loopYear)
+                    foundYears.Set(loopYear, 1)
+                }
+            }
+            for value in supportedVers {
+                if value = iniInitYear
+                    {
+                        defaultIndex := A_Index
+                        break
+                    }
+            }
+            if !IsSet(defaultIndex)
+                defaultIndex := 1
+            year := adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
+            year.OnEvent("Change", __yearEventDropDown)
+        }
+
+        /**
          * This function generates the version dropdown selector
          */
-        __generateDrop(program, &ver, ctrlX) {
+        __generateDropVer(program, &ver, ctrlX) {
             if (program != "AE" && program != "Premiere") {
                 ;// throw
                 errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
@@ -663,7 +686,7 @@ settingsGUI()
             if !IsSet(defaultIndex)
                 defaultIndex := 1
             ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
-            ver.OnEvent("Change", editCtrl.bind("", verIniName))
+            ver.OnEvent("Change", editCtrl.bind("", verIniName, ""))
         }
 
         __cacheslct(progName, *) {

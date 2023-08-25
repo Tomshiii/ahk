@@ -12,9 +12,10 @@
 - `obj.SplitPath()` will now include OwnProp `Path` containing the path that was passed into it
 - `yt-dlp {` will no longer produce a traytip saying `ffmpeg`. Oops!
 - `switchTo.Music()` will no longer accept a window with no title as a window
+- Year selector within `Premiere` & `After Effects` GUI (`settingsGUI()`) is now a `DropDownList` instead of an `Edit` control
 
 `Prem {`
-- Moved `__parseMessageResponse()` && `__recieveMessage()` => `WM {`
+- Moved `__parseMessageResponse()` & `__recieveMessage()` => `WM {`
 - Fixed a few calls to `obj.imgSrchMulti()` missing a parameter
 - Fixed `prem.thumbScroll()` spam activating if code hits a premptive end
 - Minor logic changes to `prem.__waitForTimeline()` in an attempt to stop it getting stuck in an extended loop waiting for the timeline to be brought into focus
@@ -26,3 +27,4 @@
 - Fixed some `QMK` (`Prem.ahk`) scripts incorrectly trying to focus the timeline
 - A tooltip will now be presented at the bottom of the screen while `Startup {` functions are running to alert the user to what is currently happening
 - `textreplace.ahk` (using `quickHotstring()`) will now automatically place new additions into the correctly sorted position
+- Menu item added to `My Scripts.ahk` to quickly open `UIA.ahk`

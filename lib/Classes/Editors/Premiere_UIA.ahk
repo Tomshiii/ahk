@@ -29,9 +29,9 @@ class v22_base {
 }
 
 class v23_base {
-    timeline              := "YvYY"
+    timeline              := "YwYY"
     effectsControl        := "YYY"
-    tools                 := "YsYY"
+    tools                 := "YtYY"
     programMon            := "Yq"
 }
 

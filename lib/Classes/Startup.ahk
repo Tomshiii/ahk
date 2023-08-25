@@ -879,7 +879,7 @@ class Startup {
         save := false
 
         ;// get initial values
-        MonitorCount := MonitorGetCount()
+        MonitorCount   := MonitorGetCount()
         MonitorPrimary := MonitorGetPrimary()
         /**
          * this function is to cut repeat code
@@ -947,14 +947,14 @@ class Startup {
         loop MonitorCount {
             ;// this loop is cross referencing the rest of the data
             MonitorGetWorkArea(A_Index, &WL, &WT, &WR, &WB)
-            left := IniRead(ptf["monitorsINI"], A_Index, "Left")
-            top := IniRead(ptf["monitorsINI"], A_Index, "Top")
-            right := IniRead(ptf["monitorsINI"], A_Index, "Right")
+            left   := IniRead(ptf["monitorsINI"], A_Index, "Left")
+            top    := IniRead(ptf["monitorsINI"], A_Index, "Top")
+            right  := IniRead(ptf["monitorsINI"], A_Index, "Right")
             bottom := IniRead(ptf["monitorsINI"], A_Index, "Bottom")
             if( ;// if nothing has changed, continue
-                left = WL &&
-                top = WT &&
-                right = WR &&
+                left   = WL &&
+                top    = WT &&
+                right  = WR &&
                 bottom = WB )
                 continue
             ;// if the user hasn't been alerted yet, they will be alerted now
