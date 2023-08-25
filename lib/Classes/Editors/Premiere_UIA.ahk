@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain UIA variables for various versions of premiere
  * @author tomshi
- * @date 2023/07/19
- * @version 1.0.0
+ * @date 2023/08/25
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,21 +29,24 @@ class v22_base {
 }
 
 class v23_base {
-    timeline              := "YwYY"
+    timeline              := "YvYY"
     effectsControl        := "YYY"
-    tools                 := "YtYY"
-    programMon            := "YtYY"
+    tools                 := "YsYY"
+    programMon            := "Yq"
 }
 
 ;// if a specific version breaks anything from the base, create a new clase like;
 ;// class v23_6 extends v23_base {
-;// and then setting the correct version within `settingsGUI()` ill priorities that class
+;// and then setting the correct version within `settingsGUI()` will prioritise that class
 ;// if it isn't set correctly/a specific class doesn't exist we fall back to the base class
 try {
     premClassVer := StrReplace(ptf.premIMGver, ".", "_")
     premUIA := %premClassVer%()
 } catch {
-    premGetVer := StrReplace(ptf.premIMGver, ".", "_")
-    premClassVer := SubStr(premGetVer, 1, InStr(premGetVer, "_",,, 1)-1)
-    premUIA := %premClassVer%_base()
+    try {
+        premGetVer := StrReplace(ptf.premIMGver, ".", "_")
+        premClassVer := SubStr(premGetVer, 1, InStr(premGetVer, "_",,, 1)-1)
+        premUIA := %premClassVer%_base()
+    } catch
+        throw ValueError("The set version of Premiere does not have a UIA class attached to it.`nPlease add a class to the below script to return functionality.`nSet Premiere Version: " ptf.premIMGver "`nFile: " A_LineFile, -1)
 }

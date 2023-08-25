@@ -8,10 +8,13 @@
 - [ ] prev/next keyframe sometimes swapping sequences
 - [ ] make function in addition to `prem.thumbscroll()` that moves the timeline to the left until released
 	- [ ] maybe make a third func to completely reset the playhead to the left and have `prem.thumbscroll()` optionally call it if it hits the end of the timeline 
+- [ ] change `settingsGUI()` to automatically generate acceptable adobe years by looping the image dir
+	- [ ] change edit box to a dropdown
 
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence (clicking RButton at the same time?)
 - [ ] often alerts the user it can't determine window if a save makes an attempt when prem isn't active window (ie, another window like discord)
+- [ ] ![image](https://github.com/Tomshiii/ahk/assets/53557479/b622978c-1310-4323-8ac9-bb049a317fb9)
 
 ## General
 - [x] fix margin button swapping between open sequences

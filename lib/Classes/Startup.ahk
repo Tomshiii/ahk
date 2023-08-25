@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/08/13
- * @version 1.7.3
+ * @date 2023/08/25
+ * @version 1.7.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -48,6 +48,7 @@ class Startup {
 
     alertTimer := false
     alertTtipNum := 20
+    activeFunc := ""
 
     __alertTooltip() {
         SetTimer(alertttp, 1)
@@ -64,7 +65,7 @@ class Startup {
                 case 2: dot := ".."
                 case 3: dot := "..."
             }
-            ToolTip("⚠️ Startup functions running" dot, A_ScreenWidth, A_ScreenHeight, this.alertTtipNum)
+            ToolTip("⚠️ Startup functions running" dot "`nCurrent function: " this.activeFunc, A_ScreenWidth, A_ScreenHeight, this.alertTtipNum)
             if ++dotAmount > 3
                 dotAmount := 1
             sleep 750
@@ -101,6 +102,7 @@ class Startup {
     generate() {
         if isReload() ;checks if script was reloaded
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         ;// checking to see if the users OS version is high enough to support dark mode
         darkCheck := this.__checkDark()
 
@@ -210,6 +212,7 @@ class Startup {
     updateChecker() {
         if isReload() ;checks if script was reloaded
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         ;checking to see if the user wishes to check for updates
         if this.UserSettings.update_check = "stop"
             return
@@ -435,6 +438,7 @@ class Startup {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
         if isReload() ;checks if script was reloaded
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if WinExist("Scripts Release ")
             WinWaitClose("Scripts Release ")
         if this.UserSettings.first_check != false ;how the function tracks whether this is the first time the user is running the script or not
@@ -514,6 +518,7 @@ class Startup {
     oldLogs() {
         if isReload()
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         loop files, ptf.Logs "\*.txt", "R" {
             if DateDiff(A_LoopFileTimeCreated, A_now, "Days") < -30
                 FileDelete(A_LoopFileFullPath)
@@ -532,6 +537,7 @@ class Startup {
     adobeTemp() {
         if isReload()
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if WinExist("Scripts Release " this.MyRelease) ;checks to make sure firstCheck() isn't still running
             WinWaitClose("Scripts Release " this.MyRelease)
         day := this.UserSettings.adobe_temp
@@ -595,6 +601,7 @@ class Startup {
      * This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
      */
     trayMen() {
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         check := this.UserSettings.update_check
         shortcutLink := A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\" A_ScriptName " - Shortcut.lnk"
         A_TrayMenu.Insert("6&", "Hard Reset", (*) => reset.reset())
@@ -607,6 +614,7 @@ class Startup {
         A_TrayMenu.Insert("13&") ;adds a divider bar
         A_TrayMenu.Insert("14&", "Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
         A_TrayMenu.Insert("15&", "Close All Scripts", (*) => reset.ex_exit())
+        A_TrayMenu.Insert("16&", "Open UIA Script", (*) => Run(A_WorkingDir "\lib\Other\UIA\UIA.ahk"))
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")
@@ -680,6 +688,7 @@ class Startup {
     libUpdateCheck() {
         if isReload()
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if !checkInternet()
             return
         check := this.UserSettings.update_check
@@ -749,6 +758,7 @@ class Startup {
     updateAHK() {
         if isReload() ;checks if script was reloaded
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         settingsCheck := this.UserSettings.update_check
         if settingsCheck = "stop"
             return
@@ -865,6 +875,7 @@ class Startup {
     monitorAlert() {
         if this.UserSettings.monitor_alert = A_YDay
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         save := false
 
         ;// get initial values
@@ -962,6 +973,7 @@ class Startup {
     __Delete() {
         this.UserSettings.__delAll()
         this.alertTimer := false
+        this.activeFunc := ""
         ToolTip("",,, this.alertTtipNum) ;// just incase
     }
 }
