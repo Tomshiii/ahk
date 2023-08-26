@@ -29,6 +29,10 @@
 - Added `reencodeGUI.ahk` & `reencode.ahk`
 - Fixed `Alt_menu_acceleration_DISABLER.ahk` not `#Include`(ing) `errorLog {`
 - Fixed some `QMK` (`Prem.ahk`) scripts incorrectly trying to focus the timeline
-- A tooltip will now be presented at the bottom of the screen while `Startup {` functions are running to alert the user to what is currently happening
 - `textreplace.ahk` (using `quickHotstring()`) will now automatically place new additions into the correctly sorted position
-- Menu item added to `My Scripts.ahk` to quickly open `UIA.ahk`
+
+`Startup {`
+- A tooltip will now be presented at the bottom of the screen while functions are running to alert the user to what is currently happening
+- Menu items added to `trayMen()` to;
+    - Open `UIA.ahk`
+    - Reload all active scripts

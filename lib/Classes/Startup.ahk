@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2023/08/25
- * @version 1.7.4
+ * @version 1.7.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -604,21 +604,23 @@ class Startup {
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         check := this.UserSettings.update_check
         shortcutLink := A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\" A_ScriptName " - Shortcut.lnk"
-        A_TrayMenu.Insert("6&", "Hard Reset", (*) => reset.reset())
-        A_TrayMenu.Insert("7&") ;adds a divider bar
-        A_TrayMenu.Insert("8&", "Settings", (*) => settingsGUI())
-        A_TrayMenu.Insert("9&", "keys.allUp()", (*) => keys.allUp())
-        A_TrayMenu.Insert("10&", "Active Scripts", (*) => activeScripts())
+        A_TrayMenu.Delete("3&")
+        A_TrayMenu.Insert("4&") ;adds a divider bar
+        A_TrayMenu.Insert("6&", "Reload All Scripts", (*) => reset.ext_reload())
+        A_TrayMenu.Insert("7&", "Hard Reset All Scripts", (*) => reset.reset())
+        A_TrayMenu.Insert("8&") ;adds a divider bar
+        A_TrayMenu.Insert("9&", "Settings", (*) => settingsGUI())
+        A_TrayMenu.Insert("10&", "keys.allUp()", (*) => keys.allUp())
+        A_TrayMenu.Insert("11&", "Active Scripts", (*) => activeScripts())
         startupTray(11)
-        A_TrayMenu.Insert("12&", "Check for Updates", checkUp)
-        A_TrayMenu.Insert("13&") ;adds a divider bar
-        A_TrayMenu.Insert("14&", "Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
-        A_TrayMenu.Insert("15&", "Close All Scripts", (*) => reset.ex_exit())
-        A_TrayMenu.Insert("16&", "Open UIA Script", (*) => Run(A_WorkingDir "\lib\Other\UIA\UIA.ahk"))
+        A_TrayMenu.Insert("13&", "Check for Updates", checkUp)
+        A_TrayMenu.Insert("14&") ;adds a divider bar
+        A_TrayMenu.Insert("15&", "Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
+        A_TrayMenu.Insert("16&", "Close All Scripts", (*) => reset.ex_exit())
+        A_TrayMenu.Insert("17&", "Open UIA Script", (*) => Run(A_WorkingDir "\lib\Other\UIA\UIA.ahk"))
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")
-        A_TrayMenu.Delete("3&")
         if check =  true
             A_TrayMenu.Check("Check for Updates")
         checkUp(*)
