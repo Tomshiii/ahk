@@ -432,6 +432,7 @@ settingsGUI()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         UserSettings.__delAll() ;// close the settings instance
+        ToolTip("")
         if IsSet(butt) && butt = "hard"
             {
                 reset.reset()

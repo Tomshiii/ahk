@@ -1,4 +1,4 @@
-# <> Release 2.12.x - 
+# <> Release 2.12.3 - Hotfix
 `autosave.ahk` & `adobe fullscreen check.ahk` will now attempt to check if `Premiere_RightClick.ahk` is currently active before proceeding with their functions in an attempt to mitigate unexpected behaviour that arises when multiple scripts clash against each other.
 
 ## > Functions
