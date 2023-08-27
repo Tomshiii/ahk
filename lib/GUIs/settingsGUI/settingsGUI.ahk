@@ -521,7 +521,7 @@ settingsGUI()
                 shortcutName := "Adobe Premiere Pro.exe"
                 adobeFullName := "Adobe Premiere Pro"
                 title := program " Pro Settings"
-                yearIniName := "prem year"
+                yearIniName := "prem_year"
                 iniInitYear := UserSettings.prem_year
                 verIniName := "premVer"
                 genProg := program
@@ -533,7 +533,7 @@ settingsGUI()
                 shortcutName := "AfterFX.exe"
                 adobeFullName := "Adobe After Effects"
                 title := "After Effects Settings"
-                yearIniName := "ae year"
+                yearIniName := "ae_year"
                 iniInitYear := UserSettings.ae_year
                 verIniName := "aeVer"
                 genProg := "AE"
