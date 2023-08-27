@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/08/21
- * @version 1.2.9
+ * @date 2023/08/27
+ * @version 1.2.9.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -250,9 +250,11 @@ class switchTo {
             return false
         if DirExist(newPath := WinGet.pathU(path.dir "\" optionalPath)) {
             path.dir := newPath
+            newDir := obj.SplitPath(SubStr(newPath, 1, StrLen(newPath)-1))
+            path.name := newDir.name
         }
         ;// win11 by default names an explorer window the folder you're in
-        getFolderName := SubStr(path.dir, InStr(path.dir, "\",, -1)+1)
+        getFolderName := path.name
 
         ;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
         if WinExist(getFolderName " ahk_class CabinetWClass",, "Adobe" "Editing Checklist", "Adobe") {
