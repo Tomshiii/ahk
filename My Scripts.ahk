@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.6
+;\\v2.33.7
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -317,6 +317,9 @@ AppsKey::
 SC03A & XButton2::
 ;moveYhotkey;
 SC03A & XButton1::move.XorY()
+
+;SubUnderHotkey;
++NumpadSub::_
 
 #HotIf WinActive("ahk_class CabinetWClass") || WinActive("ahk_class #32770") ;windows explorer
 ;explorerbackHotkey;
