@@ -2,9 +2,9 @@
  * @description Use Microsoft Edge WebView2 control in ahk
  * @file WebView2.ahk
  * @author thqby
- * @date 2023/06/10
- * @version 1.0.29
- * @webview2version 1.0.1823.32
+ * @date 2023/07/30
+ * @version 1.0.30
+ * @webview2version 1.0.1901.177
  ***********************************************************************/
 
 #Include '..\ComVar.ahk'
@@ -16,7 +16,8 @@ class WebView2 extends WebView2.Base {
 	 * @param createdEnvironment Create WebView2 controls from the created environment.
 	 * @param datadir User data folder.
 	 * @param edgeruntime The path of Edge Runtime or Edge(dev..) Bin.
-	 * @param options The environment options of Edge. `{TargetCompatibleBrowserVersion?: string, AdditionalBrowserArguments?: string, AllowSingleSignOnUsingOSPrimaryAccount?: bool, Language?: string, ExclusiveUserDataFolderAccess?: bool}`
+	 * @param options The environment options of Edge. @see WebView2.EnvironmentOptions
+	 * `{TargetCompatibleBrowserVersion?: string, AdditionalBrowserArguments?: string, AllowSingleSignOnUsingOSPrimaryAccount?: bool, Language?: string, ExclusiveUserDataFolderAccess?: bool}`
 	 * @param dllPath The path of `WebView2Loader.dll`.
 	 */
 	static create(hwnd, callback := unset, createdEnvironment := 0, datadir := '', edgeruntime := '', options := 0, dllPath := 'WebView2Loader.dll') {
@@ -253,10 +254,9 @@ class WebView2 extends WebView2.Base {
 		CoreWebView2 => (ComCall(25, this, 'ptr*', coreWebView2 := WebView2.Core()), coreWebView2)
 
 		static IID_2 := '{c979903e-d4ca-4228-92eb-47ee3fa96eab}'
-		; BGR color only, Alpha is not supported
 		DefaultBackgroundColor {
-			get => (ComCall(26, this, 'uint*', &backgroundColor := 0), backgroundColor >> 8)
-			set => ComCall(27, this, 'uint', Value << 8 | 0xff)
+			get => (ComCall(26, this, 'uint*', &backgroundColor := 0), backgroundColor)
+			set => ComCall(27, this, 'uint', Value)
 		}
 
 		static IID_3 := '{f9614724-5d2b-41dc-aef7-73d62b51543b}'
@@ -854,7 +854,7 @@ class WebView2 extends WebView2.Base {
 			put_xxx(this, value) => 0
 			get_xxx_str(prop, this, pvalue) {
 				if opts.HasOwnProp(prop) {
-					pm := DllCall('ole32\CoTaskMemAlloc', 'uptr', s := StrLen(v := this.%prop%) * 2 + 2, 'ptr')
+					pm := DllCall('ole32\CoTaskMemAlloc', 'uptr', s := StrLen(v := opts.%prop%) * 2 + 2, 'ptr')
 					DllCall('RtlMoveMemory', 'ptr', p, 'ptr', StrPtr(v), 'uptr', s)
 				} else pm := 0
 				return (NumPut('ptr', pm, pvalue), 0)
@@ -1041,6 +1041,9 @@ class WebView2 extends WebView2.Base {
 			get => (ComCall(10, this, 'ptr*', &value := 0), CoTaskMem_String(value))
 			set => ComCall(11, this, 'wstr', Value)
 		}
+
+		static IID_3 := '{DDFFE494-4942-4BD2-AB73-35B8FF40E19F}'
+		NavigationKind => (ComCall(12, this, 'int*', &navigation_kind := 0), navigation_kind)
 	}
 	class NewWindowRequestedEventArgs extends WebView2.Base {
 		static IID := '{34acb11c-fc37-4418-9132-f9c21d1eafb9}'
@@ -1635,7 +1638,8 @@ class WebView2 extends WebView2.Base {
 		PASSWORD_AUTOSAVE: (1 << 11),
 		BROWSING_HISTORY: (1 << 12),
 		SETTINGS: (1 << 13),
-		ALL_PROFILE: (1 << 14)
+		ALL_PROFILE: (1 << 14),
+		SERVICE_WORKERS: (1 << 15)
 	}
 	static SERVER_CERTIFICATE_ERROR_ACTION := { ALWAYS_ALLOW: 0, CANCEL: 1, DEFAULT: 2 }
 	static FAVICON_IMAGE_FORMAT := { PNG: 0, JPEG: 1 }
@@ -1658,6 +1662,7 @@ class WebView2 extends WebView2.Base {
 	}
 	static SHARED_BUFFER_ACCESS := { READ_ONLY: 0, READ_WRITE: 1 }
 	static MEMORY_USAGE_TARGET_LEVEL := { NORMAL: 0, LOW: 1 }
+	static NAVIGATION_KIND := { RELOAD: 0, BACK_OR_FORWARD: 1, NEW_DOCUMENT: 2 }
 	static COOKIE_SAME_SITE_KIND := { NONE: 0, LAX: 1, STRICT: 2 }
 	static HOST_RESOURCE_ACCESS_KIND := { DENY: 0, ALLOW: 1, DENY_CORS: 2 }
 	static SCRIPT_DIALOG_KIND := { ALERT: 0, CONFIRM: 1, PROMPT: 2, BEFOREUNLOAD: 3 }

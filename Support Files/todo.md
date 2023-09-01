@@ -16,5 +16,5 @@
 - [ ] causes cut on timeline if activates when RButton held down
 
 ## General
-- [ ] make screenshot script (launch from streamdeck?) for each of boys, track in class, if 0 ask for starting val, ask main script for current val, increment, then name that file and continue
-- [ ] change replace with ae comp script to check if AE is open, if it isn't ask if you wanted to create a new ae proj or open an old one
+- [ ] make screenshot script (launch from streamdeck? might not be possible to track val) for each of boys, track in class, if 0 ask for starting val (or continue from highest number in folder), ask main script for current val, increment, then name that file and continue
+- [x] change replace with ae comp script to check if AE is open, if it isn't ask if you wanted to create a new ae proj or open an old one

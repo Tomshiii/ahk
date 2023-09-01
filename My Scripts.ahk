@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.7
+;\\v2.33.8
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -367,8 +367,9 @@ Numpad9::
 {
 	SetTitleMatchMode 2
 	needle := "YouTube"
+	ignore := "YouTube Studio"
 	winget.Title(&title)
-	if (InStr(title, needle))
+	if (InStr(title, needle) && !InStr(title, ignore))
 		return
 	SendInput("{" A_ThisHotkey "}")
 }
