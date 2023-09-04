@@ -1,4 +1,5 @@
 # <> Release 2.12.x - 
+It is now possible to mark versions of `After Effects` & `Premiere Pro` as `Beta` within `settingsGUI()` to bring compatibility to the beta versions of both programs.
 
 ## > Other Changes
 - Added `;SubUnderHotkey;`

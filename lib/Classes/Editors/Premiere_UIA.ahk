@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain UIA variables for various versions of premiere
  * @author tomshi
- * @date 2023/08/25
- * @version 1.0.1
+ * @date 2023/09/04
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,6 +33,13 @@ class v23_base {
     effectsControl        := "YYY"
     tools                 := "YtYY"
     programMon            := "Yq"
+}
+
+class v24_base {
+    timeline              := "YyYY"
+    effectsControl        := "YqYY"
+    tools                 := "YuYY"
+    programMon            := "YsYY"
 }
 
 ;// if a specific version breaks anything from the base, create a new clase like;

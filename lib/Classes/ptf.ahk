@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/07/23
- * @version 1.1.6
+ * @date 2023/09/04
+ * @version 1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -136,11 +136,15 @@ class browser {
 }
 
 class Editors {
+    static __setWinTitle(which, exe) {
+        wintitle := (ptf().UserSettings.%which%IsBeta = true) ? "ahk_exe " exe " (Beta).exe" : "ahk_exe " exe ".exe"
+        return wintitle
+    }
     static Premiere := {
-        winTitle: "ahk_exe Adobe Premiere Pro.exe",   class: "ahk_class Premiere Pro"
+        winTitle: this.__setWinTitle("prem", "Adobe Premiere Pro"),   class: "ahk_class Premiere Pro"
     }
     static AE := {
-        winTitle: "ahk_exe AfterFX.exe",              class: "ahk_class AE_CApplication_" SubStr(ptf().UserSettings.aeVer, 2, 4)
+        winTitle: this.__setWinTitle("ae", "AfterFX"),              class: "ahk_class AE_CApplication_" SubStr(ptf().UserSettings.aeVer, 2, 4)
     }
     static Photoshop := {
         winTitle: "ahk_exe Photoshop.exe",            class: "ahk_class Photoshop"

@@ -431,6 +431,8 @@ settingsGUI()
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
+        ToolTip("")
+        tool.Tray({text: "Settings changes are being saved", title: "settingsGUI()", options: 20}, 2000)
         UserSettings.__delAll() ;// close the settings instance
         ToolTip("")
         if IsSet(butt) && butt = "hard"
@@ -520,6 +522,7 @@ settingsGUI()
             case "Premiere":
                 short := "prem"
                 shortcutName := "Adobe Premiere Pro.exe"
+                shortcutNameBeta := "Adobe Premiere Pro (Beta).exe"
                 adobeFullName := "Adobe Premiere Pro"
                 title := program " Pro Settings"
                 yearIniName := "prem_year"
@@ -532,6 +535,7 @@ settingsGUI()
             case "AE":
                 short := "ae"
                 shortcutName := "AfterFX.exe"
+                shortcutNameBeta := "AfterFX (Beta).exe"
                 adobeFullName := "Adobe After Effects"
                 title := "After Effects Settings"
                 yearIniName := "ae_year"
@@ -554,15 +558,16 @@ settingsGUI()
         __generateDropYear(genProg, &year, ctrlX)
         adobeGui.AddText("xs y+10", "Version: ")
         __generateDropVer(genProg, &ver, ctrlX)
+        adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked" UserSettings.%short%IsBeta, "Is Beta Version?").OnEvent("Click", (guiCtrl, *) => (UserSettings.%short%IsBeta := guiCtrl.value, __generateShortcut()))
         if program = "Premiere" {
-            adobeGui.AddText("xs y+8 Section", "Focus Timeline Icon: ")
+            adobeGui.AddText("xs y+10 Section", "Focus Timeline Icon: ")
             timelineCheckbox := adobeGui.AddCheckbox("xs+135 ys+1 Checked" UserSettings.prem_Focus_Icon)
             timelineCheckbox.OnEvent("Click", timelineCheckbx)
             timelineCheckbx(guiobj, *) => UserSettings.prem_Focus_Icon := timelineCheckbox.value
         }
-        adobeGui.AddText("xs y+10 Section", "Cache Dir: ")
+        adobeGui.AddText("xs y+12 Section", "Cache Dir: ")
         cacheInit := short "cache"
-        cache := adobeGui.Add("Edit", "x" ctrlX " ys-5 r1 W150 ReadOnly", UserSettings.%cacheInit%)
+        cache := adobeGui.Add("Edit", "x" ctrlX " ys-3 r1 W150 ReadOnly", UserSettings.%cacheInit%)
         cacheSelect := adobeGui.Add("Button", "x+5 w60 h27", "select")
         cacheSelect.OnEvent("Click", __cacheslct.Bind(adobeFullName))
 
@@ -617,11 +622,21 @@ settingsGUI()
             ver.Choose(new.Length)
             UserSettings.%yearIniName% := year.text
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
+            __generateShortcut()
+        }
+
+        __generateShortcut() {
             switch adobeFullName {
                 case "Adobe Premiere Pro":
-                    FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
+                    if UserSettings.%short%IsBeta = false
+                        FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
+                    else
+                        FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space "(Beta)\" shortcutNameBeta, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
                 case "Adobe After Effects":
-                    FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\Support Files\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
+                    if UserSettings.%short%IsBeta = false
+                        FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\Support Files\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
+                    else
+                        FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space "(Beta)\Support Files\" shortcutNameBeta, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
             }
         }
 

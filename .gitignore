@@ -16,10 +16,14 @@ lib/Other/UIA/UIATreeInspector.ahk
 
 # adobe shortcut files
 Support Files/shortcuts/Adobe Premiere Pro.exe.lnk
+Support Files/shortcuts/Adobe Premiere Pro (Beta).exe.lnk
 Support Files/shortcuts/AfterFX.exe.lnk
+Support Files/shortcuts/AfterFX (Beta).exe.lnk
 
 # adobe symlinks
 Support Files/ImageSearch/AE/v23.*
+Support Files/ImageSearch/AE/v24.*
 Support Files/ImageSearch/Premiere/v23.*
+Support Files/ImageSearch/Premiere/v24.*
 Support Files/ImageSearch/Photoshop/v24.[0-2]*
 Support Files/ImageSearch/Photoshop/v24.[4-9]*
