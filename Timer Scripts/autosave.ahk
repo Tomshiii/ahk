@@ -2,7 +2,7 @@
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
  * @date 2023/09/07
- * @version 2.0.3
+ * @version 2.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -205,7 +205,7 @@ class adobeAutoSave extends count {
         prem.__checkTimelineFocus()
         sleep 250
         SendEvent(KSA.playStop)
-        this.__checkPlayback
+        this.__checkPlayback()
         prem.__checkTimelineFocus()
     }
 
