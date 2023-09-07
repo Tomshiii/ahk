@@ -11,7 +11,8 @@
 
 ;// 19/07/2023;
 ;// Make NO assumptions that I will maintain this list for all versions of premiere if it
-;// continues to grow as time goes on
+;// continues to grow as time goes on. Not that it matters much considering the values change depending on
+;// your workspace layout.
 ;// if you use a version other than the one listed at the top of `Premiere.ahk` (@premVer)
 ;// there may be values missing. Follow the instructions in the repos wiki to fill them out
 
@@ -24,7 +25,7 @@
 class v22_base {
     timeline              := "YwYY"
     effectsControl        := "YYY"
-    tools                 := "YsYY"
+    tools                 := "YuYY"
     programMon            := "Yq"
 }
 
@@ -36,13 +37,13 @@ class v23_base {
 }
 
 class v24_base {
-    timeline              := "YyYY"
-    effectsControl        := "YqYY"
-    tools                 := "YuYY"
-    programMon            := "YsYY"
+    timeline              := "YwYY"
+    effectsControl        := "YYY"
+    tools                 := "YtYY"
+    programMon            := "YqYY"
 }
 
-;// if a specific version breaks anything from the base, create a new clase like;
+;// if a specific version breaks anything from the base, create a new class like;
 ;// class v23_6 extends v23_base {
 ;// and then setting the correct version within `settingsGUI()` will prioritise that class
 ;// if it isn't set correctly/a specific class doesn't exist we fall back to the base class

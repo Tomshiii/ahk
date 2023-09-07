@@ -18,3 +18,5 @@
 ## General
 - [ ] make screenshot script (launch from streamdeck? might not be possible to track val) for each of boys, track in class, if 0 ask for starting val (or continue from highest number in folder), ask main script for current val, increment, then name that file and continue
 - [x] change replace with ae comp script to check if AE is open, if it isn't ask if you wanted to create a new ae proj or open an old one
+- [ ] make `discord {` `disableAutoReplyPing` adjustable via `settingsGUI()`
+- [x] separate generating adobe symvers into own script instead of being forced to run symlink script

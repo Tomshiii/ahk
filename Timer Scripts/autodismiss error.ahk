@@ -22,7 +22,7 @@ SetTimer(detectDumbWarnings, 100)
 detectDumbWarnings() {
     if !WinExist(prem.winTitle) || !WinActive(prem.winTitle)
         return
-    if !WinActive("Warning ahk_exe Adobe Premiere Pro.exe",, "Clip Mismatch")
+    if !WinActive("Warning " prem.winTitle,, "Clip Mismatch")
         return
     SendInput("{Enter}")
 }

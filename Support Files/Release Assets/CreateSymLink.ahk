@@ -41,17 +41,8 @@ if DirExist(ahklib)
     }
 
 adobecmd := cmdLine A_Space
-
 if IsSet(adobeVers) && IsObject(adobeVers) {
-    for k, v in adobeVers.maps {
-        which := adobeVers.which[k]
-        for k2, v2 in v {
-            ;// will remove any symlinks before attempting to create it so that it doesn't error out
-            if DirExist(path := imgsrchPath "\" which "\" k2) && InStr(FileGetAttrib(path), "l") ;// checks to make sure it's still a symbolic link
-                DirDelete(path)
-            adobecmd := Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}" ', adobecmd, imgsrchPath, k2, v2, which)
-        }
-    }
+    adobecmd := adobeVers.__generate(imgsrchPath, true, adobecmd)
 }
 
 RunWait("*RunAs " A_ComSpec " /c " adobecmd)

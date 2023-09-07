@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of AE.
  * @aeVer 23.5
  * @author tomshi
- * @date 2023/06/30
- * @version 1.2.3.1
+ * @date 2023/09/07
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -342,7 +342,8 @@ class AE {
         */
         getCoords(&graphX, &graphY, &end, &bottom)
         {
-            if !InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYearVer " -")
+            activeWin := WinGetTitle("A")
+            if !InStr(activeWin, "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(activeWin, "Adobe After Effects (Beta)")
                 return
             tool.Cust(A_ThisFunc "() is grabbing the timeline coords")
             if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph.png") || ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph2.png")
@@ -358,7 +359,7 @@ class AE {
         }
         if !IsSet(set)
             getCoords(&graphX, &graphY, &end, &bottom)
-        if (!IsSet(graphX) || !IsSet(graphY) || !IsSet(end) || !IsSet(bottom)) || !InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYearVer " -")
+        if (!IsSet(graphX) || !IsSet(graphY) || !IsSet(end) || !IsSet(bottom)) || (!InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(WinGetTitle("A"), "Adobe After Effects (Beta) -" ))
             {
                 SendInput("{" A_ThisHotkey "}")
                 tool.Wait()

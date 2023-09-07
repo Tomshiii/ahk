@@ -8,8 +8,13 @@
  * @param {String} toolorig is the button you want the script to press to bring you back to your tool of choice. (consider using values in KSA)
 */
 mouseDrag(tool, toolorig) {
-    if WinActive(editors.AE.winTitle) && (!InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYearVer " -") || WinActive("Save As") || WinActive("Save a Copy"))
-        {
+    activeWin := WinGetTitle("A")
+    if (WinActive(editors.AE.winTitle) &&
+        (
+            (!InStr(activeWin, "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(activeWin, "Adobe After Effects (Beta)")) ||
+            WinActive("Save As") ||
+            WinActive("Save a Copy")
+        )) {
             SendInput("{" A_ThisHotkey "}")
             return
         }
