@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/08/25
- * @version 1.7.5
+ * @date 2023/09/07
+ * @version 1.7.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,8 +26,6 @@
 #Include <Functions\getLocalVer>
 #Include <Functions\trayShortcut>
 #Include <Other\print>
-; // libs
-#Include <Other\_DLFile>
 ; }
 
 class Startup {
@@ -52,10 +50,18 @@ class Startup {
 
     __alertTooltip() {
         SetTimer(alertttp, 1)
+        OnExit(ext, -1)
+        ext(*) {
+            this.activeFunc := ""
+            this.alertTimer := false
+            SetTimer(alertttp, 0)
+            tool.Cust("",,,, this.alertTtipNum)
+        }
         alertttp() {
             if !this.alertTimer {
+                this.activeFunc := ""
+                tool.Cust("",,,, this.alertTtipNum)
                 SetTimer(, 0)
-                ToolTip("",,, this.alertTtipNum)
                 return
             }
             coord.s("Tooltip", false)
@@ -203,6 +209,31 @@ class Startup {
     }
 
     /**
+     * determines whether to download the ahk exe or .zip folder
+     * @param {Number} version the latest version of my ahk scripts
+     * @returns On success returns a string containing either `exe` or `zip`. Else returns `false`
+     */
+    __exeOrzip(version) {
+        __request(filetype, version) {
+            whr := ComObject("WinHttp.WinHttpRequest.5.1")
+            whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." filetype, true)
+            whr.Send()
+            ; Using 'true' above and the call below allows the script to remain responsive.
+            whr.WaitForResponse()
+            return whr.ResponseText
+        }
+        checkEXE := __request("exe", version)
+        if checkEXE != "Not Found"
+            return "exe"
+        checkZip := __request("zip", version)
+        if checkZip != "Not found"
+            return "zip"
+        ToolTip("")
+        MsgBox("Couldn't find the latest release to download")
+        return false
+    }
+
+    /**
      * This function will (on first startup, NOT a refresh of the script) check which version of the script you're running, cross reference that with the latest release on github and alert the user if there is a newer release available with a prompt to download as well as showing a changelog.
      *
      * Which branch the user wishes to check for (either beta, or main releases) can be determined by either right clicking on `My Scripts.ahk` in the task bar and clicking  `Settings`, or by accessing `settingsGUI()` (by default `#F1`)
@@ -229,11 +260,10 @@ class Startup {
                 errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, this.UserSettings.update_check),, 1)
                 return
             case false, "false":
-                if VerCompare(this.MyRelease, version) < 0
-                    {
-                        errorLog(Error("User is using an outdated version of these scripts", -1, version),, {time: 3.0})
-                        return
-                    }
+                if VerCompare(this.MyRelease, version) < 0 {
+                    errorLog(Error("User is using an outdated version of these scripts", -1, version),, {time: 3.0})
+                    return
+                }
                 tool.Cust("This script will not prompt you with a download/changelog when a new version is available", 3.0,,, this.startupTtpNum)
                 return
             case true, "true":
@@ -245,14 +275,11 @@ class Startup {
                 Title := MyGui.Add("Text", "Section H40 W350", "New Scripts - Release " version)
                 Title.SetFont("S15")
                 ;set github button
-                gitButton := MyGui.Add("Button", "X+20 Y10", "GitHub")
-                gitButton.OnEvent("Click", githubButton)
+                MyGui.AddButton("X+20 Y10 vgitButton", "GitHub").OnEvent("Click", githubButton)
 
                 ;view changelog
-                view := MyGui.Add("Button", "Section xs Y+20 h40 W100", "View Latest Changelog")
-                view.OnEvent("Click", viewClick)
-                viewClick(*)
-                {
+                MyGui.AddButton("Section xs Y+20 h40 W100", "View Latest Changelog").OnEvent("Click", viewClick)
+                viewClick(*) {
                     Run(ptf["updateCheckGUI"])
                     WinSetAlwaysOnTop(0, "Scripts Release " version)
                     if WinWait("Latest Update - " version,, 3)
@@ -264,15 +291,12 @@ class Startup {
                 }
 
                 ;set download button
-                gitButton.GetPos(&x)
-                downloadbutt := MyGui.Add("Button", "Section X" x-85 " ys+13", "Download")
-                downloadbutt.OnEvent("Click", Down)
+                MyGui["gitButton"].GetPos(&x)
+                MyGui.AddButton("Section X" x-85 " ys+13", "Download").OnEvent("Click", Down)
                 ;set cancel button
-                cancelbutt := MyGui.Add("Button", "Default X+5", "Cancel")
-                cancelbutt.OnEvent("Click", closegui)
+                MyGui.AddButton("Default X+5", "Cancel").OnEvent("Click", closegui)
                 ;set "don't prompt again" checkbox
-                noprompt := MyGui.Add("Checkbox", "xs-175 Ys-10", "Don't prompt again")
-                noprompt.OnEvent("Click", prompt.bind("prompt"))
+                MyGui.AddCheckbox("xs-175 Ys-10", "Don't prompt again").OnEvent("Click", prompt.bind("prompt"))
                 ;set beta checkbox
                 betaCheck := (this.UserSettings.beta_update_check = true)
                            ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
@@ -290,12 +314,11 @@ class Startup {
                     }
                 }
                 githubButton(*) {
-                    if WinExist("Tomshiii/ahk")
-                        {
-                            WinActivate("Tomshiii/ahk")
-                            return
-                        }
-                    Run("https://github.com/tomshiii/ahk/releases")
+                    if !WinExist("Tomshiii/ahk") {
+                        Run("https://github.com/tomshiii/ahk/releases")
+                        return
+                    }
+                    WinActivate("Tomshiii/ahk")
                 }
                 down(*) {
                     this.UserSettings.__delAll()
@@ -307,107 +330,34 @@ class Startup {
                             return
                         }
                     MyGui.Destroy()
-                    downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
-                    if downloadLocation = ""
+                    if !downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
                         return
+
+                    if !type := this.__exeOrzip(version)
+                        return
+
+                    if FileExist(downloadLocation "\" version "." type) {
+                        file := MsgBox("File already exists.`n`nDo you want to override it?", "File already exists", "4 32 4096")
+                        if file = "No"
+                            return
+                        FileDelete(downloadLocation "\" version "." type)
+                    }
+
                     tool.tray({text: "Updated scripts are downloading", title: "Downloading...", options: 17})
-                    type := ""
-                    exeOrzip(filetype, &found)
-                    {
-                        whr := ComObject("WinHttp.WinHttpRequest.5.1")
-                        whr.Open("GET", "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." filetype, true)
-                        whr.Send()
-                        ; Using 'true' above and the call below allows the script to remain responsive.
-                        whr.WaitForResponse()
-                        found := whr.ResponseText
-                    }
-                    exeOrzip("exe", &found)
-                    if found = "Not found"
-                        {
-                            exeOrzip("zip", &found)
-                            if found = "Not found"
-                                {
-                                    ToolTip("")
-                                    MsgBox("Couldn't find the latest release to download")
-                                    return
-                                }
-                            type := "zip"
-                        }
-                    else
-                        type := "exe"
-
-                    if FileExist(downloadLocation "\" version "." type)
-                        {
-                            file := MsgBox("File already exists.`n`nDo you want to override it?", "File already exists", "4 32 4096")
-                            if file = "No"
-                                return
-                            FileDelete(downloadLocation "\" version "." type)
-                        }
-
-                    ; #Start DLFile
-                    url := "https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type
-                    dest := downloadLocation "\"
-
-                    DL := DLFile(url,dest,callback)
-
-                    g := Gui("+AlwaysOnTop -MaximizeBox -MinimizeBox", "Download Progress")
-                    g.OnEvent("close",(*)=>g.Hide())
-                    g.OnEvent("escape",(*)=>g.Hide())
-                    g.SetFont(,"Consolas")
-                    g.Add("Text","w300 vText1 -Wrap")
-                    g.Add("Progress","w300 vProg",0)
-                    g.Add("Text","w300 vText2 -Wrap")
-                    g.Add("Button","x255 w75 vCancel","Cancel").OnEvent("click",events)
-                    g.Add("Button","x255 yp w75 vResume Hidden","Resume").OnEvent("click",events)
-                    g.Show()
-
-                    DL.Start()
-
-                    events(ctl,info) {
-                        if (ctl.name = "Cancel") {
-                            if ctl.text = "Exit" {
-                                g.Hide()
-                            } else {
-                                DL.cancel := true
-                                g["Text2"].Text := "Download Cancelled! / Percent: " DL.perc "% / Exit = ESC"
-                                g["Resume"].Visible := true
-                                g["Cancel"].Visible := false
-                            }
-                        } else if (ctl.name = "Resume") {
-                            g["Resume"].Visible := false
-                            g["Cancel"].Visible := true
-                            DL.Start() ; note that execution stops here until download is finished or DL.cancel is set to TRUE.
-                        }
-                    }
-
-                    callback(o:="") { ; g is global in this case
-                        g["Text1"].Text := o.file
-                        g["Text2"].Text := Round(o.bps/1024) " KBps   /   Percent: " o.perc "%"
-                        g["Prog"].Value := o.perc
-
-                        If o.perc = 100
-                            {
-                                g["Cancel"].Text := "Exit"
-                                Run(dest)
-                                g.Hide()
-                            }
-                    }
-                    ; #end DLFile
+                    Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
+                    Run(downloadLocation "\")
 
                     if DirExist(A_Temp "\" this.MyRelease)
                         DirDelete(A_Temp "\" this.MyRelease, 1)
-                    if DirExist(ptf.rootDir "\Backups\Script Backups\" this.MyRelease)
-                        {
-                            newbackup := MsgBox("You already have a backup of Release " this.MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
-                            if newbackup = "Yes"
-                                DirDelete(ptf.rootDir "\Backups\Script Backups\" this.MyRelease, 1)
-                            else
-                                {
-                                    ToolTip("")
-                                    TrayTip()
-                                    return
-                                }
+                    if DirExist(ptf.rootDir "\Backups\Script Backups\" this.MyRelease) {
+                        newbackup := MsgBox("You already have a backup of Release " this.MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
+                        if newbackup != "Yes" {
+                            ToolTip("")
+                            TrayTip()
+                            return
                         }
+                        DirDelete(ptf.rootDir "\Backups\Script Backups\" this.MyRelease, 1)
+                    }
                     try {
                         tool.tray({text: "Your current scripts are being backed up!", title: "Backing Up...", options: 17})
                         DirCopy(ptf.rootDir, A_Temp "\" this.MyRelease)
@@ -415,8 +365,6 @@ class Startup {
                         if DirExist(A_Temp "\" this.MyRelease)
                             DirDelete(A_Temp "\" this.MyRelease, 1)
                         tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" this.MyRelease "' folder", 3000,,, this.startupTtpNum)
-                        if WinExist("Download Progress") && g["Cancel"].Text := "Exit"
-                            g.Destroy()
                     } catch {
                         errorLog(Error("There was an error trying to backup your current scripts"),, {ttip: this.startupTtpNum})
                         return
@@ -445,7 +393,6 @@ class Startup {
             return
         firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " this.MyRelease)
         ;set title
-        this.MyRelease := this.MyRelease
         titleText := "Welcome to Tomshi's AHK Scripts : Release " this.MyRelease
         titleWidth := 430 + ((StrLen(this.MyRelease)-4)*8)
         Title := firstCheckGUI.Add("Text", "X8 R1.5 W" titleWidth, titleText)
@@ -471,14 +418,10 @@ class Startup {
             The below ``Settings`` GUI can be accessed at anytime by right clicking ``My Scripts.ahk`` on the taskbar or by pressing ``#F1`` (by default).
         )")
         ;buttons
-        settingsButton := firstCheckGUI.Add("Button", "X200 Y+8", "Settings")
-        settingsButton.OnEvent("Click", settings)
-        todoButton := firstCheckGUI.Add("Button", "X+10", "What to Do")
-        todoButton.OnEvent("Click", todoPage)
-        hotkeysButton := firstCheckGUI.Add("Button", "X+10", "Handy Hotkeys")
-        hotkeysButton.OnEvent("Click", hotkeysPage)
-        closeButton := firstCheckGUI.Add("Button", "X+10", "Close")
-        closeButton.OnEvent("Click", close)
+        firstCheckGUI.AddButton("X200 Y+8", "Settings").OnEvent("Click", settings)
+        todoButton := firstCheckGUI.AddButton("X+10", "What to Do").OnEvent("Click", (*) => todoGUI())
+        firstCheckGUI.AddButton("X+10", "Handy Hotkeys").OnEvent("Click", (*) => hotkeysGUI())
+        firstCheckGUI.AddButton("X+10", "Close").OnEvent("Click", close)
 
         firstCheckGUI.OnEvent("Escape", close)
         firstCheckGUI.OnEvent("Close", close)
@@ -488,12 +431,6 @@ class Startup {
             firstCheckGUI.Destroy()
             RunWait(A_ScriptFullPath)
             return
-        }
-        todoPage(*) {
-            todoGUI()
-        }
-        hotkeysPage(*) {
-            hotkeysGUI()
         }
         settings(*) {
             WinSetAlwaysOnTop(0, "Scripts Release " this.MyRelease)
@@ -777,32 +714,28 @@ class Startup {
         }
         if !latestVer := __getahk()
             return
-        if VerCompare(latestVer, A_AhkVersion) <= 0
-            {
-                tool.Cust("AHK up to date",,,, this.startupTtpNum)
-                return
-            }
-        if settingsCheck = false
-            {
-                tool.Cust("A new version of AHK is available",,,, this.startupTtpNum)
-                return
-            }
-        marg := 8
+        if VerCompare(latestVer, A_AhkVersion) <= 0 {
+            tool.Cust("AHK up to date",,,, this.startupTtpNum)
+            return
+        }
+        if settingsCheck = false {
+            tool.Cust("A new version of AHK is available",,,, this.startupTtpNum)
+            return
+        }
+
         ;// define gui
+        marg := 8
         mygui := tomshiBasic(,,, "AHK v" latestVer " available")
         mygui.AddText(, "A newer version of AHK (v" latestVer ") is available`nDo you wish to download it?")
 
         ;// run installer checkbox
-        runafter := mygui.Add("Checkbox", "Section y+10 x" marg, "Run after download?")
-        checkboxValue := 0
-        runafter.OnEvent("Click", checkVal)
+        mygui.Add("Checkbox", "vrunafter Section y+10 x" marg, "Run after download?")
         ;// buttons
-        mygui.Add("Button", "ys-10 x+25", "Yes").OnEvent("Click", downahk.Bind(latestVer))
-        mygui.Add("Button", "x+5", "No").OnEvent("Click", noclick)
+        mygui.AddButton("ys-10 x+25", "Yes").OnEvent("Click", downahk.Bind(latestVer))
+        mygui.AddButton("x+5", "No").OnEvent("Click", noclick)
 
         mygui.Show()
         noclick(*) => mygui.Destroy()
-        checkVal(*) => checkboxValue := runafter.Value
         downahk(ver, *) {
             if !downloadLocation := FileSelect("D", , "Where do you wish to download the latest AHK release")
                 return
@@ -814,57 +747,10 @@ class Startup {
                     FileDelete(downloadLocation "\ahk-v2.exe")
                 }
             mygui.Destroy()
-            ; #Start DLFile
-            url := Format("https://github.com/AutoHotkey/AutoHotkey/releases/download/v{}/AutoHotkey_{}_setup.exe", ver)
-            dest := downloadLocation "\"
+            Download(Format("https://github.com/AutoHotkey/AutoHotkey/releases/download/v{1}/AutoHotkey_{1}_setup.exe", ver), downloadLocation "\ahk-v2.exe")
 
-            DL := DLFile(url,dest,callback)
-
-            g := Gui("+AlwaysOnTop -MaximizeBox -MinimizeBox", "Download Progress")
-            g.OnEvent("close", (*) => g.Hide())
-            g.OnEvent("escape", (*) => g.Hide())
-            g.SetFont(,"Consolas")
-            g.Add("Text","w300 vText1 -Wrap")
-            g.Add("Progress","w300 vProg",0)
-            g.Add("Text","w300 vText2 -Wrap")
-            g.Add("Button","x255 w75 vCancel","Cancel").OnEvent("click",events)
-            g.Add("Button","x255 yp w75 vResume Hidden","Resume").OnEvent("click",events)
-            g.Show()
-
-            DL.Start()
-
-            events(ctl,info) {
-                if (ctl.name = "Cancel") {
-                    if ctl.text = "Exit" {
-                        g.Hide()
-                    } else {
-                        DL.cancel := true
-                        g["Text2"].Text := "Download Cancelled! / Percent: " DL.perc "% / Exit = ESC"
-                        g["Resume"].Visible := true
-                        g["Cancel"].Visible := false
-                    }
-                } else if (ctl.name = "Resume") {
-                    g["Resume"].Visible := false
-                    g["Cancel"].Visible := true
-                    DL.Start() ; note that execution stops here until download is finished or DL.cancel is set to TRUE.
-                }
-            }
-
-            callback(o:="") { ; g is global in this case
-                g["Text1"].Text := o.file
-                g["Text2"].Text := Round(o.bps/1024) " KBps   /   Percent: " o.perc "%"
-                g["Prog"].Value := o.perc
-
-                If o.perc = 100
-                    {
-                        g["Cancel"].Text := "Exit"
-                        g.Hide()
-                    }
-            }
-            ; #end DLFile
-
-            switch checkboxValue {
-                case 1:  Run(downloadLocation "\ahk-v2.exe")
+            switch mygui["runafter"].Value {
+                case 1:  try Run(downloadLocation "\ahk-v2.exe")
                 default: Run(downloadLocation)
             }
         }
@@ -976,6 +862,6 @@ class Startup {
         this.UserSettings.__delAll()
         this.alertTimer := false
         this.activeFunc := ""
-        ToolTip("",,, this.alertTtipNum) ;// just incase
+        tool.Cust("",,,, this.alertTtipNum) ;// just incase
     }
 }

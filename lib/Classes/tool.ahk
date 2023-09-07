@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2023/06/30
- * @version 1.2.0.1
+ * @date 2023/09/07
+ * @version 1.2.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -178,7 +178,7 @@ class tool {
         ListLines(0) ;disables line logging
         dct := detect(0) ;we need to ensure detecthiddenwindows is disabled before proceeding or this function may never stop waiting
         if WinExist("ahk_class tooltips_class32")
-            WinWaitClose("ahk_class tooltips_class32",, timeout?)
+            WinWaitClose("ahk_class tooltips_class32",, timeout?, "⚠️ Startup functions running")
         DetectHiddenWindows(dct.Windows)
         this().__returnLines(priorLines)
     }

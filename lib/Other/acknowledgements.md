@@ -4,6 +4,3 @@
 `ComVar.ahk`       => : https://github.com/thqby/ahk2_lib/blob/master/ComVar.ahk
 `JSON.ahk`         => : https://github.com/thqby/ahk2_lib/blob/master/JSON.ahk
 `print.ahk`        => : https://github.com/thqby/ahk2_lib/blob/master/print.ahk
-
-`TheArkive`
-`_DLFile.ahk`      => : https://github.com/TheArkive/DLFile_ahk2/blob/master/_DLFile.ahk
