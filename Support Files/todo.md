@@ -10,7 +10,7 @@
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence (clicking RButton at the same time?)
 - [ ] often alerts the user it can't determine window if a save makes an attempt when prem isn't active window (ie, another window like discord)
-- [ ] ![image](https://github.com/Tomshiii/ahk/assets/53557479/b622978c-1310-4323-8ac9-bb049a317fb9)
+- [x] ![image](https://github.com/Tomshiii/ahk/assets/53557479/b622978c-1310-4323-8ac9-bb049a317fb9)
 
 ## adobe fullscreen check.ahk
 - [ ] causes cut on timeline if activates when RButton held down

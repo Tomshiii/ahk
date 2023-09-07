@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/08/15
- * @version 2.0.2
+ * @date 2023/09/07
+ * @version 2.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,7 +95,7 @@ class adobeAutoSave extends count {
 
     /** handles retrieving the users current sound device, then playing a beep at 50% of its current volume then returning sound back to normal. */
     __playBeep() {
-        if this.soundName = "" || this.currentVolume = "" {
+        if (this.soundName = "" || this.currentVolume = "") {
             this.soundName := SoundGetName(), this.currentVolume := SoundGetVolume()
         }
         SoundSetVolume(Round(this.currentVolume/2),, this.soundName)
@@ -259,7 +259,9 @@ class adobeAutoSave extends count {
 
         ;// getting window title/information
         this.premWindow := WinGet.PremName()
-        if ((this.premWindow.winTitle = "" || !this.premWindow.wintitle) && this.premWindow.titleCheck = -1 && this.premWindow.saveCheck = -1) || (!this.premWindow) {
+        if !this.premWindow || Type(this.premWindow) != "Object" ||
+            ((this.premWindow.winTitle = "" || !this.premWindow.wintitle) &&
+            this.premWindow.titleCheck = -1 && this.premWindow.saveCheck = -1) {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
             return
         }
@@ -340,7 +342,9 @@ class adobeAutoSave extends count {
 
         ;// getting window title/information
         this.aeWindow := WinGet.AEName()
-        if ((this.aeWindow.winTitle = "" || !this.aeWindow.wintitle) && this.aeWindow.titleCheck = -1 && this.aeWindow.saveCheck = -1) || (!this.aeWindow) {
+        if !this.aeWindow || Type(this.aeWindow) != "Object" ||
+            ((this.aeWindow.winTitle = "" || !this.aeWindow.wintitle) &&
+            this.aeWindow.titleCheck = -1 && this.aeWindow.saveCheck = -1) {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
             return
         }
