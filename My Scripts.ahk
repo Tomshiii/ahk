@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.8
+;\\v2.33.9
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -182,7 +182,8 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 }
 
 ;centreHotkey;
-#c::move.winCenter()
+#c::move.winCenter(1.25)
+#+c::move.winCenterWide()
 
 ;fullscreenHotkey;
 #f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen

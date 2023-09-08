@@ -6,6 +6,10 @@
 - `settingsGUI()` will now produce a TrayTip when closed to visually show that changes are being saved
 - `tool.wait()` will no longer infinitly wait for the `Startup {` tooltips
 
+`Move {`
+- Added `winCenterWide()` to center windows fullscreen on the users main monitor. Mainly useful for ultrawide monitors
+- `winCenter()` now accepts parameter `adjustHeight` to increase the height of a centred window
+
 ## > autosave.ahk
 - Attempted to fix `autosave.ahk` infrequently throwing
 - Fix `__fallback()` attempting to call non existent variable `this.__checkPlayback` instead of the function `this.__checkPlayback()`

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2023/07/01
- * @version 1.2.5
+ * @date 2023/09/08
+ * @version 1.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -340,12 +340,30 @@ class Move {
     }
 
     /**
+     * This function is a poor mans version of `winCenter()` mainly designed to center a window "fullscreen" on your main monitor (but with ultrawides in mind)
+     * @param {Number} modifier a number value that the user wishes for their windows width to conform to (in comparason to the total width of their display). Best to pick a number between 0 & 1
+     */
+    static winCenterWide(modifier := 0.75) {
+        mainMon := MonitorGetPrimary()
+        monPos  := MonitorGet(mainMon, &left, &top, &right, &bottom)
+        win     := WinGet.Title()
+        width   := right*modifier
+        height  := bottom
+        try {
+            if winget.isFullscreen(, win) ;checking if the window is fullscreen
+                WinRestore(win,, "Editing Checklist -") ;winrestore will unmaximise it
+            WinMove((left+((right-width)/2)), top, width, height, win,, "Editing Checklist -")
+        }
+    }
+
+    /**
      * This function will on first activation, center the active window in the middle of the active monitor. If activated again it will move the window to the center of the main monitor instead.
      * ##### This function has specific code for vlc & youtube windows
      * ##### The math for this function can act a bit funky with vertical monitors. Especially with programs like discord that have a minimum width
+     * @param {Number} adjustHeight a number value to allow you to modify the general height of a centred window. This value is used as a multiplication step to increase the height. Eg. `1.25` increases the height by 25%. Depending on the resolution of your monitor a perfectly centred window may look a little strange (ultrawides in particular)
      */
-    static winCenter() {
-        mainMon := 1 ;set which monitor your main monitor is (usually 1, but can check in windows display settings)
+    static winCenter(adjustHeight := 1) {
+        mainMon := MonitorGetPrimary()
         title := ""
         static win := "" ;a variable we'll hold the title of the window in
         static toggle := 1 ;a variable to determine whether to centre on the current display or move to the main one
@@ -365,7 +383,7 @@ class Move {
                     WinRestore(title2,, "Editing Checklist -") ;winrestore will unmaximise it
 
                 newWidth := width / 1.6 ;determining our new width
-                newHeight := height / 1.6 ;determining our new height
+                newHeight := ((height / 1.6)*adjustHeight) ;determining our new height
                 newX := (monitor.left + (width - newWidth)/2) ;using math to centre our newly created window
                 newY := (monitor.bottom - (height + newHeight)/2) ;using math to centre our newly created window
                 ;MsgBox("monitor = " monitor "`nwidth = " width "`nheight = " height "`nnewWidth = " newWidth "`nnewHeight = " newHeight "`nnewX = " newX "`nnewY = " newY "`nx = " x2 "`ny = " y2 "`nleft = " monitor.left "`nright = " right2 "`ntop = " top2 "`nbottom = " monitor.bottom) ;debugging
