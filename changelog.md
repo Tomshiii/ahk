@@ -5,6 +5,8 @@
 ## > Functions
 - `settingsGUI()` will now produce a TrayTip when closed to visually show that changes are being saved
 - `tool.wait()` will no longer infinitly wait for the `Startup {` tooltips
+- `obj.MousePos()` no longer attempts to retrieve the `Control` under the cursor. Doing so was causing errors for elements of windows that do not contain a control.
+    - Fixed `fastWheel.ahk` throwing if it cannot determine the active window
 
 `Move {`
 - Added `winCenterWide()` to center windows fullscreen on the users main monitor. Mainly useful for ultrawide monitors
