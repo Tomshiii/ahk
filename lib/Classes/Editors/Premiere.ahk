@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/08/21
- * @version 2.0.7
+ * @date 2023/09/09
+ * @version 2.0.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -242,7 +242,7 @@ class Prem {
                 errorLog(Error("Couldn't find the graphics tab", -1),, 1)
                 return
             }
-            if ImageSearch(&x2, &y2, classObj.classX, classObj.classY, classObj.classX + (widHeiObj.width/KSA.ECDivide), classObj.classY + widHeiObj.height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
+            if ImageSearch(&x2, &y2, classObj.x, classObj.y, classObj.x + (widHeiObj.width/KSA.ECDivide), classObj.y + widHeiObj.height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
                 break
             sleep 100
         }
@@ -260,7 +260,7 @@ class Prem {
         }
         MouseMove(xeye, yeye)
         SendInput("{Click}")
-        MouseGetPos(&eyeX, &eyeY)
+        MouseGetPos(&returnX, &returnY)
         sleep 50
     }
 
@@ -338,7 +338,7 @@ class Prem {
                     if !classNN := obj.ctrlPos()
                         return
                 }
-                this.zToolX := (classNN.x+15)
+                this.zToolX := (classNN.x+60) ;// adjust this value if your tooltips appear in the wrong position. I had it at +15 before swapping to an ultrawide monitor
                 this.zToolY := (classNN.y+classNN.height+13)
                 ToolTip("",,, 4)
                 tool.Cust("Some tooltips for this function will appear here",, this.zToolX, this.zToolY, 4)
