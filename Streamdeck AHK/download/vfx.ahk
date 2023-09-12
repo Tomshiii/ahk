@@ -1,6 +1,7 @@
 #SingleInstance Off
 ; { \\ #Includes
 #Include <Classes\ytdlp>
+#Include <Functions\getHTMLTitle>
 ; }
 
 vfxFolder      := "E:\_Editing stuff\videos"

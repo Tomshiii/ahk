@@ -11,11 +11,4 @@ outputFileName := "output_temp_file"
 URL := ytdlp().download(Format('-N 8 --output "{}{}"', outputFileName, index := ytdlp().__getIndex("output_temp_file", commsFolder)), commsFolder)
 if !URL
     return
-switch InStr(URL, "twitch.tv") {
-    case 0: ytdlp().reencode(commsFolder "\" outputFileName index, getHTMLTitle(URL))
-    default:
-        newName := getHTMLTitle(URL)
-        newIndex := (getind := ytdlp().__getIndex(newName, commsFolder) = 0) ? "" : getind
-        FileMove(commsFolder "\" outputFileName index, commsFolder "\" newName newIndex ".mp4")
-        return
-}
+ytdlp().handleDownload(URL, commsFolder, outputFileName, index)

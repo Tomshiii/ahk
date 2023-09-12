@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/08/15
- * @version 1.0.3.2
+ * @date 2023/09/12
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,7 +18,7 @@
 
 class ytdlp {
 
-    links := ["https://www.youtube.com/", "https://www.twitch.tv/", "https://clips.twitch.tv/", "https://youtu.be/"]
+    links := ["https://www.youtube.com/", "https://www.twitch.tv/", "https://clips.twitch.tv/", "https://youtu.be/", "https://www.tiktok.com"]
     URL := ""
     defaultCommand := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
     command := ""
@@ -79,7 +79,7 @@ class ytdlp {
         if !FileExist(dir "\" filename)
             return ""
         newFilename := obj.SplitPath(filename)
-        index := 0
+        index := 1
         loop files dir "\*", "F" {
             loopObj := obj.SplitPath(A_LoopFilePath)
             if loopObj.NameNoExt != newFilename.NameNoExt index
@@ -146,11 +146,43 @@ class ytdlp {
             clip.returnClip(oldClip)
         }
         this.command := Format(this.defaultCommand, args, folder, this.URL)
-        cmd.run(,, this.command)
+        cmd.run(,,, this.command)
         this.__activateDir(folder)
         clip.returnClip(oldClip)
         tool.tray({text: "ytdlp process has finished", title: A_ThisFunc "()", options: 1}, 2000)
         return this.URL
+    }
+
+    /**
+     * This function determines what a script should do once it has downloaded a file from certain websites
+     * @param {String} url the url you downloaded
+     * @param {String} dir the directory you downloaded to
+     * @param {String} filename what you called the file when you downloaded it
+     * @param {Integer} index the current index value for the current filename, in the current directory
+     */
+    handleDownload(url, dir, filename, index) {
+        switch {
+            case InStr(url, "twitch.tv"): ytdlp().reencode(dir "\" filename index, getHTMLTitle(url))
+            case InStr(url, "tiktok.com"):
+                newName := SubStr(url, atSymbol := InStr(url, "@",, 1, 1), InStr(url, "/",, atSymbol, 1) - atSymbol)
+                getind := ytdlp().__getIndex(newName ".mp4", dir)
+                newIndex := (getind = 0 || getind = "") ? "" : getind
+                try FileMove(dir "\" filename index, dir "\" newName newIndex ".mp4", 1)
+                return
+            case InStr(url, "youtube.com"):
+                newName := getHTMLTitle(url)
+                getind := ytdlp().__getIndex(newName ".webm", dir)
+                newIndex := (getind = 0 || getind = "") ? "" : getind
+                try FileMove(dir "\" filename index ".webm", dir "\" newName newIndex ".webm")
+                ytdlp().reencode(dir "\" newName newIndex ".webm", getHTMLTitle(url))
+                return
+            default:
+                newName := getHTMLTitle(url)
+                getind := ytdlp().__getIndex(newName, dir)
+                newIndex := (getind = 0 || getind = "") ? "" : getind
+                try FileMove(dir "\" filename index, dir "\" newName newIndex ".mp4")
+                return
+        }
     }
 
     __Delete() {
