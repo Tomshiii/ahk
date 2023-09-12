@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/09/07
- * @version 1.7.6
+ * @date 2023/09/12
+ * @version 1.7.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -746,13 +746,14 @@ class Startup {
                         return
                     FileDelete(downloadLocation "\ahk-v2.exe")
                 }
-            mygui.Destroy()
+            mygui.Hide()
             Download(Format("https://github.com/AutoHotkey/AutoHotkey/releases/download/v{1}/AutoHotkey_{1}_setup.exe", ver), downloadLocation "\ahk-v2.exe")
 
             switch mygui["runafter"].Value {
                 case 1:  try Run(downloadLocation "\ahk-v2.exe")
                 default: Run(downloadLocation)
             }
+            mygui.Destroy()
         }
     }
 
