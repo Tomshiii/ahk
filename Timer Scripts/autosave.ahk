@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/09/07
- * @version 2.0.4
+ * @date 2023/09/12
+ * @version 2.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,6 +41,7 @@ class adobeAutoSave extends count {
             this.UserSettings := UserPref()
             this.ms := (this.UserSettings.autosave_MIN * 60000)
             this.beep := this.UserSettings.autosave_beep
+            this.saveOverride := this.UserSettings.autosave_save_override
             this.UserSettings := ""
         }
 
@@ -49,11 +50,15 @@ class adobeAutoSave extends count {
 
         ;// start the timer
         super.start()
+
+        if this.saveOverride == true
+            PremHotkeys.__HotkeySet(["~^s"], ObjBindMethod(this, '__saveReset'))
     }
 
     ;// Class Variables
     UserSettings  := unset
     ms            := (5*60000) ;// 5min
+    saveOverride  := true
 
     origWindow    := ""
 
@@ -71,11 +76,22 @@ class adobeAutoSave extends count {
     beep          := true
     soundName     := ""
     currentVolume := ""
+    resetingSave  := false
 
     programMonX1  := A_ScreenWidth / 2
     programMonX2  := A_ScreenWidth
     programMonY1  := 0
     programMonY2  := A_ScreenHeight
+
+    __saveReset(*) {
+        if WinActive("A") != prem.winTitle && WinActive("A") != AE.winTitle
+            return
+        super.Stop()
+        this.resetingSave := true
+        sleep 2500
+        this.__reset()
+        super.Start()
+    }
 
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */
     __changeVar(val) {
@@ -108,6 +124,8 @@ class adobeAutoSave extends count {
         if this.idleAttempt = true
             return
         loop 5 {
+            if this.resetingSave = true
+                break
             ;// if the user has interacted with the keyboard recently
             ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
             ;// the save attempt will be paused and retried
@@ -439,7 +457,8 @@ class adobeAutoSave extends count {
         this.aeWindow      := unset
         this.idleAttempt   := false
 
-        this.soundName     := "",    this.currentVolume := ""
+        this.soundName     := "",    this.currentVolume := "",
+        this.resetingSave  := false
         checkstuck()
         block.Off()
     }
@@ -467,6 +486,7 @@ class adobeAutoSave extends count {
             super.stop()
         }
         checkstuck()
+        PremHotkeys.__HotkeyReset(["^s"])
         block.Off()
     }
 }
@@ -486,6 +506,7 @@ ExitFunc(ExitReason, ExitCode) {
             autoSave.stop()
         }
         checkstuck()
+        PremHotkeys.__HotkeyReset(["^s"])
         block.Off()
     }
 }

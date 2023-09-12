@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/09/04
- * @version 1.2.7.3
+ * @date 2023/09/13
+ * @version 1.2.8
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "false", "false", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.6", "false", "v23.6", "false", "v24.7", "v18.5", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "true", "false", "false", "true", 45, 2, 5, 2.5, 5, "2022", "2022", "v23.6", "false", "v23.6", "false", "v24.7", "v18.5", "F:\Adobe Cache\Prem", "F:\Adobe Cache\AE", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -56,7 +56,8 @@ class UserPref {
             case "autosave_check_checklist",
                  "tooltip", "checklist_tooltip",
                  "prem_Focus_Icon", "checklist_hotkeys",
-                 "autosave_beep":
+                 "autosave_beep", "autosave_save_override",
+                 "disc_disable_autoreply":
                                                       return "true"
             case "beta_update_check",
                  "run_at_startup", "checklist_wait",
@@ -214,11 +215,13 @@ class UserPref {
                     run at startup={}
                     autosave beep={}
                     autosave check checklist={}
+                    autosave save override={}
                     tooltip={}
                     checklist hotkeys={}
                     checklist tooltip={}
                     checklist wait={}
                     prem Focus Icon={}
+                    disc disable autoreply={}
 
                     [Adjust]
                     adobe GB={}

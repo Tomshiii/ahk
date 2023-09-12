@@ -41,6 +41,10 @@ class SettingsToolTips {
         Yes: "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up",
         No: "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
     }
+    autosaveOverride := {
+        Yes: "Manually saving within Premiere/After Effects will reset ``autosave.ahk`` timer",
+        No: "Manually saving within Premiere/After Effects will have no effect on ``autosave.ahk``"
+    }
     checklistTooltip := {
         Yes: "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer",
         No: "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
@@ -52,6 +56,10 @@ class SettingsToolTips {
     checklistHotkeys := {
         Yes: "``checklist.ahk`` will create a hotkey to start/stop the timer. (Shift & Media_Play_Pause)",
         No: "``checklist.ahk`` will no longer create a hotkey to start/stop the timer."
+    }
+    discAutoReply := {
+        Yes: "``discord.button(`"DiscReply.png`")`` will disable the @ ping automatically when replying",
+        No: "``discord.button(`"DiscReply.png`")`` will not disable the @ ping when replying"
     }
 }
 
@@ -248,6 +256,10 @@ settingsGUI()
     settingsGUI.AddCheckbox("vasbeepToggle Checked" UserSettings.autosave_beep " Y+5", asBeepTitle).OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
     settingsGUI["asbeepToggle"].ToolTip := (UserSettings.autosave_beep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
 
+    ;// autosave save override
+    asOverrideTitle := "``autosave.ahk`` save override"
+    settingsGUI.AddCheckbox("vasOverride Checked" UserSettings.autosave_save_override " Y+5", asOverrideTitle).OnEvent("Click", toggle.Bind("autosave save override", "autosave"))
+    settingsGUI["asOverride"].ToolTip := (UserSettings.autosave_save_override = true) ? toolT.autosaveOverride.Yes : toolT.autosaveOverride.No
 
     /**
      * This function handles the logic for a few checkboxes
@@ -272,6 +284,12 @@ settingsGUI()
             case asBeepTitle:
                 toolTrue := toolT.autosaveBeep.Yes
                 toolFalse := toolT.autosaveBeep.No
+            case asOverrideTitle:
+                toolTrue := toolT.autosaveOverride.yes
+                toolFalse := toolT.autosaveOverride.no
+            case discAutoReply:
+                toolTrue := toolT.discAutoReply.yes
+                toolFalse := toolT.discAutoReply.no
         }
 
         ;// toggling the checkboxes & setting values based off checkbox state
@@ -311,6 +329,10 @@ settingsGUI()
     settingsGUI.AddCheckbox("vcheckWait Checked" UserSettings.checklist_wait " Y+5", checklistWaitTitle).OnEvent("Click", msgboxToggle.Bind("checklist wait"))
     settingsGUI["checkWait"].ToolTip := (UserSettings.checklist_wait = true) ? toolT.checklistWait.Yes : toolT.checklistWait.No
 
+    ;// disc disable autoreply
+    discAutoReply := "Disable Discord Reply Ping"
+    settingsGUI.AddCheckbox("vdiscReply Checked" UserSettings.disc_disable_autoreply " Y+5", discAutoReply).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
+    settingsGUI["discReply"].ToolTip := (UserSettings.disc_disable_autoreply = true) ? toolT.discAutoReply.Yes : toolT.discAutoReply.No
 
     /**
      * This function handles logic for checkboxes that need to pop up a msgbox to alert the user that they need to reload `checklist.ahk`
@@ -367,7 +389,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! BOTTOM TEXT
-    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+80", "Reset")
+    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+120", "Reset")
     resetText.SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------

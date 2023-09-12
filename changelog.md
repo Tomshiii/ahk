@@ -10,6 +10,7 @@
 - `obj.MousePos()` no longer attempts to retrieve the `Control` under the cursor. Doing so was causing the script to throw if the cursor was hoving an element of Windows that does not contain a control. (ie. the taskbar/start menu)
 - `cmd.Run()` now accepts new parameter `keepWindow` to determine whether the `cmd` window will close once completed. Defaults to `false`
 - `yt-dlp {` now supports tiktok links
+- `discord.button("DiscReply.png")` automatically disabling the `@` ping can now be enabled/disabled within `settingsGUI()`
 
 `Move {`
 - Added `winCenterWide()` to center windows fullscreen on the users main monitor. Mainly useful for ultrawide monitors
@@ -18,6 +19,7 @@
 ## > autosave.ahk
 - Attempted to fix `autosave.ahk` infrequently throwing
 - Fix `__fallback()` attempting to call non existent variable `this.__checkPlayback` instead of the function `this.__checkPlayback()`
+- Manually saving within `Premiere` or `After Effects` will now reset `autosave` timer. (adjustable within `settingsGUI()`)
 
 ## > Other Changes
 - Added `;SubUnderHotkey;`

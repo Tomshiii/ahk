@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2023/08/13
- * @version 1.4.7
+ * @date 2023/09/13
+ * @version 1.4.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,6 +20,15 @@
 
 class discord {
 
+    static __New() {
+        try {
+            ;// attempt to grab user settings
+            this.UserSettings := UserPref()
+            this.disableAutoReplyPing := this.UserSettings.disc_disable_autoreply
+            this.UserSettings := ""
+        }
+    }
+    UserSettings := unset
     static logoCheck := false
 
     ;// set to false if you want discord to replies to leave the @ping enabled by default
