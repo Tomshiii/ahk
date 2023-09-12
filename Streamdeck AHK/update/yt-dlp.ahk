@@ -3,4 +3,4 @@
 ; }
 
 ;// this script requires the user to be using chocolatey
-cmd.run(true, true, "choco upgrade yt-dlp")
+cmd.run(true, true, true, "choco upgrade yt-dlp")

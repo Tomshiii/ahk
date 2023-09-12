@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/08/14
- * @version 1.0.5
+ * @date 2023/09/12
+ * @version 1.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,7 +69,7 @@ class ffmpeg {
      * @param {String} command the command that will be sent to the command line
      * @param {String} path the path to use as the working directory for the command
      */
-    __runCommand(command, path) => cmd.run(false, true, command, path)
+    __runCommand(command, path) => cmd.run(false, true, false, command, path)
 
     /**
      * attempts to activate the previously active explorer window
@@ -102,7 +102,7 @@ class ffmpeg {
     merge_audio_video(videoFilePath, audioFilePath) {
         finalPath := obj.SplitPath(videoFilePath)
         ;// ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac output.mp4
-        cmd.run(false, true, Format("ffmpeg -i `"{1}`" -i `"{2}`" -c:v copy -c:a aac `"{3}.mp4`"", videoFilePath, audioFilePath, finalPath.dir "\" finalPath.NameNoExt))
+        cmd.run(false, true, false, Format("ffmpeg -i `"{1}`" -i `"{2}`" -c:v copy -c:a aac `"{3}.mp4`"", videoFilePath, audioFilePath, finalPath.dir "\" finalPath.NameNoExt))
     }
 
     /**
@@ -117,7 +117,7 @@ class ffmpeg {
         finalPath := obj.SplitPath(videoFilePath)
         finalFileName := IsSet(outputFileName) ? outputFileName : finalPath.NameNoExt
         ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium -crf 17 output.mp4
-        cmd.run(false, true, Format("ffmpeg -i `"{1}`" -c:v {5} -preset {3} -crf {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, crf, codec))
+        cmd.run(false, true, false, Format("ffmpeg -i `"{1}`" -c:v {5} -preset {3} -crf {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, crf, codec))
     }
 
     /**
@@ -165,7 +165,7 @@ class ffmpeg {
         if !IsSet(durationval) || durationval = 0
             durationval := (this.__getDuration(path))- startval
         command := Format('ffmpeg -ss {1} -i "{3}" -t {2} {5} "{4}"', startval, durationval, path, outputFile, commands)
-        cmd.run(,, command)
+        cmd.run(,,, command)
         if overwrite {
             FileDelete(path)
             FileMove(outputFile, path)

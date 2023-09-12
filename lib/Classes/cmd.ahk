@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2023/07/30
- * @version 1.0.4
+ * @date 2023/09/12
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,7 +22,7 @@ class cmd {
      * runParams[3] ;// any options you wish to pass to run()
      * ```
      */
-    static run(admin := false, wait := true, runParams*) {
+    static run(admin := false, wait := true, keepWindow := false, runParams*) {
         if runParams.Length > 3 {
             ;// throw
             errorLog(ValueError("Too many Parameters passed to function", -1),,, 1)
@@ -39,13 +39,15 @@ class cmd {
                     }
             }
         }
+        commandOrKeep := (keepWindow = true) ? "/k" : "/c"
         try {
             switch wait {
                 case false:
-                    Run(elevation A_ComSpec " /c " Params[1], Params[2], Params[3], &returnPID)
+                    ;// replace /c with /k if user wants to keep cmd window open
+                    Run(elevation A_ComSpec A_Space commandOrKeep A_Space Params[1], Params[2], Params[3], &returnPID)
                     return returnPID
                 default:
-                    var := RunWait(elevation A_ComSpec " /c " Params[1], Params[2], Params[3], &returnPID)
+                    var := RunWait(elevation A_ComSpec A_Space commandOrKeep A_Space Params[1], Params[2], Params[3], &returnPID)
                     return {exitCode: var, PID: returnPID}
             }
         }
