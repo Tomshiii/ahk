@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.9
+;\\v2.33.10
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -217,23 +217,19 @@ $h::multiKeyPress((*) => SendInput("h"), (*) => Exit(), (*) => Exit(), -25)
 ;windowspyHotkey;
 Pause::switchTo.WindowSpy() ;run/swap to windowspy
 ;vscodeHotkey;
-RWin::switchTo.VSCode() ;run/swap to vscode
+PrintScreen::switchTo.VSCode() ;run/swap to vscode
 ;streamdeckHotkey;
 ScrollLock::switchTo.Streamdeck() ;run/swap to the streamdeck program
-;taskmangerHotkey;
-PrintScreen::SendInput("^+{Esc}") ;open taskmanager
-;excelHotkey;
-PgUp::switchTo.Excel() ;run/swap to excel
 
 ;This script is to open the ahk documentation. If ctrl is held, highlighted text will be searched
 ;akhdocuHotkey;
-AppsKey::
+RCtrl::
 ;// both are needed here otherwise using ctrl+appskey might fail to work if the active window grabs it first
 ;ahksearchHotkey;
-^AppsKey::
+RShift & RCtrl::
 {
 	;// logic if ctrl isn't being held
-	if !GetKeyState("Ctrl", "P")
+	if !GetKeyState("RShift", "P")
 		{
 			LinkClicked("", false)
 			return

@@ -19,7 +19,7 @@ musicGUI()
         return
 
     aimpObj := {
-        path: ptf.ProgFi32 "\AIMP3\AIMP.exe",                   image: ptf.guiIMG "\aimp.png",
+        path: ptf.ProgFi "\AIMP\AIMP.exe",                   image: ptf.guiIMG "\aimp.png",
         opts: "x12 w25 h-1 Y9",                                 title: "AIMP",
         buttonSize: "X40 Y7"
     }
