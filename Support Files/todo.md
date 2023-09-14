@@ -3,7 +3,7 @@
 # Fixes
 
 ## Functions
-- [ ] wait for timeline focus func seems to cause endless loop failing to focus the timeline
+- [x] wait for timeline focus func seems to cause endless loop failing to focus the timeline [haven't been able to reproduce]
 - [ ] qmk keyboard funcs on first use sometimes still swapping to other sequence
 - [ ] prev/next keyframe sometimes swapping sequences
 
