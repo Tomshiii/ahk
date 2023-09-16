@@ -21,7 +21,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 startupTray()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.1
+;\\v2.9.2
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.12.4
@@ -173,7 +173,7 @@ Rbutton:: ;ports the functionality of "Premiere_RightClick.ahk" as best as possi
                     SendInput("{Click Up}")
                     return
                 }
-            SendInput(KSA.resolveDeselect) ;in case you end up inside the "delete" right click menu from the timeline
+            SendInput(KSA.resolveDeselectAll) ;in case you end up inside the "delete" right click menu from the timeline
             block.Off()
             return
         }
