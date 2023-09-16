@@ -648,18 +648,13 @@ settingsGUI()
         }
 
         __generateShortcut() {
-            switch adobeFullName {
-                case "Adobe Premiere Pro":
-                    if UserSettings.%short%IsBeta = false
-                        FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
-                    else
-                        FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space "(Beta)\" shortcutNameBeta, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
-                case "Adobe After Effects":
-                    if UserSettings.%short%IsBeta = false
-                        FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\Support Files\" shortcutName, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
-                    else
-                        FileCreateShortcut(A_ProgramFiles "\Adobe\" adobeFullName A_Space "(Beta)\Support Files\" shortcutNameBeta, ptf.SupportFiles "\shortcuts\" shortcutName ".lnk")
-            }
+            ;// where the shortcut will be generated+name
+            shortcutLocation := ptf.SupportFiles "\shortcuts\" shortcutName ".lnk"
+            ;// determining if we need to include an additional folder for AE
+            aeFolder := (adobeFullName = "Adobe After Effects") ? "Support Files\" : ""
+            ;// the location of the exe we're generating a shortcut for
+            exeLocation := (UserSettings.%short%IsBeta = false) ? A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\" aeFolder shortcutName : A_ProgramFiles "\Adobe\" adobeFullName A_Space "(Beta)\" shortcutNameBeta
+            try FileCreateShortcut(exeLocation, shortcutLocation)
         }
 
         /**

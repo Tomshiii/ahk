@@ -118,7 +118,7 @@ End:: ;search for checklist file
 w::unassigned()
 s::unassigned()
 x::unassigned()
-F15::switchTo.Photo()
+F15::switchTo.Photoshop()
 
 q::unassigned()
 a::unassigned()

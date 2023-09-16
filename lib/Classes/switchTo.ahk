@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/08/27
- * @version 1.2.9.1
+ * @date 2023/09/16
+ * @version 1.2.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -110,12 +110,18 @@ class switchTo {
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program.
-     * This function will run AE using the after effects version defined within `settingsGUI()`
+     * This function will run Premiere using the Premiere version defined within `settingsGUI()`
+     * This function requires a shortcut file to be properly generated within `settingsGUI()` (This can be achieved by adjusting the year or by checking then unchecking the beta checkbox)
      */
     static Premiere()
     {
         if !WinExist(prem.class) {
-            Run(ptf["Premiere"])
+            try {
+                Run(prem.path)
+            } catch {
+                errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
+                return
+            }
             return
         }
         WinActivate(prem.class)
@@ -124,6 +130,7 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program.
      * This function will run AE using the after effects version defined within `settingsGUI()`.
+     * This function requires a shortcut file to be properly generated within `settingsGUI()` (This can be achieved by adjusting the year or by checking then unchecking the beta checkbox)
      *
      * If AE is already open, this function will also check to make sure AE isn't transparent.
      */
@@ -131,7 +138,12 @@ class switchTo {
     {
         ;// cut repeat code
         runae() {
-            Run(AE.path)
+            try {
+                Run(AE.path)
+            } catch {
+                errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
+                return
+            }
             if WinWait(AE.winTitle,, 2)
                 WinActivate(AE.winTitle)
         }
@@ -298,7 +310,7 @@ class switchTo {
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Photo() => this().__Win(PS.winTitle, PS.path, "photoshop")
+    static Photoshop() => this().__Win(PS.winTitle, PS.path, "photoshop")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one

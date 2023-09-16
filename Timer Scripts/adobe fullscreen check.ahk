@@ -81,6 +81,7 @@ class adobeTimer extends count {
                         return
                     }
                     WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
+                    sleep 50
                     if prem.RClickIsActive = false
                         WinMaximize(nameObj.winTitle)
                     return
