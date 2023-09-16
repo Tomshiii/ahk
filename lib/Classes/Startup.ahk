@@ -732,10 +732,9 @@ class Startup {
         mygui.Add("Checkbox", "vrunafter Section y+10 x" marg, "Run after download?")
         ;// buttons
         mygui.AddButton("ys-10 x+25", "Yes").OnEvent("Click", downahk.Bind(latestVer))
-        mygui.AddButton("x+5", "No").OnEvent("Click", noclick)
+        mygui.AddButton("x+5", "No").OnEvent("Click", (*) => mygui.Destroy())
 
         mygui.Show()
-        noclick(*) => mygui.Destroy()
         downahk(ver, *) {
             if !downloadLocation := FileSelect("D", , "Where do you wish to download the latest AHK release")
                 return

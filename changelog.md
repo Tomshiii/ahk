@@ -1,6 +1,6 @@
-# <> Release 2.12.x - 
+# <> Release 2.12.4 - After Effects & Premiere Pro `Beta` Support
 - It is now possible to mark versions of `After Effects` & `Premiere Pro` as `Beta` within `settingsGUI()` to bring compatibility to the beta versions of both programs.
-- Removed use of `_DLFile.ahk` to allow `startup.updateChecker()` & `startup.updateAHK()` to function correctly
+- Removed use of `_DLFile.ahk` to allow `startup.updateChecker()` & `startup.updateAHK()` to operate going forward without crashing
 
 ## > Functions
 - Fixed `fastWheel.ahk` throwing if it cannot determine the active window

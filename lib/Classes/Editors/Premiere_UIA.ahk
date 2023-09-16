@@ -37,7 +37,7 @@ class v23_base {
 }
 
 class v24_base {
-    timeline              := "YwYY"
+    timeline              := "YyY"
     effectsControl        := "YYY"
     tools                 := "YtYY"
     programMon            := "YqYY"
