@@ -27,13 +27,15 @@ class v22_base {
     effectsControl        := "YYY"
     tools                 := "YuYY"
     programMon            := "Yq"
+    effectsPanel          := ""
 }
 
 class v23_base {
-    timeline              := "YyYY"
-    effectsControl        := "YYY"
-    tools                 := "YvYY"
-    programMon            := "YsYY"
+    timeline              := "YyY"
+    effectsControl        := "YY"
+    tools                 := "YvY"
+    programMon            := "YsY"
+    effectsPanel          := "YwY"
 }
 
 class v24_base {
@@ -41,6 +43,7 @@ class v24_base {
     effectsControl        := "YYY"
     tools                 := "YtYY"
     programMon            := "YqYY"
+    effectsPanel          := ""
 }
 
 ;// if a specific version breaks anything from the base, create a new class like;

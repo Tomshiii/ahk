@@ -1,6 +1,6 @@
 #SingleInstance force
 #Requires AutoHotkey v2.0
-ListLines(0)
+; ListLines(0)
 KeyHistory(0)
 
 ; { \\ #Includes
@@ -67,31 +67,29 @@ class adobeTimer extends count {
      * @param {String} progName the name of the program so a tooltip can accurately describe the program it was attempting to operate on
      */
     __fs(nameObj, progName) {
-        if ((!IsObject(nameObj) || !nameObj.HasProp("winTitle") || !nameObj.HasProp("titleCheck")) ||
-            !nameObj.titleCheck)
+        if ((!IsObject(nameObj)             || !nameObj.HasProp("winTitle") ||
+            !nameObj.HasProp("titleCheck")) || !nameObj.titleCheck
+        )
             return
-        fullscreen := winget.isFullscreen(, nameObj.winTitle)
-        switch fullscreen {
-            case false:
-                if A_TimeIdleKeyboard > 1250 {
-                    detect()
-                    ;// this script will attempt to NOT fire if RClickPrem is active
-                    if !WinExist(ptf.MainScriptName ".ahk") {
-                        WinMaximize(nameObj.winTitle)
-                        return
-                    }
-                    WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
-                    sleep 50
-                    if prem.RClickIsActive = false
-                        WinMaximize(nameObj.winTitle)
-                    return
-                }
-                fireRound := Round(this.fire/1000, 1)
-                errorLog(Error("Couldn't reset the fullscreen of " progName " because the user was interacting with the keyboard", -1)
-                , "It will attempt again in " fireRound "s", {time: 2.0})
+        if winget.isFullscreen(, nameObj.winTitle) = true
+            return
+        if A_TimeIdleKeyboard > 1250 {
+            detect()
+            ;// this script will attempt to NOT fire if RClickPrem is active
+            if !WinExist(ptf.MainScriptName ".ahk") {
+                WinMaximize(nameObj.winTitle)
                 return
-            default: return
+            }
+            WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
+            sleep 50
+            if prem.RClickIsActive = false
+                WinMaximize(nameObj.winTitle)
+            return
         }
+        fireRound := Round(this.fire/1000, 1)
+        errorLog(Error("Couldn't reset the fullscreen of " progName " because the user was interacting with the keyboard", -1)
+        , "It will attempt again in " fireRound "s", {time: 2.0})
+        return
     }
 
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */

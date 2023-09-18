@@ -3,8 +3,8 @@
 # Fixes
 
 ## Functions
-- [ ] qmk keyboard funcs on first use sometimes still swapping to other sequence
-- [ ] prev/next keyframe sometimes swapping sequences
+- [x] qmk keyboard funcs on first use sometimes still swapping to other sequence
+- [x] prev/next keyframe sometimes swapping sequences
 
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence (clicking RButton at the same time?)

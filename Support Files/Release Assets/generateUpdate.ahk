@@ -194,6 +194,8 @@ deleting() {
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\qmk keyboard images")
     ;// deleting the `RODECaster` backup folder
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\RODECaster")
+    ;// deleting the `GoXLR` backup folder
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\GoXLR Backups")
     ;// deleting the `Old Code` backup folder
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Old Code")
     ;// deleting the `VSCode` backup folder

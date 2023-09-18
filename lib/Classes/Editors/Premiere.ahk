@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/09/09
- * @version 2.0.7.1
+ * @date 2023/09/18
+ * @version 2.0.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -112,6 +112,7 @@ class Prem {
     __findBox() {
         SendInput(KSA.findBox)
         tool.Cust("if you hear windows, blame premiere")
+        coord.c("screen")
         CaretGetPos(&findx)
         if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
             {
@@ -149,22 +150,11 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        this().__fxPanel()
         try {
-            loop {
-                if (A_Index > 3 && (!IsSet(classX) || width = 0))
-                    throw
-                premName   := WinGet.PremName()
-                AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-                ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-                try {
-                    ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-                } catch as f {
-                    ControlGetPos(&classX, &classY, &width, &height, ControlGetFocus("A")) ;gets the x/y value and width/height value
-                }
-                if IsSet(width) && width != 0
-                    break
-            }
+            premName := WinGet.PremName()
+            AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN  := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
+            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
         } catch as e {
             block.Off() ;just incase
             errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
@@ -174,10 +164,9 @@ class Prem {
             this().__loremipsum({x: classX, y: classY}, {width: width, height: height}, &eyeX, &eyeY)
         /** this is simply to cut needing to repeat this code below */
         effectbox() {
-            delaySI(50, KSA.effectsWindow, KSA.effectsWindow)
+            AdobeEl.ElementFromPath(premUIA.effectsPanel).SetFocus()
             if !this().__findBox()
                 return
-            SendInput(KSA.effectsWindow)
             SendInput("^a" "+{BackSpace}")
             SetTimer(delete, -250)
             /** this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job */
@@ -185,10 +174,9 @@ class Prem {
                 if WinExist("Delete Item") {
                     SendInput("{Esc}")
                     sleep 100
-                    SendInput(KSA.effectsWindow)
+                    AdobeEl.ElementFromPath(premUIA.effectsPanel).SetFocus()
                     if !this().__findBox()
                         return
-                    SendInput(KSA.effectsWindow)
                     SendInput("^a" "+{BackSpace}")
                     sleep 60
                     if WinExist("Delete Item") {
@@ -199,12 +187,12 @@ class Prem {
             }
         }
         effectbox()
-        coord.c() ;change caret coord mode to window
+        coord.c("screen") ;change caret coord mode to window
         CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
-        MouseMove(carx, cary) ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
+        MouseMove(carx-5, cary+5) ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
         SendInput(item) ;create a preset of any effect, must be in a folder as well
         sleep 50
-        MouseMove(0, 60,, "R") ;move down to the saved preset (must be in an additional folder)
+        MouseMove(0, 65,, "R") ;move down to the saved preset (must be in an additional folder)
         SendInput("{Click Down}")
         if item = "loremipsum" ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
             {
@@ -329,16 +317,20 @@ class Prem {
         ;// get coordinates for a tooltip that appears to alert the user that toggles have reset
         if this.zToolX = 0 || this.zToolY = 0
             {
-                tool.Cust("Retrieving tooltip location",, -40, 20, 4)
                 this.__checkTimelineFocus()
                 sleep 50
-                SendInput(KSA.programMonitor)
-                sleep 50
                 try {
-                    if !classNN := obj.ctrlPos()
-                        return
+                    premName        := WinGet.PremName()
+                    AdobeEl         := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+                    progMonClassNN  := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.programMon).GetControlId()) ;gets the ClassNN value of the program monitor
+                    ControlGetPos(&progMonX, &progMonY, &progMonWidth, &progMonHeight, progMonClassNN) ;gets the x/y value and width/height value
+                    classNN := {x: progMonX, y: progMonY, width: progMonWidth, height: progMonHeight}
+                } catch {
+                    block.Off()
+                    errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+                    return
                 }
-                this.zToolX := (classNN.x+60) ;// adjust this value if your tooltips appear in the wrong position. I had it at +15 before swapping to an ultrawide monitor
+                this.zToolX := (classNN.x+70) ;// adjust this value if your tooltips appear in the wrong position. I had it at +15 before swapping to an ultrawide monitor
                 this.zToolY := (classNN.y+classNN.height+13)
                 ToolTip("",,, 4)
                 tool.Cust("Some tooltips for this function will appear here",, this.zToolX, this.zToolY, 4)
@@ -406,13 +398,12 @@ class Prem {
             return
         }
         sleep 50
-        this().__fxPanel()
-        sleep 50
         try {
             premName   := WinGet.PremName()
             AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
             ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
             ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+            AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
         } catch {
             block.Off()
             errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
@@ -660,7 +651,6 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        this().__fxPanel()
         try {
             premName   := WinGet.PremName()
             AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
@@ -691,17 +681,6 @@ class Prem {
             if A_Index > 1 {
                 ToolTip(A_Index)
                 this().__fxPanel()
-                try {
-                    premName   := WinGet.PremName()
-                    AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-                    ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-                    ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-                } catch {
-                    block.Off()
-                    errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
-                    MouseMove(xpos, ypos)
-                    return
-                }
             }
             checkImg(checkfilepath) {
                 blendheight := (filepath = "blend\blendmode") ? 50 : 0
@@ -1215,7 +1194,6 @@ class Prem {
         keys.allWait()
         coord.s()
         block.On()
-        this().__fxPanel()
         try {
             premName   := WinGet.PremName()
             AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
@@ -1268,7 +1246,6 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        this().__fxPanel()
         try {
             premName   := WinGet.PremName()
             AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
@@ -1336,7 +1313,6 @@ class Prem {
         tool.Cust("Adjusting Gain", 0.5)
         block.On()
         coord.s()
-        this().__fxPanel()
         check := winget.Title()
         if check = "Audio Gain"
             {
@@ -1517,8 +1493,9 @@ class Prem {
             errorLog(UnsetError("Unable to determine the active window", -1),, 1)
             return false
         }
-        SendInput(KSA.timelineWindow)
-        SendInput(KSA.timelineWindow)
+        ;// because we're using UIA we shouldn't need to focus the timeline to grab information about it
+        ; SendInput(KSA.timelineWindow)
+        ; SendInput(KSA.timelineWindow)
         sleep 75
         try {
             premName   := WinGet.PremName()
