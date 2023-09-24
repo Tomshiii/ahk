@@ -1,4 +1,7 @@
-# <> Release 2.12.5 - Hotfix
+# <> Release 2.12.5b - Hotfix
+
+### Changes since v2.12.5
+- Fixed `autosave.ahk` no longer saving if Premiere or AE were the active window
 
 ## > Functions
 - Fixed `settingsGUI()` failing to appropriately set `autosave_save_override`

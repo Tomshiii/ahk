@@ -4,7 +4,7 @@
  * @file My Scripts.ahk
  * @author Tomshi
  * @date 2023/09/24
- * @version v2.12.5
+ * @version v2.12.5b
  * @ahk_ver 2.0.9
  ***********************************************************************/
 
