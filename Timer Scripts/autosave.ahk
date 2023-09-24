@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/09/12
- * @version 2.0.5
+ * @date 2023/09/24
+ * @version 2.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -52,7 +52,7 @@ class adobeAutoSave extends count {
         super.start()
 
         if this.saveOverride == true
-            PremHotkeys.__HotkeySet(["~^s"], ObjBindMethod(this, '__saveReset'))
+            PremHotkeys.__HotkeySet(["^s"], ObjBindMethod(this, '__saveReset'), "I2")
     }
 
     ;// Class Variables
@@ -84,8 +84,11 @@ class adobeAutoSave extends count {
     programMonY2  := A_ScreenHeight
 
     __saveReset(*) {
-        if WinActive("A") != prem.winTitle && WinActive("A") != AE.winTitle
+        if (("ahk_exe " WinGetProcessName("A")) != prem.winTitle) && (("ahk_exe " WinGetProcessName("A")) != AE.winTitle) {
+            SendInput("^s")
             return
+        }
+        this.__backupFiles()
         super.Stop()
         this.resetingSave := true
         sleep 2500
@@ -157,21 +160,19 @@ class adobeAutoSave extends count {
         if this.filesBackedUp = true
             return
         try {
-            time := Format("{}_{}_{}-{}-{}", A_MM, A_DD, A_Hour, A_Min, A_Sec)
+            time := Format("{}-{}-{}", A_Hour, A_Min, A_Sec)
             path := WinGet.ProjPath()
-            if !DirExist(path.Dir "\Backup")
-                DirCreate(path.Dir "\Backup")
-            loop files path.Dir "\Backup\*.*"
-                FileDelete(A_LoopFileFullPath)
+            if !DirExist(path.Dir "\Backup\" A_YYYY "_" A_MM "_" A_DD)
+                DirCreate(path.Dir "\Backup\" A_YYYY "_" A_MM "_" A_DD)
             loop files path.Dir "\*.*", "F" {
                 if A_LoopFileExt != "prproj" && A_LoopFileExt != "aep"
                     continue
-                FileCopy(A_LoopFileFullPath, path.Dir "\Backup\*_" time ".*", 1)
+                FileCopy(A_LoopFileFullPath, path.Dir "\Backup\" A_YYYY "_" A_MM "_" A_DD "\*_" time ".*", 1)
             }
             if FileExist(path.Dir "\checklist_logs.txt")
-                FileCopy(path.Dir "\checklist_logs.txt", path.Dir "\Backup\*_" time ".*", 1)
+                FileCopy(path.Dir "\checklist_logs.txt", path.Dir "\Backup\" A_YYYY "_" A_MM "_" A_DD "\*_" time ".*", 1)
             if FileExist(path.Dir "\checklist.ini")
-                FileCopy(path.Dir "\checklist.ini", path.Dir "\Backup\*_" time ".*", 1)
+                FileCopy(path.Dir "\checklist.ini", path.Dir "\Backup\" A_YYYY "_" A_MM "_" A_DD "\*_" time ".*", 1)
             this.filesBackedUp := true
         }
     }

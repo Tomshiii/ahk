@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi
- * @date 2023/09/18
- * @version 2.0.8
+ * @date 2023/09/24
+ * @version 2.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1926,11 +1926,12 @@ class PremHotkeys {
      * Sets an array of keys to the passed in function
      * @param {Array} arr an array of keynames
      * @param {FuncObj} func a passed in function that all keynames will be passed into
+     * @param {String} options allows the user to pass addition `Hotkey` options. This parameter can be omitted
      */
-    static __HotkeySet(arr, func) {
+    static __HotkeySet(arr, func, options := "") {
         try {
             for v in arr {
-                Hotkey(v, func.Bind(v), "On")
+                Hotkey(v, func.Bind(v), "On " options)
             }
         }
     }
