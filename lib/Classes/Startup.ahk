@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/09/12
- * @version 1.7.7
+ * @date 2023/09/24
+ * @version 1.7.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -465,10 +465,9 @@ class Startup {
     /**
      * This function will (on first startup, NOT a refresh of the script) delete any Adobe temp files when they're bigger than the specified amount (in GB). Adobe's "max" limits that you set within their programs is stupid and rarely chooses to work, this function acts as a sanity check.
      *
-     * It should be noted I have created a custom location for all cache/temp folders and I do not keep them on my main drive. The default locations for premiere are:
+     * It should be noted I have created a custom location for all cache/temp folders and I do not keep them on my main drive. The default locations for media cache are within:
      * ```
-     * "MediaCache", A_AppData "\Adobe\Common\Media Cache Files",
-     * "PeakFiles", A_AppData "\Adobe\Common\Peak Files",
+     * A_AppData "\Adobe\Common\"
      * ```
      */
     adobeTemp() {
@@ -477,59 +476,68 @@ class Startup {
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if WinExist("Scripts Release " this.MyRelease) ;checks to make sure firstCheck() isn't still running
             WinWaitClose("Scripts Release " this.MyRelease)
-        day := this.UserSettings.adobe_temp
-        if day = A_YDay ;checks to see if the function has already run today
+        if this.UserSettings.adobe_temp = A_YDay ;checks to see if the function has already run today
             return
 
-        ;SET HOW BIG YOU WANT IT TO WAIT FOR IN THE `settings.ini` FILE (IN GB) -- IT WILL DEFAULT TO 45GB
+        ;// SET HOW BIG YOU WANT IT TO WAIT FOR IN THE `settings.ini` FILE (IN GB) -- IT WILL DEFAULT TO 45GB
         largestSize := this.UserSettings.adobe_GB
 
-        ;first we set our counts to 0
+        ;// first we set our counts to 0
         CacheSize := 0
         ;// the below filelocations are custom and will NOT work out of the box
         ;// can be set within settingGUI()
-        cacheFolders := Map(
-            "Prem", this.UserSettings.premCache,
-            "AE",  this.UserSettings.aeCache,
+        cacheFolders := [
+            this.UserSettings.premCache,
+            this.UserSettings.aeCache,
             ;// add any more here
+        ]
+        allowedDirs := Mip(
+            "Analyzer Cache Files", 1, "Media Cache", 1,
+            "Media Cache Files",    1, "Peak Files", 1,
+            "Team Projects Cache",  1
         )
+        ;// map we use to determine directorys and not iterate on the same one multiple times
+        usedDirs := Map()
         try {
             ;// adding up the total size of the above listed filepaths
             alerted := false
-            for v, p in cacheFolders
-                {
-                    if !DirExist(p)
+            for v, p in cacheFolders {
+                if !DirExist(p) {
+                    if alerted = false
                         {
-                            if alerted = false
-                                {
-                                    errorLog(TargetError(A_ThisFunc "() could not find one or more of the specified folders, therefore making it unable to calculate the total cache size", -1), A_ScriptName "`nLine: " A_LineNumber, {time: 4.0})
-                                    alerted := true
-                                }
-                            continue
+                            errorLog(TargetError(A_ThisFunc "() could not find one or more of the specified folders, therefore making it unable to calculate the total cache size", -1), A_ScriptName "`nLine: " A_LineNumber, {time: 4.0})
+                            alerted := true
                         }
-                    CacheSize := CacheSize + winget.FolderSize(p, 2)
+                    continue
                 }
-            if CacheSize = 0
-                {
-                    tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0,,, this.startupTtpNum)
-                    this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
-                    return
-                }
+                ;// do a check to make sure we aren't adding the same directory multiple times
+                if usedDirs.Has(p)
+                    continue
+                usedDirs.Set(p, true)
+                ;// add up cache locations
+                CacheSize := CacheSize + winget.FolderSize(p, 2)
+            }
+            if CacheSize = 0 {
+                tool.Cust("Total Adobe cache size - " CacheSize "/" largestSize "GB", 3.0,,, this.startupTtpNum)
+                this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
+                return
+            }
             ;// `winget.FolderSize()` returns it's value in GB, we simply want to round it to 2dp
             tool.Cust("Total Adobe cache size - " Round(CacheSize, 2) "/" largestSize "GB", 3.0,,, this.startupTtpNum)
 
             ;// if the total is bigger than the set number, we loop those directories and delete all the files
-            if CacheSize >= largestSize
-                {
-                    tool.Cust(A_ThisFunc " is currently deleting temp files", 2.0,,, this.startupTtpNum)
-                    try {
-                        for v, p in cacheFolders
-                            {
-                                loop files, p "\*.*", "R"
-                                    FileDelete(A_LoopFileFullPath)
-                            }
+            if CacheSize >= largestSize {
+                tool.Cust(A_ThisFunc " is currently deleting temp files", 2.0,,, this.startupTtpNum)
+                try {
+                    for v, p in usedDirs {
+                        loop files, p "\*.*", "R" {
+                            if !allowedDirs.Has(A_LoopFileDir)
+                                continue
+                            FileDelete(A_LoopFileFullPath)
+                        }
                     }
                 }
+            }
         }
         this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
     }

@@ -2,11 +2,14 @@
 
 ## > Functions
 
+`adobeTemp()`
+- Fixed adding cache directories together even if they were the same path
+- Fixed function deleting all files within the set directory instead of specific paths
+
 `prem {`
 - Fixed some `QMK` functions failing to focus the timeline without scrolling through multiple sequences
     - Focusing the timeline should now be more reliable across all scripts
-- `preset()` now makes use of `UIA` for better reliability
-- `zoom()` now makes use of `UIA` for better reliability
+- `preset()` & `zoom()` now make use of `UIA` for better reliability
 
 `switchTo {`
 - Renamed `Photo()` => `Photoshop()`
