@@ -1,4 +1,4 @@
-# <> Release 2.12.x - 
+# <> Release 2.12.5 - Hotfix
 
 ## > Functions
 - Fixed `settingsGUI()` failing to appropriately set `autosave_save_override`

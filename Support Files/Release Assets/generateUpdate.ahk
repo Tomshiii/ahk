@@ -381,3 +381,4 @@ sleep 1000
 DirCopy(ahkWiki, ahkWikiBackup, 1)
 ToolTip("")
 tool.Cust("Backing up wiki folder complete")
+Run(ptf.rootDir "\Support Files\Release Assets\Adobe SymVers\generateAdobeSym.ahk")
