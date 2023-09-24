@@ -29,8 +29,24 @@ for v in folders {
         DirDelete(SelectedFolder v, 1)
 }
 
+;// delete all backups except the most recently modified
+if DirExist(SelectedFolder "\_project files\Backup") {
+    newestmodifiedtime := ""
+    newestmodifiedname := ""
+    loop files SelectedFolder "\_project files\Backup\*", "D" {
+        if newestmodifiedtime = "" || A_LoopFileTimeModified > newestmodifiedtime {
+            newestmodifiedtime := A_LoopFileTimeModified
+            newestmodifiedname := A_LoopFileName
+        }
+    }
+    loop files SelectedFolder "\_project files\Backup\*", "D" {
+        if A_LoopFileName != newestmodifiedname
+            DirDelete(SelectedFolder "\" A_LoopFileName)
+    }
+}
+
 ;// deleting any temp files if you have premiere/after effects set to save them next to their media
-;// also deletes any mkv files that might still be lying around in the videos folder (premiere can't use mkv files - so there's a 0% changce I haven't remuxed them into mp4's)
+;// also deletes any mkv files that might still be lying around in the videos folder (premiere can't use mkv files - so there's a 0% chance I haven't remuxed them into mp4's)
 files := ["\videos\*.pek", "\videos\*.pkf", "\audio\*.pek", "\audio\*.pkf", "\*.cfa", "\*.pek", "\videos\*.mkv"]
 for v in files {
     FileDelete(SelectedFolder v)

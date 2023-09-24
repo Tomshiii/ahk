@@ -84,7 +84,7 @@ class adobeAutoSave extends count {
     programMonY2  := A_ScreenHeight
 
     __saveReset(*) {
-        if (("ahk_exe " WinGetProcessName("A")) != prem.winTitle) && (("ahk_exe " WinGetProcessName("A")) != AE.winTitle) {
+        if !WinActive(prem.winTitle) && !WinActive(AE.winTitle) {
             SendInput("^s")
             return
         }
