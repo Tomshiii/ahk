@@ -1,6 +1,6 @@
-`Keyboard Shortcut Adjustments` is a `.ini`/`.ahk` combo to bring quick and easy support to adjust keyboard shortcuts within scripts without needing to dig into the code of each individual function or macro.
+`Keyboard Shortcut Adjustments` is a `.ini`/`.ahk` combo to bring quick and easy support to adjust keyboard shortcuts within scripts without needing to dig into the code of each individual function or macro. The `.ini` file is stored in `..\Support Files\KSA\`
 
-With the addition of [`[Keyboard Shortcuts.ini]`](https://github.com/Tomshiii/ahk/blob/main/lib/KSA/Keyboard%20Shortcuts.ini) you are able to quickly go in and adjust any keyboard shortcut and have it instantly reflect within any scripts that use it.
+With the addition of [`[Keyboard Shortcuts.ini]`](https://github.com/Tomshiii/ahk/blob/main/Support%20Files/KSA/Keyboard%20Shortcuts.ini) you are able to quickly go in and adjust any keyboard shortcut and have it instantly reflect within any scripts that use it.
 
 Alongside the .ini file is the companion [`[Keyboard Shortcut Adjustments.ahk]`](https://github.com/Tomshiii/ahk/blob/main/lib/KSA/Keyboard%20Shortcut%20Adjustments.ahk) file which is where we create the variables we then later call from within scripts.
 

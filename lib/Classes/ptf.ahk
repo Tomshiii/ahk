@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/09/12
- * @version 1.2.0.1
+ * @date 2023/09/28
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -86,7 +86,7 @@ class ptf {
     static __Item := Map(
         "settings",        this().UserSettings.SettingsFile,
         "monitorsINI",     this().UserSettings.SettingsDir "\monitors.ini",
-        "KSAini",          this.lib "\KSA\Keyboard Shortcuts.ini",
+        "KSAini",          this.SupportFiles "\KSA\Keyboard Shortcuts.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
         "Game List",       this.lib "\gameCheck\Game List.ahk",

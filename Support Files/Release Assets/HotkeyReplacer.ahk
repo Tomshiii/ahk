@@ -1,3 +1,9 @@
+/************************************************************************
+ * @description optimises the process of updating tomshi's scripts by allowing the user to automatically set hotkeys within `My Scripts.ahk` to their own custom layout.
+ * @author tomshi
+ * @date 2023/09/28
+ * @version 2.10.2
+ ***********************************************************************/
 #Warn VarUnset, StdOut
 
 ; { \\ #Includes
@@ -14,22 +20,18 @@ try {
     UserSettings := UserPref()
 }
 
-if !IsSet(UserSettings)
-    {
-        MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease run ``CreateSymLink.ahk`` to do so and then try running this script again.", "HotkeyReplacer.ahk requires SymLink")
-        return
-    }
+if !IsSet(UserSettings) {
+    MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease run ``CreateSymLink.ahk`` to do so and then try running this script again.", "HotkeyReplacer.ahk requires SymLink")
+    return
+}
 
 forRelease := getLocalVer()
 
 ;// The below block makes sure the `forRelease` variable is set before contiuning as if it isn't the script will run into errors
-if !IsSet(forRelease) || forRelease = ""
-    {
-        MsgBox("No ``My Scripts.ahk`` file found in the release folder.`nThe script should be located:`n``" ptf.rootDir "\My Scripts.ahk``", "Error", 48)
-        return
-    }
-
-;localVer // v2.10.1
+if !IsSet(forRelease) || forRelease = "" {
+    MsgBox("No ``My Scripts.ahk`` file found in the release folder.`nThe script should be located:`n``" ptf.rootDir "\My Scripts.ahk``", "Error", 48)
+    return
+}
 
 TraySetIcon(ptf.Icons "\myscript.png")
 
@@ -52,11 +54,24 @@ class HotkeyReplacer {
     }
 
     /**
+     * Attempts to locate the User's KSA.ini file. This file has existed in a few seperate places and as such needs to check them individually
+     * @param {String} userDir the location of the active directory that needs to be passed into this function before it can search for the file
+     */
+    __findKSA(userDir) {
+        oldLoc := FileExist(userDir "\lib\KSA\Keyboard Shortcuts.ini")
+        loc    := FileExist(userDir "\Support Files\KSA\Keyboard Shortcuts.ini")
+        if !oldLoc && !loc
+            return false
+        which := (loc = true) ? loc : oldLoc
+        return which
+    }
+
+    /**
      * This function checks to ensure both `My Scripts.ahk` & `KSA.ini` can be found in the user's defined location
      */
     __checkFiles() {
         this.UserDir := this.__getUserLoc()
-        this.UserIniLocation := this.UserDir "\lib\KSA\Keyboard Shortcuts.ini"
+        this.UserIniLocation := this.__findKSA(this.UserDir)
         if !FileExist(this.UserDir "\My Scripts.ahk") || !FileExist(this.UserIniLocation)
             throw ValueError("Could not find ``My Scripts.ahk`` or ``Keyboard Shortcuts.ini`` within the chosen directory.", -1)
     }

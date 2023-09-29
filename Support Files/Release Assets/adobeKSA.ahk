@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a function designed to parse through AE and Premiere Pro keyboard shortcut files to automatically assign KSA.ini values
  * @author tomshi
- * @date 2023/04/18
- * @version 1.0.0
+ * @date 2023/09/28
+ * @version 1.0.1
  ***********************************************************************/
 
 #Warn VarUnset, StdOut
@@ -45,7 +45,7 @@ class adobeKSA extends tomshiBasic {
     defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-" A_UserName "\Win"
     defaultAEFolder := A_AppData "\Adobe\After Effects\" LTrim(ptf.aeIMGver, "v") "\aeks"
 
-    KSADir => ptf.rootDir "\lib\KSA"
+    KSADir => ptf.rootDir "\Support Files\KSA"
     KSA => this.KSADir "\Keyboard Shortcuts.ini"
     KSARead := ""
 

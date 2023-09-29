@@ -35,7 +35,7 @@ class v23_base {
     effectsControl        := "YY"
     tools                 := "YvY"
     programMon            := "YsY"
-    effectsPanel          := "YwY"
+    effectsPanel          := "Yw"
 }
 
 class v24_base {

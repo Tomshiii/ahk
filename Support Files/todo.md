@@ -3,15 +3,12 @@
 # Fixes
 
 ## Functions
-- [x] qmk keyboard funcs on first use sometimes still swapping to other sequence
-- [x] prev/next keyframe sometimes swapping sequences
 - [ ] cut repeat code in `prem {` and turn using UIA strings and determining panel positions into a function, maybe have it optionally return values or just return them as an obj
 
 ## autosave.ahk
-- [ ] autosave saving sometimes causes changing of sequence (clicking RButton at the same time?)
+- [ ] autosave saving sometimes causes changing of sequence ~~(clicking RButton at the same time?)~~ - definitely happening regardless
 - [ ] often alerts the user it can't determine window if a save makes an attempt when prem isn't active window (ie, another window like discord)
 	- might not specifically be related to determining the original window, the error is reached in a catch statement that also includes code like attempting to restart playback. Will require more thorough testing
-- [x] make whatever function it is that "backs up" project files not store only 1 instance of the project file - ~~maybe make it user setable (default to something high since every 5min is quite frequent and if it only stores the last hour or so it's not overly useful)~~
 
 ## adobe fullscreen check.ahk
 - [ ] causes cut on timeline if activates when RButton held down
