@@ -33,9 +33,9 @@ class v22_base {
 class v23_base {
     timeline              := "YyY"
     effectsControl        := "YY"
-    tools                 := "YvY"
-    programMon            := "YsY"
-    effectsPanel          := "Yw"
+    tools                 := "YuYYq"
+    programMon            := "YtY"
+    effectsPanel          := "YwY"
 }
 
 class v24_base {

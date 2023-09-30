@@ -36,6 +36,9 @@ if yes.Result = "Cancel"
 if !DirExist(A_WorkingDir "\release\" yes.Value)
     DirCreate(A_WorkingDir "\release\" yes.Value)
 
+;// check for pre release tags
+pre   := InStr(yes.value, "pre",, 1, 1), beta  := InStr(yes.value, "beta",, 1, 1), alpha := InStr(yes.value, "alpha",, 1, 1)
+
 /**
  * This function will grab the release version from the `My Scripts.ahk` file itself.
  * This function makes it so I don't have to change this variable manually every release
@@ -98,12 +101,13 @@ loop files ptf.rootDir "\Backups\Changelogs\*", "F"
         if InStr(name, LTrim(oldVer, "v"), 1, 1, 1)
             break
     }
+
 ;// dealing with file names
-if pre := InStr(yes.value, "pre",, 1, 1) || beta := InStr(yes.value, "beta",, 1, 1) || alpha := InStr(yes.value, "alpha",, 1, 1)
+if pre != false || beta != false || alpha != false
     {
-        verNew := pre ?? 0   ? SubStr(yes.value, 1, pre-1)   : yes.value
-        verNew := beta ?? 0  ? SubStr(yes.value, 1, beta-1)  : verNew
-        verNew := alpha ?? 0 ? SubStr(yes.value, 1, alpha-1) : verNew
+        verNew := pre != 0   ? SubStr(yes.value, 1, pre-1)   : yes.value
+        verNew := beta != 0  ? SubStr(yes.value, 1, beta-1)  : verNew
+        verNew := alpha != 0 ? SubStr(yes.value, 1, alpha-1) : verNew
         verChangeLog := verNew
     }
 else
@@ -325,7 +329,7 @@ if !DirExist(A_WorkingDir "\" verNum ".x")
     DirCreate(A_WorkingDir "\" verNum ".x")
 if (InStr(yes.value, "pre") || InStr(yes.value, "beta") || InStr(yes.value, "alpha")) && !DirExist(A_WorkingDir "\" verNum ".x\pre")
     DirCreate(A_WorkingDir "\" verNum ".x\pre")
-preCheck := (pre = true || beta = true || alpha = true) ? true : false
+preCheck := (pre != false || beta != false || alpha != false) ? true : false
 switch preCheck {
     case 0:
         FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\" yes.value ".exe", 1)

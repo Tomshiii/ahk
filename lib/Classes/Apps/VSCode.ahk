@@ -85,7 +85,7 @@ class VSCode {
                 __closeOut("The test file has been selected")
                 return
             case KSA.todoHotkey: ;// Navigates to the toDo file
-                delaySI(75, "{Down 8}{Enter}", "{Down 12}{Enter}", KSA.focusExplorerWin, "{Up 12}{Enter}", KSA.focusWork)
+                delaySI(75, "{Down 8}{Enter}", "{Down 13}{Enter}", KSA.focusExplorerWin, "{Up 13}{Enter}", KSA.focusWork)
                 __closeOut("The todo file has been selected")
                 return
         }
