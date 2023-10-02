@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/09/24
- * @version 2.0.7
+ * @date 2023/10/02
+ * @version 2.0.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -88,11 +88,11 @@ class adobeAutoSave extends count {
             SendInput("^s")
             return
         }
+        this.resetingSave := true
         SendInput("^s")
         this.__backupFiles()
         super.Stop()
-        this.resetingSave := true
-        sleep 2500
+        sleep 3500
         this.__reset()
         super.Start()
     }

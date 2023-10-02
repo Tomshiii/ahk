@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 23.5
  * @author tomshi, taranVH
- * @date 2023/08/21
- * @version 2.0.14
+ * @date 2023/10/02
+ * @version 2.0.15
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -51,14 +51,20 @@ startupTray()
 
 ;---------------------------------------------------------------------------------------
 
+;// there may be code that EXPECTS the activation hotkey to be RButton
 RButton::rbuttonPrem().movePlayhead()
 ; MButton::prem().__toggleTimelineFocus()
+
+;// there is code that EXPECTS the activation hotkey to be XButton1
+;// including uses of `checkStuck()`
+;// beware if modifying this activation hotkey that code adjustments might be necessary
+XButton1::rbuttonPrem().movePlayhead(false)
 
 class rbuttonPrem {
 	leftClick    := false
 	xbuttonClick := false
 	colourOrNorm := ""
-	colour := ""
+	colour  := ""
 	colour2 := ""
 
 	;First, we define all the timeline's DEFAULT possible colors.
@@ -147,8 +153,8 @@ class rbuttonPrem {
 	 * This function checks to see whether the user simply tapped the right mouse button and moves the playhead
 	 * @returns {Boolean} if the user is no longer holding the `RButton`, returns `false`. Else return `true`
 	 */
-	__checkForTap() {
-		if !GetKeyState("RButton", "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
+	__checkForTap(activationHotkey) {
+		if !GetKeyState(activationHotkey, "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
 			{
 				SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 				;The below checks are to ensure no buttons end up stuck
@@ -196,8 +202,9 @@ class rbuttonPrem {
 	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when `RButton` is pressed.
 	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details
+	 * @param {Boolean} allChecks determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
 	 */
-	movePlayhead() {
+	movePlayhead(allChecks := true) {
 		prem.RClickIsActive := true
 
 		;// check for stuck keys
@@ -225,16 +232,18 @@ class rbuttonPrem {
 			this.__exit()
 		}
 
-		;// checks the colour at the mouse cursor and then determines whether the track is blank
-		this.__setColours(origMouse)
-		if this.__checkForBlank(this.colour) {
-			SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
-			this.__exit()
-		}
+		if allChecks = true {
+			;// checks the colour at the mouse cursor and then determines whether the track is blank
+			this.__setColours(origMouse)
+			if this.__checkForBlank(this.colour) {
+				SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
+				this.__exit()
+			}
 
-		;// checks to see if the colour under the cursor is one already defined within the class
-		if !this.__checkColour(this.colour) {
-			this.__exit()
+			;// checks to see if the colour under the cursor is one already defined within the class
+			if !this.__checkColour(this.colour) {
+				this.__exit()
+			}
 		}
 
 		;// check whether the timeline is already in focus & focuses it if it isn't
@@ -247,14 +256,17 @@ class rbuttonPrem {
 			}
 		}
 		this.__checkForPlayhead(origMouse)
-		if !this.__checkForTap() {
+		if !this.__checkForTap(A_ThisHotkey) {
 			this.__exit()
 		}
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
-		while GetKeyState("Rbutton", "P") {
+		while GetKeyState(A_ThisHotkey, "P") {
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
-				checkstuck()
+				if allChecks = true
+					checkstuck()
+				else
+					checkStuck(["XButton2", "Ctrl", "Shift"])
 				if GetKeyState("Ctrl", "P") { ;you still want to be able to hold shift so you can cut all tracks on the timeline
 					tool.Cust("Holding control while scrubbing will cause Premiere to freak out")
 					break
@@ -265,18 +277,21 @@ class rbuttonPrem {
 			sleep 16
 		}
 
-		;// resets `LButton` & `XButton2` to their original function
-		PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
-
-		;// determines whether to resume playback & how fast to playback
+		;// releases the LButton if it was used to grab the playhead
 		if this.colourOrNorm = "colour" {
 			SendInput("{LButton Up}")
 		}
-		if !this.leftClick && !this.xbuttonClick {
-			this.__exit()
+
+		if allChecks = true {
+			;// resets `LButton` & `XButton2` to their original function
+			PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
+			;// determines whether to resume playback & how fast to playback
+			if !this.leftClick && !this.xbuttonClick {
+				this.__exit()
+			}
+			if this.leftClick
+				this.__restartPlayback()
 		}
-		if this.leftClick
-			this.__restartPlayback()
 
 		;// cleans up
 		this.__exit()
