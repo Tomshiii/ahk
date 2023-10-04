@@ -40,6 +40,7 @@ Right & PgUp::switchTo.newWin("exe", "firefox.exe", "firefox.exe")
 y::unassigned()
 h::switchTo.adobeProject("..\") ;opens the directory back from the current premiere/ae project
 n::unassigned()
+/** because this macro always ends in discord being in focus, tapping the macro repeatedly will cycle through the programs but manually clicking on the program and then activating the macro will not force a cycle */
 Space::
 {
 	GroupAdd("phoneStuffDisc", "ahk_exe slack.exe")
@@ -52,13 +53,20 @@ Space::
 		switchTo.Disc()
 		return
 	}
-	/** because this macro always ends in discord being in focus, tapping the macro repeatedly will cycle through the programs but manually clicking on the program and then activating the macro will not force a cycle */
+	;// if a phonestuff application OR discord was active when this hotkey was activated, we will activate that group and ensure that it and discord are placed in the correct position on the screen
 	if store = true {
 		GroupActivate("phoneStuffDisc", "r")
 		GroupActivate("phoneStuffDisc", "r")
 		WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, WinGetTitle("A") A_Space "ahk_exe " WinGetProcessName("A"))
+		switchTo.Disc(discord.slackX, 669, discord.slackWidth, discord.slackHeight)
+		return
 	}
-	switchTo.Disc(discord.slackX, 669, discord.slackWidth, discord.slackHeight)
+	if WinExist(discord.winTitle) {
+		pos := obj.WinPos(discord.winTitle)
+		switchTo.Disc(pos.x, pos.y, pos.width, pos.height)
+		return
+	}
+	switchTo.Disc()
 }
 Enter & Space::switchTo.Disc()
 

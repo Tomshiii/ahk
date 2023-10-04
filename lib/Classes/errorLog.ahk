@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2023/07/04
- * @version 2.1.0
+ * @date 2023/10/04
+ * @version 2.1.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -15,9 +15,8 @@
 ; }
 
 /**
- * A class designed to log errors in scripts if they occur. Simply pass in an error object and optionally pass a backup func/hotkey name. The output will also be send to `OutputDebug`
- * @param {Object} err The error object you want to report on
- * @param {String} backupfunc Sometimes the error object doesn't pass through what func/hotkey has the issue - just type `A_ThisFunc "()"` if it's a function or `A_ThisHotkey "::"` if it's a hotkey
+ * A class designed to log errors in scripts if they occur. Simply pass in an error object and optionally pass a backup func/hotkey name. The output will also be send to `OutputDebug`.
+ * @param {Object} err The error object you want to report on. Within an error object is `err.What` which states what threw the error - it should be noted this function manually checks for, and strips that string of `Prototype.` to make it less confusing to read in the log. This means that if you have a function with that exact string its name may be stripped.
  * @param {String} optMessage An optional message you wish to append alongside the error. This message will be tabbed in to visually distinguish it
  * @param {Boolean/Object} toolCust Allows the user to determine if they wish for a tooltip of the current error to be automatically generated. This parameter can either be a passed as a `true` boolean, or an object to determine a custom tooltip. If you wish to pass an object, follow the naming below:
  * ```
@@ -49,6 +48,9 @@ class errorLog extends log {
         this.err.Message := StrReplace(this.err.Message, "`r`r", "- ")
         error := type(this.err) ": " Trim(this.err.Message, "`n`r`t`v")
 
+        ;// check for and remove `Prototype.` from `err.what` string
+        whatErrored := InStr(this.err.what, "Prototype.", 1, 1, 1) ? StrReplace(this.err.what, "Prototype.", '', 1,, 1) : this.err.what
+
         ;// IsSet requires a variable so we'll just assign this.err.Extra to a var
         extraVar := this.err.Extra
         beginning := (IsSet(extraVar) && this.err.Extra != "") ? "``" this.err.Extra "``-- " : ""
@@ -66,7 +68,7 @@ class errorLog extends log {
 
         ;// assigning the log error to a variable so we can reuse it
         append := Format("// ``{}`` encountered the following error: `"{}{}`" | Script: ``{}``, Line Number: {}"
-                            , this.err.what, beginning, error, script.Name, this.err.Line
+                            , whatErrored, beginning, error, script.Name, this.err.Line
                     )
 
         ;// append the error and send to the debug stream

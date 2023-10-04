@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/09/16
- * @version 1.2.10
+ * @date 2023/10/04
+ * @version 1.2.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -108,13 +108,38 @@ class switchTo {
         Run(runval)
     }
 
+    /** This function will check for the existence of Adobe Creative cloud. For use with adobe scripts. This is necessary because unless CC is opened before the program of choice, some synced assets (ie. fonts) will not load within the program and may silently default to the next option in the list. */
+    __checkCC() {
+        dct := A_DetectHiddenWindows
+        ccTitle := "Creative Cloud Desktop"
+        DetectHiddenWindows(1)
+        if WinExist(ccTitle)
+            return true
+        try Run(ptf["AdobeCC"],,, &PID)
+        catch {
+            ;// throw
+            errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or has been installed in an unexpected location.",, 1)
+            return
+        }
+        if !WinWait("ahk_pid " PID,, 5)
+            return false
+        sleep 5000
+        WinClose("ahk_pid " PID)
+        return true
+    }
+
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program.
      * This function will run Premiere using the Premiere version defined within `settingsGUI()`
      * This function requires a shortcut file to be properly generated within `settingsGUI()` (This can be achieved by adjusting the year or by checking then unchecking the beta checkbox)
+     * @param {Boolean} openCC determine whether this function will check for the existence of `Creative Cloud` and open it before proceeding
      */
-    static Premiere()
+    static Premiere(openCC := true)
     {
+        if openCC = true {
+            if !this().__checkCC()
+                MsgBox(A_ThisFunc "() attempted to open ``Adobe Creative Cloud`` and failed. This can happen if the user has installed it to an unexpected location. Please fix the directory link within the function to return functionality to this script." )
+        }
         if !WinExist(prem.class) {
             try {
                 Run(prem.path)
@@ -133,8 +158,9 @@ class switchTo {
      * This function requires a shortcut file to be properly generated within `settingsGUI()` (This can be achieved by adjusting the year or by checking then unchecking the beta checkbox)
      *
      * If AE is already open, this function will also check to make sure AE isn't transparent.
+     * @param {Boolean} openCC determine whether this function will check for the existence of `Creative Cloud` and open it before proceeding
      */
-    static AE()
+    static AE(openCC := true)
     {
         ;// cut repeat code
         runae() {
@@ -148,7 +174,7 @@ class switchTo {
                 WinActivate(AE.winTitle)
         }
 
-
+        /** checks the current project's working directory for any after effects files. If none are present, ae will simply be opened. If 1 is present, it will be opened. If multiple are present, the user will be prompted to select one */
         premTitle() {
             try {
                 ;// pulls dir url from prem title and runs ae project in that dir
@@ -186,6 +212,11 @@ class switchTo {
                 runae()
                 return
             }
+        }
+
+        if openCC = true {
+            if !this().__checkCC()
+                MsgBox("switchTo." A_ThisFunc "() attempted to open Creative Cloud and failed. This can happen if the user has installed it to an unexpected location. Please fix the directory link within the function to return functionality to this script." )
         }
 
         premExist := WinExist(prem.winTitle)
