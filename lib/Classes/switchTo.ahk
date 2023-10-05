@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/10/04
- * @version 1.2.11
+ * @date 2023/10/05
+ * @version 1.2.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -113,18 +113,24 @@ class switchTo {
         dct := A_DetectHiddenWindows
         ccTitle := "Creative Cloud Desktop"
         DetectHiddenWindows(1)
-        if WinExist(ccTitle)
+        if WinExist(ccTitle) {
+            A_DetectHiddenWindows := dct
             return true
+        }
         try Run(ptf["AdobeCC"],,, &PID)
         catch {
             ;// throw
+            A_DetectHiddenWindows := dct
             errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or has been installed in an unexpected location.",, 1)
             return
         }
-        if !WinWait("ahk_pid " PID,, 5)
+        if !WinWait("ahk_pid " PID,, 5) {
+            A_DetectHiddenWindows := dct
             return false
+        }
         sleep 5000
         WinClose("ahk_pid " PID)
+        A_DetectHiddenWindows := dct
         return true
     }
 
