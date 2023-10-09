@@ -1,14 +1,15 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/10/05
- * @version 1.2.12
+ * @date 2023/10/09
+ * @version 1.2.13
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <GUIs\musicGUI>
+#Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\tool>
+#Include <GUIs\musicGUI>
 ;programs
 #Include <Classes\Apps\VSCode>
 #Include <Classes\Apps\Discord>
@@ -20,6 +21,7 @@
 #Include <Classes\errorLog>
 ;funcs
 #Include <Functions\getHotkeys>
+#Include <Functions\generateAdobeShortcut>
 ; }
 
 class switchTo {
@@ -150,8 +152,17 @@ class switchTo {
             try {
                 Run(prem.path)
             } catch {
-                errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
-                return
+                try {
+                    UserSettings := UserPref()
+                    generateAdobeShortcut(UserSettings, "Adobe Premiere Pro", UserSettings.prem_year)
+                    UserSettings.__delAll()
+                    UserSettings := ""
+                    sleep 50
+                    Run(prem.path)
+                } catch {
+                    errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
+                    return
+                }
             }
             return
         }
@@ -173,8 +184,17 @@ class switchTo {
             try {
                 Run(AE.path)
             } catch {
-                errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
-                return
+                try {
+                    UserSettings := UserPref()
+                    generateAdobeShortcut(UserSettings, "Adobe After Effects", UserSettings.prem_year)
+                    UserSettings.__delAll()
+                    UserSettings := ""
+                    sleep 50
+                    Run(AE.path)
+                } catch {
+                    errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
+                    return
+                }
             }
             if WinWait(AE.winTitle,, 2)
                 WinActivate(AE.winTitle)

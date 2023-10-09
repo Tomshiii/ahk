@@ -12,6 +12,7 @@
 #Include <Functions\refreshWin>
 #Include <Functions\detect>
 #Include <Functions\checkInternet>
+#Include <Functions\generateAdobeShortcut>
 ;}
 
 class SettingsToolTips {
@@ -644,18 +645,9 @@ settingsGUI()
             ver.Choose(new.Length)
             UserSettings.%yearIniName% := year.text
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
-            __generateShortcut()
         }
 
-        __generateShortcut() {
-            ;// where the shortcut will be generated+name
-            shortcutLocation := ptf.SupportFiles "\shortcuts\" shortcutName ".lnk"
-            ;// determining if we need to include an additional folder for AE
-            aeFolder := (adobeFullName = "Adobe After Effects") ? "Support Files\" : ""
-            ;// the location of the exe we're generating a shortcut for
-            exeLocation := (UserSettings.%short%IsBeta = false) ? A_ProgramFiles "\Adobe\" adobeFullName A_Space year.text "\" aeFolder shortcutName : A_ProgramFiles "\Adobe\" adobeFullName A_Space "(Beta)\" shortcutNameBeta
-            try FileCreateShortcut(exeLocation, shortcutLocation)
-        }
+        __generateShortcut() => generateAdobeShortcut(UserSettings, adobeFullName, year.text)
 
         /**
          * This function generates the year dropdown selector

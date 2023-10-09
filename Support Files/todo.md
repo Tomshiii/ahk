@@ -4,6 +4,7 @@
 
 ## Functions
 - [ ] cut repeat code in `prem {` and turn using UIA strings and determining panel positions into a function, maybe have it optionally return values or just return them as an obj
+- [x] if switchTo.prem/ae determines a shortcut doesn't exist for the file, attempt to create it and try again
 
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence ~~(clicking RButton at the same time?)~~ - definitely happening regardless
