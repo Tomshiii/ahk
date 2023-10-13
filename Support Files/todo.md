@@ -10,6 +10,7 @@
 - [ ] autosave saving sometimes causes changing of sequence ~~(clicking RButton at the same time?)~~ - definitely happening regardless
 - [ ] often alerts the user it can't determine window if a save makes an attempt when prem isn't active window (ie, another window like discord)
 	- might not specifically be related to determining the original window, the error is reached in a catch statement that also includes code like attempting to restart playback. Will require more thorough testing
+- [ ] add option to enable/disable checking mouse movement before saving - might be too annoying for some
 
 ## adobe fullscreen check.ahk
 - [ ] causes cut on timeline if activates when RButton held down

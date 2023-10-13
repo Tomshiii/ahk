@@ -1,11 +1,11 @@
 /************************************************************************
  * @description move the Premere Pro playhead to the cursor
- * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 slowly began moving workflow to v23.5+
+ * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 slowly began moving workflow to v24+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
- * @premVer 23.5
+ * @premVer 24.0
  * @author tomshi, taranVH
- * @date 2023/10/02
- * @version 2.0.15
+ * @date 2023/10/13
+ * @version 2.0.16
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -133,20 +133,24 @@ class rbuttonPrem {
 	 * Checks to see wheteher the playhead can be found on the screen. If it is, `KSA.shuttleStop` is sent.
 	 * If the playhead is close to the cursor, the cursor will be moved to it and `LButton` is held down
 	 * @param {Object} coordObj an object containing the cursor coords
+	 * @param {Boolean} search passing in `allChecks` to determine if the function should search near the cursor for the playhead. Disabling this feature if `allChecks` is set to `false` stops the script from potentially clicking on a clip below the cursor
 	 */
-	__checkForPlayhead(coordObj) {
+	__checkForPlayhead(coordObj, search := true) {
 		;// checking to see if the playhead is on the screen
 		if prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y})
 			SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stops
+		;// this stops the script from potentially clicking a clip if using `rbuttonPrem().movePlayhead(false)`
+		if !search
+			return
 		;// then we check to see if it's relatively close to the cursors position
 		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
-				block.On()
-				SendInput(KSA.selectionPrem)
-				MouseMove(xcol, ycol)
-				SendInput("{LButton Down}")
-				block.Off()
-				this.colourOrNorm := "colour"
-			}
+			block.On()
+			SendInput(KSA.selectionPrem)
+			MouseMove(xcol, ycol)
+			SendInput("{LButton Down}")
+			block.Off()
+			this.colourOrNorm := "colour"
+		}
 	}
 
 	/**
@@ -255,7 +259,7 @@ class rbuttonPrem {
 				this.__exit()
 			}
 		}
-		this.__checkForPlayhead(origMouse)
+		this.__checkForPlayhead(origMouse, allChecks)
 		if !this.__checkForTap(A_ThisHotkey) {
 			this.__exit()
 		}
