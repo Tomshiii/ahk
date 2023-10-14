@@ -4,3 +4,4 @@
 `ComVar.ahk`       => : https://github.com/thqby/ahk2_lib/blob/master/ComVar.ahk
 `JSON.ahk`         => : https://github.com/thqby/ahk2_lib/blob/master/JSON.ahk
 `print.ahk`        => : https://github.com/thqby/ahk2_lib/blob/master/print.ahk
+`nameof.ahk`       => : https://github.com/thqby/ahk2_lib/blob/master/nameof.ahk

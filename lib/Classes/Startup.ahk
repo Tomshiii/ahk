@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/09/24
- * @version 1.7.8
+ * @date 2023/10/13
+ * @version 1.7.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -471,7 +471,7 @@ class Startup {
      * ```
      */
     adobeTemp() {
-        if isReload()
+        if (isReload() || (WinExist(Editors.Premiere.winTitle) || WinExist(Editors.AE.winTitle)))
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if WinExist("Scripts Release " this.MyRelease) ;checks to make sure firstCheck() isn't still running
@@ -606,10 +606,6 @@ class Startup {
             name: "ComVar",                          url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/ComVar.ahk",
             scriptPos: ptf.lib "\Other"
         }
-        SevenZip := {
-            name: "SevenZip",                        url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/7Zip/SevenZip.ahk",
-            scriptPos: ptf.lib "\Other\7zip"
-        }
         JSON := {
             name: "JSON",                            url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
             scriptPos: ptf.lib "\Other"
@@ -623,7 +619,7 @@ class Startup {
             scriptPos: ptf.lib "\Other\UIA"
         }
 
-        objs := [this.webView2, this.comVar, this.SevenZip, this.JSON, this.UIA, this.UIA_Browser]
+        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser]
         name        := []
         url         := []
         scriptPos   := []
@@ -663,6 +659,11 @@ class Startup {
          */
         getString(url) {
             string := getHTML(url)
+            if string = -1 {
+                tool.Tray({title: "libUpdateCheck() encountered an issue", text: "lib may have incorrect url:`n" url})
+                errorLog(Error(A_ThisFunc " encountered an issue with the specified url", -1), url)
+                return {version: 0}
+            }
             if string = 0
                 return {version: 0}
             if InStr(string, "﻿") ;removes zero width no-break space
