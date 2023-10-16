@@ -1,9 +1,11 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
+#Include <Classes\keys>
+#Include <Functions\delaySI>
 ; }
 
 /**
- * press a button(ideally a mouse button), this script then changes to something similar to a "hand tool" and clicks so you can drag, then you set the hotkey for it to swap back to (selection tool for example)
+ * This function will activate the desired tool, hold it until the user releases the activation hotkey, then return to the passed in tool. An example is; activate the function > function swaps to the `hand` tool, then upon release returns the user to the `selection` tool
  * @param {String} tool is the hotkey you want the program to swap TO (ie, hand tool, zoom tool, etc). (consider using values in KSA)
  * @param {String} toolorig is the button you want the script to press to bring you back to your tool of choice. (consider using values in KSA)
 */
@@ -19,8 +21,8 @@ mouseDrag(tool, toolorig) {
             return
         }
     click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-    SendInput(tool "{LButton Down}")
-    KeyWait(A_ThisHotkey)
-    SendInput("{LButton Up}")
-    SendInput(toolorig)
+    sleep 16
+    delaySI(25, tool, "{LButton Down}")
+    keys.allWait()
+    delaySI(25, "{LButton Up}", toolorig)
 }

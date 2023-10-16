@@ -5,12 +5,13 @@
 
 ## > Functions
 - Removed references to `7zip.ahk` from `startup.libUpdateCheck()` as the script has been pulled by `thqby`
-- `rbuttonPrem().movePlayhead()` now accepts optional param `allChecks` and allows the user to instead call `movePlayhead()` even if the cursor is hovering over a video/audio track by setting the parameter to `false`
+- `rbuttonPrem().movePlayhead()` now accepts optional param `allChecks` and allows the user to call `movePlayhead()` even if the cursor is hovering over a video/audio track
 - `checkStuck()` now accepts optional param `arr` to pass in a custom array of buttons to check
 - `errorLog()` will now check for, and strip the `err.what` string of the passed in error object of the word `Prototype.` to make resulting logs easier to read
 - Code taken from `settingsGUI()` to add `generateAdobeShortcut()`
 - `adobeTemp()` will no longer run if `Premiere` or `After Effects` is currently open
 - `getHTML()` will now check the resulting string for error messages
+- `mouseDrag()` will now delay slightly between inputs to reduce the number of times the function is too fast for the desired input
 
 `switchTo`
 - `Premiere()` & `AE()` will now;
@@ -19,6 +20,6 @@
     - Attempt to generate a shortcut (using values set within `settingsGUI()`) if one isn't detected
 
 ## > Other Changes
-- `autosave.ahk` will no longer backup project files when the user manually saves with <kbd>Ctrl + s</kbd> to help mitigate these project folders inflating to giant sizes during long projects
+- `autosave.ahk` will no longer backup project files when the user manually saves with <kbd>Ctrl + s</kbd> to help mitigate the backup folders inflating to giant sizes during long projects
 - Added `v24` Premiere template
-- Added `nameof.ahk`
+- Added `nameof.ahk` by `thqby`
