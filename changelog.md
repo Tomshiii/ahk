@@ -23,3 +23,4 @@
 - `autosave.ahk` will no longer backup project files when the user manually saves with <kbd>Ctrl + s</kbd> to help mitigate the backup folders inflating to giant sizes during long projects
 - Added `v24` Premiere template
 - Added `nameof.ahk` by `thqby`
+- Fixed `Move Project.ahk` throwing when it attempts to delete a `Backups` folder

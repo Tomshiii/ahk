@@ -41,7 +41,7 @@ if DirExist(SelectedFolder "\_project files\Backup") {
     }
     loop files SelectedFolder "\_project files\Backup\*", "D" {
         if A_LoopFileName != newestmodifiedname
-            DirDelete(SelectedFolder "\" A_LoopFileName)
+            DirDelete(SelectedFolder "\_project files\Backup\" A_LoopFileName "\", 1)
     }
 }
 
