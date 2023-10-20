@@ -2,7 +2,7 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 slowly began moving workflow to v23.5+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
- * @premVer 23.5
+ * @premVer 24.0
  * @author tomshi
  * @date 2023/09/24
  * @version 2.0.9
