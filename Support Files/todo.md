@@ -5,6 +5,7 @@
 ## Functions
 - [ ] cut repeat code in `prem {` and turn using UIA strings and determining panel positions into a function, maybe have it optionally return values or just return them as an obj
 - [x] if switchTo.prem/ae determines a shortcut doesn't exist for the file, attempt to create it and try again
+- [ ] RCLick Prem scripts seem to not be firing towards the right of the timeline (all versions (v22.3.1, v23.5, v24.0)) - might be grabbing coords incorrectly
 
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence ~~(clicking RButton at the same time?)~~ - definitely happening regardless
@@ -27,24 +28,8 @@
 - [ ] make `reset` section of `settingsGUI()` two checkboxes instead and move them below the exit section, then move the exit section up
 - [ ] make streamdeck script to crop input video in half to split cam/gameplay videos.
 	- use a gui to select the file & choose whether cam is on the left or right.
-		- add option to use bitrate instead of crf
 	- maybe extend off `reencode` gui to offer the same options?
-	```
-	;// crop video - 1
-	ffmpeg -i "[INPUT FILEPATH]" -c:v libx264 -preset veryfast -b:v 30000k -filter:v "crop=in_w/2:in_h:0:0" -c:a copy "[OUTPUT FILEPATH]"
-
-	;// crop video - 2
-	ffmpeg -i "[INPUT FILEPATH]" -c:v libx264 -preset veryfast -b:v 30000k -filter:v "crop=in_w/2:in_h:in_w/2:0" -c:a copy "[OUTPUT FILEPATH]"
-
-	;// c3
-	ffmpeg -i "[INPUT FILEPATH]" -filter_complex "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" -map "[left]" "[LEFT OUTPUT FILEPATH]" -map "[right]" "[RIGHT OUTPUT FILEPATH]"
-	; for %f in (*.mkv) do ffmpeg -i "%f" -c:v libx264 -preset veryfast -b:v 30000k -c:a copy -filter_complex "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" -map "[left]" "%~nf_c1.mp4" -map "[right]" -c:v libx264 -preset veryfast -b:v 30000k -c:a copy "%~nf_c2.mp4"
-	```
+		- add option to use bitrate instead of crf
 	- maybe have it build array of filepaths in dir, then do a `for p in arr` runwait c1, runwait c2, continue
 		- trying to run two cmd process at the same time would likely be time beneficial but correctly waiting for them both to close before continuing might be challenging
--
-
-
-ffmpeg -i -c:v libx264 -preset veryfast -b:v 30000k -filter:v "crop=in_w/2:in_h:1920:0" -c:a copy "E:\comms\the boys\gaming\1. Escape from Wormtown\josh_c2_1920.mp4"
-ffmpeg -i "E:\comms\the boys\gaming\1. Escape from Wormtown\josh.mkv" -c:v libx264 -preset veryfast -b:v 30000k -filter:v "crop=in_w/2:in_h:1921:0" -c:a copy "E:\comms\the boys\gaming\1. Escape from Wormtown\josh_c2_1921.mp4"
-
+- [ ] make `tiktok project.ahk` use a class to clean up the spaghetti code

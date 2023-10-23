@@ -83,12 +83,10 @@ __selectres(&finalChoice, *) {
     for k, v in allCtrls {
         if v = 0
             continue
-        if Type(k) != "String"
-            continue
-        if !InStr(k, "cust",, 1)
+        if Type(k) != "String" && !InStr(k.text, "cust",, 1)
             {
-                first  := SubStr(numVals[k], 1, InStr(numVals[k], "x")-1)
-                second := SubStr(numVals[k], InStr(numVals[k], "x")+1)
+                first  := SubStr(k.text, 1, InStr(k.text, "x")-1)
+                second := SubStr(k.text, InStr(k.text, "x")+1)
                 finalChoice := {first: first, second: second}
                 return
             }

@@ -24,3 +24,4 @@
 - Added `v24` Premiere template
 - Added `nameof.ahk` by `thqby`
 - Fixed `Move Project.ahk` throwing when it attempts to delete a `Backups` folder
+- Fixed `tiktok project.ahk` not using the selected resoltion
