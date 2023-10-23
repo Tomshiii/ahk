@@ -250,10 +250,11 @@
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "window.zoomLevel": 1,
     "diffEditor.experimental.useVersion2": true,
     "[css]": {
         "editor.defaultFormatter": "vscode.css-language-features"
     },
-    "git.openRepositoryInParentFolders": "never"
+    "git.openRepositoryInParentFolders": "never",
+    "git.allowForcePush": true,
+    "window.zoomLevel": 1
 }

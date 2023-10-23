@@ -111,7 +111,7 @@ class ffmpeg {
      * @param {String} outputFileName the desired output name of your file. leaving this variable blank will leave the name the same (which may fail as ffmpeg may not be able to output a file if that name is already taken)
      * @param {String} codec the desired h26x encoder to use. defaults to `libx264`
      * @param {String} preset the desired h264 preset to use. defaults to `veryfast`
-     * @param {String} crf the desired crf value to use. defaults to `17`.  If this parameter is set, `bitrate` must be set to false
+     * @param {String} crf the desired crf value to use. defaults to `17`. If this parameter is set, `bitrate` must be set to false
      * @param {String} bitrate the deired bitrate value to use. Defaults to false. If this parameter is set, `crf` must be set to false
      */
     reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false) {

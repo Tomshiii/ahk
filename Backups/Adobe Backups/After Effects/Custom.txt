@@ -200,7 +200,7 @@
 
 
 ["** header **"]
-	"major_version" = "103"
+	"major_version" = "105"
 
 ["AE_TopLevelWindow"]
 	"SelectNextTab" = "(Alt+Shift+.)"
@@ -304,6 +304,7 @@
 	"CompTwirlScaleAddStateNewKF" = "(Alt+Shift+S)"
 	"CompTwirlScaleNewKF" = "()"
 	"NextKeyframe" = "(K)"
+	"NextKeyframeInSelection" = "(Shift+K)"
 	"NudgeDown" = "(DownArrow)"
 	"NudgeDownMore" = "(Shift+DownArrow)"
 	"NudgeEarlier" = "(Alt+PageUP)"
@@ -333,6 +334,7 @@
 	"NudgeUp" = "(UpArrow)"
 	"NudgeUpMore" = "(Shift+UpArrow)"
 	"PrevKeyframe" = "(J)"
+	"PrevKeyframeInSelection" = "(Shift+J)"
 	"SelectAllVisibleKeyframes" = "(Ctrl+Alt+A)"
 	"TemporalAlignEnd" = "(Alt+END)"
 	"TemporalAlignStart" = "(Alt+HOME)"
@@ -441,6 +443,7 @@
 	"PreviewShiftNumpad0" = "(Shift+Pad0)(Shift+PadInsert)"
 	"ShowConsole" = "(Ctrl+F12)"
 	"ShowDebugMonitor" = "(Ctrl+Shift+9)"
+	"TestHostPlugin" = "(Ctrl+Shift+F12)"
 	"TimeReverseKeyframes" = "(Ctrl+1)"
 	"ToggleTransmit" = "(PadSlash)"
 	"WriteStringFile" = "()"
@@ -472,13 +475,17 @@
 	"ToolPenToggle" = "(Shift+G)"
 	"ToolPin" = "(Ctrl+P)"
 	"ToolRotate" = "(W)"
-	"ToolRotoBrush" = "(Alt+W)"
+	"ToolRotoBrush" = "()"
 	"ToolText" = "(Ctrl+T)"
 
 ["CItem"]
 	"FastPreviewsAdaptiveResolution" = "(Ctrl+Alt+2)"
+	"FastPreviewsAdaptiveResolutionKeyboard" = "()"
+	"FastPreviewsCalderRTEDraft3DKeyboard" = "(Ctrl+Alt+4)"
 	"FastPreviewsOff" = "(Ctrl+Alt+1)"
+	"FastPreviewsOffKeyboard" = "()"
 	"FastPreviewsWireframe" = "(Ctrl+Alt+5)"
+	"FastPreviewsWireframeKeyboard" = "()"
 	"PurgeSnapshot1" = "(Ctrl+Shift+F5)"
 	"PurgeSnapshot2" = "(Ctrl+Shift+F6)"
 	"PurgeSnapshot3" = "(Ctrl+Shift+F7)"
@@ -511,6 +518,8 @@
 	"Rename" = "(Return)"
 
 ["CPanoECOutline"]
+	"FitItemView" = "(Shift+/)"
+	"FitItemViewUpTo100" = "(Alt+/)"
 	"NOP" = "()"
 	"OpenComp" = "()"
 	"SelectNext" = "(DownArrow)"
@@ -519,6 +528,12 @@
 	"SelectPreviousAdd" = "(Shift+UpArrow)"
 	"TwirlClosed" = "(LeftArrow)"
 	"TwirlOpen" = "(RightArrow)"
+	"Zoom100Percent" = "(/)"
+	"ZoomIn" = "(Ctrl+Alt+=)(.)"
+	"ZoomInResize" = "(Alt+.)(Ctrl+=)"
+	"ZoomNoScroll" = "(Ctrl+Alt+/)"
+	"ZoomOut" = "(Ctrl+Alt+-)(Comma)"
+	"ZoomOutResize" = "(Alt+Comma)(Ctrl+-)"
 
 ["CPanoProjFootage"]
 	"TimeJumpToIn" = "(I)"
@@ -535,10 +550,10 @@
 	"SelectNextMask" = "(Alt+`)"
 	"SelectPreviousMask" = "(Alt+Shift+`)"
 	"Zoom100Percent" = "(/)"
-	"ZoomIn" = "()(.)"
+	"ZoomIn" = "(.)"
 	"ZoomInResize" = "(Alt+.)(Ctrl+=)"
 	"ZoomNoScroll" = "(Ctrl+Alt+/)"
-	"ZoomOut" = "()(Comma)"
+	"ZoomOut" = "(Comma)"
 	"ZoomOutResize" = "(Alt+Comma)(Ctrl+-)"
 
 ["CPanoProjLayer"]
@@ -593,7 +608,7 @@
 	"BestQualityRecurse" = "()"
 	"BringCloser" = "(Ctrl+Alt+UpArrow)(Ctrl+])"
 	"BringToFront" = "(Ctrl+Alt+Shift+UpArrow)(Ctrl+Shift+=)(Ctrl+Shift+])"
-	"Close" = "()"
+	"Close" = "(Alt+W)"
 	"CloseAll" = "(Ctrl+Alt+W)"
 	"CloseWindow" = "(Ctrl+Shift+W)"
 	"CompSettings" = "(Ctrl+K)"
@@ -638,6 +653,7 @@
 	"KeyframeVelocityDialog" = "(Ctrl+Shift+K)"
 	"LastEffect" = "(Ctrl+Alt+Shift+E)"
 	"LayerSettings" = "(Ctrl+Shift+Y)"
+	"LookAtAll" = "()"
 	"LookAtSelected" = "(Ctrl+Alt+Shift+Yen)(Ctrl+Alt+Shift+Backslash)"
 	"LowResolution" = "(Ctrl+Alt+Shift+J)"
 	"LowResolutionRecurse" = "()"
@@ -708,6 +724,7 @@
 	"ShowHideTools" = "()"
 	"ShowProjectTree" = "(Ctrl+F11)"
 	"ShowRulers" = "(Ctrl+R)"
+	"SpeculativePreview" = "(Alt+Shift+I)"
 	"SplitLayer" = "(Ctrl+Shift+D)"
 	"SwitchTo3DViewA" = "(F10)(F10)"
 	"SwitchTo3DViewB" = "(F11)"

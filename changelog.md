@@ -1,8 +1,8 @@
-# <> Release 2.13.0 - 
+# <> Release 2.13.0 - QOL Changes
 - `Keyboard Shortcuts.ini` has been moved from `..\lib\KSA\` => `..\Support Files\KSA\`
     - This should allow the user to more easily, manually update their entire `..\lib\` folder without worrying about `KSA.ini` getting wiped in the process
 > ##### *It should be noted that this change does not protect the user in the event that a new `KSA` variable is added. It will need to be manually added back by the user or they will have to go through the usual update steps.*
-- `dirs.ini` has been added to `..\Support Files\Streamdeck Files\` where all directories specific to `Streamdeck AHK` will be kept
+- `dirs.ini` has been added to `..\Support Files\Streamdeck Files\` which will allow the user to store directories specific to `Streamdeck AHK` in one location
     - This should allow the user to more easily, manually update their entire `..\Streamdeck AHK` folder without worrying that any custom directories set are going to be wiped
 
 ## > Functions
@@ -43,4 +43,4 @@ Added a series of scripts designed to split a video in half along the horizontal
 - Added `audSelect.ahk` & `vidSelect.ahk` as additional `..\Streamdeck AHK\download\` scripts to offer the same functionality but the user gets to decide the final file destination before the script begins
 - Fixed `Move Project.ahk` throwing when it attempts to delete a `Backups` folder
 - Fixed `tiktok project.ahk` not using the selected resoltion
-- Updated UIA lib
+- Updated `UIA` lib
