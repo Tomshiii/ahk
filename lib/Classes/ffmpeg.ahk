@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/09/12
- * @version 1.0.6
+ * @date 2023/10/23
+ * @version 1.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -111,13 +111,22 @@ class ffmpeg {
      * @param {String} outputFileName the desired output name of your file. leaving this variable blank will leave the name the same (which may fail as ffmpeg may not be able to output a file if that name is already taken)
      * @param {String} codec the desired h26x encoder to use. defaults to `libx264`
      * @param {String} preset the desired h264 preset to use. defaults to `veryfast`
-     * @param {String} crf the desired crf value to use. defaults to `17`
+     * @param {String} crf the desired crf value to use. defaults to `17`.  If this parameter is set, `bitrate` must be set to false
+     * @param {String} bitrate the deired bitrate value to use. Defaults to false. If this parameter is set, `crf` must be set to false
      */
-    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17") {
+    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false) {
+        if crf != false && bitrate != false {
+            ;// throw
+            errorLog(Error("CRF and Bitrate cannot be set at the same time. One parameter must be set to false"),,, 1)
+            return
+        }
+        qualParam := crf != false ? "-crf " crf : "-b:v " bitrate "k"
         finalPath := obj.SplitPath(videoFilePath)
         finalFileName := IsSet(outputFileName) ? outputFileName : finalPath.NameNoExt
-        ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium -crf 17 output.mp4
-        cmd.run(false, true, false, Format("ffmpeg -i `"{1}`" -c:v {5} -preset {3} -crf {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, crf, codec))
+        ;// build command
+        ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium [-crf 17]/[-b:v 30000k] output.mp4
+        command := Format("ffmpeg -i `"{1}`" -c:v {5} -preset {3} {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, qualParam, codec)
+        cmd.run(false, true, false, command)
     }
 
     /**
@@ -135,6 +144,43 @@ class ffmpeg {
             case "mp3", "wav": command := Format('for %i in (*.{1}) do ffmpeg -i `"%i`" `"%~ni.{2}`"', from, to)
             default:           command := Format('for %f in (*.{1}) do ffmpeg -i `"%f`" -map 0 -c copy `"%~nf.{2}`"', from, to)
         }
+        this.__runCommand(command, path.path)
+        this.__activateWindow(path.hwnd)
+    }
+
+    /**
+     * Attempts to split in half on the horizontal axis and reencode all `.mkv` files in the chosen directory to two separate `.mp4` files. Files will be names `[original filename]_c1.mp4` and `[original filename]_c2.mp4`.
+     * @param {String} path the desired path to excecute the loop. the active directory is used by default if no path is specified
+     * @param {Object} options an object to contain all necessary encoding options. The defaults are listed below.
+     * ```
+     * options := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000}
+     * ;// bitrate is set in kilobits
+     * ```
+     * #### NOTE: `crf` & `bitrate` can NOT be set at the same time, one of them MUST be set to `false`
+     */
+    all_HCrop(path := "A", options?) {
+        optionsDef := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000}
+        if IsSet(options) {
+            for k, v in options {
+                if optionsDef.HasProp(k)
+                    optionsDef.%k% := v
+            }
+        }
+        ;// alert user if too many options set
+        if optionsDef.crf != false && optionsDef.bitrate != false {
+            ;// throw
+            errorLog(ValueError("CRF and Bitrate cannot be used at the same time. Please set one value to false.", -1),,, 1)
+            return
+        }
+        ;// determine crf or bitrate
+        crfORbitrate := (optionsDef.crf = true) ? "-crf " optionsDef.crf : "-b:v " optionsDef.bitrate "k"
+        path := this.__setPath(path)
+
+        ;// build loop command
+        ;// for %f in (*.mkv) do ffmpeg -i "%f" -c:v libx264 -preset veryfast -b:v 30000k -c:a copy -filter_complex "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" -map "[left]" "%~nf_c1.mp4" -map "[right]" -c:v libx264 -preset veryfast -b:v 30000k -c:a copy "%~nf_c2.mp4"
+        command := Format('for %f in (*.mkv) do ffmpeg -i "%f" -c:v {1} -preset {2} {3} -c:a copy -filter_complex "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" -map "[left]" "%~nf_c1.mp4" -map "[right]" -c:v {1} -preset {2} {3} -c:a copy "%~nf_c2.mp4"', optionsDef.codec, optionsDef.preset, crfORbitrate)
+
+        ;// run loop
         this.__runCommand(command, path.path)
         this.__activateWindow(path.hwnd)
     }

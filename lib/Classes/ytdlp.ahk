@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/09/12
- * @version 1.0.4
+ * @date 2023/10/23
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -171,10 +171,12 @@ class ytdlp {
                 return
             case InStr(url, "youtube.com"):
                 newName := getHTMLTitle(url)
-                getind := ytdlp().__getIndex(newName ".webm", dir)
+                ;// if yt-dlp needs to download an .mp4 as the highest qual video and a .webm as the highest qual audio, it'll merge them into a .mkv file
+                extension := FileExist(dir "\" filename ".mkv") ? ".mkv" : ".webm"
+                getind := ytdlp().__getIndex(newName extension, dir)
                 newIndex := (getind = 0 || getind = "") ? "" : getind
-                try FileMove(dir "\" filename index ".webm", dir "\" newName newIndex ".webm")
-                ytdlp().reencode(dir "\" newName newIndex ".webm", getHTMLTitle(url))
+                try FileMove(dir "\" filename index extension, dir "\" newName newIndex extension)
+                ytdlp().reencode(dir "\" newName newIndex extension, getHTMLTitle(url))
                 return
             default:
                 newName := getHTMLTitle(url)

@@ -1,3 +1,7 @@
+; { \\ #Includes
 #Include runActivate.ahk
+#Include <Classes\Streamdeck_ptf>
+; }
 
-runAndActivate("E:\_Editing stuff\Music")
+SDptf := SD_ptf()
+runAndActivate(SDptf.editingMusic)

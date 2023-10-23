@@ -2,4 +2,4 @@
 #Include <GUIs\reencodeGUI>
 ; }
 
-encodeGUI()
+encodeGUI().show()

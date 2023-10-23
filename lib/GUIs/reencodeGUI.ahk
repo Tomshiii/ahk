@@ -1,8 +1,8 @@
 /************************************************************************
- * @description A GUI to quickly reencode files using ffmpeg
+ * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2023/08/14
- * @version 1.0.0
+ * @date 2023/10/23
+ * @version 1.1.0
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -14,38 +14,71 @@
 ; }
 
 class encodeGUI extends tomshiBasic {
-    __New() {
-        if !this.__selectFile(this)
+    __New(fileOrDir := "file") {
+        if !this.__selectFile(fileOrDir, this)
             ExitApp()
         super.__New(,,, "Encode Settings")
-        this.AddText("Section", "This script uses ffmpeg to reencode the selected file to a .mp4 h264/5 file.")
-        this.AddText("xs", "Current File: ")
-        this.currentFileName := this.AddText("x+5 W300", this.currentFileName), this.currentFileName.SetFont("Bold")
+        this.MarginX := 8
+        this.AddText("Section", "This script uses ffmpeg to reencode the selected file to a h264/5 .mp4 file.")
+        if fileOrDir = "file" {
+            this.AddText("xs", "Current File: ")
+            this.currentFileName := this.AddText("x+5 W300", this.currentFileName), this.currentFileName.SetFont("Bold")
+        }
         this.AddText("xs", "Encoding: ")
         this.AddRadio("x" this.secMarg " yp Group Checked", "h264").OnEvent("Click", (*) => this.h26 := "4")
-        this.AddRadio("x+50 yp", "h265").OnEvent("Click", (*) => this.h26 := "5")
+        this.AddRadio("x" this.trdMarg " yp", "h265").OnEvent("Click", (*) => this.h26 := "5")
         this.AddText("xs", "Preset: ")
         this.AddDropDownList("x" this.secMarg " yp-3 w100 Choose3 vpres", this.presetsArr).OnEvent("Change", (guiCtrl, *) => this.preset := guiCtrl.text)
+
+        ;// separate
+        this.AddText("xs yp+45", "CRF or BR: ")
+        this.AddRadio("x" this.secMarg " yp Group Checked", "crf").OnEvent("Click", this.__crforbitRadio.Bind(this, "crf"))
+        this.AddRadio("x" this.trdMarg " yp", "bitrate").OnEvent("Click", this.__crforbitRadio.Bind(this, "bitrate"))
+        ;// crf
         this.AddText("xs", "crf: ")
-        this.AddEdit("x" this.secMarg " yp-3 Number w50")
+        this.AddEdit("x" this.secMarg " yp-3 Number w50 vCRFEdit")
         this.AddUpDown("Range0-51", 17).OnEvent("Change", (guiObj, *) => this.crf := guiObj.value)
-        this.AddButton("xs w100", "Select File").OnEvent("Click", this.__selectFile.Bind(this))
-        this.AddButton("x+10 yp w100", "Encode").OnEvent("Click", this.__doEncode.Bind(this))
-        this.show()
+        ;// bitrate
+        this.AddText("xs", "bitrate: ")
+        this.AddEdit("x" this.secMarg " yp-3 limit5 Number w75 vBitrateEdit Disabled", this.bitrate)
+        this.AddText("x+5 yp+3", "kb/s")
+
+        ;// do these last
+        this.AddButton("x" this.firstButtonX " y" this.firstButtonY " w100", "Select File").OnEvent("Click", this.__selectFile.Bind(this, fileOrDir))
+        this.AddButton("x" this.firstButtonX " y" this.firstButtonY+30 " w100", "Encode").OnEvent("Click", this.__doEncode.Bind(this))
     }
 
+    firstButtonX := 300
+    firstButtonY := 50
+
     secMarg := 80
+    trdMarg := this.secMarg+75
 
     getFile := ""
     currentFileName := ""
     h26 := "4"
     preset := "veryfast"
     crf := 17
+    crfOrBitrate := "crf"
+    bitrate := 20000
 
     overwrite := 0
     commands := ""
 
     presetsArr := ["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo"]
+
+    /** This function is called anytime the crf/bitrate radio control is toggled and facilitates disabling the opposite of the selection */
+    __crforbitRadio(which, *) {
+        this.crfOrBitrate := which
+        switch which {
+            case "crf":
+                this["BitrateEdit"].Opt("Disabled")
+                this["CRFEdit"].Opt("-Disabled")
+            case "bitrate":
+                this["BitrateEdit"].Opt("-Disabled")
+                this["CRFEdit"].Opt("Disabled")
+        }
+    }
 
     /**
      * Run the dir
@@ -58,18 +91,41 @@ class encodeGUI extends tomshiBasic {
             Run(obj.dir)
     }
 
-    __doEncode(*) {
+    /**
+     * Facilitates determining the final filename of the selected file
+     * @returns {Object}
+     * ```
+     * {
+     * fileObjOrig: ;an obj.SplitPath of the originally selected file,
+     * fileObj: ;an obj.SplitPath of the newly indexed file
+     * }
+     * ```
+     */
+    __fileObj() {
         fileObjOrig := obj.SplitPath(this.getFile)
         if FileExist(fileObjOrig.dir "\" fileObjOrig.NameNoExt ".mp4")
             this.getFile := ffmpeg().__getIndex(this.getfile)
         fileObj := obj.SplitPath(this.getFile)
-        ffmpeg().reencode_h26x(fileObjOrig.path, fileObj.NameNoExt, "libx26" this.h26, this.preset, this.crf)
-        this.__runDir(fileObj)
+        return {fileObjOrig: fileObjOrig, fileObj: fileObj}
     }
 
-    /** Allows the user to change the file to operate on */
-    __selectFile(*) {
-        newFile := FileSelect(3,, "Select file to Reencode")
+    /** This function facilitates setting up for and then calling ffmpeg to reencode the selected file */
+    __doEncode(*) {
+        pathObj := this.__fileObj()
+        crfVal := (this.crfOrBitrate = "crf") ? this.crf : false
+        bitrateVal := (crfVal = false) ? this.bitrate : false
+        ffmpeg().reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, "libx26" this.h26, this.preset, crfVal, bitrateVal)
+        this.__runDir(pathObj.fileObj)
+    }
+
+    /**
+     * Allows the user to change the file to operate on
+     * @param {String} fileOrDir whether the user is operating on a file or directory. this is necessary as some scripts will require certain actions depending on the desired outcome
+     */
+    __selectFile(fileOrDir, *) {
+        selection := (fileOrDir = "dir") ? "D " : ""
+        selectionTitle := (fileOrDir = "dir") ? "directory" : "file"
+        newFile := FileSelect(selection 3,, "Select " selectionTitle " to Reencode")
         if newFile = ""
             return false
         this.getFile := newFile

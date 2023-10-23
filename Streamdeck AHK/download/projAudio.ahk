@@ -2,6 +2,7 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\ytdlp>
+#Include <Classes\winGet>
 ; }
 
 if !WinExist(editors.Premiere.winTitle) && !WinExist(Editors.ae.winTitle)

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/10/04
- * @version 1.2.2
+ * @date 2023/10/23
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -87,6 +87,7 @@ class ptf {
         "settings",        this().UserSettings.SettingsFile,
         "monitorsINI",     this().UserSettings.SettingsDir "\monitors.ini",
         "KSAini",          this.SupportFiles "\KSA\Keyboard Shortcuts.ini",
+        "SDdirsINI",       this.SupportFiles "\Streamdeck Files\dirs.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
         "Game List",       this.lib "\gameCheck\Game List.ahk",

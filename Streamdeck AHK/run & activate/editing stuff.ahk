@@ -1,5 +1,7 @@
 ; { \\ #Includes
 #Include runActivate.ahk
+#Include <Classes\Streamdeck_ptf>
 ; }
 
-runAndActivate("E:\_Editing stuff")
+SDptf := SD_ptf()
+runAndActivate(SDptf.editingRoot)

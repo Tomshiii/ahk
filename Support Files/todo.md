@@ -26,7 +26,7 @@
 ## General
 - [ ] make screenshot script (launch from streamdeck? might not be possible to track val) for each of boys, track in class, if 0 ask for starting val (or continue from highest number in folder), ask main script for current val, increment, then name that file and continue
 - [ ] make `reset` section of `settingsGUI()` two checkboxes instead and move them below the exit section, then move the exit section up
-- [ ] make streamdeck script to crop input video in half to split cam/gameplay videos.
+- [x] make streamdeck script to crop input video in half to split cam/gameplay videos.
 	- use a gui to select the file & choose whether cam is on the left or right.
 	- maybe extend off `reencode` gui to offer the same options?
 		- add option to use bitrate instead of crf

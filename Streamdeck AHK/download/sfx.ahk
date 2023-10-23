@@ -1,9 +1,10 @@
 #SingleInstance Off
 ; { \\ #Includes
 #Include <Classes\ytdlp>
+#Include <Classes\Streamdeck_ptf>
 ; }
 
-sfxFolder := "E:\_Editing stuff\sfx"
+SDptf := SD_ptf()
 ;yt-dlp --extract-audio --audio-format wav -P "link\to\path" "URL"
 
-ytdlp().download("-N 8 --extract-audio --audio-format wav", sfxFolder)
+ytdlp().download("-N 8 --extract-audio --audio-format wav", SDptf.sfxFolder)

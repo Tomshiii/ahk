@@ -1,3 +1,7 @@
+; { \\ #Includes
 #Include runActivate.ahk
+#Include <Classes\Streamdeck_ptf>
+; }
 
-runAndActivate("E:\comms")
+SDptf := SD_ptf()
+runAndActivate(SDptf.comms)
