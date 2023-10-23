@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/10/13
- * @version 1.7.9
+ * @date 2023/10/23
+ * @version 1.7.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -25,6 +25,7 @@
 #Include <Functions\isReload>
 #Include <Functions\getLocalVer>
 #Include <Functions\trayShortcut>
+#Include <Functions\editScript>
 #Include <Other\print>
 ; }
 
@@ -549,20 +550,31 @@ class Startup {
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         check := this.UserSettings.update_check
         shortcutLink := A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\" A_ScriptName " - Shortcut.lnk"
+        startingVal := 4
+        /** Cuts the need to adjust values everytime I want to shuffle something */
+        __addAndIncrement(text, funcObj?) {
+            A_TrayMenu.Insert(startingVal "&", text, funcObj?)
+            startingVal++
+        }
         A_TrayMenu.Delete("3&")
-        A_TrayMenu.Insert("4&") ;adds a divider bar
-        A_TrayMenu.Insert("6&", "Reload All Scripts", (*) => reset.ext_reload())
-        A_TrayMenu.Insert("7&", "Hard Reset All Scripts", (*) => reset.reset())
-        A_TrayMenu.Insert("8&") ;adds a divider bar
-        A_TrayMenu.Insert("9&", "Settings", (*) => settingsGUI())
-        A_TrayMenu.Insert("10&", "keys.allUp()", (*) => keys.allUp())
-        A_TrayMenu.Insert("11&", "Active Scripts", (*) => activeScripts())
+        __addAndIncrement("") ;adds a divider bar
+        startingVal++
+        __addAndIncrement("Reload All Scripts", (*) => reset.ext_reload())
+        __addAndIncrement("Hard Reset All Scripts", (*) => reset.reset())
+        ; A_TrayMenu.Insert("6&", "Reload All Scripts", (*) => reset.ext_reload())
+        ; A_TrayMenu.Insert("7&", "Hard Reset All Scripts", (*) => reset.reset())
+        __addAndIncrement("") ;adds a divider bar
+        __addAndIncrement("Settings", (*) => settingsGUI())
+        __addAndIncrement("keys.allUp()", (*) => keys.allUp())
+        __addAndIncrement("Active Scripts", (*) => activeScripts())
         startupTray(11)
-        A_TrayMenu.Insert("13&", "Check for Updates", checkUp)
-        A_TrayMenu.Insert("14&") ;adds a divider bar
-        A_TrayMenu.Insert("15&", "Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
-        A_TrayMenu.Insert("16&", "Close All Scripts", (*) => reset.ex_exit())
-        A_TrayMenu.Insert("17&", "Open UIA Script", (*) => Run(A_WorkingDir "\lib\Other\UIA\UIA.ahk"))
+        startingVal++
+        __addAndIncrement("Check for Updates", checkUp)
+        __addAndIncrement("") ;adds a divider bar
+        __addAndIncrement("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
+        __addAndIncrement("Close All Scripts", (*) => reset.ex_exit())
+        __addAndIncrement("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
+        __addAndIncrement("Open Prem_UIA Class", (*) => editScript(ptf.rootDir "\lib\Classes\Editors\Premiere_UIA.ahk"))
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")

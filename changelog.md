@@ -9,9 +9,12 @@
 - `checkStuck()` now accepts optional param `arr` to pass in a custom array of buttons to check
 - `errorLog()` will now check for, and strip the `err.what` string of the passed in error object of the word `Prototype.` to make resulting logs easier to read
 - Code taken from `settingsGUI()` to add `generateAdobeShortcut()`
-- `adobeTemp()` will no longer run if `Premiere` or `After Effects` is currently open
 - `getHTML()` will now check the resulting string for error messages
 - `mouseDrag()` will now delay slightly between inputs to reduce the number of times the function is too fast for the desired input
+
+`startup {`
+- `adobeTemp()` will no longer run if `Premiere` or `After Effects` is currently open
+- `trayMen()` now offers option to open `Premiere_UIA.ahk`
 
 `switchTo`
 - `Premiere()` & `AE()` will now;
