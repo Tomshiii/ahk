@@ -2,7 +2,7 @@
  * @description Speed up interactions with VSCode
  * @author tomshi
  * @date 2023/07/30
- * @version 1.2.3.1
+ * @version 1.2.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -85,7 +85,7 @@ class VSCode {
                 __closeOut("The test file has been selected")
                 return
             case KSA.todoHotkey: ;// Navigates to the toDo file
-                delaySI(75, "{Down 8}{Enter}", "{Down 13}{Enter}", KSA.focusExplorerWin, "{Up 13}{Enter}", KSA.focusWork)
+                delaySI(75, "{Down 8}{Enter}", "{Down 14}{Enter}", KSA.focusExplorerWin, "{Up 14}{Enter}", KSA.focusWork)
                 __closeOut("The todo file has been selected")
                 return
         }

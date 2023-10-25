@@ -1,11 +1,11 @@
 /************************************************************************
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 slowly began moving workflow to v23.5+
- * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
+ * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 24.0
  * @author tomshi
- * @date 2023/09/24
- * @version 2.0.9
+ * @date 2023/10/25
+ * @version 2.0.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1481,6 +1481,7 @@ class Prem {
     }
 
     /**
+     * ### Note: This function will evaluate the premiere timeline coordinates based off the `Client` coordmode. This cannot be changed.
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
      * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values. Defaults to true. Sends tooltips on `WhichToolTip` 11/12/13
      * @returns {Boolean} `true/false`
@@ -1497,6 +1498,7 @@ class Prem {
         ; SendInput(KSA.timelineWindow)
         ; SendInput(KSA.timelineWindow)
         sleep 75
+        coord.client()
         try {
             premName   := WinGet.PremName()
             AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
@@ -1510,7 +1512,7 @@ class Prem {
         this.timelineXValue   := x + width - 22  ;accounting for the scroll bars on the right side of the timeline
         this.timelineYValue   := y + 46          ;accounting for the area at the top of the timeline that you can drag to move the playhead
         this.timelineXControl := x + 236         ;accounting for the column to the left of the timeline
-        this.timelineYControl := y + height + 40 ;accounting for the scroll bars at the bottom of the timeline
+        this.timelineYControl := y + height - 25 ;accounting for the scroll bars at the bottom of the timeline
         this.timelineVals     := true
         if tools = true
             SetTimer(tooltips, -100)

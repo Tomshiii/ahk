@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.0
  * @author tomshi, taranVH
- * @date 2023/10/13
- * @version 2.0.16
+ * @date 2023/10/25
+ * @version 2.0.17
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -217,7 +217,7 @@ class rbuttonPrem {
 		}
 
 		;// set coord mode and grab the cursor position
-		coord.s()
+		coord.client()
 		origMouse := obj.MousePos()
 
 		;// set what `LButton` & `XButton2` do

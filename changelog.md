@@ -8,6 +8,7 @@
 ## > Functions
 - Added `editScript()`
 - Fixed `ytdlp().handleDownload()` not handling outlier scenario where a `.mkv` is generated
+- Fixed `prem.getTimeline()` incorrectly calculating timeline coordinates
 - Removed references to `7zip.ahk` from `startup.libUpdateCheck()` as the script has been pulled by `thqby`
 - `rbuttonPrem().movePlayhead()` now accepts optional param `allChecks` and allows the user to call `movePlayhead()` even if the cursor is hovering over a video/audio track
 - `checkStuck()` now accepts optional param `arr` to pass in a custom array of buttons to check
