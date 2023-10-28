@@ -3,9 +3,9 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2023/09/24
- * @version v2.12.5b
- * @ahk_ver 2.0.9
+ * @date 2023/10/28
+ * @version v2.13.0
+ * @ahk_ver 2.0.10
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
