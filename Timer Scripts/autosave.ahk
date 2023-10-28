@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/10/09
- * @version 2.0.9
+ * @date 2023/10/28
+ * @version 2.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,6 +41,7 @@ class adobeAutoSave extends count {
             this.UserSettings := UserPref()
             this.ms := (this.UserSettings.autosave_MIN * 60000)
             this.beep := this.UserSettings.autosave_beep
+            this.checkMouse := this.UserSettings.autosave_check_mouse
             this.saveOverride := this.UserSettings.autosave_save_override
             this.UserSettings := ""
         }
@@ -74,6 +75,7 @@ class adobeAutoSave extends count {
     idleAttempt   := false
 
     beep          := true
+    checkMouse    := true
     soundName     := ""
     currentVolume := ""
     resetingSave  := false
@@ -134,7 +136,9 @@ class adobeAutoSave extends count {
             ;// if the user has interacted with the keyboard recently
             ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
             ;// the save attempt will be paused and retried
-            if (A_TimeIdleKeyboard <= 500) || ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500) || GetKeyState("RButton", "P") {
+            if (A_TimeIdleKeyboard <= 500)
+                || (this.checkMouse = true && ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500))
+                || GetKeyState("RButton", "P") {
                 if A_Index > 1
                     this.__playBeep()
                 errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s"),, {time: 2.0})

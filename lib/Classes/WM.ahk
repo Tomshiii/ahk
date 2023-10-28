@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2023/09/24
- * @version 1.1.1
+ * @date 2023/10/28
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -138,6 +138,8 @@ class WM {
                 %res[2]%.beep := res[1]
             case "autosave_save_override":
                 %res[2]%.saveOverride := res[1]
+            case "autosave_check_mouse":
+                %res[2]%.checkMouse := res[1]
             default:
                 MsgBox("A message attempt was made but a declaration for its contents hasn't been defined. This means that Tomshi has made a mistake somewhere. Please open an issue on github explaining how to reproduce this message to alert him of his mistake!`n`nFor debug purposes;`ndetermineWhich: " determineWhich)
         }

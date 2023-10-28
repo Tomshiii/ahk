@@ -34,13 +34,9 @@ class SettingsToolTips {
         Yes: "``autosave.ahk`` will beep to alert the user it is attempting to save",
         No: "``autosave.ahk`` will no longer beep to alert the user that it is attempting to save"
     }
-    autosaveCheck := {
-        Yes: "``autosave.ahk`` will check to ensure you have ``checklist.ahk`` open",
-        No: "``autosave.ahk`` will no longer check to ensure you have ``checklist.ahk`` open"
-    }
-    autosaveTooltip := {
-        Yes: "``autosave.ahk`` will produce tooltips on the minute, in the last 4min to alert the user a save is coming up",
-        No: "``autosave.ahk`` will no longer produce tooltips on the minute, in the last 4min to alert the user a save is coming up"
+    autosaveMouse := {
+        Yes: "``autosave.ahk`` will check to ensure you haven't recently interacted with the mouse",
+        No: "``autosave.ahk`` will no longer check to ensure you haven't recently interacted with the mouse"
     }
     autosaveOverride := {
         Yes: "Manually saving within Premiere/After Effects will reset ``autosave.ahk`` timer",
@@ -238,19 +234,10 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
-    ;// autosave check checklist
-    ascheckCheckTitle := " Auto open ``checklist.ahk``"
-    ;// currently disabled
-    settingsGUI.AddCheckbox("vascheckToggle Checked0 Y+20", ascheckCheckTitle).OnEvent("Click", toggle.Bind("autosave check checklist", "autosave"))
-    settingsGUI["ascheckToggle"].Opt("Disabled")
-    settingsGUI["ascheckToggle"].ToolTip := (UserSettings.autosave_check_checklist = true) ? toolT.autosaveCheck.Yes : toolT.autosaveCheck.No
-
-    ;// autosave tooltips
-    tooltipCheckTitle := "``autosave.ahk`` tooltips"
-    ;// currently disabled
-    settingsGUI.AddCheckbox("vtoggleToggle Checked0 Y+5", tooltipCheckTitle).OnEvent("Click", toggle.Bind("tooltip", "autosave"))
-    settingsGUI["toggleToggle"].Opt("Disabled")
-    settingsGUI["toggleToggle"].ToolTip := (UserSettings.tooltip = true) ? toolT.autosaveTooltip.Yes : toolT.autosaveTooltip.No
+    ;// autosave check mouse
+    ascheckMouseTitle := "``autosave.ahk`` check mouse"
+    settingsGUI.AddCheckbox("vasmouseToggle Checked" UserSettings.autosave_check_mouse " Y+20", ascheckMouseTitle).OnEvent("Click", toggle.Bind("autosave check mouse", "autosave"))
+    settingsGUI["asmouseToggle"].ToolTip := (UserSettings.autosave_check_mouse = true) ? toolT.autosaveMouse.Yes : toolT.autosaveMouse.No
 
     ;// autosave beep
     asBeepTitle := "``autosave.ahk`` beep"
@@ -273,12 +260,9 @@ settingsGUI()
         ToolTip("")
         ;// each switch here goes off the TITLE variable we created
         switch script.text {
-            case tooltipCheckTitle:
-                toolTrue := toolT.autosaveTooltip.Yes
-                toolFalse := toolT.autosaveTooltip.No
-            case ascheckCheckTitle:
-                toolTrue := toolT.autosaveCheck.Yes
-                toolFalse := toolT.autosaveCheck.No
+            case ascheckMouseTitle:
+                toolTrue := toolT.autosaveMouse.Yes
+                toolFalse := toolT.autosaveMouse.No
             case StartupCheckTitle:
                 toolTrue := toolT.startup.Yes
                 toolFalse := toolT.startup.No
@@ -310,8 +294,8 @@ settingsGUI()
                 }
                 return
             }
-        ;// reloading autosave & updating setting value
-        if (InStr(script.text, "autosave") || InStr(script.text,ascheckCheckTitle)) && WinExist("autosave.ahk - AutoHotkey")
+        ;// changing requested value
+        if InStr(script.text, "autosave") && WinExist("autosave.ahk - AutoHotkey")
             WM.Send_WM_COPYDATA(iniVar "," script.Value "," objName, "autosave.ahk")
     }
 

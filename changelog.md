@@ -36,12 +36,16 @@ Added a series of scripts designed to split a video in half along the horizontal
 - Added `hCrop OnlyCam.ahk` - to produce a GUI allowing the user to select only one half of all `.mkv` files in a selected directory to be output to a new file
 - Added `hCrop Single.ahk`  - to split in half a single selected file
 
+## > autosave.ahk
+- No longer backs up project files when the user manually saves with <kbd>Ctrl + s</kbd> to help mitigate the backup folders inflating to giant sizes during long projects
+- Checking if the user has interacted with the mouse before proceeding with a save attempt can now be toggled within `settingsGUI()`
+
 ## > Other Changes
-- `autosave.ahk` will no longer backup project files when the user manually saves with <kbd>Ctrl + s</kbd> to help mitigate the backup folders inflating to giant sizes during long projects
 - Added `v24` Premiere template
 - Added `nameof.ahk` by `thqby`
 - Added `deleteDotUnderscore.ahk` to delete annoying macOS files from a directory
 - Added `audSelect.ahk` & `vidSelect.ahk` as additional `..\Streamdeck AHK\download\` scripts to offer the same functionality but the user gets to decide the final file destination before the script begins
 - Fixed `Move Project.ahk` throwing when it attempts to delete a `Backups` folder
 - Fixed `tiktok project.ahk` not using the selected resoltion
+- Fixed `gameCheck.ahk` being unable to call the GUI from the tray menu
 - Updated `UIA` lib

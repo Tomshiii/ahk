@@ -40,6 +40,7 @@ class adobeVers {
         "v24.7",    "v24.3",
         "v24.7.1",  "v24.3",
         "v25.0",    "v24.3",
+        "v25.1",    "v24.3",
     )
 
     static maps := [this().Premiere, this().AE, this().PS]

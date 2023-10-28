@@ -60,7 +60,7 @@ gameAdd(*) {
     ;// otherwise things like the taskbar would populate the GUI instead of the most recently active window
     for this_value in value {
         if WinGet.isProc(this_value)
-            return
+            continue
         ;// generate the gui
         gameGUI := gameCheckGUI(, WinGetTitle(this_value), WinGetProcessName(this_value))
         gameGUI.Show("AutoSize")

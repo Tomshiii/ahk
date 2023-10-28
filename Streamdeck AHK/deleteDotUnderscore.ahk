@@ -13,6 +13,7 @@ __rootDirDelete(dirName) {
         DirDelete(selectedDir "\" dirName, 1)
 }
 
+__rootDirDelete(".fseventsd")
 __rootDirDelete(".Spotlight-V100")
 __rootDirDelete(".TemporaryItems")
 __rootDirDelete(".Trashes")
