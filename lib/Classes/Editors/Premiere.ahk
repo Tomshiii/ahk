@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 24.0
  * @author tomshi
- * @date 2023/10/25
- * @version 2.0.10
+ * @date 2023/10/29
+ * @version 2.0.10.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1862,7 +1862,7 @@ class Prem {
      * This function attempts to delay playback immediately after a trim to mitigate this behaviour. This function might require some adjustment from the user depending on how fast/slow their pc is
      * @param {Integer} delayMS the delay in `ms` that you want the function to wait before attempting to resume playback. Keep in mind that the final delay will be `delayMS - A_TimeIdleKeyboard` so that if you've already waited a majority of the time, the function won't delay you even more
      */
-    static delayPlayback(delayMS := 250) {
+    static delayPlayback(delayMS := 150) {
         __sendSpace() => (SendEvent(ksa.playStop), Exit())
         if A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext
             __sendSpace()
