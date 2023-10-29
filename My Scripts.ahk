@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.10
+;\\v2.33.11
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -457,6 +457,9 @@ $Tab::
 	sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
 	SendInput(sendMod "{Tab}")
 }
+
+;spaceDelayHotkey;
+Space::prem.delayPlayback()
 
 ;linkActivateHotkey;
 ~^l::SendInput(KSA.selectAtPlayhead)

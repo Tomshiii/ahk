@@ -1857,6 +1857,20 @@ class Prem {
         this.scrollSpeed := originalSpeed
     }
 
+    /**
+     * If the user immediately attempts to resume playback after ripple trimming the playhead will sometimes not be placed at the new clip and will inadvertently begin playback where you might not expect it
+     * This function attempts to delay playback immediately after a trim to mitigate this behaviour. This function might require some adjustment from the user depending on how fast/slow their pc is
+     * @param {Integer} delayMS the delay in `ms` that you want the function to wait before attempting to resume playback. Keep in mind that the final delay will be `delayMS - A_TimeIdleKeyboard` so that if you've already waited a majority of the time, the function won't delay you even more
+     */
+    static delayPlayback(delayMS := 250) {
+        __sendSpace() => (SendEvent(ksa.playStop), Exit())
+        if A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext
+            __sendSpace()
+        if A_TimeIdleKeyboard >= delayMS
+            __sendSpace()
+        SetTimer((*) => __sendSpace(), -(delayMS-A_TimeIdleKeyboard))
+    }
+
     ;//! *** ===============================================
 
     class Excalibur {
