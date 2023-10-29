@@ -2,7 +2,7 @@
  * @description Speed up interactions with VSCode
  * @author tomshi
  * @date 2023/07/30
- * @version 1.2.3.2
+ * @version 1.2.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -81,7 +81,7 @@ class VSCode {
                 __closeOut("The function folder has been expanded")
                 return
             case KSA.testHotkey:       ;// I have a dummy test .ahk file I use constantly, this is simply navigating to it
-                delaySI(50, "{Down 5}{Enter}", "{Down 16}{Enter}")
+                delaySI(50, "{Down 5}{Enter}", "{Down 17}{Enter}")
                 __closeOut("The test file has been selected")
                 return
             case KSA.todoHotkey: ;// Navigates to the toDo file
