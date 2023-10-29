@@ -2,7 +2,7 @@
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
  * @date 2023/10/29
- * @version 1.0.9
+ * @version 1.0.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -135,7 +135,23 @@ class ffmpeg {
     }
 
     /**
-     * Attempts to convert all files of the input type, to the desired type
+     * Uses ffmpeg to determine the framerate of a file
+     * @param {String} filePath the directory path of the file you wish to check
+     * @returns {Integer} either the framerate of the file or boolean false upon failure
+     */
+    __determineFrameRate(filePath, defaultFramerate := 60) {
+        ;// determine framerate of file
+        frameCMD := Format('ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 "{1}"', filePath)
+        frameCMD := cmd.result(frameCMD)
+        ;// manipulate the resulting string to remove the `/` and anything after it
+        probeFramerate := SubStr(frameCMD, 1, InStr(frameCMD, "/",, 1, 1)-1)
+        ;// determining if result is successful
+        frameRT  := IsInteger(probeFramerate) ? probeFramerate : false
+        return frameRT
+    }
+
+    /**
+     * Attempts to convert all files of the input type, to the desired type. You may notice this function flash a cmd window, that's ffmpeg determining the fps of the file it is operating on
      * @param {String} path the path of the desired files. If no path is provided this parameter defaults to the active windows explorer window
      * @param {String} from the filetype you wish to convert from
      * @param {String} to the filetype you wish to convert to
@@ -143,7 +159,7 @@ class ffmpeg {
      */
     all_XtoY(path := "A", from := "mkv", to := "mp4", frameRate := 60) {
         path := this.__setPath(path)
-        ;// audio - video; ffmpeg commands
+        ;// audio - video; ffmpeg loop commands
         ;// for %i in (*.mkv) do ffmpeg -i "%i" "%~ni.mp3"
         ;// for %f in (*.mkv) do ffmpeg -i "%f" -map 0 -c copy "%~nf.mp4"
         switch to {
@@ -151,15 +167,14 @@ class ffmpeg {
                 command := Format('for %i in (*.{1}) do ffmpeg -i `"%i`" `"%~ni.{2}`"', from, to)
                 this.__runCommand(command, path.path)
                 this.__activateWindow(path.hwnd)
-            default:
-                ;// attempt to determine framerate of files in directory
+            default: ;// assumes video file
+                ;// attempt to determine framerate of all files in directory
                 fileArr := Map()
                 loop files path.path "\*." from, "F" {
-                    ;// determine framerate of file
-                    frameCMD := Format('ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 "{1}"', A_LoopFileFullPath)
-                    frameRT := IsInteger(probeFramerate := SubStr(frameCMD, 1, InStr(frameCMD, "/",, 1, 1))) ? probeFramerate : frameRate
+                    frameRT := (!fps := this.__determineFrameRate(A_LoopFileFullPath, frameRate)) ? frameRate : fps
                     fileArr.Set(A_LoopFileFullPath, frameRT)
                 }
+                ;// operate on all files in the map
                 for k, v in fileArr {
                     outputPath := obj.SplitPath(k)
                     command := Format('ffmpeg -i "{1}" -map 0 -c copy -video_track_timescale {3} "{2}"', k, outputPath.dir "\" outputPath.NameNoExt "." to, v)
