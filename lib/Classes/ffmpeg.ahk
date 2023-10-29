@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/10/23
- * @version 1.0.7
+ * @date 2023/10/29
+ * @version 1.0.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -134,15 +134,16 @@ class ffmpeg {
      * @param {String} path the path of the desired files. If no path is provided this parameter defaults to the active windows explorer window
      * @param {String} from the filetype you wish to convert from
      * @param {String} to the filetype you wish to convert to
+     * @param {Integer} frameRate the framerate you wish for the remux to obide by. This is important as otherwise a `60fps` file might end up remuxing as `60.0002fps` or something like that which has performance issues within NLE's like Premiere
      */
-    all_XtoY(path := "A", from := "mkv", to := "mp4") {
+    all_XtoY(path := "A", from := "mkv", to := "mp4", frameRate := 60) {
         path := this.__setPath(path)
         ;// audio - video; ffmpeg commands
         ;// for %i in (*.mkv) do ffmpeg -i "%i" "%~ni.mp3"
         ;// for %f in (*.mkv) do ffmpeg -i "%f" -map 0 -c copy "%~nf.mp4"
         switch to {
             case "mp3", "wav": command := Format('for %i in (*.{1}) do ffmpeg -i `"%i`" `"%~ni.{2}`"', from, to)
-            default:           command := Format('for %f in (*.{1}) do ffmpeg -i `"%f`" -map 0 -c copy `"%~nf.{2}`"', from, to)
+            default:           command := Format('for %f in (*.{1}) do ffmpeg -i `"%f`" -map 0 -c copy -video_track_timescale {3} `"%~nf.{2}`"', from, to, frameRate)
         }
         this.__runCommand(command, path.path)
         this.__activateWindow(path.hwnd)

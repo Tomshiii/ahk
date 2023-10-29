@@ -38,11 +38,11 @@ class v23_base {
 }
 
 class v24_base {
-    timeline              := "YwY"
-    effectsControl        := "Y/Y"
-    tools                 := "YtY"
-    programMon            := "YqYY"
-    effectsPanel          := "YuY"
+    timeline              := "YyY"
+    effectsControl        := "YrY"
+    tools                 := "YvY"
+    programMon            := "YtY"
+    effectsPanel          := "YwY"
 }
 
 ;// if a specific version breaks anything from the base, create a new class like;
