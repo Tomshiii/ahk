@@ -7,9 +7,9 @@
  * @param {Integer} adobeYear the year value you wish to determine the logic for.
  */
 generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
-    if Type(userSettingsObj) != "Object" {
+    if Type(userSettingsObj) != "UserPref" {
         ;// throw
-        errorLog(ValueError("Incorrect Value type passed in Parameter #1", -1),,, 1)
+        errorLog(ValueError("Incorrect Value type passed in Parameter #1`nNeeds to be UserPref", -1),,, 1)
     }
     if adobeName != "Adobe Premiere Pro" && adobeName != "Adobe After Effects" {
         ;// throw
