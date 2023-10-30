@@ -8,3 +8,4 @@
 
 ## > Other Changes
 - Fixed `audSelect.ahk` & `vidSelect.ahk` not functioning
+- Added `..\Streamdeck AHK\screenshots\` scripts

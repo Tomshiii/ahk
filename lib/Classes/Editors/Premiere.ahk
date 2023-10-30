@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 24.0
  * @author tomshi
- * @date 2023/10/29
- * @version 2.0.10.1
+ * @date 2023/10/30
+ * @version 2.0.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -63,6 +63,13 @@ class Prem {
     ;// rbuttonPrem
     static focusTimelineStatus := true
     static RClickIsActive := false
+
+    ;// screenshots
+    static scEddie    := "1"
+    static scNarrator := "1"
+    static scJuicy    := "1"
+    static scMully    := "1"
+    static scJosh     := "1"
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -1869,6 +1876,57 @@ class Prem {
         if A_TimeIdleKeyboard >= delayMS
             __sendSpace()
         SetTimer((*) => __sendSpace(), -(delayMS-A_TimeIdleKeyboard))
+    }
+
+    /**
+     * This function is almost entirely designed for my own workflow and requires hardcoded variables at the top of the class that are then specifically acted apon in various other classes/scripts.
+     * A function to facilitate quickly retriving large quantities of screenshots for yt thumbnails. This function is designed to be called from a streamdeck script and there may be unexpected behaviour if done in any other way
+     * @param {String} who the name of the person I'm grabbing the screenshot of
+     */
+    static screenshot(who) {
+        if !WinExist(prem.exeTitle)
+            return
+        if !WinActive(prem.exeTitle)
+            switchTo.Premiere()
+        sleep 50
+        scrshtTitle := "Export Frame"
+        try {
+            premName   := WinGet.PremName()
+            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            toolsClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.programMon).GetControlId()) ;gets the ClassNN value of the tools window
+            ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
+        } catch {
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+            return
+        }
+        __clickProx(x, y) {
+            MouseGetPos(&origX, &origY)
+            MouseMove(x, y, 2)
+            SendInput("{Click}")
+            sleep 250
+            MouseMove(origX, origY, 2)
+            sleep 250
+        }
+        if proxSrch := ImageSearch(&proxX, &proxY, toolx,  tooly, toolx+width, tooly+height+50, "*2 " ptf.Premiere "\proxy_on.png") {
+            __clickProx(proxX, proxY)
+        }
+        SendEvent(ksa.premExportFrame)
+        if !WinWait(scrshtTitle,, 3)
+            return
+        SendEvent(who "_" this.sc%who%)
+        if this.sc%who% = 1 {
+            if !WinWaitClose(scrshtTitle,, 10)
+                return
+            __clickProx(proxX, proxY)
+            return
+        }
+        SendEvent("{Enter}")
+        if !WinWaitClose(scrshtTitle,, 10)
+            return
+        sleep 50
+        if !proxSrch
+            return
+        __clickProx(proxX, proxY)
     }
 
     ;//! *** ===============================================

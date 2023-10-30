@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2023/10/28
- * @version 1.1.2
+ * @date 2023/10/30
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -111,6 +111,11 @@ class WM {
             case "Premiere_RightClick":
                 response := (prem.RClickIsActive = true) ? "Premiere_RightClick,true" : "Premiere_RightClick,false"
                 this.Send_WM_COPYDATA(response, splitMsg[2])
+            case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator":
+                getName := SubStr(splitMsg[1], InStr(splitMsg[1], "_",, 1, 1)+1)
+                response := "Premiere_" getName "," String(prem.%getName%)
+                prem.%getName%++
+                this.Send_WM_COPYDATA(response, splitMsg[2])
         }
     }
 
@@ -140,6 +145,9 @@ class WM {
                 %res[2]%.saveOverride := res[1]
             case "autosave_check_mouse":
                 %res[2]%.checkMouse := res[1]
+            case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator":
+                getName := SubStr(determineWhich, InStr(determineWhich, "_",, 1, 1)+1)
+                prem.%getName% := res[1]
             default:
                 MsgBox("A message attempt was made but a declaration for its contents hasn't been defined. This means that Tomshi has made a mistake somewhere. Please open an issue on github explaining how to reproduce this message to alert him of his mistake!`n`nFor debug purposes;`ndetermineWhich: " determineWhich)
         }

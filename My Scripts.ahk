@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.11
+;\\v2.33.12
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -223,10 +223,10 @@ ScrollLock::switchTo.Streamdeck() ;run/swap to the streamdeck program
 
 ;This script is to open the ahk documentation. If ctrl is held, highlighted text will be searched
 ;akhdocuHotkey;
-RCtrl::
+RWin::
 ;// both are needed here otherwise using ctrl+appskey might fail to work if the active window grabs it first
 ;ahksearchHotkey;
-RShift & RCtrl::
+RShift & RWin::
 {
 	;// logic if ctrl isn't being held
 	if !GetKeyState("RShift", "P")

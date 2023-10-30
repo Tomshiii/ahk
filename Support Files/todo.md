@@ -21,7 +21,7 @@
 	- [ ] maybe make a third func to completely reset the playhead to the left and have `prem.thumbscroll()` optionally call it if it hits the end of the timeline
 
 ## General
-- [ ] make screenshot script (launch from streamdeck? might not be possible to track val) for each of boys, track in class, if 0 ask for starting val (or continue from highest number in folder), ask main script for current val, increment, then name that file and continue
+- [x] make screenshot script (launch from streamdeck? might not be possible to track val) for each of boys, track in class, ~~if 0 ask for starting val (or continue from highest number in folder),~~ ask main script for current val, increment, then name that file and continue
 - [ ] make `reset` section of `settingsGUI()` two checkboxes instead and move them below the exit section, then move the exit section up
 ***
 
