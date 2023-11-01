@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2023/11/01
- * @version 1.5.15
+ * @version 1.5.15.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -59,30 +59,30 @@ class WinGet {
     {
         if !IsSet(title) || title = "A"
             this.Title(&title)
-        attempt := 0
-        tryagain:
-        attempt++
-        ;// attempt to determine the position of the window
-        try WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
-        catch {
-            errorLog(TargetError("Failed to determine the active window", -1),, 1)
-            Exit()
-        }
-        ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
-		;// so we just add 10 pixels to both variables to ensure we're in the correct monitor
-        monObj := this().__Monitor(x + 10, y + 10)
-        if !IsObject(monObj) {
-            if attempt > 2 {
-                errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1)
-                            , "The window may be overlapping monitors", 1)
+        loop {
+            ;// attempt to determine the position of the window
+            try WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
+            catch {
+                errorLog(TargetError("Failed to determine the active window", -1),, 1)
                 Exit()
             }
-            ;// if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
-            if !winget.isFullscreen(&testWin, title)
-                {
-                    WinMaximize(title,, "Editing Checklist -")
-                    goto tryagain
+            ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
+            ;// so we just add 10 pixels to both variables to ensure we're in the correct monitor
+            monObj := this().__Monitor(x + 10, y + 10)
+            if !IsObject(monObj) {
+                if A_Index > 2 {
+                    errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1)
+                                , "The window may be overlapping monitors", 1)
+                    Exit()
                 }
+                ;// if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
+                if !winget.isFullscreen(&testWin, title)
+                    {
+                        WinMaximize(title,, "Editing Checklist -")
+                        continue
+                    }
+            }
+            break
         }
         return {monitor: monObj.monitor, left: monObj.left, right: monObj.right, top:monObj.top, bottom: monObj.bottom}
     }
@@ -403,9 +403,9 @@ class WinGet {
     static FolderSize(path, option?) {
         if !IsSet(option)
             return ComObject("Scripting.FileSystemObject").GetFolder(path).Size
-        if option > 3 || option < 1 {
+        if option > 3 || option < 1 || !IsInteger(option) {
                 ;// throw
-                errorLog(ValueError("Parameter #2 invalid - Value Out of Range", -1, option),,, 1)
+                errorLog(ValueError("Parameter #2 invalid - Value Out of Range or Not an Integer", -1, option),,, 1)
             }
         ;// you convert bytes to another unit by x / (1024^y)
         ;// ie. bytes => MB ; x / (1024x1024x1024) OR x / 1024^2
