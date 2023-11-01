@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/09/04
- * @version 1.5.14
+ * @date 2023/11/01
+ * @version 1.5.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,7 +18,8 @@ class WinGet {
     /** A map containing common win explorer class names that some functions may wish to ignore */
     static explorerIgnoreMap := Mip(
         "Button", 1, "Shell_TrayWnd", 1, "NotifyIconOverflowWindow", 1,
-        "Shell_SecondaryTrayWnd", 1, "Progman", 1, "TopLevelWindowForOverflowXamlIsland", 1
+        "Shell_SecondaryTrayWnd", 1, "Progman", 1, "TopLevelWindowForOverflowXamlIsland", 1,
+        "SearchHost", 1
     )
 
     /**
@@ -56,12 +57,17 @@ class WinGet {
      */
     static WinMonitor(title?)
     {
-        if !IsSet(title)
+        if !IsSet(title) || title = "A"
             this.Title(&title)
         attempt := 0
         tryagain:
         attempt++
-        WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
+        ;// attempt to determine the position of the window
+        try WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
+        catch {
+            errorLog(TargetError("Failed to determine the active window", -1),, 1)
+            Exit()
+        }
         ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
 		;// so we just add 10 pixels to both variables to ensure we're in the correct monitor
         monObj := this().__Monitor(x + 10, y + 10)
