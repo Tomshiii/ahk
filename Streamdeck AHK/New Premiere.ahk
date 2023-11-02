@@ -22,24 +22,22 @@ if SelectedFolder = ""
     return
 pause.pause("autosave")
 pause.pause("adobe fullscreen check")
-DirCreate(SelectedFolder "\videos") ;creates a video folder if there isn't one already
-DirCreate(SelectedFolder "\audio") ;creates an audio folder if there isn't one already
-DirCreate(SelectedFolder "\proxies") ;creates the proxy folder we'll need later
-DirCreate(SelectedFolder "\proxies\colour renders")
-DirCreate(SelectedFolder "\proxies\timeline renders")
-DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
-DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
-DirCreate(SelectedFolder "\_project files") ;creates a folder to render the final into
+dirs := [
+    "\videos",                 "\audio\music",              "\audio\sfx",
+    "\proxies\colour renders", "\proxies\timeline renders", "\renders\draft",
+    "\renders\final",          "\_project files"
+]
+for v in dirs
+    DirCreate(SelectedFolder v)
 
 ;// Getting the name of the project folder to use as a default for the below inputbox
 SplitPath(SelectedFolder, &default)
 IB := InputBox("Enter the name of your project", "Project", "w100 h100", default)
-    if IB.Result = "Cancel"
-        {
-            pause.pause("autosave")
-            pause.pause("adobe fullscreen check")
-            return
-        }
+if IB.Result = "Cancel" {
+    pause.pause("autosave")
+    pause.pause("adobe fullscreen check")
+    return
+}
 ;// Copying over the template file
 count := 0
 loop files ptf["premTemp"] "\*.prproj", "F" {
@@ -56,17 +54,15 @@ if count > 1 {
 }
 FileCopy(chosenFile, SelectedFolder "\_project files\" IB.Value ".prproj")
 Run(prem.path A_Space '"' SelectedFolder "\_project files\" IB.Value ".prproj" '"')
-if !WinWait("Open Project",, 20)
-    {
-        check := MsgBox("Script didn't encounter Open Project window, can the script proceed?", "Check", "4 32 4096")
-        if check = "No"
-            {
-                pause.pause("autosave")
-                pause.pause("adobe fullscreen check")
-                return
-            }
-        goto skip
+if !WinWait("Open Project",, 20) {
+    check := MsgBox("Script didn't encounter Open Project window, can the script proceed?", "Check", "4 32 4096")
+    if check = "No" {
+        pause.pause("autosave")
+        pause.pause("adobe fullscreen check")
+        return
     }
+    goto skip
+}
 ;! // make the below use something other than sleep??
 ;// waiting for premiere to load
 sleep 5000

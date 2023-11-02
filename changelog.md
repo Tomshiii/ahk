@@ -10,3 +10,4 @@
 ## > Other Changes
 - Fixed `audSelect.ahk` & `vidSelect.ahk` not functioning
 - Added `..\Streamdeck AHK\screenshots\` scripts
+- `hCrop CamSingle.ahk` will now append `_cropped` to the resulting filename

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly horizontally crop video files using ffmpeg
  * @author tomshi
- * @date 2023/10/23
- * @version 1.0.0
+ * @date 2023/11/02
+ * @version 1.0.1
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -79,9 +79,9 @@ class hCropGui extends encodeGUI {
     __singleCamCrop(which, *) {
         qualFact := (this.crfORbitrate = "crf") ? "-crf " this.crf : "-b:v " this.bitrate "k"
         finalPath := obj.SplitPath(this.getFile)
-        finalFileName := finalPath.dir "\" finalPath.NameNoExt ".mp4"
         switch which {
             case "cam":
+                finalFileName := finalPath.dir "\" finalPath.NameNoExt "_cropped.mp4"
                 whichCrop := this["LorR"].value = true ? '"crop=in_w/2:in_h:0:0"' : '"crop=in_w/2:in_h:in_w/2:0"'
                 ;// build command
                 command := Format('ffmpeg -i "{1}" -c:v {2} -preset {3} {4} -c:a copy -filter:v {5} "{6}"', this.getFile, "libx26" this.h26, this.preset, qualFact, whichCrop, finalFileName)
