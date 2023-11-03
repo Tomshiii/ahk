@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/10/09
- * @version 1.2.13
+ * @date 2023/11/03
+ * @version 1.2.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -370,12 +370,15 @@ class switchTo {
     static Photoshop() => this().__Win(PS.winTitle, PS.path, "photoshop")
 
     /**
-     * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+     * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one.
+     * This function may require firefox to be properly installed to the system path
      */
     static Firefox()
     {
         if !WinExist(browser.firefox.class) {
-            Run("firefox.exe")
+            RunWait("firefox.exe")
+            if !WinActive(browser.firefox.winTitle)
+                WinActivate(browser.firefox.winTitle)
             return
         }
         if !WinActive(browser.firefox.winTitle) {
@@ -387,6 +390,7 @@ class switchTo {
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+     * This function may require firefox to be properly installed to the system path
      */
     __OtherFirefoxWindow()
     {
