@@ -1,6 +1,8 @@
 # <> Release 2.13.x - 
 
 ## > Functions
+- Added `ffmpeg.extractAudio()` to extract all audio streams from a file
+    - Added `extractAudio.ahk` streamdeck script
 - Fixed `generateAdobeShortcut()` throwing when called from `settingsGUI()`
 - Fixed `WinGet.WinMonitor()` throwing when unable to determine the position of the passed in window
 - Fixed firefox not being the focused window after being opened using `switchTo.firefox()`

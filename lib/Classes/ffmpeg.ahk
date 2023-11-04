@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/10/29
- * @version 1.0.10
+ * @date 2023/11/04
+ * @version 1.0.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -255,6 +255,25 @@ class ffmpeg {
         if !runDir
             return
         this.__runDir(pathobj)
+    }
+
+    /**
+     * Extracts all audio streams from a file and saves them as `.wav`
+     * @param {String} filepath the filepath of the file you wish to extract the audio from
+     */
+    extractAudio(filepath) {
+        split := obj.SplitPath(filepath)
+        try probecmd := cmd.result(Format('ffprobe "{1}"', filepath))
+        catch {
+            ;// throw
+            errorLog(UnsetError("File May not contain any audio streams", -1, filepath),,, true)
+        }
+        RegExReplace(probecmd, "(Audio)", "Audio", &amount)
+        loop amount {
+            filepath2 := split.NameNoExt "_audio" Format("{:02}", A_Index) ".wav"
+            command := Format('ffmpeg -i "{1}" -map 0:a:{2} -acodec pcm_s16le -ar 16000 "{3}" -y', filepath, A_Index-1, split.dir "\" filepath2)
+            cmd.run(,,, command)
+        }
     }
 
     __Delete() {
