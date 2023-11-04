@@ -10,6 +10,7 @@
 `prem {`
 - Added `delayPlayback()` to delay playback after a ripple trim
     - Added `prem.rippleTrim()` to support this function
+- Added `__uiaCtrlPos()` to cut repeat code when determining the position of controls using UIA
 - Fixed `moveKeyframes()` containing old code causing it to break
 
 ## > Other Changes

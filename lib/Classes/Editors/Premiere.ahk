@@ -5,7 +5,7 @@
  * @premVer 24.0
  * @author tomshi
  * @date 2023/11/04
- * @version 2.0.12
+ * @version 2.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -147,6 +147,33 @@ class Prem {
     }
 
     /**
+     * A function to cut repeat code when attempting to retrieve coordinates of a Control. This function will use the UIA class to determine all coordinates of the passed in UIA element.
+     * @param {String} UIA_Element the UIA string to isolate the premiere panel you wish to operate on. Can be passed in manually as a string such as `"YwY"` or as a pre-set variable via the `premUIA` class
+     * @returns {Object/false} returns an object containing all values recieved via `ControlGetPos` as well as the UIA object that can continue to be operated on. If the function cannot determine the controls position, it will return boolean `false`
+     * ```
+     * effCtrl := this.__uiaCtrlPos(premUIA.effectsControl)
+     * effCtrl.x
+     * effCtrl.y
+     * effCtrl.width
+     * effCtrl.height
+     * effCtrl.classNN
+     * effCtrl.uiaVar ;// returns -> uiaVar := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId())
+     * ```
+     */
+    static __uiaCtrlPos(UIA_Element) {
+        try {
+            premName := WinGet.PremName()
+            AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+            ClassNN  := ControlGetClassNN(AdobeEl.ElementFromPath(UIA_Element).GetControlId())
+            ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
+        } catch {
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+            return false
+        }
+        return {x: toolx, y: tooly, width: width, height: height, classNN: ClassNN, uiaVar: AdobeEl}
+    }
+
+    /**
      * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
      * @param {String} item in this function defines what it will type into the search box (the name of your preset within premiere)
      */
@@ -161,21 +188,15 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        try {
-            premName := WinGet.PremName()
-            AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN  := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch as e {
-            block.Off() ;just incase
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+            block.Off()
             return
         }
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
-            this().__loremipsum({x: classX, y: classY}, {width: width, height: height}, &eyeX, &eyeY)
+            this().__loremipsum({x: effCtrlNN.x, y: effCtrlNN.y}, {width: effCtrlNN.width, height: effCtrlNN.height}, &eyeX, &eyeY)
         /** this is simply to cut needing to repeat this code below */
         effectbox() {
-            AdobeEl.ElementFromPath(premUIA.effectsPanel).SetFocus()
+            effCtrlNN.uiaVar.ElementFromPath(premUIA.effectsPanel).SetFocus()
             if !this().__findBox()
                 return
             SendInput("^a" "+{BackSpace}")
@@ -185,7 +206,7 @@ class Prem {
                 if WinExist("Delete Item") {
                     SendInput("{Esc}")
                     sleep 100
-                    AdobeEl.ElementFromPath(premUIA.effectsPanel).SetFocus()
+                    effCtrlNN.uiaVar.ElementFromPath(premUIA.effectsPanel).SetFocus()
                     if !this().__findBox()
                         return
                     SendInput("^a" "+{BackSpace}")
@@ -330,19 +351,12 @@ class Prem {
             {
                 this.__checkTimelineFocus()
                 sleep 50
-                try {
-                    premName        := WinGet.PremName()
-                    AdobeEl         := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-                    progMonClassNN  := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.programMon).GetControlId()) ;gets the ClassNN value of the program monitor
-                    ControlGetPos(&progMonX, &progMonY, &progMonWidth, &progMonHeight, progMonClassNN) ;gets the x/y value and width/height value
-                    classNN := {x: progMonX, y: progMonY, width: progMonWidth, height: progMonHeight}
-                } catch {
+                if !progMonNN := this.__uiaCtrlPos(premUIA.programMon) {
                     block.Off()
-                    errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
                     return
                 }
-                this.zToolX := (classNN.x+70) ;// adjust this value if your tooltips appear in the wrong position. I had it at +15 before swapping to an ultrawide monitor
-                this.zToolY := (classNN.y+classNN.height+13)
+                this.zToolX := (progMonNN.x+70) ;// adjust this value if your tooltips appear in the wrong position. I had it at +15 before swapping to an ultrawide monitor
+                this.zToolY := (progMonNN.y+progMonNN.height+13)
                 ToolTip("",,, 4)
                 tool.Cust("Some tooltips for this function will appear here",, this.zToolX, this.zToolY, 4)
             }
@@ -409,27 +423,20 @@ class Prem {
             return
         }
         sleep 50
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-            AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
-        } catch {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
+        try effCtrlNN.uiaVar.ElementFromPath(premUIA.effectsControl).SetFocus()
 
         ;//get client name
         ClientName := WinGet.ProjClient()
-        if !ClientName
-            {
-                block.Off()
-                tool.Wait()
-                tool.Cust("Couldn't get the client name")
-                return
-            }
+        if !ClientName {
+            block.Off()
+            tool.Wait()
+            tool.Cust("Couldn't get the client name")
+            return
+        }
         ;// check to see if the clientlist contains the current client name
         if clientList.HasOwnProp(ClientName) {
             block.On()
@@ -531,17 +538,17 @@ class Prem {
         this.__checkTimelineFocus()
         sleep 50
         ;// searches to check if no clips are selected
-        if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") {
+        if ImageSearch(&clipX, &clipY, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") {
             SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
             sleep 50
             ;// checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-            if ImageSearch(&clipX, &clipY, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") {
+            if ImageSearch(&clipX, &clipY, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") {
                 errorLog(Error("No clips were selected", -1),, 1)
                 block.Off()
                 return
             }
         }
-        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height},, &motionX, &motionY
+        if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &motionX, &motionY
             , ptf.Premiere "motion2.png"
             , ptf.Premiere "motion3.png")
         {
@@ -662,22 +669,16 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             { ;any imagesearches on the effect controls window includes a division variable (KSA.ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips are selected", -1),, 1)
@@ -685,7 +686,7 @@ class Prem {
                     }
             }
         if filepath = "levels" {
-            if !this().__vholdLevels({classX: classX, classY: classY, width: width, height: height})
+            if !this().__vholdLevels({classX: effCtrlNN.x, classY: effCtrlNN.y, width: effCtrlNN.width, height: effCtrlNN.height})
                 return
         }
         loop {
@@ -695,7 +696,7 @@ class Prem {
             }
             checkImg(checkfilepath) {
                 blendheight := (filepath = "blend\blendmode") ? 50 : 0
-                if FileExist(checkfilepath) && ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height + blendheight, "*2 " checkfilepath)
+                if FileExist(checkfilepath) && ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height + blendheight, "*2 " checkfilepath)
                     return true
                 return false
             }
@@ -770,29 +771,22 @@ class Prem {
         coord.s()
         block.On()
         this().__fxPanel()
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            {
-                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        errorLog(Error("No clips were selected", -1),, 1)
-                        block.Off()
-                        return
-                    }
-            }
-        if !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "2.png") && !ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere filepath "4.png")
+        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") { ;searches to check if no clips are selected
+            SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
+            sleep 50
+            if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                {
+                    errorLog(Error("No clips were selected", -1),, 1)
+                    block.Off()
+                    return
+                }
+        }
+        if !ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere filepath "2.png") && !ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere filepath "4.png")
             {
                 errorLog(Error("The user was already keyframing", -1),, 1)
                 block.Off()
@@ -814,29 +808,23 @@ class Prem {
         coord.s()
         block.On()
         this().__fxPanel()
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
                         return
                     }
             }
-        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height},, &x, &y
+        if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x, &y
                 , ptf.Premiere filepath ".png"
                 , ptf.Premiere filepath "2.png"
                 , ptf.Premiere filepath "3.png"
@@ -1058,23 +1046,17 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            effClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            effectCtrl := obj.ctrlPos(effClassNN)
-        } catch {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
         sleep 25
-        if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
@@ -1082,7 +1064,7 @@ class Prem {
                     }
             }
         loop {
-            if ImageSearch(&x, &y, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
+            if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
                     {
                         MouseMove(x + "25", y)
                         SendInput("{Click}")
@@ -1103,7 +1085,7 @@ class Prem {
         ;// gets the state of the hotkey, enough time now has passed that if the user just presses the button, you can assume they want to reset the paramater instead of edit it
         if !GetKeyState(A_ThisHotkey, "P")
             {
-                if !ImageSearch(&xcol, &ycol, effectCtrl.x, effectCtrl.y, effectCtrl.x + (effectCtrl.width/KSA.ECDivide), effectCtrl.y + effectCtrl.height, "*2 " ptf.Premiere "reset.png")
+                if !ImageSearch(&xcol, &ycol, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "reset.png")
                     {
                         block.Off()
                         MouseMove(xpos, ypos)
@@ -1161,7 +1143,7 @@ class Prem {
             return true
         }
 
-        progClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.programMon).GetControlId()) ;gets the ClassNN value of the effects control window
+        progClassNN := ControlGetClassNN(effCtrlNN.uiaVar.ElementFromPath(premUIA.programMon).GetControlId()) ;gets the ClassNN value of the effects control window
         previewWin := obj.CtrlPos(progClassNN)
         if !IsObject(previewWin)
             return
@@ -1205,22 +1187,16 @@ class Prem {
         keys.allWait()
         coord.s()
         block.On()
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        }  catch {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
@@ -1229,7 +1205,7 @@ class Prem {
             }
         MouseGetPos(&xpos, &ypos)
         loop {
-            if ImageSearch(&x2, &y2, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion2.png") || ImageSearch(&x2, &y2, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "motion3.png") ;checks if the "motion" value is in view
+            if ImageSearch(&x2, &y2, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "motion2.png") || ImageSearch(&x2, &y2, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "motion3.png") ;checks if the "motion" value is in view
                 break
             if A_Index > 5
                 {
@@ -1257,22 +1233,16 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        }  catch {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
             return
         }
         this.__checkTimelineFocus()
-        if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
+        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
             {
                 SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
                 sleep 50
-                if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
                     {
                         block.Off()
                         errorLog(Error("No clips were selected", -1),, 1)
@@ -1280,7 +1250,7 @@ class Prem {
                     }
             }
         ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        if !obj.imgSrchMulti({x1: classX, y1: classY, x2: classX + (width/KSA.ECDivide), y2: classY + height},, &x, &y
+        if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x, &y
             , ptf.Premiere property ".png"
             , ptf.Premiere property "2.png"
             , ptf.Premiere property "3.png"
@@ -1331,21 +1301,15 @@ class Prem {
                 block.Off()
                 return -1
             }
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId()) ;gets the ClassNN value of the effects control window
-            ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
-        } catch {
-            errorLog(UnsetError("Couldn't find the ClassNN value of the Effect Controls window", -1),, 1)
-            block.Off() ;just incase
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+            block.Off()
             return false
         }
         try {
-            if ImageSearch(&x3, &y3, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+            if ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                 delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                 this().__fxPanel()
-                if !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio.png") && !ImageSearch(&audx, &audy, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "effctrlAudio1.png") {
+                if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y1: effCtrlNN.y + effCtrlNN.height},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
                     block.Off() ;just incase
                     return false
                 }
@@ -1359,12 +1323,11 @@ class Prem {
         this.__checkTimelineFocus()
         sleep 100
         SendInput(KSA.gainAdjust)
-        if !WinWait("Audio Gain",, 3)
-            {
-                tool.Cust("Waiting for gain window timed out")
-                block.Off()
-                return false
-            }
+        if !WinWait("Audio Gain",, 3) {
+            tool.Cust("Waiting for gain window timed out")
+            block.Off()
+            return false
+        }
         SendInput("+{Tab}{UP 3}{DOWN}{TAB}" amount "{ENTER}")
         WinWaitClose("Audio Gain")
         block.Off()
@@ -1510,20 +1473,13 @@ class Prem {
         ; SendInput(KSA.timelineWindow)
         sleep 75
         coord.client()
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            timelineClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.timeline).GetControlId()) ;gets the ClassNN value of the timeline
-            ControlGetPos(&x, &y, &width, &height, timelineClassNN) ;gets the x/y value and width/height of the timeline
-        } catch {
-            errorLog(UnsetError("Couldn't find the ClassNN value of the Timeline", -1),, 1)
+        if !timelineNN := this.__uiaCtrlPos(premUIA.timeline)
             return false
-        }
-        this.timelineRawX     := x, this.timelineRawY := y
-        this.timelineXValue   := x + width - 22  ;accounting for the scroll bars on the right side of the timeline
-        this.timelineYValue   := y + 46          ;accounting for the area at the top of the timeline that you can drag to move the playhead
-        this.timelineXControl := x + 236         ;accounting for the column to the left of the timeline
-        this.timelineYControl := y + height - 25 ;accounting for the scroll bars at the bottom of the timeline
+        this.timelineRawX     := timelineNN.x, this.timelineRawY := timelineNN.y
+        this.timelineXValue   := timelineNN.x + timelineNN.width - 22  ;accounting for the scroll bars on the right side of the timeline
+        this.timelineYValue   := timelineNN.y + 46          ;accounting for the area at the top of the timeline that you can drag to move the playhead
+        this.timelineXControl := timelineNN.x + 236         ;accounting for the column to the left of the timeline
+        this.timelineYControl := timelineNN.y + timelineNN.height - 25 ;accounting for the scroll bars at the bottom of the timeline
         this.timelineVals     := true
         if tools = true
             SetTimer(tooltips, -100)
@@ -1582,32 +1538,25 @@ class Prem {
         coord.client(, false)
         MouseGetPos(&xpos, &ypos)
         sleep 50
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            toolsClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.tools).GetControlId()) ;gets the ClassNN value of the tools window
-            ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-        } catch {
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+        if !toolsNN := this.__uiaCtrlPos(premUIA.tools) {
+            block.Off()
             return
         }
         loop {
-            if ImageSearch(&xx, &yy, toolx, tooly, toolx + width, tooly + height, "*2 " ptf.Premiere "selection_2.png")
+            if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection_2.png")
                 return
-            if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height, "*2 " ptf.Premiere "selection.png") {
+            if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection.png") {
                 coord.client("Mouse", false)
                 MouseMove(x, y)
                 break
             }
             sleep 100
-            if A_Index > 3
-                {
-                    SendInput(KSA.selectionPrem)
-                    SendInput(KSA.programMonitor)
-                    errorLog(Error("Couldn't find the selection tool", -1)
-                                , "Used the selection hotkey instead", 1)
-                    return
-                }
+            if A_Index > 3 {
+                SendInput(KSA.selectionPrem)
+                SendInput(KSA.programMonitor)
+                errorLog(Error("Couldn't find the selection tool", -1), "Used the selection hotkey instead", 1)
+                return
+            }
         }
         SendInput("{Click}")
         coord.s()
@@ -1888,13 +1837,8 @@ class Prem {
             switchTo.Premiere()
         sleep 50
         scrshtTitle := "Export Frame"
-        try {
-            premName   := WinGet.PremName()
-            AdobeEl    := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            toolsClassNN := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.programMon).GetControlId()) ;gets the ClassNN value of the tools window
-            ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-        } catch {
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+        if !progMonNN := this.__uiaCtrlPos(premUIA.programMon) {
+            block.Off()
             return
         }
         __clickProx(x, y) {
@@ -1905,7 +1849,7 @@ class Prem {
             MouseMove(origX, origY, 2)
             sleep 250
         }
-        if proxSrch := ImageSearch(&proxX, &proxY, toolx,  tooly, toolx+width, tooly+height+50, "*2 " ptf.Premiere "\proxy_on.png") {
+        if proxSrch := ImageSearch(&proxX, &proxY, progMonNN.x, progMonNN.y, progMonNN.x+progMonNN.width, progMonNN.y+progMonNN.height+50, "*2 " ptf.Premiere "\proxy_on.png") {
             __clickProx(proxX, proxY)
         }
         SendEvent(ksa.premExportFrame)

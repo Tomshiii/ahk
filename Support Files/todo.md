@@ -26,5 +26,5 @@
 ***
 
 # > Cleanup
-- [ ] cut repeat code in `prem {` and turn using UIA strings and determining panel positions into a function, maybe have it optionally return values or just return them as an obj
+- [x] cut repeat code in `prem {` and turn using UIA strings and determining panel positions into a function, maybe have it optionally return values or just return them as an obj
 - [ ] make `tiktok project.ahk` use a class to clean up the spaghetti code
