@@ -2,7 +2,7 @@
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
  * @date 2023/11/04
- * @version 1.0.11
+ * @version 1.0.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -260,8 +260,9 @@ class ffmpeg {
     /**
      * Extracts all audio streams from a file and saves them as `.wav`
      * @param {String} filepath the filepath of the file you wish to extract the audio from
+     * @param {String} samplerate the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
      */
-    extractAudio(filepath) {
+    extractAudio(filepath, samplerate := "48000") {
         split := obj.SplitPath(filepath)
         try probecmd := cmd.result(Format('ffprobe "{1}"', filepath))
         catch {
@@ -271,7 +272,14 @@ class ffmpeg {
         RegExReplace(probecmd, "(Audio)", "Audio", &amount)
         loop amount {
             filepath2 := split.NameNoExt "_audio" Format("{:02}", A_Index) ".wav"
-            command := Format('ffmpeg -i "{1}" -map 0:a:{2} -acodec pcm_s16le -ar 16000 "{3}" -y', filepath, A_Index-1, split.dir "\" filepath2)
+            audPos := InStr(probecmd, "Audio",, 1, A_Index)
+            try hz := SubStr(
+                probecmd,
+                startingPos := InStr(probecmd, A_Space,, hzPos := InStr(probecmd, "Hz", 1, audPos, 1), -2)+1,
+                (hzPos+-1) - startingPos
+            )
+            samplerate := IsSet(hz) ? hz : samplerate
+            command := Format('ffmpeg -i "{1}" -map 0:a:{2} -acodec pcm_s16le -ar {4} "{3}" -y', filepath, A_Index-1, split.dir "\" filepath2, samplerate)
             cmd.run(,,, command)
         }
     }
