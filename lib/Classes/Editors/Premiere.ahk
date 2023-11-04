@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 24.0
  * @author tomshi
- * @date 2023/10/30
- * @version 2.0.11
+ * @date 2023/11/04
+ * @version 2.0.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -63,6 +63,10 @@ class Prem {
     ;// rbuttonPrem
     static focusTimelineStatus := true
     static RClickIsActive := false
+
+    ;// variables for `delayPlayback()` && `rippleTrim()`
+    static defaultDelay := 325
+    static delayTime    := 0
 
     ;// screenshots
     static scEddie    := "1"
@@ -1574,10 +1578,9 @@ class Prem {
      * This function will instead attempt to warp to the selection tool on your toolbar and presses it instead. If that fails it will focus the toolbar and send the hotkey instead.
      */
     static selectionTool() {
-        coord.s()
+        coord.s("Mouse", false)
+        coord.client(, false)
         MouseGetPos(&xpos, &ypos)
-        SendInput(KSA.toolsWindow)
-        SendInput(KSA.toolsWindow)
         sleep 50
         try {
             premName   := WinGet.PremName()
@@ -1586,32 +1589,16 @@ class Prem {
             ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
         } catch {
             errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+            return
         }
-        if width = 0 || height = 0
-            {
-                loop {
-                    ;for whatever reason, if you're clicked on another panel, then try to hit this hotkey, `ControlGetPos` refuses to actually get any value, I have no idea why. This loop will attempt to get that information anyway, but if it fails will fallback to the hotkey you have set within premiere
-                    ;tool.Cust(A_Index "`n" width "`n" height, "100")
-                    if A_Index > 3
-                        {
-                            SendInput(KSA.selectionPrem)
-                            errorLog(UnsetError("Couldn't get dimensions of the class window", -1)
-                                        , "Used the selection hotkey instead", 1)
-                            return
-                        }
-                    sleep 100
-                    SendInput(KSA.toolsWindow)
-                    toolsClassNN := ControlGetClassNN(ControlGetFocus("A"))
-                    ControlGetPos(&toolx, &tooly, &width, &height, toolsClassNN)
-                } until (width != 0 || height != 0)
-            }
-        multiply := (height < 80) ? 3 : 1 ;idk why but if the toolbar panel is less than 80 pixels tall the imagesearch fails for me????, but it only does that if using the &width/&height values of the controlgetpos. Ahk is weird sometimes
         loop {
-            if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height * multiply, "*2 " ptf.Premiere "selection.png") ;moves to the selection tool
-                {
-                    MouseMove(x, y)
-                    break
-                }
+            if ImageSearch(&xx, &yy, toolx, tooly, toolx + width, tooly + height, "*2 " ptf.Premiere "selection_2.png")
+                return
+            if ImageSearch(&x, &y, toolx, tooly, toolx + width, tooly + height, "*2 " ptf.Premiere "selection.png") {
+                coord.client("Mouse", false)
+                MouseMove(x, y)
+                break
+            }
             sleep 100
             if A_Index > 3
                 {
@@ -1623,6 +1610,7 @@ class Prem {
                 }
         }
         SendInput("{Click}")
+        coord.s()
         MouseMove(xpos, ypos)
         SendInput(KSA.programMonitor)
     }
@@ -1639,12 +1627,7 @@ class Prem {
             errorLog(ValueError("Value is not a valid direction", direction, -1),,, 1)
         }
         delaySI(50, windowHotkey, windowHotkey)
-        SendInput(Format("`{{} {}`}", direction, frames))
-        SendInput("{Right " frames "}")
-        switch direction {
-            case "left":
-            case "right":
-        }
+        SendInput(Format("`{{1} {2}`}", direction, frames))
     }
 
     /**
@@ -1865,17 +1848,32 @@ class Prem {
     }
 
     /**
+     * #### This function requires you to properly set your ripple trim previous/next keys correctly within `KSA` as well as requires you to make those same keys call `prem.rippleTrim()` in your main ahk script.
      * If the user immediately attempts to resume playback after ripple trimming the playhead will sometimes not be placed at the new clip and will inadvertently begin playback where you might not expect it
      * This function attempts to delay playback immediately after a trim to mitigate this behaviour. This function might require some adjustment from the user depending on how fast/slow their pc is
-     * @param {Integer} delayMS the delay in `ms` that you want the function to wait before attempting to resume playback. Keep in mind that the final delay will be `delayMS - A_TimeIdleKeyboard` so that if you've already waited a majority of the time, the function won't delay you even more
+     * @param {Integer} delayMS the delay in `ms` that you want the function to wait before attempting to resume playback. Defaults to a value set within the class
      */
-    static delayPlayback(delayMS := 150) {
+    static delayPlayback(delayMS?) {
+        this.defaultDelay := IsSet(delayMS) ? delayMS : this.defaultDelay
+        delayMS := IsSet(delayMS) ? delayMS : this.defaultDelay
         __sendSpace() => (SendEvent(ksa.playStop), Exit())
         if A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext
             __sendSpace()
-        if A_TimeIdleKeyboard >= delayMS
-            __sendSpace()
-        SetTimer((*) => __sendSpace(), -(delayMS-A_TimeIdleKeyboard))
+        SetTimer((*) => __sendSpace(), -(delayMS-this.delayTime))
+    }
+
+    /** Tracks how long it has been since the user used a ripple trim. This function is to provide proper functionality to `prem.delayPlayback()` */
+    static rippleTrim() {
+        SendEvent(A_ThisHotkey)
+        SetTimer(__track.Bind(A_TickCount), 16)
+        __track(initialTime) {
+            currentTime := A_TickCount - initialTime
+            if currentTime >= this.defaultDelay {
+                this.delayTime := 0
+                return
+            }
+            this.delayTime := currentTime
+        }
     }
 
     /**

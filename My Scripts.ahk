@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.33.12
+;\\v2.33.13
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -376,6 +376,9 @@ XButton2:: ;these two hotkeys are activated by right clicking on a tab then pres
 ;movetab2Hotkey;
 XButton1::move.Tab()
 
+;extraEnterHotkey;
+PgDn::Enter ;// I use a TKL keyboard and miss my NumpadEnter key
+
 ;=============================================================================================================================================
 ;
 ;		Discord
@@ -478,8 +481,15 @@ PgDn::prem.moveKeyframes("right", 12)
 ;12backHotkey;
 PgUp::prem.moveKeyframes("left", 12)
 
+;premrippleTrimHotkey;
+q::
+w::prem.rippleTrim()
+
 ;thumbScrollHotkey;
 F12::prem.thumbScroll()
+
+;premresetHotkey;
+F5::prem.reset()
 
 ;premnumpadGainHotkey;
 ~Numpad1::
