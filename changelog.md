@@ -3,6 +3,7 @@
 ## > Functions
 - Added `ffmpeg.extractAudio()` to extract all audio streams from a file
     - Added `extractAudio.ahk` streamdeck script
+- `ahksearchHotkey` => `switchTo.ahkDocs()`
 - Fixed `generateAdobeShortcut()` throwing when called from `settingsGUI()`
 - Fixed `WinGet.WinMonitor()` throwing when unable to determine the position of the passed in window
 - Fixed firefox not being the focused window after being opened using `switchTo.firefox()`
@@ -15,6 +16,9 @@
     - Added `prem.rippleTrim()` to support this function
 - Added `__uiaCtrlPos()` to cut repeat code when determining the position of controls using UIA
 - Fixed `moveKeyframes()` containing old code causing it to break
+
+## > My Scripts
+- All hotkey declarations have now been separated into individual scripts within `..\lib\My Scripts\` to make it easier to add new hotkey declarations to the correct place
 
 ## > Other Changes
 - Fixed `audSelect.ahk` & `vidSelect.ahk` not functioning

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/11/03
- * @version 1.2.14
+ * @date 2023/11/10
+ * @version 1.2.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -481,5 +481,82 @@ class switchTo {
             }
         ;window := WinGetTitle("A") ;debugging
         ;tool.Cust(window) ;debugging
+    }
+
+    /**
+     * This function will attempt to open the local copy of the ahk documentation.
+     * If the `modiferKey` key set within the first param is held, it will attempt to search the highlighted word within the documentation
+     * @param {String} modifierKey a key you'd like to hold to indicate that you wish to search the highlighted word within the documentation
+     */
+    static ahkDocs(modifierKey := "RShift") {
+        ;// logic if ctrl isn't being held
+        if !GetKeyState(modifierKey, "P") {
+            LinkClicked("", false)
+            return
+        }
+        previous := ClipboardAll()
+        A_Clipboard := "" ;clears the clipboard
+        Send("^c")
+        if !ClipWait(1) { ;if the clipboard doesn't contain data after 1s this block fires
+            LinkClicked("", false)
+            A_Clipboard := previous
+            return
+        }
+        LinkClicked(A_Clipboard)
+        A_Clipboard := previous
+
+        /**
+         * Open the local ahk documentation if it can be found
+         * else open the online documentation
+         *
+         * This function originated in `ui-dash.ahk` found in `C:\Program Files\AutoHotkey\UX`
+         * @param {String} command is what you want to search for in the docs
+         */
+        LinkClicked(command, search := true) {
+            path := obj.SplitPath(A_AhkPath)
+            ;// hopefully this never has to fire as browsers are unpredictable and there's no easy way to wait for things to load
+            if !FileExist(chm := path.dir '\AutoHotkey.chm')
+                {
+                    if !WinExist("AutoHotkey v2")
+                        RunWait("https://www.autohotkey.com/docs/v2/index.htm")
+                    else
+                        {
+                            WinActivate("AutoHotkey v2")
+                            goto find
+                        }
+                    sleep 1500
+                    if !WinExist("Quick Reference | AutoHotkey v2") {
+                        tool.Cust("something went wrong")
+                        return
+                    }
+                    if WinExist("Quick Reference | AutoHotkey v2") && !WinActive("Quick Reference | AutoHotkey v2")
+                        WinActivate("Quick Reference | AutoHotkey v2")
+                    goto find
+                }
+            if !WinExist("AutoHotkey v2 Help") {
+                Run('hh.exe "ms-its:' chm '::docs/"Program.htm">How to use the program',,, &id)
+                WinWait("ahk_pid " id)
+                sleep 200
+            }
+            if !WinActive("AutoHotkey v2 Help") {
+                WinActivate()
+                if !WinWaitActive(,, 1)
+                    WinActivate()
+                ;// if the window is minimised, then activated, chances are it won't actually accept any inputs
+                ;// so we simulate a click on the window to alert it we want to input commands
+                ControlClick("X216 Y72")
+                sleep 200
+            }
+            find:
+            if search = false
+                return
+            SendInput("!s")
+            SendInput("^a")
+            SendInput("{BackSpace}")
+            if command = ""
+                return
+            SendInput(command)
+            SendInput("{Enter}")
+        }
     }
 }
