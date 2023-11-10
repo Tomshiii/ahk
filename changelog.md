@@ -22,6 +22,7 @@
 
 ## > My Scripts
 - All hotkey declarations have now been separated into individual scripts within `..\lib\My Scripts\` to make it easier to add new hotkey declarations to the correct place
+> This change will result in `HotkeyReplacer.ahk` no longer functioning as intended. It has been disabled for now until a replacement is written.
 
 ## > Other Changes
 - Fixed `audSelect.ahk` & `vidSelect.ahk` not functioning

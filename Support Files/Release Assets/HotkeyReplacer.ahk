@@ -2,7 +2,7 @@
  * @description optimises the process of updating tomshi's scripts by allowing the user to automatically set hotkeys within `My Scripts.ahk` to their own custom layout.
  * @author tomshi
  * @date 2023/09/28
- * @version 2.10.2
+ * @version 2.10.2.1
  ***********************************************************************/
 #Warn VarUnset, StdOut
 
@@ -15,6 +15,11 @@
 #Include *i <Functions\getLocalVer>
 ; #Include *i <Other\print>
 ; }
+
+
+;//! disabled for now if `My Scripts.ahk` version is above v2.13.0 as it isn't going to work now that `My Scripts.ahk` has been separated into multiple files
+if VerCompare(getLocalVer(), "v2.13.0") > 0
+    ExitApp()
 
 try {
     UserSettings := UserPref()

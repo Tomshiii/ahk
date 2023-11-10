@@ -1,3 +1,6 @@
+#Include "*i %A_ScriptDir% \..\..\lib\Functions\getLocalVer.ahk"
+#Warn VarUnset, StdOut
+
 releaseGUI := Gui("+Resize +MinSize100x170 -MinimizeBox -MaximizeBox", "Select Install Options")
 SetTimer(() => releaseGUI.Opt("-Resize"), -10)
 releaseGUI.SetFont("S11")
@@ -18,9 +21,13 @@ text    := releaseGUI.Add("Text", "X50 y16 " TitleFore " " TitleBack " Section W
 
 releaseGUI.AddText('x-4 y60 w' TotalWidth+4 ' h90 0x1000 -Background Section')
 
+;// attempt to disable hotkey replacer checkbox if user version is too high
+try doDisable := (VerCompare(getLocalVer(), "v2.13.0") > 0) ? " Disabled" : ""
+catch
+    doDisable := ""
 ;// checkboxes
 sym     := releaseGUI.Add("CheckBox", "Section xs+32 ys+20", "Symlink")
-replace := releaseGUI.Add("CheckBox", "xs+130 ys", "Hotkey Replacer")
+replace := releaseGUI.Add("CheckBox", "xs+130 ys" doDisable, "Hotkey Replacer")
 startup := releaseGUI.Add("CheckBox", "Section xs ys+25", "Run at Startup")
 adobeksa := releaseGUI.Add("CheckBox", "xs+130 ys", "adobeKSA.ahk")
 ;// checkbox onevents
