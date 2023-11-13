@@ -1,22 +1,25 @@
 #SingleInstance Force
 ; { \\ #Includes
 #Include <Classes\ptf>
+#Include <Classes\pause>
+#Include <Functions\SD Functions\genProjDirs>
 ; }
 
-;// This part makes you select the folder you wish to create the nested folders in
-SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Create your desired folder then select it.")
-if SelectedFolder = ""
-    return
+pause.pause("autosave")
+pause.pause("adobe fullscreen check")
 
-;// This part creates the folders I usually create for a project
-DirCreate(SelectedFolder "\videos")
-DirCreate(SelectedFolder "\proxies")
-DirCreate(SelectedFolder "\audio")
-DirCreate(SelectedFolder "\renders\draft") ;creates a folder to render drafts into
-DirCreate(SelectedFolder "\renders\final") ;creates a folder to render the final into
+;// Selecting the folder you wish to create the project in
+if !SelectedFolder := genProjDirs() {
+    pause.pause("autosave")
+    pause.pause("adobe fullscreen check")
+    return
+}
 
 ;// This part then just opens/activates the project folder
 if !WinExist(SelectedFolder)
     Run(SelectedFolder)
 else if !WinActive(SelectedFolder)
     WinActivate(SelectedFolder)
+
+pause.pause("autosave")
+pause.pause("adobe fullscreen check")

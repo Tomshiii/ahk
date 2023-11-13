@@ -10,25 +10,21 @@ SetDefaultMouseSpeed(0)
 #Include <Classes\coord>
 #Include <Classes\block>
 #Include <Classes\Editors\Premiere>
+#Include <Functions\SD Functions\genProjDirs>
 #Include <Functions\delaySI>
 ; }
 
 ;// This version of the script (from 19th Dec, 2022) is designed for Premiere v22.3.1 (and beyond) - it copies a template project folder out of the `..\Backups\Adobe Backups\Premiere\Template\` folder and places it in the desired project folder. It then handles changing the proxy location
 ;// it runs the version of premiere set within `settingsGUI()`
 
-;// Selecting the folder you wish to create the project in
-SelectedFolder := FileSelect("D2", ptf.MyDir "\", "Select your desired Folder. This Script will create the necessary sub folders")
-if SelectedFolder = ""
-    return
 pause.pause("autosave")
 pause.pause("adobe fullscreen check")
-dirs := [
-    "\videos",                 "\audio\music",              "\audio\sfx",
-    "\proxies\colour renders", "\proxies\timeline renders", "\renders\draft",
-    "\renders\final",          "\_project files"
-]
-for v in dirs
-    DirCreate(SelectedFolder v)
+
+if !SelectedFolder := genProjDirs() {
+    pause.pause("autosave")
+    pause.pause("adobe fullscreen check")
+    return
+}
 
 ;// Getting the name of the project folder to use as a default for the below inputbox
 SplitPath(SelectedFolder, &default)

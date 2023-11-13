@@ -27,4 +27,5 @@
 ## > Other Changes
 - Fixed `audSelect.ahk` & `vidSelect.ahk` not functioning
 - Added `..\Streamdeck AHK\screenshots\` scripts
+- Added `genProjDirs()` to cut repeat code in a couple of `Streamdeck AHK` scripts
 - `hCrop CamSingle.ahk` will now append `_cropped` to the resulting filename

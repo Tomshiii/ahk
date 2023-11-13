@@ -568,6 +568,22 @@ static DPIAwareness {
 ; Sets the maximum possible DPI awareness level depending on Windows version
 static SetMaximumDPIAwareness() => this.DPIAwareness := this.IsIUIAutomationElement6Available ? -4 : -3
 
+static ProcessIsElevated(vPID) {
+    ;PROCESS_QUERY_LIMITED_INFORMATION := 0x1000
+    if !(hProc := DllCall("OpenProcess", "UInt", 0x1000, "Int",0, "UInt",vPID, "Ptr"))
+        return -1
+    ;TOKEN_QUERY := 0x8
+    if !(DllCall("advapi32\OpenProcessToken", "Ptr", hProc, "UInt",0x8, "Ptr*", &hToken:=0)) {
+        DllCall("CloseHandle", "Ptr", hProc)
+        return -1
+    }
+    ;TokenElevation := 20
+    vRet := (DllCall("advapi32\GetTokenInformation", "Ptr", hToken, "Int", 20, "UInt*", &vIsElevated:=0, "UInt", 4, "UInt*", &vSize:=0))
+    DllCall("CloseHandle", "Ptr",hToken)
+    DllCall("CloseHandle", "Ptr",hProc)
+    return vRet ? vIsElevated : -1
+}
+
 /**
  * Finds the first element matching a condition from an AHK array
  * @param elementArray The array to search
@@ -915,29 +931,57 @@ static ElementFromPoint(x?, y?, cacheRequest?, activateChromiumAccessibility:=50
  * @param element Optional: optionally provide an element for which the search is performed for.
  *   This element must be cached with CachedBoundingRectangle and TreeScope.Element+Descendants.
  * @param cacheRequest Optional: a cache request object.
+ * @param deepSearch Whether SmallestElementFromPoint checks all the elements in the element Subtree
+ *   or filters the elements level by level by whether they contain the point or not. Default is false.
+ *   This means that is deepSearch is True then every element in the subtree is checked, but if 
+ *   false then only a small part of the tree is checked, which also means a difference in performance. 
+ *   DeepSearch might be useful if some of the intermediary elements have an incorrect size (eg in 
+ *   Firefox some group elements are 0-sized).
+ * 
  * @returns {UIA.IUIAutomationElement}
  */
-static SmallestElementFromPoint(x?, y?, element?, cacheRequest?) {
+static SmallestElementFromPoint(x?, y?, element?, cacheRequest?, deepSearch := false) {
     static sCacheRequest := this.CreateCacheRequest(["BoundingRectangle"],,5)
-    if !IsSet(cacheRequest)
-        cacheRequest := sCacheRequest
-    else
-        cacheRequest.AddProperty(UIA.Property.BoundingRectangle)
-    
+    local pt64
+
     if !(IsSet(x) && IsSet(y))
         DllCall("user32.dll\GetCursorPos", "int64P", &pt64:=0), x := 0xFFFFFFFF & pt64, y := pt64 >> 32
-    if !IsSet(element)
-        element := UIA.ElementFromPoint(x, y, cacheRequest)
+    if deepSearch {
+        if !IsSet(cacheRequest)
+            cacheRequest := sCacheRequest
+        else
+            cacheRequest.AddProperty(UIA.Property.BoundingRectangle)
 
-    return this.SmallestElementInElementContainingPoint(x, y, element)
+        if !IsSet(element)
+            element := UIA.ElementFromPoint(x, y, sCacheRequest)
+        return this.CachedSmallestElementInElementContainingPoint(x, y, element)
+    }
+
+    if !IsSet(element)
+        element := UIA.ElementFromPoint(x, y)
+    element := this.SmallestElementInElementContainingPoint(x, y, element)
+    return IsSet(cacheRequest) ? element.BuildUpdatedCache(cacheRequest) : element
 }
 
 ; Returns the smallest element inside another element (it included) that contains the point (x,y)
-; The element must have BoundingRectangle cached
 static SmallestElementInElementContainingPoint(x, y, element) {
-    local el, smallest, smallestSize, rect
-    smallest := "", smallestSize := 100000000
-    for el in element.GetCachedChildren(scope:=5) {
+    static cr := UIA.CreateCacheRequest(["BoundingRectangle"])
+    local el, smallest := element, smallestSize := 100000000, rect, evaluated := [element.BuildUpdatedCache(cr)]
+    while evaluated.Length {
+        el := evaluated.Pop(), rect := el.CachedBoundingRectangle
+        if rect.l<=x && rect.r >=x && rect.t <= y && rect.b >= y {
+            evaluated.Push(el.FindAllBuildCache(cr,, 2)*), size := (rect.r-rect.l)*(rect.b-rect.t)
+            if size < smallestSize
+                smallest := el, smallestSize := size
+        }
+    }
+    return smallest
+}
+
+; Requires the elements subtree to be cached with the BoundingRectangle property
+static CachedSmallestElementInElementContainingPoint(x, y, element) {
+    local el, smallest := element, smallestSize := 100000000, rect
+    for el in element.GetCachedChildren(5) {
         rect := el.CachedBoundingRectangle
         if rect.l<=x && rect.r >=x && rect.t <= y && rect.b >= y {
             size := (rect.r-rect.l)*(rect.b-rect.t)
@@ -3591,6 +3635,7 @@ class IUIAutomationElement extends UIA.IUIAutomationBase {
     ; For riid specify a GUID string, that is the IID for the desired pattern
     ; GetPatternAs doesn't have a use in this library, use GetPattern instead
     GetPatternAs(patternId, riid) {
+        local name
         try {
             if IsInteger(patternId)
                 name := UIA.Pattern[patternId]
@@ -3606,6 +3651,7 @@ class IUIAutomationElement extends UIA.IUIAutomationBase {
     ; Retrieves the control pattern interface of the specified pattern from the cache of this UI Automation element.
     ; GetCachedPatternAs doesn't have a use in this library, use GetCachedPattern instead
     GetCachedPatternAs(patternId, riid) {	; not completed
+        local name, GUID, patternObject
         try {
             if IsInteger(patternId)
                 name := UIA.Pattern[patternId]
@@ -3622,6 +3668,7 @@ class IUIAutomationElement extends UIA.IUIAutomationBase {
     ; This method gets the specified control pattern based on its availability at the time of the call.
     ; For some forms of UI, this method will incur cross-process performance overhead. Applications can reduce overhead by caching control patterns and then retrieving them by using UIA.IUIAutomationElement,,GetCachedPattern.
     GetPattern(patternId) {
+        local name, patternObject
         try {
             if IsInteger(patternId)
                 name := UIA.Pattern[patternId]
@@ -3635,6 +3682,7 @@ class IUIAutomationElement extends UIA.IUIAutomationBase {
 
     ; Retrieves from the cache the IUnknown interface of the specified control pattern of this UI Automation element.
     GetCachedPattern(patternId) {
+        local name, patternObject
         try {
             if IsInteger(patternId)
                 name := UIA.Pattern[patternId]
@@ -7040,6 +7088,8 @@ class Viewer {
         OnError this.ErrorHandler.Bind(this)
         CoordMode "Mouse", "Screen"
         DetectHiddenWindows "On"
+        if !UIA.IsIUIAutomationElement7Available 
+            UIA.Property.DeleteProp("IsSelectionPattern2Available") ; not available in Windows Server 2016
         this.Stored := {mwId:0, FilteredTreeView:Map(), TreeView:Map(), HighlightedElement:0}
         this.Capturing := False, this.MacroSidebarVisible := False, this.MacroSidebarWidth := 350, this.MacroSidebarMinWidth := 290, this.GuiMinWidth := 540, this.GuiMinHeight := 400, this.Focused := 1
         this.LoadSettings()
@@ -7406,9 +7456,8 @@ class Viewer {
                 if this.FoundTime != 0 && ((A_TickCount - this.FoundTime) > 500) {
                     if (mX == this.Stored.mX) && (mY == this.Stored.mY) {
                         if !(this.Stored.HasOwnProp("TreeViewWindow") && this.SafeCompareElements(this.Stored.CapturedWindow, this.Stored.TreeViewWindow))
+                            || !this.TreeViewSelectCapturedElement()
                             this.ConstructTreeView()
-                        else
-                            this.TreeViewSelectCapturedElement()
                         this.FoundTime := 0
                     } else
                         this.FoundTime := A_TickCount
@@ -7433,7 +7482,7 @@ class Viewer {
     ; Also removes and adds back the StructureChangedEventHandler
     TryUpdateElementVariables(mwId, mX, mY) {
         if mwId != this.Stored.mwId {
-            if this.ProcessIsElevated(WinGetPID(mwId)) > 0 && !A_IsAdmin {
+            if UIA.ProcessIsElevated(WinGetPID(mwId)) > 0 && !A_IsAdmin {
                 if MsgBox("The inspected window is running with elevated privileges.`nUIAViewer must be running in UIAccess mode or as administrator to inspect it.`n`nRun UIAViewer as administrator to inspect it?",, 0x1000 | 0x30 | 0x4) = "Yes" {
                     try {
                         Run('*RunAs "' (A_IsCompiled ? A_ScriptFullPath '" /restart' : A_AhkPath '" /restart "' A_ScriptFullPath '"'))
@@ -7447,7 +7496,7 @@ class Viewer {
             this.Stored.CapturedWindowBuildUpdatedCache := UIA.Viewer.Prototype.UpdateCapturedWindowCache.Bind(this)
             this.UpdateCapturedWindowCache(mwId)
         }
-        try return CapturedElement := UIA.SmallestElementInElementContainingPoint(mX, mY, this.Stored.CapturedWindow)
+        try return CapturedElement := UIA.CachedSmallestElementInElementContainingPoint(mX, mY, this.Stored.CapturedWindow)
     }
     UpdateCapturedWindowCache(mwId?) {
         if !WinExist(mwId ?? this.Stored.mwId) 
@@ -7457,7 +7506,7 @@ class Viewer {
     }
     ; Populates the listview with UIA element properties
     PopulatePropsPatterns(Element) {
-        local v, value, pattern, parent, proto, match, X, Y, W, H
+        local v, value, pattern, parent, proto, match, X, Y, W, H, name
         if IsObject(this.Stored.HighlightedElement)
             this.Stored.HighlightedElement.Highlight("clear")
         this.Stored.HighlightedElement := Element
@@ -7617,8 +7666,10 @@ class Viewer {
                 , this.Stored.CapturedElement.Path := v.Path
                 , this.Stored.CapturedElement.NumericPath := v.NumericPath
                 , this.Stored.CapturedElement.ConditionPath := v.ConditionPath
+                return 1
             }
         }
+        return 0
     }
     ; Stores the UIA tree with corresponding path values for each element
     RecurseTreeView(Element, parent:=0, path:="", conditionpath := "", numpath:="") {
@@ -7696,22 +7747,6 @@ class Viewer {
         else if !this.PathIgnoreNames && n != "" && (pathsMap[n] < pathsMap[t])
             return n
         return t
-    }
-
-    ProcessIsElevated(vPID) {
-        ;PROCESS_QUERY_LIMITED_INFORMATION := 0x1000
-        if !(hProc := DllCall("OpenProcess", "UInt", 0x1000, "Int",0, "UInt",vPID, "Ptr"))
-            return -1
-        ;TOKEN_QUERY := 0x8
-        if !(DllCall("advapi32\OpenProcessToken", "Ptr", hProc, "UInt",0x8, "Ptr*", &hToken:=0)) {
-            DllCall("CloseHandle", "Ptr", hProc)
-            return -1
-        }
-        ;TokenElevation := 20
-        vRet := (DllCall("advapi32\GetTokenInformation", "Ptr", hToken, "Int", 20, "UInt*", &vIsElevated:=0, "UInt", 4, "UInt*", &vSize:=0))
-        DllCall("CloseHandle", "Ptr",hToken)
-        DllCall("CloseHandle", "Ptr",hProc)
-        return vRet ? vIsElevated : -1
     }
 }
 
