@@ -1,4 +1,4 @@
-# <> Release 2.13.x - 
+# <> Release 2.13.1 - Hotfix
 
 ## > Functions
 - Added `ffmpeg.extractAudio()` to extract all audio streams from a file
