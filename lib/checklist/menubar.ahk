@@ -43,29 +43,17 @@ settingsToolTrack := 0
 if IniRead(checklist, "Info", "tooltip") = "1"
     {
         SettingsMenu.Check("&Tooltips")
-        if checklist_tooltip != 0
-            settingsToolTrack := 1
-        else
-            settingsToolTrack := 0
+        (checklist_tooltip != 0) ? settingsToolTrack := 1 : settingsToolTrack := 0
     }
-if checklist_tooltip = 0
-    SettingsMenu.Disable("&Tooltips")
-else
-    SettingsMenu.Enable("&Tooltips")
+(checklist_tooltip = 0) ? SettingsMenu.Disable("&Tooltips") : SettingsMenu.Enable("&Tooltips")
 
 darkToolTrack := 0
 if IniRead(checklist, "Info", "dark") = "1"
 {
     SettingsMenu.Check("&Dark Mode")
-    if dark_mode != false
-        darkToolTrack := 1
-    else
-        darkToolTrack := 0
+    (dark_mode != false) ? darkToolTrack := 1 : darkToolTrack := 0
 }
-if dark_mode = false
-    SettingsMenu.Disable("&Dark Mode")
-else
-    SettingsMenu.Enable("&Dark Mode")
+(dark_mode = false) ? SettingsMenu.Disable("&Dark Mode") : SettingsMenu.Enable("&Dark Mode")
 
 ;help menu
 HelpMenu := Menu()
@@ -150,13 +138,7 @@ aboutBox(*)
 /**
  * The function that is called when the github menu option is pressed
  */
-github(*)
-{
-    if !WinExist("Tomshiii/ahk")
-        Run("https://github.com/Tomshiii/ahk/tree/dev")
-    else
-        WinActivate("Tomshiii/ahk")
-}
+github(*) => (!WinExist("Tomshiii/ahk")) ? Run("https://github.com/Tomshiii/ahk/tree/dev") : WinActivate("Tomshiii/ahk")
 
 
 /**
@@ -287,10 +269,7 @@ hours(*)
         increment += 1
         ignore:
     }
-    if StartVal <= 0 || increment <= 0
-        avg := "Not enough data"
-    else
-        avg := floorDecimal(StartVal/increment,3)
+    (StartVal <= 0 || increment <= 0) ? avg := "Not enough data" : avg := floorDecimal(StartVal/increment,3)
 
     checklistGUI.GetPos(&x, &y, &width, &height)
     hoursGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Hours Worked")
@@ -353,10 +332,7 @@ openLog(*)
             tool.Cust("Couldn't find the log file", 2000)
             return
         }
-    if WinExist("checklist_logs.txt")
-        refreshWin("checklist_logs.txt", logs)
-    else
-        Run(logs)
+    (WinExist("checklist_logs.txt")) ? refreshWin("checklist_logs.txt", logs) : Run(logs)
 }
 
 /**
@@ -389,10 +365,8 @@ openProj(*)
 
 openini(*) {
     checklistGUI.GetPos(&x, &y, &width, &height)
-    if WinExist("checklist.ini") ;if ini already open, get pos, close, and then reopen to refresh
-        refreshWin("checklist.ini", checklist)
-    else
-        Run("Notepad.exe " checklist)
+    ;// if ini already open, get pos, close, and then reopen to refresh
+    (WinExist("checklist.ini")) ? refreshWin("checklist.ini", checklist) : Run("Notepad.exe " checklist)
     WinWait("checklist.ini")
     WinMove(x-322, y, 322, height-2, "checklist.ini")
 }

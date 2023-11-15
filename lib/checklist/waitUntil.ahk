@@ -50,10 +50,7 @@ waitUntil()
                     try {
                         aeCheckagain := WinGetTitle("Adobe After Effects")
                     }
-                    if !InStr(aeCheckagain, ":`\")
-                        aeLocationAgain := unset
-                    else
-                        aeLocationAgain := InStr(aeCheckagain, ":`\")
+                    (!InStr(aeCheckagain, ":`\")) ? aeLocationAgain := unset : aeLocationAgain := InStr(aeCheckagain, ":`\")
                 }
         }
     if !IsSet(dashLocationAgain) && !IsSet(aeLocationAgain)

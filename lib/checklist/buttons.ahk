@@ -5,10 +5,8 @@ buttonHeights := Map(
 )
 
 ;// everything is relative to this group box, simply move it to move the entire group
-if morethan11 = false
-    checklistGUI.AddGroupBox("w137 h100 " buttonHeights["lessthan11"], "Time Adjust (min)")
-else
-    checklistGUI.AddGroupBox("w137 h100 x+100 " buttonHeights["morethan11"], "Time Adjust (min)")
+(morethan11 = false) ? checklistGUI.AddGroupBox("w137 h100 " buttonHeights["lessthan11"], "Time Adjust (min)")
+                     : checklistGUI.AddGroupBox("w137 h100 x+100 " buttonHeights["morethan11"], "Time Adjust (min)")
 
 ;// binding methods to an object so the buttons can properly call them
 butPlusFive := ObjBindMethod(timer, "plusFive")

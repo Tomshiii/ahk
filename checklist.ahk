@@ -147,10 +147,7 @@ newDate(&today)
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", logs)
 
 ;// setting dark/light mode
-if darkToolTrack = 1
-    which()
-else ;* because `checklist.ahk` has it's own darkmode settings an `else` block is needed
-    which(false, "Light", 0)
+(darkToolTrack = 1) ? which() : which(false, "Light", 0)
 
 checklistGUI.Show("AutoSize NoActivate", {DarkBG: false})
 checklistGUI.BackColor := checklistGUI.LightColour
