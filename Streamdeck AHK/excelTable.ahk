@@ -9,7 +9,7 @@ getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample
 if getValExpenses.result = "Cancel"
     return
 
-getValIncome := InputBox("Enter Coordinates for Income PivotTable`n`nExample: $L$323", "Income PivotTable Coords", "H130")
+getValIncome := InputBox("Enter Coordinates for Income PivotTable`n`nExample: $O$323", "Income PivotTable Coords", "H130")
 if getValIncome.result = "Cancel"
     return
 
@@ -23,7 +23,7 @@ for v in arr1 {
     SendInput("{Tab}")
 }
 
-SendInput("+{Tab}" "{Right}{Tab}")
+SendInput("+{Tab}" "{Right}{Tab 2}")
 
 for v in arr2 {
     SendInput(Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValIncome.value, v))
