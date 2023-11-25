@@ -183,11 +183,10 @@ deleting() {
             FileDelete(file)
     }
     ;// deleting psd files
-    loop files A_WorkingDir "\release\" yes.Value "\*", "F R"
-        {
-            if A_LoopFileExt = "psd" ;they're large and unnecessary to include
-                FileDelete(A_LoopFileFullPath)
-        }
+    loop files A_WorkingDir "\release\" yes.Value "\*", "F R" {
+        if A_LoopFileExt = "psd" ;they're large and unnecessary to include
+            FileDelete(A_LoopFileFullPath)
+    }
     ;// deleting the repo banner image
     checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\repo_social.png")
     ;// deleting the todo file
@@ -254,48 +253,43 @@ FileAppend(replaceYes2, A_WorkingDir "\release\Extract.ahk")
 Run(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe")
 WinWait("Ahk2Exe for AutoHotkey")
 ;// open script
-if !WinActive("Ahk2Exe for AutoHotkey")
-    {
-        WinActivate("Ahk2Exe for AutoHotkey")
-        WinWaitActive("Ahk2Exe for AutoHotkey")
-    }
+if !WinActive("Ahk2Exe for AutoHotkey") {
+    WinActivate("Ahk2Exe for AutoHotkey")
+    WinWaitActive("Ahk2Exe for AutoHotkey")
+}
 sleep 500
 SendInput("{Tab 2}")
 sleep 250
 SendInput("{Space}")
 WinWait("Open Script")
-if !WinActive("Open Script")
-    {
-        WinActivate("Open Script")
-        WinWaitActive("Open Script")
-    }
+if !WinActive("Open Script") {
+    WinActivate("Open Script")
+    WinWaitActive("Open Script")
+}
 sleep 250
 SendInput("{F4}")
 sleep 1000
 delaySI(250, "^a", "{BackSpace}", A_WorkingDir "\release\", "{Enter}", "!n", yes.value ".ahk", "!o")
 ;// save exe
-if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
-    {
-        WinActivate("Ahk2Exe for AutoHotkey")
-        WinWaitActive("Ahk2Exe for AutoHotkey")
-    }
+if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2) {
+    WinActivate("Ahk2Exe for AutoHotkey")
+    WinWaitActive("Ahk2Exe for AutoHotkey")
+}
 SendInput("{Tab 2}")
 SendInput("{Space}")
 WinWait("Save Executable As")
-if !WinActive("Save Executable As")
-    {
-        WinActivate("Save Executable As")
-        WinWaitActive("Save Executable As")
-    }
+if !WinActive("Save Executable As") {
+    WinActivate("Save Executable As")
+    WinWaitActive("Save Executable As")
+}
 sleep 1000
 delaySI(1000, "{F4}", "^a", "{BackSpace}", A_WorkingDir "\release\", "{Enter}", "+{Tab 8}", "!n")
 delaySI(250, yes.value ".exe", "!s")
 ;// change ahk ver
-if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2)
-    {
-        WinActivate("Ahk2Exe for AutoHotkey")
-        WinWaitActive("Ahk2Exe for AutoHotkey")
-    }
+if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2) {
+    WinActivate("Ahk2Exe for AutoHotkey")
+    WinWaitActive("Ahk2Exe for AutoHotkey")
+}
 SendInput("{Tab 5}")
 SendInput("{Down 20}" "{Up}")
 SendInput("{Enter}")
