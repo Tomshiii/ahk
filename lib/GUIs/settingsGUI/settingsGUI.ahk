@@ -367,7 +367,7 @@ settingsGUI()
         detect()
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := ctrl.text
-        if WinExist(script " - AutoHotkey") {
+        if WinExist(script " - AutoHotkey") && script != "" {
             WM.Send_WM_COPYDATA(iniVar "," ctrl.text "," objName, script)
         }
     }
@@ -537,7 +537,7 @@ settingsGUI()
                 verIniName := "premVer"
                 genProg := program
                 otherTitle := "After Effects Settings"
-                imageLoc := ptf.premIMGver
+                static imageLoc := ptf.premIMGver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
             case "AE":
                 short := "ae"
@@ -550,7 +550,7 @@ settingsGUI()
                 verIniName := "aeVer"
                 genProg := "AE"
                 otherTitle := "Premiere Pro Settings"
-                imageLoc := ptf.aeIMGver
+                static imageLoc := ptf.aeIMGver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
         }
         if WinExist(title) {
@@ -684,7 +684,6 @@ settingsGUI()
                 if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
                     supportedVers.Push(A_LoopFileName)
             }
-
             for value in supportedVers {
                 if value = imageLoc
                     {
@@ -695,7 +694,7 @@ settingsGUI()
             if !IsSet(defaultIndex)
                 defaultIndex := 1
             ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
-            ver.OnEvent("Change", editCtrl.bind("", verIniName, ""))
+            ver.OnEvent("Change", (editCtrl.bind("", verIniName, "", ver), (ctrl, *) => imageLoc := ctrl.Text))
         }
 
         __cacheslct(progName, *) {
