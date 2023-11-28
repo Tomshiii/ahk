@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.0.3
  * @author tomshi
- * @date 2023/11/04
- * @version 2.1.0
+ * @date 2023/11/27
+ * @version 2.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1870,6 +1870,21 @@ class Prem {
         if !proxSrch
             return
         __clickProx(proxX, proxY)
+    }
+
+    /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
+    static anchorToPosition() {
+        clipb := clip.clear()
+        if !clip.copyWait(clipb.storedClip)
+            return
+        anch1 := A_Clipboard
+        clip.clear()
+        SendEvent("{Tab}")
+        if !clip.copyWait(clipb.storedClip)
+            return
+        anch2 := A_Clipboard
+        delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
+        clip.delayReturn(clipb.storedClip)
     }
 
     ;//! *** ===============================================

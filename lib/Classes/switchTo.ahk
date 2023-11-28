@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/11/10
- * @version 1.2.16
+ * @date 2023/11/27
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -342,25 +342,32 @@ class switchTo {
 
     /**
      * This switchTo function will quickly switch to the specified program. If there isn't an open window of the desired program, this function will open one
-     * @param {Integer} x/y/width/height the coordinates you wish to move discord too. Will default to the values listed at the top of the `discord {` class
+     * @param {Boolean} doMove defines whether you want the function to move discord to a certain position. By default it's the coordinates set within the `Discord` class
+     * @param {Integer} x/y/width/height an object containing the coordinates you wish to move discord too. Will default to the values listed at the top of the `discord {` class
      */
-    static Disc(x := discord.x, y := discord.y, width := discord.width, height := discord.height)
+    static Disc(doMove := false, coords?)
     {
-        move() => WinMove(x, y, width, height, discord.winTitle) ;cut repeat visual clutter. Values assigned in discord class
+        if !IsSet(coords)
+            coords := {x: discord.x, y: discord.y, width: discord.width, height: discord.height}
+        move() => WinMove(coords.x, coords.y, coords.width, coords.height, discord.winTitle) ;cut repeat visual clutter. Values assigned in discord class
         if WinExist(discord.winTitle) {
             WinActivate(discord.winTitle)
-            if WinGet.isFullscreen(, discord.winTitle) ;a return value of 1 means it is maximised
-                WinRestore() ;winrestore will unmaximise it
-            move() ; just incase it isn't in the right spot/fullscreened for some reason
+            if doMove = true {
+                if WinGet.isFullscreen(, discord.winTitle) ;a return value of 1 means it is maximised
+                    WinRestore() ;winrestore will unmaximise it
+                move() ; just incase it isn't in the right spot/fullscreened for some reason
+            }
             tool.Cust("Discord is now active", 500) ;this is simply because it's difficult to tell when discord has focus if it was already open
             return
         }
         Run(discord.path)
         if !WinWait(discord.winTitle,, 2)
             return
-        if WinGet.isFullscreen(, discord.winTitle) ;a return value of 1 means it is maximised
-            WinRestore() ;winrestore will unmaximise it
-        move() ;moves it into position after opening
+        if doMove = true {
+            if WinGet.isFullscreen(, discord.winTitle) ;a return value of 1 means it is maximised
+                WinRestore() ;winrestore will unmaximise it
+            move() ;moves it into position after opening
+        }
     }
 
     /**
@@ -438,6 +445,9 @@ class switchTo {
         if highlightBar ?? false = true
             SendInput("{F6}")
     }
+
+    /** This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one */
+    static Slack() => this().__Win("ahk_exe slack.exe", A_AppData "\..\Local\slack\slack.exe", "slack")
 
     /** This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one */
     static Music()

@@ -50,7 +50,7 @@ Space::
 
 	;// if slack/phone link isn't open, simply call function
 	if (!WinExist("ahk_group phoneStuffDisc")) {
-		switchTo.Disc()
+		switchTo.Disc(true)
 		return
 	}
 	;// if a phonestuff application OR discord was active when this hotkey was activated, we will activate that group and ensure that it and discord are placed in the correct position on the screen
@@ -58,17 +58,17 @@ Space::
 		GroupActivate("phoneStuffDisc", "r")
 		GroupActivate("phoneStuffDisc", "r")
 		WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, WinGetTitle("A") A_Space "ahk_exe " WinGetProcessName("A"))
-		switchTo.Disc(discord.slackX, 669, discord.slackWidth, discord.slackHeight)
+		switchTo.Disc(true, {x: discord.slackX, y: 669, width: discord.slackWidth, height: discord.slackHeight})
 		return
 	}
 	if WinExist(discord.winTitle) {
 		pos := obj.WinPos(discord.winTitle)
-		switchTo.Disc(pos.x, pos.y, pos.width, pos.height)
+		switchTo.Disc(true, {x: pos.x, y: pos.y, width: pos.width, height: pos.height})
 		return
 	}
-	switchTo.Disc()
+	switchTo.Disc(true)
 }
-Enter & Space::switchTo.Disc()
+Enter & Space::switchTo.Disc(true)
 
 t::unassigned()
 g::unassigned()
@@ -139,5 +139,5 @@ Enter & F16::switchTo.closeOtherWindow(browser.edge.winTitle)
 
 ;Tab::unassigned()
 Esc::unassigned()
-F13::unassigned()
+F13::switchTo.Slack()
 Home::switchTo.PhoneProgs()

@@ -96,24 +96,9 @@ g:: ;this hotkey will fill the frame to fit the window
 }
 b::prem.preset("transform_MINE")
 
-r::prem.preset("tint 100")
-f:: ;this macro is to open the speed menu
-{
-	premTimeline()
-	try {
-		loop 3 {
-			effClassNN := ControlGetClassNN(ControlGetFocus("A"))
-			if effClassNN != "DroverLord - Window Class3"
-				break
-			sleep 30
-		}
-	} catch as e {
-		tool.Cust("something broke")
-		errorLog(e)
-		Exit
-	}
-	SendInput(KSA.selectAtPlayhead KSA.speedHotkey)
-}
+r::prem.preset("Lowpass Me")
+f::prem.preset("Highpass Me")
+
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
 	SendInput(KSA.programMonitor)
@@ -123,7 +108,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 }
 ;PgDn::unassigned()
 
-e::prem.preset("Highpass Me")
+e::prem.preset("tint 100")
 d::prem.preset("hflip")
 c::prem.preset("vflip")
 ;End::
@@ -133,9 +118,10 @@ s::prem.preset("croptom")
 x::prem.fxSearch()
 ;F15::unassigned()
 
-q::unassigned()
-a::unassigned()
-z::unassigned()
+q::prem.preset("S_Shake Me")
+a::prem.preset("Transform Me")
+z::prem.anchorToPosition()
+
 ;F16::unassigned()
 
 ;Tab::unassigned()
