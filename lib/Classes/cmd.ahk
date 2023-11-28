@@ -2,7 +2,7 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2023/11/04
+ * @date 2023/11/28
  * @version 1.1.1
  ***********************************************************************/
 
@@ -65,7 +65,7 @@ class cmd {
         return (exec.StdOut.ReadAll() != "") ? exec.StdOut.ReadAll() : exec.StdErr.ReadAll()
     }
 
-    static deleteMappedDrive(driveLocation) => this.run(,, Format("net use {}: /delete", Chr(64+driveLocation)))
+    static deleteMappedDrive(driveLocation) => this.run(,,, Format("net use {}: /delete", Chr(64+driveLocation)))
 
     /**
      * This function will unmap the desired mapped drive location, then remap your desired drive letter to the desired ip address.
@@ -77,7 +77,7 @@ class cmd {
         this.deleteMappedDrive(driveLocation)
         ;// net use N: \\192.168.20.5\storage
         keepDrive := (persistent = true) ? "/persistent:yes" : ""
-        this.run(,, Format("net use {}: {} {}", Chr(64+driveLocation), networkLocation, keepDrive))
+        this.run(,,, Format("net use {}: {} {}", Chr(64+driveLocation), networkLocation, keepDrive))
     }
 
     /**
