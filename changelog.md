@@ -1,4 +1,4 @@
-# <> Release 2.13.x - 
+# <> Release 2.13.2 - Hotfix
 
 ## > Functions
 - Fixed `Premiere` & `After Effects` `Version` selector dropdown not visually sticking if the GUI window is closed and reopened before restarting `settingsGUI()`
