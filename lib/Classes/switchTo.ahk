@@ -344,6 +344,12 @@ class switchTo {
      * This switchTo function will quickly switch to the specified program. If there isn't an open window of the desired program, this function will open one
      * @param {Boolean} doMove defines whether you want the function to move discord to a certain position. By default it's the coordinates set within the `Discord` class
      * @param {Integer} x/y/width/height an object containing the coordinates you wish to move discord too. Will default to the values listed at the top of the `discord {` class
+     * ```
+     * switchTo.Disc(true, {x: discord.x,
+     *                      y: discord.y,
+     *                      width: discord.width,
+     *                      height: discord.height})
+     * ```
      */
     static Disc(doMove := false, coords?)
     {

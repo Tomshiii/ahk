@@ -6,46 +6,41 @@
  */
 class adobeVers {
     Premiere := Map(
+        ;// VER  || IMAGE VER   ||  SUBSEQUENT MINOR VERS
         "v23.0",    "v22.3.1",
         "v23.1",    "v22.3.1",
         "v23.2",    "v22.3.1",
         "v23.3",    "v22.3.1",
         "v23.4",    "v22.3.1",
         "v23.5",    "v22.3.1",
-        "v23.6",    "v22.3.1",
-        "v23.6.2",  "v22.3.1",
-        "v24.0",    "v22.3.1",
-        "v24.0.3",  "v22.3.1",
+        "v23.6",    "v22.3.1",      "v23.6.2",  "v22.3.1",
+        "v24.0",    "v22.3.1",      "v24.0.3",  "v22.3.1",
         "v24.1",    "v22.3.1",
         "v24.2",    "v22.3.1",
     )
     AE := Map(
+        ;// VER  || IMAGE VER   ||  SUBSEQUENT MINOR VERS
         "v23.0",    "v22.6",
         "v23.1",    "v22.6",
-        "v23.2",    "v22.6",
-        "v23.2.1",  "v22.6",
+        "v23.2",    "v22.6",        "v23.2.1",  "v22.6",
         "v23.3",    "v22.6",
         "v23.4",    "v22.6",
         "v23.5",    "v22.6",
-        "v23.6",    "v22.6",
-        "v23.6.2",  "v22.6",
-        "v24.0",    "v22.6",
-        "v24.0.1",  "v22.6",
-        "v24.0.3",  "v22.6",
+        "v23.6",    "v22.6",        "v23.6.2",  "v22.6",
+        "v24.0",    "v22.6",        "v24.0.1",  "v22.6",        "v24.0.3",  "v22.6",
     )
     PS := Map(
+        ;// VER  || IMAGE VER   ||  SUBSEQUENT MINOR VERS
         "v24.0.1",  "v24.3",
-        "v24.1",    "v24.3",
-        "v24.1.1",  "v24.3",
-        "v24.2",    "v24.3",
-        "v24.2.1",  "v24.3",
+        "v24.1",    "v24.3",        "v24.1.1",  "v24.3",
+        "v24.2",    "v24.3",        "v24.2.1",  "v24.3",
         "v24.4.1",  "v24.3",
         "v24.5",    "v24.3",
         "v24.6",    "v24.3",
-        "v24.7",    "v24.3",
-        "v24.7.1",  "v24.3",
+        "v24.7",    "v24.3",        "v24.7.1",  "v24.3",
         "v25.0",    "v24.3",
         "v25.1",    "v24.3",
+        "v25.2",    "v24.3",
     )
 
     static maps := [this().Premiere, this().AE, this().PS]
@@ -65,11 +60,12 @@ class adobeVers {
                 ;// will remove any symlinks before attempting to create it so that it doesn't error out
                 if DirExist(path := imgsrchPath "\" which "\" k2) && InStr(FileGetAttrib(path), "l") ;// checks to make sure it's still a symbolic link
                     DirDelete(path)
-                if execute == 1 && symScript == false
+                if execute == 1 && symScript == false {
                     adobecmd := Format('mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}" ', adobecmd, imgsrchPath, k2, v2, which)
-                else
-                    adobecmd := Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}" ', adobecmd, imgsrchPath, k2, v2, which)
-                execute++
+                    execute++
+                    continue
+                }
+                adobecmd := Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}" ', adobecmd, imgsrchPath, k2, v2, which)
             }
         }
         return adobecmd

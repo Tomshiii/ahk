@@ -56,5 +56,5 @@ z::unassigned()
 
 ;Tab::unassigned()
 Esc::unassigned()
-F13::unassigned()
+; F13::unassigned()
 ; Home::unassigned()
