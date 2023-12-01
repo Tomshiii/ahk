@@ -4,6 +4,7 @@
 # > Fixes
 
 ## Functions
+- [ ] `ytdlp().download()` or `ytdlp().handleDownload()` not properly dealing with twitch links
 
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence ~~(clicking RButton at the same time?)~~ - definitely happening regardless
@@ -19,12 +20,12 @@
 ## Functions
 - [ ] make function in addition to `prem.thumbscroll()` that moves the timeline to the left until released
 	- [ ] maybe make a third func to completely reset the playhead to the left and have `prem.thumbscroll()` optionally call it if it hits the end of the timeline
+- [ ] make `switchTo.adobeProject()` copy path to clipboard on double press
+- [ ] make script for prem to quickly select audio in/out selection
 
 ## General
-- [x] make screenshot script (launch from streamdeck? might not be possible to track val) for each of boys, track in class, ~~if 0 ask for starting val (or continue from highest number in folder),~~ ask main script for current val, increment, then name that file and continue
 - [ ] make `reset` section of `settingsGUI()` two checkboxes instead and move them below the exit section, then move the exit section up
 ***
 
 # > Cleanup
-- [x] cut repeat code in `prem {` and turn using UIA strings and determining panel positions into a function, maybe have it optionally return values or just return them as an obj
 - [ ] make `tiktok project.ahk` use a class to clean up the spaghetti code

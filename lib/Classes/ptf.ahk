@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/10/23
- * @version 1.2.3
+ * @date 2023/11/01
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -28,7 +28,7 @@ class ptf {
     static MainScriptName    := "My Scripts"
 
     ;My Stuff
-    static MyDir             := "E:"
+    static MyDir             := SubStr(this.rootDir, 1, 2)
     static EditingStuff      := this.MyDir "\_Editing Stuff"
     static comms             := this.MyDir "\comms"
     static LioranBoardDir    := "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
