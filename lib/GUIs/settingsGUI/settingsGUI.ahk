@@ -351,7 +351,7 @@ settingsGUI()
         initVal := UserSettings.%initValVar%
         settingsGUI.Add("Edit",
                              set_Edit_Val.EditPos[A_Index] " r1 W50 -E0200 Number v" set_Edit_Val.control[A_Index])
-        settingsGUI.Add("UpDown",, initVal)
+        settingsGUI.Add("UpDown", set_Edit_Val.UpDownOpt[A_Index], initVal)
         settingsGUI.Add("Text",
                             set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index],
                             set_Edit_Val.scriptText[A_Index])

@@ -14,7 +14,7 @@ class set_Edit_Val {
         otherText: " limit (GB)",            otherTextPos: "X+1",
         iniInput: "adobe GB",                colour: "cd53c3c",
         textControl: "adobeTempText",        Bind: "--",
-        objName: "--"
+        objName: "--",                       UpDownOpt: "Range1-999"
     }
     adFS := {
         control: "adobeFS",                              EditPos: "xs Y+10",
@@ -22,7 +22,7 @@ class set_Edit_Val {
         otherText: " check rate (sec)",                  otherTextPos: "Y+-1",
         iniInput: "adobe FS",                            colour: "cd53c3c",
         textControl: "adobeFSText",                      Bind: "adobe fullscreen check.ahk",
-        objName: "adobeCheck"
+        objName: "adobeCheck",                           UpDownOpt: "Range1-999"
     }
     autoSave := {
         control: "autoSave",                  EditPos: "xs Y+2",
@@ -30,7 +30,7 @@ class set_Edit_Val {
         otherText: " save rate (min)",        otherTextPos: "X+1",
         iniInput: "autosave MIN",             colour: "c4141d5",
         textControl: "autoSaveText",          Bind: "autosave.ahk",
-        objName: "autoSave"
+        objName: "autoSave",                  UpDownOpt: "Range1-60"
     }
     gameCk := {
         control: "gameCheck",                  EditPos: "xs Y+10",
@@ -38,7 +38,7 @@ class set_Edit_Val {
         otherText: " check rate (sec)",        otherTextPos: "X+1",
         iniInput: "game SEC",                  colour: "c328832",
         textControl: "gameCheckText",          Bind: "gameCheck.ahk",
-        objName: "--"
+        objName: "--",                         UpDownOpt: "Range1-999"
     }
     MIC := {
         control: "MIC",                                 EditPos: "xs Y+12",
@@ -46,7 +46,7 @@ class set_Edit_Val {
         otherText: " check rate (sec)",                 otherTextPos: "Y+-1",
         iniInput: "multi SEC",                          colour: "c983d98",
         textControl: "MICText",                         Bind: "Multi-Instance Close.ahk",
-        objName: "--"
+        objName: "--",                                  UpDownOpt: "Range1-999"
     }
 
     objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.MIC]
@@ -61,4 +61,5 @@ class set_Edit_Val {
     static textControl := []
     static bind := []
     static objName := []
+    static UpDownOpt := []
 }

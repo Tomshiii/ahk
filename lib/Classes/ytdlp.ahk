@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/11/14
- * @version 1.0.6
+ * @date 2023/12/02
+ * @version 1.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -103,13 +103,14 @@ class ytdlp {
         ytTitle := (this.URL != "" && !IsSet(title)) ? getHTMLTitle(this.URL) : title
         if !FileExist(splitFilePath.dir "\" splitFilePath.NameNoExt ".*")
             return false
+        ext := ""
         loop files splitFilePath.dir "\*.*", "F" {
             if A_LoopFileName != splitFilePath.NameNoExt "." A_LoopFileExt
                 continue
-            ext := A_LoopFileExt
+            ext := "." A_LoopFileExt
         }
-        ffmpeg().reencode_h26x(splitFilePath.dir "\" splitFilePath.NameNoExt "." ext, ytTitle)
-        FileDelete(splitFilePath.dir "\" splitFilePath.NameNoExt "." ext)
+        ffmpeg().reencode_h26x(splitFilePath.dir "\" splitFilePath.NameNoExt ext, ytTitle)
+        FileDelete(splitFilePath.dir "\" splitFilePath.NameNoExt ext)
     }
 
     /**
