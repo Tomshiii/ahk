@@ -27,7 +27,14 @@ A backup of the original release versions of `My Scripts.ahk` & `Keyboard Shortc
 ___
 
 **Run at Startup:**
+
 Will create a shortcut of `PC Startup.ahk` (`..\PC Startup\PC Startup.ahk`) in the user's startup folder `C:\Users\A_UserName\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`. This can be disabled/reenabled later in `settingsGUI()` (`#F1` by default)
+
+___
+
+**adobeKSA:**
+
+Is a script that allows the user to parse their individual `Premere Pro` & `After Effects` keyboard shortcuts files and attempt to map those shortcuts to respective `KSA` variables within this repo. This script is not perfect and it is recommended to backup any old `KSA.ini` files in use if attempting to use this script.
 
 ___
 

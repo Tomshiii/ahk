@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/10/28
- * @version 2.1.0
+ * @date 2023/12/02
+ * @version 2.1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -202,7 +202,7 @@ class adobeAutoSave extends count {
             ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
             if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
                 prem.__checkTimelineFocus()
-                sleep 100
+                sleep 250
                 SendEvent(KSA.playStop)
                 continue
             }
@@ -293,7 +293,7 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.premWindow.saveCheck {
-            tool.Cust("Adobe save not required, cancelling")
+            tool.Cust("Premiere save not required, cancelling")
             return
         }
 
@@ -376,7 +376,7 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.aeWindow.saveCheck {
-            tool.Cust("Adobe save not required, cancelling")
+            tool.Cust("AE save not required, cancelling")
             return
         }
 
