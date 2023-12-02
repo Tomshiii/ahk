@@ -4,7 +4,7 @@
 # > Fixes
 
 ## Functions
-- [ ] `ytdlp().download()` or `ytdlp().handleDownload()` not properly dealing with twitch links
+- [x] `ytdlp().download()` or `ytdlp().handleDownload()` not properly dealing with twitch links
 
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence ~~(clicking RButton at the same time?)~~ - definitely happening regardless

@@ -694,7 +694,13 @@ settingsGUI()
             if !IsSet(defaultIndex)
                 defaultIndex := 1
             ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
-            ver.OnEvent("Change", (editCtrl.bind("", verIniName, "", ver), (ctrl, *) => imageLoc := ctrl.Text))
+
+            ;// look idk using .bind wasn't calling the editCtrl function, I gave up, this is easier
+            doChange() {
+                editCtrl("", verIniName, "", ver)
+                imageLoc := ver.Text
+            }
+            ver.OnEvent("Change", (*) => doChange())
         }
 
         __cacheslct(progName, *) {
