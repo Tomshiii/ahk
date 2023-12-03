@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2023/10/30
- * @version 1.1.3
+ * @date 2023/12/03
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -111,7 +111,8 @@ class WM {
             case "Premiere_RightClick":
                 response := (prem.RClickIsActive = true) ? "Premiere_RightClick,true" : "Premiere_RightClick,false"
                 this.Send_WM_COPYDATA(response, splitMsg[2])
-            case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator":
+            case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator",
+                 "Premiere_scDesktop":
                 getName := SubStr(splitMsg[1], InStr(splitMsg[1], "_",, 1, 1)+1)
                 response := "Premiere_" getName "," String(prem.%getName%)
                 prem.%getName%++

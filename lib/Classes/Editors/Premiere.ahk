@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.0.3
  * @author tomshi
- * @date 2023/11/27
- * @version 2.1.1
+ * @date 2023/12/03
+ * @version 2.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -75,6 +75,7 @@ class Prem {
     static scJuicy    := "1"
     static scMully    := "1"
     static scJosh     := "1"
+    static scDesktop  := "1"
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -1827,7 +1828,7 @@ class Prem {
     }
 
     /**
-     * This function is almost entirely designed for my own workflow and requires hardcoded variables at the top of the class that are then specifically acted apon in various other classes/scripts.
+     * #### This function is almost entirely designed for my own workflow and requires hardcoded variables at the top of the class that are then specifically acted apon in various other classes/scripts.
      * A function to facilitate quickly retriving large quantities of screenshots for yt thumbnails. This function is designed to be called from a streamdeck script and there may be unexpected behaviour if done in any other way
      * @param {String} who the name of the person I'm grabbing the screenshot of
      */
