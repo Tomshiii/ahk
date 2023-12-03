@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/11/27
- * @version 1.3.0
+ * @date 2023/12/02
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -25,6 +25,11 @@
 ; }
 
 class switchTo {
+
+    ;// vars for `adobeProject()`
+    static adobeProjCount := 0
+    static adobeProjCopied := false
+
     /**
      * This function cuts a lot of repeat code in other functions in this class. It's main goal is to provide the ability to swap between windows of the desired type or open one if there are none already.
      *
@@ -286,6 +291,7 @@ class switchTo {
 
     /**
      * This function opens the current `Premiere Pro`/`After Effects` project filepath in windows explorer. If prem/ae isn't open it will attempt to open the `ptf.comms` folder.
+     * Double pressing the activation hotkey for this function will instead copy the project path to the user's clipboard
      * @param {String} optionalPath allows the user to navigate to a directory beyond (or before) where the project file is located. See example #1 for more.
      * @returns {Boolean} `true/false` whether the function succeeded or failed
      * ```
@@ -297,47 +303,68 @@ class switchTo {
      * ```
      */
     static adobeProject(optionalPath := "") {
-        ;// if an editor isn't open
-        if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects") {
-            ;// if the commissions folder doesn't exist
-            if !DirExist(ptf.comms) {
-                errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
+        this.adobeProjCount++
+        ;// gives the user time to double press
+        SetTimer(__action, -200)
+
+        __action(*) {
+            ;// if an editor isn't open
+            if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects") {
+                ;// if the commissions folder doesn't exist
+                if !DirExist(ptf.comms) {
+                    errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)
+                    return false
+                }
+                ;// opening the commissions folder
+                tool.Cust("A Premiere/AE isn't open, opening the comms folder")
+                Run(ptf.comms)
+                commPath := obj.SplitPath(ptf.comms)
+                ;// commPath.name assumes win11 -- if you're on win10 or you've changed it so explorer titles show the full path
+                ;// simply use ptf.comms instead
+                if !WinWait(commPath.name " ahk_class CabinetWClass", "comms", 2)
+                    return false
+                WinActivate(commPath.name " ahk_class CabinetWClass", "comms")
+                return true
+            }
+            if !path := WinGet.ProjPath()
+                return false
+            if DirExist(newPath := WinGet.pathU(path.dir "\" optionalPath)) {
+                path.dir := newPath
+                newDir := obj.SplitPath(SubStr(newPath, 1, StrLen(newPath)-1))
+                path.name := newDir.name
+            }
+            ;// win11 by default names an explorer window the folder you're in
+            getFolderName := path.name
+
+            ;// handles the logic required to enable double tap to copy path to clipboard
+            if this.adobeProjCount > 1 {
+                this.adobeProjCount := 0
+                this.adobeProjCopied := true
+                A_Clipboard := path.dir
+                tool.Cust("Project path copied to clipboard")
+                return
+            }
+            this.adobeProjCount := 0
+            ;// halts the second timer if the above block was fired
+            if this.adobeProjCopied = true {
+                this.adobeProjCopied := false
+                return
+            }
+
+            ;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
+            if WinExist(getFolderName " ahk_class CabinetWClass",, "Adobe" "Editing Checklist", "Adobe") {
+                WinActivate(getFolderName " ahk_class CabinetWClass",, "Adobe")
+                return true
+            }
+            ;// run the path
+            RunWait(path.dir)
+            if !WinWait(getFolderName " ahk_class CabinetWClass",, 2, "Adobe") {
+                tool.Cust("Waiting for project directory to open timed out")
                 return false
             }
-            ;// opening the commissions folder
-            tool.Cust("A Premiere/AE isn't open, opening the comms folder")
-            Run(ptf.comms)
-            commPath := obj.SplitPath(ptf.comms)
-            ;// commPath.name assumes win11 -- if you're on win10 or you've changed it so explorer titles show the full path
-            ;// simply use ptf.comms instead
-            if !WinWait(commPath.name " ahk_class CabinetWClass", "comms", 2)
-                return false
-            WinActivate(commPath.name " ahk_class CabinetWClass", "comms")
-            return true
-        }
-        if !path := WinGet.ProjPath()
-            return false
-        if DirExist(newPath := WinGet.pathU(path.dir "\" optionalPath)) {
-            path.dir := newPath
-            newDir := obj.SplitPath(SubStr(newPath, 1, StrLen(newPath)-1))
-            path.name := newDir.name
-        }
-        ;// win11 by default names an explorer window the folder you're in
-        getFolderName := path.name
-
-        ;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
-        if WinExist(getFolderName " ahk_class CabinetWClass",, "Adobe" "Editing Checklist", "Adobe") {
             WinActivate(getFolderName " ahk_class CabinetWClass",, "Adobe")
             return true
         }
-        ;// run the path
-        RunWait(path.dir)
-        if !WinWait(getFolderName " ahk_class CabinetWClass",, 2, "Adobe") {
-            tool.Cust("Waiting for project directory to open timed out")
-            return false
-        }
-        WinActivate(getFolderName " ahk_class CabinetWClass",, "Adobe")
-        return true
     }
 
     /**
