@@ -2,3 +2,6 @@
 
 ## > Functions
 - `switchTo.adobeProject()` will now copy the project path to the user's clipboard if they instead activate the function twice in rapid succession
+
+## > Other Changes
+- Fixed `audSelect.ahk` failing under certain conditions
