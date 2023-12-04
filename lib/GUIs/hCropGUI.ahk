@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly horizontally crop video files using ffmpeg
  * @author tomshi
- * @date 2023/11/02
- * @version 1.0.1
+ * @date 2023/12/04
+ * @version 1.0.2
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -26,7 +26,7 @@ class hCropGui extends encodeGUI {
             case "singleCam":
                 this["BitrateEdit"].GetPos(, &lastCTRLY)
                 ;// add additional option
-                this.AddText("x" this.MarginX A_Space "y" lastCTRLY+45 " w100", "Cam is:")
+                this.AddText("x" this.MarginX A_Space "y" lastCTRLY+45 " w100", "Crop side:")
                 this.AddRadio("Group vLorR Checked x" this.secMarg " yp", "Left")
                 this.AddRadio("x" this.trdMarg " yp", "Right") ;// this["LorR"].value -- Left returns 1, Right returns 0
                 ;// change what clicking crop button does
