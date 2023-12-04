@@ -1,3 +1,4 @@
+#SingleInstance Off
 ; { \\ #Includes
 #Include <Classes\ffmpeg>
 ; }
