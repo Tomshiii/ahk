@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/12/02
- * @version 1.3.1
+ * @date 2023/12/04
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -460,11 +460,21 @@ class switchTo {
     /** This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one */
     static PhoneLink() => this().__Win("Phone Link ahk_exe PhoneExperienceHost.exe", ptf["Phone Link"], "PhoneLink", "ahk_class WinUIDesktopWin32WindowClass")
 
-    /** This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one */
-    static PhoneProgs(run := A_AppData "\..\Local\Programs\beeper\Beeper.exe") {
+    /**
+     * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+     * @param {String} run the filepath of the file you wish for this function to run if the desired programs aren't already open
+     * @param {Object/Boolean} move to determine whether you wish for the function to move the desired program to a specific location. Simply pass `true` to move to a predetermined location, or pass an object containing `{x: , y: , width: , height: }`
+     */
+    static PhoneProgs(run := A_AppData "\..\Local\Programs\beeper\Beeper.exe", move?) {
         GroupAdd("phoneStuff", "ahk_exe PhoneExperienceHost.exe")
         GroupAdd("phoneStuff", "ahk_exe ahk_exe Beeper.exe")
         this().__Win("ahk_group phoneStuff", run, "phones")
+        if !IsSet(move) || (move != true && !IsObject(move))
+            return
+        coord.s()
+        if move = true
+            move := {x: 3440, y: -912, width: 740, height: 1080}
+        WinMove(move.x, move.y, move.width, move.height, "ahk_group phoneStuff")
     }
 
     /** This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one */

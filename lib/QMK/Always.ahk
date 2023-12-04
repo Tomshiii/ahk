@@ -44,8 +44,6 @@ n::unassigned()
 Space::
 {
 	GroupAdd("phoneStuffDisc", "ahk_exe slack.exe")
-	GroupAdd("phoneStuffDisc", "Phone Link ahk_class WinUIDesktopWin32WindowClass")
-	GroupAdd("phoneStuffDisc", "ahk_exe ahk_exe Beeper.exe")
 	store := (WinActive("ahk_group phoneStuffDisc") || WinActive(discord.winTitle)) ? true : false
 
 	;// if slack/phone link isn't open, simply call function
@@ -140,4 +138,4 @@ Enter & F16::switchTo.closeOtherWindow(browser.edge.winTitle)
 ;Tab::unassigned()
 Esc::unassigned()
 F13::switchTo.Slack()
-Home::switchTo.PhoneProgs()
+Home::switchTo.PhoneProgs(, true)
