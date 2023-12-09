@@ -309,11 +309,6 @@ settingsGUI()
     settingsGUI.AddCheckbox("vcheckTool Checked" UserSettings.checklist_tooltip " Y+5", checklistTooltipTitle).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
     settingsGUI["checkTool"].ToolTip := (UserSettings.checklist_tooltip = true) ? toolT.checklistTooltip.Yes : toolT.checklistTooltip.No
 
-    ;// checklist wait
-    checklistWaitTitle := "``checklist.ahk`` always wait"
-    settingsGUI.AddCheckbox("vcheckWait Checked" UserSettings.checklist_wait " Y+5", checklistWaitTitle).OnEvent("Click", msgboxToggle.Bind("checklist wait"))
-    settingsGUI["checkWait"].ToolTip := (UserSettings.checklist_wait = true) ? toolT.checklistWait.Yes : toolT.checklistWait.No
-
     ;// disc disable autoreply
     discAutoReply := "Disable Discord Reply Ping"
     settingsGUI.AddCheckbox("vdiscReply Checked" UserSettings.disc_disable_autoreply " Y+5", discAutoReply).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
@@ -328,13 +323,11 @@ settingsGUI()
     {
         detect()
         ToolTip("")
-        toolTrue := (script.text == checklistWaitTitle) ? toolT.checklistWait.Yes : toolT.checklistTooltip.Yes
-        toolFalse := (script.text == checklistWaitTitle) ? toolT.checklistWait.No : toolT.checklistTooltip.No
         msgboxText := "Please stop any active checklist timers and restart ``checklist.ahk`` for this change to take effect"
         iniVar := StrReplace(ini, A_Space, "_")
         ;// setting values based on the state of the checkbox
         UserSettings.%iniVar% := (script.Value = 1) ? true : false
-        settingsGUI["checkWait"].ToolTip := (script.Value = 1) ? toolTrue : toolFalse
+        settingsGUI["checkWait"].ToolTip := (script.Value = 1) ? toolT.checklistTooltip.Yes : toolT.checklistTooltip.No
         if WinExist("checklist.ahk - AutoHotkey")
             MsgBox(msgboxtext,, "48 4096")
     }

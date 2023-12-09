@@ -28,6 +28,8 @@ class adobeVers {
         "v23.5",    "v22.6",
         "v23.6",    "v22.6",        "v23.6.2",  "v22.6",
         "v24.0",    "v22.6",        "v24.0.1",  "v22.6",        "v24.0.3",  "v22.6",
+        "v24.1",    "v22.6",
+        "v24.2",    "v22.6",
     )
     PS := Map(
         ;// VER  || IMAGE VER   ||  SUBSEQUENT MINOR VERS

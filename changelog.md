@@ -11,3 +11,4 @@
     - Both moved to `..\Streamdeck AHK\extract audio\`
 
 ## > Other Changes
+- Removed lingering `checklist wait` setting from `settingsGUI`
