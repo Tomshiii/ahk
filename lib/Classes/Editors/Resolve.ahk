@@ -1,6 +1,6 @@
 /************************************************************************
  * @description A library of useful Resolve functions to speed up common tasks
- * Tested on and designed for v18.5 of Resolve
+ * Last tested on Davinci Resolve v18.6.4
  * @author tomshi
  * @date 2023/07/23
  * @version 1.5.1

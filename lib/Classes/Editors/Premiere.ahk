@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.0.3
  * @author tomshi
- * @date 2023/12/03
- * @version 2.1.2
+ * @date 2023/12/09
+ * @version 2.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1495,6 +1495,7 @@ class Prem {
     }
 
     /**
+     * ### This function has been broken for a while. Premiere now makes it so that if you're on the very last character of a text block, <kbd>Ctrl</kbd> + <kbd>Left</kbd> won't do anything. Move one character to the left and suddenly it works.
      * Premiere is really dumb and doesn't let you ctrl + backspace, this function is to return that functionality
      */
     static wordBackspace() {
@@ -1681,22 +1682,22 @@ class Prem {
      */
     __delprev(sendHotkey) {
         SendInput(sendHotkey)
-        if !WinWait("Confirm Delete ahk_exe Adobe Premiere Pro.exe",, 3)
+        if !WinWait("Confirm Delete " prem.exeTitle,, 3)
             return
         tool.Cust("found")
-        WinActivate("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
-        if !WinWaitActive("Confirm Delete ahk_exe Adobe Premiere Pro.exe",, 3)
+        WinActivate("Confirm Delete " prem.exeTitle)
+        if !WinWaitActive("Confirm Delete " prem.exeTitle,, 3)
             return
         sleep 1000
         SendInput("{Enter}")
-        if !WinExist("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+        if !WinExist("Confirm Delete " prem.exeTitle)
             return
         loop 3 {
-            WinActivate("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+            WinActivate("Confirm Delete " prem.exeTitle)
             sleep 100
             SendInput("{Enter}")
             sleep 500
-            if !WinExist("Confirm Delete ahk_exe Adobe Premiere Pro.exe")
+            if !WinExist("Confirm Delete " prem.exeTitle)
                 return
         }
     }

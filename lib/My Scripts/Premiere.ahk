@@ -21,7 +21,7 @@ Space::prem.delayPlayback()
 ~^l::SendInput(KSA.selectAtPlayhead)
 
 ;prem^DeleteHotkey;
-Ctrl & BackSpace::prem.wordBackspace()
+; Ctrl & BackSpace::prem.wordBackspace()
 
 ;premselecttoolHotkey;
 SC03A & v::prem.selectionTool()

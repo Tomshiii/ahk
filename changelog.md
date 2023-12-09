@@ -11,4 +11,5 @@
     - Both moved to `..\Streamdeck AHK\extract audio\`
 
 ## > Other Changes
+- Fixed `autosave.ahk` not respecting `beep` setting
 - Removed lingering `checklist wait` setting from `settingsGUI`

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/12/02
- * @version 2.1.0.1
+ * @date 2023/12/09
+ * @version 2.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -139,7 +139,7 @@ class adobeAutoSave extends count {
             if (A_TimeIdleKeyboard <= 500)
                 || (this.checkMouse = true && ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500))
                 || GetKeyState("RButton", "P") {
-                if A_Index > 1
+                if A_Index > 1 && this.beep = true
                     this.__playBeep()
                 errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s"),, {time: 2.0})
                 sleep 2500
@@ -189,7 +189,7 @@ class adobeAutoSave extends count {
      */
     __checkPremPlayback() {
         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
-        if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
+        if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
             return
 
         tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
@@ -200,7 +200,7 @@ class adobeAutoSave extends count {
     __checkPlayback() {
         loop 3 {
             ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
-            if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
+            if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
                 prem.__checkTimelineFocus()
                 sleep 250
                 SendEvent(KSA.playStop)
@@ -242,7 +242,7 @@ class adobeAutoSave extends count {
                 return
             switch this.origWindow {
                 case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
-                case "Adobe Premiere Pro.exe":
+                case "Adobe Premiere Pro.exe", "Adobe Premiere Pro (Beta).exe":
                     if !WinActive(prem.winTitle)
                         switchTo.Premiere()
                     if this.userPlayback = false
@@ -309,8 +309,10 @@ class adobeAutoSave extends count {
             return
 
         ;// checking if prem is the originally active window
-        if this.origWindow = "Adobe Premiere Pro.exe"
+        if this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe"
             this.__checkPremPlayback()
+
+        tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -50, 7)
 
         try {
             block.On()
