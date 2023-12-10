@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2023/12/03
- * @version 1.1.4
+ * @date 2023/12/10
+ * @version 1.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -146,7 +146,7 @@ class WM {
                 %res[2]%.saveOverride := res[1]
             case "autosave_check_mouse":
                 %res[2]%.checkMouse := res[1]
-            case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator":
+            case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator", "Premiere_scDesktop":
                 getName := SubStr(determineWhich, InStr(determineWhich, "_",, 1, 1)+1)
                 prem.%getName% := res[1]
             default:

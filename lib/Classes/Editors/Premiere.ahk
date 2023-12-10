@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.0.3
  * @author tomshi
- * @date 2023/12/09
- * @version 2.1.3
+ * @date 2023/12/10
+ * @version 2.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1852,7 +1852,7 @@ class Prem {
             MouseMove(origX, origY, 2)
             sleep 250
         }
-        if proxSrch := ImageSearch(&proxX, &proxY, progMonNN.x, progMonNN.y, progMonNN.x+progMonNN.width, progMonNN.y+progMonNN.height+50, "*2 " ptf.Premiere "\proxy_on.png") {
+        if proxSrch := ImageSearch(&proxX, &proxY, progMonNN.x, progMonNN.y/2, progMonNN.x+progMonNN.width, progMonNN.y+progMonNN.height+50, "*2 " ptf.Premiere "\proxy_on.png") {
             __clickProx(proxX, proxY)
         }
         SendEvent(ksa.premExportFrame)
@@ -1861,6 +1861,8 @@ class Prem {
         SendEvent(who "_" this.sc%who%)
         if this.sc%who% = 1 {
             if !WinWaitClose(scrshtTitle,, 10)
+                return
+            if !proxSrch
                 return
             __clickProx(proxX, proxY)
             return
