@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2023/11/28
- * @version 1.1.1
+ * @date 2023/12/10
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,7 +62,8 @@ class cmd {
     static result(command) {
         shell := ComObject("WScript.Shell")
         exec := shell.Exec(A_ComSpec " /C " command)
-        return (exec.StdOut.ReadAll() != "") ? exec.StdOut.ReadAll() : exec.StdErr.ReadAll()
+        stOutput := exec.StdOut.ReadAll(), erOutput := exec.StdErr.ReadAll()
+        return ((stOutput != "") ? stOutput : erOutput)
     }
 
     static deleteMappedDrive(driveLocation) => this.run(,,, Format("net use {}: /delete", Chr(64+driveLocation)))

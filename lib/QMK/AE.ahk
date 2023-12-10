@@ -1,4 +1,5 @@
 #Include <Classes\Editors\After Effects>
+#Include <Classes\Editors\Premiere>
 #Include <QMK\unassigned>
 
 BackSpace::unassigned()
@@ -57,7 +58,7 @@ x::unassigned()
 
 q::unassigned()
 a::unassigned()
-z::unassigned()
+z::prem.anchorToPosition()
 ;F16::unassigned()
 
 ;Tab::unassigned()
