@@ -200,7 +200,7 @@
 
 
 ["** header **"]
-	"major_version" = "105"
+	"major_version" = "106"
 
 ["AE_TopLevelWindow"]
 	"SelectNextTab" = "(Alt+Shift+.)"
@@ -357,8 +357,8 @@
 	"CompGotoMarker8" = "(8)"
 	"CompGotoMarker9" = "(9)"
 	"CompMarker0" = "(Shift+0)"
-	"CompMarker1" = "(Shift+1)"
-	"CompMarker2" = "(Shift+2)"
+	"CompMarker1" = "()"
+	"CompMarker2" = "()"
 	"CompMarker3" = "(Shift+3)"
 	"CompMarker4" = "(Shift+4)"
 	"CompMarker5" = "(Shift+5)"
@@ -518,8 +518,8 @@
 	"Rename" = "(Return)"
 
 ["CPanoECOutline"]
-	"FitItemView" = "(Shift+/)"
-	"FitItemViewUpTo100" = "(Alt+/)"
+	"FitItemView" = "(Shift+1)()"
+	"FitItemViewUpTo100" = "(Shift+2)()"
 	"NOP" = "()"
 	"OpenComp" = "()"
 	"SelectNext" = "(DownArrow)"
@@ -544,8 +544,8 @@
 	"TimeTrimOut" = "(Alt+])"
 
 ["CPanoProjItem"]
-	"FitItemView" = "(Shift+/)"
-	"FitItemViewUpTo100" = "(Alt+/)"
+	"FitItemView" = "(Shift+1)()"
+	"FitItemViewUpTo100" = "(Shift+2)()"
 	"ProofColors" = "(Shift+PadSlash)"
 	"SelectNextMask" = "(Alt+`)"
 	"SelectPreviousMask" = "(Alt+Shift+`)"
