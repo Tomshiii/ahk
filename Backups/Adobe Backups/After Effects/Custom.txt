@@ -518,8 +518,8 @@
 	"Rename" = "(Return)"
 
 ["CPanoECOutline"]
-	"FitItemView" = "(Shift+1)()"
-	"FitItemViewUpTo100" = "(Shift+2)()"
+	"FitItemView" = "(Shift+1)"
+	"FitItemViewUpTo100" = "(Shift+2)"
 	"NOP" = "()"
 	"OpenComp" = "()"
 	"SelectNext" = "(DownArrow)"
@@ -544,8 +544,8 @@
 	"TimeTrimOut" = "(Alt+])"
 
 ["CPanoProjItem"]
-	"FitItemView" = "(Shift+1)()"
-	"FitItemViewUpTo100" = "(Shift+2)()"
+	"FitItemView" = "(Shift+1)"
+	"FitItemViewUpTo100" = "(Shift+2)"
 	"ProofColors" = "(Shift+PadSlash)"
 	"SelectNextMask" = "(Alt+`)"
 	"SelectPreviousMask" = "(Alt+Shift+`)"
@@ -745,7 +745,7 @@
 	"ToggleSnapGrid" = "(Ctrl+Shift+SingleQuote)"
 	"ToggleSnapGuides" = "(Ctrl+Shift+;)"
 	"ToggleSwitchesModes" = "(F4)"
-	"ToggleVideo" = "(Ctrl+Alt+Shift+V)"
+	"ToggleVideo" = "(Shift+E)()"
 	"Undo" = "(Ctrl+Z)"
 	"Ungroup" = "(Ctrl+Shift+G)"
 	"UnlockAllLayers" = "(Ctrl+Shift+L)"

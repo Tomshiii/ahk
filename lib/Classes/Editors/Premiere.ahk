@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.0.3
  * @author tomshi
- * @date 2023/12/10
- * @version 2.1.4
+ * @date 2023/12/11
+ * @version 2.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1330,7 +1330,10 @@ class Prem {
             block.Off()
             return false
         }
-        SendInput("+{Tab}{UP 3}{DOWN}{TAB}" amount "{ENTER}")
+
+        ;// the below sendinput use to begin with a simple +{Tab} but it appears that since either v24.0/v24.1 doing so will
+        ;// instead focus the cancel button
+        SendInput("{Tab 3}{Up 3}{Down}{Tab}" amount "{Enter}")
         WinWaitClose("Audio Gain")
         block.Off()
         return true
