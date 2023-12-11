@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.0
+;\\v2.34.1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -176,6 +176,16 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 #HotIf WinActive(discord.winTitle) ;some scripts to speed up discord interactions
 
 #Include <My Scripts\Discord>
+
+;=============================================================================================================================================
+;
+;		Slack
+;
+;=============================================================================================================================================
+;//! Slack
+#HotIf WinActive(Slack.winTitle) ;some scripts to speed up Slack interactions
+
+#Include <My Scripts\Slack>
 
 ;=============================================================================================================================================
 ;

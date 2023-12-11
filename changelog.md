@@ -12,6 +12,8 @@
 - Added `extractAll.ahk`
     - `extractAudio.ahk` renamed => `extractSingle.ahk`
     - Both moved to `..\Streamdeck AHK\extract audio\`
+- Added `Slack {`
+    - Added `Unread()`
 
 ## > Other Changes
 - Fixed `autosave.ahk` not respecting `beep` setting

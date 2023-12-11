@@ -22,7 +22,7 @@
 	- [ ] maybe make a third func to completely reset the playhead to the left and have `prem.thumbscroll()` optionally call it if it hits the end of the timeline
 - [ ] make `switchTo.adobeProject()` copy path to clipboard on double press
 - [ ] make script for prem to quickly select audio in/out selection
-- [ ] discord style F1/F2 functionality for slack
+- [x] discord style F1/F2 functionality for slack
 - [ ] discord style capslock functionality for slack
 - [ ] make update script for `choco` packages
 	- make it check that choco is installed before continuing with `cmd.result("choco")`

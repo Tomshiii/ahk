@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2023/11/01
- * @version 1.2.4
+ * @date 2023/12/11
+ * @version 1.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,6 +41,7 @@ class ptf {
     static resolveIMGver     := this().UserSettings.resolveVer
     static ImgSearch         := this.SupportFiles "\ImageSearch"
     static Discord           := this.ImgSearch "\Discord\"
+    static Slack           := this.ImgSearch "\Slack\"
     static Premiere          := this.ImgSearch "\Premiere\" this.premIMGver "\"
     static AE                := this.ImgSearch "\AE\" this.aeIMGver "\"
     static Photoshop         := this.ImgSearch "\Photoshop\" this.psIMGver "\"

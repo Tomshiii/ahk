@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/12/04
- * @version 1.3.2
+ * @date 2023/12/11
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,7 @@
 ;programs
 #Include <Classes\Apps\VSCode>
 #Include <Classes\Apps\Discord>
+#Include <Classes\Apps\Slack>
 #Include <Classes\Editors\After Effects>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\Editors\Photoshop>
@@ -490,7 +491,7 @@ class switchTo {
     }
 
     /** This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one */
-    static Slack() => this().__Win("ahk_exe slack.exe", A_AppData "\..\Local\slack\slack.exe", "slack")
+    static Slack() => this().__Win("ahk_exe slack.exe", slack.path, "slack")
 
     /** This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one */
     static Music()
