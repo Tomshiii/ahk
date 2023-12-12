@@ -20,15 +20,15 @@
 ## Functions
 - [ ] make function in addition to `prem.thumbscroll()` that moves the timeline to the left until released
 	- [ ] maybe make a third func to completely reset the playhead to the left and have `prem.thumbscroll()` optionally call it if it hits the end of the timeline
-- [ ] make `switchTo.adobeProject()` copy path to clipboard on double press
+- [x] make `switchTo.adobeProject()` copy path to clipboard on double press
 - [ ] make script for prem to quickly select audio in/out selection
 - [x] discord style F1/F2 functionality for slack
-- [ ] discord style capslock functionality for slack
+- [x] discord style capslock functionality for slack
 - [ ] make update script for `choco` packages
 	- make it check that choco is installed before continuing with `cmd.result("choco")`
 	- maybe make it opt in as it requires cmd windows to linger on the screen for a while
 	- `cmd.result("choco list")` to get current installed versions
-	- can maybe use cmd.run(true, false, true, "choco upgrade all --yes")
+	- can maybe use `cmd.run(true, false, true, "choco upgrade all --yes")`
 ```
 _ Chocolatey:ChocolateyUpgradeCommand - Noop Mode _
 chocolatey v2.2.2 is the latest version available based on your source(s).
