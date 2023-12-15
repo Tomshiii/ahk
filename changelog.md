@@ -22,4 +22,5 @@
 
 ## > Other Changes
 - Fixed `autosave.ahk` not respecting `beep` setting
+- Fixed `CreateSymLink.ahk` failing to operate on the correct path
 - Removed lingering `checklist wait` setting from `settingsGUI`
