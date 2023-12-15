@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2023/10/23
- * @version 1.1.0
+ * @date 2023/12/15
+ * @version 1.1.1
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -85,8 +85,8 @@ class encodeGUI extends tomshiBasic {
      * @param {Object} obj the splitpath object that contains the path of the file being worked on
      */
     __runDir(obj) {
-        if WinExist(obj.dir)
-            WinActivate(obj.dir)
+        if WinExist(obj.NameNoExt)
+            WinActivate(obj.NameNoExt)
         else
             Run(obj.dir)
     }

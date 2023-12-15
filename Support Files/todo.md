@@ -24,6 +24,10 @@
 - [ ] make script for prem to quickly select audio in/out selection
 - [x] discord style F1/F2 functionality for slack
 - [x] discord style capslock functionality for slack
+- [ ] create custom imgsearch func that is designed specifically for prem/ae versions. 
+	- move everything to `fallback` folder
+	- have func check individual ver folder first, if img doesn't exist check fallback folder
+- [ ] makes `nexteditpoint` script check effect controls window for `0x454545` (selected property) if anything is selected, <kbd>Ctrl + Click</kbd> it
 - [ ] make update script for `choco` packages
 	- make it check that choco is installed before continuing with `cmd.result("choco")`
 	- maybe make it opt in as it requires cmd windows to linger on the screen for a while
@@ -69,6 +73,8 @@ Can upgrade:
 
 ## General
 - [ ] make `reset` section of `settingsGUI()` two checkboxes instead and move them below the exit section, then move the exit section up
+- [ ] create a detailed wiki page just on installation. include screenshots/gifs
+- [ ] add script to automatically copy a path in the clipboard from .mp3 => .wav or visa versa
 ***
 
 # > Cleanup

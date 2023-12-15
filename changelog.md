@@ -2,6 +2,7 @@
 
 ## > Functions
 - Fixed `cmd.Result()` failing to provide a result under certain conditions
+- Fixed `reencodeGUI()` not focusing opened destination window correctly if it is already open
 - Added `Slack {`
     - Added `unread()`
     - Added `button()`
