@@ -11,6 +11,7 @@
 `Prem {`
 - Fixed `screenshot()` throwing under certain conditions
 - Fixed `gain()` focusing the cancel button due to `Premiere` changing the <kbd>Tab</kbd> order
+- Fixed `prem.wheelEditPoint()` having difficulties trying to select previous/next keyframes
 
 ## Streamdeck AHK
 - Fixed `audSelect.ahk` & `vidSelect.ahk` still failing under certain conditions
