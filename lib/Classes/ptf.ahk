@@ -41,7 +41,7 @@ class ptf {
     static resolveIMGver     := this().UserSettings.resolveVer
     static ImgSearch         := this.SupportFiles "\ImageSearch"
     static Discord           := this.ImgSearch "\Discord\"
-    static Slack           := this.ImgSearch "\Slack\"
+    static Slack             := this.ImgSearch "\Slack\"
     static Premiere          := this.ImgSearch "\Premiere\" this.premIMGver "\"
     static AE                := this.ImgSearch "\AE\" this.aeIMGver "\"
     static Photoshop         := this.ImgSearch "\Photoshop\" this.psIMGver "\"
