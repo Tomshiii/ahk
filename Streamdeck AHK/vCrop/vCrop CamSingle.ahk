@@ -2,4 +2,4 @@
 #Include <GUIs\cropGui>
 ; }
 
-cropGui("all").show()
+cropGui("singleCam", "vertical").show()

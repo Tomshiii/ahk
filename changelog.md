@@ -18,6 +18,8 @@
 - Added `extractAll.ahk`
     - `extractAudio.ahk` renamed => `extractSingle.ahk`
     - Both moved to `..\Streamdeck AHK\extract audio\`
+- Added `vCrop` scripts to split clips vertically
+    - `hCropGUI` => `cropGUI`
 - `..\download\` scripts now pass `--recode-video mp4` instead of using `ytdlp().handleDownload()` to automatically reencode any files to `.mp4`
 
 ## > Other Changes

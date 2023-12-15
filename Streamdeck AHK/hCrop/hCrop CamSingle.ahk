@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include <GUIs\hCropGUI>
+#Include <GUIs\cropGui>
 ; }
 
-hCropGui("singleCam").show()
+cropGui("singleCam").show()

@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include <GUIs\hCropGUI>
+#Include <GUIs\cropGui>
 ; }
 
-hCropGui("single").show()
+cropGui("single").show()
