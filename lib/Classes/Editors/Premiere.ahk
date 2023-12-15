@@ -6,7 +6,7 @@
  * @premVer 24.1
  * @author tomshi
  * @date 2023/12/15
- * @version 2.1.6
+ * @version 2.1.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1028,7 +1028,6 @@ class Prem {
      */
     static wheelEditPoint(window, direction, keyswait := "all")
     {
-        tool.Cust("here")
         switch window {
             case ksa.timelineWindow: this.__checkTimelineFocus()
             case ksa.effectControls: delaySI(20, window, "^a", ksa.deselectAll) ;// indicates the user is trying to use `Select previous/next Keyframe`
