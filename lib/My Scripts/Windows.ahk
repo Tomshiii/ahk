@@ -35,6 +35,8 @@ SC03A & Right::jumpChar()
 
 ;refreshWinHotkey;
 SC03A & F5::refreshWin("A", wingetProcessPath("A"))
+;refreshElevateHotkey;
+^+F5::refreshWin("A", wingetProcessPath("A"), true)
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

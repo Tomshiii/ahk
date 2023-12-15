@@ -7,6 +7,7 @@
     - Added `unread()`
     - Added `button()`
 - `switchTo.adobeProject()` will now copy the project path to the user's clipboard if they instead activate the function twice in rapid succession
+- `refreshWin()` can now define whether the program is run elevated
 
 `Prem {`
 - Fixed `screenshot()` throwing under certain conditions
