@@ -25,9 +25,7 @@
 - [x] discord style F1/F2 functionality for slack
 - [x] discord style capslock functionality for slack
 - [x] makes `nexteditpoint` script check effect controls window for `0x454545` (selected property) if anything is selected, <kbd>Ctrl + Click</kbd> it
-- [ ] create custom imgsearch func that is designed specifically for prem/ae versions. 
-	- move everything to `fallback` folder
-	- have func check individual ver folder first, if img doesn't exist check fallback folder
+- [ ] make functions for prem/ae so when I try to zoom in/out on preview monitor (or reset view) it focuses that window first so it actually works
 - [ ] make update script for `choco` packages
 	- make it check that choco is installed before continuing with `cmd.result("choco")`
 	- maybe make it opt in as it requires cmd windows to linger on the screen for a while

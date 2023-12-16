@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/11/04
- * @version 1.0.12
+ * @date 2023/12/16
+ * @version 1.0.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -185,17 +185,17 @@ class ffmpeg {
     }
 
     /**
-     * Attempts to split in half on the horizontal axis and reencode all `.mkv` files in the chosen directory to two separate `.mp4` files. Files will be names `[original filename]_c1.mp4` and `[original filename]_c2.mp4`.
+     * Attempts to split all videos in half on the horizontal or vertical axis and reencode all `.mkv` files in the chosen directory to two separate `.mp4` files. Files will be names `[original filename]_c1.mp4` and `[original filename]_c2.mp4`.
      * @param {String} path the desired path to excecute the loop. the active directory is used by default if no path is specified
      * @param {Object} options an object to contain all necessary encoding options. The defaults are listed below.
      * ```
-     * options := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000}
+     * options := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000, horizontalVertical: "horizontal"}
      * ;// bitrate is set in kilobits
      * ```
      * #### NOTE: `crf` & `bitrate` can NOT be set at the same time, one of them MUST be set to `false`
      */
-    all_HCrop(path := "A", options?) {
-        optionsDef := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000}
+    all_Crop(path := "A", options?) {
+        optionsDef := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000, horizontalVertical: "horizontal"}
         if IsSet(options) {
             for k, v in options {
                 if optionsDef.HasProp(k)
@@ -212,9 +212,11 @@ class ffmpeg {
         crfORbitrate := (optionsDef.crf = true) ? "-crf " optionsDef.crf : "-b:v " optionsDef.bitrate "k"
         path := this.__setPath(path)
 
+        ;// define horizontal or vertical
+        filter := (optionsDef.horizontalVertical = "horizontal") ? "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" : "[0]crop=iw:ih/2:0:0[left];[0]crop=iw:ih/2:0:oh[right]"
         ;// build loop command
         ;// for %f in (*.mkv) do ffmpeg -i "%f" -c:v libx264 -preset veryfast -b:v 30000k -c:a copy -filter_complex "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" -map "[left]" "%~nf_c1.mp4" -map "[right]" -c:v libx264 -preset veryfast -b:v 30000k -c:a copy "%~nf_c2.mp4"
-        command := Format('for %f in (*.mkv) do ffmpeg -i "%f" -c:v {1} -preset {2} {3} -c:a copy -filter_complex "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" -map "[left]" "%~nf_c1.mp4" -map "[right]" -c:v {1} -preset {2} {3} -c:a copy "%~nf_c2.mp4"', optionsDef.codec, optionsDef.preset, crfORbitrate)
+        command := Format('for %f in (*.mkv) do ffmpeg -i "%f" -c:v {1} -preset {2} {3} -c:a copy -filter_complex "{4}" -map "[left]" "%~nf_c1.mp4" -map "[right]" -c:v {1} -preset {2} {3} -c:a copy "%~nf_c2.mp4"', optionsDef.codec, optionsDef.preset, crfORbitrate, filter)
 
         ;// run loop
         this.__runCommand(command, path.path)

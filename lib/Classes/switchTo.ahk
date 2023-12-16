@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/12/11
- * @version 1.3.3
+ * @date 2023/12/16
+ * @version 1.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -474,8 +474,8 @@ class switchTo {
             return
         coord.s()
         if move = true
-            move := {x: 3440, y: -912, width: 740, height: 1080}
-        WinMove(move.x, move.y, move.width, move.height, "ahk_group phoneStuff")
+            move := {x: 3440, y: -805, width: 740, height: 1080}
+        try WinMove(move.x, move.y, move.width, move.height, "ahk_group phoneStuff")
     }
 
     /** This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one */
