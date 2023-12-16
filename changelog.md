@@ -8,8 +8,11 @@
     - Added `button()`
 - `switchTo.adobeProject()` will now copy the project path to the user's clipboard if they instead activate the function twice in rapid succession
 - `refreshWin()` can now define whether the program is run elevated
-- `ffmpeg.all_HCrop()` => `ffmpeg.all_Crop()`
+
+`ffmpeg {`
+- `all_HCrop()` => `all_Crop()`
     - Now has added option to define whether to crop horizontally or vertically
+- `extractAudio()` will now place extracted audio streams in dir named after the file
 
 `Prem {`
 - Fixed `screenshot()` throwing under certain conditions

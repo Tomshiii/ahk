@@ -2,7 +2,7 @@
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
  * @date 2023/12/16
- * @version 1.0.13
+ * @version 1.0.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -273,6 +273,8 @@ class ffmpeg {
         }
         RegExReplace(probecmd, "(Audio)", "Audio", &amount)
         loop amount {
+            if !DirExist(split.dir "\" split.NameNoExt)
+                DirCreate(split.dir "\" split.NameNoExt)
             filepath2 := split.NameNoExt "_audio" Format("{:02}", A_Index) ".wav"
             audPos := InStr(probecmd, "Audio",, 1, A_Index)
             try hz := SubStr(
@@ -281,7 +283,7 @@ class ffmpeg {
                 (hzPos+-1) - startingPos
             )
             samplerate := IsSet(hz) ? hz : samplerate
-            command := Format('ffmpeg -i "{1}" -map 0:a:{2} -acodec pcm_s16le -ar {4} "{3}" -y', filepath, A_Index-1, split.dir "\" filepath2, samplerate)
+            command := Format('ffmpeg -i "{1}" -map 0:a:{2} -acodec pcm_s16le -ar {4} "{3}" -y', filepath, A_Index-1, split.dir "\" split.NameNoExt "\" filepath2, samplerate)
             cmd.run(,,, command)
         }
     }
