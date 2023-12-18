@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/12/02
- * @version 1.0.7
+ * @date 2023/12/18
+ * @version 1.0.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -121,11 +121,9 @@ class ytdlp {
      * @param {String} args is any arguments you wish to pass to yt-dlp
      * @param {String} folder is the folder you wish the files to save. By default it's this scripts directory
      * @returns the url
-     * ```
-     * ytdlp().download("", "download\path")
+     * @example ytdlp().download("", "download\path")
      * ;// default command with no passed args;
      * ;// yt-dlp -P "link\to\path" "URL"
-     * ```
      */
     download(args := "", folder := A_ScriptDir) {
         if (Type(args) != "string" || Type(folder) != "string") {
@@ -150,7 +148,6 @@ class ytdlp {
         cmd.run(,,, this.command)
         this.__activateDir(folder)
         clip.returnClip(oldClip)
-        tool.tray({text: "ytdlp process has finished", title: A_ThisFunc "()", options: 1}, 2000)
         return this.URL
     }
 

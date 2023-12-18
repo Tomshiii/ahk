@@ -11,6 +11,7 @@
 #Include <Classes\obj>
 #Include <Classes\winGet>
 #Include <Classes\errorLog>
+#Include <Other\JSON>
 ; }
 
 class ffmpeg {
@@ -41,11 +42,10 @@ class ffmpeg {
      * sets the path variable to an object
      * @param {String} path the path the user provides
      * @returns {Object} an object containing the path to work on & a windows explorer hwnd if it was previously the active window
-     * ```
+     * @example
      * path := _setPath("A")
      * path.path ;// the passed in Path
      * path.hwnd ;// the hwnd of the explorer window
-     * ```
      */
     __setPath(path) {
         this.__checkPath(path)
@@ -186,13 +186,12 @@ class ffmpeg {
 
     /**
      * Attempts to split all videos in half on the horizontal or vertical axis and reencode all `.mkv` files in the chosen directory to two separate `.mp4` files. Files will be names `[original filename]_c1.mp4` and `[original filename]_c2.mp4`.
+     * #### NOTE: `crf` & `bitrate` can NOT be set at the same time, one of them MUST be set to `false`
      * @param {String} path the desired path to excecute the loop. the active directory is used by default if no path is specified
      * @param {Object} options an object to contain all necessary encoding options. The defaults are listed below.
-     * ```
+     * @example
      * options := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000, horizontalVertical: "horizontal"}
      * ;// bitrate is set in kilobits
-     * ```
-     * #### NOTE: `crf` & `bitrate` can NOT be set at the same time, one of them MUST be set to `false`
      */
     all_Crop(path := "A", options?) {
         optionsDef := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000, horizontalVertical: "horizontal"}
@@ -260,32 +259,76 @@ class ffmpeg {
     }
 
     /**
+     * returns the base command structure for `extractAudio()`
+     *
+     * base command is; `ffmpeg -i [filepath]`
+     * @param {String} filepath the filepath of the file you are operating on
+     */
+    __baseCommandExtract(filepath) => baseCommand := Format('ffmpeg -i "{}"', filepath)
+
+    /**
+     * This function builds the remaining extract ffmpeg command based off the amount of audio streams present within the file
+     * @param {String} filepath the filepath of the file you are operating on
+     * @param {Integer} count the amount of audio streams present within the file
+     * @param {Array} hzArr an array containing the sample rates of all audio streams
+     */
+    __buildExtractCommand(filepath, count, hzArr) {
+        command := ""
+        loop count {
+            command := command Format('-map 0:a:{1} -f wav -b:a {2} -acodec pcm_s16le "{3}"', A_Index-1, hzArr[A_Index], this.__appendOutput(filepath, A_Index)) A_space
+        }
+        return command
+    }
+
+    /**
+     * generates the output portion of the `extractAudio()` ffmpeg command
+     * @param {String} filepath the filepath of the file you are operating on
+     * @param {Integer} count the amount of audio streams present within the file
+     */
+    __appendOutput(filepath, count) {
+        split := obj.SplitPath(filepath)
+        if !DirExist(split.dir "\" split.NameNoExt)
+            DirCreate(split.dir "\" split.NameNoExt)
+        outputPath := split.dir "\" split.NameNoExt "\" split.NameNoExt "_" count ".wav"
+        return outputPath
+    }
+
+    /**
+     * This function determines the sample rate of all audio streams within a file
+     * @param {String} filepath the filepath of the file you are operating on
+     * @param {String} fallback the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
+     * @returns {Object}
+     * @example
+     * {hzArr: Array containing all sample rates, amount: integer detailing the amount of audio streams present}
+     */
+    __getFrequency(filepath, fallback := "48000") {
+        try probecmd := cmd.result(Format('ffprobe -v quiet -show_streams -show_format -print_format json "{1}"', filepath))
+        catch {
+            ;// throw
+            errorLog(UnsetError("File May not contain any audio streams", -1, filepath),,, true)
+        }
+        mp     := JSON.parse(probecmd)
+        amount := mp["streams"].length - 1
+        hzArr := []
+        loop amount {
+            try hzArr.Push(mp["streams"][A_Index+1]["sample_rate"])
+            catch
+                hzArr.Push(fallback)
+        }
+        return {hzArr: hzArr, amount: amount}
+    }
+
+    /**
      * Extracts all audio streams from a file and saves them as `.wav`
      * @param {String} filepath the filepath of the file you wish to extract the audio from
      * @param {String} samplerate the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
      */
     extractAudio(filepath, samplerate := "48000") {
         split := obj.SplitPath(filepath)
-        try probecmd := cmd.result(Format('ffprobe "{1}"', filepath))
-        catch {
-            ;// throw
-            errorLog(UnsetError("File May not contain any audio streams", -1, filepath),,, true)
-        }
-        RegExReplace(probecmd, "(Audio)", "Audio", &amount)
-        loop amount {
-            if !DirExist(split.dir "\" split.NameNoExt)
-                DirCreate(split.dir "\" split.NameNoExt)
-            filepath2 := split.NameNoExt "_audio" Format("{:02}", A_Index) ".wav"
-            audPos := InStr(probecmd, "Audio",, 1, A_Index)
-            try hz := SubStr(
-                probecmd,
-                startingPos := InStr(probecmd, A_Space,, hzPos := InStr(probecmd, "Hz", 1, audPos, 1), -2)+1,
-                (hzPos+-1) - startingPos
-            )
-            samplerate := IsSet(hz) ? hz : samplerate
-            command := Format('ffmpeg -i "{1}" -map 0:a:{2} -acodec pcm_s16le -ar {4} "{3}" -y', filepath, A_Index-1, split.dir "\" split.NameNoExt "\" filepath2, samplerate)
-            cmd.run(,,, command)
-        }
+        audioStreams := this.__getFrequency(filepath, samplerate)
+        baseCommand := this.__baseCommandExtract(filepath)
+        command     := baseCommand A_space this.__buildExtractCommand(filepath, audioStreams.amount, audioStreams.hzArr)
+        cmd.run(,,, command)
     }
 
     __Delete() {
