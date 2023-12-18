@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2023/12/10
- * @version 1.1.5
+ * @date 2023/12/18
+ * @version 1.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -117,6 +117,10 @@ class WM {
                 response := "Premiere_" getName "," String(prem.%getName%)
                 prem.%getName%++
                 this.Send_WM_COPYDATA(response, splitMsg[2])
+            case "Premiere_scChange":
+                getName := "sc" splitMsg[2]
+                response := "Premiere_" getName "," String(prem.%getName%)
+                prem.%getName% := splitMsg[3]
         }
     }
 

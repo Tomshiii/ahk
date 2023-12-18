@@ -28,6 +28,7 @@ There are still a few notable things I wanted to add/change before pushing anoth
     - Both moved to `..\Streamdeck AHK\extract audio\`
 - Added `vCrop` scripts to split clips vertically
     - `hCropGUI` => `cropGUI`
+- Added `Change.ahk` screenshot script to set a new starting value
 - `..\download\` scripts now pass `--recode-video mp4` instead of using `ytdlp().handleDownload()` to automatically reencode any files to `.mp4`
 
 ## > Other Changes

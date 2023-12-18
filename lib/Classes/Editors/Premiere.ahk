@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.1
  * @author tomshi
- * @date 2023/12/15
- * @version 2.1.7
+ * @date 2023/12/18
+ * @version 2.1.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1836,12 +1836,37 @@ class Prem {
      * #### This function is almost entirely designed for my own workflow and requires hardcoded variables at the top of the class that are then specifically acted apon in various other classes/scripts.
      * A function to facilitate quickly retriving large quantities of screenshots for yt thumbnails. This function is designed to be called from a streamdeck script and there may be unexpected behaviour if done in any other way
      * @param {String} who the name of the person I'm grabbing the screenshot of
+     * @param {Boolean} change determine if the function is being called to change the new starting value
      */
-    static screenshot(who) {
+    static screenshot(who, change := false) {
         if !WinExist(prem.exeTitle)
             return
         if !WinActive(prem.exeTitle)
             switchTo.Premiere()
+        if change = true {
+            title := "Change stored value"
+            storedVar := 0
+            changeGUI := tomshiBasic(,,, title)
+            changeGUI.AddDropDownList("vDropdwn Choose1 Sort", ["Desktop", "Narrator", "Mully", "Eddie", "Juicy", "Josh"]) ;//! make alphabetical
+            changeGUI.AddEdit("Number Range1-100")
+            changeGUI.AddUpDown("vUpDwn", 1)
+            changeGUI.AddButton(, "Set").OnEvent("Click", (guiCtrl, *) => __setVal(guiCtrl))
+
+            changeGUI.OnEvent("Close", (*) => Exit())
+            changeGUI.OnEvent("Escape", (*) => Exit())
+            changeGUI.show()
+            WinWaitClose(title)
+
+            __setVal(guiCtrl, *) {
+                which := changeGUI["Dropdwn"].text
+                val := changeGUI["UpDwn"].value
+                this.sc%which% := val
+                changeGUI.Destroy()
+                storedVar := Format("{},{}", which, val)
+                return
+            }
+            return storedVar
+        }
         sleep 50
         scrshtTitle := "Export Frame"
         if !progMonNN := this.__uiaCtrlPos(premUIA.programMon) {
