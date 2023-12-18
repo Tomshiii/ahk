@@ -26,6 +26,10 @@
 - [x] discord style capslock functionality for slack
 - [x] makes `nexteditpoint` script check effect controls window for `0x454545` (selected property) if anything is selected, <kbd>Ctrl + Click</kbd> it
 - [ ] make functions for prem/ae so when I try to zoom in/out on preview monitor (or reset view) it focuses that window first so it actually works
+- [ ] make extract audio scripts operate on all files by combining command
+```
+ffmpeg -i files/2023-12-14__19-28-15.mkv -map 0:a:0 -f wav -b:a 48000 -acodec pcm_s16le files/2023-12-14__19-28-15_track1.wav -map 0:a:1 -f wav -b:a 48000 -acodec pcm_s16le files/2023-12-14__19-28-15_track2.wav -map 0:a:2 -f wav -b:a 48000 -acodec pcm_s16le files/2023-12-14__19-28-15_track3.wav -map 0:a:3 -f wav -b:a 48000 -acodec pcm_s16le files/2023-12-14__19-28-15_track4.wav -map 0:a:4 -f wav -b:a 48000 -acodec pcm_s16le files/2023-12-14__19-28-15_track5.wav -map 0:a:5 -f wav -b:a 48000 -acodec pcm_s16le files/2023-12-14__19-28-15_track6.wav -y -y -y -y -y -y
+```
 - [ ] make update script for `choco` packages
 	- make it check that choco is installed before continuing with `cmd.result("choco")`
 	- maybe make it opt in as it requires cmd windows to linger on the screen for a while
@@ -73,6 +77,8 @@ Can upgrade:
 - [ ] make `reset` section of `settingsGUI()` two checkboxes instead and move them below the exit section, then move the exit section up
 - [ ] create a detailed wiki page just on installation. include screenshots/gifs
 - [ ] add script to automatically convert a path in the clipboard from .mp3 => .wav or visa versa
+- [ ] make release script do a backup of all adobe stuff
+- [ ] add an additional set of crop scripts to render as prores instead, or provide the user with an option on run with a dropdown or something to let them choose prores/h264
 ***
 
 # > Cleanup

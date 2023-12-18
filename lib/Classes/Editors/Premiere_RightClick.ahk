@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.0
  * @author tomshi, taranVH
- * @date 2023/10/25
- * @version 2.0.17
+ * @date 2023/12/18
+ * @version 2.0.18
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -17,6 +17,7 @@
 #Include <Classes\coord>
 #Include <Classes\keys>
 #Include <Classes\obj>
+#Include <Classes\winGet>
 #Include <Functions\checkStuck>
 #Include <GUIs\Premiere Timeline GUI>
 ; }
@@ -211,6 +212,13 @@ class rbuttonPrem {
 	 * @param {Boolean} allChecks determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
 	 */
 	movePlayhead(allChecks := true) {
+		;// ensure the main prem window is active before attempting to fire
+		getTitle := WinGet.PremName()
+		if WingetTitle("A") != gettitle.winTitle {
+			SendInput("{Rbutton}")
+			return
+		}
+
 		prem.RClickIsActive := true
 
 		;// check for stuck keys

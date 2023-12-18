@@ -1,4 +1,5 @@
-# <> Release 2.13.x - 
+# <> Release 2.13.4 - Bugfix
+There are still a few notable things I wanted to add/change before pushing another release but I feel the amount of things fixed has begun to get too high to continue delaying it. Being busy with work has just continued to make it difficult to work on any of the larger issues/projects.
 
 ## > Functions
 - Fixed `cmd.Result()` failing to provide a result under certain conditions
@@ -8,6 +9,7 @@
     - Added `button()`
 - `switchTo.adobeProject()` will now copy the project path to the user's clipboard if they instead activate the function twice in rapid succession
 - `refreshWin()` can now define whether the program is run elevated
+- `rbuttonPrem().movePlayhead()` will now first check to ensure the main `Premiere` window is the active window before anything else. This should stop the function retrieving incorrect timeline coordinates if another window is currently stealing focus
 
 `ffmpeg {`
 - `all_HCrop()` => `all_Crop()`

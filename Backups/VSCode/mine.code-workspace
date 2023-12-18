@@ -15,6 +15,10 @@
 		{
 			"name": "ahk_work",
 			"path": "../../../ahk_work"
+		},
+		{
+			"name": "BulkAudioExtractTool",
+			"path": "../../../BulkAudioExtractTool"
 		}
 	],
 	"settings": {
