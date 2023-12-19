@@ -34,4 +34,5 @@ There are still a few notable things I wanted to add/change before pushing anoth
 ## > Other Changes
 - Fixed `autosave.ahk` not respecting `beep` setting
 - Fixed `CreateSymLink.ahk` failing to operate on the correct path
+- Fixed `generateAdobeSym.ahk` requiring a dependacy. This script is expected to run before symlinks and as such should have none
 - Removed lingering `checklist wait` setting from `settingsGUI`
