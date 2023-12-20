@@ -1,4 +1,5 @@
 #Include <Classes\ptf>
+#Include <Classes\errorLog>
 
 /**
  * This function will attempt to generate a shortcut of either Premiere or After Effects to the users `..\Support Files\shortcuts\` folder
@@ -24,6 +25,7 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
     ;// determining if we need to include an additional folder for AE
     aeFolder := (adobeName = "Adobe After Effects") ? "Support Files\" : ""
     ;// the location of the exe we're generating a shortcut for
-    exeLocation := (userSettingsObj.%shortName%IsBeta = false) ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta
+    exeLocation := (userSettingsObj.%shortName%IsBeta = false) ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE
+                                                               : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta
     try FileCreateShortcut(exeLocation, shortcutLocation)
 }
