@@ -10,6 +10,7 @@ There are still a few notable things I wanted to add/change before pushing anoth
 - `switchTo.adobeProject()` will now copy the project path to the user's clipboard if they instead activate the function twice in rapid succession
 - `refreshWin()` can now define whether the program is run elevated
 - `rbuttonPrem().movePlayhead()` will now first check to ensure the main `Premiere` window is the active window before anything else. This should stop the function retrieving incorrect timeline coordinates if another window is currently stealing focus
+- `move.winCenter()` now accepts parameter `adjustWidth`
 
 `ffmpeg {`
 - `all_HCrop()` => `all_Crop()`

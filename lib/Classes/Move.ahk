@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2023/09/08
- * @version 1.2.6
+ * @date 2023/12/20
+ * @version 1.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -361,8 +361,9 @@ class Move {
      * ##### This function has specific code for vlc & youtube windows
      * ##### The math for this function can act a bit funky with vertical monitors. Especially with programs like discord that have a minimum width
      * @param {Number} adjustHeight a number value to allow you to modify the general height of a centred window. This value is used as a multiplication step to increase the height. Eg. `1.25` increases the height by 25%. Depending on the resolution of your monitor a perfectly centred window may look a little strange (ultrawides in particular)
+     * @param {Number} adjustWidth a number value to allow you to modify the general width of a centred window. This value is used as a multiplication step to increase the width. Eg. `1.25` increases the width by 25%. Depending on the resolution of your monitor a perfectly centred window may look a little strange (ultrawides in particular)
      */
-    static winCenter(adjustHeight := 1) {
+    static winCenter(adjustHeight := 1, adjustWidth := 1) {
         mainMon := MonitorGetPrimary()
         title := ""
         static win := "" ;a variable we'll hold the title of the window in
@@ -382,7 +383,7 @@ class Move {
                 if winget.isFullscreen(&title2, title) ;checking if the window is fullscreen
                     WinRestore(title2,, "Editing Checklist -") ;winrestore will unmaximise it
 
-                newWidth := width / 1.6 ;determining our new width
+                newWidth := (width / 1.6)*adjustWidth ;determining our new width
                 newHeight := ((height / 1.6)*adjustHeight) ;determining our new height
                 newX := (monitor.left + (width - newWidth)/2) ;using math to centre our newly created window
                 newY := (monitor.bottom - (height + newHeight)/2) ;using math to centre our newly created window
@@ -409,6 +410,7 @@ class Move {
             }
         if InStr(title, "VLC media player") && IsSet(newHeight) && monitor.monitor = mainMon ;I want vlc to be a size for 16:9 video to get rid of any letterboxing
             {
+                ;// the size & position of vlc may be a little weird on a non 16:9 resolution
                 newHeight := 900
                 newWidth := 1416
             }
