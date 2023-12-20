@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.1
  * @author tomshi
- * @date 2023/12/20
- * @version 2.1.9
+ * @date 2023/12/21
+ * @version 2.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -668,7 +668,7 @@ class Prem {
         ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
         ;You can plug your own x distance in by changing the value below
         xdist := 210
-        coord.s()
+        coord.client()
         MouseGetPos(&xpos, &ypos)
         block.On()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {

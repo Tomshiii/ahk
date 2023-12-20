@@ -63,7 +63,7 @@ y:: ;this hotkey will fill the frame to fit the window
 	premTimeline()
 	SendInput(KSA.scaleFrameSize)
 }
-x::prem.preset("transform_MINE")
+x::prem.preset("transform Me")
 
 e::prem.preset("Parametric EQ_mine")
 c::prem.preset("Lowpass Me")
