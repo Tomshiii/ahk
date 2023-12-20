@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.1
  * @author tomshi
- * @date 2023/12/18
- * @version 2.1.8
+ * @date 2023/12/20
+ * @version 2.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1188,7 +1188,7 @@ class Prem {
     static reset()
     {
         keys.allWait()
-        coord.s()
+        coord.client()
         block.On()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
