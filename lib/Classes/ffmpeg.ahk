@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/12/16
- * @version 1.0.14
+ * @date 2023/12/21
+ * @version 1.0.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -185,7 +185,7 @@ class ffmpeg {
     }
 
     /**
-     * Attempts to split all videos in half on the horizontal or vertical axis and reencode all `.mkv` files in the chosen directory to two separate `.mp4` files. Files will be names `[original filename]_c1.mp4` and `[original filename]_c2.mp4`.
+     * Attempts to split all videos in half on the horizontal or vertical axis and reencode all `.mkv/.mp4` files in the chosen directory to two separate `.mp4` files. Files will be named `[original filename]_c1.mp4` and `[original filename]_c2.mp4` and placed in a folder called `crop_loop_output_loop_output`.
      * #### NOTE: `crf` & `bitrate` can NOT be set at the same time, one of them MUST be set to `false`
      * @param {String} path the desired path to excecute the loop. the active directory is used by default if no path is specified
      * @param {Object} options an object to contain all necessary encoding options. The defaults are listed below.
@@ -210,12 +210,13 @@ class ffmpeg {
         ;// determine crf or bitrate
         crfORbitrate := (optionsDef.crf = true) ? "-crf " optionsDef.crf : "-b:v " optionsDef.bitrate "k"
         path := this.__setPath(path)
-
+        if !DirExist(path.path "\crop_loop_output")
+            DirCreate(path.path "\crop_loop_output")
         ;// define horizontal or vertical
         filter := (optionsDef.horizontalVertical = "horizontal") ? "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" : "[0]crop=iw:ih/2:0:0[left];[0]crop=iw:ih/2:0:oh[right]"
         ;// build loop command
         ;// for %f in (*.mkv) do ffmpeg -i "%f" -c:v libx264 -preset veryfast -b:v 30000k -c:a copy -filter_complex "[0]crop=iw/2:ih:0:0[left];[0]crop=iw/2:ih:ow:0[right]" -map "[left]" "%~nf_c1.mp4" -map "[right]" -c:v libx264 -preset veryfast -b:v 30000k -c:a copy "%~nf_c2.mp4"
-        command := Format('for %f in (*.mkv) do ffmpeg -i "%f" -c:v {1} -preset {2} {3} -c:a copy -filter_complex "{4}" -map "[left]" "%~nf_c1.mp4" -map "[right]" -c:v {1} -preset {2} {3} -c:a copy "%~nf_c2.mp4"', optionsDef.codec, optionsDef.preset, crfORbitrate, filter)
+        command := Format('for %f in (*.mkv, *.mp4) do ffmpeg -i "%f" -c:v {1} -preset {2} {3} -c:a copy -filter_complex "{4}" -map "[left]" "{5}\%~nf_c1.mp4" -map "[right]" -c:v {1} -preset {2} {3} -c:a copy "{5}\%~nf_c2.mp4"', optionsDef.codec, optionsDef.preset, crfORbitrate, filter, path.path "\crop_loop_output")
 
         ;// run loop
         this.__runCommand(command, path.path)

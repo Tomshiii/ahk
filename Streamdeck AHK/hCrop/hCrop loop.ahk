@@ -3,4 +3,4 @@
 #Include <Classes\ffmpeg>
 ; }
 
-ffmpeg().all_HCrop()
+ffmpeg().all_Crop()
