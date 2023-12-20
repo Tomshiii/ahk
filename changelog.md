@@ -15,6 +15,8 @@ There are still a few notable things I wanted to add/change before pushing anoth
 `ffmpeg {`
 - `all_HCrop()` => `all_Crop()`
     - Now has added option to define whether to crop horizontally or vertically
+    - Will now include `.mp4` files
+    - Cropped videos will be placed in a folder labelled `crop_loop_output`
 - `extractAudio()` will now place extracted audio streams in dir named after the file
 
 `Prem {`
