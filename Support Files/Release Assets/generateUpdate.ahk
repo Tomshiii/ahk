@@ -250,7 +250,7 @@ FileDelete(A_WorkingDir "\release\Extract.ahk")
 FileAppend(replaceYes2, A_WorkingDir "\release\Extract.ahk")
 
 ;// opening & using the compiler
-Run(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe")
+Run(ptf.ProgFi "\AutoHotkey\Ahk2Exe.exe")
 WinWait("Ahk2Exe for AutoHotkey")
 ;// open script
 if !WinActive("Ahk2Exe for AutoHotkey") {
