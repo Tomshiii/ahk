@@ -65,7 +65,7 @@ class premUIA_Values {
 ;// if a specific version breaks anything from the base, create a new object like;
 ;// v23_6 := Map()
 ;// and then setting the correct version within `settingsGUI()` will prioritise that version
-;// if it isn't set correctly/a specific class doesn't exist we fall back to the base class
+;// if it isn't set correctly/a specific version object doesn't exist we fall back to the base version
 try {
     premClassVer := StrReplace(ptf.premIMGver, ".", "_")
     premUIA := premUIA_Values(premClassVer)

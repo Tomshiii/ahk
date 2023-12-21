@@ -4,12 +4,13 @@ There are still a few notable things I wanted to add/change before pushing anoth
 ## > Functions
 - Fixed `cmd.Result()` failing to provide a result under certain conditions
 - Fixed `reencodeGUI()` not focusing opened destination window correctly if it is already open
+- Fixed `editScript()` silently failing if registry value came back blank
 - Added `Slack {`
     - Added `unread()`
     - Added `button()`
 - `switchTo.adobeProject()` will now copy the project path to the user's clipboard if they instead activate the function twice in rapid succession
 - `refreshWin()` can now define whether the program is run elevated
-- `rbuttonPrem().movePlayhead()` will now first check to ensure the main `Premiere` window is the active window before anything else. This should stop the function retrieving incorrect timeline coordinates if another window is currently stealing focus
+- `rbuttonPrem().movePlayhead()` will now first check to ensure the main `Premiere` window is the active window before anything else. This should help mitigate the function retrieving incorrect timeline coordinates if another window is currently stealing focus
 - `move.winCenter()` now accepts parameter `adjustWidth`
 
 `ffmpeg {`

@@ -13,15 +13,15 @@
 
 ## adobe fullscreen check.ahk
 - [ ] causes cut on timeline if activates when RButton held down
+
+## General
+- [ ] `adobeVers.__generate()` may silently fail if the build command gets too long (ie. the user's installation path is longer than mine)
 ***
 
 # > Additions
 
 ## Functions
-- [ ] make function in addition to `prem.thumbscroll()` that moves the timeline to the left until released
-	- [ ] maybe make a third func to completely reset the playhead to the left and have `prem.thumbscroll()` optionally call it if it hits the end of the timeline
 - [x] make `switchTo.adobeProject()` copy path to clipboard on double press
-- [ ] make script for prem to quickly select audio in/out selection
 - [x] discord style F1/F2 functionality for slack
 - [x] discord style capslock functionality for slack
 - [x] makes `nexteditpoint` script check effect controls window for `0x454545` (selected property) if anything is selected, <kbd>Ctrl + Click</kbd> it
