@@ -20,7 +20,7 @@ genProjDirs(dirs?) {
         dirs := [
             "videos",                 "audio\music",              "audio\sfx",
             "proxies\colour renders", "proxies\timeline renders", "renders\draft",
-            "renders\final",          "_project files"
+            "renders\final",          "_project files",           "screenshots"
         ]
     }
     for v in dirs

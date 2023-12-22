@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.1
  * @author tomshi
- * @date 2023/12/21
- * @version 2.1.10
+ * @date 2023/12/22
+ * @version 2.1.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1559,6 +1559,7 @@ class Prem {
             }
             sleep 100
             if A_Index > 3 {
+                SendInput(KSA.timelineWindow)
                 SendInput(KSA.selectionPrem)
                 SendInput(KSA.programMonitor)
                 errorLog(Error("Couldn't find the selection tool", -1), "Used the selection hotkey instead", 1)

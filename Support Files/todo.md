@@ -4,7 +4,6 @@
 # > Fixes
 
 ## Functions
-- [x] `ytdlp().download()` or `ytdlp().handleDownload()` not properly dealing with twitch links
 
 ## autosave.ahk
 - [ ] autosave saving sometimes causes changing of sequence ~~(clicking RButton at the same time?)~~ - definitely happening regardless
@@ -21,12 +20,7 @@
 # > Additions
 
 ## Functions
-- [x] make `switchTo.adobeProject()` copy path to clipboard on double press
-- [x] discord style F1/F2 functionality for slack
-- [x] discord style capslock functionality for slack
-- [x] makes `nexteditpoint` script check effect controls window for `0x454545` (selected property) if anything is selected, <kbd>Ctrl + Click</kbd> it
 - [ ] make functions for prem/ae so when I try to zoom in/out on preview monitor (or reset view) it focuses that window first so it actually works
-- [x] make extract audio scripts operate on all files by combining command
 - [ ] make update script for `choco` packages
 	- make it check that choco is installed before continuing with `cmd.result("choco")`
 	- maybe make it opt in as it requires cmd windows to linger on the screen for a while
