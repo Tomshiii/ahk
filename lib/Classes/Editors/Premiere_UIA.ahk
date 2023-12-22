@@ -55,7 +55,7 @@ class premUIA_Values {
         "effectsPanel", "YwY"
     )
     v24_1 := Map(
-        "effectsControl", "YvY"
+        "effectsControl", "YrY"
     )
 
     arr := ["timeline", "effectsControl", "tools", "programMon", "effectsPanel"]

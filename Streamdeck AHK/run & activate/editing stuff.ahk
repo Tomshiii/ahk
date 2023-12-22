@@ -1,7 +1,7 @@
 ; { \\ #Includes
 #Include runActivate.ahk
-#Include <Classes\Streamdeck_ptf>
+#Include <Classes\Streamdeck_opt>
 ; }
 
-SDptf := SD_ptf()
-runAndActivate(SDptf.editingRoot)
+SDopt := SD_Opt()
+runAndActivate(SDopt.editingRoot)

@@ -2,10 +2,14 @@
 ; { \\ #Includes
 #Include <Classes\ytdlp>
 #Include <Classes\winGet>
+#Include <Classes\Streamdeck_opt>
 ; }
 
 if !selectedDir := FileSelect("D2",, "Select Download Location")
     return
-;yt-dlp --extract-audio --audio-format wav -P "link\to\path" "URL"
 
-ytdlp().download("-N 8 --extract-audio --audio-format wav", WinGet.pathU(selectedDir) "\")
+SDopt := SD_Opt()
+outputFileName := Format("%(title).{1}s [%(id)s].%(ext)s", SDopt.filenameLengthLimit)
+
+;yt-dlp --extract-audio --audio-format wav -P "link\to\path" "URL"
+ytdlp().download(Format('-N 8 -o "{1}" --windows-filenames --extract-audio --audio-format wav', outputFileName), WinGet.pathU(selectedDir) "\")

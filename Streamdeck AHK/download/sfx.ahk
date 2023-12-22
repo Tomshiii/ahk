@@ -1,10 +1,11 @@
 #SingleInstance Off
 ; { \\ #Includes
 #Include <Classes\ytdlp>
-#Include <Classes\Streamdeck_ptf>
+#Include <Classes\Streamdeck_opt>
 ; }
 
-SDptf := SD_ptf()
-;yt-dlp --extract-audio --audio-format wav -P "link\to\path" "URL"
+SDopt := SD_Opt()
+outputFileName := Format("%(title).{1}s [%(id)s].%(ext)s", SDopt.filenameLengthLimit)
 
-ytdlp().download("-N 8 --extract-audio --audio-format wav", SDptf.sfxFolder)
+;yt-dlp --extract-audio --audio-format wav -P "link\to\path" "URL"
+ytdlp().download(Format('-N 8 -output "{1}" --windows-filenames --extract-audio --audio-format wav', outputFileName), SDopt.sfxFolder)
