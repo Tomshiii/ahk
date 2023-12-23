@@ -2,6 +2,7 @@
 
 ## > Functions
 - Fixed `prem.selectionTool()` failing to fall back to keyboard shortcuts if the image cannot be found
+- `WinGet.ExplorerPath()` now uses code by `lexikos` to correctly function with win11 explorer tabs
 
 ## > Streamdeck AHK
 `download` scripts;

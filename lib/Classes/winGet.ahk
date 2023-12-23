@@ -361,28 +361,28 @@ class WinGet {
     }
 
     /**
-     * A function that returns the path of an open explorer window
-     * @link Original code found here by svArtist: https://www.autohotkey.com/boards/viewtopic.php?p=422751#p387113
+     * A function that returns the path of an open explorer window. Will work with win11 tabs
+     * @link Original code found here by lexikos: https://www.autohotkey.com/boards/viewtopic.php?f=83&t=109907
      * @param {Integer} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
      * @returns {String} the directory path of the explorer window
      */
-    static ExplorerPath(hwnd := 0)
+    static ExplorerPath(hwnd := WinExist("A"))
     {
-        if(hwnd==0){
-            explorerHwnd := WinActive("ahk_class CabinetWClass")
-            if(explorerHwnd==0)
-                explorerHwnd := WinExist("ahk_class CabinetWClass")
-        }
-        else
-            explorerHwnd := WinExist("ahk_class CabinetWClass ahk_id " . hwnd)
-
-        if (explorerHwnd){
-            for window in ComObject("Shell.Application").Windows{
-                try{
-                    if (window && window.hwnd && window.hwnd==explorerHwnd)
-                        return window.Document.Folder.Self.Path
-                }
+        activeTab := 0
+        try activeTab := ControlGetHwnd("ShellTabWindowClass1", hwnd) ; File Explorer (Windows 11)
+        catch
+            return false
+        for w in ComObject("Shell.Application").Windows {
+            if w.hwnd != hwnd
+                continue
+            if activeTab { ; The window has tabs, so make sure this is the right one.
+                static IID_IShellBrowser := "{000214E2-0000-0000-C000-000000000046}"
+                shellBrowser := ComObjQuery(w, IID_IShellBrowser, IID_IShellBrowser)
+                ComCall(3, shellBrowser, "uint*", &thisTab:=0)
+                if thisTab != activeTab
+                    continue
             }
+            return w
         }
         return false
     }
