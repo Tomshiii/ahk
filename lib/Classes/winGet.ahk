@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/11/01
- * @version 1.5.15.1
+ * @date 2023/12/24
+ * @version 1.5.16.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -382,7 +382,7 @@ class WinGet {
                 if thisTab != activeTab
                     continue
             }
-            return w
+            return w.Document.Folder.Self.Path
         }
         return false
     }
