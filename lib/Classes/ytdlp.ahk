@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/12/18
- * @version 1.0.7.1
+ * @date 2023/12/24
+ * @version 1.0.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,7 +18,7 @@
 
 class ytdlp {
 
-    links := ["https://www.youtube.com/", "https://www.twitch.tv/", "https://clips.twitch.tv/", "https://youtu.be/", "https://www.tiktok.com"]
+    links := ["https://www.youtube.com/", "https://www.twitch.tv/", "https://clips.twitch.tv/", "https://youtu.be/", "https://www.tiktok.com", "https://www.facebook.com", "https://old.reddit.com", "https://www.reddit.com"]
     URL := ""
     defaultCommand := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
     command := ""
@@ -137,8 +137,10 @@ class ytdlp {
         this.URL := oldClip.storedClip
         SendInput("^c")
         if ClipWait(0.3) {
-            if !this.__checkClipboard(A_Clipboard, oldClip.storedClip, args, folder)
-                return this.URL
+            if !this.__checkClipboard(A_Clipboard, oldClip.storedClip, args, folder) {
+                if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No"
+                    return this.URL
+            }
         }
         if this.checkClipState = true {
             this.command := Format(this.defaultCommand, args, folder, oldClip.storedClip)
