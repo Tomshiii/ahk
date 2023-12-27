@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2023/09/13
- * @version 1.4.8
+ * @date 2023/12/25
+ * @version 1.4.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -50,6 +50,8 @@ class discord {
     static winTitle := this.exeTitle
     static class := "ahk_class Chrome_WidgetWin_1"
     static path := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
+
+    static surroundActive := false
 
     /**
      * This function is called by a few other User facing functions and is designed to alert the user when discord has gone and changed the logo button within the main UI. This logo changing breaks those functions in certain ways.
@@ -273,12 +275,29 @@ class discord {
         if (!IsSet(timeWait) || Type(timeWait) != "object" ||
             !(timeWait.HasOwnProp("First") && timeWait.HasOwnProp("Second"))) {
                 timeWait := {}
-                timeWait.First := 0.05, timeWait.Second := 0.1
+                timeWait.First := 0.1, timeWait.Second := 0.1
         }
         if Type(char) != "string" || Type(onFailSend) != "string" {
                 ;// throw
                 errorLog(TypeError("Incorrect Parameter Type passed to function", -1),,, 1)
             }
+        __exit(returnClip) {
+            block.Off()
+            clip.returnClip(returnClip)
+            this.surroundActive := false
+        }
+        ;// if the function is reactivated before the clipboard has been returned to normal
+        ;// it will get confused and end up sending the clipboard, most likely when you don't want it to
+        if this.surroundActive = true {
+            loop {
+                if A_Index > 40
+                    return
+                if this.surroundActive = false
+                    break
+                sleep 15
+            }
+        }
+        this.surroundActive := true
         charLength := StrLen(char)
         if charLength > 2 {
                 ;// throw
@@ -286,29 +305,30 @@ class discord {
             }
         block.On("send")
         store := clip.clear()
-        if !clip.copyWait(store.storedClip, timeWait.first, false)
-            {
-                SendInput(KSA.discHighlightChat)
-                if charLength = 2 && A_ThisHotkey != ""
-                    SendText(onFailSend)
-                else
-                    SendText(char)
-                ; clip.delayReturn(store.storedClip)
-                block.Off()
+        if !clip.copyWait(, timeWait.first, false) {
+            SendInput(KSA.discHighlightChat)
+            sendText := (charLength = 2 && A_ThisHotkey != "") ? onFailSend : char
+            A_Clipboard := sendText
+            if !ClipWait(timeWait.second) {
+                __exit(store.storedClip)
                 return
             }
+            SendInput("{Ctrl Down}v{Ctrl Up}")
+            SetTimer((*) => (clip.returnClip(store.storedClip), this.surroundActive := false), -25)
+            block.Off()
+            return
+        }
         ;// clearing the clipboard again in an attempt to fix this function sometimes hanging and sending keys seemingly randomly
         middle := A_Clipboard
         clip.clear()
         A_Clipboard := (charLength = 2) ? SubStr(char, 1, 1) middle SubStr(char, 2, 1) : char middle char
-        if !ClipWait(timeWait.second)
-            {
-                block.Off()
-                clip.delayReturn(store.storedClip)
-                return
-            }
-        SendInput("^v")
+        if !ClipWait(timeWait.second) {
+            __exit(store.storedClip)
+            return
+        }
+        SendInput("{ctrl down}v{ctrl up}")
         block.Off()
-        clip.delayReturn(store.storedClip)
+        SetTimer((*) => (clip.returnClip(store.storedClip), this.surroundActive := false), -25)
+        return
     }
 }

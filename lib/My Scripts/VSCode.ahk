@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Apps\VSCode>
+#Include <Classes\Apps\Discord>
 #Include <Functions\delaySI>
 ; }
 
@@ -22,5 +23,7 @@ $^f::VSCode.search()
 $^x::VSCode.cut()
 ;vscodeCopyHotkey;
 $^c::VSCode.copy()
-;vscodeHideBar;
+;vscodeHideBarHotkey;
 ^b::delaySI(15, KSA.hideSideBar, KSA.hideActivityBar)
+;vscodeAsterixHotkey;
+*::discord.surround("*")
