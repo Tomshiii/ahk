@@ -363,6 +363,57 @@ ahkBackup     := "E:\Github\Non Github Backups\ahkBackup"
 ahkWiki       := "E:\Github\ahk_wiki"
 ahkWikiBackup := "E:\Github\Non Github Backups\ahkWikiBackup"
 
+;// backup adobe stuff
+;//! premiere
+
+;//* KotET
+DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
+DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
+
+__backupPremFolders(ahkDir, pcDir) {
+    files := FileSelect("M3", pcDir)
+    if !files
+        return
+    for v in files {
+        FileCopy(v, ahkDir "*.*", 1)
+    }
+}
+;//* Layouts
+layoutsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Layouts\"
+layoutsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Layouts"
+__backupPremFolders(layoutsBackup, layoutsBeginningDir)
+
+;//* Settings
+settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\"
+settingsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom"
+__backupPremFolders(settingsBackup, settingsBeginningDir)
+
+;//* Win
+winBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Win\v" ptf.PremYearVer
+winBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Win"
+FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*")
+; __backupPremFolders(winBackup, winBeginningDir)
+
+;//! ae
+
+;//* aeks
+ahkAEKBD := "E:\Github\ahk\Backups\Adobe Backups\After Effects\aeks\Custom.txt"
+pcAEKBD := "C:\Users\Tom\AppData\Roaming\Adobe\After Effects\" ptf.premIMGver "\aeks\Custom.txt"
+FileCopy(pcAEKBD, ahkAEKBD, 1)
+
+;//* workspace
+workspaceBackup := "E:\Github\ahk\Backups\Adobe Backups\After Effects\ModifiedWorkspaces\"
+workspaceBeginningDir := A_AppData "\Adobe\After Effects\" ptf.premIMGver "\ModifiedWorkspaces"
+__backupPremFolders(workspaceBackup, workspaceBeginningDir)
+
+;//! media encoder
+
+;//* presets
+presetsBackup := "E:\Github\ahk\Backups\Adobe Backups\Media Encoder\Presets\"
+presetsBeginningDir := A_MyDocuments "\Adobe\Adobe Media Encoder\" ptf.PremYearVer ".0\Presets"
+__backupPremFolders(presetsBackup, presetsBeginningDir)
+
+
 if DirExist(ahkBackup)
     DirDelete(ahkBackup, 1)
 ToolTip("Backing up ahk folder")
