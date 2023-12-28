@@ -745,7 +745,7 @@
 	"ToggleSnapGrid" = "(Ctrl+Shift+SingleQuote)"
 	"ToggleSnapGuides" = "(Ctrl+Shift+;)"
 	"ToggleSwitchesModes" = "(F4)"
-	"ToggleVideo" = "(Shift+E)()"
+	"ToggleVideo" = "(Shift+E)"
 	"Undo" = "(Ctrl+Z)"
 	"Ungroup" = "(Ctrl+Shift+G)"
 	"UnlockAllLayers" = "(Ctrl+Shift+L)"

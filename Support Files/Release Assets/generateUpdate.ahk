@@ -385,25 +385,27 @@ __backupPremFolders(layoutsBackup, layoutsBeginningDir)
 
 ;//* Settings
 settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\"
-settingsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom"
-__backupPremFolders(settingsBackup, settingsBeginningDir)
+settingsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\"
+FileCopy(settingsBeginningDir "\Adobe Premiere Pro Prefs", settingsBackup "\Adobe Premiere Pro Prefs", 1)
+FileCopy(settingsBeginningDir "\Effect Presets and Custom Items.prfpset", settingsBackup "\Effect Presets and Custom Items.prfpset", 1)
+FileCopy(settingsBeginningDir "\LayoutsWorkspaceConfig.xml", settingsBackup "\LayoutsWorkspaceConfig.xml", 1)
 
 ;//* Win
 winBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Win\v" ptf.PremYearVer
 winBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Win"
-FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*")
+FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*", 1)
 ; __backupPremFolders(winBackup, winBeginningDir)
 
 ;//! ae
 
 ;//* aeks
 ahkAEKBD := "E:\Github\ahk\Backups\Adobe Backups\After Effects\aeks\Custom.txt"
-pcAEKBD := "C:\Users\Tom\AppData\Roaming\Adobe\After Effects\" ptf.premIMGver "\aeks\Custom.txt"
+pcAEKBD := A_AppData "\Adobe\After Effects\" StrReplace(ptf.premIMGver, "v") "\aeks\Custom.txt"
 FileCopy(pcAEKBD, ahkAEKBD, 1)
 
 ;//* workspace
 workspaceBackup := "E:\Github\ahk\Backups\Adobe Backups\After Effects\ModifiedWorkspaces\"
-workspaceBeginningDir := A_AppData "\Adobe\After Effects\" ptf.premIMGver "\ModifiedWorkspaces"
+workspaceBeginningDir := A_AppData "\Adobe\After Effects\" StrReplace(ptf.premIMGver, "v") "\ModifiedWorkspaces"
 __backupPremFolders(workspaceBackup, workspaceBeginningDir)
 
 ;//! media encoder
