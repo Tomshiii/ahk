@@ -5,11 +5,11 @@
 arr1 := ["Food & Bev", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Health"]
 arr2 := ["Gift", "Salary", "Loan Repayments", "Other Repayments"]
 
-getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample: $L$323", "Expenses PivotTable Coords", "H130")
+getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample: $L$323", "Expenses PivotTable Coords", "H130", "$L$")
 if getValExpenses.result = "Cancel"
     return
 
-getValIncome := InputBox("Enter Coordinates for Income PivotTable`n`nExample: $O$323", "Income PivotTable Coords", "H130")
+getValIncome := InputBox("Enter Coordinates for Income PivotTable`n`nExample: $O$323", "Income PivotTable Coords", "H130", "$O$")
 if getValIncome.result = "Cancel"
     return
 

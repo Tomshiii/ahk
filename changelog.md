@@ -2,7 +2,8 @@
 
 ## > Functions
 - Fixed `prem.selectionTool()` failing to fall back to keyboard shortcuts if the image cannot be found
-- Fixed `discord.surround()` always failing and forcing `ClipWait` to time out
+- Fixed `errorLog()` throwing if only one tooltip coordinate is passed
+- Attempt to fix `discord.surround()` always failing and forcing `ClipWait` to time out. (Still sometimes delayed.. dealing with the clipboard is annoying)
 - `WinGet.ExplorerPath()` now uses code by `lexikos` to correctly function with win11 explorer tabs
 
 `ytdlp {`
@@ -21,5 +22,3 @@ Renamed;
 - `SD_ptf {` => `SD_Opt {`
 - `Streamdeck_ptf.ahk` => `Streamdeck_opt.ahk`
 - `..\Support Files\Streamdeck AHK\dirs.ini` => `options.ini`
-
-## > Other Changes

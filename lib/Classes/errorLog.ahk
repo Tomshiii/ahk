@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2023/10/04
- * @version 2.1.1
+ * @date 2023/12/30
+ * @version 2.1.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -179,8 +179,8 @@ class errorLog extends log {
                 }
 
                 ;// checking if either the x/y values have been overridden
-                x := defaults.x = "null" ? unset : x
-                y := defaults.y = "null" ? unset : x
+                x := defaults.x = "null" ? unset : defaults.x
+                y := defaults.y = "null" ? unset : defaults.y
 
                 ;// generate tooltip
                 tool.Cust(this.err.Message scndLine, defaults.time, x?, y?, defaults.ttip)

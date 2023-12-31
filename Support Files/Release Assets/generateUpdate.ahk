@@ -416,6 +416,7 @@ presetsBeginningDir := A_MyDocuments "\Adobe\Adobe Media Encoder\" ptf.PremYearV
 __backupPremFolders(presetsBackup, presetsBeginningDir)
 
 
+;// backup ahk folder
 if DirExist(ahkBackup)
     DirDelete(ahkBackup, 1)
 ToolTip("Backing up ahk folder")
@@ -424,6 +425,7 @@ DirCopy(ptf.rootDir, ahkBackup, 1)
 ToolTip("")
 tool.Cust("AHK folder backup complete")
 
+;// backup wiki
 tool.Wait()
 if DirExist(ahkWikiBackup)
     DirDelete(ahkWikiBackup, 1)

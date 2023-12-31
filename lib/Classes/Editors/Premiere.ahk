@@ -1076,7 +1076,7 @@ class Prem {
             if A_Index > 3
                 {
                     block.Off()
-                    errorLog(IndexError("Couldn't find the requested property.", -1),, {ttip: 2, y:30})
+                    errorLog(IndexError("Couldn't find the requested property."),, {ttip: 2, y:30})
                     keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                     MouseMove(xpos, ypos)
                     return
