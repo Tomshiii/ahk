@@ -34,7 +34,8 @@ My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https
 ## [Getting Started:](https://github.com/Tomshiii/ahk/wiki)
 
 Depending on which sections of my repo you intend to use will determine how much manual setup is required from the user; For indepth instructions on how to get started with my repo, alongside any important notices head [over to the wiki page](https://github.com/Tomshiii/ahk/wiki).  
-There you will also find complete definitions of all scripts/functions of my repo as well as important prerequisite information that is required of the user before my repo will function as expected.
+There you will also find complete definitions of all scripts/functions of my repo as well as important prerequisite information that is required of the user before my repo will function as expected.  
+You will also find [Installation Instructions](https://github.com/Tomshiii/ahk/wiki/Installation)
 ***
 
 ## Short Explanation:

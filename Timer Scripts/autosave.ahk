@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2023/12/09
- * @version 2.1.2
+ * @date 2024/01/04
+ * @version 2.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -382,8 +382,8 @@ class adobeAutoSave extends count {
             return
         }
 
-        WinSetTransparent(0, editors.AE.winTitle)
         try {
+            WinSetTransparent(0, editors.AE.winTitle)
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
                 SendInput("{Shift Up}")

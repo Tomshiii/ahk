@@ -66,7 +66,7 @@ Can upgrade:
 
 ## General
 - [ ] make `reset` section of `settingsGUI()` two checkboxes instead and move them below the exit section, then move the exit section up
-- [ ] create a detailed wiki page just on installation. include screenshots/gifs
+- [x] create a detailed wiki page just on installation. include screenshots/gifs
 - [x] add script to automatically convert a path in the clipboard from .mp3 => .wav or visa versa
 - [x] make release script do a backup of all adobe stuff
 - [ ] add an additional set of crop scripts to render as prores instead, or provide the user with an option on run with a dropdown or something to let them choose prores/h264

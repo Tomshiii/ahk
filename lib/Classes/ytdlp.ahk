@@ -121,9 +121,11 @@ class ytdlp {
      * @param {String} args is any arguments you wish to pass to yt-dlp
      * @param {String} folder is the folder you wish the files to save. By default it's this scripts directory
      * @returns the url
-     * @example ytdlp().download("", "download\path")
+     * ```
+     * ytdlp().download("", "download\path")
      * ;// default command with no passed args;
      * ;// yt-dlp -P "link\to\path" "URL"
+     * ```
      */
     download(args := "", folder := A_ScriptDir) {
         if (Type(args) != "string" || Type(folder) != "string") {

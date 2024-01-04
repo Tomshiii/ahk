@@ -120,7 +120,7 @@ End:: ;search for checklist file
 	if !WinExist("Editing Checklist") && !WinExist("Select commission folder") && !WinExist("checklist.ahk - AutoHotkey")
 		Run(ptf["checklist"])
 	else if WinExist("Editing Checklist")
-		WinMove(-345, -191,,, "Editing Checklist -")
+		WinMove(-345, 0,,, "Editing Checklist -")
 }
 
 w::unassigned()

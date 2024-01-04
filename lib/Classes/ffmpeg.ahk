@@ -42,10 +42,11 @@ class ffmpeg {
      * sets the path variable to an object
      * @param {String} path the path the user provides
      * @returns {Object} an object containing the path to work on & a windows explorer hwnd if it was previously the active window
-     * @example
+     * ```
      * path := _setPath("A")
      * path.path ;// the passed in Path
      * path.hwnd ;// the hwnd of the explorer window
+     * ```
      */
     __setPath(path) {
         this.__checkPath(path)
@@ -189,9 +190,10 @@ class ffmpeg {
      * #### NOTE: `crf` & `bitrate` can NOT be set at the same time, one of them MUST be set to `false`
      * @param {String} path the desired path to excecute the loop. the active directory is used by default if no path is specified
      * @param {Object} options an object to contain all necessary encoding options. The defaults are listed below.
-     * @example
+     * ```
      * options := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000, horizontalVertical: "horizontal"}
      * ;// bitrate is set in kilobits
+     * ```
      */
     all_Crop(path := "A", options?) {
         optionsDef := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000, horizontalVertical: "horizontal"}
@@ -298,9 +300,13 @@ class ffmpeg {
      * This function determines the sample rate of all audio streams within a file
      * @param {String} filepath the filepath of the file you are operating on
      * @param {String} fallback the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
-     * @returns {Object}
-     * @example
-     * {hzArr: Array containing all sample rates, amount: integer detailing the amount of audio streams present}
+     * @returns {Object}  .
+     * ```
+     * {
+     * hzArr: ;Array containing all sample rates,
+     * amount: ;integer detailing the amount of audio streams present
+     * }
+     * ```
      */
     __getFrequency(filepath, fallback := "48000") {
         try probecmd := cmd.result(Format('ffprobe -v quiet -show_streams -show_format -print_format json "{1}"', filepath))

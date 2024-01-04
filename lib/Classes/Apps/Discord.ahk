@@ -18,6 +18,9 @@
 #Include <Functions\change_msgButton>
 ; }
 
+/**
+ * Please be aware that automating the discord client in any way is technically against TOS. While none of these scripts are likely to cause any issues, use this class at your own risk - I do not take any responsibility for anything that may happen to your account.
+*/
 class discord {
 
     static __New() {
@@ -112,15 +115,11 @@ class discord {
 
     /**
      * This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in `..\Support Files\ImageSearch\disc[button].png` and automatically clicks the one you're after, allowing the user to more quickly navigate the UI.
-     *
-     * This function is constantly being broken as discord updates their logo/the text for words. When this happens you can try taking new screenshots to see if that fixes the issue.
-     *
-     * This function may encounter different behaviours depending on the orientation of the monitor that it's on/the resolution. It hasn't been tested on anything higher than a `1440p` monitor.
-     *
-     * This function automatically disables the `@ON` ping when replying to someone. This can be disabled by setting the class variable `disableAutoReplyPing` to `false`
-     *
-     * *This function includes specific code for the reply button and requires the passed parameter to be `DiscReply.png`*
-     * *This function includes specific code for the delete button and requires the passed parameter to be `DiscDelete.png`*
+     * - This function is **constantly** being broken as discord updates their logo/the text for words. When this happens you can try taking new screenshots to see if that fixes the issue.
+     * - This function may encounter different behaviours depending on the orientation of the monitor that it's on/the resolution. It hasn't been tested on anything higher than a `1440p` monitor.
+     * - This function automatically disables the `@ON` ping when replying to someone. This can be disabled by setting the class variable `disableAutoReplyPing` to `false` (or by adjusting the setting within `settingsGUI()`)
+     * - ⚠️ *This function includes specific code for the reply button and requires the passed parameter to be `DiscReply.png`*
+     * - ⚠️ *This function includes specific code for the delete button and requires the passed parameter to be `DiscDelete.png`*
      * @param {String} button is the png name of a screenshot of the button you want the function to press.
      * ```
      * ;NOTE this function may only work if you use the same display settings. Otherwise you may need your own screenshots.
@@ -262,10 +261,10 @@ class discord {
 
     /**
      * This function allows the user to wrap the highlighted text with whatever characters they want (eg. ``, (), etc). I created this mostly because I got too use to VSCode offering this feature that I kept trying to do it in discord.
-     * ```
-     * ;// If the passed `char` variable is 2 characters long, the first character will be appended at the beginning of the highlighted text & the second character will be appended to the end of the highlighted text
-     * ;// If the passed `char` variable is 2 characters long & you aren't highlighting anything OR it fails to wait for data, this function will attempt to highlight the chat window and send the hotkey that activated the function (by default)
-     * ```
+     *
+     * ⚠️ This function isn't perfect, dealing with the clipboard is sometimes incredibly slow and as such might cause noticeable delay at times, unintended characters appearing, or even just past clipboards being pasted instead of the intended text. I've done my best to avoid these issues as much as possible but at the end of the day windows is windows and there's only so much I can do about it. If I knew a way to detect if text is highlighted or not it might reduce some of these pitfalls, but at the current time I have yet to find a method that works with the discord client. ⚠️
+     * - If the passed `char` variable is 2 characters long, the first character will be appended at the beginning of the highlighted text & the second character will be appended to the end of the highlighted text
+     * - If the passed `char` variable is 2 characters long & you aren't highlighting anything OR it fails to wait for data, this function will attempt to highlight the chat window and send the hotkey that activated the function (by default)
      * @param {String} char the desired character(s) to wrap the text with. This parameter can be no more than 2 characters long
      * @param {String} onFailSend is the desired character you wish to be sent when `char` is 2 characters long and you aren't highlighting any text
      * @param {Object} timeWait is to set a custom time that each `ClipWait` will wait. Two values **MUST** be passed for this parameter to work correctly, they are; `{first: 0.05, second: 0.1}`. The `first` value is to determine how long the clipboard will wait while attempting to see if the user has anything highlighted. The `second` value is hhow long the clipboard will wait while attempting to add the user's highlighted text.
