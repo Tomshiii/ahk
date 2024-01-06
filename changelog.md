@@ -13,6 +13,7 @@
 
 ## > Streamdeck AHK
 - Added `convert wavOrmp3.ahk`
+- `extractAll.ahk` will now check to see if [Bulk Audio Extract Tool](https://github.com/TimeTravelPenguin/BulkAudioExtractTool) is installed before proceeding.
 
 `download` scripts;
 - All scripts now employ a filename size limit which can be set in `options.ini` (see below). This is to help avoid circumstances where a filename may become too large and corrupt itself upon download

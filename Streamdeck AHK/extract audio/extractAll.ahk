@@ -8,6 +8,13 @@
 if !selectedFile := FileSelect("D 3",, "Select file to extract audio.")
     return
 
+;// checking to see if the user has [Bulk Audio Extract Tool](https://github.com/TimeTravelPenguin/BulkAudioExtractTool) installed
+checkBaet := cmd.result("baet --v")
+if InStr(checkBaet, "Bulk Audio Extract Tool", 1, 1, 1) = true {
+    cmd.run(,,1, Format('baet -i "{1}"', selectedFile))
+    return
+}
+
 ;// creating an instance like this stops the script from producing a traytip for every audio stream
 ;// that it extracts
 ffmpegInstance := ffmpeg()
