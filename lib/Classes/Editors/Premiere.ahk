@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.1
  * @author tomshi
- * @date 2023/12/22
- * @version 2.1.11
+ * @date 2024/01/07
+ * @version 2.1.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -151,6 +151,7 @@ class Prem {
     /**
      * A function to cut repeat code when attempting to retrieve coordinates of a Control. This function will use the UIA class to determine all coordinates of the passed in UIA element.
      * @param {String} UIA_Element the UIA string to isolate the premiere panel you wish to operate on. Can be passed in manually as a string such as `"YwY"` or as a pre-set variable via the `premUIA` class
+     * @param {Boolean} tooltip whether or not this function should provide a tooltip to alert the user on failure. Defaults to `true`
      * @returns {Object/false} returns an object containing all values recieved via `ControlGetPos` as well as the UIA object that can continue to be operated on. If the function cannot determine the controls position, it will return boolean `false`
      * ```
      * effCtrl := this.__uiaCtrlPos(premUIA.effectsControl)
@@ -162,14 +163,14 @@ class Prem {
      * effCtrl.uiaVar ;// returns -> uiaVar := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId())
      * ```
      */
-    static __uiaCtrlPos(UIA_Element) {
+    static __uiaCtrlPos(UIA_Element, tooltip := true) {
         try {
             premName := WinGet.PremName()
             AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
             ClassNN  := ControlGetClassNN(AdobeEl.ElementFromPath(UIA_Element).GetControlId())
             ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
         } catch {
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, 1)
+            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, tooltip)
             return false
         }
         return {x: toolx, y: tooly, width: width, height: height, classNN: ClassNN, uiaVar: AdobeEl}
@@ -1541,35 +1542,55 @@ class Prem {
      * This function will instead attempt to warp to the selection tool on your toolbar and presses it instead. If that fails it will focus the toolbar and send the hotkey instead.
      */
     static selectionTool() {
-        coord.s("Mouse", false)
-        coord.client(, false)
         MouseGetPos(&xpos, &ypos)
         sleep 50
         if !toolsNN := this.__uiaCtrlPos(premUIA.tools) {
             block.Off()
             return
         }
-        loop {
-            if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection_2.png")
-                return
-            if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection.png") {
-                coord.client("Mouse", false)
-                MouseMove(x, y)
-                break
-            }
-            sleep 100
-            if A_Index > 3 {
-                SendInput(KSA.timelineWindow)
-                SendInput(KSA.selectionPrem)
-                SendInput(KSA.programMonitor)
-                errorLog(Error("Couldn't find the selection tool", -1), "Used the selection hotkey instead", 1)
-                return
+        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection_2.png")
+            return
+        if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection.png") {
+            coord.client("Mouse", false)
+            MouseMove(x, y)
+            SendInput("{Click}")
+            MouseMove(xpos, ypos)
+            SendInput(KSA.programMonitor)
+            return
+        }
+        sleep 100
+        if A_Index > 3 {
+            SendInput(KSA.timelineWindow)
+            SendInput(KSA.selectionPrem)
+            SendInput(KSA.programMonitor)
+            errorLog(Error("Couldn't find the selection tool", -1), "Used the selection hotkey instead", 1)
+            return
+        }
+    }
+
+    /**
+     * Trying to zoom in on the preview window can be really annoying when the hotkey only works while the window is focused
+     * This function will ensure it happens regardless
+     * @param {String} command the hotkey to send to premiere to zoom however you wish
+    */
+    static zoomPreviewWindow(command) {
+        __sendOrig() {
+            if A_ThisHotkey != "" {
+                hot := SubStr(A_ThisHotkey, 1, 1) = "$" ? SubStr(A_ThisHotkey, 2) : A_ThisHotkey
+                SendInput(hot)
             }
         }
-        SendInput("{Click}")
-        coord.s()
-        MouseMove(xpos, ypos)
-        SendInput(KSA.programMonitor)
+        if !toolsNN := this.__uiaCtrlPos(premUIA.tools, false) {
+            __sendOrig()
+            return
+        }
+        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png") {
+            __sendOrig()
+            return
+        }
+        ;// we first need to focus a window that won't cycle through anything if you activate it multiple times
+        ;// if you don't, activating the program monitor while it's already activated will cycle timeline sequences
+        delaySI(50, KSA.effectControls, KSA.programMonitor, command)
     }
 
     /**

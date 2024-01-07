@@ -347,7 +347,7 @@
 
 ["CCompMarkerCmd"]
 	"CompGotoMarker0" = "(0)"
-	"CompGotoMarker1" = "(1)"
+	"CompGotoMarker1" = "()"
 	"CompGotoMarker2" = "(2)"
 	"CompGotoMarker3" = "(3)"
 	"CompGotoMarker4" = "(4)"
@@ -359,7 +359,7 @@
 	"CompMarker0" = "(Shift+0)"
 	"CompMarker1" = "()"
 	"CompMarker2" = "()"
-	"CompMarker3" = "(Shift+3)"
+	"CompMarker3" = "()"
 	"CompMarker4" = "(Shift+4)"
 	"CompMarker5" = "(Shift+5)"
 	"CompMarker6" = "(Shift+6)"
@@ -390,7 +390,7 @@
 	"PaintSetOpacity70" = "(Pad7)"
 	"PaintSetOpacity80" = "(Pad8)"
 	"PaintSetOpacity90" = "(Pad9)"
-	"PaintTimeStepBack" = "(1)(Ctrl+PageUP)"
+	"PaintTimeStepBack" = "(Ctrl+PageUP)"
 	"PaintTimeStepForward" = "(2)(Ctrl+PageDOWN)"
 
 ["CCompTime"]
@@ -459,11 +459,11 @@
 	"ToolArrow" = "(V)"
 	"ToolCamera" = "(C)"
 	"ToolCameraDolly" = "(3)"
-	"ToolCameraDollyToggle" = "(Shift+3)"
-	"ToolCameraOrbit" = "(1)"
-	"ToolCameraOrbitToggle" = "(Shift+1)"
+	"ToolCameraDollyToggle" = "()"
+	"ToolCameraOrbit" = "()"
+	"ToolCameraOrbitToggle" = "()"
 	"ToolCameraPan" = "(2)"
-	"ToolCameraPanToggle" = "(Shift+2)"
+	"ToolCameraPanToggle" = "()"
 	"ToolCameraToggle" = "(Shift+C)"
 	"ToolHand" = "(H)"
 	"ToolMagnify" = "()"
@@ -518,8 +518,8 @@
 	"Rename" = "(Return)"
 
 ["CPanoECOutline"]
-	"FitItemView" = "(Shift+1)"
-	"FitItemViewUpTo100" = "(Shift+2)"
+	"FitItemView" = "()"
+	"FitItemViewUpTo100" = "(Shift+3)()"
 	"NOP" = "()"
 	"OpenComp" = "()"
 	"SelectNext" = "(DownArrow)"
@@ -528,11 +528,11 @@
 	"SelectPreviousAdd" = "(Shift+UpArrow)"
 	"TwirlClosed" = "(LeftArrow)"
 	"TwirlOpen" = "(RightArrow)"
-	"Zoom100Percent" = "(/)"
-	"ZoomIn" = "(Ctrl+Alt+=)(.)"
+	"Zoom100Percent" = "()"
+	"ZoomIn" = "(Shift+1)(Shift+1)(Ctrl+Alt+=)(.)"
 	"ZoomInResize" = "(Alt+.)(Ctrl+=)"
 	"ZoomNoScroll" = "(Ctrl+Alt+/)"
-	"ZoomOut" = "(Ctrl+Alt+-)(Comma)"
+	"ZoomOut" = "(Shift+2)(Shift+2)(Ctrl+Alt+-)(Comma)"
 	"ZoomOutResize" = "(Alt+Comma)(Ctrl+-)"
 
 ["CPanoProjFootage"]
@@ -544,16 +544,16 @@
 	"TimeTrimOut" = "(Alt+])"
 
 ["CPanoProjItem"]
-	"FitItemView" = "(Shift+1)"
-	"FitItemViewUpTo100" = "(Shift+2)"
+	"FitItemView" = "()"
+	"FitItemViewUpTo100" = "(Shift+3)()"
 	"ProofColors" = "(Shift+PadSlash)"
 	"SelectNextMask" = "(Alt+`)"
 	"SelectPreviousMask" = "(Alt+Shift+`)"
-	"Zoom100Percent" = "(/)"
-	"ZoomIn" = "(.)"
+	"Zoom100Percent" = "()"
+	"ZoomIn" = "(Shift+1)(.)"
 	"ZoomInResize" = "(Alt+.)(Ctrl+=)"
 	"ZoomNoScroll" = "(Ctrl+Alt+/)"
-	"ZoomOut" = "(Comma)"
+	"ZoomOut" = "(Shift+2)(Comma)"
 	"ZoomOutResize" = "(Alt+Comma)(Ctrl+-)"
 
 ["CPanoProjLayer"]
@@ -590,9 +590,9 @@
 	"NudgeUpMore" = "(Shift+UpArrow)(Alt+Shift+UpArrow)"
 
 ["CPanoProjLayerPanoMask"]
-	"Zoom100Percent" = "(/)"
-	"ZoomIn" = "(.)"
-	"ZoomOut" = "(Comma)"
+	"Zoom100Percent" = "()"
+	"ZoomIn" = "(Shift+1)(.)"
+	"ZoomOut" = "(Shift+2)(Comma)"
 
 ["CPanoRender"]
 	"StopRenderQueue" = "(Ctrl+.)(Esc)"
@@ -721,7 +721,7 @@
 	"ShowHideProject" = "(Ctrl+0)"
 	"ShowHideRenderQueue" = "(Ctrl+Alt+0)"
 	"ShowHideTimePanel" = "(Ctrl+3)"
-	"ShowHideTools" = "()"
+	"ShowHideTools" = "(F5)"
 	"ShowProjectTree" = "(Ctrl+F11)"
 	"ShowRulers" = "(Ctrl+R)"
 	"SpeculativePreview" = "(Alt+Shift+I)"
@@ -778,9 +778,9 @@
 	"Clear" = "(Delete)(FwdDel)"
 	"ClearWithoutWarning" = "(Ctrl+Delete)"
 	"OpenComp" = "()"
-	"Zoom100Percent" = "(/)"
-	"ZoomIn" = "(.)"
-	"ZoomOut" = "(Comma)"
+	"Zoom100Percent" = "()"
+	"ZoomIn" = "(Shift+1)(.)"
+	"ZoomOut" = "(Shift+2)(Comma)"
 
 ["MacSysShortcutsAlt"]
 	"MacSysMenuHideMe" = "()"

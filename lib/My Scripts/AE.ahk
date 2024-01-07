@@ -12,3 +12,6 @@ Xbutton2::mouseDrag(KSA.handAE, KSA.selectionAE) ;changes the tool to the hand t
 F21::SendInput(KSA.previousKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
 ;aenextframeHotkey;
 F23::SendInput(KSA.nextKeyframe) ;check the keyboard shortcut ini file to adjust hotkeys
+
+
+$+3::ae.zoomCompWindow({x:0, y:0, x2: 738, y2: 29}, A_ThisHotkey, 1)

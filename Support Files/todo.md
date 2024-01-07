@@ -20,7 +20,7 @@
 # > Additions
 
 ## Functions
-- [ ] make functions for prem/ae so when I try to zoom in/out on preview monitor (or reset view) it focuses that window first so it actually works
+- [x] make functions for prem/ae so when I try to zoom in/out on preview monitor (or reset view) it focuses that window first so it actually works
 - [ ] make update script for `choco` packages
 	- make it check that choco is installed before continuing with `cmd.result("choco")`
 	- maybe make it opt in as it requires cmd windows to linger on the screen for a while
