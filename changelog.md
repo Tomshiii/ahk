@@ -13,6 +13,7 @@
 
 ## > Streamdeck AHK
 - Added `convert wavOrmp3.ahk`
+- Added `choco All.ahk` update script
 
 `extract audio`
 - `extractAll.ahk` will now check to see if [Bulk Audio Extract Tool](https://github.com/TimeTravelPenguin/BulkAudioExtractTool) is installed before proceeding.
