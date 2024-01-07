@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly horizontally crop video files using ffmpeg
  * @author tomshi
- * @date 2023/12/04
- * @version 1.0.2
+ * @date 2024/01/08
+ * @version 1.0.3
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -63,14 +63,6 @@ class cropGui extends encodeGUI {
 
     nameArr      := []
     nameCleansed := []
-
-    __cleanse(input) {
-        output := StrReplace(input, ".mkv", "")
-        output := StrReplace(input, ".mp4", "")
-        output := StrReplace(output, A_Space, "_")
-        output := StrReplace(output, "-", "_")
-        return output
-    }
 
     /** This function will attempt to split all videos in `nameArr` using the values passed into it by the GUI */
     __allCamCrop(*) {

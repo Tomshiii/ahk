@@ -24,6 +24,11 @@
 - All scripts now employ a filename size limit which can be set in `options.ini` (see below). This is to help avoid circumstances where a filename may become too large and corrupt itself upon download
 - All scripts now pass `--windows-filenames`
 
+`reencode`
+- `reencode.ahk` => `reencode_h264.ahk`
+- Added `proresGUI.ahk`
+    - Added `reencode_prores.ahk` & `reencode_prores_all.ahk`
+
 Renamed;
 - `SD_ptf {` => `SD_Opt {`
 - `Streamdeck_ptf.ahk` => `Streamdeck_opt.ahk`

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2023/12/21
- * @version 1.0.15
+ * @date 2024/01/08
+ * @version 1.0.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -57,8 +57,9 @@ class ffmpeg {
      * Get the index to append to the file if the user doesn't wish to overwrite it
      * @param {String} path the location of the file being worked on
      */
-    __getIndex(path) {
+    __getIndex(path, extOverride := "") {
         pathobj := obj.SplitPath(path)
+        pathobj.ext := (extOverride = "") ? pathobj.ext : extOverride
         index := 1
         loop {
             if FileExist(pathobj.dir "\" pathobj.NameNoExt "_" index "." pathobj.ext) {

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2023/12/15
- * @version 1.1.1
+ * @date 2024/01/08
+ * @version 1.1.2
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -14,34 +14,39 @@
 ; }
 
 class encodeGUI extends tomshiBasic {
-    __New(fileOrDir := "file") {
+    __New(fileOrDir := "file", type := "h26") {
         if !this.__selectFile(fileOrDir, this)
             ExitApp()
         super.__New(,,, "Encode Settings")
         this.MarginX := 8
-        this.AddText("Section", "This script uses ffmpeg to reencode the selected file to a h264/5 .mp4 file.")
+        this.AddText("Section vBlurb", "This script uses ffmpeg to reencode the selected file to a h264/5 .mp4 file.")
         if fileOrDir = "file" {
             this.AddText("xs", "Current File: ")
             this.currentFileName := this.AddText("x+5 W300", this.currentFileName), this.currentFileName.SetFont("Bold")
         }
-        this.AddText("xs", "Encoding: ")
-        this.AddRadio("x" this.secMarg " yp Group Checked", "h264").OnEvent("Click", (*) => this.h26 := "4")
-        this.AddRadio("x" this.trdMarg " yp", "h265").OnEvent("Click", (*) => this.h26 := "5")
+        if type = "h26" {
+            this.AddText("xs", "Encoding: ")
+            this.AddRadio("x" this.secMarg " yp Group Checked", "h264").OnEvent("Click", (*) => this.h26 := "4")
+            this.AddRadio("x" this.trdMarg " yp", "h265").OnEvent("Click", (*) => this.h26 := "5")
+        }
+
         this.AddText("xs", "Preset: ")
         this.AddDropDownList("x" this.secMarg " yp-3 w100 Choose3 vpres", this.presetsArr).OnEvent("Change", (guiCtrl, *) => this.preset := guiCtrl.text)
 
-        ;// separate
-        this.AddText("xs yp+45", "CRF or BR: ")
-        this.AddRadio("x" this.secMarg " yp Group Checked", "crf").OnEvent("Click", this.__crforbitRadio.Bind(this, "crf"))
-        this.AddRadio("x" this.trdMarg " yp", "bitrate").OnEvent("Click", this.__crforbitRadio.Bind(this, "bitrate"))
-        ;// crf
-        this.AddText("xs", "crf: ")
-        this.AddEdit("x" this.secMarg " yp-3 Number w50 vCRFEdit")
-        this.AddUpDown("Range0-51", 17).OnEvent("Change", (guiObj, *) => this.crf := guiObj.value)
-        ;// bitrate
-        this.AddText("xs", "bitrate: ")
-        this.AddEdit("x" this.secMarg " yp-3 limit5 Number w75 vBitrateEdit Disabled", this.bitrate)
-        this.AddText("x+5 yp+3", "kb/s")
+        if type = "h26" {
+            ;// separate
+            this.AddText("xs yp+45", "CRF or BR: ")
+            this.AddRadio("x" this.secMarg " yp Group Checked", "crf").OnEvent("Click", this.__crforbitRadio.Bind(this, "crf"))
+            this.AddRadio("x" this.trdMarg " yp", "bitrate").OnEvent("Click", this.__crforbitRadio.Bind(this, "bitrate"))
+            ;// crf
+            this.AddText("xs", "crf: ")
+            this.AddEdit("x" this.secMarg " yp-3 Number w50 vCRFEdit")
+            this.AddUpDown("Range0-51", 17).OnEvent("Change", (guiObj, *) => this.crf := guiObj.value)
+            ;// bitrate
+            this.AddText("xs", "bitrate: ")
+            this.AddEdit("x" this.secMarg " yp-3 limit5 Number w75 vBitrateEdit Disabled", this.bitrate)
+            this.AddText("x+5 yp+3", "kb/s")
+        }
 
         ;// do these last
         this.AddButton("x" this.firstButtonX " y" this.firstButtonY " w100", "Select File").OnEvent("Click", this.__selectFile.Bind(this, fileOrDir))
@@ -90,6 +95,16 @@ class encodeGUI extends tomshiBasic {
         else
             Run(obj.dir)
     }
+
+    /** cleanse an input of .mkv/.mp4 and replaces whitespace/- with _ */
+    __cleanse(input) {
+        output := StrReplace(input, ".mkv", "")
+        output := StrReplace(input, ".mp4", "")
+        output := StrReplace(output, A_Space, "_")
+        output := StrReplace(output, "-", "_")
+        return output
+    }
+
 
     /**
      * Facilitates determining the final filename of the selected file
