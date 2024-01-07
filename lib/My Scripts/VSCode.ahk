@@ -15,8 +15,6 @@
 !c::VSCode.script(12) ;clicks on my `changelog` file in vscode
 ;vscodeTestHotkey;
 !t::VSCode.script()
-;vscodeTodoHotkey;
-!d::VSCode.script()
 ;vscodesearchHotkey;
 $^f::VSCode.search()
 ;vscodecutHotkey;
