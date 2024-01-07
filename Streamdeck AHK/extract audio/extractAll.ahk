@@ -3,9 +3,11 @@
 #Include <Classes\ffmpeg>
 #Include <Classes\cmd>
 #Include <Classes\tool>
+#Include <Classes\winGet>
 ; }
 
-if !selectedFile := FileSelect("D 3",, "Select file to extract audio.")
+defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+if !selectedFile := FileSelect("D 3", defaultDir, "Select file to extract audio.")
     return
 
 ;// checking to see if the user has [Bulk Audio Extract Tool](https://github.com/TimeTravelPenguin/BulkAudioExtractTool) installed
