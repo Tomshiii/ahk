@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2023/12/24
- * @version 1.0.8
+ * @date 2024/01/08
+ * @version 1.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,7 +18,13 @@
 
 class ytdlp {
 
-    links := ["https://www.youtube.com/", "https://www.twitch.tv/", "https://clips.twitch.tv/", "https://youtu.be/", "https://www.tiktok.com", "https://www.facebook.com", "https://old.reddit.com", "https://www.reddit.com"]
+    links := [
+        "https://www.youtube.com/",  "https://youtu.be/",
+        "https://www.twitch.tv/",    "https://clips.twitch.tv/",
+        "https://www.tiktok.com/",
+        "https://www.facebook.com/", "https://www.instagram.com/",
+        "https://old.reddit.com/",   "https://www.reddit.com/"
+    ]
     URL := ""
     defaultCommand := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
     command := ""
@@ -49,6 +55,7 @@ class ytdlp {
         }
         if !this.check && !this.checkClipState {
                 tool.Cust("Clipboard doesn't contain a downloadable link")
+                this.URL := clip ;// the user may still wish to attempt a download
                 return false
             }
         this.command := Format(this.defaultCommand, formatVars[1], formatVars[2], clip)
@@ -140,8 +147,10 @@ class ytdlp {
         SendInput("^c")
         if ClipWait(0.3) {
             if !this.__checkClipboard(A_Clipboard, oldClip.storedClip, args, folder) {
-                if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No"
+                if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
+                    clip.returnClip(oldClip)
                     return this.URL
+                }
             }
         }
         if this.checkClipState = true {

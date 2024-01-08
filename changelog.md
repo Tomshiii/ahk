@@ -9,7 +9,7 @@
 
 `ytdlp {`
 - `download()`
-    - Will now work with `facebook` & `reddit` links
+    - Will now work with `facebook`, `instagram` & `reddit` links
     - Will now alert the user if the URL isn't a known to work link and will ask if they wish to attempt a download regardless
 
 ## > Streamdeck AHK
