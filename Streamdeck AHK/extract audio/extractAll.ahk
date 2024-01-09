@@ -11,8 +11,8 @@ if !selectedFile := FileSelect("D 3", defaultDir, "Select file to extract audio.
     return
 
 ;// checking to see if the user has [Bulk Audio Extract Tool](https://github.com/TimeTravelPenguin/BulkAudioExtractTool) installed
-checkBaet := cmd.result("baet --v")
-if InStr(checkBaet, "Bulk Audio Extract Tool", 1, 1, 1) = true {
+checkBaet := cmd.result('powershell -c "Get-Command -Name baet -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+if checkBaet != "" {
     cmd.run(,,1, Format('baet -i "{1}"', selectedFile))
     return
 }
