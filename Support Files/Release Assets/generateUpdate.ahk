@@ -368,7 +368,7 @@ ahkWikiBackup := "E:\Github\Non Github Backups\ahkWikiBackup"
 DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
 DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
 
-__backupPremFolders(ahkDir, pcDir) {
+__backupPremFolders(ahkDir, pcDir, title) {
     files := FileSelect("M3", pcDir)
     if !files
         return
@@ -379,7 +379,7 @@ __backupPremFolders(ahkDir, pcDir) {
 ;//* Layouts
 layoutsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Layouts\"
 layoutsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Layouts"
-__backupPremFolders(layoutsBackup, layoutsBeginningDir)
+__backupPremFolders(layoutsBackup, layoutsBeginningDir, "Select Premiere Layouts to Backup")
 
 ;//* Settings
 settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\"
@@ -404,14 +404,14 @@ FileCopy(pcAEKBD, ahkAEKBD, 1)
 ;//* workspace
 workspaceBackup := "E:\Github\ahk\Backups\Adobe Backups\After Effects\ModifiedWorkspaces\"
 workspaceBeginningDir := A_AppData "\Adobe\After Effects\" StrReplace(ptf.premIMGver, "v") "\ModifiedWorkspaces"
-__backupPremFolders(workspaceBackup, workspaceBeginningDir)
+__backupPremFolders(workspaceBackup, workspaceBeginningDir, "Select After Effects Workspaces to Backup")
 
 ;//! media encoder
 
 ;//* presets
 presetsBackup := "E:\Github\ahk\Backups\Adobe Backups\Media Encoder\Presets\"
 presetsBeginningDir := A_MyDocuments "\Adobe\Adobe Media Encoder\" ptf.PremYearVer ".0\Presets"
-__backupPremFolders(presetsBackup, presetsBeginningDir)
+__backupPremFolders(presetsBackup, presetsBeginningDir, "Select Preset files (and tree xml file) to Backup")
 
 
 ;// backup ahk folder

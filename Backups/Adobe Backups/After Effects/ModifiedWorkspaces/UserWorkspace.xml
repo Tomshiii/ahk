@@ -12,9 +12,9 @@
 <key>Monitor-0</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>61</int>
+<int type='signed' size='32'>58</int>
 <int type='signed' size='32'>0</int>
-<int type='signed' size='32'>3379</int>
+<int type='signed' size='32'>3382</int>
 <int type='signed' size='32'>1440</int>
 </array>
 </prop.pair>
@@ -23,7 +23,7 @@
 <array>
 <array.type><int type='signed' size='32'/></array.type>
 <int type='signed' size='32'>3440</int>
-<int type='signed' size='32'>-805</int>
+<int type='signed' size='32'>-728</int>
 <int type='signed' size='32'>1920</int>
 <int type='signed' size='32'>1080</int>
 </array>
@@ -33,7 +33,7 @@
 <array>
 <array.type><int type='signed' size='32'/></array.type>
 <int type='signed' size='32'>-1080</int>
-<int type='signed' size='32'>-226</int>
+<int type='signed' size='32'>0</int>
 <int type='signed' size='32'>1080</int>
 <int type='signed' size='32'>1920</int>
 </array>
@@ -43,7 +43,7 @@
 <array>
 <array.type><int type='signed' size='32'/></array.type>
 <int type='signed' size='32'>3440</int>
-<int type='signed' size='32'>275</int>
+<int type='signed' size='32'>353</int>
 <int type='signed' size='32'>1920</int>
 <int type='signed' size='32'>1080</int>
 </array>
@@ -100,7 +100,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.93473125</float>
+<float>0.93467337</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -128,7 +128,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.7135247</float>
+<float>0.71407449</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -142,7 +142,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.284944</float>
+<float>0.13374741</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -156,7 +156,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.47016013</float>
+<float>0.39876544</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -217,20 +217,6 @@
 <key>Sub2</key>
 <prop.list>
 <prop.pair>
-<key>Splitter</key>
-<prop.list>
-<prop.pair>
-<key>Orient</key>
-<true/>
-</prop.pair>
-<prop.pair>
-<key>Place</key>
-<float>0.3763524</float>
-</prop.pair>
-<prop.pair>
-<key>Sub1</key>
-<prop.list>
-<prop.pair>
 <key>FrameProxy</key>
 <prop.list>
 <prop.pair>
@@ -265,11 +251,33 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
-<key>Sub1Vis</key>
+<key>Sub2Vis</key>
 <false/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
+<key>Sub1Vis</key>
+<true/>
 </prop.pair>
 <prop.pair>
 <key>Sub2</key>
+<prop.list>
+<prop.pair>
+<key>Splitter</key>
+<prop.list>
+<prop.pair>
+<key>Orient</key>
+<true/>
+</prop.pair>
+<prop.pair>
+<key>Place</key>
+<float>0.17399618</float>
+</prop.pair>
+<prop.pair>
+<key>Sub1</key>
 <prop.list>
 <prop.pair>
 <key>Frame</key>
@@ -310,22 +318,6 @@
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub2Vis</key>
-<true/>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub2Vis</key>
-<true/>
 </prop.pair>
 </prop.list>
 </prop.pair>
@@ -474,6 +466,14 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
+<key>Sub2Vis</key>
+<true/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
 <key>Sub1Vis</key>
 <true/>
 </prop.pair>
@@ -489,7 +489,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.3140496</float>
+<float>0.31437436</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -503,7 +503,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.54430377</float>
+<float>0.51476794</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -517,21 +517,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.93798447</float>
-</prop.pair>
-<prop.pair>
-<key>Sub1</key>
-<prop.list>
-<prop.pair>
-<key>Splitter</key>
-<prop.list>
-<prop.pair>
-<key>Orient</key>
-<false/>
-</prop.pair>
-<prop.pair>
-<key>Place</key>
-<float>0.83884299</float>
+<float>0.83196723</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -711,6 +697,7 @@
 <array>
 <array.type><string/></array.type>
 <string>AEGP_PropertiesPal</string>
+<string>AE Effects Palette</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -727,49 +714,8 @@
 &lt;/prop.list&gt;
 </string>
 </prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
 <prop.pair>
-<key>Sub2Vis</key>
-<true/>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub1Vis</key>
-<true/>
-</prop.pair>
-<prop.pair>
-<key>Sub2</key>
-<prop.list>
-<prop.pair>
-<key>Frame</key>
-<prop.list>
-<prop.pair>
-<key>CurrTab</key>
-<int type='unsigned' size='32'>0</int>
-</prop.pair>
-<prop.pair>
-<key>StackedViewFlags</key>
-<int type='signed' size='32'>6</int>
-</prop.pair>
-<prop.pair>
-<key>TabIDs</key>
-<array>
-<array.type><string/></array.type>
-<string>AE Effects Palette</string>
-</array>
-</prop.pair>
-<prop.pair>
-<key>Vis</key>
-<true/>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-0</key>
+<key>VisTabState-1</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;FrameViewFlags&lt;/key&gt;
@@ -814,7 +760,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.75028247</float>
+<float>0.93465406</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -984,7 +930,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -1145,8 +1091,8 @@
 <string>AEGP_ParagraphPalette</string>
 <string>ProgressPanel</string>
 <string>AEGP_Wiggler</string>
-<string>AE CEP Extension-com.adobe.DesignLibraries.angular</string>
 <string>AEGP_Smoother</string>
+<string>AE CEP Extension-com.adobe.DesignLibraries.angular</string>
 </array>
 </prop.pair>
 </prop.list>
@@ -1175,9 +1121,9 @@
 <key>SzPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>53</int>
+<int type='signed' size='32'>50</int>
 <int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>3395</int>
+<int type='signed' size='32'>3398</int>
 <int type='signed' size='32'>1456</int>
 </array>
 </prop.pair>
@@ -1212,9 +1158,9 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>293</int>
+<int type='signed' size='32'>120</int>
 <int type='signed' size='32'>31</int>
-<int type='signed' size='32'>1556</int>
+<int type='signed' size='32'>1156</int>
 <int type='signed' size='32'>742</int>
 </array>
 </prop.pair>

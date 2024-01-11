@@ -1,4 +1,4 @@
-# <> Release 2.13.x - 
+# <> Release 2.13.5 - Bugfix
 
 ## > Functions
 - Fixed `prem.selectionTool()` failing to fall back to keyboard shortcuts if the image cannot be found
