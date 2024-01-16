@@ -23,3 +23,7 @@ Run(ptf.TimerScripts "\gameCheck.ahk")
 Run(ptf.TimerScripts "\Multi-Instance Close.ahk")
 Run(ptf.TimerScripts "\premKeyCheck.ahk")
 Run(ptf["textreplace"])
+
+;//backups
+FileCopy(ptf.rootDir "\Support Files\Streamdeck Files\options.ini", ptf.rootDir "\Backups\Work\options.ini", 1)
+FileCopy(ptf.rootDir "\lib\My Scripts\Windows.ahk", ptf.rootDir "\Backups\Work\Windows.ahk", 1)
