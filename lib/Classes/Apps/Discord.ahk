@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2023/12/25
- * @version 1.4.9.1
+ * @date 2024/01/17
+ * @version 1.4.9.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -293,7 +293,7 @@ class discord {
                     return
                 if this.surroundActive = false
                     break
-                sleep 15
+                sleep 25
             }
         }
         this.surroundActive := true
