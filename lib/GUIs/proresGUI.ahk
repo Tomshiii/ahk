@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode a file to prores
  * @author tomshi
- * @date 2024/01/08
- * @version 1.0.0
+ * @date 2024/01/17
+ * @version 1.0.1
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -65,7 +65,7 @@ class proresGUI extends encodeGUI {
     __proresEncode(*) {
         pathObj := this.__fileObj()
         command := Format('ffmpeg -i "{1}" -c:v prores_ks -profile:v {2} "{3}"', pathObj.fileObjOrig.path, String(this["pres"].value-1), pathObj.fileObj.Dir "\" pathObj.fileObj.NameNoExt ".mov")
-        cmd.run(,,, )
+        cmd.run(,,, command)
     }
 
     __dirproresEncode(*) {

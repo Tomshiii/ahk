@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2024/01/08
- * @version 1.1.2
+ * @date 2024/01/17
+ * @version 1.1.3
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -11,6 +11,7 @@
 #Include <GUIs\tomshiBasic>
 #Include <Classes\obj>
 #Include <Classes\ffmpeg>
+#Include <Classes\winGet>
 ; }
 
 class encodeGUI extends tomshiBasic {
@@ -140,7 +141,9 @@ class encodeGUI extends tomshiBasic {
     __selectFile(fileOrDir, *) {
         selection := (fileOrDir = "dir") ? "D " : ""
         selectionTitle := (fileOrDir = "dir") ? "directory" : "file"
-        newFile := FileSelect(selection 3,, "Select " selectionTitle " to Reencode")
+        currentDir := WinGet.ExplorerPath()
+        defaultDir := currentDir != false ? currentDir : ""
+        newFile := FileSelect(selection 3, defaultDir, "Select " selectionTitle " to Reencode")
         if newFile = ""
             return false
         this.getFile := newFile

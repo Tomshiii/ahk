@@ -2,3 +2,6 @@
 
 ## > Functions
 - `genProjDirs()` directory selection will default to a selected explorer window if it is the active window
+
+## > Streamdeck AHK
+- Fix `proresGUI {` failing to run the ffmpeg command
