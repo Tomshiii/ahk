@@ -1,4 +1,4 @@
-#Include <Classes\Editors\After Effects>
+/* #Include <Classes\Editors\After Effects>
 #Include <Classes\Editors\Premiere>
 #Include <QMK\unassigned>
 
@@ -64,4 +64,4 @@ z::prem.anchorToPosition()
 ;Tab::unassigned()
 Esc::unassigned()
 ; F13::unassigned()
-; Home::unassigned()
+; Home::unassigned() */

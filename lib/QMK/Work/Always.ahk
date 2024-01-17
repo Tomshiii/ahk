@@ -33,32 +33,7 @@ Left::switchTo.AE()
 u::unassigned()
 j::unassigned()
 Enter & m::switchTo.Disc(true)
-m::
-{
-	/** because this macro always ends in discord being in focus, tapping the macro repeatedly will cycle through the programs but manually clicking on the program and then activating the macro will not force a cycle */
-	GroupAdd("phoneStuffDisc", "ahk_exe slack.exe")
-	store := (WinActive("ahk_group phoneStuffDisc") || WinActive(discord.winTitle)) ? true : false
-
-	;// if slack/phone link isn't open, simply call function
-	if (!WinExist("ahk_group phoneStuffDisc")) {
-		switchTo.Disc(true)
-		return
-	}
-	;// if a phonestuff application OR discord was active when this hotkey was activated, we will activate that group and ensure that it and discord are placed in the correct position on the screen
-	if store = true {
-		GroupActivate("phoneStuffDisc", "r")
-		GroupActivate("phoneStuffDisc", "r")
-		WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, WinGetTitle("A") A_Space "ahk_exe " WinGetProcessName("A"))
-		switchTo.Disc(true, {x: discord.slackX, y: 669, width: discord.slackWidth, height: discord.slackHeight})
-		return
-	}
-	if WinExist(discord.winTitle) {
-		pos := obj.WinPos(discord.winTitle)
-		switchTo.Disc(true, {x: pos.x, y: pos.y, width: pos.width, height: pos.height})
-		return
-	}
-	switchTo.Disc(true)
-}
+m::switchTo.Disc()
 SC149::switchTo.Firefox()
 Enter & SC149::switchTo.closeOtherWindow(browser.firefox.class)
 Right & PgUp::switchTo.newWin("exe", "firefox.exe", "firefox.exe")

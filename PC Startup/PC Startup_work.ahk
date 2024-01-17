@@ -27,3 +27,4 @@ Run(ptf["textreplace"])
 ;//backups
 FileCopy(ptf.rootDir "\Support Files\Streamdeck Files\options.ini", ptf.rootDir "\Backups\Work\options.ini", 1)
 FileCopy(ptf.rootDir "\lib\My Scripts\Windows.ahk", ptf.rootDir "\Backups\Work\Windows.ahk", 1)
+FileCopy(ptf.rootDir "\lib\Classes\Apps\Discord.ahk", ptf.rootDir "\Backups\Work\Discord.ahk", 1)
