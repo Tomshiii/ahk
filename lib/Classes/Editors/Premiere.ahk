@@ -6,7 +6,7 @@
  * @premVer 24.1
  * @author tomshi
  * @date 2024/01/07
- * @version 2.1.12
+ * @version 2.1.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1030,8 +1030,10 @@ class Prem {
     static wheelEditPoint(window, direction, keyswait := "all")
     {
         switch window {
-            case ksa.timelineWindow: this.__checkTimelineFocus()
-            case ksa.effectControls: delaySI(20, ksa.programMonitor, window, "^a", ksa.deselectAll) ;// indicates the user is trying to use `Select previous/next Keyframe`
+            ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a nulticam nest for whatever reason. Doing it this way however, is unfortunately slower.
+            ;// if you do not use the multiview window simply replace the below line with `this.__checkTimelineFocus()`
+            case ksa.timelineWindow: SendInput(ksa.effectControls), SendInput(window)
+            case ksa.effectControls: delaySI(20, window, ksa.programMonitor, window, "^a", ksa.deselectAll) ;// indicates the user is trying to use `Select previous/next Keyframe`
             default: SendInput(window) ;focuses the timeline/desired window
         }
         SendInput(direction)
