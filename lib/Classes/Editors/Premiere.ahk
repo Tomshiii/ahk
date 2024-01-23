@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.1
  * @author tomshi
- * @date 2024/01/07
- * @version 2.1.13
+ * @date 2024/01/24
+ * @version 2.1.13.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1497,7 +1497,7 @@ class Prem {
             ; tool.Wait()
             tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 4.0,,, 10)
             tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 4.0,, 30, 11)
-            tool.Cust("If you had multiple sequences open, this should be the only time a script cycles through them!", 4.0,, 75, 12)
+            tool.Cust("If this script fails to function correctly, recheck your Prem_UIA coords`nbefore refreshing the script and trying again!", 4.0,, 73, 12)
         }
     }
 
