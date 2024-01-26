@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.1
  * @author tomshi, taranVH
- * @date 2023/12/18
- * @version 2.0.18
+ * @date 2024/01/26
+ * @version 2.0.19_test
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -107,7 +107,7 @@ class rbuttonPrem {
 		loop { ;// this loop is checking to see if `colour` is one of the predetermined colours
 			if A_Index > this.timelineCol.Length
 				{
-					SendInput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
+					SendEvent("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
 					return false
 				}
 			if colour = this.timelineCol[A_Index] || colour = prem.playhead
@@ -126,7 +126,7 @@ class rbuttonPrem {
 			colour != this.timelineCol[8] && colour != this.timelineCol[9] &&
 			colour != this.timelineCol[11]
 		) {
-			SendInput("{Rbutton}")
+			SendEvent("{Rbutton}")
 			return false
 		}
 		return true
@@ -141,16 +141,16 @@ class rbuttonPrem {
 	__checkForPlayhead(coordObj, search := true) {
 		;// checking to see if the playhead is on the screen
 		if prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y})
-			SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stops
+			SendEvent(KSA.shuttleStop) ;if it is, we input a shuttle stops
 		;// this stops the script from potentially clicking a clip if using `rbuttonPrem().movePlayhead(false)`
 		if !search
 			return
 		;// then we check to see if it's relatively close to the cursors position
 		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
 			block.On()
-			SendInput(KSA.selectionPrem)
+			SendEvent(KSA.selectionPrem)
 			MouseMove(xcol, ycol)
-			SendInput("{LButton Down}")
+			SendEvent("{LButton Down}")
 			block.Off()
 			this.colourOrNorm := "colour"
 		}
@@ -163,7 +163,7 @@ class rbuttonPrem {
 	__checkForTap(activationHotkey) {
 		if !GetKeyState(activationHotkey, "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
 			{
-				SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
+				SendEvent(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
 				;The below checks are to ensure no buttons end up stuck
 				checkstuck()
 				return false
@@ -174,9 +174,9 @@ class rbuttonPrem {
 	/** If `LButton` or `XButton2` was pressed while `RButton` was being held, this function will start playback in either 1x or 2x speed once `RButton` is released */
 	__restartPlayback() {
 		;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
-			SendInput(KSA.playStop)
+			SendEvent(KSA.playStop)
 			if this.xbuttonClick = true ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
-				SendInput(KSA.speedUpPlayback)
+				SendEvent(KSA.speedUpPlayback)
 	}
 
 	/** Set class variables to the found colour */
@@ -215,7 +215,7 @@ class rbuttonPrem {
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
 		if WingetTitle("A") != gettitle.winTitle {
-			SendInput("{Rbutton}")
+			SendEvent("{Rbutton}")
 			return
 		}
 
@@ -235,14 +235,14 @@ class rbuttonPrem {
 
 		;// checks to see whether the timeline position has been located
 		if !prem.__checkTimeline() {
-			SendInput("{Rbutton}")
+			SendEvent("{Rbutton}")
 			this.__exit()
 		}
 
 		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
 		;// only continues if the cursor is within the timeline
 		if !prem.__checkCoords(origMouse) {
-			SendInput("{Rbutton}")
+			SendEvent("{Rbutton}")
 			this.__exit()
 		}
 
@@ -250,7 +250,7 @@ class rbuttonPrem {
 			;// checks the colour at the mouse cursor and then determines whether the track is blank
 			this.__setColours(origMouse)
 			if this.__checkForBlank(this.colour) {
-				SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
+				SendEvent("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
 				this.__exit()
 			}
 
@@ -287,13 +287,13 @@ class rbuttonPrem {
 				}
 			}
 			if this.colourOrNorm != "colour"
-				SendInput(ksa.playheadtoCursor)
+				SendEvent(ksa.playheadtoCursor)
 			sleep 16
 		}
 
 		;// releases the LButton if it was used to grab the playhead
 		if this.colourOrNorm = "colour" {
-			SendInput("{LButton Up}")
+			SendEvent("{LButton Up}")
 		}
 
 		if allChecks = true {

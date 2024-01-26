@@ -17,6 +17,7 @@ class adobeVers {
         "v24.0",    "v22.3.1",      "v24.0.3",  "v22.3.1",
         "v24.1",    "v22.3.1",
         "v24.2",    "v22.3.1",
+        "v24.3",    "v22.3.1",
     )
     AE := Map(
         ;// VER  || IMAGE VER   ||  SUBSEQUENT MINOR VERS
@@ -30,6 +31,7 @@ class adobeVers {
         "v24.0",    "v22.6",        "v24.0.1",  "v22.6",        "v24.0.3",  "v22.6",
         "v24.1",    "v22.6",
         "v24.2",    "v22.6",
+        "v24.3",    "v22.6",
     )
     PS := Map(
         ;// VER  || IMAGE VER   ||  SUBSEQUENT MINOR VERS
@@ -43,6 +45,8 @@ class adobeVers {
         "v25.0",    "v24.3",
         "v25.1",    "v24.3",
         "v25.2",    "v24.3",
+        "v25.3",    "v24.3",
+        "v25.4",    "v24.3",
     )
 
     static maps := [this().Premiere, this().AE, this().PS]

@@ -674,6 +674,8 @@ settingsGUI()
             }
             supportedVers := []
             loop files ptf.ImgSearch "\" program "\*", "D" {
+                if checkV := SubStr(A_LoopFileName, 1, 1) != "v"
+                    continue
                 if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
                     supportedVers.Push(A_LoopFileName)
             }
