@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2023/12/16
- * @version 1.3.4
+ * @date 2024/01/26
+ * @version 1.3.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -66,16 +66,20 @@ class switchTo {
      */
     static Explorer()
     {
-        if !WinExist("ahk_class CabinetWClass") && !WinExist("ahk_class #32770")
-            {
-                Run("explorer.exe")
-                if WinWait("ahk_class CabinetWClass",, 2)
-                    WinActivate("ahk_class CabinetWClass") ;in win11 running explorer won't always activate it, so it'll open in the backround
-                return
-            }
+        ;// the below values will be ignored (but only if `ignoreString` is added to the respective `GroupAdd` down below)
+        ignore := Map("ahk_exe hamachi-2-ui.exe", 1)
+        ignoreString := ""
+        for k, v in ignore
+            ignoreString := ignoreString A_Space k
+        if !WinExist("ahk_class CabinetWClass") && !WinExist("ahk_class #32770") {
+            Run("explorer.exe")
+            if WinWait("ahk_class CabinetWClass",, 2)
+                WinActivate("ahk_class CabinetWClass") ;in win11 running explorer won't always activate it, so it'll open in the backround
+            return
+        }
         GroupAdd("explorers", "ahk_class CabinetWClass")
-        GroupAdd("explorers", "ahk_class #32770") ;these are save dialoge windows from any program
-        GroupAdd("explorers", "ahk_class OperationStatusWindow") ;these are file transfer windows
+        GroupAdd("explorers", "ahk_class #32770", ignoreString) ;these are usually save dialoge windows from any program
+        GroupAdd("explorers", "ahk_class OperationStatusWindow") ;these are usually file transfer windows
         if WinActive("ahk_exe explorer.exe")
             GroupActivate("explorers", "r")
         else if WinExist("ahk_class CabinetWClass") || WinExist("ahk_class #32770") || WinExist("ahk_class OperationStatusWindow")
