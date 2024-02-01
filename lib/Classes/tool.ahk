@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2023/09/07
- * @version 1.2.0.2
+ * @date 2024/02/01
+ * @version 1.2.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -89,8 +89,9 @@ class tool {
      * @param {Integer/Float} timeout is how many ms you want the tooltip to last. This value can be omitted and it will default to 1000. If you wish to type in seconds, use a floating point number, ie; `1.0`, `2.5`, etc. If 0 is passed, the tooltip that was called with the same `WhichToolTip` parameter will be stopped.
      * @param {Integer} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
      * @param {Integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip to operate upon. If unspecified or set larger than 20, that number is 1 (the first).
+     * @param {Boolean} darkMode whether to set the tooltip as darkmode or lightmode. will default to the user's system theme. Brought to my attention by [Nikola](https://discord.com/channels/115993023636176902/1202471107211431986/1202471107211431986)
      */
-    static Cust(message, timeout := 1000, x?, y?, WhichToolTip?)
+    static Cust(message, timeout := 1000, x?, y?, WhichToolTip?, darkMode?)
     {
         this().__inputs({message: message, timeout: timeout, x: x?, y: y?, ttip: WhichToolTip?})
         ;// saving the previous ListLines value
@@ -100,6 +101,8 @@ class tool {
         priorCoords := coord.store()
         ;// set coord mode
         this().__setCoords()
+        ;// set darkmode
+        static isDarkMode := !RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
 
         ;// ensuring `WhichToolTip` never goes above 20 or below 1
         WhichToolTip := !IsSet(WhichToolTip) || (IsSet(WhichToolTip) && (WhichToolTip > 20 || WhichToolTip < 1)) ? 1 : WhichToolTip
@@ -126,16 +129,18 @@ class tool {
         time := A_TickCount ;log our starting time
 
         ;//! creating the tooltip
-        ToolTip(message, origMouse.x + x, origMouse.y + y, WhichToolTip) ;// produce the initial tooltip
+        ttw := ToolTip(message, origMouse.x + x, origMouse.y + y, WhichToolTip) ;// produce the initial tooltip
+        if (darkMode ?? isDarkMode)
+            DllCall("uxtheme\SetWindowTheme", "ptr", ttw, "ptr", StrPtr("DarkMode_Explorer"), "ptr", 0)
         this.%WhichToolTip% := true ;// set tooltip var to true
         if both = false || none = true ;// if the user wants the tooltip to track the mouse
             SetTimer(moveWithMouse.Bind(x, y, WhichToolTip), 15)
-        else ;// otherwise we create a timer to remove the cursor after the timout period
+        else ;// otherwise we create a timer to remove the tooltip after the timout period
             SetTimer(() => (ToolTip("",,, WhichToolTip), this.%WhichToolTip% := false), -timeout)
 
         ;//! finally return coordmode & listlines to their previous settings before returning
         this().__returnCoords(priorCoords.Tooltip, priorCoords.Mouse, priorLines)
-        return
+        return ttw
 
         /**
          * This function is called by `SetTimer` and is what allows the tooltip to follow the cursor

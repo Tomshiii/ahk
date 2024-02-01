@@ -5,6 +5,7 @@
 - Fixed `settingsGUI()` showing invalid versions in the dropdown list
 - `genProjDirs()` directory selection will default to a selected explorer window if it is the active window
 - `switchTo.Explorer()` now contains code to ignore other programs that share the same class values and cause unexpected conflicts
+- `tool.cust()` now offers darkmode and will default to the system theme
 
 ## > Streamdeck AHK
 - Fix `proresGUI {` failing to run the ffmpeg command

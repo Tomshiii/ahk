@@ -11,7 +11,7 @@
 
 ;// 19/07/2023;
 ;// Do not expect any of these values to work out of the box, they are incredibly tempremental
-;// and change constantly as you adjust your workspace. You will need to adjust them any time you do
+;// and change constantly as you adjust your workspace. You will need to adjust them any time you do.
 ;// you can quickly access this script by right clicking on `My Scripts.ahk` in the windows taskbar tray
 
 ;// if you use a version other than the one listed at the top of `Premiere.ahk` (@premVer)
@@ -50,9 +50,9 @@ class premUIA_Values {
         "effectsPanel", "YwY"
     )
     v24 := Map(
-        "timeline"    , "YxY",    "effectsControl", "YrY",
-        "tools"       , "YuY",    "programMon", "YtY",
-        "effectsPanel", "YvY"
+        "timeline"    , "YyY",    "effectsControl", "YrY",
+        "tools"       , "YvY",    "programMon", "Yt",
+        "effectsPanel", "Yw"
     )
     v24_3 := Map(
         "timeline"    , "YyY",    "effectsControl", "YY",
