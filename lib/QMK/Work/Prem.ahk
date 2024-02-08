@@ -44,10 +44,12 @@ End::prem.preset("audio_basic")
 k::prem.valuehold("scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
 SC028::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+.::prem.preset("transform Me")
 ;Down::unassigned()
 
 p::prem.gain("-2") ;REDUCE GAIN BY -2db
 o::prem.gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
+,::prem.anchorToPosition()
 ;Left::unassigned()
 
 j::prem.valuehold("rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
@@ -63,7 +65,7 @@ y:: ;this hotkey will fill the frame to fit the window
 	premTimeline()
 	SendInput(KSA.scaleFrameSize)
 }
-x::prem.preset("transform Me")
+x::unassigned()
 
 e::prem.preset("Parametric EQ_mine")
 c::prem.preset("Lowpass Me")
@@ -89,7 +91,7 @@ F15::prem.preset("croptom")
 ;F15::unassigned()
 
 q::unassigned()
-a::prem.anchorToPosition()
+a::unassigned()
 
 ;F16::unassigned()
 

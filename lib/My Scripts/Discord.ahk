@@ -13,12 +13,14 @@ SC03A & a::discord.button("DiscReact.png") ;add a reaction to the message you're
 SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
+/*
 ;discitalicHotkey;
 *::discord.surround("*")
 ;discBacktickHotkey;
 `::discord.surround("``")
 ;discParenthHotkey;
 (::discord.surround("()")
+*/
 
 ;discserverHotkey;
 F1::discord.Unread() ;will click any unread servers

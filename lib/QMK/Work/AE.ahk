@@ -1,7 +1,8 @@
-/* #Include <Classes\Editors\After Effects>
+#Include <Classes\Editors\After Effects>
 #Include <Classes\Editors\Premiere>
 #Include <QMK\unassigned>
-
+,::prem.anchorToPosition()
+/*
 BackSpace::unassigned()
 SC028::unassigned()
 Enter::unassigned()

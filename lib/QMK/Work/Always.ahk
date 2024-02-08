@@ -22,7 +22,7 @@ Up::switchTo.Explorer()
 
 o::unassigned()
 l::unassigned()
-.::switchTo.Photoshop()
+.::unassigned()
 Down::switchTo.Premiere()
 
 i::unassigned()
@@ -47,7 +47,7 @@ Enter & Space::switchTo.closeOtherWindow(browser.edge.winTitle)
 
 t::unassigned()
 g::unassigned()
-b::unassigned()
+b::switchTo.Photoshop()
 
 r::unassigned()
 f::unassigned()
