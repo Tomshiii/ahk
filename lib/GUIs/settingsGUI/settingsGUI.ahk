@@ -84,7 +84,7 @@ settingsGUI()
     editorsMenu.Add("&Adobe", (*) => MsgBox("Not implemented"))
     editorsMenu.Disable("&Adobe")
     editorsMenu.Add("&After Effects", menu_Adobe.bind("AE"))
-    ; editorsMenu.Add("&Photoshop", ) ;// call a different gui
+    editorsMenu.Add("&Photoshop", menu_Adobe.bind("Photoshop")) ;// call a different gui
     editorsMenu.Add("&Premiere", menu_Adobe.bind("Premiere"))
     ; editorsMenu.Add("&Resolve", ) ;// call a different gui
     ;// define the entire menubar
@@ -545,6 +545,19 @@ settingsGUI()
                 otherTitle := "Premiere Pro Settings"
                 static imageLoc := ptf.aeIMGver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
+            case "Photoshop":
+                short := "ps"
+                shortcutName := "ahk_exe Photoshop.exe"
+                shortcutNameBeta := "ahk_exe Photoshop.exe (Beta).exe"
+                adobeFullName := "Photoshop"
+                title := program " Settings"
+                yearIniName := "ps_year"
+                iniInitYear := UserSettings.ps_year
+                verIniName := "psVer"
+                genProg := program
+                otherTitle := "Photoshop Settings"
+                static imageLoc := ptf.psIMGver
+                path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
         }
         if WinExist(title) {
             WinActivate(title)
@@ -565,11 +578,13 @@ settingsGUI()
             timelineCheckbox.OnEvent("Click", timelineCheckbx)
             timelineCheckbx(guiobj, *) => UserSettings.prem_Focus_Icon := timelineCheckbox.value
         }
-        adobeGui.AddText("xs y+12 Section", "Cache Dir: ")
-        cacheInit := short "cache"
-        cache := adobeGui.Add("Edit", "x" ctrlX " ys-3 r1 W150 ReadOnly", UserSettings.%cacheInit%)
-        cacheSelect := adobeGui.Add("Button", "x+5 w60 h27", "select")
-        cacheSelect.OnEvent("Click", __cacheslct.Bind(adobeFullName))
+        if program != "Photoshop" {
+            adobeGui.AddText("xs y+12 Section", "Cache Dir: ")
+            cacheInit := short "cache"
+            cache := adobeGui.Add("Edit", "x" ctrlX " ys-3 r1 W150 ReadOnly", UserSettings.%cacheInit%)
+            cacheSelect := adobeGui.Add("Button", "x+5 w60 h27", "select")
+            cacheSelect.OnEvent("Click", __cacheslct.Bind(adobeFullName))
+        }
 
         ;// warning & save button
         adobeGui.AddText("xs+50 y+15", "*some settings will require`na full reload to take effect").SetFont("s9 italic")
@@ -610,16 +625,18 @@ settingsGUI()
          * This function handles the logic behind what happens when the user selects a new year value
          */
         __yearEventDropDown(*) {
-            ver.Delete()
-            new := []
-            loop files ptf.ImgSearch "\" program "\*", "D" {
-                if InStr(A_LoopFileName, "v" SubStr(year.Text, 3, 2))
-                    new.Push(A_LoopFileName)
+            if program != "Photoshop" {
+                ver.Delete()
+                new := []
+                loop files ptf.ImgSearch "\" program "\*", "D" {
+                    if InStr(A_LoopFileName, "v" SubStr(year.Text, 3, 2))
+                        new.Push(A_LoopFileName)
+                }
+                ver.Add(new)
+                if !new.Has(1)
+                    return
+                ver.Choose(new.Length)
             }
-            ver.Add(new)
-            if !new.Has(1)
-                return
-            ver.Choose(new.Length)
             UserSettings.%yearIniName% := year.text
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
         }
@@ -630,7 +647,7 @@ settingsGUI()
          * This function generates the year dropdown selector
          */
         __generateDropYear(program, &year, ctrlX) {
-            if (program != "AE" && program != "Premiere") {
+            if (program != "AE" && program != "Premiere" && program != "Photoshop") {
                 ;// throw
                 errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
             }
@@ -642,6 +659,11 @@ settingsGUI()
             foundYears := Map()
             loop files ptf.ImgSearch "\" program "\*", "D" {
                 loopYear := SubStr(A_Year, 1, 2) SubStr(A_LoopFileName, 2, 2)
+                if program = "Photoshop" {
+                    supportedVers.Push(A_Year-1), supportedVers.Push(A_Year), supportedVers.Push(A_Year+1)
+                    foundYears.Set(loopYear, 1)
+                    break
+                }
                 if !foundYears.Has(loopYear) {
                     supportedVers.Push(loopYear)
                     foundYears.Set(loopYear, 1)
@@ -664,7 +686,7 @@ settingsGUI()
          * This function generates the version dropdown selector
          */
         __generateDropVer(program, &ver, ctrlX) {
-            if (program != "AE" && program != "Premiere") {
+            if (program != "AE" && program != "Premiere" && program != "Photoshop") {
                 ;// throw
                 errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
             }
@@ -676,6 +698,10 @@ settingsGUI()
             loop files ptf.ImgSearch "\" program "\*", "D" {
                 if checkV := SubStr(A_LoopFileName, 1, 1) != "v"
                     continue
+                if program = "Photoshop" {
+                    supportedVers.Push(A_LoopFileName)
+                    continue
+                }
                 if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
                     supportedVers.Push(A_LoopFileName)
             }

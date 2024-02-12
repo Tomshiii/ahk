@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/01/26
- * @version 1.3.5
+ * @date 2024/02/12
+ * @version 1.3.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -158,25 +158,7 @@ class switchTo {
             if !this().__checkCC()
                 MsgBox(A_ThisFunc "() attempted to open ``Adobe Creative Cloud`` and failed. This can happen if the user has installed it to an unexpected location. Please fix the directory link within the function to return functionality to this script." )
         }
-        if !WinExist(prem.class) {
-            try {
-                Run(prem.path)
-            } catch {
-                try {
-                    UserSettings := UserPref()
-                    generateAdobeShortcut(UserSettings, "Adobe Premiere Pro", UserSettings.prem_year)
-                    UserSettings.__delAll()
-                    UserSettings := ""
-                    sleep 50
-                    Run(prem.path)
-                } catch {
-                    errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
-                    return
-                }
-            }
-            return
-        }
-        WinActivate(prem.class)
+        this().__adobeSwitch(prem.class, prem.path, "Adobe Premiere Pro", "prem")
     }
 
     /**
@@ -409,9 +391,39 @@ class switchTo {
     }
 
     /**
+     * A function to cut repeat code. Handles swapping too/running desired adobe program as well as generating shortcut if one does not exist
+     * @param {String} adobeClass the class value usually determined using window spy. Can use the values at the top of the respective program's class within this repo (ie. prem.class/ps.class)
+     * @param {String} path the path to the shortcut that this function will attempt to run. Can use the values at the top of the respective program's class within this repo (ie. prem.path/ps.path)
+     * @param {String} which the string that will be passed to `generateAdobeShortcut(, x, )`.
+     * @param {String} year short name used within `settings.ini` to determine which program you are targeting (ie. prem/ae/ps)
+    */
+    __adobeSwitch(adobeClass, path, which, year) {
+        if WinExist(adobeClass) {
+            WinActivate(adobeClass)
+            return
+        }
+        try {
+            Run(path)
+        } catch {
+            try {
+                UserSettings := UserPref()
+                generateAdobeShortcut(UserSettings, which, UserSettings.%year%_year)
+                UserSettings.__delAll()
+                UserSettings := ""
+                sleep 50
+                Run(path)
+            } catch {
+                errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
+                return
+            }
+        }
+        return
+    }
+
+    /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      */
-    static Photoshop() => this().__Win(PS.winTitle, PS.path, "photoshop")
+    static Photoshop() => this().__adobeSwitch(PS.class, PS.path, "Photoshop", "ps")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one.

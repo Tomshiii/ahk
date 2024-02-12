@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2023/10/28
- * @version 1.2.9.1
+ * @date 2024/02/12
+ * @version 1.2.9.2
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "v24.0.3", "false", "v24.0.3", "false", "v25.1", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "2024", "v24.1", "false", "v24.1", "false", "v25.4", "false", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -44,12 +44,12 @@ class UserPref {
             case "autosave_MIN":                      return 5
             case "game_SEC":                          return 2
             case "multi_SEC":                         return 5
-            case "prem_year", "ae_year":              return 2024
+            case "prem_year", "ae_year", "ps_year":   return 2024
             case "version":                           return "v2.0"
             case "monitor_alert":                     return "0"
-            case "premVer":                           return "v24.0"
-            case "aeVer":                             return "v24.0"
-            case "psVer":                             return "v25.1"
+            case "premVer":                           return "v24.1"
+            case "aeVer":                             return "v24.1"
+            case "psVer":                             return "v25.4"
             case "resolveVer":                        return "v18.5"
             case "update_check":                      return "true"
             case "dark_mode":                         return ""
@@ -62,7 +62,7 @@ class UserPref {
             case "beta_update_check",
                  "run_at_startup", "checklist_wait",
                  "first_check", "block_aware", "premIsBeta",
-                 "aeIsBeta":
+                 "aeIsBeta", "psIsBeta":
                                                       return "false"
             default:                                  return "false"
         }
@@ -232,11 +232,13 @@ class UserPref {
                     multi SEC={}
                     prem year={}
                     ae year={}
+                    ps year={}
                     premVer={}
                     premIsBeta={}
                     aeVer={}
                     aeIsBeta={}
                     psVer={}
+                    psIsBeta={}
                     resolveVer={}
                     premCache={}
                     aeCache={}
