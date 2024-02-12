@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/01/04
- * @version 2.1.3
+ * @date 2024/01/12
+ * @version 2.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,6 +10,7 @@
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\ptf>
 #Include <Classes\Editors\Premiere>
+#Include <Classes\Editors\Premiere_UIA>
 #Include <Classes\switchTo>
 #Include <Classes\tool>
 #Include <Classes\block>
@@ -80,18 +81,18 @@ class adobeAutoSave extends count {
     currentVolume := ""
     resetingSave  := false
 
-    programMonX1  := A_ScreenWidth / 2
-    programMonX2  := A_ScreenWidth
-    programMonY1  := 0
-    programMonY2  := A_ScreenHeight
+    programMonX1  := false
+    programMonX2  := false
+    programMonY1  := false
+    programMonY2  := false
 
     __saveReset(*) {
         if !WinActive(prem.winTitle) && !WinActive(AE.winTitle) {
-            SendInput("^s")
+            SendEvent("^s")
             return
         }
         this.resetingSave := true
-        SendInput("^s")
+        SendEvent("^s")
         ;// maybe don't backup files everytime save is pressed... can cause quite large backup folders for long projects
         ; this.__backupFiles()
         super.Stop()
@@ -188,10 +189,14 @@ class adobeAutoSave extends count {
      * *note: this function will only work if the user has their program monitor on their main display*
      */
     __checkPremPlayback() {
+        if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
+            if !progMon := prem.__uiaCtrlPos(premUIA.programMon)
+                return false
+            this.programMonX1 := progMon.x+100, this.programMonX2 := progMon.x + progMon.width-100, this.programMonY1 := (progMon.y+progMon.height)*0.7,  this.programMonY2 := progMon.y + progMon.height + 150
+        }
         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
-        if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
+        if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
             return
-
         tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
         this.userPlayback := true
     }
@@ -319,6 +324,9 @@ class adobeAutoSave extends count {
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
                 SendInput("{Shift Up}")
+            if !WinActive(prem.winTitle)
+                switchTo.Premiere()
+            sleep 25
             ;// if the user manually saves inbetween grabbing the title and this timer attempting to save
             ;// this part will throw if it's not inside a try block
             ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, this.premWindow.wintitle)

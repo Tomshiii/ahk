@@ -13,4 +13,5 @@
 - Fix `proresGUI {` failing to run the ffmpeg command
 
 ## > Other Changes
+- Fixed `autosave.ahk` failing to restart playback
 - Added `Labels.ini` to backup premiere label colours
