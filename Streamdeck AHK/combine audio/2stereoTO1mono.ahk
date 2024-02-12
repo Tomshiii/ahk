@@ -32,6 +32,11 @@ loop files selectedFile "\*", "F" {
         continue
     if !FileExist(fileObj.dir "\" fileObj.NameNoExt "_D." fileObj.ext)
         continue
+    if FileExist(fileObj.dir "\" fileObj.NameNoExt "_combined." fileObj.ext) {
+        if MsgBox("File: " fileObj.NameNoExt "_combined." fileObj.ext "`nAlready exists, would you like to ignore and continue?`n`nDoing so could cause ffmpeg to run into issues", "Abort or Continue?", "4 32 4096") = "No"
+            return
+        continue
+    }
     filepaths.Push(A_LoopFileFullPath)
 }
 getChannels(filepath) {

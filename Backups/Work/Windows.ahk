@@ -70,6 +70,3 @@ SC03A & XButton1::move.XorY()
 
 ;SubUnderHotkey;
 +NumpadSub::_
-
-;extraEnterHotkey;
-PgDn::Enter ;// I use a TKL keyboard and miss my NumpadEnter key
