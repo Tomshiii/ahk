@@ -43,9 +43,14 @@ if DirExist(ahklib)
 adobecmd := cmdLine A_Space
 if IsSet(adobeVers) && IsObject(adobeVers) {
     adobecmd := adobeVers.__generate(imgsrchPath, true, adobecmd)
+    if !InStr(adobecmd, "|||")
+        RunWait("*RunAs " A_ComSpec " /c " adobecmd)
+    else {
+        cmds := StrSplit(adobecmd, "|||")
+        for v in cmds
+            RunWait("*RunAs " A_ComSpec " /c " v)
+    }
 }
-
-RunWait("*RunAs " A_ComSpec " /c " adobecmd)
 
 if !DirExist(ahklib)
     {

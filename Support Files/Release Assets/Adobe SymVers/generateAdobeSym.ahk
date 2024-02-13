@@ -12,5 +12,11 @@ imgsrchPath := A_WorkingDir '\..\..\Support Files\ImageSearch'
 adobecmd := ""
 if IsSet(adobeVers) && IsObject(adobeVers) {
     adobecmd := adobeVers.__generate(imgsrchPath)
-    RunWait("*RunAs " A_ComSpec " /c " adobecmd)
+    if !InStr(adobecmd, "|||") {
+        RunWait("*RunAs " A_ComSpec " /c " adobecmd)
+        return
+    }
+    cmds := StrSplit(adobecmd, "|||")
+    for v in cmds
+        RunWait("*RunAs " A_ComSpec " /c " v)
 }
