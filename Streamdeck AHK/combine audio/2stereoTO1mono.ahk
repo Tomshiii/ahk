@@ -51,6 +51,10 @@ getChannels(filepath) {
     } catch
         return false
 }
+if filepaths.Length < 1
+    ;// throw
+    errorLog(UnsetError("No files found.", -1),,, 1)
+
 if !channels := getChannels(filepaths[1])
     ;// throw
     errorLog(UnsetError("Unable to determine channels for file.", -1), "File may be corrupted or not contain any audio streams",, 1)

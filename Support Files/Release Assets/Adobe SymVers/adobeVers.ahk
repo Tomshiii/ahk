@@ -136,7 +136,6 @@ class adobeVers {
                     ;// checking to see if we need to break up the command bc of its length
                     if (!InStr(adobecmd, "|||") && (StrLen(adobecmd) + StrLen(Format(' && mklink /D "{1}\{4}\{2}" "{1}\{4}\{3}"', imgsrchPath, k2, v2, which))) >= 8191) ||
                         ((StrLen(Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}"', StrLen(SubStr(adobecmd, InStr(adobecmd, "|||",,, -1))), imgsrchPath, k2, v2, which))) >= 8191) {
-                            MsgBox()
                         adobecmd := Format('{1} ||| mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}"', adobecmd, imgsrchPath, k2, v2, which)
                         continue
                     }
