@@ -629,7 +629,7 @@ settingsGUI()
                 ver.Delete()
                 new := []
                 loop files ptf.ImgSearch "\" program "\*", "D" {
-                    if InStr(A_LoopFileName, "v" SubStr(year.Text, 3, 2))
+                    if InStr(A_LoopFileName, "v" SubStr(year.Text, 3, 2)) && !InStr(A_LoopFileName, "_") && !InStr(A_LoopFileName, "-")
                         new.Push(A_LoopFileName)
                 }
                 ver.Add(new)
@@ -657,8 +657,15 @@ settingsGUI()
             }
             supportedVers := []
             foundYears := Map()
+            installPath := A_ProgramFiles "\Adobe\"
             loop files ptf.ImgSearch "\" program "\*", "D" {
+                if SubStr(A_LoopFileName, 1, 1) != "v"
+                    continue
                 loopYear := SubStr(A_Year, 1, 2) SubStr(A_LoopFileName, 2, 2)
+                if program != "Photoshop" {
+                    if !DirExist(installPath adobeFullName A_Space loopYear)
+                        continue
+                }
                 if program = "Photoshop" {
                     supportedVers.Push(A_Year-1), supportedVers.Push(A_Year), supportedVers.Push(A_Year+1)
                     foundYears.Set(loopYear, 1)
