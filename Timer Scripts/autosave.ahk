@@ -317,7 +317,7 @@ class adobeAutoSave extends count {
         if this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe"
             this.__checkPremPlayback()
 
-        tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -50, 7)
+        tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
         try {
             block.On()

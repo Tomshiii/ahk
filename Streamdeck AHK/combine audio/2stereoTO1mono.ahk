@@ -42,14 +42,18 @@ loop files selectedFile "\*", "F" {
 getChannels(filepath) {
     command := Format('ffprobe -v quiet -show_streams -show_format -print_format json "{1}"', filepath)
     try probecmd := cmd.result(command)
-    catch {
+    catch
         ;// throw
         errorLog(UnsetError("File May not contain any audio streams", -1),,, true)
-    }
-    mp      := JSON.parse(probecmd)
-    return mp["streams"][1]["channels"]
+    try {
+        mp := JSON.parse(probecmd)
+        return mp["streams"][1]["channels"]
+    } catch
+        return false
 }
-channels := getChannels(filepaths[1])
+if !channels := getChannels(filepaths[1])
+    ;// throw
+    errorLog(UnsetError("Unable to determine channels for file.", -1), "File may be corrupted or not contain any audio streams",, 1)
 
 switch channels {
     ;// if mono
