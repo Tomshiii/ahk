@@ -14,7 +14,7 @@ version := IsSet(UserSettings) ? LTrim(ptf.aeIMGver, "v") : IniRead(A_WorkingDir
 
 Dir := drive ":\Users\" A_UserName "\AppData\Roaming\Adobe\After Effects\" version "\aeks"
 if !DirExist(Dir) {
-    MsgBox("Error attempting to run Adobe folder. This folder is usually in the \AppData\Roaming\ directory.`n`nIf you have moved this directory, please adjust the .ini file and try again")
+    MsgBox("You either have the incorrect version set within ``settingsGUI()`` (current version set: v" version ") or you have installed After Effects to a different location.`n`nThis folder is usually in the \AppData\Roaming\ directory.`nIf you have moved this directory, please adjust the .ini file and try again", "Error attempting to run Adobe folder", 0x30)
     return
 }
 Run(Dir)
