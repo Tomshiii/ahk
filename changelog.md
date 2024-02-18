@@ -8,5 +8,6 @@
 
 ## > Other Changes
 - Fixed `generateAdobeSym.ahk` silently failing if build command got too long
+- Fixed `Hours Worked` in `checklist.ahk` showing incorrectly unless the timer has stopped
 - Added `selectFollowPlayhead.ahk`
 - Added `swapChannels.ahk`

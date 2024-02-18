@@ -242,7 +242,7 @@ hours(*)
     startHours := SubStr(readLog, findHours + 22, (endpos - 1) - (findHours + 22))
 
     currentHours := floorDecimal(timer.Count / 3600, 3)
-    workedToday := floorDecimal(currentHours - startHours, 3)
+    workedToday  := floorDecimal(currentHours - startHours, 3)
     if workedToday <= 0
         workedToday := 0
 
@@ -252,24 +252,23 @@ hours(*)
     loop {
         if !InStr(readLog, "{",,, A_Index)
             break
-        startPos := InStr(readLog, "{",,, A_Index)
-        finddash := InStr(readLog, "-",, startPos, 1)
-        dateStart := SubStr(readLog, startPos + 2, (finddash-1)-(startPos+2))
+        startPos     := InStr(readLog, "{",,, A_Index)
+        finddash     := InStr(readLog, "-",, startPos, 1)
+        dateStart    := SubStr(readLog, startPos + 2, (finddash-1)-(startPos+2))
         FindhoursEnd := InStr(readLog, "\",, finddash, 1)
-        StartHours := SubStr(readLog, finddash + 2, (FindhoursEnd-1)-(finddash+2))
-        LastDate := InStr(readLog, dateStart,,, -1)
-        findEquals := InStr(readLog, "=",, LastDate, 1)
-        lastHourEnd := InStr(readLog, "-",, findEquals, 1)
-        lastHour := SubStr(readLog, findEquals + 2, (lastHourEnd-1)-(findEquals+2))
+        StartHours   := SubStr(readLog, finddash + 2, (FindhoursEnd-1)-(finddash+2))
+        LastDate     := InStr(readLog, dateStart,,, -1)
+        findEquals   := InStr(readLog, "=",, LastDate, 1)
+        lastHourEnd  := InStr(readLog, "-",, findEquals, 1)
+        lastHour     := SubStr(readLog, findEquals + 2, (lastHourEnd-1)-(findEquals+2))
 
         if lastHour <= startHours
-            goto ignore
+            continue
         HoursWorkedForDate := lastHour-StartHours
         StartVal += HoursWorkedForDate
         increment += 1
-        ignore:
     }
-    (StartVal <= 0 || increment <= 0) ? avg := "Not enough data" : avg := floorDecimal(StartVal/increment,3)
+    (StartVal <= 0 || increment <= 0) ? avg := "Not enough data" : avg := floorDecimal(currentHours/increment,3)
 
     checklistGUI.GetPos(&x, &y, &width, &height)
     hoursGUI := tomshiBasic(, 400, "AlwaysOnTop +MinSize200x200", "Hours Worked")
