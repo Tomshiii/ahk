@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/01/12
- * @version 2.1.4
+ * @date 2024/02/19
+ * @version 2.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -269,7 +269,7 @@ class adobeAutoSave extends count {
                         }
                         this.__fallback()
                     }
-                default: WinActivate("ahk_exe " this.origWind)
+                default: WinActivate("ahk_exe " this.origWindow)
             }
         } catch {
             errorLog(TargetError("Couldn't determine the active window"),, 1)
@@ -427,7 +427,7 @@ class adobeAutoSave extends count {
     __checkRClick() {
         if this.__checkMainScript() {
             WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
-            if prem.RClickIsActive = true
+            if prem.RClickIsActive = true || GetKeyState("RButton", "P") = true
                 return true
         }
         return false
