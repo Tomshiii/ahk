@@ -15,6 +15,8 @@
 ;//* This script will only check the first file in the directory to determine if all files are mono/stereo
 ;//* the final ffmpeg command is different depending on which it is so make sure not to mix different files into this process
 
+recurse := (MsgBox("Do you wish to recurse?", "Recurse?", "4 32 4096") = "Yes") ? "R" : ""
+
 defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
 if !selectedFile := FileSelect("D 3", defaultDir, "Select file to extract audio.")
     return
@@ -24,7 +26,7 @@ if !selectedFile := FileSelect("D 3", defaultDir, "Select file to extract audio.
 ffmpegInstance := ffmpeg()
 
 filepaths := []
-loop files selectedFile "\*", "F" {
+loop files selectedFile "\*", "F" recurse {
     if A_LoopFileExt != "mp3" && A_LoopFileExt != "wav"
         continue
     fileObj := obj.SplitPath(A_LoopFileFullPath)
@@ -64,6 +66,11 @@ switch channels {
     case "1": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]join=inputs=2:channel_layout=stereo[a]" -map "[a]" "{3}"'
     ;// if stereo
     case "2": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0+c1|c1<c2+c3[a]" -map "[a]" "{3}"'
+    default:
+        ;// throw
+        errorLog(UnsetError("An undefined amount of channels was found in the audio file.", -1),,, 1)
+        ffmpegInstance.__Delete()
+        ExitApp()
 }
 
 command := ""
