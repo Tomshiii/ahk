@@ -2,7 +2,7 @@
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
  * @date 2024/02/19
- * @version 2.1.5
+ * @version 2.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -321,6 +321,12 @@ class adobeAutoSave extends count {
 
         try {
             block.On()
+
+            ;// this script will attempt to NOT fire if Premiere_RightClick.ahk is active
+            if this.__checkRClick() = true {
+                throw
+            }
+
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
                 SendInput("{Shift Up}")
@@ -425,9 +431,11 @@ class adobeAutoSave extends count {
 
     /** attempts to check if `Premiere_RightClick.ahk` is active */
     __checkRClick() {
+        InstallMouseHook(1)
         if this.__checkMainScript() {
             WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
-            if prem.RClickIsActive = true || GetKeyState("RButton", "P") = true
+            playToCurs := InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}") ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{") : ksa.playheadtoCursor
+            if prem.RClickIsActive = true || GetKeyState("RButton", "P") = true || GetKeyState(playToCurs) = true
                 return true
         }
         return false
