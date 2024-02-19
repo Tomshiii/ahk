@@ -49,7 +49,7 @@ class adobeTimer extends count {
         super.start()
     }
 
-    playToCurs := InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}") ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{") : ksa.playheadtoCursor
+    playToCurs := (InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{") : ksa.playheadtoCursor
 
     ;// default timer (attempts to be overridden by the user's settings value)
     fire := 2000
@@ -87,7 +87,7 @@ class adobeTimer extends count {
             }
             WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
             sleep 50
-            if prem.RClickIsActive = false && GetKeyState("RButton", "P") = false && GetKeyState(this.playToCurs) = false
+            if prem.RClickIsActive = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false)
                 WinMaximize(nameObj.winTitle)
             return
         }
