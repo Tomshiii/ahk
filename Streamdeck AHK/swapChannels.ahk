@@ -14,6 +14,7 @@ if !WinActive(prem.winTitle)
     return
 
 clipWinTitle := "Modify Clip"
+coord.s()
 origCoords := obj.MousePos()
 block.On()
 
@@ -24,7 +25,6 @@ if !WinWait(clipWinTitle,, 3) {
     return
 }
 sleep 300
-coord.s()
 clipWin := obj.WinPos(clipWinTitle)
 
 if !ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "channel1.png") {
