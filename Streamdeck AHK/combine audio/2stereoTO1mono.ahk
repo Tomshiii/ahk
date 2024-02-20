@@ -41,44 +41,34 @@ loop files selectedFile "\*", "F" recurse {
     }
     filepaths.Push(A_LoopFileFullPath)
 }
-getChannels(filepath) {
-    command := Format('ffprobe -v quiet -show_streams -show_format -print_format json "{1}"', filepath)
-    try probecmd := cmd.result(command)
-    catch
-        ;// throw
-        errorLog(UnsetError("File May not contain any audio streams", -1),,, true)
-    try {
-        mp := JSON.parse(probecmd)
-        return mp["streams"][1]["channels"]
-    } catch
-        return false
-}
-if filepaths.Length < 1
+
+if filepaths.Length < 1 {
     ;// throw
     errorLog(UnsetError("No files found.", -1),,, 1)
-
-if !channels := getChannels(filepaths[1])
-    ;// throw
-    errorLog(UnsetError("Unable to determine channels for file.", -1), "File may be corrupted or not contain any audio streams",, 1)
-
-switch channels {
-    ;// if mono
-    case "1": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]join=inputs=2:channel_layout=stereo[a]" -map "[a]" "{3}"'
-    ;// if stereo
-    case "2": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0+c1|c1<c2+c3[a]" -map "[a]" "{3}"'
-    default:
-        ;// throw
-        errorLog(UnsetError("An undefined amount of channels was found in the audio file.", -1),,, 1)
-        ffmpegInstance.__Delete()
-        ExitApp()
 }
 
 command := ""
 for v in filepaths {
-    fileObj := obj.SplitPath(v)
-    append  := (A_Index != filepaths.Length) ? "&&" A_space : ""
+    if !channels := ffmpegInstance.__getChannels(filepaths[1]) {
+        ;// throw
+        errorLog(UnsetError("Unable to determine channels for file.", -1), "File may be corrupted or not contain any audio streams",, 1)
+    }
+
+    switch channels {
+        ;// if mono
+        case "1": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]join=inputs=2:channel_layout=stereo[a]" -map "[a]" "{3}"'
+        ;// if stereo
+        case "2": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0+c1|c1<c2+c3[a]" -map "[a]" "{3}"'
+        default:
+            ;// throw
+            errorLog(UnsetError("An undefined amount of channels was found in the audio file.", -1),,, 1)
+            ffmpegInstance.__Delete()
+            ExitApp()
+    }
+    fileObj   := obj.SplitPath(v)
+    append    := (A_Index != filepaths.Length) ? "&&" A_space : ""
     currentOp := Format(baseCommand, v, fileObj.dir "\" fileObj.NameNoExt "_D." fileObj.ext, fileObj.dir "\" fileObj.NameNoExt "_combined." fileObj.ext)
-    command := command currentOp A_Space append
+    command   := command currentOp A_Space append
 }
 
 cmd.run(,,, command)

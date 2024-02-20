@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/01/08
- * @version 1.0.16
+ * @date 2024/02/20
+ * @version 1.0.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -150,6 +150,23 @@ class ffmpeg {
         ;// determining if result is successful
         frameRT  := IsInteger(probeFramerate) ? probeFramerate : false
         return frameRT
+    }
+
+    /**
+     * This function will return the amount of `channels` present within the passed in file
+     * @param {String} filepath the path of the file you wish to determine the channels for
+     * @returns On success returns `Integer` of how many channels are present within the passed in file. On failure returns `false`
+     */
+    __getChannels(filepath) {
+        command := Format('ffprobe -v quiet -show_streams -show_format -print_format json "{1}"', filepath)
+        try probecmd := cmd.result(command)
+        catch
+            return false
+        try {
+            mp := JSON.parse(probecmd)
+            return mp["streams"][1]["channels"]
+        } catch
+            return false
     }
 
     /**

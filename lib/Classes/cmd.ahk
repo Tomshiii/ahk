@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2023/12/10
- * @version 1.1.2
+ * @date 2024/02/20
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,15 +55,43 @@ class cmd {
     }
 
     /**
-     * This function sends commands to the commandline and returns the result
-     * @link code from here: https://lexikos.github.io/v2/docs/commands/Run.htm#Examples
-     * @param command is the command you wish to send to the commandline
+     * This function sends commands to the commandline and returns the result from either stOutput or erOutput.
+     * @link `!hide` code orginally from [here](https://lexikos.github.io/v2/docs/commands/Run.htm#Examples)
+     * @link `hide` code originally from [here]()
+     * @author lexikos,
+     * @param {String} command is the command you wish to send to the commandline
+     * @param {Boolean} hide whether you wish for the cmd window to launch hidden or not
+     * @returns {String} a string containing the response from the commandline
      */
-    static result(command) {
-        shell := ComObject("WScript.Shell")
-        exec := shell.Exec(A_ComSpec " /C " command)
-        stOutput := exec.StdOut.ReadAll(), erOutput := exec.StdErr.ReadAll()
-        return ((stOutput != "") ? stOutput : erOutput)
+    static result(command, hide := false) {
+        if (hide != true && hide != false) || Type(command) != "string" {
+            ;// throw
+            errorLog(PropertyError("Incorrect value type in Parameter #1", -1),,, 1)
+            return
+        }
+        __whichOutput(stOutput, erOutput) => ((stOutput != "") ? stOutput : erOutput)
+        if !hide {
+            shell := ComObject("WScript.Shell")
+            exec := shell.Exec(A_ComSpec " /C " command)
+            return __whichOutput(exec.StdOut.ReadAll(), exec.StdErr.ReadAll())
+        }
+        ;// this will be changing soon as I was encountering issues with it
+        /*
+        static shell := "", pid := 0
+        SetWinDelay(-1)
+        if !shell {
+            Run(A_ComSpec " /C exit",, "Hide", &pid)
+            OnExit((*) => (ProcessClose(pid)))
+            if !DllCall("AttachConsole", "Ptr", 0xFFFFFFFF)
+                DllCall("AllocConsole"),
+                WinHide(DllCall("GetConsoleWindow", "Ptr"))
+            shell := ComObject("WScript.Shell")
+        }
+        exec := shell.Exec(A_ComSpec ' /Q /K echo off')
+        exec.StdIn.WriteLine(command "`nexit")
+        reponse := __whichOutput(exec.StdOut.ReadAll(), exec.StdErr.ReadAll())
+        return reponse
+        */
     }
 
     static deleteMappedDrive(driveLocation) => this.run(,,, Format("net use {}: /delete", Chr(64+driveLocation)))

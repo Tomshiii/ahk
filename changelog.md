@@ -1,6 +1,8 @@
 # <> Release 2.13.x - 
 
 ## > Functions
+- `cmd.result()` now accepts parameter `hide` and can launch the cmd window hidden
+- Added `__getChannels()` to `ffmpeg()` to determine audio channels present within the given file
 
 `settingsGUI()`
 - Fixed `Adobe` settings generating incorrect values
@@ -8,7 +10,7 @@
 
 ## > autosave.ahk
 - Script should now be better at determining if `rbuttonPrem()` is active which should result in less cuts on the timeline
-- Fixed `autosave.ahk` failing to reactive the original window if a save attempt is made
+- Fixed failing to reactive the original window if a save attempt was made
 
 ## > Other Changes
 - Fixed `generateAdobeSym.ahk` silently failing if build command got too long
