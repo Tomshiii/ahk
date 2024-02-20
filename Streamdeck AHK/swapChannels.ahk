@@ -24,13 +24,17 @@ if !WinWait(clipWinTitle,, 3) {
     errorLog(Error("Timed out waiting for window", -1),, 1)
     return
 }
-sleep 300
+sleep 150
 clipWin := obj.WinPos(clipWinTitle)
 
-if !ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "channel1.png") {
-    block.Off()
-    errorLog(TargetError("Couldn't find channel 1.", -1),, 1)
-    return
+__searchChannel(&x, &y) => ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "channel1.png")
+if !__searchChannel(&x, &y) {
+    sleep 150
+    if !__searchChannel(&x, &y) {
+        block.Off()
+        errorLog(TargetError("Couldn't find channel 1.", -1),, 1)
+        return
+    }
 }
 
 left  := ImageSearch(&checkX, &checkY, x, y - 50, x + 200, y + 50, "*2 " ptf.Premiere "L_unchecked.png")
@@ -50,6 +54,7 @@ if !ImageSearch(&okX, &okY, clipWin.x, (clipWin.y + clipWin.height) - 150, clipW
     errorLog(TargetError("Couldn't find OK button.", -1),, 1)
     return
 }
-Click(Format("{} {}", okX, okY))
+MouseMove(okX, okY, 1)
+SendInput("{Click}")
 MouseMove(origCoords.x, origCoords.y, 2)
 block.Off()
