@@ -2,20 +2,21 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2024/02/20
- * @version 1.1.3
+ * @date 2024/02/21
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\errorLog>
+#Include <Other\pipeCommand>
 ; }
 
 class cmd {
     /**
      * A wrapper function to quickly send custom commands to the command line
-     * @param {Boolean} admin is whether you want the commandline to be run elevated
-     * @param {Boolean} wait whether you want this function to use `RunWait()` or `Run()`. It will default to `RunWait()`
-     * @param {Boolean} keepWindow whether you wish for the cmd window to remain once it has finished excecuting your command
+     * @param {Boolean} [admin=false] is whether you want the commandline to be run elevated
+     * @param {Boolean} [wait=true] whether you want this function to use `RunWait()` or `Run()`. It will default to `RunWait()`
+     * @param {Boolean} [keepWindow=false] whether you wish for the cmd window to remain once it has finished excecuting your command
      * @param {Varadic - String} runParams* the paramaters you wish to pass to run()
      * ```
      * runParams[1] ;// the command you wish to pass to run()
@@ -57,14 +58,15 @@ class cmd {
     /**
      * This function sends commands to the commandline and returns the result from either stOutput or erOutput.
      * @link `!hide` code orginally from [here](https://lexikos.github.io/v2/docs/commands/Run.htm#Examples)
-     * @link `hide` code originally from [here]()
-     * @author lexikos,
+     * @link `hide` code originally from [here](https://discord.com/channels/115993023636176902/1209347616513720342/1209485394270224406)
+     * @author lexikos, DepthTrawler, g33k
      * @param {String} command is the command you wish to send to the commandline
-     * @param {Boolean} hide whether you wish for the cmd window to launch hidden or not
-     * @returns {String} a string containing the response from the commandline
+     * @param {Boolean} [hide=true] whether you wish for the cmd window to launch hidden or not
+     * @param {Boolean} [returnObj=false] whether you wish for the function to return a string containing the response or an object containing `StdOut`, `StdErr` & `ExitCode`
+     * @returns {String/Object} either a string containing the response from the commandline or an object containing `StdOut`, `StdErr` & `ExitCode`
      */
-    static result(command, hide := false) {
-        if (hide != true && hide != false) || Type(command) != "string" {
+    static result(command, hide := true, returnObj := false) {
+        if (hide != true && hide != false) || (returnObj != true && returnObj != false) || Type(command) != "string" {
             ;// throw
             errorLog(PropertyError("Incorrect value type in Parameter #1", -1),,, 1)
             return
@@ -75,23 +77,8 @@ class cmd {
             exec := shell.Exec(A_ComSpec " /C " command)
             return __whichOutput(exec.StdOut.ReadAll(), exec.StdErr.ReadAll())
         }
-        ;// this will be changing soon as I was encountering issues with it
-        /*
-        static shell := "", pid := 0
-        SetWinDelay(-1)
-        if !shell {
-            Run(A_ComSpec " /C exit",, "Hide", &pid)
-            OnExit((*) => (ProcessClose(pid)))
-            if !DllCall("AttachConsole", "Ptr", 0xFFFFFFFF)
-                DllCall("AllocConsole"),
-                WinHide(DllCall("GetConsoleWindow", "Ptr"))
-            shell := ComObject("WScript.Shell")
-        }
-        exec := shell.Exec(A_ComSpec ' /Q /K echo off')
-        exec.StdIn.WriteLine(command "`nexit")
-        reponse := __whichOutput(exec.StdOut.ReadAll(), exec.StdErr.ReadAll())
-        return reponse
-        */
+
+        return pipeCommand(command,, returnObj)
     }
 
     static deleteMappedDrive(driveLocation) => this.run(,,, Format("net use {}: /delete", Chr(64+driveLocation)))
@@ -100,7 +87,7 @@ class cmd {
      * This function will unmap the desired mapped drive location, then remap your desired drive letter to the desired ip address.
      * @param {String} driveLocation the drive letter you wish to remap. Do **not** include `:`
      * @param {String} networkLocation the ip location of your network drive
-     * @param {Boolean} persistent whether you wish for the drive mapping to remain after system events like `shutdown/restart`
+     * @param {Boolean} [persistent=true] whether you wish for the drive mapping to remain after system events like `shutdown/restart`
      */
     static mapDrive(driveLocation, networkLocation, persistent := true) {
         this.deleteMappedDrive(driveLocation)

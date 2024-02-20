@@ -2,6 +2,7 @@
 
 ## > Functions
 - `cmd.result()` now accepts parameter `hide` and can launch the cmd window hidden
+    - Added `pipeCommand()` to allow for this possibility. Acknowledgements for this function can be found in the `..\lib\Other\` directory.
 - Added `__getChannels()` to `ffmpeg()` to determine audio channels present within the given file
 
 `settingsGUI()`
