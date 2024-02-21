@@ -7,7 +7,6 @@
 ; }
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
-LabelColour := KSA.labelViolet
 
 if !WinActive(prem.winTitle)
     return
@@ -21,19 +20,4 @@ if prem.__checkTimelineValues() = true {
         return
 }
 
-SendEvent(LabelColour)
-sleep 25
-SendEvent("^s")
-if !WinWait("Save Project",, 3) {
-    tool.Cust("Function timed out waiting for save prompt")
-    return
-}
-if !WinWaitClose("Save Project",, 5) {
-    tool.Cust("Function timed out waiting for save prompt to close")
-    return
-}
-sleep 750
-if !prem.__waitForTimeline(3)
-    return
-sleep 100
-SendEvent(KSA.premRndrReplce)
+SendInput(ksa.audioTimeUnits)

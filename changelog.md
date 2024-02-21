@@ -18,4 +18,5 @@
 - Fixed `Hours Worked` in `checklist.ahk` showing incorrectly unless the timer has stopped
 - Added `selectFollowPlayhead.ahk`
 - Added `swapChannels.ahk`
+- Added `showAudioUnits.ahk`
 - `adobe fullscreen check.ahk` should now be better at determining if `rbuttonPrem()` is active which should result in less window flashing
