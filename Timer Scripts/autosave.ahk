@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/02/19
- * @version 2.1.6
+ * @date 2024/02/21
+ * @version 2.1.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,22 +30,50 @@
 ListLines(0)
 ; KeyHistory(0) ;// this has to be enabled for some code relating to `mouse idle` to work
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
-InstallMouseHook()
-
+;InstallMouseHook() ;// this is set within the function, no idea why but it needs to happen in the func or it just... doesn't work
 TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
 startupTray()
 
+;// initialising the timer
+autoSave := adobeAutoSave()
+
+;// this is required to allow the script to have its timer adjusted with `settingsGUI()`
+changeInterval := ObjBindMethod(WM, "__parseMessageResponse")
+OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
+
+;// defining exit func
+OnExit(ExitFunc)
+ExitFunc(ExitReason, ExitCode) {
+    if (ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error") {
+        try {
+            autoSave.stop()
+        }
+        checkstuck()
+        PremHotkeys.__HotkeyReset(["^s"])
+        block.Off()
+    }
+}
+
+/**
+     * @param {String} [rClickPrem=RButton] what the user has `rbuttonPrem().movePlayhead()` bound to
+     * @param {String} [rClickMove=XButton1] what the user has `rbuttonPrem().movePlayhead(false)` bound to
+     * it is recommended to have both of these set to a key as passing nothing will throw an error
+     */
 class adobeAutoSave extends count {
-    __New() {
+
+    __New(rClickPrem := "RButton", rClickMove := "XButton1") {
         try {
             ;// attempt to grab user settings
             this.UserSettings := UserPref()
-            this.ms := (this.UserSettings.autosave_MIN * 60000)
+            this.ms   := (this.UserSettings.autosave_MIN * 60000)
             this.beep := this.UserSettings.autosave_beep
-            this.checkMouse := this.UserSettings.autosave_check_mouse
+            this.checkMouse   := this.UserSettings.autosave_check_mouse
             this.saveOverride := this.UserSettings.autosave_save_override
             this.UserSettings := ""
         }
+
+        ;// set variables for some user hotkeys
+        this.rClickPrem := rClickPrem, this.rClickMove := rClickMove
 
         ;// initialise timer
         super.__New(this.ms)
@@ -59,33 +87,75 @@ class adobeAutoSave extends count {
 
     ;// Class Variables
     UserSettings  := unset
-    ms            := (5*60000) ;// 5min
+    ms            := (5*60000) ;// 5min by default
     saveOverride  := true
-
     origWindow    := ""
 
-    premExist     := false
-    aeExist       := false
-
-    userPlayback  := false
-    filesBackedUp := false
-
+    premExist     := false,  aeExist := false
     premWindow    := unset
     aeWindow      := unset
 
+    userPlayback  := false
+    filesBackedUp := false
     idleAttempt   := false
-
     beep          := true
     checkMouse    := true
     soundName     := ""
     currentVolume := ""
     resetingSave  := false
 
-    programMonX1  := false
-    programMonX2  := false
-    programMonY1  := false
-    programMonY2  := false
+    rClickPrem    := ""
+    rClickMove    := ""
+    movePlayhead  := InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}") ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{")
+                                                                                          : ksa.playheadtoCursor
 
+    programMonX1  := false,  programMonX2 := false
+    programMonY1  := false,  programMonY2 := false
+
+    /** This function is called every increment */
+    Tick() {
+        ;// start the saving process
+        this.begin()
+
+        ;// if the above function got to the point that it was able to determine an active window and has been set
+        ;// attempt to reactivate it
+        if this.origWindow != ""
+            this.__reactivateWindow()
+
+        ;// finish up
+        this.__reset()
+        block.Off()
+    }
+
+    /** stops the timer */
+    Stop() => super.stop()
+
+    /** This function begins the saving process */
+    begin() {
+        ;// check for prem/ae
+        this.__checkforEditors()
+        if this.premExist = false && this.aeExist = false
+            return
+
+        ;// begin blocking user inputs
+        block.On("SendAndMouse")
+
+        ;// grab originally active window
+        if !this.__getOrigWindow() {
+            this.__reset()
+            return
+        }
+
+        ;// save prem
+        if this.premExist = true
+            this.__savePrem()
+
+        ;// save ae
+        if this.aeExist = true
+            this.__saveAE()
+    }
+
+    /** This function handles reseting the timer when the user manually saves */
     __saveReset(*) {
         if !WinActive(prem.winTitle) && !WinActive(AE.winTitle) {
             SendEvent("^s")
@@ -138,8 +208,8 @@ class adobeAutoSave extends count {
             ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
             ;// the save attempt will be paused and retried
             if (A_TimeIdleKeyboard <= 500)
-                || (this.checkMouse = true && ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = "\") && A_TimeIdleMouse <= 500))
-                || GetKeyState("RButton", "P") {
+                || (this.checkMouse = true && ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = this.movePlayhead) && A_TimeIdleMouse <= 500))
+                || this.__checkRClick() {
                 if A_Index > 1 && this.beep = true
                     this.__playBeep()
                 errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s"),, {time: 2.0})
@@ -335,7 +405,9 @@ class adobeAutoSave extends count {
             sleep 25
             ;// if the user manually saves inbetween grabbing the title and this timer attempting to save
             ;// this part will throw if it's not inside a try block
-            ControlSend("{Ctrl Down}{s Down}{s Up}{Ctrl Up}",, this.premWindow.wintitle)
+            ControlSend("{Ctrl Down}{s}",, this.premWindow.wintitle)
+            sleep 50
+            ControlSend("{Ctrl Up}",, this.premWindow.wintitle)
         } catch {
             block.Off()
             return
@@ -434,42 +506,10 @@ class adobeAutoSave extends count {
         InstallMouseHook(1)
         if this.__checkMainScript() {
             WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
-            playToCurs := InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}") ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{") : ksa.playheadtoCursor
-            if prem.RClickIsActive = true || GetKeyState("RButton", "P") = true || GetKeyState(playToCurs) = true
+            if prem.RClickIsActive = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true
                 return true
         }
         return false
-    }
-
-    /** This function begins the saving process */
-    begin() {
-        ;// check for prem/ae
-        this.__checkforEditors()
-        if this.premExist = false && this.aeExist = false
-            return
-
-        ;// begin blocking user inputs
-        block.On("SendAndMouse")
-
-        ;// this script will attempt to NOT fire if Premiere_RightClick.ahk is active
-        if this.__checkRClick() = true {
-            this.__reset()
-            return
-        }
-
-        ;// grab originally active window
-        if !this.__getOrigWindow() {
-            this.__reset()
-            return
-        }
-
-        ;// save prem
-        if this.premExist = true
-            this.__savePrem()
-
-        ;// save ae
-        if this.aeExist = true
-            this.__saveAE()
     }
 
     /** resets all internal variables */
@@ -488,47 +528,9 @@ class adobeAutoSave extends count {
         block.Off()
     }
 
-    /** This function is called every increment */
-    Tick() {
-        ;// start the saving process
-        this.begin()
-
-        ;// if the above function got to the point that it was able to determine an active window and has been set
-        ;// attempt to reactivate it
-        if this.origWindow != ""
-            this.__reactivateWindow()
-
-        ;// finish up
-        this.__reset()
-        block.Off()
-    }
-
-    /** stops the timer */
-    Stop() => super.stop()
-
     __Delete() {
         try {
             super.stop()
-        }
-        checkstuck()
-        PremHotkeys.__HotkeyReset(["^s"])
-        block.Off()
-    }
-}
-
-;// initialising the timer
-autoSave := adobeAutoSave()
-
-;// this is required to allow the script to have its timer adjusted with `settingsGUI()`
-changeInterval := ObjBindMethod(WM, "__parseMessageResponse")
-OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
-
-;// defining exit func
-OnExit(ExitFunc)
-ExitFunc(ExitReason, ExitCode) {
-    if (ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error") {
-        try {
-            autoSave.stop()
         }
         checkstuck()
         PremHotkeys.__HotkeyReset(["^s"])

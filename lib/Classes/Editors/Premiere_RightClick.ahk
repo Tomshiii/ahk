@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.1
  * @author tomshi, taranVH
- * @date 2024/01/26
- * @version 2.0.20
+ * @date 2024/02/21
+ * @version 2.0.21
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -96,7 +96,10 @@ class rbuttonPrem {
 		this.timeline10, this.timeline11
 	]
 
-	/** Checks to see whether the colour under the cursor indicates that it's a blank track */
+	/**
+	 * Checks to see whether the colour under the cursor indicates that it's a blank track
+	 * @param {Hexadecimal} colour the colour you wish to check
+	 */
 	__checkForBlank(colour) {
 		;// these are the timelineCol colors of a selected clip or blank space, in or outside of in/out points.
 		if (colour = this.timelineCol[5] || colour = this.timelineCol[6] || colour = this.timelineCol[7])
@@ -106,15 +109,15 @@ class rbuttonPrem {
 
 	/**
 	 * Checks the colour under the cursor to determine if it's one of the predetermined colours
+	 * @param {Hexadecimal} colour the colour you wish to check
 	 * @returns {Boolean} if colour is not one of the predetermined values, returns `false`. Else returns `true`
 	 */
 	__checkColour(colour) {
 		loop { ;// this loop is checking to see if `colour` is one of the predetermined colours
-			if A_Index > this.timelineCol.Length
-				{
-					SendInput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
-					return false
-				}
+			if A_Index > this.timelineCol.Length {
+				SendInput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
+				return false
+			}
 			if colour = this.timelineCol[A_Index] || colour = prem.playhead
 				return true
 		}
@@ -122,6 +125,7 @@ class rbuttonPrem {
 
 	/**
 	 * Checks the colour under the cursor to determine if it's potentially a clip
+	 * @param {Hexadecimal} colour the colour you wish to check
 	 * @returns {Boolean} if the colour under the cursor **isn't** a predetermined value, returns `false`. Else returns `true`
 	 */
 	__checkUnderCursor(colour) {
@@ -141,7 +145,7 @@ class rbuttonPrem {
 	 * Checks to see wheteher the playhead can be found on the screen. If it is, `KSA.shuttleStop` is sent.
 	 * If the playhead is close to the cursor, the cursor will be moved to it and `LButton` is held down
 	 * @param {Object} coordObj an object containing the cursor coords
-	 * @param {Boolean} search passing in `allChecks` to determine if the function should search near the cursor for the playhead. Disabling this feature if `allChecks` is set to `false` stops the script from potentially clicking on a clip below the cursor
+	 * @param {Boolean} [search=true] passing in `allChecks` to determine if the function should search near the cursor for the playhead. Disabling this feature if `allChecks` is set to `false` stops the script from potentially clicking on a clip below the cursor
 	 */
 	__checkForPlayhead(coordObj, search := true) {
 		;// checking to see if the playhead is on the screen
@@ -162,26 +166,27 @@ class rbuttonPrem {
 	}
 
 	/**
-	 * This function checks to see whether the user simply tapped the right mouse button and moves the playhead
+	 * This function checks to see whether the user simply tapped the activation hotkey and moves the playhead
+	 * @param {String} activationHotkey the keyname for the activation hotkey. should be `A_ThisHotkey`
 	 * @returns {Boolean} if the user is no longer holding the `RButton`, returns `false`. Else return `true`
 	 */
 	__checkForTap(activationHotkey) {
-		if !GetKeyState(activationHotkey, "P") ;this block will allow you to still tap the activation hotkey and have it move the cursor
-			{
-				SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
-				;The below checks are to ensure no buttons end up stuck
-				checkstuck()
-				return false
-			}
+		;// this block will allow you to still tap the activation hotkey and have it move the cursor
+		if !GetKeyState(activationHotkey, "P") {
+			SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
+			;The below checks are to ensure no buttons end up stuck
+			checkstuck()
+			return false
+		}
 		return true
 	}
 
 	/** If `LButton` or `XButton2` was pressed while `RButton` was being held, this function will start playback in either 1x or 2x speed once `RButton` is released */
 	__restartPlayback() {
 		;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
-			SendInput(KSA.playStop)
-			if this.xbuttonClick = true ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
-				SendInput(KSA.speedUpPlayback)
+		SendInput(KSA.playStop)
+		if this.xbuttonClick = true ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
+			SendInput(KSA.speedUpPlayback)
 	}
 
 	/** Set class variables to the found colour */
@@ -214,7 +219,7 @@ class rbuttonPrem {
 	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when `RButton` is pressed.
 	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details
-	 * @param {Boolean} allChecks determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
+	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
 	 */
 	movePlayhead(allChecks := true) {
 		;// ensure the main prem window is active before attempting to fire
@@ -224,6 +229,7 @@ class rbuttonPrem {
 			return
 		}
 
+		InstallMouseHook(1)
 		prem.RClickIsActive := true
 
 		;// check for stuck keys
