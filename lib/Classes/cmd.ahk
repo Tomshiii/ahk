@@ -17,7 +17,7 @@ class cmd {
      * @param {Boolean} [admin=false] is whether you want the commandline to be run elevated
      * @param {Boolean} [wait=true] whether you want this function to use `RunWait()` or `Run()`. It will default to `RunWait()`
      * @param {Boolean} [keepWindow=false] whether you wish for the cmd window to remain once it has finished excecuting your command
-     * @param {Varadic - String} runParams* the paramaters you wish to pass to run()
+     * @param {Varadic-String} runParams* the paramaters you wish to pass to run()
      * ```
      * runParams[1] ;// the command you wish to pass to run()
      * runParams[2] ;// the workingdir you wish run() to use
