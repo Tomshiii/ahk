@@ -4,6 +4,8 @@
 - `cmd.result()` now accepts parameter `hide` and can launch the cmd window hidden
     - Added `pipeCommand()` to allow for this possibility. Acknowledgements for this function can be found in the `..\lib\Other\` directory.
 - Added `__getChannels()` to `ffmpeg()` to determine audio channels present within the given file
+- Fixed a bug in `clip.copyWait()` that caused it to send an empty variable to `copy.wait()` instead of `unset` if its first parameter was left blank
+    - This caused `copy.wait()` to assign a blank variable to the clipboard instead of doing nothing
 
 `settingsGUI()`
 - Fixed `Adobe` settings generating incorrect values

@@ -40,19 +40,19 @@ class discord {
     ;// position you keep it
     static x := -1080
     static y := 34
-    static width := 1080
+    static width  := 1080
     static height := 1600
 
     static slackX := -1068
     static slackY := 16
-    static slackWidth := 1058
+    static slackWidth  := 1058
     static slackHeight := 840
 
     ;// other
     static exeTitle := "ahk_exe Discord.exe"
     static winTitle := this.exeTitle
-    static class := "ahk_class Chrome_WidgetWin_1"
-    static path := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
+    static class    := "ahk_class Chrome_WidgetWin_1"
+    static path     := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
 
     static surroundActive := false
 
@@ -262,7 +262,7 @@ class discord {
     /**
      * This function allows the user to wrap the highlighted text with whatever characters they want (eg. ``, (), etc). I created this mostly because I got too use to VSCode offering this feature that I kept trying to do it in discord.
      *
-     * ⚠️ This function isn't perfect, dealing with the clipboard is sometimes incredibly slow and as such might cause noticeable delay at times, unintended characters appearing, or even just past clipboards being pasted instead of the intended text. I've done my best to avoid these issues as much as possible but at the end of the day windows is windows and there's only so much I can do about it. If I knew a way to detect if text is highlighted or not it might reduce some of these pitfalls, but at the current time I have yet to find a method that works with the discord client. ⚠️
+     * > ⚠️ This function isn't perfect, dealing with the clipboard is sometimes incredibly slow and as such might cause noticeable delay at times, unintended characters appearing, or even just past clipboards being pasted instead of the intended text. I've done my best to avoid these issues as much as possible but at the end of the day windows is windows and there's only so much I can do about it. If I knew a way to detect if text is highlighted or not it might reduce some of these pitfalls, but at the current time I have yet to find a method that works with the discord client. ⚠️
      * - If the passed `char` variable is 2 characters long, the first character will be appended at the beginning of the highlighted text & the second character will be appended to the end of the highlighted text
      * - If the passed `char` variable is 2 characters long & you aren't highlighting anything OR it fails to wait for data, this function will attempt to highlight the chat window and send the hotkey that activated the function (by default)
      * @param {String} char the desired character(s) to wrap the text with. This parameter can be no more than 2 characters long

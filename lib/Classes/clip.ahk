@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
- * @date 2023/08/04
- * @version 1.0.5
+ * @date 2024/02/22
+ * @version 1.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -35,7 +35,7 @@ class clip {
      */
     static copyWait(storedClip?, waitSec := 0.1, ttip := true) {
         SendInput("^c")
-        if !this.wait(storedClip?, waitSec, ttip)
+        if !this.wait(storedClip ?? unset, waitSec, ttip)
             return false
         return true
     }
@@ -48,13 +48,12 @@ class clip {
      * @returns {Boolean} True/False depending on if the clipboard recieved any data
      */
     static wait(storedClip?, waitSec := 0.1, ttip := true) {
-        if !ClipWait(waitSec)
-            {
-                if IsSet(storedClip)
-                    A_Clipboard := storedClip
-                errorLog(UnsetError("Couldn't copy data to clipboard", -1),, ttip)
-                return false
-            }
+        if !ClipWait(waitSec) {
+            if IsSet(storedClip)
+                A_Clipboard := storedClip
+            errorLog(UnsetError("Couldn't copy data to clipboard", -1),, ttip)
+            return false
+        }
         return true
     }
 
@@ -70,11 +69,10 @@ class clip {
      * @param {Var/Object} returnClip is the variable/object you're storing the clipboard in. If this parameter is an object it MUST have a parameter `clipObj.storedClip`
      */
     static returnClip(returnClip) {
-        if !IsObject(returnClip)
-            {
-                A_Clipboard := returnClip
-                return
-            }
+        if !IsObject(returnClip) {
+            A_Clipboard := returnClip
+            return
+        }
         if returnClip.HasOwnProp("storedClip")
             A_Clipboard := returnClip.storedClip
     }
