@@ -22,3 +22,4 @@
 - Added `swapChannels.ahk`
 - Added `showAudioUnits.ahk`
 - `adobe fullscreen check.ahk` should now be better at determining if `rbuttonPrem()` is active which should result in less window flashing
+- Rewrote `tiktok project.ahk` to utilise a class
