@@ -1,7 +1,7 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/02/12
+ * @date 2024/02/25
  * @version 1.3.6
  ***********************************************************************/
 
@@ -89,16 +89,31 @@ class switchTo {
     /**
      * This function when called will close all windows of the desired program EXCEPT the active one. Helpful when you accidentally have way too many windows open.
      * @param {String} program is the ahk_class or ahk_exe of the program you want this function to close
+     * @param {Boolean} [ttip=true] determine whether you wish for the function to present a tooltip upon completion that displays how many windows were closed
      */
-    static closeOtherWindow(program)
+    static closeOtherWindow(program, ttip := true)
     {
-        value := WinGetList(program) ;gets a list of all open windows
-        tool.Cust(value.length - 1 " other window(s) closed") ;tooltip to display how many explorer windows are being closed
-        for this_value in value
-            {
-                if A_Index > 1 ;closes all windows that AREN'T the last active window
-                    WinClose(this_value)
+        totalWindowsClosed := 0
+        storeActive := ""
+        ;// we run a loop here that checks itself to ensure that all windows are closed
+        ;// as if an explorer window for example contains multiple tabs you will end up with left over windows
+        loop {
+            value := WinGetList(program) ;gets a list of all open windows
+            if value.Length <= 1
+                break
+            totalWindowsClosed := (totalWindowsClosed = 0) ? value.length - 1 : totalWindowsClosed
+            for this_value in value {
+                if storeActive != "" && this_value = storeActive
+                    continue
+                if A_Index = 1 && storeActive = "" {
+                    storeActive := this_value
+                    continue
+                }
+                WinClose(this_value)
             }
+        }
+        if ttip && totalWindowsClosed > 0
+            tool.Cust(totalWindowsClosed " other window(s) closed") ;tooltip to display how many explorer windows are being closed
     }
 
     /**

@@ -6,6 +6,7 @@
 - Added `__getChannels()` to `ffmpeg()` to determine audio channels present within the given file
 - Fixed a bug in `clip.copyWait()` that caused it to send an empty variable to `copy.wait()` instead of `unset` if its first parameter was left blank
     - This caused `copy.wait()` to assign a blank variable to the clipboard instead of doing nothing
+- Fixed `switchTo.closeOtherWindow()` failing to close all `explorer` windows if one or more contain multiple tabs
 
 `settingsGUI()`
 - Fixed `Adobe` settings generating incorrect values
