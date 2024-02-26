@@ -24,7 +24,8 @@ A lot of the code in the earliest versions of my scripts was either inspired by,
 ***
 
 ### AHK Version Information:
-This repo is to maintain work on the `ahk v2.0.x` versions of my scripts. These scripts **_will not_** work in `ahk v1.1`, the only versions of these scripts that will work with `ahk v1.1` are Releases [1.0](https://github.com/Tomshiii/ahk/releases/tag/v1.0)/[1.1](https://github.com/Tomshiii/ahk/releases/tag/v1.1)/[1.2](https://github.com/Tomshiii/ahk/releases/tag/v1.2) in this repo. They are _severely_ outdated, are practically missing everything found in the current versions of scripts, and are no longer being maintained - you're free to try and backport any later additions if you're willing as long as the requirements of this repos license are followed.
+This repo is to maintain work on the `ahk v2.0` versions of my scripts.
+> #### ⚠️ These scripts *will not* work in `ahk v1.1` ⚠️
 
 ## QMK Keyboard:
 My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) **OR** `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.

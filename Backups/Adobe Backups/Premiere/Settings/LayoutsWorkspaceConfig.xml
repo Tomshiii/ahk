@@ -35,10 +35,12 @@
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\ArchivedLayouts\UserWorkspace_6.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\ArchivedLayouts\UserWorkspace_8.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\ArchivedLayouts\UserWorkspace_9.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\Layouts\UserWorkspace_6.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\Layouts\UserWorkspace_8.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\Layouts\UserWorkspace_9.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\Layouts\UserWorkspace5.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\Layouts\UserWorkspace3.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\24.0\Profile-Tom\Layouts\UserWorkspace12.xml</ustring>
@@ -97,10 +99,12 @@
 <string>20220102T043215.207365</string>
 <string>20221020T020352.261979</string>
 <string>20231222T011258.080156</string>
+<string>20240222T110825.947179</string>
 <string>20201116T003810</string>
 <string>20220622T034809.770985</string>
 <string>20230716T025946.190429</string>
-<string>20240212T052131.477464</string>
+<string>20240219T052853.511758</string>
+<string>20240224T115446.005733</string>
 <string>20211129T055027.354664</string>
 <string>20220614T030634.122250</string>
 <string>20200630T070242</string>
@@ -124,10 +128,12 @@
 <ustring>2021-2</ustring>
 <ustring>2022-01</ustring>
 <ustring>2023_work</ustring>
+<ustring>2023_work - multicam</ustring>
 <ustring>testing</ustring>
 <ustring>2021-2</ustring>
 <ustring>2022-01</ustring>
 <ustring>2023_work</ustring>
+<ustring>2023_work - multicam</ustring>
 <ustring>$$$/Premiere/FrontEnd/AllPanels=All Panels</ustring>
 <ustring>$$$/Premiere/FrontEnd/Assembly=Assembly</ustring>
 <ustring>$$$/Premiere/FrontEnd/Audio=Audio</ustring>
@@ -156,6 +162,8 @@
 <int type='signed' size='32'>0</int>
 <int type='signed' size='32'>0</int>
 <int type='signed' size='32'>0</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>

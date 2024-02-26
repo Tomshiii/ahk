@@ -930,7 +930,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;0&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -1158,10 +1158,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>120</int>
-<int type='signed' size='32'>31</int>
-<int type='signed' size='32'>1156</int>
-<int type='signed' size='32'>742</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>3382</int>
+<int type='signed' size='32'>1440</int>
 </array>
 </prop.pair>
 <prop.pair>

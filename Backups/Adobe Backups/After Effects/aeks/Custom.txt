@@ -519,7 +519,7 @@
 
 ["CPanoECOutline"]
 	"FitItemView" = "()"
-	"FitItemViewUpTo100" = "(Shift+3)()"
+	"FitItemViewUpTo100" = "(Shift+3)"
 	"NOP" = "()"
 	"OpenComp" = "()"
 	"SelectNext" = "(DownArrow)"
@@ -545,7 +545,7 @@
 
 ["CPanoProjItem"]
 	"FitItemView" = "()"
-	"FitItemViewUpTo100" = "(Shift+3)()"
+	"FitItemViewUpTo100" = "(Shift+3)"
 	"ProofColors" = "(Shift+PadSlash)"
 	"SelectNextMask" = "(Alt+`)"
 	"SelectPreviousMask" = "(Alt+Shift+`)"

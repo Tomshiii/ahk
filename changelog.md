@@ -1,4 +1,4 @@
-# <> Release 2.13.x - 
+# <> Release 2.13.7 - Stability Fixes
 
 ## > Functions
 - `cmd.result()` now accepts parameter `hide` and can launch the cmd window hidden
