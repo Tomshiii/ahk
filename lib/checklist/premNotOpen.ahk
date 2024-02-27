@@ -13,9 +13,10 @@ premNotOpen(&checklist, &logs, &path)
             if WinExist("checklist.ahk",, "- Visual Studio Code " browser.vscode.winTitle)
                 ProcessClose(WinGetPID("checklist.ahk",, "- Visual Studio Code " browser.vscode.winTitle))
         }
-    checklist := findFile "\checklist.ini"
-    logs := findFile "\checklist_logs.txt"
-    path := findFile
+    checklist := (FileExist(findFile "\_project files\checklist.ini")) ? findFile "\_project files\checklist.ini" : findFile "\checklist.ini"
+    SplitPath(checklist,, &chosenDir)
+    logs := chosenDir "\checklist_logs.txt"
+    path := chosenDir
     if !FileExist(checklist)
         generateINI(checklist)
 }
