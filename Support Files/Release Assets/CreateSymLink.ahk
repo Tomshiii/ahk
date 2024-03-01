@@ -12,10 +12,14 @@ temp := false
 
 cmdLine := Format('mklink /D `"{}`" `"{}`"'
                   , ahklib, path)
+
+runOrAs := (A_IsAdmin = false) ? "*RunAs " : ""
 ;final command should look like;
 ; mklink /D "mydocumentspathhere\AutoHotkey\Lib" "rootrepopath\lib"
 
-if DirExist(ahklib)
+if DirExist(ahklib) = "DL"
+    DirDelete(ahklib, 1)
+/*
     {
         SetTimer(change_buttonNames, 15)
         change_buttonNames() {
@@ -36,28 +40,26 @@ if DirExist(ahklib)
             DirMove(ahklib, A_Temp "\tomshi\UserBackup", 1)
             temp := true
             if DirExist(ahklib)
-                DirDelete(ahklib, 1)
         }
-    }
+    } */
 
 adobecmd := cmdLine A_Space
 if IsSet(adobeVers) && IsObject(adobeVers) {
     adobecmd := adobeVers.__generate(imgsrchPath, true, adobecmd)
     if !InStr(adobecmd, "|||")
-        RunWait("*RunAs " A_ComSpec " /c " adobecmd)
+        RunWait(runOrAs A_ComSpec " /c " adobecmd,, "Hide")
     else {
         cmds := StrSplit(adobecmd, "|||")
         for v in cmds
-            RunWait("*RunAs " A_ComSpec " /c " v)
+            RunWait(runOrAs A_ComSpec " /c " v,, "Hide")
     }
 }
 
-if !DirExist(ahklib)
-    {
-        MsgBox("Something went wrong", "Error", "16 4096")
-        return
-    }
-if !temp
+if !DirExist(ahklib) {
+    MsgBox("Something went wrong", "Error", "16 4096")
+    return
+}
+/* if !temp
     {
         MsgBox("SymLink generated successfully!", "Success", "64 4096")
         return
@@ -65,7 +67,7 @@ if !temp
 try {
     DirMove(A_Temp "\tomshi\UserBackup", ahklib "\UserBackup", 1)
     MsgBox("SymLink generated successfully!", "Success", "64 4096")
-}
+} */
 
 
 /**

@@ -3,7 +3,9 @@
 #Include <Classes\tool>
 #Include <Functions\getLocalVer>
 #Include <Functions\delaySI>
+#Include <Functions\getLocalVer>
 #Include <Other\7zip\SevenZip>
+#Include <Classes\winGet>
 ; }
 
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release
@@ -27,9 +29,15 @@ if WinExist("Ahk2Exe for AutoHotkey")
 ;// backup adobe stuff
 ;//! premiere
 
+;//* PremiereRemote
+RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\backupPremRemote.ahk"))
+
 ;//* KotET
 DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
 DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
+
+;//* labels
+FileCopy(A_MyDocuments "\Adobe\Common\Assets\Label Color Presets\Mine.prlabelpreset", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Labels\Mine.prlabelpreset", 1)
 
 __backupPremFolders(ahkDir, pcDir, title) {
     files := FileSelect("M3", pcDir)
@@ -59,7 +67,7 @@ FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*", 1)
 
 ;//! ae
 
-aeVerNum := StrReplace(ptf.premIMGver, "v", "")
+aeVerNum := StrReplace(ptf.aeIMGver, "v", "")
 aeVerNumTrim := InStr(aeVerNum, ".",,, 2) ? SubStr(aeVerNum, 1, InStr(aeVerNum, ".",,, 2)-1) : aeVerNum
 aeDir := A_AppData "\Adobe\After Effects\" aeVerNumTrim
 ahkAEDir := "E:\Github\ahk\Backups\Adobe Backups\After Effects"
@@ -267,31 +275,11 @@ deleting() {
 }
 deleting()
 
-;// copying over a script that will be used to extract the .zip file
-FileCopy(ptf.SupportFiles "\Release Assets\Extract.ahk", A_WorkingDir "\release")
-appendTo(readFile, script) {
-    funcToAppend := FileRead(readFile)
-    FileAppend("`n`n" funcToAppend, script)
-}
-appendTo(ptf.lib "\Functions\unzip.ahk", A_WorkingDir "\release\Extract.ahk")
-
-;//cmd has errorLog in it so we only want the one function
-; appendTo(ptf.lib "\Classes\cmd.ahk", A_WorkingDir "\release\Extract.ahk")
-addCMD := SubStr(cmdRead := FileRead(ptf.lib "\Classes\cmd.ahk"), startPos := (InStr(cmdRead, "static result(command)",, 1, 1) + 7), (InStr(cmdRead, "}",, startPos, 1) - startPos)+1)
-FileAppend("`n`n" addCMD, A_WorkingDir "\release\Extract.ahk")
-
-;// copying over thqby's 7zip lib in case it's useful
-FileCopy(ptf.lib "\Other\7zip\7-zip32.dll", A_WorkingDir "\release")
-FileCopy(ptf.lib "\Other\7zip\7-zip64.dll", A_WorkingDir "\release")
-FileCopy(ptf.lib "\Other\7zip\SevenZip.ahk", A_WorkingDir "\release")
-;// zipping the temp repo
-zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
-
 ;// copying a file that will get compiled into the release exe
 ;// this copied script deals with extracting all the files from the exe itself
 ;// it will then run `releaseGUI.ahk` to provide the user with some install options
 ;//! checkout the code in this script if you're cautious/curious about the release.exe
-FileCopy(ptf.SupportFiles "\Release Assets\install.ahk", A_WorkingDir "\release\" yes.value ".ahk")
+FileCopy(ptf.SupportFiles "\Release Assets\installGUI.ahk", A_WorkingDir "\release\" yes.value ".ahk")
 
 ;// doing string manipulation to replace some values in the above script with the actual release ver
 readFi := FileRead(A_WorkingDir "\release\" yes.value ".ahk")
@@ -299,12 +287,6 @@ replaceFileVer := StrReplace(readFi, "Version yes.value", "Version " Trim(yes.va
 replaceYes := StrReplace(replaceFileVer, "yes.value", yes.value, 1)
 FileDelete(A_WorkingDir "\release\" yes.value ".ahk")
 FileAppend(replaceYes, A_WorkingDir "\release\" yes.value ".ahk")
-
-;// doing the same as above but for extract.ahk
-readFi2 := FileRead(A_WorkingDir "\release\Extract.ahk")
-replaceYes2 := StrReplace(readFi2, "yes.value", yes.value, 1)
-FileDelete(A_WorkingDir "\release\Extract.ahk")
-FileAppend(replaceYes2, A_WorkingDir "\release\Extract.ahk")
 
 ;// opening & using the compiler
 Run(ptf.ProgFi "\AutoHotkey\Ahk2Exe.exe")
