@@ -8,6 +8,11 @@
 class adobeVers {
     Premiere := {
         ;// VER      || IMAGE VER    ||  SUBSEQUENT MINOR VERS
+        22: Map(
+            "v22.4",    "v22.3.1",
+            "22.5",     "v22.3.1",
+            "22.6",     "v22.3.1",
+        ),
         23: Map(
             "v23.0",    "v22.3.1",
             "v23.1",    "v22.3.1",
@@ -21,7 +26,8 @@ class adobeVers {
             "v24.0",    "v22.3.1",      "v24.0.3", "v22.3.1",
             "v24.1",    "v22.3.1",
             "v24.2",    "v22.3.1",      "v24.2.1", "v22.3.1",
-            "v24.3",    "v22.3.1",      ;// UI changes likely occur here so these entries may change/be removed in the future
+            ; "v24.3",  "v22.3.1",      ;// UI changes occur here so this version has its own folder
+            "v24.4",    "v24.3",
         )
     }
     AE := {
@@ -40,6 +46,7 @@ class adobeVers {
             "v24.1",    "v22.6",
             "v24.2",    "v22.6",        "v24.2.1", "v22.6",
             "v24.3",    "v22.6",
+            "v24.4",    "v22.6",
         )
     }
     PS := {

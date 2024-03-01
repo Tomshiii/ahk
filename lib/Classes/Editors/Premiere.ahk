@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.2.1
  * @author tomshi
- * @date 2024/01/24
- * @version 2.1.13.1
+ * @date 2024/02/22
+ * @version 2.1.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,6 +23,7 @@
 #Include <Classes\errorLog>
 #Include <Classes\block>
 #Include <Classes\WM>
+#Include <Classes\cmd>
 #Include <Classes\Editors\Premiere_UIA>
 #Include <Other\UIA\UIA>
 #Include <Functions\getHotkeys>
@@ -63,7 +64,7 @@ class Prem {
 
     ;// rbuttonPrem
     static focusTimelineStatus := true
-    static RClickIsActive := false
+    static RClickIsActive      := false
 
     ;// variables for `delayPlayback()` && `rippleTrim()`
     static defaultDelay := 325
@@ -77,31 +78,29 @@ class Prem {
     static scJosh     := "1"
     static scDesktop  := "1"
 
+    ;// PremiereRemote variables
+    static remoteDir := A_AppData "\Adobe\CEP\extensions\PremiereRemote"
+    static indexFile := this.remoteDir "\host\src\index.tsx"
+
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
 
         alex := {
-            1: [2064, -26, 215],
-            2: [3467, 339, 390]
+            1: [2064, -26, 215, 960, 540],
+            2: [3467, 339, 390, 960, 540]
         }
         d0yle := {
             1: [1925, 1085, 210, 1916.8, 1082],
             2: [1917.5, 1077.5, 288, 1915, 1074.6]
-            ;// no anchor point
-            /* 1: [-78, -53, 210],
-            2: [-833, -462, 288] */
-            ;// sm64
-            /* 1: [2013, 1128, 210],
-            2: [2759, 1547, 288] */
         }
         chloe := {
-            1: [-426, -238, 267],
-            2: [-1776, -932, 495],
-            3: [632, 278, 292]
+            1: [-426, -238, 267, 960, 540],
+            2: [-1776, -932, 495, 960, 540],
+            3: [632, 278, 292, 960, 540]
         }
         emerldd := {
-            1: [1913, 67, 200],
-            2: [2873, -436, 300]
+            1: [1913, 67, 200, 960, 540],
+            2: [2873, -436, 300, 960, 540]
         }
     }
 
@@ -174,6 +173,80 @@ class Prem {
             return false
         }
         return {x: toolx, y: tooly, width: width, height: height, classNN: ClassNN, uiaVar: AdobeEl}
+    }
+
+    /**
+     * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main). Can also check for the existence of a specific function within the `index.tsx` file
+     * @param {String} [checkFunc=""] the name of the function you wish to check for
+     * @returns {Boolean}
+     */
+    static __checkPremRemoteDir(checkFunc := "") {
+        return (DirExist(this.remoteDir) && FileExist(this.indexFile) && this.__checkPremRemoteFunc(checkFunc) ? true : false)
+    }
+
+    /**
+     * This function checks the [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) `index` file for the desired function
+     * @param {String} checkFunc the function name you wish to search for. ie `projPath`
+     * @returns {Boolean}
+     */
+    static __checkPremRemoteFunc(checkFunc) {
+        return ((InStr(readFile := FileRead(this.indexFile), Format("{}: function (", checkFunc)) ||
+                    InStr(readFile, Format("{}: function(", checkFunc)))
+                    ? true : false)
+    }
+
+    /**
+     * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) function
+     * @param {String} whichFunc the function you wish to call
+     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window.
+     * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
+     * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response.
+     */
+    static __remoteFunc(whichFunc, needResult := false, params*) {
+        paramsString := ""
+        if params.Length >= 1 {
+            for k, v in params {
+                if params.Length == 1 {
+                    paramsString := params[A_Index]
+                    break ;// happens anyway but for readability
+                }
+                if k = 1 {
+                    paramsString := params[A_Index]
+                    continue
+                }
+                paramsString := paramsString "&" params[A_Index]
+            }
+        }
+        sendcommand := Format('curl "http://localhost:8081/{1}?{2}"', whichFunc, String(paramsString))
+        if !needResult
+            Run(sendcommand,, "Hide")
+        else {
+            parse := JSON.parse(cmd.result(sendcommand))
+            return parse["result"]
+        }
+    }
+
+    /**
+     * Calls a `PremiereRemote` function to directly save the current project.
+     * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close
+     * @returns {Trilean/String}
+     * - `true`: successful
+     * - `false`: `PremiereRemote`/`saveProj` func/`projPath` func not found
+     * - `-1`: waiting for the save project window to open/close timed out
+     */
+    static save(andWait := true) {
+        if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("projPath")
+            return false
+        this.__remoteFunc("saveProj")
+        if !andWait
+            return true
+
+        ;// waiting for save dialogue to open & close
+        if !WinWait("Save Project",, 3)
+            return "timeout"
+        if !WinWaitClose("Save Project",, 3)
+            return "timeout"
+        return true
     }
 
     /**
@@ -324,6 +397,8 @@ class Prem {
      * This function on first run will ask you to select a clip with the exact zoom you wish to use for the current session. Any subsequent activations of the script will simply zoom the current clip to that zoom amount. You can reset this zoom by refreshing the script.
      *
      * If a specified client name is in the title of the window (usually in the url project path) this function will set predefined zooms. These clients can be defined within the neseted class `Prem.ClientInfo`
+     *
+     * > This function contains code that will check for `PremiereRemote` and use it if detected. This code will make the function faster to excecute.
      */
     static zoom()
     {
@@ -455,20 +530,6 @@ class Prem {
                     break
             }
             this.isWaiting := true
-
-            ;// debug func
-            /* check(block, other := "") {
-                MsgBox(Format("
-                (
-                    block: {}
-                    orig: {}
-                    tog {}
-                    count: {}
-                    presses: {}
-                    math: {}
-                )", block, origtog, tog, count, this.presses, other)
-                )
-            } */
             count := ObjOwnPropCount(clientList.%ClientName%)
 
             ;// logic for the toggle using a class variable
@@ -484,12 +545,8 @@ class Prem {
                     x     := clientList.%ClientName%.punchIn[1]
                     y     := clientList.%ClientName%.punchIn[2]
                     scale := clientList.%ClientName%.punchIn[3]
-
-                    ;// if an anchor point has been given
-                    if clientList.%ClientName%.Length = 5 {
-                        anchorX := clientList.%ClientName%.punchIn[4]
-                        anchorY := clientList.%ClientName%.punchIn[5]
-                    }
+                    anchorX := clientList.%ClientName%.punchIn[4]
+                    anchorY := clientList.%ClientName%.punchIn[5]
                 }
             else if count > 1
                 {
@@ -519,27 +576,30 @@ class Prem {
                         x := clientList.%ClientName%.%Name%[1]
                         y := clientList.%ClientName%.%Name%[2]
                         scale := clientList.%ClientName%.%Name%[3]
-
-                        ;// if an anchor point has been given
-                        if clientList.%ClientName%.%Name%.Length = 5 {
-                            anchorX := clientList.%ClientName%.%Name%[4]
-                            anchorY := clientList.%ClientName%.%Name%[5]
-                        }
+                        anchorX := clientList.%ClientName%.%Name%[4]
+                        anchorY := clientList.%ClientName%.%Name%[5]
                     }
                 }
         }
         if scale = 0 {
             setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
-            if setValue = "No"
-                {
-                    block.Off()
-                    return
-                }
+            if setValue = "No" {
+                block.Off()
+                return
+            }
         }
         block.On()
         MouseGetPos(&xpos, &ypos)
         this.__checkTimelineFocus()
         sleep 50
+
+        ;// if the user is using premiereremote we can excecute now and terminate early
+        if x != 0 && this.__checkPremRemoteDir("setZoomOfCurrentClip") {
+            this.__remoteFunc("setZoomOfCurrentClip", true, "zoomLevel=" String(scale), "xPos=" String(x), "yPos=" String(y), "anchorX=" String(anchorX), "anchorY=" String(anchorY))
+            block.Off()
+            return
+        }
+
         ;// searches to check if no clips are selected
         if ImageSearch(&clipX, &clipY, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") {
             SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
@@ -1301,12 +1361,11 @@ class Prem {
         block.On()
         coord.s()
         check := winget.Title()
-        if check = "Audio Gain"
-            {
-                SendInput(amount "{Enter}")
-                block.Off()
-                return -1
-            }
+        if check = "Audio Gain" {
+            SendInput(amount "{Enter}")
+            block.Off()
+            return -1
+        }
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return false
@@ -1732,20 +1791,24 @@ class Prem {
 
     /**
      * This function handles different hotkeys related to `Previews` (both rendering & deleting them). This function will attempt to save the project before doing anything.
+     *
+     * > This function contains code that will check for `PremiereRemote` and use it if detected. This code will make the function more reliable.
      * @param {String} which whether you wish to delete or render a preview. If deleting, pass `"delete"` else pass an empty string
      * @param {String} sendHotkey which hotkey you wish to send
      */
     static Previews(which, sendHotkey) {
         if !WinActive(this.exeTitle)
             return
-        SendEvent("^s")
-        if !WinWait("Save Project",, 3) {
-            tool.Cust("Function timed out waiting for save prompt")
-            return
-        }
-        if !WinWaitClose("Save Project",, 5) {
-            tool.Cust("Function timed out waiting for save prompt to close")
-            return
+        if !this.save() {
+            SendEvent("^s")
+            if !WinWait("Save Project",, 3) {
+                tool.Cust("Function timed out waiting for save prompt")
+                return
+            }
+            if !WinWaitClose("Save Project",, 5) {
+                tool.Cust("Function timed out waiting for save prompt to close")
+                return
+            }
         }
         sleep 500
         if this.__checkTimelineValues() {
@@ -1754,7 +1817,7 @@ class Prem {
         }
         switch which {
             case "delete": this().__delprev(sendHotkey)
-            default:       SendInput(sendHotkey)
+            default: SendInput(sendHotkey)
         }
     }
 
