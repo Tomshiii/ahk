@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/02/21
- * @version 2.1.7
+ * @date 2024/02/23
+ * @version 2.1.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -377,6 +377,10 @@ class adobeAutoSave extends count {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1),, 1)
             return
         }
+
+        saveAttempt := prem.save()
+        if (saveAttempt = true || saveAttempt = -1)
+            return
 
         ;// checking idle status
         this.__checkIdle()
