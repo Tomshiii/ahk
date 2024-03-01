@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/02/25
- * @version 1.3.6
+ * @date 2024/02/30
+ * @version 1.3.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -193,7 +193,7 @@ class switchTo {
             } catch {
                 try {
                     UserSettings := UserPref()
-                    generateAdobeShortcut(UserSettings, "Adobe After Effects", UserSettings.prem_year)
+                    generateAdobeShortcut(UserSettings, "Adobe After Effects", UserSettings.ae_year)
                     UserSettings.__delAll()
                     UserSettings := ""
                     sleep 50
