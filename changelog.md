@@ -9,7 +9,7 @@ This tool offers multiple advantages for my repo, such as;
 - Directly change clip properties like `zoom`, `x/y`, `anchor point`, etc. Meaning less keystrokes needing to be sent
 - Directly receive the current project path
 
-It requires additional setup from the user so make sure you checkout the [wiki page]() to get started.
+It requires additional setup from the user so make sure you checkout the [wiki page](https://github.com/Tomshiii/ahk/wiki/PremiereRemote) to get started.
 
 #### PremiereRemote related changes
 - `winGet.ProjPath()` can now retrieve the project directory directly from Premiere without needing string manipulation
@@ -42,7 +42,7 @@ Check the [Installation wiki page](https://github.com/Tomshiii/ahk/wiki/Installa
 ## > Other Changes
 - Now backing up `.prlabelpreset` file in `..\Backups\Adobe Backups\Premiere\Labels\`
 - `checklist.ahk` now better handles my project folder paths
-- `v24.3` is now it's own folder in `ImageSearch` as it contains UI changes
+- `v24.3` of `Premiere` is now its own folder in `ImageSearch` as it contains UI changes
 
 `adobeKSA.ahk`
 - Fixed a bug that caused it to incorrectly set the default directory path for `After Effects`

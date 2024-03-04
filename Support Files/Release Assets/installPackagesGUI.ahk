@@ -1,4 +1,6 @@
 #requires AutoHotkey v2
+#Warn VarUnset, StdOut
+
 #Include <Classes\ptf>
 
 instance := newGUI()
@@ -12,6 +14,9 @@ class newGUI extends Gui {
         ;nofocus
         this.AddButton("Default X8 Y0 w0 h0 v_", "_")
 
+        ;from `C:\Program Files\AutoHotkey\UX\ui-setup.ahk`
+        DllCall('uxtheme\SetWindowThemeAttribute', 'ptr', this.hwnd, 'int', 1 ; WTA_NONCLIENT
+                    , 'int64*', 3 | (3<<32), 'int', 8) ; WTNCA_NODRAWCAPTION=1, WTNCA_NODRAWICON=2
         this.AddText('x0 y0 w' this.TotalWidth ' h60 ' this.TitleBack)
         this.Add("Text", "X105 y16 " this.TitleFore " " this.TitleBack " Section W250 H35 vTopText Center", "Installation Complete!`nSee further options for additional features:")
         this.AddText('x-4 y60 w' this.TotalWidth+4 ' h125 0x1000 -Background Section')
@@ -52,8 +57,12 @@ class newGUI extends Gui {
     }
 
     __premRemote() {
-        RunWait(ptf.SupportFiles "\Release Assets\Install Packages\installPremRemote.ahk")
-        sleep 100
+        try {
+            RunWait(ptf.SupportFiles "\Release Assets\Install Packages\installPremRemote.ahk")
+            sleep 100
+        } catch {
+            throw TargetError("Unable to determine requested file. Settings.ini may not be generated.", -1)
+        }
     }
 
     __install(*) {
