@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.2.1
  * @author tomshi
- * @date 2024/02/22
- * @version 2.1.14
+ * @date 2024/03/07
+ * @version 2.1.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1771,7 +1771,6 @@ class Prem {
         SendInput(sendHotkey)
         if !WinWait("Confirm Delete " prem.exeTitle,, 3)
             return
-        tool.Cust("found")
         WinActivate("Confirm Delete " prem.exeTitle)
         if !WinWaitActive("Confirm Delete " prem.exeTitle,, 3)
             return
