@@ -15,11 +15,11 @@
 ;//* This script will only check the first file in the directory to determine if all files are mono/stereo
 ;//* the final ffmpeg command is different depending on which it is so make sure not to mix different files into this process
 
-recurse := (MsgBox("Do you wish to recurse?", "Recurse?", "4 32 4096") = "Yes") ? "R" : ""
-
 defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
 if !selectedFile := FileSelect("D 3", defaultDir, "Select file to extract audio.")
     return
+
+recurse := (MsgBox("Do you wish to recurse?", "Recurse?", "4 32 4096") = "Yes") ? "R" : ""
 
 ;// creating an instance like this stops the script from producing a traytip for every audio stream
 ;// that it extracts
