@@ -35,10 +35,12 @@ DirDelete(extensionsPath "\.premRemoteExtract", 1)
 ;// build the project
 cmd.run(,,, "npm i", remotePath "\client")
 cmd.run(,,, "npm i", remotePath "\host")
-cmd.run(,,, "npm run build", remotePath "\host")
 
 ;// then copy files from install
 BackupLocation := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote"
-loop files BackupLocation "\*.tsx" {
+if !DirExist(remotePath "\host\src")
+    DirCreate(remotePath "\host\src")
+loop files BackupLocation "\*.tsx", "F" {
     FileCopy(A_LoopFileFullPath, remotePath "\host\src\" A_loopfilename, true)
 }
+cmd.run(,,, "npm run build", remotePath "\host")
