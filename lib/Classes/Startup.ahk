@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2024/03/07
- * @version 1.7.11
+ * @version 1.7.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -631,7 +631,7 @@ class Startup {
             scriptPos: ptf.lib "\Other\UIA"
         }
         WinEvent := {
-            name: "WinEvent",                        url: "https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/WinEvent.ahk",
+            name: "WinEvent",                        url: "https://raw.githubusercontent.com/Descolada/AHK-v2-libraries/main/Lib/WinEvent.ahk",
             scriptPos: ptf.lib "\Other"
         }
 
