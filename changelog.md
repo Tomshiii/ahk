@@ -2,7 +2,7 @@
 > ### ⚠️ This branch will likely contain breaking changes for most of its development cycle. It is not recommended to use this branch ⚠️
 
 ***
-### Premiere Remote
+## ‣ Premiere Remote
 This release brings along support for [`PremiereRemote`](https://github.com/sebinside/PremiereRemote), a tool by [`sebinside`](https://github.com/sebinside) that allows the user to easily interact with [`Adobe Premiere's Extension mechanism`](https://github.com/Adobe-CEP).  
 This tool offers multiple advantages for my repo, such as;  
 - More directly telling Premiere to `save` resulting in less issues
@@ -30,7 +30,7 @@ It requires additional setup from the user so make sure you checkout the [wiki p
 - `Previews()` now attempts to use `save()` for a more reliable experience
 
 
-### Better Installation process of my repo
+## ‣ Better Installation process of my repo
 This release also offers a new and improved installation process which takes more of the work off the user to handle it systematically instead. The installation process should now be more akin to any other program you install on windows.
 
 Check the [Installation wiki page](https://github.com/Tomshiii/ahk/wiki/Installation) for more details.
@@ -40,6 +40,8 @@ Check the [Installation wiki page](https://github.com/Tomshiii/ahk/wiki/Installa
 - `cmd.result()` now accepts parameter `workingDir` to pass the working dir to `pipeCommand()` if parameter `hide` is set to `true`
 
 ## > Other Changes
+- Added [`WinEvent.ahk`](https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/WinEvent.ahk) by [Descolada](https://github.com/Descolada/)
+    - `autodismiss error.ahk` now uses `WinEvent {`
 - Now backing up `.prlabelpreset` file in `..\Backups\Adobe Backups\Premiere\Labels\`
 - `checklist.ahk` now better handles my project folder paths
 - `v24.3` of `Premiere` is now its own folder in `ImageSearch` as it contains UI changes

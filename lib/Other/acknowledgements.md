@@ -8,3 +8,6 @@
 
 `DepthTrawler` & `G33k`  
 `pipeCommand.ahk`  => : https://discord.com/channels/115993023636176902/1209347616513720342/1209485394270224406  
+
+`Descolada`  
+`WinEvent.ahk`     => : https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/WinEvent.ahk  

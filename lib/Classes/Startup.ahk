@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/10/23
- * @version 1.7.10
+ * @date 2024/03/07
+ * @version 1.7.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -630,8 +630,12 @@ class Startup {
             name: "UIA_Browser",                     url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA_Browser.ahk",
             scriptPos: ptf.lib "\Other\UIA"
         }
+        WinEvent := {
+            name: "WinEvent",                        url: "https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/WinEvent.ahk",
+            scriptPos: ptf.lib "\Other"
+        }
 
-        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser]
+        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent]
         name        := []
         url         := []
         scriptPos   := []
