@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2024/01/17
- * @version 1.4.9.2
+ * @date 2024/03/03
+ * @version 1.4.9.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -40,19 +40,19 @@ class discord {
     ;// position you keep it
     static x := 60
     static y := 0
-    static width := 1012
+    static width  := 1012
     static height := 720
 
-    static slackX := 60
-    static slackY := 720
-    static slackWidth := 1012
-    static slackHeight := 720
+    static slackX := -1068
+    static slackY := 16
+    static slackWidth := 1058
+    static slackHeight := 840
 
     ;// other
     static exeTitle := "ahk_exe Discord.exe"
     static winTitle := this.exeTitle
-    static class := "ahk_class Chrome_WidgetWin_1"
-    static path := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
+    static class    := "ahk_class Chrome_WidgetWin_1"
+    static path     := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
 
     static surroundActive := false
 
@@ -234,15 +234,16 @@ class discord {
             WinActivate(this.winTitle)
         MouseGetPos(&xPos, &yPos)
         WinGetPos(,, &width, &height, this.winTitle)
-        if which = ""
-            {
-                if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " ptf.Discord "\unread3.png")
-                    end(-20)
-            }
-        if !obj.imgSrchMulti({x1:0 + x2, y1:0, x2:50 + y2, y2:height},, &x, &y, ptf.Discord "\unread" which "_1.png", ptf.Discord "\unread" which "_2.png", ptf.Discord "\unread" which "_3.png") {
-                tool.Cust("Couldn't find any unread " message)
-                return
-            }
+        if which = "" {
+            if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " ptf.Discord "\unread3.png")
+                end(-20)
+        }
+        if !obj.imgSrchMulti({x1:0 + x2, y1:0, x2:50 + y2, y2:height},, &x, &y,
+                                ptf.Discord "\unread" which "_1.png", ptf.Discord "\unread" which "_2.png",
+                                ptf.Discord "\unread" which "_3.png", ptf.Discord "\unread" which "_4.png") {
+            tool.Cust("Couldn't find any unread " message)
+            return
+        }
         end()
     }
 
@@ -262,7 +263,7 @@ class discord {
     /**
      * This function allows the user to wrap the highlighted text with whatever characters they want (eg. ``, (), etc). I created this mostly because I got too use to VSCode offering this feature that I kept trying to do it in discord.
      *
-     * ⚠️ This function isn't perfect, dealing with the clipboard is sometimes incredibly slow and as such might cause noticeable delay at times, unintended characters appearing, or even just past clipboards being pasted instead of the intended text. I've done my best to avoid these issues as much as possible but at the end of the day windows is windows and there's only so much I can do about it. If I knew a way to detect if text is highlighted or not it might reduce some of these pitfalls, but at the current time I have yet to find a method that works with the discord client. ⚠️
+     * > ⚠️ This function isn't perfect, dealing with the clipboard is sometimes incredibly slow and as such might cause noticeable delay at times, unintended characters appearing, or even just past clipboards being pasted instead of the intended text. I've done my best to avoid these issues as much as possible but at the end of the day windows is windows and there's only so much I can do about it. If I knew a way to detect if text is highlighted or not it might reduce some of these pitfalls, but at the current time I have yet to find a method that works with the discord client. ⚠️
      * - If the passed `char` variable is 2 characters long, the first character will be appended at the beginning of the highlighted text & the second character will be appended to the end of the highlighted text
      * - If the passed `char` variable is 2 characters long & you aren't highlighting anything OR it fails to wait for data, this function will attempt to highlight the chat window and send the hotkey that activated the function (by default)
      * @param {String} char the desired character(s) to wrap the text with. This parameter can be no more than 2 characters long
@@ -304,7 +305,7 @@ class discord {
             }
         block.On("send")
         store := clip.clear()
-        if !clip.copyWait(, timeWait.first, false) {
+        if !clip.copyWait(unset, timeWait.first, false) {
             SendInput(KSA.discHighlightChat)
             sendText := (charLength = 2 && A_ThisHotkey != "") ? onFailSend : char
             A_Clipboard := sendText
@@ -318,9 +319,8 @@ class discord {
             return
         }
         ;// clearing the clipboard again in an attempt to fix this function sometimes hanging and sending keys seemingly randomly
-        middle := A_Clipboard
-        clip.clear()
-        A_Clipboard := (charLength = 2) ? SubStr(char, 1, 1) middle SubStr(char, 2, 1) : char middle char
+        middle := clip.clear()
+        A_Clipboard := (charLength = 2) ? SubStr(char, 1, 1) middle.storedClip SubStr(char, 2, 1) : char middle.storedClip char
         if !ClipWait(timeWait.second) {
             __exit(store.storedClip)
             return

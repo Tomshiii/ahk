@@ -37,6 +37,7 @@ Check the [Installation wiki page](https://github.com/Tomshiii/ahk/wiki/Installa
 ***
 ## > Functions
 - Fixed `switchTo.AE()` generating a shortcut using `UserSettings.prem_year` instead of `ae_year`
+- Fixed `move.Window()` throwing in the event you try to minimize the active window the same moment it changes (and can no longer be found. eg opening a new browser tab)
 - `cmd.result()` now accepts parameter `workingDir` to pass the working dir to `pipeCommand()` if parameter `hide` is set to `true`
 
 ## > Streamdeck AHK
