@@ -7,7 +7,9 @@
 
 ;// this script must be called AFTER symlinks have been generated
 ;// it requires cmd { & unzip()
-SetWorkingDir(A_ScriptDir)
+SplitPath(A_LineFile,, &workDir)
+SetWorkingDir(workDir "\..\..\..\")
+
 getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
 if !getNPM {
     ;// throw
@@ -22,12 +24,17 @@ if !RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.11", "PlayerDebugMode", 0)
 downloadURl    := "https://github.com/sebinside/PremiereRemote/archive/refs/heads/main.zip"
 extensionsPath := A_AppData "\Adobe\CEP\extensions"
 remotePath     := extensionsPath "\PremiereRemote"
+
+if DirExist(remotePath)
+    return
+
 if !DirExist(remotePath)
     DirCreate(remotePath)
 Download(downloadURl, extensionsPath "\premExtract.zip")
 ;// unzip
 unzip(extensionsPath "\premExtract.zip", extensionsPath "\.premRemoteExtract\")
-DirMove(extensionsPath "\.premRemoteExtract\PremiereRemote-main", remotePath, 1)
+DirMove(extensionsPath "\.premRemoteExtract\PremiereRemote-main", extensionsPath "\.premRemoteExtract\PremiereRemote", 1)
+DirMove(extensionsPath "\.premRemoteExtract\PremiereRemote", extensionsPath, 1)
 ;// remove old files/dir
 FileDelete(extensionsPath "\premExtract.zip")
 DirDelete(extensionsPath "\.premRemoteExtract", 1)
@@ -37,7 +44,7 @@ cmd.run(,,, "npm i", remotePath "\client")
 cmd.run(,,, "npm i", remotePath "\host")
 
 ;// then copy files from install
-BackupLocation := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote"
+BackupLocation := A_WorkingDir "\Backups\Adobe Backups\Premiere\PremiereRemote"
 if !DirExist(remotePath "\host\src")
     DirCreate(remotePath "\host\src")
 loop files BackupLocation "\*.tsx", "F" {

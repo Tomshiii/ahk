@@ -112,23 +112,6 @@ class installGUI extends Gui {
         }
 
         /**
-         * this function adds value to the progress bar over a set period of time using `SetTimer()`. it will add a value of `1` per `delay`
-         * @param {Integer} amount the amount you wish to add in total to the progress bar
-         * @param {Integer} delay the amount of delay between each addition to the progress bar
-         */
-        __slowAddProgress(amount, delay) {
-            Critical
-            SetTimer(addAmount.bind(this, amount, this["Progress"].value), delay)
-            addAmount(guiObj, amount, original, *) {
-                Critical
-                if guiObj["Progress"].value < original + amount
-                    guiObj["Progress"].value += 1
-                else
-                    SetTimer(, 0)
-            }
-        }
-
-        /**
          * this function sets the value of the progress bar
          * @param {Integer} amount the number value you wish to set the progress bar to
          * @param {Boolean} [relative=false] determine whether you wish to relatively set the value or hard set it to your defined value
@@ -160,7 +143,6 @@ class installGUI extends Gui {
         __installDump() {
             __after(name) {
                 this.__addLogEntry("extracting ``" name "``")
-                this.__slowAddProgress(5, 100)
             }
             FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
             __after("yes.value.zip")
@@ -170,7 +152,6 @@ class installGUI extends Gui {
         __deleteInstallFiles() {
             __after(name) {
                 this.__addLogEntry("deleting ``" name "``")
-                this.__slowAddProgress(2, 100)
             }
             FileDelete(A_WorkingDir '\yes.value.zip')
             __after("yes.value.zip")
@@ -199,13 +180,13 @@ class installGUI extends Gui {
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
             amount := 0
+            if !this.hasAttempted {
+                this.__addLogEditBox()
+            }
             this.hasAttempted := true
             if FileExist(A_MyDocuments "\tomshi\settings.ini")
                 this.settingsCheck := true
             this.__changeInstallButton(true)
-            if !this.hasAttempted {
-                this.__addLogEditBox()
-            }
             SplitPath(this.InstallDir, &FinalDir)
             if FinalDir !== "Tomshi AHK" {
                 this.InstallDir := this.InstallDir "\Tomshi AHK"
@@ -227,7 +208,6 @@ class installGUI extends Gui {
                     break
                 }
             }
-            this.__slowAddProgress(10, 100)
             sleep 300
             if this.isDetected = true && FileExist(this.settingsDir "\settings.ini") {
                 this.__addLogEntry("backing up previous install")
@@ -239,21 +219,20 @@ class installGUI extends Gui {
                 this.__addLogEntry("backing up: " this.InstallDir)
                 DirCopy(this.InstallDir, this.settingsDir "\Backups\" oldVer)
                 this.__addLogEntry("backup complete: " this.settingsDir "\Backups\" oldVer)
-                this.__setProgress(10)
             }
+            this.__setProgress(10)
             if A_IsCompiled = 1
                 this.__installDump()
             this.__setProgress(35) ;// hard setting to 35 here
 
-            this.__slowAddProgress(30, 250)
             this.__addLogEntry("unzipping release contents")
             if this.__unzip(A_WorkingDir "\yes.value.zip", this.InstallDir) != true {
                 this.__setProgress(100)
                 this["Progress"].opt("CRed")
                 throw(Error("Unable to Unzip install files", -1))
             }
+            this.__setProgress(65) ;// hard setting to 35 here
             if this.settingsCheck = false && FileExist(this.InstallDir "\Support Files\Release Assets\baseLineSettings.ahk") {
-                this.__slowAddProgress(5, 200)
                 this.__addLogEntry("generating default ``settings.ini``")
                 Run(this.InstallDir "\Support Files\Release Assets\baseLineSettings.ahk")
             }
@@ -278,7 +257,7 @@ class installGUI extends Gui {
 
             ;// run next GUI and destroy this one
             this.GetPos(&oldX, &oldY, &oldWidth, &oldHeight)
-            Run(this.InstallDir "\Support Files\Release Assets\",,, &PID)
+            try Run(this.InstallDir "\Support Files\Release Assets\installPackagesGUI.ahk",,, &PID)
             try WinMove(oldX, oldY, oldWidth, oldHeight, "ahk_pid " PID)
             this.Destroy()
         }

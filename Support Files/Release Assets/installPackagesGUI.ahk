@@ -8,6 +8,8 @@ instance.Show('w' instance.TotalWidth)
 
 class newGUI extends Gui {
     __New() {
+        SplitPath(A_LineFile,, &workDir)
+        SetWorkingDir(workDir)
         super.__New("+Resize +MinSize100x170 -MinimizeBox -MaximizeBox", "Install Tomshi AHK")
         SetTimer(() => this.Opt("-Resize"), -10)
         this.SetFont("S11")
@@ -58,10 +60,10 @@ class newGUI extends Gui {
 
     __premRemote() {
         try {
-            RunWait(ptf.SupportFiles "\Release Assets\Install Packages\installPremRemote.ahk")
+            RunWait(A_WorkingDir "\Release Assets\Install Packages\installPremRemote.ahk")
             sleep 100
         } catch {
-            throw TargetError("Unable to determine requested file. Settings.ini may not be generated.", -1)
+            throw TargetError("Unable to determine requested file.", -1)
         }
     }
 

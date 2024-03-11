@@ -275,6 +275,9 @@ deleting() {
 }
 deleting()
 
+;// zipping the temp repo
+zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
+
 ;// copying a file that will get compiled into the release exe
 ;// this copied script deals with extracting all the files from the exe itself
 ;// it will then run `releaseGUI.ahk` to provide the user with some install options
@@ -341,6 +344,17 @@ getverNum() {
     num := LTrim(yes.value, "v")
     dot := false
     finalNum := ""
+    beta := InStr(num, "beta")
+    alpha := InStr(num, "alpha")
+    pre := InStr(num, "pre")
+    if beta != false || alpha != false || pre != false {
+        if beta != false
+            return (SubStr(num, 1, beta-1))
+        if alpha != false
+            return (SubStr(num, 1, alpha-1))
+        if pre != false
+            return (SubStr(num, 1, pre-1))
+    }
     loop StrLen(num) {
         loopField := SubStr(num, A_Index, 1)
         if IsNumber(loopField) || (loopField = ".") {

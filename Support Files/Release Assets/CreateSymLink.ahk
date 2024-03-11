@@ -1,14 +1,15 @@
-#Include *i Adobe SymVers\adobeVers.ahk
+#Include "%A_LineFile%"
+#Include Adobe SymVers\adobeVers.ahk
 
-SetWorkingDir(A_ScriptDir)
+SplitPath(A_LineFile,, &workDir)
+SetWorkingDir(workDir)
 
 if !DirExist(A_MyDocuments "\AutoHotkey")
     DirCreate(A_MyDocuments "\AutoHotkey")
 
-ahklib := A_MyDocuments '\AutoHotkey\Lib'
-path := pathU(A_ScriptDir '\..\..\Lib')
-imgsrchPath := A_ScriptDir '\..\..\Support Files\ImageSearch'
-temp := false
+ahklib      := A_MyDocuments '\AutoHotkey\Lib'
+path        := pathU(A_WorkingDir '\..\..\Lib')
+imgsrchPath := A_WorkingDir '\..\..\Support Files\ImageSearch'
 
 cmdLine := Format('mklink /D `"{}`" `"{}`"'
                   , ahklib, path)
@@ -19,29 +20,6 @@ runOrAs := (A_IsAdmin = false) ? "*RunAs " : ""
 
 if DirExist(ahklib) = "DL"
     DirDelete(ahklib, 1)
-/*
-    {
-        SetTimer(change_buttonNames, 15)
-        change_buttonNames() {
-            if !WinExist("Backup lib files")
-                return
-            SetTimer(, 0)
-            WinActivate("Backup lib files")
-            ControlSetText "&Continue", "Button1"
-        }
-        warn := MsgBox("This script will delete your entire lib folder found here:`n" A_MyDocuments "\AutoHotkey\Lib`n`nIf you use files other than mine, this script will attempt to place them in a backup folder but it's best to not rely on this and back them up yourself.`n`nDo you wish to continue?.", "Backup lib files", "1 48 256 4096")
-        if warn = "Cancel"
-            return
-        try {
-            if !DirExist(A_Temp "\tomshi")
-                DirCreate(A_Temp "\tomshi")
-            if DirExist(ahklib "\UserBackup")
-                DirDelete(ahklib "\UserBackup", 1)
-            DirMove(ahklib, A_Temp "\tomshi\UserBackup", 1)
-            temp := true
-            if DirExist(ahklib)
-        }
-    } */
 
 adobecmd := cmdLine A_Space
 if IsSet(adobeVers) && IsObject(adobeVers) {
@@ -54,20 +32,22 @@ if IsSet(adobeVers) && IsObject(adobeVers) {
             RunWait(runOrAs A_ComSpec " /c " v,, "Hide")
     }
 }
+sleep 100
 
 if !DirExist(ahklib) {
-    MsgBox("Something went wrong", "Error", "16 4096")
-    return
-}
-/* if !temp
-    {
-        MsgBox("SymLink generated successfully!", "Success", "64 4096")
-        return
+    loop 5 {
+        if DirExist(ahklib)
+            break
+        if !DirExist(ahklib) && A_Index < 5 {
+            sleep 100
+            continue
+        }
+        if !DirExist(ahklib) && A_Index >= 5 {
+            MsgBox("Unable to determine the symlink folder.`nSomething may have gone wrong during generation or waiting for the folder simply timed out.", "Error", "16 4096")
+            return
+        }
     }
-try {
-    DirMove(A_Temp "\tomshi\UserBackup", ahklib "\UserBackup", 1)
-    MsgBox("SymLink generated successfully!", "Success", "64 4096")
-} */
+}
 
 
 /**
