@@ -39,6 +39,13 @@ Check the [Installation wiki page](https://github.com/Tomshiii/ahk/wiki/Installa
 - Fixed `switchTo.AE()` generating a shortcut using `UserSettings.prem_year` instead of `ae_year`
 - `cmd.result()` now accepts parameter `workingDir` to pass the working dir to `pipeCommand()` if parameter `hide` is set to `true`
 
+## > Streamdeck AHK
+- `extractAll.ahk` now has protection against command growing too large
+
+`2stereoTO1mono.ahk`
+- Fixed script ignoring user input if a file already exists and the user chooses `Yes` in the dialogue box
+- Now has protection against command growing too large
+
 ## > Other Changes
 - Added [`WinEvent.ahk`](https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/WinEvent.ahk) by [Descolada](https://github.com/Descolada/)
     - `autodismiss error.ahk` now uses `WinEvent {`

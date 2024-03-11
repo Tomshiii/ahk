@@ -50,9 +50,9 @@ class premUIA_Values {
         "effectsPanel", "YwY"
     )
     v24 := Map(
-        "timeline"    , "YvY",    "effectsControl", "YY",
-        "tools"       , "YsY",    "programMon", "YrY",
-        "effectsPanel", "YtY"
+        "timeline"    , "YwY",    "effectsControl", "YY",
+        "tools"       , "YtY",    "programMon", "YrY",
+        "effectsPanel", "YuY"
     )
     v24_3 := Map(
         "timeline"    , "YwY",    "effectsControl", "YY",

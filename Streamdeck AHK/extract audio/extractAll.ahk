@@ -33,9 +33,24 @@ for v in filepaths {
     audioStreams := ffmpegInstance.__getFrequency(v)
     baseCommand  := ffmpegInstance.__baseCommandExtract(v)
     append       := (A_Index != filepaths.Length) ? "&&" A_space : ""
-    command      := command baseCommand A_space ffmpegInstance.__buildExtractCommand(v, audioStreams.amount, audioStreams.hzArr) append
+    extCommand   := ffmpegInstance.__buildExtractCommand(v, audioStreams.amount, audioStreams.hzArr)
+
+    if (!InStr(command, "|||") && StrLen(command . baseCommand A_Space extCommand append) >= 8191) ||
+        (StrLen(Format('{1}{2} {3}{4}', SubStr(command, InStr("|||",,,, -1)), baseCommand, extCommand, append)) >= 8191) {
+            command := Format('{1} ||| {2} {3}{4}', command, baseCommand, extCommand, append)
+            continue
+        }
+
+    command      := command baseCommand A_space extCommand append
 }
 
-cmd.run(,,, command)
+if !InStr(command, "|||")
+    cmd.run(,,, command)
+else {
+
+    cmds := StrSplit(command, "|||")
+    for v in cmds
+        cmd.run(,,, v)
+}
 ;// calls the traytip
 ffmpegInstance.__Delete()
