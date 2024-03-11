@@ -87,6 +87,8 @@ class installGUI extends Gui {
             "generateAdobeSym",     "{1}\Support Files\Release Assets\Adobe SymVers\generateAdobeSym.ahk"
         )
 
+        tempLog := A_Temp "\tomshi\" A_YYYY "_" A_MM "_" A_DD "_log.txt"
+
         /** this function handles the user changing the chosen installation directory */
         __changeDir(*) {
             if !changeDir := FileSelect("D2", this.InstallDir, "Select Installation Directory")
@@ -109,6 +111,10 @@ class installGUI extends Gui {
         __addLogEntry(entry) {
             beginning := A_Hour ":" A_Min ":" A_Sec " // "
             this["LogEdit"].value := (this["LogEdit"].value = "") ? beginning entry : beginning entry "`n" this["LogEdit"].value
+            SplitPath(this.tempLog,, &tempdir)
+            if !DirExist(tempdir)
+                DirCreate(tempdir)
+            FileAppend(beginning entry "`n", this.tempLog)
         }
 
         /**
@@ -243,13 +249,12 @@ class installGUI extends Gui {
                 try RunWait(Format(this.installFiles["CreateSymLink"], this.InstallDir))
                 this.__setProgress(80)
             }
-            if FileExist(Format(this.installFiles["generateAdobeSym"], this.InstallDir)) {
-                this.__addLogEntry("generating adobe symlinks")
-                try RunWait(Format(this.installFiles["generateAdobeSym"], this.InstallDir))
-                this.__setProgress(90)
-            }
 
-            ;// if did a backup read ksa/options.ini from backup
+            ;// set correct working dir in settings.ini
+            this.__addLogEntry("generating updated settings.ini file")
+            try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallSettings.ahk")
+            catch
+                this.__addLogEntry("failed to generate updated settings.ini file")
 
             ;//! finished
             this.__setProgress(100)
