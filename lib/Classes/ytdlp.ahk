@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2024/01/08
- * @version 1.0.9
+ * @date 2024/03/12
+ * @version 1.0.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -140,6 +140,8 @@ class ytdlp {
                 errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
             }
         check := false
+        if (StrLen(folder) = 2 && SubStr(folder, 2, 1) = ":") || (StrLen(folder) = 3 && SubStr(folder, 2, 2) =":\")
+            folder := SubStr(folder, 1, 1) ":\\"
         if !DirExist(folder) ;saftey check
             folder := A_ScriptDir
         oldClip := clip.clear()

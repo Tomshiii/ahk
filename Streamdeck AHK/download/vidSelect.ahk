@@ -4,6 +4,8 @@
 #Include <Classes\winGet>
 ; }
 
+SendInput("^c")
+
 if !selectedDir := FileSelect("D2",, "Select Download Location")
     return
 filenameLengthLimit := 50
