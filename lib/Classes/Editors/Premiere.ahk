@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.2.1
  * @author tomshi
- * @date 2024/03/07
- * @version 2.1.15
+ * @date 2024/03/15
+ * @version 2.1.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1925,21 +1925,27 @@ class Prem {
      * @param {Boolean} change determine if the function is being called to change the new starting value
      */
     static screenshot(who, change := false) {
-        if !WinExist(prem.exeTitle)
-            return
-        if !WinActive(prem.exeTitle)
-            switchTo.Premiere()
         if change = true {
             title := "Change stored value"
             storedVar := 0
-            changeGUI := tomshiBasic(,,, title)
-            changeGUI.AddDropDownList("vDropdwn Choose1 Sort", ["Desktop", "Narrator", "Mully", "Eddie", "Juicy", "Josh"]) ;//! make alphabetical
+            changeGUI := tomshiBasic(,, -0x30000, title) ; WS_MINIMIZEBOX := 0x20000, WS_MAXIMIZEBOX := 0x10000
+            listArr := []
+            loop files ptf.rootDir "\Streamdeck AHK\screenshots\*.ahk", "F" {
+                SplitPath(A_LoopFileFullPath,,,, &name)
+                if name = "Change"
+                    continue
+                listArr.Push(name)
+            }
+            if listarr.Length < 1 {
+                listArr := ["Desktop", "Narrator", "Mully", "Eddie", "Juicy", "Josh", "guest1", "guest2"]
+            }
+            changeGUI.AddDropDownList("vDropdwn Choose1 Sort", listArr) ;//! make alphabetical
             changeGUI.AddEdit("Number Range1-100")
             changeGUI.AddUpDown("vUpDwn", 1)
-            changeGUI.AddButton(, "Set").OnEvent("Click", (guiCtrl, *) => __setVal(guiCtrl))
+            changeGUI.AddButton("x+10 y+-27", "Set").OnEvent("Click", (guiCtrl, *) => __setVal(guiCtrl))
 
-            changeGUI.OnEvent("Close", (*) => Exit())
-            changeGUI.OnEvent("Escape", (*) => Exit())
+            changeGUI.OnEvent("Close", (*) => ExitApp())
+            changeGUI.OnEvent("Escape", (*) => ExitApp())
             changeGUI.show()
             WinWaitClose(title)
 

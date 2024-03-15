@@ -24,4 +24,4 @@ $^c::VSCode.copy()
 ;vscodeHideBarHotkey;
 ^b::delaySI(15, KSA.hideSideBar, KSA.hideActivityBar)
 ;vscodeAsterixHotkey;
-*::discord.surround("*")
+; *::discord.surround("*")

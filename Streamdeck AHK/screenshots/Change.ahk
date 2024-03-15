@@ -1,9 +1,13 @@
+#SingleInstance Ignore
 ; { \\ #Includes
 #Include <Classes\Editors\Premiere>
 #Include <Classes\ptf>
 #Include <Classes\wm>
 #Include <Classes\obj>
 ; }
+
+if !WinActive(prem.winTitle) || !WinExist(prem.winTitle)
+    return
 
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
