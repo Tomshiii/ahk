@@ -1,15 +1,19 @@
-# <> Release 2.14 - PremiereRemote
-> ### ⚠️ This branch will likely contain breaking changes for most of its development cycle. It is not recommended to use this branch ⚠️
+# <> Release 2.14 - PremiereRemote, Premiere_UIA & Installation
 
+This release brings about quite a few large and sweeping changes that expand on the functionality of the repo will also offering a few QOL improvements as things progress.
+
+> [!Caution]
+> Most of the changes in this update are breaking changes. It is recommended you do a clean installation of my repo if you intend on upgrading to this version.
 ***
-## ‣ Premiere Remote
+## ‣ PremiereRemote
 This release brings along support for [`PremiereRemote`](https://github.com/sebinside/PremiereRemote), a tool by [`sebinside`](https://github.com/sebinside) that allows the user to easily interact with [`Adobe Premiere's Extension mechanism`](https://github.com/Adobe-CEP).  
 This tool offers multiple advantages for my repo, such as;  
 - More directly telling Premiere to `save` resulting in less issues
 - Directly change clip properties like `zoom`, `x/y`, `anchor point`, etc. Meaning less keystrokes needing to be sent
 - Directly receive the current project path
 
-It requires additional setup from the user so make sure you checkout the [wiki page](https://github.com/Tomshiii/ahk/wiki/PremiereRemote) to get started.
+> [!IMPORTANT] 
+> Use of `PremiereRemote` requires additional setup from the user so make sure you checkout the [wiki page](https://github.com/Tomshiii/ahk/wiki/PremiereRemote) to get started.
 
 #### PremiereRemote related changes
 - `winGet.ProjPath()` can now retrieve the project directory directly from Premiere without needing string manipulation
@@ -28,19 +32,35 @@ It requires additional setup from the user so make sure you checkout the [wiki p
 - Added `save()` to call the custom `saveProj` function and directly tell premiere to save instead of requiring keystrokes
 - `zoom()` can now directly set the properties without needing to send keystrokes
 - `Previews()` now attempts to use `save()` for a more reliable experience
+***
 
+## ‣ Premiere_UIA
+This release brings exciting (but breaking) changes to `Premiere_UIA.ahk` and its use/functionality within the repo.
+- `UIA` values are now stored in `..\Support Files\UIA\values.ini` instead of the class itself
+    - Values are now stored in a `JSON` string instead of an ahk object
+- Class must now be initialised before it can be used in another script
+- `premUIA_Values {` can now automatically fill out UIA values by focusing each panel within `Premiere` and retrieving the UIA path
+- `premUIA_Values(false).__setNewVal()` can be called to automatically generate new data for the currently set `Premiere` version
+    - Class will automatically attempt to generate new data under certain circomstances
+- `Set Prem_UIA values` can be selected from the `My Scripts.ahk` tray menu to automatically set new UIA values for the currently set `Premiere` version
+
+> [!Tip]
+> Checkout the updated [wiki](https://github.com/Tomshiii/ahk/wiki/UIA) page to learn more about these changes!
+***
 
 ## ‣ Better Installation process of my repo
 This release also offers a new and improved installation process which takes more of the work off the user to handle it systematically instead. The installation process should now be more akin to any other program you install on windows.
 
-Check the [Installation wiki page](https://github.com/Tomshiii/ahk/wiki/Installation) for more details.
+> [!Tip]
+> Check the [Installation wiki page](https://github.com/Tomshiii/ahk/wiki/Installation) for more details.
 ***
-## > Functions
+# ‣ Further Changelog
+## Functions
 - Fixed `switchTo.AE()` generating a shortcut using `UserSettings.prem_year` instead of `ae_year`
 - Fixed `move.Window()` throwing in the event you try to minimize the active window the same moment it changes (and can no longer be found. eg opening a new browser tab)
 - `cmd.result()` now accepts parameter `workingDir` to pass the working dir to `pipeCommand()` if parameter `hide` is set to `true`
 - `prem.screenshot()` will now generate the dropdown list automatically using all filenames in `..\Streamdeck AHK\screenshots\`
-> *values will still need to be manually added to `WM {` however
+    - **note: values will still need to be manually added to `WM {` however*
 
 ## > Streamdeck AHK
 - `extractAll.ahk` now has protection against command growing too large

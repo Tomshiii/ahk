@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.2.1
  * @author tomshi
- * @date 2024/03/15
- * @version 2.1.16
+* @date 2024/03/16
+ * @version 2.1.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -164,6 +164,7 @@ class Prem {
      */
     static __uiaCtrlPos(UIA_Element, tooltip := true) {
         try {
+            premUIA := premUIA_Values()
             premName := WinGet.PremName()
             AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
             ClassNN  := ControlGetClassNN(AdobeEl.ElementFromPath(UIA_Element).GetControlId())
@@ -264,6 +265,7 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
+        premUIA := premUIA_Values()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return
@@ -424,6 +426,7 @@ class Prem {
             }
         }
 
+        premUIA := premUIA_Values()
         ;// get coordinates for a tooltip that appears to alert the user that toggles have reset
         if this.zToolX = 0 || this.zToolY = 0
             {
@@ -732,6 +735,7 @@ class Prem {
         coord.client()
         MouseGetPos(&xpos, &ypos)
         block.On()
+        premUIA := premUIA_Values()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return
@@ -834,6 +838,7 @@ class Prem {
         coord.s()
         block.On()
         this().__fxPanel()
+        premUIA := premUIA_Values()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return
@@ -871,6 +876,7 @@ class Prem {
         coord.s()
         block.On()
         this().__fxPanel()
+        premUIA := premUIA_Values()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return
@@ -1112,6 +1118,7 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
+        premUIA := premUIA_Values()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return
@@ -1253,6 +1260,7 @@ class Prem {
         keys.allWait()
         coord.client()
         block.On()
+        premUIA := premUIA_Values()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return
@@ -1299,6 +1307,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
+        premUIA := premUIA_Values()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return
@@ -1366,6 +1375,7 @@ class Prem {
             block.Off()
             return -1
         }
+        premUIA := premUIA_Values()
         if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
             block.Off()
             return false
@@ -1541,6 +1551,7 @@ class Prem {
         ; SendInput(KSA.timelineWindow)
         sleep 75
         coord.client()
+        premUIA := premUIA_Values()
         if !timelineNN := this.__uiaCtrlPos(premUIA.timeline)
             return false
         this.timelineRawX     := timelineNN.x, this.timelineRawY := timelineNN.y
@@ -1605,6 +1616,7 @@ class Prem {
     static selectionTool() {
         MouseGetPos(&xpos, &ypos)
         sleep 50
+        premUIA := premUIA_Values()
         if !toolsNN := this.__uiaCtrlPos(premUIA.tools) {
             block.Off()
             return
@@ -1641,6 +1653,7 @@ class Prem {
                 SendInput(hot)
             }
         }
+        premUIA := premUIA_Values()
         if !toolsNN := this.__uiaCtrlPos(premUIA.tools, false) {
             __sendOrig()
             return
@@ -1961,6 +1974,7 @@ class Prem {
         }
         sleep 50
         scrshtTitle := "Export Frame"
+        premUIA := premUIA_Values()
         if !progMonNN := this.__uiaCtrlPos(premUIA.programMon) {
             block.Off()
             return

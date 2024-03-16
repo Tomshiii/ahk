@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/02/23
- * @version 2.1.8
+ * @date 2024/03/16
+ * @version 2.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -63,6 +63,7 @@ class adobeAutoSave extends count {
 
     __New(rClickPrem := "RButton", rClickMove := "XButton1") {
         try {
+            this.premUIA := premUIA_Values()
             ;// attempt to grab user settings
             this.UserSettings := UserPref()
             this.ms   := (this.UserSettings.autosave_MIN * 60000)
@@ -84,6 +85,8 @@ class adobeAutoSave extends count {
         if this.saveOverride == true
             PremHotkeys.__HotkeySet(["^s"], ObjBindMethod(this, '__saveReset'), "I2")
     }
+
+    premUIA := false
 
     ;// Class Variables
     UserSettings  := unset
@@ -260,7 +263,7 @@ class adobeAutoSave extends count {
      */
     __checkPremPlayback() {
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
-            if !progMon := prem.__uiaCtrlPos(premUIA.programMon)
+            if !progMon := prem.__uiaCtrlPos(this.premUIA.programMon)
                 return false
             this.programMonX1 := progMon.x+100, this.programMonX2 := progMon.x + progMon.width-100, this.programMonY1 := (progMon.y+progMon.height)*0.7,  this.programMonY2 := progMon.y + progMon.height + 150
         }

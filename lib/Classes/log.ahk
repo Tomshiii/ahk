@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to enable easy file/outputdebug based logging
  * @author tomshi
- * @date 2023/07/04
- * @version 1.0.0
+ * @date 2024/03/16
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -47,7 +47,7 @@ class log {
      * @param {String} errorMsg the desired message
      */
     Append(errorMsg) {
-        FileAppend(this.dateTime errorMsg "`n", this.fileLocation)
+        try FileAppend(this.dateTime errorMsg "`n", this.fileLocation)
 
         if !this.print
             return

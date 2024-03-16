@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/02/30
- * @version 1.3.7
+ * @date 2024/03/16
+ * @version 1.3.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -170,8 +170,10 @@ class switchTo {
     static Premiere(openCC := true)
     {
         if openCC = true {
-            if !this().__checkCC()
+            if !this().__checkCC() {
                 MsgBox(A_ThisFunc "() attempted to open ``Adobe Creative Cloud`` and failed. This can happen if the user has installed it to an unexpected location. Please fix the directory link within the function to return functionality to this script." )
+                return
+            }
         }
         this().__adobeSwitch(prem.class, prem.path, "Adobe Premiere Pro", "prem")
     }
@@ -248,8 +250,10 @@ class switchTo {
         }
 
         if openCC = true {
-            if !this().__checkCC()
+            if !this().__checkCC() {
                 MsgBox("switchTo." A_ThisFunc "() attempted to open Creative Cloud and failed. This can happen if the user has installed it to an unexpected location. Please fix the directory link within the function to return functionality to this script." )
+                return
+            }
         }
 
         premExist := WinExist(prem.winTitle)

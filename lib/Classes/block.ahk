@@ -53,7 +53,7 @@ class block {
      * Otherwise pass `send`, `mouse`, `sendandmouse`, `default`, `on` or `mousemove`
      *
      * *[IF YOU GET STUCK IN A SCRIPT PRESS YOUR REFRESH HOTKEY (WIN + SHIFT + R BY DEFAULT) OR USE CTRL + ALT + DEL to open task manager and close AHK]*
-     * @param {String} option? is the desired block mode. If this parameter is omitted `BlockInput("SendAndMouse") & BlockInput("MouseMove")` will be enabled
+     * @param {String} [option=unset] is the desired block mode. If this parameter is omitted `BlockInput("SendAndMouse") & BlockInput("MouseMove")` will be enabled
      */
     static On(option?) {
         if !IsSet(option)
@@ -69,7 +69,7 @@ class block {
      * This function by default will unblock all user input (`BlockInput("Default") & BlockInput("MouseMoveOff")`).
      *
      * Otherwise pass `mousemoveoff`, `off`
-     * @param {String} option? is the desired block mode the user wishes to disable. If this parameter is omitted `BlockInput("Default") & BlockInput("MouseMoveOff")` will be disabled
+     * @param {String} [option=unset] is the desired block mode the user wishes to disable. If this parameter is omitted `BlockInput("Default") & BlockInput("MouseMoveOff")` will be disabled
      */
     static Off(option?) {
         if !IsSet(option)
