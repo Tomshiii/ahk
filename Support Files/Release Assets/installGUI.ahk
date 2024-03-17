@@ -185,6 +185,10 @@ class installGUI extends Gui {
 
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
+            if DirExist(A_MyDocuments "\AutoHotkey\Lib") {
+                if MsgBox("AHK Lib folder detected in the User library. Continuing with this installation may delete any user downloaded libraries or otherwise fail to install correctly.`n`nDo you wish to continue?", "User Library Found.", "4 48 4096") = "No"
+                    return
+            }
             amount := 0
             if !this.hasAttempted {
                 this.__addLogEditBox()

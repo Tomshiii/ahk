@@ -15,7 +15,8 @@ A lot of the code in the earliest versions of my scripts was either inspired by,
 > Any scripts not created by me are labeled as such down below in the Explanation section, alongside the code/in a function's comment, or in an acknowledgment file in the same directory as the code.
 
 > [!Important]
-> *A lot* of the development for this repo happens in the [dev](https://github.com/Tomshiii/ahk/tree/dev) branch before making its way into a release and these changes can remain over there for months at a time. I recommend checking out any [changes](https://github.com/Tomshiii/ahk/blob/dev/changelog.md) over there in case of important fixes, as well as the [`todo.md`](https://github.com/Tomshiii/ahk/blob/dev/Support%20Files/todo.md) checklist to see if any small bugs are currently being tracked/worked on - ***but*** do be aware that the dev branch **is** in active development and any amount of bugs/issues may still be present as I continue to iron things out.
+> *A lot* of the development for this repo happens in the [dev](https://github.com/Tomshiii/ahk/tree/dev) branch before making its way into a release and these changes can remain over there for months at a time. I recommend checking out any [changes](https://github.com/Tomshiii/ahk/blob/dev/changelog.md) over there in case of important fixes, as well as the [Known Issues](https://github.com/users/Tomshiii/projects/2) and [Planned Changes](https://github.com/users/Tomshiii/projects/1) project pages to see if any small bugs/changes are currently being tracked/worked on.  
+> ***However*** do be aware that the dev branch **is** in active development and any amount of bugs/issues may still be present as I continue to iron things out.
 
 ***
 
