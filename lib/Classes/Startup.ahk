@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/03/16
- * @version 1.7.13
+ * @date 2024/03/18
+ * @version 1.7.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,6 +26,7 @@
 #Include <Functions\getLocalVer>
 #Include <Functions\trayShortcut>
 #Include <Functions\editScript>
+#Include <Other\FileGetExtendedProp>
 #Include <Other\print>
 ; }
 
@@ -39,6 +40,9 @@ class Startup {
         ;// populate settings variables
         this.UserSettings := UserPref()
     }
+
+    ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
+    ;// also add settingsGUI() option to enable/disable this check
 
     MyRelease := 0
     UserSettings := ""
@@ -541,6 +545,28 @@ class Startup {
             }
         }
         this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
+    }
+
+    /** This function will set the current prem/ae version based off the current .exe version (only if UserSettings.adobeExeOverride is set to `true`). This function still requires to user to manually set their Year variable. */
+    adobeVerOverride() {
+        if !this.UserSettings.adobeExeOveride
+            return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
+        premFolder := (this.UserSettings.premIsBeta = true) ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) ptf.PremYearVer
+        aeFolder   := (this.UserSettings.aeIsBeta = true)   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) ptf.aeYearVer
+        premExeLocation := A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro.exe"
+        aeExeLocation   := A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
+
+        premExeVer := FileExist(premExeLocation) ? FileGetExtendedProp(premExeLocation,, "Product version")["Product version"] : false
+        aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "Product version")["Product version"]   : false
+
+        if premExeVer = false && aeExeVer = false
+            return
+
+        if VerCompare(premExeVer, this.UserSettings.premVer) != 0 || VerCompare(aeExeVer, this.UserSettings.aeVer) != 0 {
+            this.UserSettings.premVer := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
+            this.UserSettings.aeVer   := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
+        }
     }
 
     /**

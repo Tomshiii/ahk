@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/03/16
- * @version 2.1.9
+ * @date 2024/03/18
+ * @version 2.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -70,6 +70,7 @@ class adobeAutoSave extends count {
             this.beep := this.UserSettings.autosave_beep
             this.checkMouse   := this.UserSettings.autosave_check_mouse
             this.saveOverride := this.UserSettings.autosave_save_override
+            this.alwaysSave   := this.UserSettings.autosave_always_save
             this.UserSettings := ""
         }
 
@@ -103,6 +104,7 @@ class adobeAutoSave extends count {
     idleAttempt   := false
     beep          := true
     checkMouse    := true
+    alwaysSave    := true
     soundName     := ""
     currentVolume := ""
     resetingSave  := false
@@ -356,6 +358,9 @@ class adobeAutoSave extends count {
         ;// backing up project files
         this.__backupFiles()
 
+        if this.alwaysSave = false && !WinActive(prem.winTitle)
+            return
+
         ;// checking for save dialogue box
         if !this.__checkDialogueClass()
             return
@@ -381,10 +386,6 @@ class adobeAutoSave extends count {
             return
         }
 
-        saveAttempt := prem.save()
-        if (saveAttempt = true || saveAttempt = -1)
-            return
-
         ;// checking idle status
         this.__checkIdle()
         if this.idleAttempt = false
@@ -395,6 +396,11 @@ class adobeAutoSave extends count {
             this.__checkPremPlayback()
 
         tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
+
+        ;// attempts to save using `PremiereRemote`
+        saveAttempt := prem.save()
+        if (saveAttempt = true || saveAttempt = -1)
+            return
 
         try {
             block.On()
@@ -436,6 +442,9 @@ class adobeAutoSave extends count {
 
         ;// backing up project files
         this.__backupFiles()
+
+        if this.alwaysSave = false && !WinActive(ae.winTitle)
+            return
 
         ;// checking for save dialogue box
         if !this.__checkDialogueClass("AfterFX")

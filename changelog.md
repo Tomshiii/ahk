@@ -1,6 +1,5 @@
 # <> Release 2.14 - PremiereRemote, Premiere_UIA & Installation
-
-This release brings about quite a few large and sweeping changes that expand on the functionality of the repo will also offering a few QOL improvements as things progress.
+This release brings about quite a few large and sweeping changes that expand on the functionality of the repo while also offering a few QOL improvements.
 
 > [!Caution]
 > Most of the changes in this update are breaking changes. It is recommended you do a clean installation of my repo if you intend on upgrading to this version.
@@ -12,7 +11,7 @@ This tool offers multiple advantages for my repo, such as;
 - Directly change clip properties like `zoom`, `x/y`, `anchor point`, etc. Meaning less keystrokes needing to be sent
 - Directly receive the current project path
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > Use of `PremiereRemote` requires additional setup from the user so make sure you checkout the [wiki page](https://github.com/Tomshiii/ahk/wiki/PremiereRemote) to get started.
 
 #### PremiereRemote related changes
@@ -22,7 +21,7 @@ This tool offers multiple advantages for my repo, such as;
     - **note: custom amount of "{Down}" will need to be set by the user*
 - Added `openRemoteDir.ahk` to open the `A_AppData \Adobe\CEP\extensions\PremiereRemote\` directory
 - Added `resetNPM.ahk` to rerun the `npm run build` command in the `A_AppData \Adobe\CEP\extensions\PremiereRemote\host\` directory
-- Added `installPremRemote.ahk` that is potentially called during the new installation process.
+- Added `installPremRemote.ahk` that is optionally called during the new installation process.
     - **note: NodeJS must already be installed before this script will proceed.*
 
 `Prem {`
@@ -56,11 +55,18 @@ This release also offers a new and improved installation process which takes mor
 ***
 # ‣ Further Changelog
 ## Functions
+- Added `startup.adobeVerOverride()` which can optionally set the current `Premiere Pro`/`After Effects` version based off the user's current installed version instead of needing to manually be set.
+    - **note: if the user wishes to use a beta version, the beta toggle must first be set and then the function must be rerun*
+- Added `FileGetExtendedProp()` a function by `neogna2` to get extended properties of files/folders
 - Fixed `switchTo.AE()` generating a shortcut using `UserSettings.prem_year` instead of `ae_year`
 - Fixed `move.Window()` throwing in the event you try to minimize the active window the same moment it changes (and can no longer be found. eg opening a new browser tab)
 - `cmd.result()` now accepts parameter `workingDir` to pass the working dir to `pipeCommand()` if parameter `hide` is set to `true`
 - `prem.screenshot()` will now generate the dropdown list automatically using all filenames in `..\Streamdeck AHK\screenshots\`
     - **note: values will still need to be manually added to `WM {` however*
+
+`settingsGUI()`
+- Added option to enable/disable `startup.adobeVerOverride()`
+- Added option to set `autosave.ahk` to always save or only save if the current program is the active window
 
 ## > Streamdeck AHK
 - `extractAll.ahk` now has protection against command growing too large

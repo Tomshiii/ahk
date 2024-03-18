@@ -8,6 +8,8 @@
 #Include <Classes\winGet>
 ; }
 
+;//! make script wipe ..\UIA\values.ini before zipping so it always tries to grab data first time the user uses it
+
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release
 ; // Then goes through the annoying process of generating the release
 ; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep its code open so you can make sure the install exe isn't too scary)
@@ -272,6 +274,9 @@ deleting() {
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\og")
     ;// deleting folder I store in repo that isn't needed
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Stream\TomSongQueueue")
+    ;// resetting `values.ini` file so it's empty for the user
+    checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")
+    FileAppend("", A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")
 }
 deleting()
 

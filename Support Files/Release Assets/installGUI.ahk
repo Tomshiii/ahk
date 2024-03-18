@@ -1,6 +1,11 @@
-#requires AutoHotkey v2
-;// This file is the file that gets turned into the release.exe that is sent out as a release
-
+/************************************************************************
+ * @description This script is the file that gets turned into the release.exe that is sent out as a release
+ * @author tomshi
+ * @date 2024/03/18
+ * @version 1.0.0
+ ***********************************************************************/
+#Requires AutoHotkey v2
+;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
 ;// setting up
 SetWorkingDir(A_ScriptDir) ;! A_ScriptDir in this case is the users install location
 A_ScriptName := "yes.value"
@@ -254,11 +259,18 @@ class installGUI extends Gui {
                 this.__setProgress(80)
             }
 
+            /** This function cuts repeat code for dealing with some first time settings */
+            __runSettingsInstall(filename, catchText) {
+                try RunWait(filename)
+                catch
+                    this.__addLogEntry(catchText)
+            }
             ;// set correct working dir in settings.ini
             this.__addLogEntry("generating updated settings.ini file")
-            try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallSettings.ahk")
-            catch
-                this.__addLogEntry("failed to generate updated settings.ini file")
+            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallSettings.ahk", "failed to generate updated settings.ini file")
+            ;// set current adobe versions in settings.ini
+            this.__addLogEntry("setting current adobe versions in settings.ini")
+            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk", "failed to set current adobe versions")
 
             ;//! finished
             this.__setProgress(100)

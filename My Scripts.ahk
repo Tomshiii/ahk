@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.1
+;\\v2.34.2
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -120,6 +120,7 @@ start.trayMen()                ;adds the ability to toggle checking for updates 
 start.firstCheck()             ;runs the firstCheck() function
 start.oldLogs()                ;runs the loop to delete old log files
 start.adobeTemp()              ;runs the loop to delete cache files
+start.adobeVerOverride()
 start.libUpdateCheck()         ;runs a loop to check for lib updates
 start.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
 start.monitorAlert()           ;checks the users monitor work area for any changes
