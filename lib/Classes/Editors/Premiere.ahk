@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.2.1
  * @author tomshi
-* @date 2024/03/16
- * @version 2.1.17
+* @date 2024/03/19
+ * @version 2.1.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -71,12 +71,15 @@ class Prem {
     static delayTime    := 0
 
     ;// screenshots
-    static scEddie    := "1"
-    static scNarrator := "1"
-    static scJuicy    := "1"
-    static scMully    := "1"
-    static scJosh     := "1"
-    static scDesktop  := "1"
+    static scEddie        := "1"
+    static scNarrator     := "1"
+    static scJuicy        := "1"
+    static scMully        := "1"
+    static scJosh         := "1"
+    static scDesktop      := "1"
+    static scEnvironment  := "1"
+    static scGuest1  := "1"
+    static scGuest2  := "1"
 
     ;// PremiereRemote variables
     static remoteDir := A_AppData "\Adobe\CEP\extensions\PremiereRemote"
