@@ -3,4 +3,4 @@
 #Include <GUIs\proresGUI>
 ; }
 
-proresGUI("dir", true).show()
+proresGUI("dir", true, true).show()

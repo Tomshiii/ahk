@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode a file to prores
  * @author tomshi
- * @date 2024/03/19
- * @version 1.0.3
+ * @date 2024/03/20
+ * @version 1.0.4
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -15,7 +15,7 @@
 ; }
 
 class proresGUI extends encodeGUI {
-    __New(fileOrDir := "file", recurse := false) {
+    __New(fileOrDir := "file", recurse := false, skipDupes := false) {
         super.__New(fileOrDir, "prores")
         ;// change the initial text
         this["Blurb"].Text := "This script uses ffmpeg to reencode the selected file to a prores .mov file."
@@ -32,6 +32,9 @@ class proresGUI extends encodeGUI {
                 recurseDir := (recurse = true) ? "R" : ""
                 loop files this.getFile "\*", "F" recurseDir {
                     if A_LoopFileExt != "mkv" && A_LoopFileExt != "mp4"
+                        continue
+                    SplitPath(A_LoopFileFullPath,, &outDir,, &outNameNoExt)
+                    if FileExist(outDir "\" outNameNoExt ".mov") && skipDupes = true
                         continue
                     this.nameArr.Push(A_LoopFileFullPath)
                     this.nameCleansed.Push(this.__cleanse(A_LoopFileName))
@@ -74,8 +77,6 @@ class proresGUI extends encodeGUI {
         for k, v in this.nameArr {
             this.getFile := v
             pathObj := this.__fileObj()
-            if FileExist(pathObj.fileObj.Dir "\" pathObj.fileObj.NameNoExt ".mov")
-                continue
             command := Format('ffmpeg -i "{1}" -c:v prores_ks -profile:v {2} "{3}"', v, String(this["pres"].value-1), pathObj.fileObj.Dir "\" pathObj.fileObj.NameNoExt ".mov")
             cmd.run(,,, command)
         }
