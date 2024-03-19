@@ -69,6 +69,7 @@ This release also offers a new and improved installation process which takes mor
 - Added option to set `autosave.ahk` to always save or only save if the current program is the active window
 
 ## > Streamdeck AHK
+- Fixed `reencode_prores_all.ahk` not doing anything
 - `extractAll.ahk` now has protection against command growing too large
 
 `2stereoTO1mono.ahk`
