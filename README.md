@@ -47,7 +47,7 @@ This script will also go through a lot of important functions on boot. Some go t
 - `firstCheck()` - Will check to see if this is the first time you're running my scripts and offer a helpful GUI to run you through a few things to get you going.
 - `oldLogs()` - Will remove logs in `..\Logs\Error Logs\` & `..\Logs\Other Logs\` older than 30 days
 - `adobeTemp()` - Will scan your adobe temp folders and delete them if they're larger than the user adjustable setting. This function also contains a custom folder for `After Effects` and will require the user to meddle with it for full functionality
-- `adobeVerOveride()` - Will optionally check the user's current `Adobe Premiere` and `Adobe After Effects` installed `.exe` files to ensure the version number lines up with what they've set in `settingsGUI()`
+- `adobeVerOverride()` - Will optionally check the user's current `Adobe Premiere` and `Adobe After Effects` installed `.exe` files to ensure the version number lines up with what they've set in `settingsGUI()`
 - `libUpdateCheck()` - Will check all external lib files to see if they're up to date
 - `updateAHK()` - Will check for and alert the user of a new version of AutoHotkey
 - `monitorAlert()` - Will alert the user of any changes to their monitor layout so they can be aware that some hotkeys might not work as expected

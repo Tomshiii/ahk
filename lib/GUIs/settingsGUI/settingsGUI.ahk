@@ -243,9 +243,9 @@ settingsGUI()
     ;//! script checkboxes
 
     ;// adobe version override
-    adobeVerOverideTitle := "Adobe Version Override"
-    settingsGUI.AddCheckbox("vadobeVerOverrideToggle Checked" UserSettings.adobeExeOveride " Y+20", adobeVerOverideTitle).OnEvent("Click", toggle.Bind("adobeExeOveride"))
-    settingsGUI["adobeVerOverrideToggle"].ToolTip := (UserSettings.adobeExeOveride = true) ? toolT.adobeExe.Yes : toolT.adobeExe.No
+    adobeVerOverrideTitle := "Adobe Version Override"
+    settingsGUI.AddCheckbox("vadobeVerOverrideToggle Checked" UserSettings.adobeExeOverride " Y+20", adobeVerOverrideTitle).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
+    settingsGUI["adobeVerOverrideToggle"].ToolTip := (UserSettings.adobeExeOverride = true) ? toolT.adobeExe.Yes : toolT.adobeExe.No
 
     ;// autosave always save
     asAlwaysSaveTitle := "``autosave.ahk`` Always Save"
@@ -279,7 +279,7 @@ settingsGUI()
         ToolTip("")
         ;// each switch here goes off the TITLE variable we created
         switch script.text {
-            case adobeVerOverideTitle:
+            case adobeVerOverrideTitle:
                 toolTrue := toolT.adobeExe.Yes
                 toolFalse := toolT.adobeExe.No
             case asAlwaysSaveTitle:

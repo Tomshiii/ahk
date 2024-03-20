@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/03/18
- * @version 1.7.14
+ * @date 2024/03/20
+ * @version 1.7.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -549,7 +549,7 @@ class Startup {
 
     /** This function will set the current prem/ae version based off the current .exe version (only if UserSettings.adobeExeOverride is set to `true`). This function still requires to user to manually set their Year variable. */
     adobeVerOverride() {
-        if !this.UserSettings.adobeExeOveride
+        if !this.UserSettings.adobeExeOverride
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         premFolder := (this.UserSettings.premIsBeta = true) ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) ptf.PremYearVer
@@ -559,6 +559,10 @@ class Startup {
 
         premExeVer := FileExist(premExeLocation) ? FileGetExtendedProp(premExeLocation,, "Product version")["Product version"] : false
         aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "Product version")["Product version"]   : false
+
+        ;// remove ".0"
+        premExeVer := SubStr(premExeVer, premFinalDot := InStr(premExeVer, ".",, -1), 2) = ".0" ? SubStr(premExeVer, 1, premFinalDot-1) : premExeVer
+        aeExeVer   := SubStr(aeExeVer, aeFinalDot     := InStr(aeExeVer, ".",, -1), 2)   = ".0" ? SubStr(aeExeVer, 1, aeFinalDot-1)     : aeExeVer
 
         if premExeVer = false && aeExeVer = false
             return

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/03/18
- * @version 1.2.10
+ * @date 2024/03/20
+ * @version 1.2.11
  ***********************************************************************/
 
 class UserPref {
@@ -58,7 +58,7 @@ class UserPref {
                  "prem_Focus_Icon", "checklist_hotkeys",
                  "autosave_beep", "autosave_save_override",
                  "disc_disable_autoreply", "autosave_check_mouse",
-                 "adobeExeOveride", "autosave_always_save":
+                 "adobeExeOverride", "autosave_always_save":
                                                       return "true"
             case "beta_update_check",
                  "run_at_startup", "checklist_wait",
@@ -225,7 +225,7 @@ class UserPref {
                     checklist wait={}
                     prem Focus Icon={}
                     disc disable autoreply={}
-                    adobeExeOveride={}
+                    adobeExeOverride={}
 
                     [Adjust]
                     adobe GB={}
