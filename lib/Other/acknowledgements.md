@@ -13,4 +13,7 @@
 `WinEvent.ahk`     => : https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/WinEvent.ahk  
 
 `neogna2`  
-`FileGetExtendedProp.ahk` => : https://www.autohotkey.com/r?p=434132
+`FileGetExtendedProp.ahk` => : https://www.autohotkey.com/r?p=434132  
+
+`nperovic`  
+`SystemThemeAwareToolTip` => : https://github.com/nperovic/SystemThemeAwareToolTip

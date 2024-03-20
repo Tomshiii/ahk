@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2024/03/20
- * @version 1.7.15
+ * @version 1.7.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,6 +20,7 @@
 #Include <Classes\Mip>
 #Include <Classes\reset>
 #Include <Classes\errorLog>
+#Include <Other\SystemThemeAwareToolTip>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
 #Include <Functions\isReload>

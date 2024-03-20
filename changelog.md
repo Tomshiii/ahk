@@ -79,6 +79,9 @@ This release also offers a new and improved installation process which takes mor
 ## > Other Changes
 - Added [`WinEvent.ahk`](https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/WinEvent.ahk) by [Descolada](https://github.com/Descolada/)
     - `autodismiss error.ahk` now uses `WinEvent {`
+- Added [SystemThemeAwareTooltip.ahk](https://github.com/nperovic/SystemThemeAwareToolTip) by [nperovic](https://github.com/nperovic)
+    - `tool.cust()` now uses `SystemThemeAwareTooltip {` to set dark/lightmode tooltips as well as rounding them for win11
+    - `Startup {` tooltips will now be coloured based off the system theme
 - Now backing up `.prlabelpreset` file in `..\Backups\Adobe Backups\Premiere\Labels\`
 - `checklist.ahk` now better handles my project folder paths
 - `v24.3` of `Premiere` is now its own folder in `ImageSearch` as it contains UI changes
