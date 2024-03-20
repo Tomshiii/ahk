@@ -19,9 +19,9 @@ editScript(script, overrideEditor?) {
         WinWait("ahk_exe Code.exe")
         ToolTip("")
         sleep 1000
-        Run(editor A_Space script)
+        Run(editor A_Space Format('"{}"', script))
         return
     }
-    Run(editor A_Space script)
+    Run(editor A_Space Format('"{}"', script))
     return
 }

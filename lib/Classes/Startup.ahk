@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2024/03/20
- * @version 1.7.16
+ * @version 1.7.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -605,7 +605,7 @@ class Startup {
         __addAndIncrement("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
         __addAndIncrement("Close All Scripts", (*) => reset.ex_exit())
         __addAndIncrement("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
-        __addAndIncrement("Open Prem_UIA Class", (*) => editScript(ptf.rootDir "\lib\Classes\Editors\Premiere_UIA.ahk"))
+        __addAndIncrement("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
         __addAndIncrement("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false).__setNewVal() : MsgBox("Premiere needs to be open for this option to function correctly!"))
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
