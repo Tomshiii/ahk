@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.2.1
  * @author tomshi
-* @date 2024/03/19
- * @version 2.1.18
+* @date 2024/03/21
+ * @version 2.1.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -225,7 +225,11 @@ class Prem {
         if !needResult
             Run(sendcommand,, "Hide")
         else {
-            parse := JSON.parse(cmd.result(sendcommand))
+            if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
+                tool.cust("Unable to connect to localhost server. PremiereRemote Extension may not be running.")
+                return false
+            }
+            parse := JSON.parse(getResp)
             return parse["result"]
         }
     }

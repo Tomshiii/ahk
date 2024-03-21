@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2024/02/30
- * @version 1.5.17
+ * @date 2024/03/21
+ * @version 1.5.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -320,7 +320,7 @@ class WinGet {
     {
         if !WinExist(Editors.Premiere.winTitle) && !WinExist(Editors.AE.winTitle)
             return false
-        if !WinExist(Editors.Premiere.winTitle) || !prem.__checkPremRemoteDir("projPath") {
+        if !WinExist(Editors.Premiere.winTitle) || !prem.__checkPremRemoteDir("projPath") || !entirePath := prem.__remoteFunc("projPath", true) {
             ;// attempt to get the editors name
             try {
                 if WinExist(Editors.Premiere.winTitle)
@@ -339,8 +339,6 @@ class WinGet {
                 , dashLocation := InStr(Name, "-") + 2			;// start location
                 , StrLen(Name) - dashLocation)                  ;// length
         }
-        else
-            entirePath := prem.__remoteFunc("projPath", true)
         ;// splitting the path
         path := obj.SplitPath(entirePath)
         ;// return object
