@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2023/12/20
- * @version 1.2.7
+ * @date 2024/03/12
+ * @version 1.2.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -54,7 +54,7 @@ class Move {
         window := winGet.Title()
         SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
         switch A_ThisHotkey,  "Off" {
-            case KSA.minimiseHotkey: WinMinimize(window)
+            case KSA.minimiseHotkey: try WinMinimize(window)
             case KSA.maximiseHotkey:
                 if !winget.isFullscreen(&title, window)
                     WinMaximize(window)

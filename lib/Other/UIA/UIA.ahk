@@ -2091,97 +2091,97 @@ class IUIAutomationElement extends UIA.IUIAutomationBase {
     SelectionPattern {
         get {
             try return (this.DefineProp("SelectionPattern", {value:this.GetPattern(UIA.Pattern.Selection2)}), this.SelectionPattern)
-            return (this.DefineProp("SelectionPattern", {value:this.GetPattern(UIA.Pattern.Selection)}), this.SelectionPattern)
+                return (this.DefineProp("SelectionPattern", {value:this.GetPattern(UIA.Pattern.Selection )}), this.SelectionPattern)
         }
     }
-    ValuePattern => (this.DefineProp("ValuePattern", {value:this.GetPattern(UIA.Pattern.Value)}), this.ValuePattern)
-    RangeValuePattern => (this.DefineProp("RangeValuePattern", {value:this.GetPattern(UIA.Pattern.RangeValue)}), this.RangeValuePattern)
-    ScrollPattern => (this.DefineProp("ScrollPattern", {value:this.GetPattern(UIA.Pattern.Scroll)}), this.ScrollPattern)
+    ValuePattern          => (this.DefineProp("ValuePattern"         , {value:this.GetPattern(UIA.Pattern.Value         )}), this.ValuePattern)
+    RangeValuePattern     => (this.DefineProp("RangeValuePattern"    , {value:this.GetPattern(UIA.Pattern.RangeValue    )}), this.RangeValuePattern)
+    ScrollPattern         => (this.DefineProp("ScrollPattern"        , {value:this.GetPattern(UIA.Pattern.Scroll        )}), this.ScrollPattern)
     ExpandCollapsePattern => (this.DefineProp("ExpandCollapsePattern", {value:this.GetPattern(UIA.Pattern.ExpandCollapse)}), this.ExpandCollapsePattern)
-    GridPattern => (this.DefineProp("GridPattern", {value:this.GetPattern(UIA.Pattern.Grid)}), this.GridPattern)
-    GridItemPattern => (this.DefineProp("GridItemPattern", {value:this.GetPattern(UIA.Pattern.GridItem)}), this.GridItemPattern)
-    MultipleViewPattern => (this.DefineProp("MultipleViewPattern", {value:this.GetPattern(UIA.Pattern.MultipleView)}), this.MultipleViewPattern)
-    WindowPattern => (this.DefineProp("WindowPattern", {value:this.GetPattern(UIA.Pattern.Window)}), this.WindowPattern)
-    SelectionItemPattern => (this.DefineProp("SelectionItemPattern", {value:this.GetPattern(UIA.Pattern.SelectionItem)}), this.SelectionItemPattern)
-    DockPattern => (this.DefineProp("DockPattern", {value:this.GetPattern(UIA.Pattern.Dock)}), this.DockPattern)
-    TablePattern => (this.DefineProp("TablePattern", {value:this.GetPattern(UIA.Pattern.Table)}), this.TablePattern)
-    TableItemPattern => (this.DefineProp("TableItemPattern", {value:this.GetPattern(UIA.Pattern.TableItem)}), this.TableItemPattern)
+    GridPattern           => (this.DefineProp("GridPattern"          , {value:this.GetPattern(UIA.Pattern.Grid          )}), this.GridPattern)
+    GridItemPattern       => (this.DefineProp("GridItemPattern"      , {value:this.GetPattern(UIA.Pattern.GridItem      )}), this.GridItemPattern)
+    MultipleViewPattern   => (this.DefineProp("MultipleViewPattern"  , {value:this.GetPattern(UIA.Pattern.MultipleView  )}), this.MultipleViewPattern)
+    WindowPattern         => (this.DefineProp("WindowPattern"        , {value:this.GetPattern(UIA.Pattern.Window        )}), this.WindowPattern)
+    SelectionItemPattern  => (this.DefineProp("SelectionItemPattern" , {value:this.GetPattern(UIA.Pattern.SelectionItem )}), this.SelectionItemPattern)
+    DockPattern           => (this.DefineProp("DockPattern"          , {value:this.GetPattern(UIA.Pattern.Dock          )}), this.DockPattern)
+    TablePattern          => (this.DefineProp("TablePattern"         , {value:this.GetPattern(UIA.Pattern.Table         )}), this.TablePattern)
+    TableItemPattern      => (this.DefineProp("TableItemPattern"     , {value:this.GetPattern(UIA.Pattern.TableItem     )}), this.TableItemPattern)
     TextPattern {
         get {
             try return (this.DefineProp("TextPattern", {value:this.GetPattern(UIA.Pattern.Text2)}), this.TextPattern)
-            return (this.DefineProp("TextPattern", {value:this.GetPattern(UIA.Pattern.Text)}), this.TextPattern)
+                return (this.DefineProp("TextPattern", {value:this.GetPattern(UIA.Pattern.Text )}), this.TextPattern)
         }
     }
     TogglePattern => (this.DefineProp("TogglePattern", {value:this.GetPattern(UIA.Pattern.Toggle)}), this.TogglePattern)
     TransformPattern {
         get {
             try return (this.DefineProp("TransformPattern", {value:this.GetPattern(UIA.Pattern.Transform2)}), this.TransformPattern)
-            return (this.DefineProp("TransformPattern", {value:this.GetPattern(UIA.Pattern.Transform)}), this.TransformPattern)
+                return (this.DefineProp("TransformPattern", {value:this.GetPattern(UIA.Pattern.Transform )}), this.TransformPattern)
         }
     }
-    ScrollItemPattern => (this.DefineProp("ScrollItemPattern", {value:this.GetPattern(UIA.Pattern.ScrollItem)}), this.ScrollItemPattern)
-    LegacyIAccessiblePattern => (this.DefineProp("LegacyIAccessiblePattern", {value:this.GetPattern(UIA.Pattern.LegacyIAccessible)}), this.LegacyIAccessiblePattern)
-    ItemContainerPattern => (this.DefineProp("ItemContainerPattern", {value:this.GetPattern(UIA.Pattern.ItemContainer)}), this.ItemContainerPattern)
-    VirtualizedItemPattern => (this.DefineProp("VirtualizedItemPattern", {value:this.GetPattern(UIA.Pattern.VirtualizedItem)}), this.VirtualizedItemPattern)
-    SynchronizedInputPattern => (this.DefineProp("SynchronizedInputPattern", {value:this.GetPattern(UIA.Pattern.SynchronizedInput)}), this.SynchronizedInputPattern)
-    ObjectModelPattern => (this.DefineProp("ObjectModelPattern", {value:this.GetPattern(UIA.Pattern.ObjectModel)}), this.ObjectModelPattern)
-    AnnotationPattern => (this.DefineProp("AnnotationPattern", {value:this.GetPattern(UIA.Pattern.Annotation)}), this.AnnotationPattern)
-    StylesPattern => (this.DefineProp("StylesPattern", {value:this.GetPattern(UIA.Pattern.Styles)}), this.StylesPattern)
-    SpreadsheetPattern => (this.DefineProp("SpreadsheetPattern", {value:this.GetPattern(UIA.Pattern.Spreadsheet)}), this.SpreadsheetPattern)
-    SpreadsheetItemPattern => (this.DefineProp("SpreadsheetItemPattern", {value:this.GetPattern(UIA.Pattern.SpreadsheetItem)}), this.SpreadsheetItemPattern)
-    TextChildPattern => (this.DefineProp("TextChildPattern", {value:this.GetPattern(UIA.Pattern.TextChild)}), this.TextChildPattern)
-    DragPattern => (this.DefineProp("DragPattern", {value:this.GetPattern(UIA.Pattern.Drag)}), this.DragPattern)
-    DropTargetPattern => (this.DefineProp("DropTargetPattern", {value:this.GetPattern(UIA.Pattern.DropTarget)}), this.DropTargetPattern)
-    TextEditPattern => (this.DefineProp("TextEditPattern", {value:this.GetPattern(UIA.Pattern.TextEdit)}), this.TextEditPattern)
-    CustomNavigationPattern => (this.DefineProp("CustomNavigationPattern", {value:this.GetPattern(UIA.Pattern.CustomNavigation)}), this.CustomNavigationPattern)
+    ScrollItemPattern        => (this.DefineProp("ScrollItemPattern"        , {value:this.GetPattern(UIA.Pattern.ScrollItem       )}), this.ScrollItemPattern)
+    LegacyIAccessiblePattern => (this.DefineProp("LegacyIAccessiblePattern" , {value:this.GetPattern(UIA.Pattern.LegacyIAccessible)}), this.LegacyIAccessiblePattern)
+    ItemContainerPattern     => (this.DefineProp("ItemContainerPattern"     , {value:this.GetPattern(UIA.Pattern.ItemContainer    )}), this.ItemContainerPattern)
+    VirtualizedItemPattern   => (this.DefineProp("VirtualizedItemPattern"   , {value:this.GetPattern(UIA.Pattern.VirtualizedItem  )}), this.VirtualizedItemPattern)
+    SynchronizedInputPattern => (this.DefineProp("SynchronizedInputPattern" , {value:this.GetPattern(UIA.Pattern.SynchronizedInput)}), this.SynchronizedInputPattern)
+    ObjectModelPattern       => (this.DefineProp("ObjectModelPattern"       , {value:this.GetPattern(UIA.Pattern.ObjectModel      )}), this.ObjectModelPattern)
+    AnnotationPattern        => (this.DefineProp("AnnotationPattern"        , {value:this.GetPattern(UIA.Pattern.Annotation       )}), this.AnnotationPattern)
+    StylesPattern            => (this.DefineProp("StylesPattern"            , {value:this.GetPattern(UIA.Pattern.Styles           )}), this.StylesPattern)
+    SpreadsheetPattern       => (this.DefineProp("SpreadsheetPattern"       , {value:this.GetPattern(UIA.Pattern.Spreadsheet      )}), this.SpreadsheetPattern)
+    SpreadsheetItemPattern   => (this.DefineProp("SpreadsheetItemPattern"   , {value:this.GetPattern(UIA.Pattern.SpreadsheetItem  )}), this.SpreadsheetItemPattern)
+    TextChildPattern         => (this.DefineProp("TextChildPattern"         , {value:this.GetPattern(UIA.Pattern.TextChild        )}), this.TextChildPattern)
+    DragPattern              => (this.DefineProp("DragPattern"              , {value:this.GetPattern(UIA.Pattern.Drag             )}), this.DragPattern)
+    DropTargetPattern        => (this.DefineProp("DropTargetPattern"        , {value:this.GetPattern(UIA.Pattern.DropTarget       )}), this.DropTargetPattern)
+    TextEditPattern          => (this.DefineProp("TextEditPattern"          , {value:this.GetPattern(UIA.Pattern.TextEdit         )}), this.TextEditPattern)
+    CustomNavigationPattern  => (this.DefineProp("CustomNavigationPattern"  , {value:this.GetPattern(UIA.Pattern.CustomNavigation )}), this.CustomNavigationPattern)
     ; Aliases for UIA.GetCachedPattern(UIA.Pattern.PatternName)
-    CachedInvokePattern => (this.DefineProp("CachedInvokePattern", {value:this.GetCachedPattern(UIA.Pattern.Invoke)}), this.CachedInvokePattern)
+    CachedInvokePattern => (this.DefineProp("CachedInvokePattern" , {value:this.GetCachedPattern(UIA.Pattern.Invoke)}), this.CachedInvokePattern)
     CachedSelectionPattern {
         get {
             try return (this.DefineProp("CachedSelectionPattern", {value:this.GetCachedPattern(UIA.Pattern.Selection2)}), this.CachedSelectionPattern)
-            return (this.DefineProp("CachedSelectionPattern", {value:this.GetCachedPattern(UIA.Pattern.Selection)}), this.CachedSelectionPattern)
+                return (this.DefineProp("CachedSelectionPattern", {value:this.GetCachedPattern(UIA.Pattern.Selection )}), this.CachedSelectionPattern)
         }
     }
-    CachedValuePattern => (this.DefineProp("CachedValuePattern", {value:this.GetCachedPattern(UIA.Pattern.Value)}), this.CachedValuePattern)
-    CachedRangeValuePattern => (this.DefineProp("CachedRangeValuePattern", {value:this.GetCachedPattern(UIA.Pattern.RangeValue)}), this.CachedRangeValuePattern)
-    CachedScrollPattern => (this.DefineProp("CachedScrollPattern", {value:this.GetCachedPattern(UIA.Pattern.Scroll)}), this.CachedScrollPattern)
-    CachedExpandCollapsePattern => (this.DefineProp("CachedExpandCollapsePattern", {value:this.GetCachedPattern(UIA.Pattern.ExpandCollapse)}), this.CachedExpandCollapsePattern)
-    CachedGridPattern => (this.DefineProp("CachedGridPattern", {value:this.GetCachedPattern(UIA.Pattern.Grid)}), this.CachedGridPattern)
-    CachedGridItemPattern => (this.DefineProp("CachedGridItemPattern", {value:this.GetCachedPattern(UIA.Pattern.GridItem)}), this.CachedGridItemPattern)
-    CachedMultipleViewPattern => (this.DefineProp("CachedMultipleViewPattern", {value:this.GetCachedPattern(UIA.Pattern.MultipleView)}), this.CachedMultipleViewPattern)
-    CachedWindowPattern => (this.DefineProp("CachedWindowPattern", {value:this.GetCachedPattern(UIA.Pattern.Window)}), this.CachedWindowPattern)
-    CachedSelectionItemPattern => (this.DefineProp("CachedSelectionItemPattern", {value:this.GetCachedPattern(UIA.Pattern.SelectionItem)}), this.CachedSelectionItemPattern)
-    CachedDockPattern => (this.DefineProp("CachedDockPattern", {value:this.GetCachedPattern(UIA.Pattern.Dock)}), this.CachedDockPattern)
-    CachedTablePattern => (this.DefineProp("CachedTablePattern", {value:this.GetCachedPattern(UIA.Pattern.Table)}), this.CachedTablePattern)
-    CachedTableItemPattern => (this.DefineProp("CachedTableItemPattern", {value:this.GetCachedPattern(UIA.Pattern.TableItem)}), this.CachedTableItemPattern)
+    CachedValuePattern          => (this.DefineProp("CachedValuePattern"          , {value:this.GetCachedPattern(UIA.Pattern.Value         )}), this.CachedValuePattern)
+    CachedRangeValuePattern     => (this.DefineProp("CachedRangeValuePattern"     , {value:this.GetCachedPattern(UIA.Pattern.RangeValue    )}), this.CachedRangeValuePattern)
+    CachedScrollPattern         => (this.DefineProp("CachedScrollPattern"         , {value:this.GetCachedPattern(UIA.Pattern.Scroll        )}), this.CachedScrollPattern)
+    CachedExpandCollapsePattern => (this.DefineProp("CachedExpandCollapsePattern" , {value:this.GetCachedPattern(UIA.Pattern.ExpandCollapse)}), this.CachedExpandCollapsePattern)
+    CachedGridPattern           => (this.DefineProp("CachedGridPattern"           , {value:this.GetCachedPattern(UIA.Pattern.Grid          )}), this.CachedGridPattern)
+    CachedGridItemPattern       => (this.DefineProp("CachedGridItemPattern"       , {value:this.GetCachedPattern(UIA.Pattern.GridItem      )}), this.CachedGridItemPattern)
+    CachedMultipleViewPattern   => (this.DefineProp("CachedMultipleViewPattern"   , {value:this.GetCachedPattern(UIA.Pattern.MultipleView  )}), this.CachedMultipleViewPattern)
+    CachedWindowPattern         => (this.DefineProp("CachedWindowPattern"         , {value:this.GetCachedPattern(UIA.Pattern.Window        )}), this.CachedWindowPattern)
+    CachedSelectionItemPattern  => (this.DefineProp("CachedSelectionItemPattern"  , {value:this.GetCachedPattern(UIA.Pattern.SelectionItem )}), this.CachedSelectionItemPattern)
+    CachedDockPattern           => (this.DefineProp("CachedDockPattern"           , {value:this.GetCachedPattern(UIA.Pattern.Dock          )}), this.CachedDockPattern)
+    CachedTablePattern          => (this.DefineProp("CachedTablePattern"          , {value:this.GetCachedPattern(UIA.Pattern.Table         )}), this.CachedTablePattern)
+    CachedTableItemPattern      => (this.DefineProp("CachedTableItemPattern"      , {value:this.GetCachedPattern(UIA.Pattern.TableItem     )}), this.CachedTableItemPattern)
     CachedTextPattern {
         get {
             try return (this.DefineProp("CachedTextPattern", {value:this.GetCachedPattern(UIA.Pattern.Text2)}), this.CachedTextPattern)
-            return (this.DefineProp("CachedTextPattern", {value:this.GetCachedPattern(UIA.Pattern.Text)}), this.CachedTextPattern)
+                return (this.DefineProp("CachedTextPattern", {value:this.GetCachedPattern(UIA.Pattern.Text )}), this.CachedTextPattern)
         }
     }
-    CachedTogglePattern => (this.DefineProp("CachedTogglePattern", {value:this.GetCachedPattern(UIA.Pattern.Toggle)}), this.CachedTogglePattern)
+    CachedTogglePattern => (this.DefineProp("CachedTogglePattern" , {value:this.GetCachedPattern(UIA.Pattern.Toggle)}), this.CachedTogglePattern)
     CachedTransformPattern {
         get {
             try return (this.DefineProp("CachedTransformPattern", {value:this.GetCachedPattern(UIA.Pattern.Transform2)}), this.CachedTransformPattern)
-            return (this.DefineProp("CachedTransformPattern", {value:this.GetCachedPattern(UIA.Pattern.Transform)}), this.CachedTransformPattern)
+                return (this.DefineProp("CachedTransformPattern", {value:this.GetCachedPattern(UIA.Pattern.Transform )}), this.CachedTransformPattern)
         }
     }
-    CachedScrollItemPattern => (this.DefineProp("CachedScrollItemPattern", {value:this.GetCachedPattern(UIA.Pattern.ScrollItem)}), this.CachedScrollItemPattern)
-    CachedLegacyIAccessiblePattern => (this.DefineProp("CachedLegacyIAccessiblePattern", {value:this.GetCachedPattern(UIA.Pattern.LegacyIAccessible)}), this.CachedLegacyIAccessiblePattern)
-    CachedItemContainerPattern => (this.DefineProp("CachedItemContainerPattern", {value:this.GetCachedPattern(UIA.Pattern.ItemContainer)}), this.CachedItemContainerPattern)
-    CachedVirtualizedItemPattern => (this.DefineProp("CachedVirtualizedItemPattern", {value:this.GetCachedPattern(UIA.Pattern.VirtualizedItem)}), this.CachedVirtualizedItemPattern)
-    CachedSynchronizedInputPattern => (this.DefineProp("CachedSynchronizedInputPattern", {value:this.GetCachedPattern(UIA.Pattern.SynchronizedInput)}), this.CachedSynchronizedInputPattern)
-    CachedObjectModelPattern => (this.DefineProp("CachedObjectModelPattern", {value:this.GetCachedPattern(UIA.Pattern.ObjectModel)}), this.CachedObjectModelPattern)
-    CachedAnnotationPattern => (this.DefineProp("CachedAnnotationPattern", {value:this.GetCachedPattern(UIA.Pattern.Annotation)}), this.CachedAnnotationPattern)
-    CachedStylesPattern => (this.DefineProp("CachedStylesPattern", {value:this.GetCachedPattern(UIA.Pattern.Styles)}), this.CachedStylesPattern)
-    CachedSpreadsheetPattern => (this.DefineProp("CachedSpreadsheetPattern", {value:this.GetCachedPattern(UIA.Pattern.Spreadsheet)}), this.CachedSpreadsheetPattern)
-    CachedSpreadsheetItemPattern => (this.DefineProp("CachedSpreadsheetItemPattern", {value:this.GetCachedPattern(UIA.Pattern.SpreadsheetItem)}), this.CachedSpreadsheetItemPattern)
-    CachedTextChildPattern => (this.DefineProp("CachedTextChildPattern", {value:this.GetCachedPattern(UIA.Pattern.TextChild)}), this.CachedTextChildPattern)
-    CachedDragPattern => (this.DefineProp("CachedDragPattern", {value:this.GetCachedPattern(UIA.Pattern.Drag)}), this.CachedDragPattern)
-    CachedDropTargetPattern => (this.DefineProp("CachedDropTargetPattern", {value:this.GetCachedPattern(UIA.Pattern.DropTarget)}), this.CachedDropTargetPattern)
-    CachedTextEditPattern => (this.DefineProp("CachedTextEditPattern", {value:this.GetCachedPattern(UIA.Pattern.TextEdit)}), this.CachedTextEditPattern)
-    CachedCustomNavigationPattern => (this.DefineProp("CachedCustomNavigationPattern", {value:this.GetCachedPattern(UIA.Pattern.CustomNavigation)}), this.CachedCustomNavigationPattern)
+    CachedScrollItemPattern        => (this.DefineProp("CachedScrollItemPattern"        , {value:this.GetCachedPattern(UIA.Pattern.ScrollItem       )}), this.CachedScrollItemPattern)
+    CachedLegacyIAccessiblePattern => (this.DefineProp("CachedLegacyIAccessiblePattern" , {value:this.GetCachedPattern(UIA.Pattern.LegacyIAccessible)}), this.CachedLegacyIAccessiblePattern)
+    CachedItemContainerPattern     => (this.DefineProp("CachedItemContainerPattern"     , {value:this.GetCachedPattern(UIA.Pattern.ItemContainer    )}), this.CachedItemContainerPattern)
+    CachedVirtualizedItemPattern   => (this.DefineProp("CachedVirtualizedItemPattern"   , {value:this.GetCachedPattern(UIA.Pattern.VirtualizedItem  )}), this.CachedVirtualizedItemPattern)
+    CachedSynchronizedInputPattern => (this.DefineProp("CachedSynchronizedInputPattern" , {value:this.GetCachedPattern(UIA.Pattern.SynchronizedInput)}), this.CachedSynchronizedInputPattern)
+    CachedObjectModelPattern       => (this.DefineProp("CachedObjectModelPattern"       , {value:this.GetCachedPattern(UIA.Pattern.ObjectModel      )}), this.CachedObjectModelPattern)
+    CachedAnnotationPattern        => (this.DefineProp("CachedAnnotationPattern"        , {value:this.GetCachedPattern(UIA.Pattern.Annotation       )}), this.CachedAnnotationPattern)
+    CachedStylesPattern            => (this.DefineProp("CachedStylesPattern"            , {value:this.GetCachedPattern(UIA.Pattern.Styles           )}), this.CachedStylesPattern)
+    CachedSpreadsheetPattern       => (this.DefineProp("CachedSpreadsheetPattern"       , {value:this.GetCachedPattern(UIA.Pattern.Spreadsheet      )}), this.CachedSpreadsheetPattern)
+    CachedSpreadsheetItemPattern   => (this.DefineProp("CachedSpreadsheetItemPattern"   , {value:this.GetCachedPattern(UIA.Pattern.SpreadsheetItem  )}), this.CachedSpreadsheetItemPattern)
+    CachedTextChildPattern         => (this.DefineProp("CachedTextChildPattern"         , {value:this.GetCachedPattern(UIA.Pattern.TextChild        )}), this.CachedTextChildPattern)
+    CachedDragPattern              => (this.DefineProp("CachedDragPattern"              , {value:this.GetCachedPattern(UIA.Pattern.Drag             )}), this.CachedDragPattern)
+    CachedDropTargetPattern        => (this.DefineProp("CachedDropTargetPattern"        , {value:this.GetCachedPattern(UIA.Pattern.DropTarget       )}), this.CachedDropTargetPattern)
+    CachedTextEditPattern          => (this.DefineProp("CachedTextEditPattern"          , {value:this.GetCachedPattern(UIA.Pattern.TextEdit         )}), this.CachedTextEditPattern)
+    CachedCustomNavigationPattern  => (this.DefineProp("CachedCustomNavigationPattern"  , {value:this.GetCachedPattern(UIA.Pattern.CustomNavigation )}), this.CachedCustomNavigationPattern)
 
     /**
      * Returns the children of this element, optionally filtering by a condition
@@ -5156,7 +5156,7 @@ class IUIAutomationEventHandler {
     static __IID := "{146c3c17-f12e-4e22-8c27-f894b9b79c69}"
 
     HandleAutomationEvent(pSelf, sender, eventId) {
-        ObjAddRef(sender), this.EventHandler.Call(UIA.IUIAutomationElement(sender), eventId)
+        ObjAddRef(sender), this.EventHandler.Call(UIA.IUIAutomationElement(sender), eventId&0xFFFFFFFF)
     }
 }
 class IUIAutomationFocusChangedEventHandler {
@@ -5178,7 +5178,7 @@ class IUIAutomationPropertyChangedEventHandler { ; UNTESTED
     HandlePropertyChangedEvent(pSelf, sender, propertyId, newValue) {
         local val := ComValue(0x400C, newValue)[]
         DllCall("oleaut32\VariantClear", "ptr", newValue)
-        ObjAddRef(sender), this.EventHandler.Call(UIA.IUIAutomationElement(sender), propertyId, val)
+        ObjAddRef(sender), this.EventHandler.Call(UIA.IUIAutomationElement(sender), propertyId&0xFFFFFFFF, val)
     }
 }
 /*
@@ -5190,7 +5190,7 @@ class IUIAutomationStructureChangedEventHandler {
     static __IID := "{e81d1b4e-11c5-42f8-9754-e7036c79f054}"
 
     HandleStructureChangedEvent(pSelf, sender, changeType, runtimeId) {
-        ObjAddRef(sender), this.EventHandler.Call(UIA.IUIAutomationElement(sender), changeType, UIA.SafeArrayToAHKArray(runtimeId))
+        ObjAddRef(sender), this.EventHandler.Call(UIA.IUIAutomationElement(sender), changeType&0xFFFFFFFF, UIA.SafeArrayToAHKArray(runtimeId))
         DllCall("oleaut32\VariantClear", "ptr", runtimeId)
     }
 }
@@ -5205,7 +5205,7 @@ class IUIAutomationTextEditTextChangedEventHandler { ; UNTESTED
     HandleTextEditTextChangedEvent(pSelf, sender, changeType, eventStrings) {
         local val := ComValue(0x400C, eventStrings)[]
         DllCall("oleaut32\VariantClear", "ptr", eventStrings)
-        ObjAddRef(sender), this.EventHandler.Call(UIA.IUIAutomationElement(sender), changeType, val)
+        ObjAddRef(sender), this.EventHandler.Call(UIA.IUIAutomationElement(sender), changeType&0xFFFFFFFF, val)
     }
 }
 
@@ -7457,7 +7457,10 @@ class Viewer {
         if !InStr(Item, "()")
             return
         Item := SubStr(Item, 1, -2)
-        if !(CurrentEl := UIA.ElementFromHandle(this.Stored.mwId).ElementExist({RuntimeId:this.Stored.CapturedElement.CachedRuntimeId}))
+        if !WinExist(this.Stored.mwId) || !(WinEl := UIA.ElementFromHandle(this.Stored.mwId))
+            return MsgBox("Target window not found!",,"4096")
+        if !(CurrentEl := WinEl.ElementExist({RuntimeId:this.Stored.CapturedElement.CachedRuntimeId})) 
+            && !(CurrentEl := WinEl.ElementFromPathExist(Trim(this.Stored.CapturedElement.Path, "```"")))
             return MsgBox("Live element not found!",,"4096")
         if Item ~= "Value|Scroll(?!Into)" {
             this.gViewer.Opt("-AlwaysOnTop")

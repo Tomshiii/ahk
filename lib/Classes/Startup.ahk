@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2023/10/23
- * @version 1.7.10
+ * @date 2024/03/20
+ * @version 1.7.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,12 +20,14 @@
 #Include <Classes\Mip>
 #Include <Classes\reset>
 #Include <Classes\errorLog>
+#Include <Other\SystemThemeAwareToolTip>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
 #Include <Functions\isReload>
 #Include <Functions\getLocalVer>
 #Include <Functions\trayShortcut>
 #Include <Functions\editScript>
+#Include <Other\FileGetExtendedProp>
 #Include <Other\print>
 ; }
 
@@ -39,6 +41,9 @@ class Startup {
         ;// populate settings variables
         this.UserSettings := UserPref()
     }
+
+    ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
+    ;// also add settingsGUI() option to enable/disable this check
 
     MyRelease := 0
     UserSettings := ""
@@ -543,6 +548,32 @@ class Startup {
         this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
     }
 
+    /** This function will set the current prem/ae version based off the current .exe version (only if UserSettings.adobeExeOverride is set to `true`). This function still requires to user to manually set their Year variable. */
+    adobeVerOverride() {
+        if !this.UserSettings.adobeExeOverride
+            return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
+        premFolder := (this.UserSettings.premIsBeta = true) ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) ptf.PremYearVer
+        aeFolder   := (this.UserSettings.aeIsBeta = true)   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) ptf.aeYearVer
+        premExeLocation := A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro.exe"
+        aeExeLocation   := A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
+
+        premExeVer := FileExist(premExeLocation) ? FileGetExtendedProp(premExeLocation,, "Product version")["Product version"] : false
+        aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "Product version")["Product version"]   : false
+
+        ;// remove ".0"
+        premExeVer := SubStr(premExeVer, premFinalDot := InStr(premExeVer, ".",, -1), 2) = ".0" ? SubStr(premExeVer, 1, premFinalDot-1) : premExeVer
+        aeExeVer   := SubStr(aeExeVer, aeFinalDot     := InStr(aeExeVer, ".",, -1), 2)   = ".0" ? SubStr(aeExeVer, 1, aeFinalDot-1)     : aeExeVer
+
+        if premExeVer = false && aeExeVer = false
+            return
+
+        if VerCompare(premExeVer, this.UserSettings.premVer) != 0 || VerCompare(aeExeVer, this.UserSettings.aeVer) != 0 {
+            this.UserSettings.premVer := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
+            this.UserSettings.aeVer   := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
+        }
+    }
+
     /**
      * This function will add right click tray menu items to "My Scripts.ahk" to toggle checking for updates as well as accessing a GUI to modify script settings
      */
@@ -574,7 +605,8 @@ class Startup {
         __addAndIncrement("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
         __addAndIncrement("Close All Scripts", (*) => reset.ex_exit())
         __addAndIncrement("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
-        __addAndIncrement("Open Prem_UIA Class", (*) => editScript(ptf.rootDir "\lib\Classes\Editors\Premiere_UIA.ahk"))
+        __addAndIncrement("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
+        __addAndIncrement("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false).__setNewVal() : MsgBox("Premiere needs to be open for this option to function correctly!"))
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")
@@ -630,8 +662,12 @@ class Startup {
             name: "UIA_Browser",                     url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA_Browser.ahk",
             scriptPos: ptf.lib "\Other\UIA"
         }
+        WinEvent := {
+            name: "WinEvent",                        url: "https://raw.githubusercontent.com/Descolada/AHK-v2-libraries/main/Lib/WinEvent.ahk",
+            scriptPos: ptf.lib "\Other"
+        }
 
-        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser]
+        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent]
         name        := []
         url         := []
         scriptPos   := []

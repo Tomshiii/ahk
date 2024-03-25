@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode a file to prores
  * @author tomshi
- * @date 2024/01/17
- * @version 1.0.1
+ * @date 2024/03/20
+ * @version 1.0.4
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -15,7 +15,7 @@
 ; }
 
 class proresGUI extends encodeGUI {
-    __New(fileOrDir := "file") {
+    __New(fileOrDir := "file", recurse := false, skipDupes := false) {
         super.__New(fileOrDir, "prores")
         ;// change the initial text
         this["Blurb"].Text := "This script uses ffmpeg to reencode the selected file to a prores .mov file."
@@ -29,10 +29,14 @@ class proresGUI extends encodeGUI {
         switch fileOrDir {
             case "file": this.AddButton("x" this.firstButtonX " y" this.firstButtonY+30 " w100", "Encode").OnEvent("Click", this.__proresEncode.Bind(this))
             case "dir":
-                loop files this.getFile "\*", "F" {
+                recurseDir := (recurse = true) ? "R" : ""
+                loop files this.getFile "\*", "F" recurseDir {
                     if A_LoopFileExt != "mkv" && A_LoopFileExt != "mp4"
                         continue
-                    this.nameArr.Push(A_LoopFileName)
+                    SplitPath(A_LoopFileFullPath,, &outDir,, &outNameNoExt)
+                    if FileExist(outDir "\" outNameNoExt ".mov") && skipDupes = true
+                        continue
+                    this.nameArr.Push(A_LoopFileFullPath)
                     this.nameCleansed.Push(this.__cleanse(A_LoopFileName))
                 }
                 this.AddButton("x" this.firstButtonX " y" this.firstButtonY+30 " w100", "Encode").OnEvent("Click", this.__dirproresEncode.Bind(this))
@@ -71,11 +75,9 @@ class proresGUI extends encodeGUI {
     __dirproresEncode(*) {
         origPath := this.getFile
         for k, v in this.nameArr {
-            this.getFile := origPath "\" v
-            MsgBox(this.getFile)
+            this.getFile := v
             pathObj := this.__fileObj()
-            MsgBox(this.getFile "`n" pathObj.fileObjOrig.dir "\" v "`n" pathObj.fileObj.Dir "\" pathObj.fileObj.NameNoExt ".mov")
-            command := Format('ffmpeg -i "{1}" -c:v prores_ks -profile:v {2} "{3}"', pathObj.fileObjOrig.dir "\" v, String(this["pres"].value-1), pathObj.fileObj.Dir "\" pathObj.fileObj.NameNoExt ".mov")
+            command := Format('ffmpeg -i "{1}" -c:v prores_ks -profile:v {2} "{3}"', v, String(this["pres"].value-1), pathObj.fileObj.Dir "\" pathObj.fileObj.NameNoExt ".mov")
             cmd.run(,,, command)
         }
     }

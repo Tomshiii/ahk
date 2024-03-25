@@ -8,15 +8,16 @@ RunWait(scptDir "\deleteAdobeSyms.ahk")
 SetWorkingDir(scptDir "\..\")
 
 imgsrchPath := A_WorkingDir '\..\..\Support Files\ImageSearch'
+runOrAs := (A_IsAdmin = false) ? "*RunAs " : ""
 
 adobecmd := ""
 if IsSet(adobeVers) && IsObject(adobeVers) {
     adobecmd := adobeVers.__generate(imgsrchPath)
     if !InStr(adobecmd, "|||") {
-        RunWait("*RunAs " A_ComSpec " /c " adobecmd)
+        RunWait(runOrAs A_ComSpec " /c " adobecmd,, "Hide")
         return
     }
     cmds := StrSplit(adobecmd, "|||")
     for v in cmds
-        RunWait("*RunAs " A_ComSpec " /c " v)
+        RunWait(runOrAs A_ComSpec " /c " v,, "Hide")
 }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/02/12
- * @version 1.2.9.2
+ * @date 2024/03/20
+ * @version 1.2.11
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "2024", "v24.1", "false", "v24.1", "false", "v25.4", "false", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "2024", "v24.1", "false", "v24.1", "false", "v25.4", "false", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -57,7 +57,8 @@ class UserPref {
                  "tooltip", "checklist_tooltip",
                  "prem_Focus_Icon", "checklist_hotkeys",
                  "autosave_beep", "autosave_save_override",
-                 "disc_disable_autoreply", "autosave_check_mouse":
+                 "disc_disable_autoreply", "autosave_check_mouse",
+                 "adobeExeOverride", "autosave_always_save":
                                                       return "true"
             case "beta_update_check",
                  "run_at_startup", "checklist_wait",
@@ -217,12 +218,14 @@ class UserPref {
                     autosave check checklist={}
                     autosave save override={}
                     autosave check mouse={}
+                    autosave always save={}
                     tooltip={}
                     checklist hotkeys={}
                     checklist tooltip={}
                     checklist wait={}
                     prem Focus Icon={}
                     disc disable autoreply={}
+                    adobeExeOverride={}
 
                     [Adjust]
                     adobe GB={}

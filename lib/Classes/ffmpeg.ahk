@@ -288,7 +288,7 @@ class ffmpeg {
     __baseCommandExtract(filepath) => baseCommand := Format('ffmpeg -i "{}"', filepath)
 
     /**
-     * This function builds the remaining extract ffmpeg command based off the amount of audio streams present within the file
+     * This function builds the remaining extract ffmpeg command based off the amount of audio streams present within the file. The returned command ends with A_Space
      * @param {String} filepath the filepath of the file you are operating on
      * @param {Integer} count the amount of audio streams present within the file
      * @param {Array} hzArr an array containing the sample rates of all audio streams
@@ -296,7 +296,7 @@ class ffmpeg {
     __buildExtractCommand(filepath, count, hzArr) {
         command := ""
         loop count {
-            command := command Format('-map 0:a:{1} -f wav -b:a {2} -acodec pcm_s16le "{3}"', A_Index-1, hzArr[A_Index], this.__appendOutput(filepath, A_Index)) A_space
+            command := command Format('-map 0:a:{1} -f wav -b:a {2} -acodec pcm_s16le "{3}"', A_Index-1, hzArr[A_Index], this.__appendOutput(filepath, A_Index)) A_Space
         }
         return command
     }

@@ -1,4 +1,4 @@
-;// from Descolada--
+## > from Descolada;
 # UIA-v2
 
 This library is a wrapper for the UIAutomation framework, which can be used to automate windows that normally might be difficult or impossible to automate with AHK.

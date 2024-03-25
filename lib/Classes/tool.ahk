@@ -1,13 +1,14 @@
 /************************************************************************
  * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2024/02/01
- * @version 1.2.0.3
+ * @date 2024/03/20
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\coord>
 #Include <Classes\errorLog>
+#Include <Other\SystemThemeAwareToolTip>
 #Include <Functions\detect>
 ; }
 
@@ -101,8 +102,10 @@ class tool {
         priorCoords := coord.store()
         ;// set coord mode
         this().__setCoords()
+
         ;// set darkmode
         static isDarkMode := !RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)
+
 
         ;// ensuring `WhichToolTip` never goes above 20 or below 1
         WhichToolTip := !IsSet(WhichToolTip) || (IsSet(WhichToolTip) && (WhichToolTip > 20 || WhichToolTip < 1)) ? 1 : WhichToolTip
@@ -130,7 +133,9 @@ class tool {
 
         ;//! creating the tooltip
         ttw := ToolTip(message, origMouse.x + x, origMouse.y + y, WhichToolTip) ;// produce the initial tooltip
-        if (darkMode ?? isDarkMode)
+        if !(darkMode ?? isDarkMode)
+            SystemThemeAwareToolTip.IsDarkMode := false
+        else if (darkMode ?? isDarkMode)
             DllCall("uxtheme\SetWindowTheme", "ptr", ttw, "ptr", StrPtr("DarkMode_Explorer"), "ptr", 0)
         this.%WhichToolTip% := true ;// set tooltip var to true
         if both = false || none = true ;// if the user wants the tooltip to track the mouse

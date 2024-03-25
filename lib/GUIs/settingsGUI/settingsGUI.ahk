@@ -30,6 +30,14 @@ class SettingsToolTips {
         Yes: "My scripts will automatically run at PC startup",
         No: "My scripts will no longer run at PC startup"
     }
+    adobeExe := {
+        Yes: "Scripts will set the current Premiere Pro and After Effects version based off the current installed version",
+        No: "The current versions of Premiere Pro and After Effects must be set by the user"
+    }
+    autosaveAlwaysSave := {
+        Yes: "``autosave.ahk`` will save regardless of the active window",
+        No: "``autosave.ahk`` will only save the active window"
+    }
     autosaveBeep := {
         Yes: "``autosave.ahk`` will beep to alert the user it is attempting to save",
         No: "``autosave.ahk`` will no longer beep to alert the user that it is attempting to save"
@@ -234,18 +242,29 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
+    ;// adobe version override
+    adobeVerOverrideTitle := "Adobe Version Override"
+    settingsGUI.AddCheckbox("vadobeVerOverrideToggle Checked" UserSettings.adobeExeOverride " Y+20", adobeVerOverrideTitle).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
+    settingsGUI["adobeVerOverrideToggle"].ToolTip := (UserSettings.adobeExeOverride = true) ? toolT.adobeExe.Yes : toolT.adobeExe.No
+
+    ;// autosave always save
+    asAlwaysSaveTitle := "``autosave.ahk`` Always Save"
+    settingsGUI.AddCheckbox("vasAlwaysSaveToggle Checked" UserSettings.autosave_always_save " Y+5", asAlwaysSaveTitle).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
+    settingsGUI["asAlwaysSaveToggle"].ToolTip := (UserSettings.autosave_always_save = true) ? toolT.autosaveAlwaysSave.Yes : toolT.autosaveAlwaysSave.No
+
+
     ;// autosave check mouse
-    ascheckMouseTitle := "``autosave.ahk`` check mouse"
-    settingsGUI.AddCheckbox("vasmouseToggle Checked" UserSettings.autosave_check_mouse " Y+20", ascheckMouseTitle).OnEvent("Click", toggle.Bind("autosave check mouse", "autosave"))
+    ascheckMouseTitle := "``autosave.ahk`` Check Mouse"
+    settingsGUI.AddCheckbox("vasmouseToggle Checked" UserSettings.autosave_check_mouse " Y+5", ascheckMouseTitle).OnEvent("Click", toggle.Bind("autosave check mouse", "autosave"))
     settingsGUI["asmouseToggle"].ToolTip := (UserSettings.autosave_check_mouse = true) ? toolT.autosaveMouse.Yes : toolT.autosaveMouse.No
 
     ;// autosave beep
-    asBeepTitle := "``autosave.ahk`` beep"
+    asBeepTitle := "``autosave.ahk`` Beep"
     settingsGUI.AddCheckbox("vasbeepToggle Checked" UserSettings.autosave_beep " Y+5", asBeepTitle).OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
     settingsGUI["asbeepToggle"].ToolTip := (UserSettings.autosave_beep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
 
     ;// autosave save override
-    asOverrideTitle := "``autosave.ahk`` save override"
+    asOverrideTitle := "``autosave.ahk`` Save Override"
     settingsGUI.AddCheckbox("vasOverride Checked" UserSettings.autosave_save_override " Y+5", asOverrideTitle).OnEvent("Click", toggle.Bind("autosave save override", "autosave"))
     settingsGUI["asOverride"].ToolTip := (UserSettings.autosave_save_override = true) ? toolT.autosaveOverride.Yes : toolT.autosaveOverride.No
 
@@ -260,6 +279,12 @@ settingsGUI()
         ToolTip("")
         ;// each switch here goes off the TITLE variable we created
         switch script.text {
+            case adobeVerOverrideTitle:
+                toolTrue := toolT.adobeExe.Yes
+                toolFalse := toolT.adobeExe.No
+            case asAlwaysSaveTitle:
+                toolTrue := toolT.autosaveAlwaysSave.Yes
+                toolFalse := toolT.autosaveAlwaysSave.No
             case ascheckMouseTitle:
                 toolTrue := toolT.autosaveMouse.Yes
                 toolFalse := toolT.autosaveMouse.No
@@ -528,6 +553,7 @@ settingsGUI()
                 yearIniName := "prem_year"
                 iniInitYear := UserSettings.prem_year
                 verIniName := "premVer"
+                initVer := UserSettings.premVer
                 genProg := program
                 otherTitle := "After Effects Settings"
                 static imageLoc := ptf.premIMGver
@@ -541,6 +567,7 @@ settingsGUI()
                 yearIniName := "ae_year"
                 iniInitYear := UserSettings.ae_year
                 verIniName := "aeVer"
+                initVer := UserSettings.aeVer
                 genProg := "AE"
                 otherTitle := "Premiere Pro Settings"
                 static imageLoc := ptf.aeIMGver
@@ -713,7 +740,7 @@ settingsGUI()
                     supportedVers.Push(A_LoopFileName)
             }
             for value in supportedVers {
-                if value = imageLoc
+                if value = initVer
                     {
                         defaultIndex := A_Index
                         break

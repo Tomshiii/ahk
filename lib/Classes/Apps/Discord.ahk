@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2024/01/17
- * @version 1.4.9.2
+ * @date 2024/03/03
+ * @version 1.4.9.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -234,15 +234,16 @@ class discord {
             WinActivate(this.winTitle)
         MouseGetPos(&xPos, &yPos)
         WinGetPos(,, &width, &height, this.winTitle)
-        if which = ""
-            {
-                if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " ptf.Discord "\unread3.png")
-                    end(-20)
-            }
-        if !obj.imgSrchMulti({x1:0 + x2, y1:0, x2:50 + y2, y2:height},, &x, &y, ptf.Discord "\unread" which "_1.png", ptf.Discord "\unread" which "_2.png", ptf.Discord "\unread" which "_3.png") {
-                tool.Cust("Couldn't find any unread " message)
-                return
-            }
+        if which = "" {
+            if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " ptf.Discord "\unread3.png")
+                end(-20)
+        }
+        if !obj.imgSrchMulti({x1:0 + x2, y1:0, x2:50 + y2, y2:height},, &x, &y,
+                                ptf.Discord "\unread" which "_1.png", ptf.Discord "\unread" which "_2.png",
+                                ptf.Discord "\unread" which "_3.png", ptf.Discord "\unread" which "_4.png") {
+            tool.Cust("Couldn't find any unread " message)
+            return
+        }
         end()
     }
 
@@ -304,7 +305,7 @@ class discord {
             }
         block.On("send")
         store := clip.clear()
-        if !clip.copyWait(, timeWait.first, false) {
+        if !clip.copyWait(unset, timeWait.first, false) {
             SendInput(KSA.discHighlightChat)
             sendText := (charLength = 2 && A_ThisHotkey != "") ? onFailSend : char
             A_Clipboard := sendText
@@ -318,9 +319,8 @@ class discord {
             return
         }
         ;// clearing the clipboard again in an attempt to fix this function sometimes hanging and sending keys seemingly randomly
-        middle := A_Clipboard
-        clip.clear()
-        A_Clipboard := (charLength = 2) ? SubStr(char, 1, 1) middle SubStr(char, 2, 1) : char middle char
+        middle := clip.clear()
+        A_Clipboard := (charLength = 2) ? SubStr(char, 1, 1) middle.storedClip SubStr(char, 2, 1) : char middle.storedClip char
         if !ClipWait(timeWait.second) {
             __exit(store.storedClip)
             return

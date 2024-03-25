@@ -72,7 +72,7 @@
 <key>MinPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-1</int>
+<int type='signed' size='32'>-59</int>
 <int type='signed' size='32'>-1</int>
 </array>
 </prop.pair>
@@ -80,10 +80,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>-31</int>
-<int type='signed' size='32'>3390</int>
-<int type='signed' size='32'>1448</int>
+<int type='signed' size='32'>2</int>
+<int type='signed' size='32'>44</int>
+<int type='signed' size='32'>3400</int>
+<int type='signed' size='32'>1523</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -102,9 +102,9 @@
 <string>20240222T110825.947179</string>
 <string>20201116T003810</string>
 <string>20220622T034809.770985</string>
-<string>20230716T025946.190429</string>
+<string>20240315T100125.646025</string>
 <string>20240219T052853.511758</string>
-<string>20240224T115446.005733</string>
+<string>20240325T043745.878384</string>
 <string>20211129T055027.354664</string>
 <string>20220614T030634.122250</string>
 <string>20200630T070242</string>

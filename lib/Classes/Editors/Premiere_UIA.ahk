@@ -1,21 +1,19 @@
 /************************************************************************
- * @description A class to contain UIA variables for various versions of premiere
+ * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2023/10/30
- * @version 1.0.3
+* @date 2024/03/16
+ * @version 2.0.0
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\ptf>
+#Include <Classes\winget>
+#Include <Classes\switchTo>
+#Include <Classes\errorLog>
+#Include <Classes\settings>
+#Include <Other\UIA\UIA>
+#Include <Other\JSON>
 ; }
-
-;// 19/07/2023;
-;// Do not expect any of these values to work out of the box, they are incredibly tempremental
-;// and change constantly as you adjust your workspace. You will need to adjust them any time you do.
-;// you can quickly access this script by right clicking on `My Scripts.ahk` in the windows taskbar tray
-
-;// if you use a version other than the one listed at the top of `Premiere.ahk` (@premVer)
-;// there may be values missing. Follow the instructions in the repos wiki to fill them out
 
 ;// [Table of Contents]
 ;//!
@@ -23,59 +21,96 @@
 timeline              - The timeline panel
 effectsControl        - The effects control panel
 tools                 - The tools panel
-programMon            - The Program monitor panel
+programMonitor        - The Program monitor panel
 effectsPanel          - The Effects panel
 */
 
-class premUIA_Values {
-    __New(ver) {
-        for _, v in this.arr {
-            if !this.%ver%.Has(v) {
-                baseVer := SubStr(ver, 1, InStr(ver, "_",,, 1)-1)
-                this.%v% := this.%baseVer%.Get(v)
-                continue
+Class premUIA_Values {
+    __New(doChecks := true) {
+        UserSettings    := UserPref()
+        currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
+        UserSettings    := ""
+        this.allVals    := JSON.parse(FileRead(this.valueINI),, false)
+        this.currentVer := currentPremVer
+        this.baseVer    := SubStr(this.currentVer, 1, InStr(this.currentVer, "_",, 1, 1)-1)
+
+        if !doChecks
+            return
+
+        if !this.allVals.HasOwnProp(this.currentVer) && !this.allVals.HasOwnProp(this.baseVer) {
+            if WinExist(prem.winTitle) {
+                block.On()
+                this.__setNewVal()
+                block.Off()
+                return
             }
-            this.%v% := this.%ver%.Get(v)
+            errorLog(UnsetError("Current Version has no values set. Please run ``premUIA_Values(false).__setNewVal()``", -1),,, true)
+            return
+        }
+        this.__setClassVal()
+    }
+
+    valueINI   := ptf.SupportFiles "\UIA\values.ini"
+    currentVer := false
+    allValls   := false
+    baseVer    := false
+
+    /**
+     * This function turns the parsed json data into class variables so the user may call on them as an extension of the class object
+     */
+    __setClassVal() {
+        if !this.allVals.HasOwnProp(this.currentVer) && this.allVals.HasOwnProp(this.baseVer)
+            this.currentVer := this.baseVer
+        for k, v in this.allVals.%this.currentVer%.Ownprops() {
+            this.%k% := v
         }
     }
 
-    v22 := Map(
-        "timeline"    , "YvY",    "effectsControl", "YYY",
-        "tools"       , "YuYY",   "programMon", "Yq",
-        "effectsPanel", ""
-    )
-    v23 := Map(
-        "timeline"    , "YyY",    "effectsControl", "YY",
-        "tools"       , "YuYYq",  "programMon", "YtY",
-        "effectsPanel", "YwY"
-    )
-    v24 := Map(
-        "timeline"    , "YwY",    "effectsControl", "YY",
-        "tools"       , "YtY",    "programMon", "YrY",
-        "effectsPanel", "YuY"
-    )
-    v24_3 := Map(
-        "timeline"    , "YyY",    "effectsControl", "YY",
-        "tools"       , "YvY",    "programMon", "YtY",
-        "effectsPanel", "YwY"
-    )
+    /**
+     * This function handles creating new json entries in the `values.ini` files
+     */
+    __setNewVal() {
+        UserSettings    := UserPref()
+        currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
+        UserSettings    := ""
+        premName := WinGet.PremName()
+        AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle)
+        currentVers := JSON.parse(FileRead(ptf.SupportFiles "\UIA\values.ini"),, false)
+        originalVers := currentVers.Clone()
 
-    arr := ["timeline", "effectsControl", "tools", "programMon", "effectsPanel"]
-}
+        if !WinActivate(prem.winTitle)
+            switchTo.Premiere()
 
-;// if a specific version breaks anything from the base, create a new object like;
-;// v23_6 := Map()
-;// and then setting the correct version within `settingsGUI()` will prioritise that version
-;// if it isn't set correctly/a specific version object doesn't exist we fall back to the base version
-try {
-    premClassVer := StrReplace(ptf.premIMGver, ".", "_")
-    premUIA := premUIA_Values(premClassVer)
-} catch {
-    try {
-        premGetVer := StrReplace(ptf.premIMGver, ".", "_")
-        premClassVer := SubStr(premGetVer, 1, InStr(premGetVer, "_",,, 1)-1)
-        premUIA := premUIA_Values(premClassVer)
-    } catch {
-        throw ValueError("The set version of Premiere does not have a UIA object attached to it.`nPlease add an object to the below script to return functionality.`nCurrent Set Premiere Version: " ptf.premIMGver "`nFile: " A_LineFile, -1)
+        windowHotkeys := Map(
+            "effectsControl",   ksa.effectControls,
+            "effectsPanel",     ksa.effectsWindow,
+            "programMon",       ksa.programMonitor,
+            "timeline",         ksa.timelineWindow,
+            "tools",            ksa.toolsWindow
+        )
+        if !currentVers.HasOwnProp(currentPremVer) {
+            currentVers.%currentPremVer% := {}
+            for currentPanel in windowHotkeys {
+                currentVers.%currentPremVer%.%currentPanel% := {}
+            }
+        }
+
+        for currentPanel, currHotkey in windowHotkeys {
+            SendInput(currHotkey)
+            sleep 50
+            currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+            currentVers.%currentPremVer%.%currentPanel% := currentEl
+        }
+
+        this.allVals := currentVers
+        this.__setClassVal()
+        if JSON.stringify(originalVers) == JSON.stringify(currentVers)
+            return
+
+        if !DirExist(A_Temp "\tomshi")
+            DirCreate(A_Temp "\tomshi")
+        tempPath := A_Temp "\tomshi\json_values.ini"
+        FileAppend(JSON.stringify(currentVers), tempPath)
+        try FileMove(tempPath, this.valueINI, true)
     }
 }

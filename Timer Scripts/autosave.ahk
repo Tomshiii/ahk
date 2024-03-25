@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/02/21
- * @version 2.1.7
+ * @date 2024/03/18
+ * @version 2.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -63,12 +63,14 @@ class adobeAutoSave extends count {
 
     __New(rClickPrem := "RButton", rClickMove := "XButton1") {
         try {
+            this.premUIA := premUIA_Values()
             ;// attempt to grab user settings
             this.UserSettings := UserPref()
             this.ms   := (this.UserSettings.autosave_MIN * 60000)
             this.beep := this.UserSettings.autosave_beep
             this.checkMouse   := this.UserSettings.autosave_check_mouse
             this.saveOverride := this.UserSettings.autosave_save_override
+            this.alwaysSave   := this.UserSettings.autosave_always_save
             this.UserSettings := ""
         }
 
@@ -85,6 +87,8 @@ class adobeAutoSave extends count {
             PremHotkeys.__HotkeySet(["^s"], ObjBindMethod(this, '__saveReset'), "I2")
     }
 
+    premUIA := false
+
     ;// Class Variables
     UserSettings  := unset
     ms            := (5*60000) ;// 5min by default
@@ -100,6 +104,7 @@ class adobeAutoSave extends count {
     idleAttempt   := false
     beep          := true
     checkMouse    := true
+    alwaysSave    := true
     soundName     := ""
     currentVolume := ""
     resetingSave  := false
@@ -212,7 +217,7 @@ class adobeAutoSave extends count {
                 || this.__checkRClick() {
                 if A_Index > 1 && this.beep = true
                     this.__playBeep()
-                errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s"),, {time: 2.0})
+                errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s autosave will try again in 2.5s"),, {time: 2.0})
                 sleep 2500
                 continue
             }
@@ -260,7 +265,7 @@ class adobeAutoSave extends count {
      */
     __checkPremPlayback() {
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
-            if !progMon := prem.__uiaCtrlPos(premUIA.programMon)
+            if !progMon := prem.__uiaCtrlPos(this.premUIA.programMon)
                 return false
             this.programMonX1 := progMon.x+100, this.programMonX2 := progMon.x + progMon.width-100, this.programMonY1 := (progMon.y+progMon.height)*0.7,  this.programMonY2 := progMon.y + progMon.height + 150
         }
@@ -353,6 +358,9 @@ class adobeAutoSave extends count {
         ;// backing up project files
         this.__backupFiles()
 
+        if this.alwaysSave = false && !WinActive(prem.winTitle)
+            return
+
         ;// checking for save dialogue box
         if !this.__checkDialogueClass()
             return
@@ -388,6 +396,11 @@ class adobeAutoSave extends count {
             this.__checkPremPlayback()
 
         tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
+
+        ;// attempts to save using `PremiereRemote`
+        saveAttempt := prem.save()
+        if (saveAttempt = true || saveAttempt = -1)
+            return
 
         try {
             block.On()
@@ -429,6 +442,9 @@ class adobeAutoSave extends count {
 
         ;// backing up project files
         this.__backupFiles()
+
+        if this.alwaysSave = false && !WinActive(ae.winTitle)
+            return
 
         ;// checking for save dialogue box
         if !this.__checkDialogueClass("AfterFX")

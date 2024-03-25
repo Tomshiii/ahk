@@ -15,11 +15,11 @@
 ;//* This script will only check the first file in the directory to determine if all files are mono/stereo
 ;//* the final ffmpeg command is different depending on which it is so make sure not to mix different files into this process
 
-recurse := (MsgBox("Do you wish to recurse?", "Recurse?", "4 32 4096") = "Yes") ? "R" : ""
-
 defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
 if !selectedFile := FileSelect("D 3", defaultDir, "Select file to extract audio.")
     return
+
+recurse := (MsgBox("Do you wish to recurse?", "Recurse?", "4 32 4096") = "Yes") ? "R" : ""
 
 ;// creating an instance like this stops the script from producing a traytip for every audio stream
 ;// that it extracts
@@ -37,7 +37,6 @@ loop files selectedFile "\*", "F" recurse {
     if FileExist(fileObj.dir "\" fileObj.NameNoExt "_combined." fileObj.ext) {
         if MsgBox("File: " fileObj.NameNoExt "_combined." fileObj.ext "`nAlready exists, would you like to ignore and continue?`n`nDoing so could cause ffmpeg to run into issues", "Abort or Continue?", "4 32 4096") = "No"
             return
-        continue
     }
     filepaths.Push(A_LoopFileFullPath)
 }
@@ -68,9 +67,22 @@ for v in filepaths {
     fileObj   := obj.SplitPath(v)
     append    := (A_Index != filepaths.Length) ? "&&" A_space : ""
     currentOp := Format(baseCommand, v, fileObj.dir "\" fileObj.NameNoExt "_D." fileObj.ext, fileObj.dir "\" fileObj.NameNoExt "_combined." fileObj.ext)
+    if (!InStr(command, "|||") && StrLen(command . currentOp A_Space append) >= 8191) ||
+        (StrLen(Format('{1}{2} {3}', SubStr(command, InStr(command, "|||",,, -1)), currentOp, append)) >= 8191) {
+            command := Format('{1} ||| {2} {3}', command, currentOp, append)
+            continue
+        }
+
     command   := command currentOp A_Space append
 }
 
-cmd.run(,,, command)
+if !InStr(command, "|||")
+    cmd.run(,,, command)
+else {
+
+    cmds := StrSplit(command, "|||")
+    for v in cmds
+        cmd.run(,,, v)
+}
 ;// calls the traytip
 ffmpegInstance.__Delete()

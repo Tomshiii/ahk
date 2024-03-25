@@ -9,33 +9,23 @@ This repo is a combination of all the scripts I use almost daily to help with ei
 - Video walking through [how to make sense of this repo](https://youtu.be/4qakIF4Vins)
 - Video going over how AHK can help speed up [editing workflows](https://youtu.be/Iv-oR7An_iI)
 
-A lot of the code in the earliest versions of my scripts was either inspired by, or taken from [Taran (previous editor for LTT)](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself so many thanks. These scripts were then further elaborated on, transformed into `ahk v2.0` compliant scripts and now mostly contains my own tinkerings. Any scripts directly from Taran (or anyone else) are labeled as such down below in the Explanation section (or in comments alongside the code, or in acknowledgment files in the same directory).
+A lot of the code in the earliest versions of my scripts was either inspired by, or taken from [Taran (previous editor for LTT)](https://github.com/TaranVH/). His videos on ahk got me into fiddling around with it myself. These scripts were then further elaborated on, transformed into `ahk v2.0` compliant scripts and now mostly contains my own tinkerings with a sprinkle of additional libraries.
 
-> *A lot* of the development for this repo happens in the [dev](https://github.com/Tomshiii/ahk/tree/dev) branch before making its way into a release and these changes can remain over there for months at a time. I recommend checking out any [changes](https://github.com/Tomshiii/ahk/blob/dev/changelog.md) over there in case of important fixes, as well as the [`todo.md`](https://github.com/Tomshiii/ahk/blob/dev/Support%20Files/todo.md) checklist to see if any small bugs are currently being tracked/worked on - ***but*** do be aware that the dev branch **is** in active development and any amount of bugs/issues may still be present as I continue to iron things out.
+> [!Important]
+> *A lot* of the development for this repo happens in the [dev](https://github.com/Tomshiii/ahk/tree/dev) branch before making its way into a release and these changes can remain over there for months at a time. I recommend checking out any [changes](https://github.com/Tomshiii/ahk/blob/dev/changelog.md) over there in case of important fixes, as well as the [Known Issues](https://github.com/users/Tomshiii/projects/2) and [Planned Changes](https://github.com/users/Tomshiii/projects/1) project pages to see if any small bugs/changes are currently being tracked/worked on.  
+> ***However*** do be aware that the dev branch **is** in active development and any amount of bugs/issues may still be present as I continue to iron things out.
 
-***
-
-<div align="center">
-
-### ⚠️ Keep up to date ⚠️
-[Known issues](https://github.com/users/Tomshiii/projects/2) and planned [features/changes](https://github.com/users/Tomshiii/projects/1) can be tracked from the [Projects](https://github.com/Tomshiii/ahk/projects?query=is%3Aopen) page.
-</div>
-
-***
-
-### AHK Version Information:
-This repo is to maintain work on the `ahk v2.0` versions of my scripts.
-> #### ⚠️ These scripts *will not* work in `ahk v1.1` ⚠️
-
-## QMK Keyboard:
-My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) **OR** `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.
 ***
 
 ## [Getting Started:](https://github.com/Tomshiii/ahk/wiki)
 
 Depending on which sections of my repo you intend to use will determine how much manual setup is required from the user; For indepth instructions on how to get started with my repo, alongside any important notices head [over to the wiki page](https://github.com/Tomshiii/ahk/wiki).  
-There you will also find complete definitions of all scripts/functions of my repo as well as important prerequisite information that is required of the user before my repo will function as expected.  
-You will also find [Installation Instructions](https://github.com/Tomshiii/ahk/wiki/Installation)
+There you will also find complete definitions of all scripts/functions of my repo, important prerequisite information that is required of the user before my repo will function as expected, as well as detailed [installation instructions](https://github.com/Tomshiii/ahk/wiki/Installation).
+
+### AHK Version Information:
+This repo is to maintain work on the `ahk v2.0` versions of my scripts.
+> [!Caution]
+> These scripts will not work in `ahk v1.1`
 ***
 
 ## Short Explanation:
@@ -57,12 +47,14 @@ This script will also go through a lot of important functions on boot. Some go t
 - `firstCheck()` - Will check to see if this is the first time you're running my scripts and offer a helpful GUI to run you through a few things to get you going.
 - `oldLogs()` - Will remove logs in `..\Logs\Error Logs\` & `..\Logs\Other Logs\` older than 30 days
 - `adobeTemp()` - Will scan your adobe temp folders and delete them if they're larger than the user adjustable setting. This function also contains a custom folder for `After Effects` and will require the user to meddle with it for full functionality
+- `adobeVerOverride()` - Will optionally check the user's current `Adobe Premiere` and `Adobe After Effects` installed `.exe` files to ensure the version number lines up with what they've set in `settingsGUI()`
 - `libUpdateCheck()` - Will check all external lib files to see if they're up to date
 - `updateAHK()` - Will check for and alert the user of a new version of AutoHotkey
 - `monitorAlert()` - Will alert the user of any changes to their monitor layout so they can be aware that some hotkeys might not work as expected
 
 #### [QMK Keyboard.ahk](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk)
-A script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.3+](https://github.com/Tomshiii/ahk/releases/tag/v2.3) I use a `Planck Ez` custom keyboard.
+My scripts have support for a secondary keyboard with [[QMK Keyboard.ahk]](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) which along with the [`Hasu USB-USB converter`](https://geekhack.org/index.php?topic=109514.0) **OR** `a custom keyboard` (with `custom firmware`), allows you to use a secondary keyboard or numpad to launch completely different scripts than your main keyboard following [this tutorial by Taran from LTT](https://www.youtube.com/watch?v=GZEoss4XIgc). Any macros that have been moved to this script can be pulled out and placed in your own scripts without any issues.  
+[QMK Keyboard.ahk](https://github.com/Tomshiii/ahk/blob/main/QMK%20Keyboard.ahk) is therefor a script to allow separate function for my secondary keyboard. A script originally created by [Taran](https://github.com/TaranVH/) that I've heavily modified to work for my own workflow and to function in ahk v2.0 (and cut down to only applicable buttons). Up until [Release v2.2.5.1](https://github.com/Tomshiii/ahk/releases/tag/v2.2.5.1) I used a small seconday numpad, but as of [Release v2.3+](https://github.com/Tomshiii/ahk/releases/tag/v2.3) I use a `Planck Ez` custom keyboard.
 Check out [\Secondary Keyboard Files](https://github.com/Tomshiii/ahk/tree/main/Support%20Files/Secondary%20Keyboard%20Files) for more information on how that works.
 
 #### [gameCheck.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/gameCheck.ahk)
@@ -82,7 +74,7 @@ A script that will automatically suspend `My Scripts.ahk` when a game is detecte
 ```
 
 #### [autosave.ahk](https://github.com/Tomshiii/ahk/blob/main/Timer%20Scripts/autosave.ahk)
-A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot.
+A script that will automatically save an Adobe Premiere Pro/After Effects project every 5min (if there have been unsaved changes) because Adobe's built in autosave is practically useless and fails to function a lot. This script contains optional code to use [`PremiereRemote`](https://github.com/Tomshiii/ahk/wiki/PremiereRemote) instead of only ahk.
 
 #### [checklist.ahk](https://github.com/Tomshiii/ahk/blob/main/checklist.ahk)
 A script that allows me to keep informed about what I have left to do on a video editing project as well as keeping track of the hours I've put into any individual project. This file gets run from this directory and then reads an autogenerated `checklist.ini` file in your project folder.
@@ -111,4 +103,5 @@ Eg.
 // Script: `My Scripts.ahk`, Line: 643
 ```
 ***
-Plenty more scripts can be found within this repo, feel free to check out the [wiki page](https://github.com/Tomshiii/ahk/wiki/Home) or just browse around for more!
+> [!Tip]
+> Plenty more scripts can be found within this repo, feel free to check out the [wiki page](https://github.com/Tomshiii/ahk/wiki/Home) or just browse around for more!

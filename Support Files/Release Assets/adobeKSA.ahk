@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a function designed to parse through AE and Premiere Pro keyboard shortcut files to automatically assign KSA.ini values
  * @author tomshi
- * @date 2023/09/28
- * @version 1.0.1
+ * @date 2024/02/29
+ * @version 1.0.2
  ***********************************************************************/
 
 #Warn VarUnset, StdOut
@@ -11,26 +11,17 @@
 /*
 This process is **NOT** perfect, some values may still be entered incorrectly or just outright skipped due to the nature of trying to convert the way adobe stores their values to the way ahk can read them.
 It also doesn't help that Premiere & After Effects store their data differently making it even more prone to small errors.
+The code for this script was also written a LONG time ago and by this point has holes starting to leak all over the place. If it works for you, that's great! if it doesn't... sorry about that! I worked super hard on this initially but due to its complicated nature it's been almost impossible to improve/maintain
 **Please** report any issues with this process or any errors you come across, making sure to provide as much information as possible.
 */
 
 ; { \\ #Includes
-#Include *i <Classes\settings>
-#Include *i <Classes\ptf>
-#Include *i <Classes\Mip>
-#Include *i <Classes\tool>
-#Include *i <GUIs\tomshiBasic>
+#Include <Classes\settings>
+#Include <Classes\ptf>
+#Include <Classes\Mip>
+#Include <Classes\tool>
+#Include <GUIs\tomshiBasic>
 ; }
-
-try {
-    UserSettings := UserPref()
-}
-
-if !IsSet(UserSettings)
-    {
-        MsgBox("This script requires the user to properly generate a symlink using ``CreateSymLink.ahk```n`nPlease run ``CreateSymLink.ahk`` to do so and then try running this script again.", A_ScriptName ".ahk requires SymLink")
-        return
-    }
 
 class adobeKSA extends tomshiBasic {
     __New() {
@@ -43,7 +34,9 @@ class adobeKSA extends tomshiBasic {
     Xclude := 500
 
     defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-" A_UserName "\Win"
-    defaultAEFolder := A_AppData "\Adobe\After Effects\" LTrim(ptf.aeIMGver, "v") "\aeks"
+    aeVerNum     := StrReplace(ptf.premIMGver, "v", "")
+    aeVerNumTrim := InStr(this.aeVerNum, ".",,, 2) ? SubStr(this.aeVerNum, 1, InStr(this.aeVerNum, ".",,, 2)-1) : this.aeVerNum
+    defaultAEFolder := A_AppData "\Adobe\After Effects\" this.aeVerNumTrim "\aeks"
 
     KSADir => ptf.rootDir "\Support Files\KSA"
     KSA => this.KSADir "\Keyboard Shortcuts.ini"
@@ -78,23 +71,23 @@ class adobeKSA extends tomshiBasic {
     }
 
     knownKeys := Mip(
-        "BackSpace",    1,
-        "Del",      1,
-        "Delete",       1,
-        "Enter",    1,
-        "Up",   1,
-        "Down", 1,
-        "Left", 1,
-        "Right",    1,
-        "Space",    1,
-        "Tab",  1,
-        "Esc",  1,
-        "Escape",   1,
-        "Insert",   1,
-        "Home", 1,
-        "End",  1,
-        "PgUp", 1,
-        "PgDown",   1
+        "BackSpace",  1,
+        "Del",        1,
+        "Delete",     1,
+        "Enter",      1,
+        "Up",         1,
+        "Down",       1,
+        "Left",       1,
+        "Right",      1,
+        "Space",      1,
+        "Tab",        1,
+        "Esc",        1,
+        "Escape",     1,
+        "Insert",     1,
+        "Home",       1,
+        "End",        1,
+        "PgUp",       1,
+        "PgDown",     1
     )
 
     /**
@@ -286,26 +279,26 @@ class adobeKSA extends tomshiBasic {
      * A map of known replacements
      */
     AEKeyMap := Mip(
-        "Comma",        ",",
-        "LeftArrow",        "{Left}",
-        "RightArrow",       "{Right}",
-        "UpArrow",      "{Up}",
-        "DownArrow",        "{Down}",
-        "FwdDel",       "{BackSpace}",
-        "SingleQuote",      "'",
-        "Backslash",        "\",
-        "PadClear",     "{NumpadClear}",
+        "Comma",       ",",
+        "LeftArrow",   "{Left}",
+        "RightArrow",  "{Right}",
+        "UpArrow",     "{Up}",
+        "DownArrow",   "{Down}",
+        "FwdDel",      "{BackSpace}",
+        "SingleQuote", "'",
+        "Backslash",   "\",
+        "PadClear",    "{NumpadClear}",
         "PadSlash",    "{NumpadDiv}",
         "PadMinus",    "{NumpadSub}",
-        "PadPlus", "{NumpadAdd}",
-        "PadInsert", "{Insert}",
-        "PadDecimal",   "{NumpadDot}",
+        "PadPlus",     "{NumpadAdd}",
+        "PadInsert",   "{Insert}",
+        "PadDecimal",  "{NumpadDot}",
         "PadMultiply", "{NumpadMulti}",
-        "PadHome",      "{NumpadHome}",
-        "PadEnd",       "{NumpadEnd}",
-        "PadPageUp",        "{NumpadPgUp}",
-        "PadPageDown",      "{NumpadPgDn}",
-        "PadDelete",        "{NumpadDel}",
+        "PadHome",     "{NumpadHome}",
+        "PadEnd",      "{NumpadEnd}",
+        "PadPageUp",   "{NumpadPgUp}",
+        "PadPageDown", "{NumpadPgDn}",
+        "PadDelete",   "{NumpadDel}",
 
     )
 
@@ -464,10 +457,11 @@ class adobeXML {
      * @returns {String} returns a string containing the modifiers for the given hotkey or a blank string if none
      */
     __retriveModifiers(path) {
-        ctrl  := (this.xml.selectSingleNode(path "/modifier.ctrl").text  = "true") ? "^" : ""
-        alt   := (this.xml.selectSingleNode(path "/modifier.alt").text   = "true") ? "!" : ""
-        shift := (this.xml.selectSingleNode(path "/modifier.shift").text = "true") ? "+" : ""
-        return (ctrl alt shift)
+
+        try ctrl  := (this.xml.selectSingleNode(path "/modifier.ctrl").text  = "true") ? "^" : ""
+        try alt   := (this.xml.selectSingleNode(path "/modifier.alt").text   = "true") ? "!" : ""
+        try shift := (this.xml.selectSingleNode(path "/modifier.shift").text = "true") ? "+" : ""
+        return (ctrl ?? "") . (alt ?? "") . (shift ?? "")
     }
 
     /**
@@ -477,18 +471,23 @@ class adobeXML {
      * @returns {String} returns complete hotkey
      */
     __buildHotkey(start, codename) {
+        if codename = ""
+            return false
         if InStr(this.xml.text, codename,,, 2) || !InStr(this.xml.text, codename)
             return false
-        firstPrompt := Format('{}/*[commandname="{}"]', start, codename)
-        getItemNum := this.xml.selectSingleNode(firstPrompt).nodename
-        secondPrompt := Format('{}[commandname="{}"]', start "/" getItemNum, codename)
-        getModifiers := this.__retriveModifiers(secondPrompt)
-        virtkey := this.__convVirtToKey(this.xml.selectSingleNode(secondPrompt "/virtualkey").text)
-        getKey := (virtkey != false) ? virtkey : "false"
-        if getKey == "false"
-            return false
-        getKey := adobeKSA().__wrapKey(getKey)
-        return (getModifiers getKey)
+        try {
+            firstPrompt := Format('{}/*[commandname="{}"]', start, codename)
+            getItemNum := this.xml.selectSingleNode(firstPrompt).nodename
+            secondPrompt := Format('{}[commandname="{}"]', start "/" getItemNum, codename)
+            getModifiers := this.__retriveModifiers(secondPrompt)
+            virtkey := this.__convVirtToKey(this.xml.selectSingleNode(secondPrompt "/virtualkey").text)
+            getKey := (virtkey != false) ? virtkey : "false"
+            if getKey == "false"
+                return false
+            getKey := adobeKSA().__wrapKey(getKey)
+            return (getModifiers getKey)
+        }
+        return false
     }
 }
 

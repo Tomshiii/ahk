@@ -268,7 +268,7 @@ class UIA_Edge extends UIA_Browser {
 			throw TargetError("UIA_Browser was unable to find the Document element for browser. Make sure the browser is at least partially visible or active before calling UIA_Browser()", -2)
 		Loop 2 {
 			try {
-				if !(this.URLEditElement := this.BrowserElement.ElementExist({Type:"Edit"},,,UIA.TreeTraversalOptions.LastToFirstOrder,this.DocumentElement)) {
+				if !(this.URLEditElement := this.BrowserElement.ElementExist({Type:"Edit"})) {
 					this.ToolbarElements := this.BrowserElement.FindAll(this.ToolbarControlCondition), topCoord := 10000000
 					for k, v in this.ToolbarElements {
 						if ((bT := v.BoundingRectangle.t) && (bt < topCoord))
@@ -310,7 +310,7 @@ class UIA_Edge extends UIA_Browser {
 	GetCurrentDocumentElement() {
 		local endtime := A_TickCount+3000
 		While A_TickCount < endtime
-			try return this.DocumentElement := this.CurrentDocumentElement := UIA.ElementFromChromium(this.BrowserId).FindFirst(UIA.TrueCondition,1)
+			try return this.DocumentElement := this.CurrentDocumentElement := UIA.ElementFromHandle(this.BrowserId).FindFirst(this.DocumentControlCondition,4) ; ElementFromChromium works unreliably
 		throw Error("Unable to get the current Document element", -1)
 	}
 }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2023/12/24
- * @version 1.5.16.1
+ * @date 2024/03/21
+ * @version 1.5.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,6 +12,7 @@
 #Include <Classes\coord>
 #Include <Classes\errorLog>
 #Include <Classes\Mip>
+#Include <Classes\Editors\Premiere>
 ; }
 
 class WinGet {
@@ -319,23 +320,25 @@ class WinGet {
     {
         if !WinExist(Editors.Premiere.winTitle) && !WinExist(Editors.AE.winTitle)
             return false
-        ;// attempt to get the editors name
-        try {
-            if WinExist(Editors.Premiere.winTitle)
-                WinGet.PremName(&Name, &titlecheck)
-            else if WinExist(Editors.AE.winTitle)
-                WinGet.AEName(&Name, &titlecheck)
+        if !WinExist(Editors.Premiere.winTitle) || !prem.__checkPremRemoteDir("projPath") || !entirePath := prem.__remoteFunc("projPath", true) {
+            ;// attempt to get the editors name
+            try {
+                if WinExist(Editors.Premiere.winTitle)
+                    WinGet.PremName(&Name, &titlecheck)
+                else if WinExist(Editors.AE.winTitle)
+                    WinGet.AEName(&Name, &titlecheck)
+            }
+            ;// if the name returns blank
+            if (!titlecheck || titlecheck = -1) {
+                tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
+                return false
+            }
+            ;// string manipulation to get the path
+            ;// getting the path
+            entirePath := SubStr(name							;// string
+                , dashLocation := InStr(Name, "-") + 2			;// start location
+                , StrLen(Name) - dashLocation)                  ;// length
         }
-        ;// if the name returns blank
-        if (!titlecheck || titlecheck = -1) {
-            tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
-            return false
-        }
-        ;// string manipulation to get the path
-        ;// getting the path
-        entirePath := SubStr(name							;// string
-            , dashLocation := InStr(Name, "-") + 2			;// start location
-            , StrLen(Name) - dashLocation)                  ;// length
         ;// splitting the path
         path := obj.SplitPath(entirePath)
         ;// return object
