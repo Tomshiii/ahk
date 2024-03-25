@@ -8,8 +8,6 @@
 #Include <Classes\winGet>
 ; }
 
-;//! make script wipe ..\UIA\values.ini before zipping so it always tries to grab data first time the user uses it
-
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release
 ; // Then goes through the annoying process of generating the release
 ; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep its code open so you can make sure the install exe isn't too scary)
@@ -422,21 +420,25 @@ ahkWiki       := "E:\Github\ahk_wiki"
 ahkWikiBackup := "E:\Github\Non Github Backups\ahkWikiBackup"
 
 ;// backup ahk folder
-if DirExist(ahkBackup)
-    DirDelete(ahkBackup, 1)
-ToolTip("Backing up ahk folder")
-sleep 1000
-DirCopy(ptf.rootDir, ahkBackup, 1)
-ToolTip("")
-tool.Cust("AHK folder backup complete")
+if MsgBox("Backup ahk folder?",, 0x3) = "Yes" {
+    if DirExist(ahkBackup)
+        DirDelete(ahkBackup, 1)
+    ToolTip("Backing up ahk folder")
+    sleep 1000
+    DirCopy(ptf.rootDir, ahkBackup, 1)
+    ToolTip("")
+    tool.Cust("AHK folder backup complete")
+}
 
 ;// backup wiki
 tool.Wait()
-if DirExist(ahkWikiBackup)
-    DirDelete(ahkWikiBackup, 1)
-ToolTip("Backing up wiki")
-sleep 1000
-DirCopy(ahkWiki, ahkWikiBackup, 1)
-ToolTip("")
-tool.Cust("Backing up wiki folder complete")
+if MsgBox("Backup wiki folder?",, 0x3) = "Yes" {
+    if DirExist(ahkWikiBackup)
+        DirDelete(ahkWikiBackup, 1)
+    ToolTip("Backing up wiki")
+    sleep 1000
+    DirCopy(ahkWiki, ahkWikiBackup, 1)
+    ToolTip("")
+    tool.Cust("Backing up wiki folder complete")
+}
 Run(ptf.rootDir "\Support Files\Release Assets\Adobe SymVers\generateAdobeSym.ahk")

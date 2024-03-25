@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2024/03/18
- * @version 1.0.0
+ * @date 2024/03/25
+ * @version 1.0.1
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -16,6 +16,9 @@ A_ScriptName := "yes.value"
 
 ;// setting version
 ;@Ahk2Exe-SetVersion yes.value
+
+;// requires admin
+;@Ahk2Exe-UpdateManifest 1
 
 ;// forces Admin perms
 full_command_line := DllCall("GetCommandLine", "str")
@@ -260,14 +263,17 @@ class installGUI extends Gui {
             }
 
             /** This function cuts repeat code for dealing with some first time settings */
-            __runSettingsInstall(filename, catchText) {
-                try RunWait(filename)
+            __runSettingsInstall(filename, catchText, workingDir := "") {
+                try RunWait(filename, workingDir)
                 catch
                     this.__addLogEntry(catchText)
             }
             ;// set correct working dir in settings.ini
             this.__addLogEntry("generating updated settings.ini file")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallSettings.ahk", "failed to generate updated settings.ini file")
+            ;// do initial startup functions
+            this.__addLogEntry("running initial startup functions for proper settings file")
+            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\doStartup.ahk", "failed to run initial startup functions", this.installDir)
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk", "failed to set current adobe versions")

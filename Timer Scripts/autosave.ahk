@@ -217,7 +217,7 @@ class adobeAutoSave extends count {
                 || this.__checkRClick() {
                 if A_Index > 1 && this.beep = true
                     this.__playBeep()
-                errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s`nautosave will try again in 2.5s"),, {time: 2.0})
+                errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s autosave will try again in 2.5s"),, {time: 2.0})
                 sleep 2500
                 continue
             }

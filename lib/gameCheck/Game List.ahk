@@ -27,4 +27,5 @@ GroupAdd("games", "Cyberpunk 2077 (C) 2020 by CD Projekt RED ahk_exe Cyberpunk20
 GroupAdd("games", "BloonsTD6 ahk_exe BloonsTD6.exe")
 GroupAdd("games", "Dying Light ahk_exe DyingLightGame.exe")
 GroupAdd("games", "Horizon Zero Dawn: Complete Edition ahk_exe HorizonZeroDawn.exe")
+GroupAdd("games", "Risk of Rain 2 ahk_exe Risk of Rain 2.exe")
 ; -- leave this line it gets used and is needed in settingsGUI()
