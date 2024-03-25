@@ -1,5 +1,5 @@
 import { Utils } from "./Utils";
-// this file is taken from sebinside
+
 declare global { interface Track {
     overwriteClip(clipProjectItem: ProjectItem, time: Time): void;
   }
@@ -15,11 +15,11 @@ export class MarkerUtils {
 
       for (let i = 0; i < app.project.rootItem.children.numItems; i++) {
         const child = app.project.rootItem.children[i];
-
+  
         if (child.name === "marker") {
           for (let j = 0; j < child.children.numItems; j++) {
             const markerChild = child.children[j];
-
+  
             if (markerChild.name === markerColor) {
               return markerChild;
             }
@@ -28,60 +28,60 @@ export class MarkerUtils {
       }
       return undefined;
     }
-
+  
     static getLastUnnamedMarkerClip(): TrackItem {
       const currentSequence = app.project.activeSequence;
       const markerLayer =
         currentSequence.videoTracks[currentSequence.videoTracks.numTracks - 1];
       const markerClips = markerLayer.clips;
       const markerCount = markerClips.numItems;
-
+  
       const lastMarker = markerClips[markerCount - 1];
       debugger;
-
+  
       if (/[0-9]+/.test(lastMarker.name)) {
         return lastMarker;
       }
       return markerClips[markerCount - 2];
     }
-
+  
     static addCustomMarker(color: string): void {
       const currentSequence = app.project.activeSequence;
       const markerLayer =
         currentSequence.videoTracks[currentSequence.videoTracks.numTracks - 1];
-
+  
       Utils.fixPlayHeadPosition();
       const currentPlayheadPosition = currentSequence.getPlayerPosition();
-
+  
       const markerChild = MarkerUtils.getMarkerItemInMarkerFolder(color);
-
+  
       if (markerChild === undefined) {
         alert("No 'marker' folder found. Please use a viable preset.");
       } else {
         markerLayer.overwriteClip(markerChild, currentPlayheadPosition);
       }
     }
-
+  
     static loadMarkersFromCSVFile(): void {
       const csvFileDialog = File.openDialog("Target CSV File", "*.csv");
       const csvFile = csvFileDialog.fsName;
-
+  
       const currentSequence = app.project.activeSequence;
       const markerLayer =
         currentSequence.videoTracks[currentSequence.videoTracks.numTracks - 1];
       const currentPlayheadPosition = currentSequence.getPlayerPosition();
-
+  
       if (csvFile) {
         const file = File(csvFile);
         file.open("r");
         const fullText = file.read();
         file.close();
-
+  
         const lines = fullText.split("\n");
-
+  
         for (let i = 0; i < lines.length; i++) {
           const entry = lines[i].split(",");
-
+  
           if (entry.length === 7) {
             // Parse csv
             const seconds =
@@ -92,18 +92,18 @@ export class MarkerUtils {
             const mode = entry[4];
             const message = entry[5];
             const color = entry[6];
-
+  
             // Insert clip
             const markerChild = MarkerUtils.getMarkerItemInMarkerFolder(color);
             const targetInSeconds = currentPlayheadPosition.seconds + seconds;
             markerLayer.overwriteClip(markerChild, targetInSeconds);
-
+  
             // Retrieve clip
             const clip = MarkerUtils.getLastUnnamedMarkerClip();
-
+  
             // Set name
             clip.name = message;
-
+  
             // Set length
             if (mode === "mode") {
               // If mode == mode, get next item with mode mode and calculate length
@@ -116,7 +116,7 @@ export class MarkerUtils {
                   parseInt(newEntry[2]) +
                   parseInt(newEntry[3]) / 1000;
                 const nextMode = newEntry[4];
-
+  
                 if (nextMode === "mode") {
                   nextItemSeconds = nextSeconds;
                   break;
@@ -133,7 +133,7 @@ export class MarkerUtils {
         }
       }
     }
-
+  
     static saveCustomMarkerToTextFile(): void {
       const currentSequence = app.project.activeSequence;
       const markerLayer =
@@ -141,29 +141,29 @@ export class MarkerUtils {
       const markerClips = markerLayer.clips;
       const markerCount = markerClips.numItems;
       const projectName = app.project.name;
-
+  
       let output = "Project: " + projectName + "\n";
       output += "Sequence: " + currentSequence.name + "\n";
       output += "Marker count: " + markerCount + "\n\n";
-
+  
       for (let i = 0; i < markerCount; i++) {
         const clip = markerClips[i];
         let trueSeconds = parseInt("" + clip.start.seconds);
-
+  
         const hours = parseInt("" + trueSeconds / 3600);
         trueSeconds -= hours * 3600;
-
+  
         const minutes = parseInt("" + trueSeconds / 60);
         trueSeconds -= minutes * 60;
-
+  
         const seconds = trueSeconds;
-
+  
         if (hours > 0) {
           output += Utils.pad(hours, 2) + ":";
         }
         output += Utils.pad(minutes, 2) + ":";
         output += Utils.pad(seconds, 2) + " - ";
-
+  
         output += clip.name + "\n";
       }
       try {
@@ -177,36 +177,36 @@ export class MarkerUtils {
         // User hit cancel
       }
     }
-
+  
     static selectCurrentMarker(): void {
       const clip = MarkerUtils.getCurrentMarkerClip();
-
+  
       if (clip !== undefined) {
         clip.setSelected(true, true);
       }
     }
-
+  
     static getCurrentMarkerClip(): TrackItem {
       const currentSequence = app.project.activeSequence;
       const markerLayer =
         currentSequence.videoTracks[currentSequence.videoTracks.numTracks - 1];
       const markerClips = markerLayer.clips;
       const markerCount = markerClips.numItems;
-
+  
       Utils.fixPlayHeadPosition();
       const currentPlayheadPosition = currentSequence.getPlayerPosition().ticks;
-
+  
       for (let i = 0; i < markerCount; i++) {
         const clip = markerClips[i];
         const startTicks = clip.start.ticks;
         const endTicks = clip.end.ticks;
-
+  
         if (
           parseInt(startTicks) <= parseInt(currentPlayheadPosition) &&
           parseInt(currentPlayheadPosition) < parseInt(endTicks)
         ) {
           return clip;
-        }
+        } 
       }
     }
     static deselectAll(): void {

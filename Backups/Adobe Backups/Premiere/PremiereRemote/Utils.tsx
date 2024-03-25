@@ -1,4 +1,3 @@
-// this file is taken from sebinside
 export class Utils {
     static ticksPerSecond = 254016000000;
 

@@ -1,5 +1,4 @@
 import { Utils } from "./Utils";
-// this file is taken from sebinside
 
 export class EffectUtils {
 
