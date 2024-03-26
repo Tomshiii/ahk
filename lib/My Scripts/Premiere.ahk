@@ -59,6 +59,20 @@ $+1::
 $+2::
 $+3::prem.zoomPreviewWindow(A_ThisHotkey)
 
+`::
+{
+	allowedTitles := Map(
+		"Modify Clip",		 true,
+		"Audio Gain",		 true,
+	)
+	activeWin := WinGetTitle("A")
+	if !allowedTitles.Has(activeWin) {
+		SendInput("{``}")
+		return
+	}
+	SendInput("{Enter}")
+}
+
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts

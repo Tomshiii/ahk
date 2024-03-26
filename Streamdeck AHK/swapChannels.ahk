@@ -1,3 +1,5 @@
+#SingleInstance Force
+
 ;//! this script is mostly designed for my own workflow and isn't really built out with an incredible amount of logic.
 ;//! it is designed to swap the L/R channel on a single track stereo file.
 ;//! attempting to use this script on anything else will either produce unintended results or will simply not function at all
@@ -31,16 +33,17 @@ if prem.__checkTimelineValues() = true {
     if !prem.__waitForTimeline(3)
         return
 }
-
-SendInput(ksa.audioChannels)
-if !WinWait(clipWinTitle,, 3) {
-    block.Off()
-    errorLog(Error("Timed out waiting for window", -1),, 1)
-    return
+if !WinActive(clipWinTitle) {
+    SendInput(ksa.audioChannels)
+    if !WinWait(clipWinTitle,, 3) {
+        block.Off()
+        errorLog(Error("Timed out waiting for window", -1),, 1)
+        return
+    }
+    sleep 150
 }
-sleep 150
-clipWin := obj.WinPos(clipWinTitle)
 
+clipWin := obj.WinPos(clipWinTitle)
 __searchChannel(&x, &y) => ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "channel1.png")
 if !__searchChannel(&x, &y) {
     sleep 150
