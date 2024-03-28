@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/03/20
- * @version 1.7.17
+ * @date 2024/03/28
+ * @version 1.7.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -552,6 +552,8 @@ class Startup {
     adobeVerOverride() {
         if !this.UserSettings.adobeExeOverride
             return
+        if isReload()
+            return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         premFolder := (this.UserSettings.premIsBeta = true) ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) ptf.PremYearVer
         aeFolder   := (this.UserSettings.aeIsBeta = true)   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) ptf.aeYearVer
@@ -571,6 +573,7 @@ class Startup {
         if VerCompare(premExeVer, this.UserSettings.premVer) != 0 || VerCompare(aeExeVer, this.UserSettings.aeVer) != 0 {
             this.UserSettings.premVer := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
             this.UserSettings.aeVer   := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
+            reset.ext_reload()
         }
     }
 
