@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2024/03/28
- * @version 1.7.18
+ * @version 1.7.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -573,6 +573,7 @@ class Startup {
         if VerCompare(premExeVer, this.UserSettings.premVer) != 0 || VerCompare(aeExeVer, this.UserSettings.aeVer) != 0 {
             this.UserSettings.premVer := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
             this.UserSettings.aeVer   := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
+            this.UserSettings.__delAll()
             reset.ext_reload()
         }
     }
