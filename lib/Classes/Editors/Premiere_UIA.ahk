@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
-* @date 2024/03/16
- * @version 2.0.0
+* @date 2024/03/28
+ * @version 2.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -76,7 +76,7 @@ Class premUIA_Values {
         premName := WinGet.PremName()
         AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle)
         currentVers := JSON.parse(FileRead(ptf.SupportFiles "\UIA\values.ini"),, false)
-        originalVers := currentVers.Clone()
+        originalVers := JSON.stringify(currentVers)
 
         if !WinActivate(prem.winTitle)
             switchTo.Premiere()
@@ -104,7 +104,7 @@ Class premUIA_Values {
 
         this.allVals := currentVers
         this.__setClassVal()
-        if JSON.stringify(originalVers) == JSON.stringify(currentVers)
+        if JSON.stringify(currentVers) == originalVers
             return
 
         if !DirExist(A_Temp "\tomshi")
