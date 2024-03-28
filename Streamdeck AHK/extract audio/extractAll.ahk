@@ -36,7 +36,7 @@ for v in filepaths {
     extCommand   := ffmpegInstance.__buildExtractCommand(v, audioStreams.amount, audioStreams.hzArr)
 
     if (!InStr(command, "|||") && StrLen(command . baseCommand A_Space extCommand append) >= 8191) ||
-        (StrLen(Format('{1}{2} {3}{4}', SubStr(command, InStr("|||",,,, -1)), baseCommand, extCommand, append)) >= 8191) {
+        (StrLen(Format('{1}{2} {3}{4}', SubStr(command, InStr(command, "|||",,, -1)), baseCommand, extCommand, append)) >= 8191) {
             command := Format('{1} ||| {2} {3}{4}', command, baseCommand, extCommand, append)
             continue
         }

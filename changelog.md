@@ -10,3 +10,6 @@
 `adobeVerOverride()`
 - Will now only fire on a fresh start and **not** on a reload
 - Will reload all active scripts if it changes a value
+
+## > Other Changes
+- Fix `extractAll.ahk` missing an `InStr` parameter
