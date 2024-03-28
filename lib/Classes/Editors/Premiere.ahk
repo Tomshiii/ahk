@@ -6,7 +6,7 @@
  * @premVer 24.2.1
  * @author tomshi
 * @date 2024/03/21
- * @version 2.1.19
+ * @version 2.1.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1722,14 +1722,10 @@ class Prem {
      * @param {Integer} timout how many `seconds` you want to wait before this function times out
      */
     static __waitForTimeline(timeout := 5) {
-        storeTick := A_TickCount
-        loop {
-            ;// if time elapsed is greated than the timeout param
-            if A_TickCount-storeTick > (timeout*1000)
-                break
+        loop timeout {
             if this.timelineFocusStatus() != true {
                 this.__checkTimelineFocus()
-                sleep 250
+                sleep 1000
                 continue
             }
             return true
@@ -1829,14 +1825,22 @@ class Prem {
                 return
             }
         }
+        tool.Cust("Checking if timeline is in focus", 500, -180,, 16)
         sleep 500
         if this.__checkTimelineValues() {
             if !this.__waitForTimeline()
                 return
         }
+        tool.Cust("Letting Premiere catch up...", 500, -180,, 16)
+        sleep 500
         switch which {
             case "delete": this().__delprev(sendHotkey)
-            default: SendInput(sendHotkey)
+            default:
+                SendInput(sendHotkey)
+                if !WinWait("Rendering",, 2) {
+                    tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
+                    return
+                }
         }
     }
 
