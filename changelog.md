@@ -3,6 +3,8 @@
 
 > [!Caution]
 > If the user has already installed Release `v2.14` of this repo, and does not migrate to this version, they may encounter issues with a few scripts that search for the `Proxy` icon within Premiere. Other than that nothing else should be affected.
+
+- Fixed `vidSelect.ahk` no longer working
 ***
 
 > [!Warning]
