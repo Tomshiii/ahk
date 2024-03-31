@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/03/18
- * @version 2.1.10
+ * @date 2024/03/30
+ * @version 2.1.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -276,19 +276,6 @@ class adobeAutoSave extends count {
         this.userPlayback := true
     }
 
-    /** this function will double check to see if playback has resumed */
-    __checkPlayback() {
-        loop 3 {
-            ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
-            if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
-                prem.__checkTimelineFocus()
-                sleep 250
-                SendEvent(KSA.playStop)
-                continue
-            }
-            return
-        }
-    }
 
     /**
      * Check for a window containing a class used by windows to denote that a file select/dir select GUI is open (ie. a save window)
@@ -310,7 +297,17 @@ class adobeAutoSave extends count {
         prem.__checkTimelineFocus()
         sleep 250
         SendEvent(KSA.playStop)
-        this.__checkPlayback()
+        sleep 2000
+        loop 3 {
+            ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
+            if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
+                prem.__checkTimelineFocus()
+                sleep 1500
+                SendEvent(KSA.playStop)
+                continue
+            }
+            return
+        }
         prem.__checkTimelineFocus()
     }
 

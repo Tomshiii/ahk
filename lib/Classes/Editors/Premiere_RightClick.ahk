@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.1
  * @author tomshi, taranVH
- * @date 2024/02/21
- * @version 2.0.21
+ * @date 2024/03/29
+ * @version 2.1.0
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -19,6 +19,7 @@
 #Include <Classes\obj>
 #Include <Classes\winGet>
 #Include <Functions\checkStuck>
+#Include <Other\MouseHook>
 #Include <GUIs\Premiere Timeline GUI>
 ; }
 
@@ -74,6 +75,9 @@ class rbuttonPrem {
 	colourOrNorm := ""
 	colour  := ""
 	colour2 := ""
+
+	lh := false
+	xh := false
 
 	;First, we define all the timeline's DEFAULT possible colors.
 	;(Note that your colors will be different if you changed the UI brightness inside [preferences > appearance > brightness] OR may be different in other versions of premiere)
@@ -150,7 +154,7 @@ class rbuttonPrem {
 	__checkForPlayhead(coordObj, search := true) {
 		;// checking to see if the playhead is on the screen
 		if prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y})
-			SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stops
+			SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stop
 		;// this stops the script from potentially clicking a clip if using `rbuttonPrem().movePlayhead(false)`
 		if !search
 			return
@@ -196,24 +200,12 @@ class rbuttonPrem {
 	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", prem.RClickIsActive := false)
 
 	/** A functon to define what should happen anytime the class is closed */
-	__exit() => (PremHotkeys.__HotkeyReset(["LButton", "XButton2"]), this.__resetClicks(), checkstuck(), Exit())
-
-	/**
-	 * Defines what happens when certain buttons are pressed while RButton is held down
-	 * @param {Array} arr all keys you wish to assign a function
-	 */
-	__HotkeySet(arr) {
-		PremHotkeys.__HotkeySet(arr, __set)
-		/**
-		 * A function to define what each hotkey passed will do
-		 * @param {String} which the keyname
-		 */
-		__set(which, *) {
-			switch which {
-				case "LButton":  this.leftClick := true
-				case "XButton2": this.leftClick := true, this.xbuttonClick := true
-			}
-		}
+	__exit() {
+		(this.lh != false) ? this.lh.Stop() : ""
+		(this.xh != false) ? this.xh.Stop() : ""
+		this.__resetClicks()
+		checkstuck()
+		Exit()
 	}
 
 	/**
@@ -242,7 +234,9 @@ class rbuttonPrem {
 		origMouse := obj.MousePos()
 
 		;// set what `LButton` & `XButton2` do
-		this.__HotkeySet(["LButton", "XButton2"])
+		this.lh := MouseHook("LButton Down", (*) => (this.leftClick := true, this.lh.Stop()))
+		this.xh := MouseHook("XButton2 Down", (*) => (this.leftClick := true, this.xbuttonClick := true, this.xh.Stop()))
+		this.lh.Start(), this.xh.Start()
 
 		;// checks to see whether the timeline position has been located
 		if !prem.__checkTimeline() {

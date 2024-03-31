@@ -13,3 +13,5 @@
 
 ## > Other Changes
 - Fix `extractAll.ahk` missing an `InStr` parameter
+- Added [`MouseHook {`](https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350) by [nperovic](https://github.com/nperovic/)
+    - `Premiere_RightClick.ahk` now uses `MouseHook {` to determine when `LButton`/`XButton2` are pressed

@@ -16,4 +16,5 @@
 `FileGetExtendedProp.ahk` => : https://www.autohotkey.com/r?p=434132  
 
 `nperovic`  
-`SystemThemeAwareToolTip` => : https://github.com/nperovic/SystemThemeAwareToolTip
+`SystemThemeAwareToolTip.ahk` => : https://github.com/nperovic/SystemThemeAwareToolTip
+`MouseHook.ahk`               => : https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350
