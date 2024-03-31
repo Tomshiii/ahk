@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/03/28
- * @version 1.7.19
+ * @date 2024/04/01
+ * @version 1.7.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -40,6 +40,8 @@ class Startup {
         this.MyRelease := this.__getMainRelease()
         ;// populate settings variables
         this.UserSettings := UserPref()
+
+        this.origSkipVer := this.UserSettings.skipVersion
     }
 
     ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
@@ -53,6 +55,8 @@ class Startup {
     alertTimer := false
     alertTtipNum := 20
     activeFunc := ""
+
+    origSkipVer := ""
 
     __alertTooltip() {
         SetTimer(alertttp, 1)
@@ -257,6 +261,8 @@ class Startup {
         if version = 0
             return
         tool.Wait(1)
+        if version = this.UserSettings.skipVersion
+            return
         if this.MyRelease != version
             tool.Cust("Current Installed Version = " this.MyRelease "`nCurrent Github Release = " version, 5000,,, this.startupTtpNum)
         else
@@ -301,8 +307,10 @@ class Startup {
                 MyGui.AddButton("Section X" x-85 " ys+13", "Download").OnEvent("Click", Down)
                 ;set cancel button
                 MyGui.AddButton("Default X+5", "Cancel").OnEvent("Click", closegui)
+                ;set "skip this version" checkbox
+                MyGui.AddCheckbox("xs-175 Ys-30", "Skip this Version").OnEvent("Click", prompt.bind("skip"))
                 ;set "don't prompt again" checkbox
-                MyGui.AddCheckbox("xs-175 Ys-10", "Don't prompt again").OnEvent("Click", prompt.bind("prompt"))
+                MyGui.AddCheckbox("xs-175 Y+5", "Don't prompt again").OnEvent("Click", prompt.bind("prompt"))
                 ;set beta checkbox
                 betaCheck := (this.UserSettings.beta_update_check = true)
                            ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
@@ -317,6 +325,7 @@ class Startup {
                             this.UserSettings.beta_update_check := (guiCtrl.value = 0) ? false : true
                             this.UserSettings.__delAll()
                             Run(A_ScriptFullPath)
+                        case "skip": this.UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer
                     }
                 }
                 githubButton(*) {

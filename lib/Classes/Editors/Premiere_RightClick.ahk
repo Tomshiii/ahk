@@ -255,7 +255,7 @@ class rbuttonPrem {
 			;// checks the colour at the mouse cursor and then determines whether the track is blank
 			this.__setColours(origMouse)
 			if this.__checkForBlank(this.colour) {
-				SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timelineCol, in addition to its other uses. i think it is good to use here, now. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
+				SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timeline, in addition to its other uses. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
 				this.__exit()
 			}
 

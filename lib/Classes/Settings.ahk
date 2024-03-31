@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/03/20
- * @version 1.2.11
+ * @date 2024/04/01
+ * @version 1.2.12
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "2024", "v24.1", "false", "v24.1", "false", "v25.4", "false", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0"]
+    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "2024", "v24.1", "false", "v24.1", "false", "v25.4", "false", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0", "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -45,6 +45,7 @@ class UserPref {
             case "game_SEC":                          return 2
             case "multi_SEC":                         return 5
             case "prem_year", "ae_year", "ps_year":   return 2024
+            case "skipVersion":                       return "v2.0"
             case "version":                           return "v2.0"
             case "monitor_alert":                     return "0"
             case "premVer":                           return "v24.1"
@@ -252,6 +253,7 @@ class UserPref {
                     first check={}
                     block aware={}
                     monitor alert={}
+                    skipVersion={}
                     version={}
                 )", filelocation)
                 ;// replace {}
