@@ -21,10 +21,10 @@ TraySetIcon(ptf.Icons "\resolve.png")
 startupTray()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.2
+;\\v2.9.3
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.14.0.1
+;\\v2.14.1
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY
@@ -147,7 +147,7 @@ Rbutton:: ;ports the functionality of "Premiere_RightClick.ahk" as best as possi
                     errorLog(Error("Couldn't find reference point for scrub bar", -1),, 1)
                     return
                 }
-            scrub := speakY + 74
+            scrub := speakY + 72
             tool.Cust("This macro has grabbed the coordinates of your timeline`nIf you move your timeline, you'll need to reload the script to grab new coordinates", 2.5)
         }
     if ypos < scrub

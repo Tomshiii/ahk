@@ -537,7 +537,7 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>true</FolderState>
+					<FolderState>false</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>Broadcast_Sm</Icon>
 					<SubList Version="1">
@@ -4996,6 +4996,27 @@
 									</ProxyPreset>
 									<Name>High Quality 2160p 4K</Name>
 								</PresetsUIItem>
+								<PresetsUIItem Version="4" Index="13">
+									<FormatName>QuickTime</FormatName>
+									<PresetType>0</PresetType>
+									<FSize>Based on source </FSize>
+									<FPS>Based on source </FPS>
+									<TRate>10 Mbps</TRate>
+									<Comment>($$$/AME/EncoderHost/Presets/c37ff3aa-dfad-4551-893d-c5cdc40b497b/PresetComments=QuickTime H264 High bitrate output - All video settings matched to source)</Comment>
+									<ItemType>0</ItemType>
+									<ToolTipSum>H264 Match Source - High bitrate&#10;Video: Based on source, Quality 100, H.264&#10;Audio: Uncompressed, 48000 Hz, Stereo, 24 bit&#10;Comment: QuickTime H264 High bitrate output - All video settings matched to source</ToolTipSum>
+									<ProxyPreset Version="3">
+										<PresetModifiedTime>20240221T094253.897772</PresetModifiedTime>
+										<PresetFileType>1299148630</PresetFileType>
+										<PresetClassID>1061109567</PresetClassID>
+										<PresetName>($$$/AME/EncoderHost/Presets/c37ff3aa-dfad-4551-893d-c5cdc40b497b/PresetName=H264 Match Source - High bitrate)</PresetName>
+										<PresetID>c37ff3aa-dfad-4551-893d-c5cdc40b497b</PresetID>
+										<FolderDisplayPath>System Presets/Broadcast/H.264</FolderDisplayPath>
+										<IngestPreset>false</IngestPreset>
+										<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\H264 Match Source - High bitrate.epr</PresetPath>
+									</ProxyPreset>
+									<Name>H264 Match Source - High bitrate</Name>
+								</PresetsUIItem>
 							</SubList>
 							<Name>H.264</Name>
 						</PresetsUIItem>
@@ -7900,7 +7921,7 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>true</FolderState>
+					<FolderState>false</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>Camcorder_Sm</Icon>
 					<SubList Version="1">
@@ -8936,7 +8957,7 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>true</FolderState>
+					<FolderState>false</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>Cinema_Sm</Icon>
 					<SubList Version="1">
@@ -9009,7 +9030,7 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>true</FolderState>
+					<FolderState>false</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>MobileDevices_Sm</Icon>
 					<SubList Version="1">
@@ -9166,7 +9187,7 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>true</FolderState>
+					<FolderState>false</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>DVD_Sm</Icon>
 					<SubList Version="1">
@@ -9779,7 +9800,7 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>true</FolderState>
+					<FolderState>false</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>Video_Sm</Icon>
 					<SubList Version="1">
@@ -10293,305 +10314,11 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>false</FolderState>
+					<FolderState>true</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>Desktop_Sm</Icon>
 					<SubList Version="1">
 						<PresetsUIItem Version="4" Index="0">
-							<FormatName>Apple ProRes MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>Based on source </FSize>
-							<FPS>Based on source </FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/5eeb435f-3f49-4a10-b4e0-c1aad5e7fc67/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>Apple ProRes 4444 XQ with alpha&#10;Video: Based on source&#10;Audio: 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.786600</PresetModifiedTime>
-								<PresetFileType>1347246150</PresetFileType>
-								<PresetClassID>1297630752</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/5eeb435f-3f49-4a10-b4e0-c1aad5e7fc67/PresetName=Apple ProRes 4444 XQ with alpha)</PresetName>
-								<PresetID>5eeb435f-3f49-4a10-b4e0-c1aad5e7fc67</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\4D584620_504D5846\Apple ProRes 4444 XQ with alpha.epr</PresetPath>
-							</ProxyPreset>
-							<Name>Apple ProRes 4444 XQ with alpha</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="1">
-							<FormatName>Apple ProRes MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>Based on source </FSize>
-							<FPS>Based on source </FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/24fdb9ff-2f47-41c9-84da-96c3a603bf25/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>Apple ProRes 4444 XQ&#10;Video: Based on source&#10;Audio: 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232011.826677</PresetModifiedTime>
-								<PresetFileType>1347246150</PresetFileType>
-								<PresetClassID>1297630752</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/24fdb9ff-2f47-41c9-84da-96c3a603bf25/PresetName=Apple ProRes 4444 XQ)</PresetName>
-								<PresetID>24fdb9ff-2f47-41c9-84da-96c3a603bf25</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\4D584620_504D5846\Apple ProRes 4444 XQ.epr</PresetPath>
-							</ProxyPreset>
-							<Name>Apple ProRes 4444 XQ</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="2">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>1920x1080</FSize>
-							<FPS>23.976 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/99a97316-776c-49e2-a8c4-22686e1b70f4/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC HD Intra Class100 23.976p HLG&#10;Video: 1920x1080 (1.0), 23.976 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.856232</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/99a97316-776c-49e2-a8c4-22686e1b70f4/PresetName=XAVC HD Intra Class100 23.976p HLG)</PresetName>
-								<PresetID>99a97316-776c-49e2-a8c4-22686e1b70f4</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 23.976p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC HD Intra Class100 23.976p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="3">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>1920x1080</FSize>
-							<FPS>25 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/88767ac7-006b-4de8-a14f-73890d9b144c/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC HD Intra Class100 25p HLG&#10;Video: 1920x1080 (1.0), 25 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.661129</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/88767ac7-006b-4de8-a14f-73890d9b144c/PresetName=XAVC HD Intra Class100 25p HLG)</PresetName>
-								<PresetID>88767ac7-006b-4de8-a14f-73890d9b144c</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 25p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC HD Intra Class100 25p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="4">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>1920x1080</FSize>
-							<FPS>29.97 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/3a79630c-af9f-4610-ba72-0995c07a4b82/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC HD Intra Class100 29.97p HLG&#10;Video: 1920x1080 (1.0), 29.97 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232012.084451</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/3a79630c-af9f-4610-ba72-0995c07a4b82/PresetName=XAVC HD Intra Class100 29.97p HLG)</PresetName>
-								<PresetID>3a79630c-af9f-4610-ba72-0995c07a4b82</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 29.97p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC HD Intra Class100 29.97p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="5">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>1920x1080</FSize>
-							<FPS>25 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/3f56019c-4fc2-491c-82b7-e6ee7229e848/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC HD Intra Class100 50i HLG&#10;Video: 1920x1080 (1.0), 25 fps, Upper, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.857232</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/3f56019c-4fc2-491c-82b7-e6ee7229e848/PresetName=XAVC HD Intra Class100 50i HLG)</PresetName>
-								<PresetID>3f56019c-4fc2-491c-82b7-e6ee7229e848</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 50i HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC HD Intra Class100 50i HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="6">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>1920x1080</FSize>
-							<FPS>50 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/903690d5-760b-4421-a5f7-8ca477455143/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC HD Intra Class100 50p HLG&#10;Video: 1920x1080 (1.0), 50 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.662640</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/903690d5-760b-4421-a5f7-8ca477455143/PresetName=XAVC HD Intra Class100 50p HLG)</PresetName>
-								<PresetID>903690d5-760b-4421-a5f7-8ca477455143</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 50p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC HD Intra Class100 50p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="7">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>1920x1080</FSize>
-							<FPS>29.97 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/cb9e8f16-6b46-40dc-bf89-068f60670eb7/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC HD Intra Class100 59.94i HLG&#10;Video: 1920x1080 (1.0), 29.97 fps, Upper, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232012.085451</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/cb9e8f16-6b46-40dc-bf89-068f60670eb7/PresetName=XAVC HD Intra Class100 59.94i HLG)</PresetName>
-								<PresetID>cb9e8f16-6b46-40dc-bf89-068f60670eb7</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 59.94i HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC HD Intra Class100 59.94i HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="8">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>1920x1080</FSize>
-							<FPS>59.94 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/9a7ee02e-b595-4265-8fa5-b17c69ec0b43/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC HD Intra Class100 59.94p HLG&#10;Video: 1920x1080 (1.0), 59.94 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.858233</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/9a7ee02e-b595-4265-8fa5-b17c69ec0b43/PresetName=XAVC HD Intra Class100 59.94p HLG)</PresetName>
-								<PresetID>9a7ee02e-b595-4265-8fa5-b17c69ec0b43</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 59.94p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC HD Intra Class100 59.94p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="9">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>3840x2160</FSize>
-							<FPS>23.976 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/4682a9c8-5289-459c-b5d6-9badbf2ded42/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC QFHD Intra Class300 23.976p HLG&#10;Video: 3840x2160 (1.0), 23.976 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232012.089451</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/4682a9c8-5289-459c-b5d6-9badbf2ded42/PresetName=XAVC QFHD Intra Class300 23.976p HLG)</PresetName>
-								<PresetID>4682a9c8-5289-459c-b5d6-9badbf2ded42</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 23.976p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC QFHD Intra Class300 23.976p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="10">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>3840x2160</FSize>
-							<FPS>25 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/1c972cec-0a36-4e43-8730-7bf110a621fd/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC QFHD Intra Class300 25p HLG&#10;Video: 3840x2160 (1.0), 25 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.861233</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/1c972cec-0a36-4e43-8730-7bf110a621fd/PresetName=XAVC QFHD Intra Class300 25p HLG)</PresetName>
-								<PresetID>1c972cec-0a36-4e43-8730-7bf110a621fd</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 25p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC QFHD Intra Class300 25p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="11">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>3840x2160</FSize>
-							<FPS>29.97 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/18855e98-7137-4e3d-9f4e-e71777870525/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC QFHD Intra Class300 29.97p HLG&#10;Video: 3840x2160 (1.0), 29.97 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.667141</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/18855e98-7137-4e3d-9f4e-e71777870525/PresetName=XAVC QFHD Intra Class300 29.97p HLG)</PresetName>
-								<PresetID>18855e98-7137-4e3d-9f4e-e71777870525</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 29.97p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC QFHD Intra Class300 29.97p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="12">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>3840x2160</FSize>
-							<FPS>50 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/2c23f566-814b-417a-8ade-39a26aff3f39/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC QFHD Intra Class300 50p HLG&#10;Video: 3840x2160 (1.0), 50 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232012.090452</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/2c23f566-814b-417a-8ade-39a26aff3f39/PresetName=XAVC QFHD Intra Class300 50p HLG)</PresetName>
-								<PresetID>2c23f566-814b-417a-8ade-39a26aff3f39</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 50p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC QFHD Intra Class300 50p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="13">
-							<FormatName>MXF OP1a</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>3840x2160</FSize>
-							<FPS>59.94 fps</FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/10fc731b-4d96-4097-9d6a-c4c6a1e9ccdb/PresetComments=Custom)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>XAVC QFHD Intra Class300 59.94p HLG&#10;Video: 3840x2160 (1.0), 59.94 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.863246</PresetModifiedTime>
-								<PresetFileType>1297630808</PresetFileType>
-								<PresetClassID>1480868673</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/10fc731b-4d96-4097-9d6a-c4c6a1e9ccdb/PresetName=XAVC QFHD Intra Class300 59.94p HLG)</PresetName>
-								<PresetID>10fc731b-4d96-4097-9d6a-c4c6a1e9ccdb</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 59.94p HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>XAVC QFHD Intra Class300 59.94p HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="14">
 							<FormatName>QuickTime</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>Based on source </FSize>
@@ -10612,7 +10339,7 @@
 							</ProxyPreset>
 							<Name>Apple ProRes 422 HQ HLG</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="15">
+						<PresetsUIItem Version="4" Index="1">
 							<FormatName>QuickTime</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>Based on source </FSize>
@@ -10633,7 +10360,7 @@
 							</ProxyPreset>
 							<Name>Apple ProRes 422 HQ PQ</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="16">
+						<PresetsUIItem Version="4" Index="2">
 							<FormatName>QuickTime</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>Based on source </FSize>
@@ -10654,7 +10381,7 @@
 							</ProxyPreset>
 							<Name>Apple ProRes 4444 HLG</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="17">
+						<PresetsUIItem Version="4" Index="3">
 							<FormatName>QuickTime</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>Based on source </FSize>
@@ -10675,7 +10402,7 @@
 							</ProxyPreset>
 							<Name>Apple ProRes 4444 PQ</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="18">
+						<PresetsUIItem Version="4" Index="4">
 							<FormatName>QuickTime</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>Based on source </FSize>
@@ -10696,7 +10423,7 @@
 							</ProxyPreset>
 							<Name>Apple ProRes 4444 with alpha HLG</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="19">
+						<PresetsUIItem Version="4" Index="5">
 							<FormatName>QuickTime</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>Based on source </FSize>
@@ -10717,112 +10444,28 @@
 							</ProxyPreset>
 							<Name>Apple ProRes 4444 with alpha PQ</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="20">
-							<FormatName>QuickTime</FormatName>
+						<PresetsUIItem Version="4" Index="6">
+							<FormatName>Apple ProRes MXF OP1a</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>Based on source </FSize>
 							<FPS>Based on source </FPS>
 							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/ac8e92be-38b8-4e2b-bd24-30efa4e5e1a8/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set as Rec. 2100 HLG.)</Comment>
+							<Comment>($$$/AME/EncoderHost/Presets/24fdb9ff-2f47-41c9-84da-96c3a603bf25/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.)</Comment>
 							<ItemType>0</ItemType>
-							<ToolTipSum>Apple ProRes 4444 XQ HLG&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set as Rec. 2100 HLG.</ToolTipSum>
+							<ToolTipSum>Apple ProRes 4444 XQ&#10;Video: Based on source&#10;Audio: 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.</ToolTipSum>
 							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232011.767701</PresetModifiedTime>
-								<PresetFileType>1299148630</PresetFileType>
-								<PresetClassID>1061109567</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/ac8e92be-38b8-4e2b-bd24-30efa4e5e1a8/PresetName=Apple ProRes 4444 XQ HLG)</PresetName>
-								<PresetID>ac8e92be-38b8-4e2b-bd24-30efa4e5e1a8</PresetID>
+								<PresetModifiedTime>20231008T232011.826677</PresetModifiedTime>
+								<PresetFileType>1347246150</PresetFileType>
+								<PresetClassID>1297630752</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/24fdb9ff-2f47-41c9-84da-96c3a603bf25/PresetName=Apple ProRes 4444 XQ)</PresetName>
+								<PresetID>24fdb9ff-2f47-41c9-84da-96c3a603bf25</PresetID>
 								<FolderDisplayPath></FolderDisplayPath>
 								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ HLG.epr</PresetPath>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\4D584620_504D5846\Apple ProRes 4444 XQ.epr</PresetPath>
 							</ProxyPreset>
-							<Name>Apple ProRes 4444 XQ HLG</Name>
+							<Name>Apple ProRes 4444 XQ</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="21">
-							<FormatName>QuickTime</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>Based on source </FSize>
-							<FPS>Based on source </FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/62b168e7-9684-4686-a2f6-3de3c1761b9d/PresetComments=The highest-quality version of ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set to PQ.)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>Apple ProRes 4444 XQ PQ&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: The highest-quality version of ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set to PQ.</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.237552</PresetModifiedTime>
-								<PresetFileType>1299148630</PresetFileType>
-								<PresetClassID>1061109567</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/62b168e7-9684-4686-a2f6-3de3c1761b9d/PresetName=Apple ProRes 4444 XQ PQ)</PresetName>
-								<PresetID>62b168e7-9684-4686-a2f6-3de3c1761b9d</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ PQ.epr</PresetPath>
-							</ProxyPreset>
-							<Name>Apple ProRes 4444 XQ PQ</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="22">
-							<FormatName>QuickTime</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>Based on source </FSize>
-							<FPS>Based on source </FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/6232c352-7b31-489f-8f7e-f79159d1a0aa/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set as Rec. 2100 HLG.)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>Apple ProRes 4444 XQ with alpha HLG&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set as Rec. 2100 HLG.</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.732451</PresetModifiedTime>
-								<PresetFileType>1299148630</PresetFileType>
-								<PresetClassID>1061109567</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/6232c352-7b31-489f-8f7e-f79159d1a0aa/PresetName=Apple ProRes 4444 XQ with alpha HLG)</PresetName>
-								<PresetID>6232c352-7b31-489f-8f7e-f79159d1a0aa</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ with alpha HLG.epr</PresetPath>
-							</ProxyPreset>
-							<Name>Apple ProRes 4444 XQ with alpha HLG</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="23">
-							<FormatName>QuickTime</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>Based on source </FSize>
-							<FPS>Based on source </FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/233e607a-7ace-415b-93c0-06b54956bc7d/PresetComments=The highest-quality version of ProRes for 4:4:4:4 image sources with alpha channel. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set to Rec. 2100 PQ.)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>Apple ProRes 4444 XQ with alpha PQ&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: The highest-quality version of ProRes for 4:4:4:4 image sources with alpha channel. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set to Rec. 2100 PQ.</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232011.768204</PresetModifiedTime>
-								<PresetFileType>1299148630</PresetFileType>
-								<PresetClassID>1061109567</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/233e607a-7ace-415b-93c0-06b54956bc7d/PresetName=Apple ProRes 4444 XQ with alpha PQ)</PresetName>
-								<PresetID>233e607a-7ace-415b-93c0-06b54956bc7d</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ with alpha PQ.epr</PresetPath>
-							</ProxyPreset>
-							<Name>Apple ProRes 4444 XQ with alpha PQ</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="24">
-							<FormatName>QuickTime</FormatName>
-							<PresetType>0</PresetType>
-							<FSize>Based on source </FSize>
-							<FPS>Based on source </FPS>
-							<TRate>-</TRate>
-							<Comment>($$$/AME/EncoderHost/Presets/6138d052-31dc-470a-ace2-61f2c4f665c2/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.)</Comment>
-							<ItemType>0</ItemType>
-							<ToolTipSum>Apple ProRes 4444 XQ with alpha&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.</ToolTipSum>
-							<ProxyPreset Version="3">
-								<PresetModifiedTime>20231008T232009.238051</PresetModifiedTime>
-								<PresetFileType>1299148630</PresetFileType>
-								<PresetClassID>1061109567</PresetClassID>
-								<PresetName>($$$/AME/EncoderHost/Presets/6138d052-31dc-470a-ace2-61f2c4f665c2/PresetName=Apple ProRes 4444 XQ with alpha)</PresetName>
-								<PresetID>6138d052-31dc-470a-ace2-61f2c4f665c2</PresetID>
-								<FolderDisplayPath></FolderDisplayPath>
-								<IngestPreset>false</IngestPreset>
-								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ with alpha.epr</PresetPath>
-							</ProxyPreset>
-							<Name>Apple ProRes 4444 XQ with alpha</Name>
-						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="25">
+						<PresetsUIItem Version="4" Index="7">
 							<FormatName>QuickTime</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>Based on source </FSize>
@@ -10843,7 +10486,133 @@
 							</ProxyPreset>
 							<Name>Apple ProRes 4444 XQ</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="26">
+						<PresetsUIItem Version="4" Index="8">
+							<FormatName>QuickTime</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>Based on source </FSize>
+							<FPS>Based on source </FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/ac8e92be-38b8-4e2b-bd24-30efa4e5e1a8/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set as Rec. 2100 HLG.)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>Apple ProRes 4444 XQ HLG&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set as Rec. 2100 HLG.</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232011.767701</PresetModifiedTime>
+								<PresetFileType>1299148630</PresetFileType>
+								<PresetClassID>1061109567</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/ac8e92be-38b8-4e2b-bd24-30efa4e5e1a8/PresetName=Apple ProRes 4444 XQ HLG)</PresetName>
+								<PresetID>ac8e92be-38b8-4e2b-bd24-30efa4e5e1a8</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>Apple ProRes 4444 XQ HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="9">
+							<FormatName>QuickTime</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>Based on source </FSize>
+							<FPS>Based on source </FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/62b168e7-9684-4686-a2f6-3de3c1761b9d/PresetComments=The highest-quality version of ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set to PQ.)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>Apple ProRes 4444 XQ PQ&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: The highest-quality version of ProRes for 4:4:4:4 image sources. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set to PQ.</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.237552</PresetModifiedTime>
+								<PresetFileType>1299148630</PresetFileType>
+								<PresetClassID>1061109567</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/62b168e7-9684-4686-a2f6-3de3c1761b9d/PresetName=Apple ProRes 4444 XQ PQ)</PresetName>
+								<PresetID>62b168e7-9684-4686-a2f6-3de3c1761b9d</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ PQ.epr</PresetPath>
+							</ProxyPreset>
+							<Name>Apple ProRes 4444 XQ PQ</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="10">
+							<FormatName>Apple ProRes MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>Based on source </FSize>
+							<FPS>Based on source </FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/5eeb435f-3f49-4a10-b4e0-c1aad5e7fc67/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>Apple ProRes 4444 XQ with alpha&#10;Video: Based on source&#10;Audio: 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.786600</PresetModifiedTime>
+								<PresetFileType>1347246150</PresetFileType>
+								<PresetClassID>1297630752</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/5eeb435f-3f49-4a10-b4e0-c1aad5e7fc67/PresetName=Apple ProRes 4444 XQ with alpha)</PresetName>
+								<PresetID>5eeb435f-3f49-4a10-b4e0-c1aad5e7fc67</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\4D584620_504D5846\Apple ProRes 4444 XQ with alpha.epr</PresetPath>
+							</ProxyPreset>
+							<Name>Apple ProRes 4444 XQ with alpha</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="11">
+							<FormatName>QuickTime</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>Based on source </FSize>
+							<FPS>Based on source </FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/6138d052-31dc-470a-ace2-61f2c4f665c2/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>Apple ProRes 4444 XQ with alpha&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source.</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.238051</PresetModifiedTime>
+								<PresetFileType>1299148630</PresetFileType>
+								<PresetClassID>1061109567</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/6138d052-31dc-470a-ace2-61f2c4f665c2/PresetName=Apple ProRes 4444 XQ with alpha)</PresetName>
+								<PresetID>6138d052-31dc-470a-ace2-61f2c4f665c2</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ with alpha.epr</PresetPath>
+							</ProxyPreset>
+							<Name>Apple ProRes 4444 XQ with alpha</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="12">
+							<FormatName>QuickTime</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>Based on source </FSize>
+							<FPS>Based on source </FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/6232c352-7b31-489f-8f7e-f79159d1a0aa/PresetComments=Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set as Rec. 2100 HLG.)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>Apple ProRes 4444 XQ with alpha HLG&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: Highest-quality version of Apple ProRes for 4:4:4:4 image sources including alpha channels. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set as Rec. 2100 HLG.</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.732451</PresetModifiedTime>
+								<PresetFileType>1299148630</PresetFileType>
+								<PresetClassID>1061109567</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/6232c352-7b31-489f-8f7e-f79159d1a0aa/PresetName=Apple ProRes 4444 XQ with alpha HLG)</PresetName>
+								<PresetID>6232c352-7b31-489f-8f7e-f79159d1a0aa</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ with alpha HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>Apple ProRes 4444 XQ with alpha HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="13">
+							<FormatName>QuickTime</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>Based on source </FSize>
+							<FPS>Based on source </FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/233e607a-7ace-415b-93c0-06b54956bc7d/PresetComments=The highest-quality version of ProRes for 4:4:4:4 image sources with alpha channel. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set to Rec. 2100 PQ.)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>Apple ProRes 4444 XQ with alpha PQ&#10;Video: Based on source, Quality 100, Apple ProRes 4444 XQ&#10;Audio: Uncompressed, 48000 Hz, Stereo, 16 bit&#10;Comment: The highest-quality version of ProRes for 4:4:4:4 image sources with alpha channel. Frame Size, Frame Rate, Field Order, and Pixel Aspect are set automatically, based on properties of the source. Color Space is set to Rec. 2100 PQ.</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232011.768204</PresetModifiedTime>
+								<PresetFileType>1299148630</PresetFileType>
+								<PresetClassID>1061109567</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/233e607a-7ace-415b-93c0-06b54956bc7d/PresetName=Apple ProRes 4444 XQ with alpha PQ)</PresetName>
+								<PresetID>233e607a-7ace-415b-93c0-06b54956bc7d</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\3F3F3F3F_4D6F6F56\Apple ProRes 4444 XQ with alpha PQ.epr</PresetPath>
+							</ProxyPreset>
+							<Name>Apple ProRes 4444 XQ with alpha PQ</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="14">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>1280x720</FSize>
@@ -10864,7 +10633,7 @@
 							</ProxyPreset>
 							<Name>HD 720p 24</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="27">
+						<PresetsUIItem Version="4" Index="15">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>1280x720</FSize>
@@ -10885,7 +10654,7 @@
 							</ProxyPreset>
 							<Name>HD 720p 25</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="28">
+						<PresetsUIItem Version="4" Index="16">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>1280x720</FSize>
@@ -10906,7 +10675,7 @@
 							</ProxyPreset>
 							<Name>HD 720p 29.97</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="29">
+						<PresetsUIItem Version="4" Index="17">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>1280x720</FSize>
@@ -10927,7 +10696,7 @@
 							</ProxyPreset>
 							<Name>HD 720p 59.94</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="30">
+						<PresetsUIItem Version="4" Index="18">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>1920x1080</FSize>
@@ -10948,7 +10717,7 @@
 							</ProxyPreset>
 							<Name>HD 1080p 24</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="31">
+						<PresetsUIItem Version="4" Index="19">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>1920x1080</FSize>
@@ -10969,7 +10738,7 @@
 							</ProxyPreset>
 							<Name>HD 1080p 25</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="32">
+						<PresetsUIItem Version="4" Index="20">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>1920x1080</FSize>
@@ -10990,7 +10759,7 @@
 							</ProxyPreset>
 							<Name>HD 1080p 29.97</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="33">
+						<PresetsUIItem Version="4" Index="21">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>360x264</FSize>
@@ -11011,7 +10780,7 @@
 							</ProxyPreset>
 							<Name>NTSC Half (360x264 15 fps)</Name>
 						</PresetsUIItem>
-						<PresetsUIItem Version="4" Index="34">
+						<PresetsUIItem Version="4" Index="22">
 							<FormatName>Windows Media</FormatName>
 							<PresetType>0</PresetType>
 							<FSize>360x264</FSize>
@@ -11032,6 +10801,258 @@
 							</ProxyPreset>
 							<Name>PAL Half (360x264 12.5 fps)</Name>
 						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="23">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>1920x1080</FSize>
+							<FPS>23.976 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/99a97316-776c-49e2-a8c4-22686e1b70f4/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC HD Intra Class100 23.976p HLG&#10;Video: 1920x1080 (1.0), 23.976 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.856232</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/99a97316-776c-49e2-a8c4-22686e1b70f4/PresetName=XAVC HD Intra Class100 23.976p HLG)</PresetName>
+								<PresetID>99a97316-776c-49e2-a8c4-22686e1b70f4</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 23.976p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC HD Intra Class100 23.976p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="24">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>1920x1080</FSize>
+							<FPS>25 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/88767ac7-006b-4de8-a14f-73890d9b144c/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC HD Intra Class100 25p HLG&#10;Video: 1920x1080 (1.0), 25 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.661129</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/88767ac7-006b-4de8-a14f-73890d9b144c/PresetName=XAVC HD Intra Class100 25p HLG)</PresetName>
+								<PresetID>88767ac7-006b-4de8-a14f-73890d9b144c</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 25p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC HD Intra Class100 25p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="25">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>1920x1080</FSize>
+							<FPS>29.97 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/3a79630c-af9f-4610-ba72-0995c07a4b82/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC HD Intra Class100 29.97p HLG&#10;Video: 1920x1080 (1.0), 29.97 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232012.084451</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/3a79630c-af9f-4610-ba72-0995c07a4b82/PresetName=XAVC HD Intra Class100 29.97p HLG)</PresetName>
+								<PresetID>3a79630c-af9f-4610-ba72-0995c07a4b82</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 29.97p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC HD Intra Class100 29.97p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="26">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>1920x1080</FSize>
+							<FPS>25 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/3f56019c-4fc2-491c-82b7-e6ee7229e848/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC HD Intra Class100 50i HLG&#10;Video: 1920x1080 (1.0), 25 fps, Upper, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.857232</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/3f56019c-4fc2-491c-82b7-e6ee7229e848/PresetName=XAVC HD Intra Class100 50i HLG)</PresetName>
+								<PresetID>3f56019c-4fc2-491c-82b7-e6ee7229e848</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 50i HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC HD Intra Class100 50i HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="27">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>1920x1080</FSize>
+							<FPS>50 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/903690d5-760b-4421-a5f7-8ca477455143/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC HD Intra Class100 50p HLG&#10;Video: 1920x1080 (1.0), 50 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.662640</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/903690d5-760b-4421-a5f7-8ca477455143/PresetName=XAVC HD Intra Class100 50p HLG)</PresetName>
+								<PresetID>903690d5-760b-4421-a5f7-8ca477455143</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 50p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC HD Intra Class100 50p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="28">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>1920x1080</FSize>
+							<FPS>29.97 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/cb9e8f16-6b46-40dc-bf89-068f60670eb7/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC HD Intra Class100 59.94i HLG&#10;Video: 1920x1080 (1.0), 29.97 fps, Upper, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232012.085451</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/cb9e8f16-6b46-40dc-bf89-068f60670eb7/PresetName=XAVC HD Intra Class100 59.94i HLG)</PresetName>
+								<PresetID>cb9e8f16-6b46-40dc-bf89-068f60670eb7</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 59.94i HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC HD Intra Class100 59.94i HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="29">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>1920x1080</FSize>
+							<FPS>59.94 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/9a7ee02e-b595-4265-8fa5-b17c69ec0b43/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC HD Intra Class100 59.94p HLG&#10;Video: 1920x1080 (1.0), 59.94 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.858233</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/9a7ee02e-b595-4265-8fa5-b17c69ec0b43/PresetName=XAVC HD Intra Class100 59.94p HLG)</PresetName>
+								<PresetID>9a7ee02e-b595-4265-8fa5-b17c69ec0b43</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC HD Intra Class100 59.94p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC HD Intra Class100 59.94p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="30">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>3840x2160</FSize>
+							<FPS>23.976 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/4682a9c8-5289-459c-b5d6-9badbf2ded42/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC QFHD Intra Class300 23.976p HLG&#10;Video: 3840x2160 (1.0), 23.976 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232012.089451</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/4682a9c8-5289-459c-b5d6-9badbf2ded42/PresetName=XAVC QFHD Intra Class300 23.976p HLG)</PresetName>
+								<PresetID>4682a9c8-5289-459c-b5d6-9badbf2ded42</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 23.976p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC QFHD Intra Class300 23.976p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="31">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>3840x2160</FSize>
+							<FPS>25 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/1c972cec-0a36-4e43-8730-7bf110a621fd/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC QFHD Intra Class300 25p HLG&#10;Video: 3840x2160 (1.0), 25 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.861233</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/1c972cec-0a36-4e43-8730-7bf110a621fd/PresetName=XAVC QFHD Intra Class300 25p HLG)</PresetName>
+								<PresetID>1c972cec-0a36-4e43-8730-7bf110a621fd</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 25p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC QFHD Intra Class300 25p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="32">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>3840x2160</FSize>
+							<FPS>29.97 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/18855e98-7137-4e3d-9f4e-e71777870525/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC QFHD Intra Class300 29.97p HLG&#10;Video: 3840x2160 (1.0), 29.97 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.667141</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/18855e98-7137-4e3d-9f4e-e71777870525/PresetName=XAVC QFHD Intra Class300 29.97p HLG)</PresetName>
+								<PresetID>18855e98-7137-4e3d-9f4e-e71777870525</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 29.97p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC QFHD Intra Class300 29.97p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="33">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>3840x2160</FSize>
+							<FPS>50 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/2c23f566-814b-417a-8ade-39a26aff3f39/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC QFHD Intra Class300 50p HLG&#10;Video: 3840x2160 (1.0), 50 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232012.090452</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/2c23f566-814b-417a-8ade-39a26aff3f39/PresetName=XAVC QFHD Intra Class300 50p HLG)</PresetName>
+								<PresetID>2c23f566-814b-417a-8ade-39a26aff3f39</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 50p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC QFHD Intra Class300 50p HLG</Name>
+						</PresetsUIItem>
+						<PresetsUIItem Version="4" Index="34">
+							<FormatName>MXF OP1a</FormatName>
+							<PresetType>0</PresetType>
+							<FSize>3840x2160</FSize>
+							<FPS>59.94 fps</FPS>
+							<TRate>-</TRate>
+							<Comment>($$$/AME/EncoderHost/Presets/10fc731b-4d96-4097-9d6a-c4c6a1e9ccdb/PresetComments=Custom)</Comment>
+							<ItemType>0</ItemType>
+							<ToolTipSum>XAVC QFHD Intra Class300 59.94p HLG&#10;Video: 3840x2160 (1.0), 59.94 fps, Progressive, 100 (63% HLG, 51% PQ)&#10;Audio: 48000 Hz, 8 Channels, 24 bit&#10;Comment: Custom</ToolTipSum>
+							<ProxyPreset Version="3">
+								<PresetModifiedTime>20231008T232009.863246</PresetModifiedTime>
+								<PresetFileType>1297630808</PresetFileType>
+								<PresetClassID>1480868673</PresetClassID>
+								<PresetName>($$$/AME/EncoderHost/Presets/10fc731b-4d96-4097-9d6a-c4c6a1e9ccdb/PresetName=XAVC QFHD Intra Class300 59.94p HLG)</PresetName>
+								<PresetID>10fc731b-4d96-4097-9d6a-c4c6a1e9ccdb</PresetID>
+								<FolderDisplayPath></FolderDisplayPath>
+								<IngestPreset>false</IngestPreset>
+								<PresetPath>C:\Program Files\Adobe\Adobe Media Encoder 2024\MediaIO\systempresets\58444341_4D584658\XAVC QFHD Intra Class300 59.94p HLG.epr</PresetPath>
+							</ProxyPreset>
+							<Name>XAVC QFHD Intra Class300 59.94p HLG</Name>
+						</PresetsUIItem>
 					</SubList>
 					<Name>Other</Name>
 				</PresetsUIItem>
@@ -11044,7 +11065,7 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>true</FolderState>
+					<FolderState>false</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>PanoramaVR_Sm</Icon>
 					<SubList Version="1">
@@ -11159,7 +11180,7 @@
 					<TRate></TRate>
 					<Comment></Comment>
 					<ItemType>1</ItemType>
-					<FolderState>true</FolderState>
+					<FolderState>false</FolderState>
 					<ToolTipSum></ToolTipSum>
 					<Icon>WebVideoPreset_Sm</Icon>
 					<SubList Version="1">
