@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/04/01
- * @version 1.7.20
+ * @date 2024/04/02
+ * @version 1.7.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -40,8 +40,6 @@ class Startup {
         this.MyRelease := this.__getMainRelease()
         ;// populate settings variables
         this.UserSettings := UserPref()
-
-        this.origSkipVer := this.UserSettings.skipVersion
     }
 
     ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
@@ -261,6 +259,7 @@ class Startup {
         if version = 0
             return
         tool.Wait(1)
+        this.origSkipVer := this.UserSettings.skipVersion
         if version = this.UserSettings.skipVersion
             return
         if this.MyRelease != version
