@@ -2,10 +2,10 @@
  * @description move the Premere Pro playhead to the cursor
  * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 slowly began moving workflow to v24+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
- * @premVer 24.3
+ * @premVer 24.1
  * @author tomshi, taranVH
- * @date 2024/04/02
- * @version 2.1.2
+ * @date 2024/02/21
+ * @version 2.2.0
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -19,7 +19,6 @@
 #Include <Classes\obj>
 #Include <Classes\winGet>
 #Include <Functions\checkStuck>
-#Include <Other\MouseHook>
 #Include <GUIs\Premiere Timeline GUI>
 ; }
 
@@ -70,22 +69,11 @@ RButton::rbuttonPrem().movePlayhead()
 XButton1::rbuttonPrem().movePlayhead(false)
 
 class rbuttonPrem {
-
-	__New() {
-		;// set what `LButton` & `XButton2` do
-		this.lh := MouseHook("LButton Down", (obj, *) => (this.leftClick := true, obj.stop()))
-		this.xh := MouseHook("XButton2 Down", (obj, *) => (this.leftClick := true, this.xbuttonClick := true, obj.Stop()))
-		this.lh.Start(), this.xh.Start()
-	}
-
 	leftClick    := false
 	xbuttonClick := false
 	colourOrNorm := ""
 	colour  := ""
 	colour2 := ""
-
-	lh := false
-	xh := false
 
 	;First, we define all the timeline's DEFAULT possible colors.
 	;(Note that your colors will be different if you changed the UI brightness inside [preferences > appearance > brightness] OR may be different in other versions of premiere)
@@ -174,6 +162,14 @@ class rbuttonPrem {
 			SendInput("{LButton Down}")
 			block.Off()
 			this.colourOrNorm := "colour"
+
+			SetTimer(checktap, -50)
+			checktap() {
+				if !this.__checkForTap(A_ThisHotkey) {
+					SendInput("{LButton Up}")
+					Exit()
+				}
+			}
 		}
 	}
 
@@ -208,12 +204,24 @@ class rbuttonPrem {
 	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", prem.RClickIsActive := false)
 
 	/** A functon to define what should happen anytime the class is closed */
-	__exit() {
-		try (this.lh != false) ? this.lh.Stop() : ""
-		try (this.xh != false) ? this.xh.Stop() : ""
-		this.__resetClicks()
-		checkstuck()
-		Exit()
+	__exit() => (PremHotkeys.__HotkeyReset(["LButton", "XButton2"]), this.__resetClicks(), checkstuck(), Exit())
+
+	/**
+	 * Defines what happens when certain buttons are pressed while RButton is held down
+	 * @param {Array} arr all keys you wish to assign a function
+	 */
+	__HotkeySet(arr) {
+		PremHotkeys.__HotkeySet(arr, __set)
+		/**
+		 * A function to define what each hotkey passed will do
+		 * @param {String} which the keyname
+		 */
+		__set(which, *) {
+			switch which {
+				case "LButton":  this.leftClick := true
+				case "XButton2": this.leftClick := true, this.xbuttonClick := true
+			}
+		}
 	}
 
 	/**
@@ -240,6 +248,9 @@ class rbuttonPrem {
 		;// set coord mode and grab the cursor position
 		coord.client()
 		origMouse := obj.MousePos()
+
+		;// set what `LButton` & `XButton2` do
+		this.__HotkeySet(["LButton", "XButton2"])
 
 		;// checks to see whether the timeline position has been located
 		if !prem.__checkTimeline() {
