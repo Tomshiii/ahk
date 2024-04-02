@@ -2,10 +2,10 @@
  * @description move the Premere Pro playhead to the cursor
  * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 slowly began moving workflow to v24+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
- * @premVer 24.1
+ * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/03/29
- * @version 2.1.0
+ * @date 2024/04/02
+ * @version 2.1.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -201,8 +201,8 @@ class rbuttonPrem {
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
-		(this.lh != false) ? this.lh.Stop() : ""
-		(this.xh != false) ? this.xh.Stop() : ""
+		try (this.lh != false) ? this.lh.Stop() : ""
+		try (this.xh != false) ? this.xh.Stop() : ""
 		this.__resetClicks()
 		checkstuck()
 		Exit()
@@ -234,8 +234,8 @@ class rbuttonPrem {
 		origMouse := obj.MousePos()
 
 		;// set what `LButton` & `XButton2` do
-		this.lh := MouseHook("LButton Down", (*) => (this.leftClick := true, this.lh.Stop()))
-		this.xh := MouseHook("XButton2 Down", (*) => (this.leftClick := true, this.xbuttonClick := true, this.xh.Stop()))
+		this.lh := MouseHook("LButton Down", (obj, *) => (this.leftClick := true, obj.stop()))
+		this.xh := MouseHook("XButton2 Down", (obj, *) => (this.leftClick := true, this.xbuttonClick := true, obj.Stop()))
 		this.lh.Start(), this.xh.Start()
 
 		;// checks to see whether the timeline position has been located

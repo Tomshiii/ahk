@@ -63,6 +63,13 @@ if right = 1 {
     coords := {x: checkX, y: checkY}
 }
 
+;// if the file isn't dual channel it might not have two checkboxes and thus `coords` won't be set
+if !IsSet(coords) || !coords {
+    block.Off()
+    tool.Cust("Checkbox not found")
+    return
+}
+
 which := (left = 1) ? "L_unchecked.png" : "R_unchecked.png"
 Click(Format("{} {}", coords.x+10, coords.y+30))
 
