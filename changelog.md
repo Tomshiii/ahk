@@ -2,4 +2,7 @@
 
 ## > Functions
 - `startup.updateChecker()` now allows the user to select `Skip this version` during the update prompt to no longer recieve a GUI about that individual update
-- Fixed `Premiere_RightClick.ahk` playing back when the user quickly presses and releases <kbd>RButton</kbd>
+
+`Premiere_RightClick.ahk`
+- Fixed script beginning playback if the user quickly presses and releases <kbd>RButton</kbd>
+- Now initiates the `MouseHook {` on initialisation of the class

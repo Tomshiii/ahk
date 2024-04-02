@@ -5,7 +5,7 @@
  * @premVer 24.3
  * @author tomshi, taranVH
  * @date 2024/04/02
- * @version 2.1.1
+ * @version 2.1.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -70,6 +70,14 @@ RButton::rbuttonPrem().movePlayhead()
 XButton1::rbuttonPrem().movePlayhead(false)
 
 class rbuttonPrem {
+
+	__New() {
+		;// set what `LButton` & `XButton2` do
+		this.lh := MouseHook("LButton Down", (obj, *) => (this.leftClick := true, obj.stop()))
+		this.xh := MouseHook("XButton2 Down", (obj, *) => (this.leftClick := true, this.xbuttonClick := true, obj.Stop()))
+		this.lh.Start(), this.xh.Start()
+	}
+
 	leftClick    := false
 	xbuttonClick := false
 	colourOrNorm := ""
@@ -232,11 +240,6 @@ class rbuttonPrem {
 		;// set coord mode and grab the cursor position
 		coord.client()
 		origMouse := obj.MousePos()
-
-		;// set what `LButton` & `XButton2` do
-		this.lh := MouseHook("LButton Down", (obj, *) => (this.leftClick := true, obj.stop()))
-		this.xh := MouseHook("XButton2 Down", (obj, *) => (this.leftClick := true, this.xbuttonClick := true, obj.Stop()))
-		this.lh.Start(), this.xh.Start()
 
 		;// checks to see whether the timeline position has been located
 		if !prem.__checkTimeline() {
