@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/04/02
- * @version 1.7.21
+ * @date 2024/04/03
+ * @version 1.7.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -556,15 +556,37 @@ class Startup {
         this.UserSettings.adobe_temp := A_YDay ;tracks the day so it will not run again today
     }
 
-    /** This function will set the current prem/ae version based off the current .exe version (only if UserSettings.adobeExeOverride is set to `true`). This function still requires to user to manually set their Year variable. */
+    /**
+     * This function will set the current prem/ae version based off the current .exe version (only if UserSettings.adobeExeOverride is set to `true`).
+     * This function will attempt to also set the correct `Year` variable but may not work as expected under certain circumstances (including if the user has multiple year versions of Premiere installed).
+     * It is best to double check that it is set correctly within `settingsGUI()`
+     */
     adobeVerOverride() {
         if !this.UserSettings.adobeExeOverride
             return
         if isReload()
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
-        premFolder := (this.UserSettings.premIsBeta = true) ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) ptf.PremYearVer
-        aeFolder   := (this.UserSettings.aeIsBeta = true)   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) ptf.aeYearVer
+
+        __determineYear(dir, which, default) {
+            if !DirExist(dir)
+                return false
+            count := 0
+            dirName := ""
+            loop files dir, "D" {
+                if !InStr(A_LoopFileName, which, true) || InStr(A_LoopFileName, "(Beta)", true)
+                    continue
+                count++
+                dirName := A_LoopFileName
+            }
+            return (count = 1) ? SubStr(dirName, -2) : default
+        }
+        dirFold := "C:\Program Files\Adobe"
+        setPremYear := __determineYear(dirFold, "Adobe Premiere Pro", ptf.PremYearVer)
+        setAEYear   := __determineYear(dirFold, "Adobe After Effects", ptf.aeYearVer)
+
+        premFolder := (this.UserSettings.premIsBeta = true) ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) setPremYear
+        aeFolder   := (this.UserSettings.aeIsBeta = true)   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) setAEYear
         premExeLocation := A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro.exe"
         aeExeLocation   := A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
 
@@ -578,9 +600,12 @@ class Startup {
         if premExeVer = false && aeExeVer = false
             return
 
-        if VerCompare(premExeVer, this.UserSettings.premVer) != 0 || VerCompare(aeExeVer, this.UserSettings.aeVer) != 0 {
-            this.UserSettings.premVer := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
-            this.UserSettings.aeVer   := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
+        if VerCompare(premExeVer, this.UserSettings.premVer) != 0 || VerCompare(aeExeVer, this.UserSettings.aeVer) != 0 ||
+            ptf.PremYearVer != (SubStr(A_YYYY, 1, 2) setPremYear) || ptf.aeYearVer != (SubStr(A_YYYY, 1, 2) setAEYear) {
+            this.UserSettings.premVer   := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
+            this.UserSettings.prem_year := SubStr(A_YYYY, 1, 2) setPremYear
+            this.UserSettings.aeVer     := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
+            this.UserSettings.ae_year   := SubStr(A_YYYY, 1, 2) setAEYear
             this.UserSettings.__delAll()
             reset.ext_reload()
         }
