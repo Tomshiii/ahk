@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
-* @date 2024/03/21
- * @version 2.1.20
+* @date 2024/04/04
+ * @version 2.1.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -240,7 +240,7 @@ class Prem {
      * @returns {Trilean/String}
      * - `true`: successful
      * - `false`: `PremiereRemote`/`saveProj` func/`projPath` func not found
-     * - `-1`: waiting for the save project window to open/close timed out
+     * - `"timeout"`: waiting for the save project window to open/close timed out
      */
     static save(andWait := true) {
         if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("projPath")
@@ -1814,7 +1814,7 @@ class Prem {
     static Previews(which, sendHotkey) {
         if !WinActive(this.exeTitle)
             return
-        if !this.save() {
+        if this.save() = (false || "timeout") {
             SendEvent("^s")
             if !WinWait("Save Project",, 3) {
                 tool.Cust("Function timed out waiting for save prompt")
