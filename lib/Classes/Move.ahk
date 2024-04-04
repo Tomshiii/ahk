@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2024/03/12
- * @version 1.2.8
+ * @date 2024/04/04
+ * @version 1.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -403,17 +403,25 @@ class Move {
                 win := "" ;reset our win variable
                 goto start ;and go back to the beginning
         }
-        if InStr(title, "YouTube") && IsSet(newHeight) && monitor.monitor = mainMon ;My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
-            {
-                newHeight := newHeight * 1.3
-                newY := newY / 2.25
+
+        ;// My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
+        if InStr(title, "YouTube") && IsSet(newHeight) && monitor.monitor = mainMon {
+            newHeight := newHeight * 1.3
+            newY := newY / 2.25
+        }
+        ;// I want vlc to be a size for 16:9 video to get rid of any letterboxing
+        if InStr(title, "VLC media player") && IsSet(newHeight) && monitor.monitor = mainMon {
+            IsWav := InStr(title, ".wav")
+            switch IsWav {
+                case false:
+                    ;// the size & position of vlc may be a little weird on a non 16:9 resolution
+                    newHeight := 900
+                    newWidth  := 1416
+                default:
+                    newWidth  := 488
+                    newHeight := 367
             }
-        if InStr(title, "VLC media player") && IsSet(newHeight) && monitor.monitor = mainMon ;I want vlc to be a size for 16:9 video to get rid of any letterboxing
-            {
-                ;// the size & position of vlc may be a little weird on a non 16:9 resolution
-                newHeight := 900
-                newWidth := 1416
-            }
+        }
         try{
             WinMove(newX, newY, newWidth, newHeight, title,, "Editing Checklist -") ;then we attempt to move the window
         }
