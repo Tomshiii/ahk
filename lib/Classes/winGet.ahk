@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2024/03/21
- * @version 1.5.18
+ * @date 2024/04/05
+ * @version 1.5.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -303,7 +303,11 @@ class WinGet {
     }
 
     /**
-     * A function to recover the path within the title of either `Premiere Pro` or `After Effects`
+     * A function to recover the path within the title of either `Premiere Pro` or `After Effects`.
+     *
+     * ## Warning
+     *
+     * Do not attempt to use `PremiereRemote` in this function. In the event that Premiere is hanging (say for example you've pushed a clip to ae but haven't saved the project somewhere yet) this function will also hang and never conclude.
      * @returns {Object}
      * ```
      * ;// "E:\comms\tomshi\video\project.prproj"
@@ -320,25 +324,23 @@ class WinGet {
     {
         if !WinExist(Editors.Premiere.winTitle) && !WinExist(Editors.AE.winTitle)
             return false
-        if !WinExist(Editors.Premiere.winTitle) || !prem.__checkPremRemoteDir("projPath") || !entirePath := prem.__remoteFunc("projPath", true) {
-            ;// attempt to get the editors name
-            try {
-                if WinExist(Editors.Premiere.winTitle)
-                    WinGet.PremName(&Name, &titlecheck)
-                else if WinExist(Editors.AE.winTitle)
-                    WinGet.AEName(&Name, &titlecheck)
-            }
-            ;// if the name returns blank
-            if (!titlecheck || titlecheck = -1) {
-                tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
-                return false
-            }
-            ;// string manipulation to get the path
-            ;// getting the path
-            entirePath := SubStr(name							;// string
-                , dashLocation := InStr(Name, "-") + 2			;// start location
-                , StrLen(Name) - dashLocation)                  ;// length
+        ;// attempt to get the editors name
+        try {
+            if WinExist(Editors.Premiere.winTitle)
+                WinGet.PremName(&Name, &titlecheck)
+            else if WinExist(Editors.AE.winTitle)
+                WinGet.AEName(&Name, &titlecheck)
         }
+        ;// if the name returns blank
+        if (!titlecheck || titlecheck = -1) {
+            tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
+            return false
+        }
+        ;// string manipulation to get the path
+        ;// getting the path
+        entirePath := SubStr(name							;// string
+            , dashLocation := InStr(Name, "-") + 2			;// start location
+            , StrLen(Name) - dashLocation)                  ;// length
         ;// splitting the path
         path := obj.SplitPath(entirePath)
         ;// return object
