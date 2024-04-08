@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/04/08
- * @version 1.7.23
+ * @date 2024/04/09
+ * @version 1.7.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -547,7 +547,7 @@ class Startup {
                         try DirDelete(p "\" d, true)
                         catch
                             continue
-                        errorLog(this.activeFunc " deleting adobe cache directory: " p "\" d)
+                        errorLog(Error(this.activeFunc " deleting adobe cache directory: " p "\" d))
                     }
                 }
             }
