@@ -55,6 +55,8 @@ F5::prem.reset()
 ~Numpad8::
 ~Numpad9::prem.numpadGain()
 
+NumpadDiv::Tab
+
 $+1::
 $+2::
 $+3::prem.zoomPreviewWindow(A_ThisHotkey)
