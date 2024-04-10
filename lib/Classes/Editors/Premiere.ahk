@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
-* @date 2024/04/04
- * @version 2.1.21
+ * @date 2024/04/10
+ * @version 2.1.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -151,6 +151,23 @@ class Prem {
     }
 
     /**
+     * A function to create a UIA element for Premiere Pro
+     * @returns {Object}
+     * ```
+     * createEl := this.__createUIAelement()
+     * createEl.AdobeEl   ;// the UIA element created from the Premiere Pro window
+     * createEl.currentEl ;// the UIA string of the currently active element
+     * ```
+     */
+    static __createUIAelement() {
+        premUIA := premUIA_Values()
+        premName := WinGet.PremName()
+        AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
+        currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+        return {AdobeEl: AdobeEl, activeElement: currentEl}
+    }
+
+    /**
      * A function to cut repeat code when attempting to retrieve coordinates of a Control. This function will use the UIA class to determine all coordinates of the passed in UIA element.
      * @param {String} UIA_Element the UIA string to isolate the premiere panel you wish to operate on. Can be passed in manually as a string such as `"YwY"` or as a pre-set variable via the `premUIA` class
      * @param {Boolean} tooltip whether or not this function should provide a tooltip to alert the user on failure. Defaults to `true`
@@ -165,18 +182,19 @@ class Prem {
      * effCtrl.uiaVar ;// returns -> uiaVar := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId())
      * ```
      */
-    static __uiaCtrlPos(UIA_Element, tooltip := true) {
+    static __uiaCtrlPos(UIA_Element, tooltip := true, passIn?) {
         try {
-            premUIA := premUIA_Values()
-            premName := WinGet.PremName()
-            AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-            ClassNN  := ControlGetClassNN(AdobeEl.ElementFromPath(UIA_Element).GetControlId())
+            if !IsSet(passIn)
+                UIAel := this.__createUIAelement()
+            else
+                UIAel := passIn
+            ClassNN  := ControlGetClassNN(UIAel.AdobeEl.ElementFromPath(UIA_Element).GetControlId())
             ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
         } catch {
             errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, tooltip)
             return false
         }
-        return {x: toolx, y: tooly, width: width, height: height, classNN: ClassNN, uiaVar: AdobeEl}
+        return {x: toolx, y: tooly, width: width, height: height, classNN: ClassNN, uiaVar: UIAel.AdobeEl}
     }
 
     /**
@@ -1661,11 +1679,10 @@ class Prem {
             }
         }
         premUIA := premUIA_Values()
-        if !toolsNN := this.__uiaCtrlPos(premUIA.tools, false) {
-            __sendOrig()
-            return
-        }
-        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png") {
+        createEl := this.__createUIAelement()
+        toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl)
+        if !toolsNN || SubStr(createEl.activeElement, 1, StrLen(createEl.activeElement)-3) = premUIA.project ||
+            ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png") {
             __sendOrig()
             return
         }

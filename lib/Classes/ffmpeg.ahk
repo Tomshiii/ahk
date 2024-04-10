@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/02/20
- * @version 1.0.17
+ * @date 2024/04/10
+ * @version 1.0.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -296,7 +296,7 @@ class ffmpeg {
     __buildExtractCommand(filepath, count, hzArr) {
         command := ""
         loop count {
-            command := command Format('-map 0:a:{1} -f wav -b:a {2} -acodec pcm_s16le "{3}"', A_Index-1, hzArr[A_Index], this.__appendOutput(filepath, A_Index)) A_Space
+            command := command Format('-map 0:a:{1}? -f wav -b:a {2} -acodec pcm_s16le "{3}"', A_Index-1, hzArr[A_Index], this.__appendOutput(filepath, A_Index)) A_Space
         }
         return command
     }

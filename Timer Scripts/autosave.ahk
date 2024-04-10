@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/04/04
- * @version 2.1.12
+ * @date 2024/04/10
+ * @version 2.1.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -81,10 +81,7 @@ class adobeAutoSave extends count {
         super.__New(this.ms)
 
         ;// start the timer
-        super.start()
-
-        if this.saveOverride == true
-            PremHotkeys.__HotkeySet(["^s"], ObjBindMethod(this, '__saveReset'), "I2")
+        this.start()
     }
 
     premUIA := false
@@ -133,7 +130,21 @@ class adobeAutoSave extends count {
     }
 
     /** stops the timer */
-    Stop() => super.stop()
+    Stop() {
+        try {
+            super.stop()
+        }
+        checkstuck()
+        PremHotkeys.__HotkeyReset(["^s"])
+        block.Off()
+    }
+
+    /** starts the timer */
+    Start() {
+        if this.saveOverride == true
+            PremHotkeys.__HotkeySet(["^s"], ObjBindMethod(this, '__saveReset'), "I2")
+        super.start()
+    }
 
     /** This function begins the saving process */
     begin() {
@@ -170,7 +181,7 @@ class adobeAutoSave extends count {
         SendEvent("^s")
         ;// maybe don't backup files everytime save is pressed... can cause quite large backup folders for long projects
         ; this.__backupFiles()
-        super.Stop()
+        this.Stop()
         sleep 3500
         this.__reset()
         super.Start()
@@ -179,7 +190,7 @@ class adobeAutoSave extends count {
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */
     __changeVar(val) {
         try {
-            super.stop()
+            this.stop()
             this.interval := (val*60000)
             super.start()
             return

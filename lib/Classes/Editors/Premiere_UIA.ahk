@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
-* @date 2024/03/28
- * @version 2.0.1
+ * @date 2024/04/10
+ * @version 2.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,12 +55,24 @@ Class premUIA_Values {
     allValls   := false
     baseVer    := false
 
+    windowHotkeys := Map(
+        "effectsControl",   ksa.effectControls,
+        "effectsPanel",     ksa.effectsWindow,
+        "programMon",       ksa.programMonitor,
+        "timeline",         ksa.timelineWindow,
+        "tools",            ksa.toolsWindow,
+        "project",          ksa.projectsWindow
+    )
+
     /**
      * This function turns the parsed json data into class variables so the user may call on them as an extension of the class object
      */
     __setClassVal() {
         if !this.allVals.HasOwnProp(this.currentVer) && this.allVals.HasOwnProp(this.baseVer)
             this.currentVer := this.baseVer
+        if ObjOwnPropCount(this.allVals.%this.currentVer%) != this.windowHotkeys.Count {
+            errorLog(Error("The user is currently missing UIA values. Please set new values to ensure proper function."),, true)
+        }
         for k, v in this.allVals.%this.currentVer%.Ownprops() {
             this.%k% := v
         }
@@ -81,21 +93,14 @@ Class premUIA_Values {
         if !WinActivate(prem.winTitle)
             switchTo.Premiere()
 
-        windowHotkeys := Map(
-            "effectsControl",   ksa.effectControls,
-            "effectsPanel",     ksa.effectsWindow,
-            "programMon",       ksa.programMonitor,
-            "timeline",         ksa.timelineWindow,
-            "tools",            ksa.toolsWindow
-        )
         if !currentVers.HasOwnProp(currentPremVer) {
             currentVers.%currentPremVer% := {}
-            for currentPanel in windowHotkeys {
+            for currentPanel in this.windowHotkeys {
                 currentVers.%currentPremVer%.%currentPanel% := {}
             }
         }
 
-        for currentPanel, currHotkey in windowHotkeys {
+        for currentPanel, currHotkey in this.windowHotkeys {
             SendInput(currHotkey)
             sleep 50
             currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())

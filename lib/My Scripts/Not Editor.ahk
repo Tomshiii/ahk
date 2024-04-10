@@ -55,6 +55,9 @@ SC03A & c::clip.capitilise()
 		Run("https://github.com/users/Tomshiii/projects/2")
 }
 
+;extraEnterHotkey;
+PgDn::Enter ;// I use a TKL keyboard and miss my NumpadEnter key
+
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
