@@ -47,7 +47,6 @@ for v in filepaths {
 if !InStr(command, "|||")
     cmd.run(,,, command)
 else {
-
     cmds := StrSplit(command, "|||")
     for v in cmds
         cmd.run(,,, v)

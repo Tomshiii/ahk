@@ -2,7 +2,7 @@
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
  * @date 2024/04/10
- * @version 1.0.18
+ * @version 1.0.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -139,9 +139,9 @@ class ffmpeg {
     /**
      * Uses ffmpeg to determine the framerate of a file
      * @param {String} filePath the directory path of the file you wish to check
-     * @returns {Integer} either the framerate of the file or boolean false upon failure
+     * @returns {Integer} either the framerate of the file or boolean `false` upon failure
      */
-    __determineFrameRate(filePath, defaultFramerate := 60) {
+    __determineFrameRate(filePath) {
         ;// determine framerate of file
         frameCMD := Format('ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 "{1}"', filePath)
         frameCMD := cmd.result(frameCMD)
@@ -155,7 +155,7 @@ class ffmpeg {
     /**
      * This function will return the amount of `channels` present within the passed in file
      * @param {String} filepath the path of the file you wish to determine the channels for
-     * @returns On success returns `Integer` of how many channels are present within the passed in file. On failure returns `false`
+     * @returns {Integer} On success returns `Integer` of how many channels are present within the passed in file. On failure returns `false`
      */
     __getChannels(filepath) {
         command := Format('ffprobe -v quiet -show_streams -show_format -print_format json "{1}"', filepath)
@@ -266,6 +266,7 @@ class ffmpeg {
     trim(path, startval := 0, durationval?, overwrite := false, commands := "", runDir := true) {
         pathobj := obj.SplitPath(path)
         outputFile := this.__getIndex(path)
+        startval := (startval = "") ? 0 : startval
         if !IsSet(durationval) || durationval = 0
             durationval := (this.__getDuration(path))- startval
         command := Format('ffmpeg -ss {1} -i "{3}" -t {2} {5} "{4}"', startval, durationval, path, outputFile, commands)
@@ -296,7 +297,7 @@ class ffmpeg {
     __buildExtractCommand(filepath, count, hzArr) {
         command := ""
         loop count {
-            command := command Format('-map 0:a:{1}? -f wav -b:a {2} -acodec pcm_s16le "{3}"', A_Index-1, hzArr[A_Index], this.__appendOutput(filepath, A_Index)) A_Space
+            command := command Format('-map 0:a:{1} -f wav -b:a {2} -acodec pcm_s16le "{3}"', A_Index-1, hzArr[A_Index], this.__appendOutput(filepath, A_Index)) A_Space
         }
         return command
     }
@@ -318,12 +319,11 @@ class ffmpeg {
      * This function determines the sample rate of all audio streams within a file
      * @param {String} filepath the filepath of the file you are operating on
      * @param {String} fallback the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
-     * @returns {Object}  .
+     * @returns {Object}
      * ```
-     * {
-     * hzArr: ;Array containing all sample rates,
-     * amount: ;integer detailing the amount of audio streams present
-     * }
+     * audio := ffmpeg().__getFrequency(filepath)
+     * audio.hzArr  ;// Array containing all sample rates,
+     * audio.amount ;// integer detailing the amount of audio streams present
      * ```
      */
     __getFrequency(filepath, fallback := "48000") {
@@ -333,10 +333,13 @@ class ffmpeg {
             errorLog(UnsetError("File May not contain any audio streams", -1, filepath),,, true)
         }
         mp     := JSON.parse(probecmd)
-        amount := mp["streams"].length - 1
+        amount := 0
         hzArr := []
-        loop amount {
-            try hzArr.Push(mp["streams"][A_Index+1]["sample_rate"])
+        loop mp["streams"].length {
+            if mp["streams"][A_Index]["codec_type"] != "audio"
+                continue
+            amount++
+            try hzArr.Push(mp["streams"][A_Index]["sample_rate"])
             catch
                 hzArr.Push(fallback)
         }

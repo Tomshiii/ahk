@@ -2,7 +2,7 @@
 
 ## > Functions
 - Fixed `startup.adobeTemp()` failing to delete anything
-- Fixed `ffmpeg.__buildExtractCommand()` causing an error if it's been given an incorrect amount of audio tracks
+- Fixed `ffmpeg.__getFrequency()` not correctly determining the amount of audio tracks
 - Reverted `winget.ProjPath()` using `PremiereRemote` to retrieve the current project path as it causes the function to silently throw in the event that `Premiere` isn't currently responding
 
 `prem {`
