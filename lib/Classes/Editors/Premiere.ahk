@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/10
- * @version 2.1.22
+ * @date 2024/04/11
+ * @version 2.1.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -272,6 +272,37 @@ class Prem {
             return "timeout"
         if !WinWaitClose("Save Project",, 3)
             return "timeout"
+        return true
+    }
+
+    /**
+     * This function is to reduce repeat code and is designed to save the current project, then wait for premiere to catch up refocusing the timeline.
+     * This function will never *always* work perfectly due to Premiere being Premiere and ranging quite wildly how it performs at any given time.
+     * If you notice any issues you may need to slow this function down even further.
+     *
+     * This function is mostly designed to be used in scripts like `render and replace.ahk` and the `render previews` scripts where **speed** isn't *super* important.
+     * @returns {Boolean}
+     */
+    static saveAndFocusTimeline() {
+        if this.save() = (false || "timeout") {
+            SendEvent("^s")
+            if !WinWait("Save Project",, 3) {
+                tool.Cust("Function timed out waiting for save prompt")
+                return false
+            }
+            if !WinWaitClose("Save Project",, 5) {
+                tool.Cust("Function timed out waiting for save prompt to close")
+                return false
+            }
+        }
+        tool.Cust("Checking if timeline is in focus", 500, -180,, 16)
+        sleep 500
+        if this.__checkTimelineValues() {
+            if !this.__waitForTimeline()
+                return false
+        }
+        tool.Cust("Letting Premiere catch up...", 500, -180,, 16)
+        sleep 500
         return true
     }
 
@@ -1678,6 +1709,11 @@ class Prem {
                 SendInput(hot)
             }
         }
+        title := WinGet.PremName()
+        if WinGetTitle("A") != title.winTitle {
+            __sendOrig()
+            return
+        }
         premUIA := premUIA_Values()
         createEl := this.__createUIAelement()
         toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl)
@@ -1831,25 +1867,7 @@ class Prem {
     static Previews(which, sendHotkey) {
         if !WinActive(this.exeTitle)
             return
-        if this.save() = (false || "timeout") {
-            SendEvent("^s")
-            if !WinWait("Save Project",, 3) {
-                tool.Cust("Function timed out waiting for save prompt")
-                return
-            }
-            if !WinWaitClose("Save Project",, 5) {
-                tool.Cust("Function timed out waiting for save prompt to close")
-                return
-            }
-        }
-        tool.Cust("Checking if timeline is in focus", 500, -180,, 16)
-        sleep 500
-        if this.__checkTimelineValues() {
-            if !this.__waitForTimeline()
-                return
-        }
-        tool.Cust("Letting Premiere catch up...", 500, -180,, 16)
-        sleep 500
+        this.saveAndFocusTimeline()
         switch which {
             case "delete": this().__delprev(sendHotkey)
             default:

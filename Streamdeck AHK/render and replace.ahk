@@ -20,20 +20,8 @@ if prem.__checkTimelineValues() = true {
     if !prem.__waitForTimeline(3)
         return
 }
-
-SendEvent(LabelColour)
-sleep 25
-SendEvent("^s")
-if !WinWait("Save Project",, 3) {
-    tool.Cust("Function timed out waiting for save prompt")
-    return
-}
-if !WinWaitClose("Save Project",, 5) {
-    tool.Cust("Function timed out waiting for save prompt to close")
-    return
-}
-sleep 750
-if !prem.__waitForTimeline(3)
-    return
 sleep 100
+SendEvent(LabelColour)
+sleep 50
+prem.saveAndFocusTimeline()
 SendEvent(KSA.premRndrReplce)
