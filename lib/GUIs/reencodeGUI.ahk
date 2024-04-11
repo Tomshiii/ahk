@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2024/01/17
- * @version 1.1.3
+ * @date 2024/04/11
+ * @version 1.2.0
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -12,12 +12,14 @@
 #Include <Classes\obj>
 #Include <Classes\ffmpeg>
 #Include <Classes\winGet>
+#Include <Functions\Win32_VideoController>
 ; }
 
 class encodeGUI extends tomshiBasic {
     __New(fileOrDir := "file", type := "h26") {
         if !this.__selectFile(fileOrDir, this)
             ExitApp()
+        this.ffmpegInstance := ffmpeg()
         super.__New(,,, "Encode Settings")
         this.MarginX := 8
         this.AddText("Section vBlurb", "This script uses ffmpeg to reencode the selected file to a h264/5 .mp4 file.")
@@ -32,13 +34,13 @@ class encodeGUI extends tomshiBasic {
         }
 
         this.AddText("xs", "Preset: ")
-        this.AddDropDownList("x" this.secMarg " yp-3 w100 Choose3 vpres", this.presetsArr).OnEvent("Change", (guiCtrl, *) => this.preset := guiCtrl.text)
+        this.AddDropDownList("x" this.secMarg " yp-3 w100 Choose6 vpres", this.presetsArr).OnEvent("Change", (guiCtrl, *) => this.preset := guiCtrl.text)
 
         if type = "h26" {
             ;// separate
             this.AddText("xs yp+45", "CRF or BR: ")
-            this.AddRadio("x" this.secMarg " yp Group Checked", "crf").OnEvent("Click", this.__crforbitRadio.Bind(this, "crf"))
-            this.AddRadio("x" this.trdMarg " yp", "bitrate").OnEvent("Click", this.__crforbitRadio.Bind(this, "bitrate"))
+            this.AddRadio("x" this.secMarg " yp Group Checked vcrfRadio", "crf").OnEvent("Click", this.__crforbitRadio.Bind(this, "crf"))
+            this.AddRadio("x" this.trdMarg " yp Disabled vbitrateRadio", "bitrate").OnEvent("Click", this.__crforbitRadio.Bind(this, "bitrate"))
             ;// crf
             this.AddText("xs", "crf: ")
             this.AddEdit("x" this.secMarg " yp-3 Number w50 vCRFEdit")
@@ -52,7 +54,13 @@ class encodeGUI extends tomshiBasic {
         ;// do these last
         this.AddButton("x" this.firstButtonX " y" this.firstButtonY " w100", "Select File").OnEvent("Click", this.__selectFile.Bind(this, fileOrDir))
         this.AddButton("x" this.firstButtonX " y" this.firstButtonY+30 " w100", "Encode").OnEvent("Click", this.__doEncode.Bind(this))
+
+        if type = "h26" {
+            this.AddCheckbox("x" this.firstButtonX " y" this.firstButtonY+65 " vuseNVENC Checked1", "Render using GPU").OnEvent("Click", (guiCtrl, *) => this.__gpuCheck(guiCtrl))
+        }
     }
+
+    ffmpegInstance := ""
 
     firstButtonX := 300
     firstButtonY := 50
@@ -64,14 +72,49 @@ class encodeGUI extends tomshiBasic {
     currentFileName := ""
     h26 := "4"
     preset := "veryfast"
+    presetGPU := "slower (p6)"
     crf := 17
     crfOrBitrate := "crf"
     bitrate := 20000
 
     overwrite := 0
     commands := ""
+    useNVENC := 1
 
-    presetsArr := ["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo"]
+    presetsArrCPU := ["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo"]
+    presetsArrGPU := ["fastest (p1)", "faster (p2)", "fast (p3)", "medium (p4)", "slow (p5)", "slower (p6)", "slowest (p7)"]
+    presetsArr := this.presetsArrGPU
+
+    __gpuCheck(guiCtrl, *) {
+        this.useNVENC := guiCtrl.value
+        switch {
+            case this.useNVENC = 1:
+                this["bitrateRadio"].value := 0
+                this["bitrateRadio"].Opt("Disabled")
+                this["BitrateEdit"].Opt("Disabled")
+                this["CRFEdit"].Opt("-Disabled")
+                this["crfRadio"].value := 1
+                this.crfOrBitrate := "crf"
+                this["pres"].Delete()
+                this["pres"].Add(this.presetsArrGPU)
+                this["pres"].Choose(6)
+            case (this.useNVENC = 0 && this.crfOrBitrate = "bitrate"):
+                this["BitrateEdit"].Opt("-Disabled")
+                this["bitrateRadio"].Opt("-Disabled")
+                this["CRFEdit"].Opt("Disabled")
+                this["bitrateRadio"].value := 1
+                this["crfRadio"].value := 0
+                this["pres"].Delete()
+                this["pres"].Add(this.presetsArrCPU)
+                this["pres"].Choose(3)
+            default:
+                this["bitrateRadio"].Opt("-Disabled")
+                this["BitrateEdit"].Opt("-Disabled")
+                this["pres"].Delete()
+                this["pres"].Add(this.presetsArrCPU)
+                this["pres"].Choose(3)
+        }
+    }
 
     /** This function is called anytime the crf/bitrate radio control is toggled and facilitates disabling the opposite of the selection */
     __crforbitRadio(which, *) {
@@ -120,18 +163,28 @@ class encodeGUI extends tomshiBasic {
     __fileObj() {
         fileObjOrig := obj.SplitPath(this.getFile)
         if FileExist(fileObjOrig.dir "\" fileObjOrig.NameNoExt ".mp4")
-            this.getFile := ffmpeg().__getIndex(this.getfile)
+            this.getFile := this.ffmpegInstance.__getIndex(this.getfile)
         fileObj := obj.SplitPath(this.getFile)
         return {fileObjOrig: fileObjOrig, fileObj: fileObj}
     }
 
     /** This function facilitates setting up for and then calling ffmpeg to reencode the selected file */
     __doEncode(*) {
+        if this.useNVENC = true {
+            getGPU := Win32_VideoController()
+            if getGPU.Manufacturer != "NVIDIA" {
+                MsgBox("System failed to detect a NVIDIA GPU. NVENC Rendering is unavailable.`nPlease use CPU encoding", "No NVENC Detected", "48 4096")
+                return
+            }
+        }
         pathObj := this.__fileObj()
-        crfVal := (this.crfOrBitrate = "crf") ? this.crf : false
+        crfVal  := (this.crfOrBitrate = "crf") ? this.crf : false
         bitrateVal := (crfVal = false) ? this.bitrate : false
-        ffmpeg().reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, "libx26" this.h26, this.preset, crfVal, bitrateVal)
+        encoder := (this.useNVENC = true) ? "h26" this.h26 "_nvenc" : "libx26" this.h26
+        this.ffmpegInstance.reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, encoder, this.preset, crfVal, bitrateVal, this.useNVENC)
         this.__runDir(pathObj.fileObj)
+        ;// calls the traytip
+        this.ffmpegInstance.__Delete()
     }
 
     /**

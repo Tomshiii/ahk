@@ -2,10 +2,10 @@
  * @description move the Premere Pro playhead to the cursor
  * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 slowly began moving workflow to v24+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
- * @premVer 24.1
+ * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/02/21
- * @version 2.2.0
+ * @date 2024/04/11
+ * @version 2.2.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -48,7 +48,7 @@ RUNNING THIS SCRIPT SEPARATELY WHILE OTHER HOTKEYS ARE SET USING THE SAME KEYS A
 TRY RUNNING THIS SCRIPT ALONGSIDE THOSE OTHER HOTKEYS (similarly to how I run this script from within `My Scripts.ahk`) TO ATTEMPT
 TO ESCAPE THIS ODD AHK QUIRK
 
-I've tried using sendeven instead of sendinput in this script multiple times but the simple fact is that sendevent is just too slow and using it means that attempting to right click and then almost immediately leftclick/xbutton click results in no input being registered.
+I've tried using sendevent instead of sendinput in this script multiple times but the simple fact is that sendevent is just too slow and using it means that attempting to right click and then almost immediately leftclick/xbutton click results in no input being registered.
 There's probably some dumb hacky way to work around that but ultimately it's just not worth it. I see little to no benefit from using sendevent.
 -Tomshi
 */
@@ -61,7 +61,7 @@ There's probably some dumb hacky way to work around that but ultimately it's jus
 
 ;// there may be code that EXPECTS the activation hotkey to be RButton
 RButton::rbuttonPrem().movePlayhead()
-; MButton::prem().__toggleTimelineFocus()
+; MButton::prem.__toggleTimelineFocus()
 
 ;// there is code that EXPECTS the activation hotkey to be XButton1
 ;// including uses of `checkStuck()`
@@ -270,7 +270,7 @@ class rbuttonPrem {
 			this.__setColours(origMouse)
 			if this.__checkForBlank(this.colour) {
 				SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timeline, in addition to its other uses. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
-				this.__exit()
+				; this.__exit()
 			}
 
 			;// checks to see if the colour under the cursor is one already defined within the class

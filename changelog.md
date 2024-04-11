@@ -2,8 +2,13 @@
 
 ## > Functions
 - Fixed `startup.adobeTemp()` failing to delete anything
-- Fixed `ffmpeg.__getFrequency()` not correctly determining the amount of audio tracks
+- Added `Win32_VideoController()` by `jNizM` to get information about the user's GPU
 - Reverted `winget.ProjPath()` using `PremiereRemote` to retrieve the current project path as it causes the function to silently throw in the event that `Premiere` isn't currently responding
+
+`ffmpeg {`
+- Fixed `__getFrequency()` not correctly determining the amount of audio tracks
+- `reencode_h26x()` now has rudimentary `nvenc` support
+    - `reencodeGUI` will now also offer basic GPU rendering options
 
 `prem {`
 - Fixed `Previews()` failing to make a save attempt if the user wasn't using `PremiereRemote`
@@ -24,4 +29,4 @@
 
 `autosave.ahk`
 - Fixed script failing to make a save attempt if the user wasn't using `PremiereRemote`
-- Identified an occurrence of the script silently crashing in the background, causing <kbd>Ctrl + s</kbd> to no longer work
+- Identified an occurrence of the script silently crashing in the background, causing <kbd>ctrl + s</kbd> to no longer work

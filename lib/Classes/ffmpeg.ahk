@@ -1,7 +1,7 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/04/10
+ * @date 2024/04/11
  * @version 1.0.19
  ***********************************************************************/
 
@@ -120,18 +120,26 @@ class ffmpeg {
      * @param {String} preset the desired h264 preset to use. defaults to `veryfast`
      * @param {String} crf the desired crf value to use. defaults to `17`. If this parameter is set, `bitrate` must be set to false
      * @param {String} bitrate the deired bitrate value to use. Defaults to false. If this parameter is set, `crf` must be set to false
+     * @param {Boolean} useNVENC determine whether to use GPU encoding. `codec` must also be set to `h26x_nvenc`. When set to true `preset` must be an `integer` between 12->18
      */
-    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false) {
+    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false, useNVENC := true) {
         if crf != false && bitrate != false {
             ;// throw
             errorLog(Error("CRF and Bitrate cannot be set at the same time. One parameter must be set to false"),,, 1)
             return
         }
         qualParam := crf != false ? "-crf " crf : "-b:v " bitrate "k"
+        if useNVENC = true {
+            codec := "h264_nvenc"
+            qualParam := "-cq " crf
+            if !IsInteger(preset) || (preset>12 || preset<18)
+                preset := "16"
+        }
         finalPath := obj.SplitPath(videoFilePath)
         finalFileName := IsSet(outputFileName) ? outputFileName : finalPath.NameNoExt
         ;// build command
         ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium [-crf 17]/[-b:v 30000k] output.mp4
+        ;// ffmpeg -i "{1}" -c:v h264_nvenc -preset 16 -cq 17 "{2}"
         command := Format("ffmpeg -i `"{1}`" -c:v {5} -preset {3} {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, qualParam, codec)
         cmd.run(false, true, false, command)
     }
