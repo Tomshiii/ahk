@@ -15,8 +15,12 @@
 - Will now additionally set the `project window`
 - Will now alert the user if a value hasn't been set (ie. if they update the script without setting new values)
 
+## > Streamdeck AHK
+- `download` streamdeck scripts now include `--verbose` to give a more detailed output to the commandline
+- `lock` scripts now allow the user to select a range of tracks to toggle by first pressing `NumpadDiv`
+    - Each selection will either wait for two numbers to be pressed or for the user to press <kbd>NumpadEnter</kbd> between each selection
+
 ## > Other changes
-- `download` Streamdeck scripts now include `--verbose` to give a more detailed output to the commandline
 
 `autosave.ahk`
 - Fixed script failing to make a save attempt if the user wasn't using `PremiereRemote`

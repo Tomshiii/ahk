@@ -55,7 +55,7 @@ F5::prem.reset()
 ~Numpad8::
 ~Numpad9::prem.numpadGain()
 
-NumpadDiv::Tab
+NumpadMult::Tab
 
 $+1::
 $+2::

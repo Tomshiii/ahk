@@ -6,7 +6,7 @@
  * @premVer 24.3
  * @author tomshi
  * @date 2024/04/11
- * @version 2.1.23
+ * @version 2.1.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1506,7 +1506,7 @@ class Prem {
 	 * This function will toggle the state of an internal variable that tracks whether you user wishes for timeline focusing to be enabled or disabled.
 	 * Toggling this can help scenarios where the user has multiple sequences open and the main function would otherwise start cycling between them
 	 */
-	__toggleTimelineFocus() {
+	static __toggleTimelineFocus() {
 		which := (this.focusTimelineStatus = true) ? "disabled" : "enabled"
 		tool.Cust(Format("Timeline focusing is now {}.", which), 2000)
 		this.focusTimelineStatus := !this.focusTimelineStatus
@@ -2080,7 +2080,7 @@ class Prem {
         /**
          * Sets or resets some numpad functionality for `lockTracks()`
          */
-        __lockNumpadKeys(set_reset := "set") {
+        __lockNumpadKeys(set_reset := "set", which := "") {
             switch set_reset, "Off" {
                 case "set":
                     __set(sendHotkey, *) => SendInput(sendHotkey)
@@ -2095,7 +2095,50 @@ class Prem {
                             Hotkey(k2, "Off")
                         }
                     }
+                    try {
+                        Hotkey("NumpadDiv", "NumpadDiv")
+                    } catch {
+                        Hotkey("NumpadDiv", "Off")
+                    }
             }
+        }
+
+        /**
+         * This function allows the user to select a range of tracks to toggle instead of needing to type them one by one. It will either wait for two numbers to be input or for <kbd>NumpadEnter</kbd> to be pressed.
+         */
+        __divHotkey(*) {
+            __finish() {
+                errorLog(Error("Input value is not a number."),, true)
+                tool.Wait()
+            }
+            tool.Cust("Type first number then press NumpadEnter", 3.0)
+            ih := InputHook("L2", "{NumpadEnter}")
+            ih.Start()
+            ih.Wait()
+            firstNum := ih.Input
+            if !IsInteger(firstNum) {
+                __finish()
+                ExitApp()
+            }
+
+            tool.Cust("Type second number then press NumpadEnter", 3.0)
+            ih2 := InputHook("L2", "{NumpadEnter}")
+            ih2.Start()
+            ih2.Wait()
+            secondNum := ih2.input
+            if !IsInteger(secondNum) {
+                __finish()
+                ExitApp()
+            }
+
+            startingVal := Min(firstNum, secondNum)
+            arr := [startingVal]
+            loop (Max(firstNum, secondNum)-Min(firstNum, secondNum)) {
+                arr.Push(++startingVal)
+            }
+            for v in arr
+                SendInput(v ",")
+            SendInput("{Enter}")
         }
 
         /**
@@ -2113,11 +2156,8 @@ class Prem {
                 return
             sleep 200
             SendInput("{Down}")
-            this().__lockNumpadKeys("set")
-
-            if WinWaitClose("Lock " StrTitle(which) " Tracks") {
-                this().__lockNumpadKeys("reset")
-            }
+            this().__lockNumpadKeys("set", which)
+            Hotkey("NumpadDiv", this().__divHotkey, "On")
         }
     }
 }

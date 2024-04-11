@@ -5,7 +5,14 @@
 if !WinActive(prem.winTitle)
     return
 
+Persistent()
+
 prem.excalibur.lockTracks("audio")
 
-;// this is necessary, otherwise the script remains open because the function creates hotkeys
-ExitApp()
+SetTimer(__end, 250)
+__end() {
+    if !WinExist("Lock " StrTitle(SubStr(A_ScriptName, 1, StrLen(A_ScriptName)-4)) " Tracks") {
+        prem.Excalibur().__lockNumpadKeys("reset")
+        ExitApp()
+    }
+}
