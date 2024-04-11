@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2024/04/11
- * @version 1.2.0
+ * @date 2024/04/12
+ * @version 1.2.1
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -109,7 +109,6 @@ class encodeGUI extends tomshiBasic {
                 this["pres"].Choose(3)
             default:
                 this["bitrateRadio"].Opt("-Disabled")
-                this["BitrateEdit"].Opt("-Disabled")
                 this["pres"].Delete()
                 this["pres"].Add(this.presetsArrCPU)
                 this["pres"].Choose(3)
@@ -181,7 +180,8 @@ class encodeGUI extends tomshiBasic {
         crfVal  := (this.crfOrBitrate = "crf") ? this.crf : false
         bitrateVal := (crfVal = false) ? this.bitrate : false
         encoder := (this.useNVENC = true) ? "h26" this.h26 "_nvenc" : "libx26" this.h26
-        this.ffmpegInstance.reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, encoder, this.preset, crfVal, bitrateVal, this.useNVENC)
+        presetVal := (this.useNVENC = true) ? this["pres"].value + 11 : this.preset
+        this.ffmpegInstance.reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, encoder, presetVal, crfVal, bitrateVal, this.useNVENC)
         this.__runDir(pathObj.fileObj)
         ;// calls the traytip
         this.ffmpegInstance.__Delete()
