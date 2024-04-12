@@ -3,6 +3,7 @@
 ## > Functions
 - Fixed `startup.adobeTemp()` failing to delete anything
 - Added `Win32_VideoController()` by `jNizM` to get information about the user's GPU
+- Added `useNVENC()` to rudimentarily determine whether the user can use NVENC encoding
 - Reverted `winget.ProjPath()` using `PremiereRemote` to retrieve the current project path as it causes the function to silently throw in the event that `Premiere` isn't currently responding
 
 `ffmpeg {`
@@ -21,9 +22,12 @@
 - Will now alert the user if a value hasn't been set (ie. if they update the script without setting new values)
 
 ## > Streamdeck AHK
-- `download` streamdeck scripts now include `--verbose` to give a more detailed output to the commandline
 - `lock` scripts now allow the user to select a range of tracks to toggle by first pressing `NumpadDiv`
     - Each selection will either wait for two numbers to be pressed or for the user to press <kbd>NumpadEnter</kbd> between each selection
+
+`download` scripts
+- Now include `--verbose` to give a more detailed output to the commandline
+- Now do a rudimentary check for `NVENC` and will render using it if available
 
 ## > Other changes
 

@@ -2,7 +2,7 @@
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
  * @date 2024/04/12
- * @version 1.0.20
+ * @version 1.0.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,7 +11,7 @@
 #Include <Classes\obj>
 #Include <Classes\winGet>
 #Include <Classes\errorLog>
-#Include <Functions\Win32_VideoController>
+#Include <Functions\useNVENC>
 #Include <Other\JSON>
 ; }
 
@@ -130,9 +130,7 @@ class ffmpeg {
             errorLog(Error("CRF and Bitrate cannot be set at the same time. One parameter must be set to false"),,, 1)
             return
         }
-        getGPU := Win32_VideoController()
-        checkCUDA := cmd.result("ffmpeg -hide_banner -hwaccels")
-        if useNVENC = true && (getGPU.Manufacturer != "NVIDIA" || !InStr(checkCUDA, "cuda",,, 1))
+        if useNVENC = true && !useNVENC()
             return false
         qualParam := crf != false ? "-crf " crf : "-b:v " bitrate "k"
         if useNVENC = true {
