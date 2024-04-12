@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/04/11
- * @version 1.0.19
+ * @date 2024/04/12
+ * @version 1.0.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,6 +11,7 @@
 #Include <Classes\obj>
 #Include <Classes\winGet>
 #Include <Classes\errorLog>
+#Include <Functions\Win32_VideoController>
 #Include <Other\JSON>
 ; }
 
@@ -120,26 +121,32 @@ class ffmpeg {
      * @param {String} preset the desired h264 preset to use. defaults to `veryfast`
      * @param {String} crf the desired crf value to use. defaults to `17`. If this parameter is set, `bitrate` must be set to false
      * @param {String} bitrate the deired bitrate value to use. Defaults to false. If this parameter is set, `crf` must be set to false
-     * @param {Boolean} useNVENC determine whether to use GPU encoding. `codec` must also be set to `h26x_nvenc`. When set to true `preset` must be an `integer` between 12->18
+     * @param {Boolean} useNVENC determines whether to use GPU encoding. If this parameter is set to `true` a few different conditions must be met; the `codec` parameter must also be set to `h26x_nvenc` where `x` is either `4` or `5`. When set to true `preset` must also be an `integer` between 12->18. The `crf` value is used in place for `-cq` instead as they use the same range and essentially achieve the same results.
+     * @returns `false` if the user sets `useNVENC` to true but doesn't have a nvidia gpu
      */
-    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false, useNVENC := true) {
+    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false, useNVENC := false) {
         if crf != false && bitrate != false {
             ;// throw
             errorLog(Error("CRF and Bitrate cannot be set at the same time. One parameter must be set to false"),,, 1)
             return
         }
+        getGPU := Win32_VideoController()
+        checkCUDA := cmd.result("ffmpeg -hide_banner -hwaccels")
+        if useNVENC = true && (getGPU.Manufacturer != "NVIDIA" || !InStr(checkCUDA, "cuda",,, 1))
+            return false
         qualParam := crf != false ? "-crf " crf : "-b:v " bitrate "k"
         if useNVENC = true {
             codec := "h264_nvenc"
             qualParam := "-cq " crf
-            if !IsInteger(preset) || (preset>12 || preset<18)
-                preset := "16"
+            if !IsInteger(preset) || (preset<12 || preset>18)
+                preset := "17"
         }
         finalPath := obj.SplitPath(videoFilePath)
         finalFileName := IsSet(outputFileName) ? outputFileName : finalPath.NameNoExt
         ;// build command
         ;// ffmpeg -i input.mp4 -c:v libx264 -preset medium [-crf 17]/[-b:v 30000k] output.mp4
         ;// ffmpeg -i "{1}" -c:v h264_nvenc -preset 16 -cq 17 "{2}"
+        ;// see all settings relating to nvenc; ffmpeg -h encoder=hevc_nvenc
         command := Format("ffmpeg -i `"{1}`" -c:v {5} -preset {3} {4} `"{2}.mp4`"", videoFilePath, finalPath.dir "\" finalFileName, preset, qualParam, codec)
         cmd.run(false, true, false, command)
     }

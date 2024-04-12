@@ -2,7 +2,7 @@
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
  * @date 2024/04/12
- * @version 1.2.1
+ * @version 1.2.2
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -12,6 +12,7 @@
 #Include <Classes\obj>
 #Include <Classes\ffmpeg>
 #Include <Classes\winGet>
+#Include <Classes\cmd>
 #Include <Functions\Win32_VideoController>
 ; }
 
@@ -171,7 +172,8 @@ class encodeGUI extends tomshiBasic {
     __doEncode(*) {
         if this.useNVENC = true {
             getGPU := Win32_VideoController()
-            if getGPU.Manufacturer != "NVIDIA" {
+            checkCUDA := cmd.result("ffmpeg -hide_banner -hwaccels")
+            if (getGPU.Manufacturer != "NVIDIA" || !InStr(checkCUDA, "cuda",,, 1)) {
                 MsgBox("System failed to detect a NVIDIA GPU. NVENC Rendering is unavailable.`nPlease use CPU encoding", "No NVENC Detected", "48 4096")
                 return
             }
