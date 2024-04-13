@@ -1,4 +1,6 @@
-# <> Release 2.14.x - 
+# <> Release 2.14.2 - Rudimentary NVENC Support
+> [!Note]
+> Support for NVNEC across my scripts is not universal, only the main scripts get its addition. Some other scripts (ie. the crop scripts) will no be receiving these changes (at least in this release)
 
 ## > Functions
 - Fixed `startup.adobeTemp()` failing to delete anything

@@ -33,7 +33,7 @@
 <array>
 <array.type><int type='signed' size='32'/></array.type>
 <int type='signed' size='32'>3440</int>
-<int type='signed' size='32'>-739</int>
+<int type='signed' size='32'>-731</int>
 <int type='signed' size='32'>1920</int>
 <int type='signed' size='32'>1080</int>
 </array>
@@ -43,7 +43,7 @@
 <array>
 <array.type><int type='signed' size='32'/></array.type>
 <int type='signed' size='32'>3440</int>
-<int type='signed' size='32'>341</int>
+<int type='signed' size='32'>349</int>
 <int type='signed' size='32'>1920</int>
 <int type='signed' size='32'>1080</int>
 </array>
@@ -128,7 +128,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.93465406</float>
+<float>0.8166765</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -142,7 +142,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.095505618</float>
+<float>0.11694425</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -274,7 +274,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.11899313</float>
+<float>0.14924149</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -339,7 +339,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.64081633</float>
+<float>0.83228916</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -477,20 +477,6 @@
 </prop.pair>
 <prop.pair>
 <key>Sub2</key>
-<prop.list>
-<prop.pair>
-<key>Splitter</key>
-<prop.list>
-<prop.pair>
-<key>Orient</key>
-<true/>
-</prop.pair>
-<prop.pair>
-<key>Place</key>
-<float>0.3140496</float>
-</prop.pair>
-<prop.pair>
-<key>Sub1</key>
 <prop.list>
 <prop.pair>
 <key>Splitter</key>
@@ -743,11 +729,49 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
+<key>Sub2Vis</key>
+<true/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
+<key>Sub2Vis</key>
+<true/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
+<key>Sub2Vis</key>
+<true/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
 <key>Sub1Vis</key>
 <true/>
 </prop.pair>
 <prop.pair>
 <key>Sub2</key>
+<prop.list>
+<prop.pair>
+<key>Splitter</key>
+<prop.list>
+<prop.pair>
+<key>Orient</key>
+<true/>
+</prop.pair>
+<prop.pair>
+<key>Place</key>
+<float>0.93465406</float>
+</prop.pair>
+<prop.pair>
+<key>Sub1</key>
 <prop.list>
 <prop.pair>
 <key>Frame</key>
@@ -766,6 +790,7 @@
 <array.type><string/></array.type>
 <string>AE CEP Extension-com.videolancer.motionbro</string>
 <string>MH AC3 Main Panel</string>
+<string>AEGP_Filler</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -792,37 +817,15 @@
 &lt;/prop.list&gt;
 </string>
 </prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
 <prop.pair>
-<key>Sub2Vis</key>
-<true/>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub2Vis</key>
-<true/>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub2Vis</key>
-<true/>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub2Vis</key>
-<true/>
+<key>VisTabState-2</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameViewFlags&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
 </prop.pair>
 </prop.list>
 </prop.pair>
@@ -873,6 +876,14 @@
 <prop.pair>
 <key>Sub2Vis</key>
 <false/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
+<key>Sub2Vis</key>
+<true/>
 </prop.pair>
 </prop.list>
 </prop.pair>
@@ -941,7 +952,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;3&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;0&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -990,16 +1001,6 @@
 </prop.pair>
 <prop.pair>
 <key>HidTabState-10</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;5&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>HidTabState-11</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;FrameViewFlags&lt;/key&gt;
@@ -1103,7 +1104,6 @@
 <string>AEGP_Wiggler</string>
 <string>AEGP_Smoother</string>
 <string>AE CEP Extension-com.adobe.DesignLibraries.angular</string>
-<string>AEGP_Filler</string>
 </array>
 </prop.pair>
 </prop.list>
