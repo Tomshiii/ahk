@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/04/09
- * @version 1.7.24
+ * @date 2024/04/14
+ * @version 1.7.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -391,6 +391,53 @@ class Startup {
                     return
                 }
         }
+    }
+
+    /**
+     * This function will check for any updates in the user's package manager. If any are available they will be prompted asking if they wish to update.
+     * ### _Please note_; the code for this function is designed around `chocolatey` and may not function with other package managers. The code to send the upgrade command specifically is also choco specific
+     * @param {String} [packageManager="choco"] the cmdline command for the desired package manager
+     * @param {String} [checkOutdated="choco outdated"] the command for the user's respective package manager to check if any packages are outdated
+     * @param {String} [noUpdatesString="has determined 0 package(s) are outdated"] the string the cmdline usually gives the user in the event that no updates are available
+     * @param {String} [nonChocoUpdateCommand=""] an alternative command given to the commandline to update all installed packages as the update code in this function is specific to chocolatey
+     */
+    updatePackages(packageManager := "choco", checkOutdated := "choco outdated", noUpdatesString := "has determined 0 package(s) are outdated", nonChocoUpdateCommand := "") {
+        if isReload() || this.UserSettings.package_update_check = false ;checks if script was reloaded
+            return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
+        if InStr(cmd.result(packageManager), Format("'{1}' is not recognized as an internal or external command", packageManager))
+            return
+        outDated := cmd.result(checkOutdated)
+        if InStr(outDated, noUpdatesString, 1, 1, 1)
+            return
+        if MsgBox("Some packages the user has installed through " packageManager " appear to be outdated.`nWould you like to update them now?", "Update Packages", "4 32 4096") = "No"
+            return
+        if packageManager = "choco" {
+            omitString := "Output is package name | current version | available version | pinned?"
+            newResponse := SubStr(outDated, InStr(outDated, omitString, 1, 1, 1)+StrLen(omitString)+2)
+            splt := StrSplit(newResponse, ["`n", "`r"])
+
+            arr := []
+            for k, v in splt {
+                if !InStr(v, "|")
+                    continue
+                determinePackage := StrSplit(v, ["|"])
+                arr.Push(determinePackage[1])
+            }
+            command := ""
+            for i, v in arr {
+                concat := " && "
+                if i = arr.Length
+                    concat := ""
+                command := "choco upgrade " v " --yes" concat
+            }
+            if StrLen(command) < 8191
+                cmd.run(true, false, false)
+            else
+                cmd.run(true, false, false, "choco upgrade all --yes")
+        }
+        else if nonChocoUpdateCommand != ""
+            cmd.run(true, false, false, nonChocoUpdateCommand)
     }
 
     /**

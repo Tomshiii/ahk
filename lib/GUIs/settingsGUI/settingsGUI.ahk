@@ -21,6 +21,10 @@ class SettingsToolTips {
         false: "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available",
         stop: "Scripts will NOT check for updates"
     }
+    packageUpdate := {
+        Yes: "Scripts will check to see if any updates are available using Chocolatey or the user's defined package manager",
+        No: "Scripts will not check for updates using Chocolatey or the user's defined package manager"
+    }
     dark := {
         Yes: "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect",
         No: "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect",
@@ -205,6 +209,10 @@ settingsGUI()
         }
     }
 
+    packageUpdate := "Check for Package Updates"
+    settingsGUI.AddCheckbox("vpackageCheck Checked" UserSettings.package_update_check " Y+5", packageUpdate).OnEvent("Click", toggle.Bind("package update check", ""))
+    settingsGUI["packageCheck"].ToolTip := (UserSettings.package_update_check = true) ? toolT.packageUpdate.Yes : toolT.packageUpdate.No
+
     ;// dark mode toggle
     settingsGUI.AddCheckbox("vdarkCheck Checked" UserSettings.dark_mode " Y+5", "Dark Mode").OnEvent("Click", darkToggle)
     switch UserSettings.dark_mode {
@@ -271,6 +279,7 @@ settingsGUI()
     /**
      * This function handles the logic for a few checkboxes
      * @param {any} ini is the name of the ini `Key` you wish to be toggles
+     * @param {string} objName used for `autosave` settings. must be either "autosave" or passed as ""
      * @param {any} script the name of the guiCtrl obj that gets auto fed into this function
      */
     toggle(ini, objName := "", script?, unneeded?)
@@ -300,6 +309,9 @@ settingsGUI()
             case discAutoReply:
                 toolTrue := toolT.discAutoReply.yes
                 toolFalse := toolT.discAutoReply.no
+            case packageUpdate:
+                toolTrue := toolT.packageUpdate.yes
+                toolFalse := toolT.packageUpdate.no
         }
 
         ;// toggling the checkboxes & setting values based off checkbox state

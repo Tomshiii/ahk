@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/04/01
- * @version 1.2.12
+ * @date 2024/04/14
+ * @version 1.2.13
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,7 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "", "false", "true", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "2024", "v24.1", "false", "v24.1", "false", "v25.4", "false", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0", "v2.0"]
+    defaults := ["true", "false", "true", "", "false", "true", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "2024", "v24.1", "false", "v24.1", "false", "v25.4", "false", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0", "v2.0"]
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -59,7 +59,7 @@ class UserPref {
                  "prem_Focus_Icon", "checklist_hotkeys",
                  "autosave_beep", "autosave_save_override",
                  "disc_disable_autoreply", "autosave_check_mouse",
-                 "adobeExeOverride", "autosave_always_save":
+                 "adobeExeOverride", "autosave_always_save", "package_update_check":
                                                       return "true"
             case "beta_update_check",
                  "run_at_startup", "checklist_wait",
@@ -213,6 +213,7 @@ class UserPref {
                     [Settings]
                     update check={}
                     beta update check={}
+                    package update check={}
                     dark mode={}
                     run at startup={}
                     autosave beep={}
