@@ -233,7 +233,7 @@ settingsGUI()
 
     ;// run at startup
     StartupCheckTitle := "Run at Startup"
-    settingsGUI.AddCheckbox("vStartupCheck Checked" UserSettings.run_at_startup " Y+5", StartupCheckTitle).OnEvent("Click", toggle.Bind("run at startup"))
+    settingsGUI.AddCheckbox("vStartupCheck Checked" UserSettings.run_at_startup " Y+5", StartupCheckTitle).OnEvent("Click", toggle.Bind("run at startup", ""))
     switch UserSettings.run_at_startup {
         case true:  settingsGUI["StartupCheck"].ToolTip := toolT.startup.Yes
         case false: settingsGUI["StartupCheck"].ToolTip := toolT.startup.No
