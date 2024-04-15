@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/04/10
- * @version 2.0.2
+ * @date 2024/04/15
+ * @version 2.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -109,6 +109,7 @@ Class premUIA_Values {
 
         this.allVals := currentVers
         this.__setClassVal()
+        tool.Cust("This process may have no effect until all scripts are reloaded!", 3.0)
         if JSON.stringify(currentVers) == originalVers
             return
 
