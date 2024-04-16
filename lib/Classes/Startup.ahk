@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/04/14
- * @version 1.7.25
+ * @date 2024/04/17
+ * @version 1.7.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -429,10 +429,10 @@ class Startup {
                 concat := " && "
                 if i = arr.Length
                     concat := ""
-                command := "choco upgrade " v " --yes" concat
+                command := command "choco upgrade " v " --yes" concat
             }
             if StrLen(command) < 8191
-                cmd.run(true, false, false)
+                cmd.run(true, false, false, command)
             else
                 cmd.run(true, false, false, "choco upgrade all --yes")
         }
