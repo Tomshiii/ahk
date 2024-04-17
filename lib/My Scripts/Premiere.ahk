@@ -15,7 +15,14 @@ $Tab::
 }
 
 ;spaceDelayHotkey;
-Space::prem.delayPlayback()
+Space::
+{
+	if WinActive("Modify Clip " prem.winTitle) {
+		SendInput("{Enter}")
+		return
+	}
+	prem.delayPlayback()
+}
 
 ;linkActivateHotkey;
 ~^l::SendInput(KSA.selectAtPlayhead)
