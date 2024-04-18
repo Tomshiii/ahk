@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/11
- * @version 2.1.24
+ * @date 2024/04/18
+ * @version 2.1.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1482,7 +1482,7 @@ class Prem {
 		}
         priorKey := (A_PriorKey = "NumpadSub") ? "-" : ""
 		firstKey := SubStr(A_ThisHotkey, -1, 1), secondKey := ""
-        ih := InputHook("L1 T2",, "{" A_ThisHotkey "}")
+        ih := InputHook("L2 T2", "{NumpadEnter}", "{" A_ThisHotkey "}")
         ih.Start()
         ih.Wait()
         if IsDigit(ih.Input)
