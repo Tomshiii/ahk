@@ -5,6 +5,7 @@
 ;//! attempting to use this script on anything else will either produce unintended results or will simply not function at all
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\settings>
 #Include <Classes\ptf>
 #Include <Classes\block>
 #Include <Classes\obj>
@@ -25,8 +26,9 @@ onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 detect()
-if WinExist(ptf.MainScriptName ".ahk")
-    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+UserSettings := UserPref()
+if WinExist(UserSettings.MainScriptName ".ahk")
+    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 
 if prem.__checkTimelineValues() = true {
     sleep 100

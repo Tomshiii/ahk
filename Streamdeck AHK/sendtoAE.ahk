@@ -1,6 +1,7 @@
 #SingleInstance Force
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\settings>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\Editors\After Effects>
 #Include <Classes\switchTo>
@@ -15,12 +16,13 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 __detectMainScript() {
     detect()
-    if !WinExist(ptf.MainScriptName ".ahk") {
+    UserSettings := UserPref()
+    if !WinExist(UserSettings.MainScriptName ".ahk") {
         sleep 1000
         __final()
         return
     }
-    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 }
 
 if !WinActive(prem.winTitle)

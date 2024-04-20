@@ -42,13 +42,14 @@ class adobeTimer extends count {
             UserSettings := UserPref()
             fire_frequency := UserSettings.adobe_FS
             this.fire := (fire_frequency * 1000)
+            this.mainScript := UserSettings.MainScriptName
             UserSettings := ""
         }
 
         super.__New(this.fire)
         super.start()
     }
-
+    mainScript := ""
     playToCurs := (InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{") : ksa.playheadtoCursor
 
     ;// default timer (attempts to be overridden by the user's settings value)
@@ -81,11 +82,11 @@ class adobeTimer extends count {
         if A_TimeIdleKeyboard > 1250 {
             detect()
             ;// this script will attempt to NOT fire if RClickPrem is active
-            if !WinExist(ptf.MainScriptName ".ahk") {
+            if !WinExist(this.mainScript ".ahk") {
                 WinMaximize(nameObj.winTitle)
                 return
             }
-            WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
+            WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, this.mainScript ".ahk")
             sleep 50
             if prem.RClickIsActive = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false)
                 WinMaximize(nameObj.winTitle)

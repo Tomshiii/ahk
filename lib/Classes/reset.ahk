@@ -1,11 +1,12 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2023/07/23
- * @version 1.0.1
+ * @date 2024/04/21
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
+#Include <Classes\settings>
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Classes\Apps\VSCode> ;// only to easy grab the path/wintitle information
@@ -21,9 +22,14 @@ class reset {
             if !this.ignoreScript.Has(A_LoopFileName)
                 this.ignoreScript.Set(A_LoopFileName, 1)
         }
+        UserSettings := UserPref()
+        this.mainScript := UserSettings.MainScriptName
     }
+
+    mainScript := ""
+
     ;// this portion of the code defines scripts to ignore within the below function
-    ignoreScript := Mip("PC Startup.ahk", 1, "PC Startup2.ahk", 1, ptf.MainScriptName ".ahk", 1, "launcher.ahk", 1)
+    ignoreScript := Mip("PC Startup.ahk", 1, "PC Startup2.ahk", 1, this.mainScript ".ahk", 1, "launcher.ahk", 1)
 
     /** @returns a list of open ahk windows */
     __getList() {
@@ -154,7 +160,7 @@ class reset {
         detect(false)
         tool.Wait()
         detect()
-        if WinExist(ptf.MainScriptName ".ahk")
-            ProcessClose(WinGetPID(ptf.MainScriptName ".ahk",, browser.vscode.winTitle))
+        if WinExist(this.mainScript ".ahk")
+            ProcessClose(WinGetPID(this.mainScript ".ahk",, browser.vscode.winTitle))
     }
 }

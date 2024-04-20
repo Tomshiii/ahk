@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/18
- * @version 2.1.25
+ * @date 2024/04/21
+ * @version 2.1.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -463,6 +463,10 @@ class Prem {
         keys.allWait()
         CoordMode("ToolTip", "Screen")
 
+        UserSettings := UserPref()
+        mainScript := UserSettings.MainScriptName
+        UserSettings := ""
+
         ;// ensure timeline coords are set
         detect()
         __fallback() {
@@ -471,11 +475,11 @@ class Prem {
             tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
         }
         if !this.__checkTimelineValues() {
-            if !(A_ScriptName != ptf.MainScriptName ".ahk" && WinExist(ptf.MainScriptName ".ahk")) {
+            if !(A_ScriptName != mainScript ".ahk" && WinExist(mainScript ".ahk")) {
                 __fallback()
                 return
             }
-            WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+            WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, mainScript ".ahk")
             if !this.__waitForTimeline() {
                 __fallback()
                 return

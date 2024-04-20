@@ -12,3 +12,5 @@
 - Added `swap solo.png`
 - Separated `Premiere` `v24.3` ImageSearch images back into their own folder
     - It has come to my attention that at some point between `v22.3.1` the `track` images have changed. Little things like this can go unnoticed for long periods of time unfortunately
+- `ptf.MainScriptName` is now tracked in `settings.ini` instead to remove some friction when installing new versions of the repo
+    - This value will now automatically get set when using `startup.generate()` in a user's custom `Main Script`

@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/04/17
- * @version 1.7.26
+ * @date 2024/04/21
+ * @version 1.7.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -189,23 +189,26 @@ class Startup {
                 case true:
                     for k, v in userSettingsArr {
                         ;// set version number
-                        if k = "version"
-                            {
-                                this.UserSettings.%k% := this.MyRelease
-                                continue
-                            }
-                        if k = "first_check" || k = "block_aware"
-                            {
-                                returnBool(input) {
-                                    switch input {
-                                        case "true":      return true
-                                        case "false":     return false
-                                        default:          return input
-                                    }
+                        if k = "version" {
+                            this.UserSettings.%k% := this.MyRelease
+                            continue
+                        }
+                        if k = "MainScriptName" {
+                            SplitPath(A_ScriptFullPath,,,, &name)
+                            if name != "doStartup.ahk"
+                                this.UserSettings.%k% := name
+                        }
+                        if k = "first_check" || k = "block_aware" {
+                            returnBool(input) {
+                                switch input {
+                                    case "true":      return true
+                                    case "false":     return false
+                                    default:          return input
                                 }
-                                this.UserSettings.%k% := returnBool(startupArr.Get(k))
-                                continue
                             }
+                            this.UserSettings.%k% := returnBool(startupArr.Get(k))
+                            continue
+                        }
                         this.UserSettings.%k% := (startupArr.Has(k)) ? startupArr.Get(k) : userSettingsArr.Get(k)
                     }
                 default:

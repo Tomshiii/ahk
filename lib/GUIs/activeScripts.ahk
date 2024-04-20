@@ -153,8 +153,9 @@ activeScripts()
     checkScripts(*)
     {
         detect()
-        if WinExist(ptf.MainScriptName ".ahk is Suspended")
-            WinWaitClose(ptf.MainScriptName ".ahk is Suspended")
+        UserSettings := UserPref()
+        if WinExist(UserSettings.MainScriptName ".ahk is Suspended")
+            WinWaitClose(UserSettings.MainScriptName ".ahk is Suspended")
 
         MyGui[scripts[1]].Value := (A_IsSuspended = 0) ? 1 : 0
         loop scripts.Length - 1 {

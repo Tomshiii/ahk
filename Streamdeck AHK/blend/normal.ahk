@@ -1,5 +1,6 @@
 #SingleInstance Force
 ; { \\ #Includes
+#Include <Classes\settings>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\ptf>
 #Include <Classes\Editors\After Effects>
@@ -10,8 +11,9 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 if WinActive(Editors.Premiere.winTitle) {
     detect()
-    if WinExist(ptf.MainScriptName ".ahk")
-        WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+    UserSettings := UserPref()
+    if WinExist(UserSettings.MainScriptName ".ahk")
+        WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
     prem.valuehold("blend\blendmode",, "normal")
 }
 if WinActive(Editors.AE.winTitle)

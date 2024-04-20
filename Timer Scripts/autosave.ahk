@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/04/11
- * @version 2.1.14
+ * @date 2024/04/21
+ * @version 2.1.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -71,6 +71,7 @@ class adobeAutoSave extends count {
             this.checkMouse   := this.UserSettings.autosave_check_mouse
             this.saveOverride := this.UserSettings.autosave_save_override
             this.alwaysSave   := this.UserSettings.autosave_always_save
+            this.mainScript   := this.UserSettings.MainScriptName
             this.UserSettings := ""
         }
 
@@ -105,6 +106,7 @@ class adobeAutoSave extends count {
     soundName     := ""
     currentVolume := ""
     resetingSave  := false
+    mainScript    := "My Scripts"
 
     rClickPrem    := ""
     rClickMove    := ""
@@ -340,11 +342,11 @@ class adobeAutoSave extends count {
                     try {
                         detect()
                         if !prem.__checkTimelineValues() {
-                            if !WinExist(ptf.MainScriptName ".ahk") {
+                            if !WinExist(this.mainScript ".ahk") {
                                 this.__fallback()
                                 return
                             }
-                            WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+                            WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, this.mainScript ".ahk")
                             if !prem.__waitForTimeline() {
                                 this.__fallback()
                                 return
@@ -522,7 +524,7 @@ class adobeAutoSave extends count {
     /** checks to see if the script the user has defined as their main script is running */
     __checkMainScript() {
         detect()
-        if WinExist(ptf.MainScriptName ".ahk")
+        if WinExist(this.mainScript ".ahk")
             return true
         return false
     }
@@ -531,7 +533,7 @@ class adobeAutoSave extends count {
     __checkRClick() {
         InstallMouseHook(1)
         if this.__checkMainScript() {
-            WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, ptf.MainScriptName ".ahk")
+            WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, this.mainScript ".ahk")
             if prem.RClickIsActive = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true
                 return true
         }

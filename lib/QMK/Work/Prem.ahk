@@ -9,13 +9,14 @@
 #Include <QMK\unassigned>
 
 premTimeline() {
+	UserSettings := UserPref()
 	__fallback() {
 		if !prem.__checkTimeline(false)
 			return
 		tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
 	}
 	if !prem.__checkTimelineValues() {
-		WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, ptf.MainScriptName ".ahk")
+		WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 		if !prem.__waitForTimeline() {
 			__fallback()
 			return
