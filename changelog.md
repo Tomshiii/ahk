@@ -9,7 +9,7 @@
 - `prem.numpadGain()` should now move clips on the timeline less often
 
 ## Other Changes
-- Added `swap solo.png`
+- Added `swap solo.ahk`
 - Separated `Premiere` `v24.3` ImageSearch images back into their own folder
     - It has come to my attention that at some point between `v22.3.1` the `track` images have changed. Little things like this can go unnoticed for long periods of time unfortunately
 - `ptf.MainScriptName` is now tracked in `settings.ini` instead to remove some friction when installing new versions of the repo
