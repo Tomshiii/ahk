@@ -26,7 +26,7 @@ class adobeVers {
             "v24.0",    "v22.3.1",      "v24.0.3", "v22.3.1",
             "v24.1",    "v22.3.1",
             "v24.2",    "v22.3.1",      "v24.2.1", "v22.3.1",
-            "v24.3",    "v22.3.1",
+            ; "v24.3",    "v22.3.1",
             ; "v24.4",    "v24.3",      ;// UI changes occur here so this version has its own folder
             "v24.5",    "v24.4",
         )
