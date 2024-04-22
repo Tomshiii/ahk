@@ -112,6 +112,8 @@ class Startup {
     /**
      * This function handles checking `settings.ini` on a new release of the repo and ensures all values are present and set.
      * It will also automatically add new values to an existing settings file if it isn't currently present.
+     *
+     * This function will also automatically set the `MainScriptName` variable within `settings.ini` based off the script name that calls this function.
      */
     generate() {
         if isReload() ;checks if script was reloaded

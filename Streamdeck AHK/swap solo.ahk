@@ -18,8 +18,7 @@ UserSettings := UserPref()
 if WinExist(UserSettings.MainScriptName ".ahk")
     WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 
-if !prem.__checkTimeline()
-    return
+prem.__checkTimelineFocus()
 origPos := obj.MousePos()
 tool.Cust("Please press the numpad button corresponding to the track you'd like to solo.`n`nOr press ESC to cancel.", 4.0)
 ;"{Numpad1}, {Numpad2}, {Numpad3}, {Numpad4}, {Numpad5}, {Numpad6}, {Numpad7}, {Numpad8}, {Numpad9}"
@@ -39,7 +38,7 @@ loop {
     if !ImageSearch(&x, &y, prem.timelineRawX, prem.timelineRawY, prem.timelineXControl, prem.timelineYControl, "*2 " ptf.Premiere "solo.png")
         break
     Click(Format("{} {}", x, y))
-    sleep 50
+    sleep 100
 }
 if ih.Input = 0 {
     MouseMove(origPos.x, origPos.y, 2)
