@@ -22,7 +22,7 @@ prem.__checkTimelineFocus()
 origPos := obj.MousePos()
 tool.Cust("Please press the numpad button corresponding to the track you'd like to solo.`n`nOr press ESC to cancel.", 4.0)
 ;"{Numpad1}, {Numpad2}, {Numpad3}, {Numpad4}, {Numpad5}, {Numpad6}, {Numpad7}, {Numpad8}, {Numpad9}"
-ih := InputHook("L2", "{Escape}, {NumpadEnter}, {Enter}")
+ih := InputHook("L2", "{Escape}, {NumpadEnter}, {Enter}, {Tab}")
 ih.Start()
 ih.Wait()
 if (!IsInteger(ih.Input) && ih.Input != "") || (ih.EndKey = "Escape") {
