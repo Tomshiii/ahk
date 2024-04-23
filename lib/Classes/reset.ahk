@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2024/04/21
- * @version 1.0.2
+ * @date 2024/04/24
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,12 +24,14 @@ class reset {
         }
         UserSettings := UserPref()
         this.mainScript := UserSettings.MainScriptName
+
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup2.ahk", 1, UserSettings.MainScriptName ".ahk", 1, "launcher.ahk", 1)
     }
 
     mainScript := ""
 
     ;// this portion of the code defines scripts to ignore within the below function
-    ignoreScript := Mip("PC Startup.ahk", 1, "PC Startup2.ahk", 1, this.mainScript ".ahk", 1, "launcher.ahk", 1)
+    ignoreScript := Mip()
 
     /** @returns a list of open ahk windows */
     __getList() {
