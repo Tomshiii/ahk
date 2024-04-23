@@ -18,6 +18,7 @@
 #Include <Classes\keys>
 #Include <Classes\obj>
 #Include <Classes\winGet>
+#Include <Other\WinEvent>
 #Include <Functions\checkStuck>
 #Include <GUIs\Premiere Timeline GUI>
 ; }
@@ -232,6 +233,7 @@ class rbuttonPrem {
 	movePlayhead(allChecks := true) {
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
+		WinEvent.NotActive((*) => Exit(), "gettitle.winTitle " prem.winTitle)
 		if WingetTitle("A") != gettitle.winTitle {
 			SendInput("{Rbutton}")
 			return
