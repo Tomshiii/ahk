@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/04/12
- * @version 1.0.21
+ * @date 2024/04/23
+ * @version 1.0.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -203,7 +203,7 @@ class ffmpeg {
                 ;// attempt to determine framerate of all files in directory
                 fileArr := Map()
                 loop files path.path "\*." from, "F" {
-                    frameRT := (!fps := this.__determineFrameRate(A_LoopFileFullPath, frameRate)) ? frameRate : fps
+                    frameRT := (!fps := this.__determineFrameRate(A_LoopFileFullPath)) ? frameRate : fps
                     fileArr.Set(A_LoopFileFullPath, frameRT)
                 }
                 ;// operate on all files in the map
