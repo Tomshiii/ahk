@@ -4,14 +4,15 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/04/11
- * @version 2.2.1
+ * @date 2024/04/23
+ * @version 2.2.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\Editors\Premiere>
+#Include <Classes\Editors\Premiere_UIA>
 #Include <Classes\tool>
 #Include <Classes\block>
 #Include <Classes\coord>
@@ -75,6 +76,9 @@ class rbuttonPrem {
 	colourOrNorm := ""
 	colour  := ""
 	colour2 := ""
+
+	origActivePanel := ""
+	premUIA := false
 
 	;First, we define all the timeline's DEFAULT possible colors.
 	;(Note that your colors will be different if you changed the UI brightness inside [preferences > appearance > brightness] OR may be different in other versions of premiere)
@@ -202,7 +206,7 @@ class rbuttonPrem {
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
 
 	/** Reset class variables */
-	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", prem.RClickIsActive := false)
+	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", prem.RClickIsActive := false, this.origActivePanel := "")
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() => (PremHotkeys.__HotkeyReset(["LButton", "XButton2"]), this.__resetClicks(), checkstuck(), Exit())
@@ -241,6 +245,11 @@ class rbuttonPrem {
 
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
+		this.premUIA := premUIA_Values()
+		try premEl := prem.__createUIAelement()
+		try this.origActivePanel := premEl.currentEl
+		catch
+			this.origActivePanel := ""
 
 		;// check for stuck keys
 		if GetKeyState("Ctrl") || GetKeyState("Shift") {
@@ -282,7 +291,8 @@ class rbuttonPrem {
 		}
 
 		;// check whether the timeline is already in focus & focuses it if it isn't
-		prem.__checkTimelineFocus()
+		if this.origActivePanel != this.premUIA.timeline
+			prem.__checkTimelineFocus()
 
 		;// determines the position of the playhead
 		if this.colour = prem.playhead {

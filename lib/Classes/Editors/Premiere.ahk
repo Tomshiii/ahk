@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/22
- * @version 2.1.27
+ * @date 2024/04/23
+ * @version 2.1.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -160,7 +160,6 @@ class Prem {
      * ```
      */
     static __createUIAelement() {
-        premUIA := premUIA_Values()
         premName := WinGet.PremName()
         AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
         currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
@@ -284,6 +283,8 @@ class Prem {
      * @returns {Boolean}
      */
     static saveAndFocusTimeline() {
+        premUIA := this.__createUIAelement()
+        uiaVals := premUIA_Values()
         if this.save() = (false || "timeout") {
             SendEvent("^s")
             if !WinWait("Save Project",, 3) {
@@ -294,6 +295,10 @@ class Prem {
                 tool.Cust("Function timed out waiting for save prompt to close")
                 return false
             }
+        }
+        if premUIA.currentEl == uiaVals.timeline {
+            tool.Cust("Premiere should automatically refocus the timeline")
+            return
         }
         tool.Cust("Checking if timeline is in focus", 500, -180,, 16)
         sleep 500

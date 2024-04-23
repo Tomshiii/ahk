@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/04/21
- * @version 2.1.15
+ * @date 2024/04/23
+ * @version 2.1.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -115,6 +115,8 @@ class adobeAutoSave extends count {
 
     programMonX1  := false,  programMonX2 := false
     programMonY1  := false,  programMonY2 := false
+
+    origPanelFocus := ""
 
     /** This function is called every increment */
     Tick() {
@@ -302,13 +304,18 @@ class adobeAutoSave extends count {
         return true
     }
 
-    /** This function is fallback code for if `My Scripts.ahk` isn't currently open and autosave can't ask it for timeline coords */
-    __fallback() {
+    /**
+     * This function is fallback code for if `My Scripts.ahk` isn't currently open and autosave can't ask it for timeline coords
+     * @param {Boolean} needFocus pass into the function whether it needs to initially check for timeline focus. This is usually done by checking the original active panel against the user's saved UIA timeline value. If they match, pass `false` into this function
+     */
+    __fallback(needFocus := true) {
         if !prem.__checkTimeline()
             return
         sleep 100
-        prem.__checkTimelineFocus()
-        sleep 250
+        if needFocus = true {
+            prem.__checkTimelineFocus()
+            sleep 250
+        }
         SendEvent(KSA.playStop)
         sleep 2000
         loop 3 {
@@ -340,6 +347,7 @@ class adobeAutoSave extends count {
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
                     try {
+                        fallbackFocus := (this.origPanelFocus = this.premUIA.timeline) ? false : true
                         detect()
                         if !prem.__checkTimelineValues() {
                             if !WinExist(this.mainScript ".ahk") {
@@ -347,12 +355,12 @@ class adobeAutoSave extends count {
                                 return
                             }
                             WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, this.mainScript ".ahk")
-                            if !prem.__waitForTimeline() {
-                                this.__fallback()
+                            if fallbackFocus = true && !prem.__waitForTimeline() {
+                                this.__fallback(fallbackFocus)
                                 return
                             }
                         }
-                        this.__fallback()
+                        this.__fallback(fallbackFocus)
                     }
                 default: WinActivate("ahk_exe " this.origWindow)
             }
@@ -395,6 +403,12 @@ class adobeAutoSave extends count {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1),, 1)
             return
         }
+
+        ;// get active UIA panel
+        premUIAEl := prem.__createUIAelement()
+        try this.origActivePanel := premUIAEl.AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+		catch
+			this.origActivePanel := ""
 
         ;// checking idle status
         this.__checkIdle()
@@ -552,6 +566,8 @@ class adobeAutoSave extends count {
 
         this.soundName     := "",    this.currentVolume := "",
         this.resetingSave  := false
+
+        this.origPanelFocus := ""
         checkstuck()
         block.Off()
     }
