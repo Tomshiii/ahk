@@ -25,9 +25,11 @@ tool.Cust("Please press the numpad button corresponding to the track you'd like 
 ih := InputHook("L2", "{Escape}, {NumpadEnter}, {Enter}")
 ih.Start()
 ih.Wait()
-if !IsInteger(ih.Input)
+if (!IsInteger(ih.Input) && ih.Input != "") || (ih.EndKey = "Escape") {
+    tool.Cust("")
     return
-if ih.Input != 0 {
+}
+if ih.Input != 0 && ih.Input != "" {
     if !FileExist(ptf.Premiere "track " ih.input "_1.png") && !FileExist(ptf.Premiere "track " ih.input "_2.png") {
         tool.Cust("The selected track doesn't have images corresponding to it!`nYou may need to take your own screenshots if you wish to use values that high.", 4.0)
         return
@@ -40,7 +42,7 @@ loop {
     Click(Format("{} {}", x, y))
     sleep 100
 }
-if ih.Input = 0 {
+if ih.Input = 0 || ih.Input = "" {
     MouseMove(origPos.x, origPos.y, 2)
     tool.Cust("")
     return
