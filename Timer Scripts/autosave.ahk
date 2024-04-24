@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/04/23
- * @version 2.1.16
+ * @date 2024/04/24
+ * @version 2.1.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -405,10 +405,10 @@ class adobeAutoSave extends count {
         }
 
         ;// get active UIA panel
-        premUIAEl := prem.__createUIAelement()
-        try this.origActivePanel := premUIAEl.AdobeEl.GetUIAPath(UIA.GetFocusedElement())
-		catch
-			this.origActivePanel := ""
+        if WinActive(prem.winTitle) {
+            premUIAEl := prem.__createUIAelement()
+            try this.origPanelFocus := premUIAEl.AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+        }
 
         ;// checking idle status
         this.__checkIdle()
