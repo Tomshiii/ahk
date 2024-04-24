@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/23
- * @version 2.1.28
+ * @date 2024/04/24
+ * @version 2.1.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -155,8 +155,8 @@ class Prem {
      * @returns {Object}
      * ```
      * createEl := this.__createUIAelement()
-     * createEl.AdobeEl   ;// the UIA element created from the Premiere Pro window
-     * createEl.currentEl ;// the UIA string of the currently active element
+     * createEl.AdobeEl       ;// the UIA element created from the Premiere Pro window
+     * createEl.activeElement ;// the UIA string of the currently active element
      * ```
      */
     static __createUIAelement() {
@@ -296,7 +296,7 @@ class Prem {
                 return false
             }
         }
-        if premUIA.currentEl == uiaVals.timeline {
+        if premUIA.activeElement == uiaVals.timeline {
             tool.Cust("Premiere should automatically refocus the timeline")
             return
         }

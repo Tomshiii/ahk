@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/04/23
- * @version 2.2.3
+ * @date 2024/04/24
+ * @version 2.2.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -247,7 +247,7 @@ class rbuttonPrem {
 		prem.RClickIsActive := true
 		this.premUIA := premUIA_Values()
 		try premEl := prem.__createUIAelement()
-		try this.origActivePanel := premEl.currentEl
+		try this.origActivePanel := premEl.activeElement
 		catch
 			this.origActivePanel := ""
 
