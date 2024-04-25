@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.3
+;\\v2.34.4
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -225,7 +225,7 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;
 ;=============================================================================================================================================
 ;//! Anything that isn't in the Editors Group
-#HotIf not WinActive("ahk_group Editors") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
+#HotIf not WinActive("ahk_group Editors") && !GetKeyState("F24") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 
 #Include <My Scripts\Not Editor>
 

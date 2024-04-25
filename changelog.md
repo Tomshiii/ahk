@@ -21,6 +21,7 @@
 
 ## Other Changes
 - Fixed `screenshot` streamdeck scripts failing to work if the timeline isn't the focused panel
+- Fixed some `Not Editor.ahk` scripts not firing under certain conditions
 - Added `swap solo.ahk`
 - Separated `Premiere` `v24.3` ImageSearch images back into their own folder
     - It has come to my attention that at some point between `v22.3.1` the `track` images have changed. Little things like this can go unnoticed for long periods of time unfortunately
