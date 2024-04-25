@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/04/24
- * @version 2.1.17
+ * @date 2024/04/25
+ * @version 2.1.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -117,6 +117,7 @@ class adobeAutoSave extends count {
     programMonY1  := false,  programMonY2 := false
 
     origPanelFocus := ""
+    premUIAEl      := false
 
     /** This function is called every increment */
     Tick() {
@@ -346,22 +347,39 @@ class adobeAutoSave extends count {
                         return
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
-                    try {
-                        fallbackFocus := (this.origPanelFocus = this.premUIA.timeline) ? false : true
-                        detect()
-                        if !prem.__checkTimelineValues() {
-                            if !WinExist(this.mainScript ".ahk") {
-                                this.__fallback()
-                                return
+                    try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+                    catch {
+                        try {
+                            fallbackFocus := (this.origPanelFocus = this.premUIA.timeline) ? false : true
+                            detect()
+                            if !prem.__checkTimelineValues() {
+                                if !WinExist(this.mainScript ".ahk") {
+                                    this.__fallback(fallbackFocus)
+                                    return
+                                }
+                                WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, this.mainScript ".ahk")
+                                if fallbackFocus = true && !prem.__waitForTimeline() {
+                                    this.__fallback(fallbackFocus)
+                                    return
+                                }
                             }
-                            WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, this.mainScript ".ahk")
-                            if fallbackFocus = true && !prem.__waitForTimeline() {
-                                this.__fallback(fallbackFocus)
-                                return
-                            }
+                            this.__fallback(fallbackFocus)
                         }
-                        this.__fallback(fallbackFocus)
                     }
+                    sleep 100
+                    SendEvent(KSA.playStop)
+                    sleep 1000
+                    loop 3 {
+                        ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
+                        if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
+                            try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+                            sleep 100
+                            SendEvent(KSA.playStop)
+                            continue
+                        }
+                        break
+                    }
+                    try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
                 default: WinActivate("ahk_exe " this.origWindow)
             }
         } catch {
@@ -406,8 +424,10 @@ class adobeAutoSave extends count {
 
         ;// get active UIA panel
         if WinActive(prem.winTitle) {
-            premUIAEl := prem.__createUIAelement()
-            try this.origPanelFocus := premUIAEl.AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+            try {
+                this.premUIAEl := prem.__createUIAelement()
+                this.origPanelFocus := this.premUIAEl.AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+            }
         }
 
         ;// checking idle status
@@ -568,6 +588,7 @@ class adobeAutoSave extends count {
         this.resetingSave  := false
 
         this.origPanelFocus := ""
+        this.premUIAEl      := false
         checkstuck()
         block.Off()
     }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2024/03/25
- * @version 1.0.1
+ * @date 2024/04/26
+ * @version 1.0.2
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -277,6 +277,21 @@ class installGUI extends Gui {
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk", "failed to set current adobe versions")
+            ;// replace premRemote stuff
+            premRemoteDir := A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src"
+            if DirExist(premRemoteDir) {
+                this.__addLogEntry("backing up previous PremiereRemote files")
+                if !DirExist(premRemoteDir "\backup")
+                    DirCreate(premRemoteDir "\backup")
+                loop files premRemoteDir "\*.*", "F" {
+                    FileCopy(A_LoopFileFullPath, premRemoteDir "\backup\*.*", true)
+                }
+                this.__addLogEntry("copying over new PremiereRemote files")
+                loop files this.InstallDir "\Backups\Adobe Backups\Premiere\PremiereRemote\*.tsx", "F" {
+                    try FileCopy(A_LoopFileFullPath, A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\*.*", 1)
+                }
+                try Run(this.InstallDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk", this.InstallDir, "Hide")
+            }
 
             ;//! finished
             this.__setProgress(100)

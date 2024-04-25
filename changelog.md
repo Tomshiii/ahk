@@ -15,9 +15,13 @@
 
 `rbuttonPrem().movePlayhead()`
 - Now uses `WinEvent` to halt the function as soon as the main Premiere window is no longer active
-- Now checks the originally focused panel using `UIA {` and uses that to determine if it needs to initially attempt to focus the timeline
+- Now focuses the timeline using `UIA {`
+- Now checks that the initially active sequence is still the active sequence when the function is finished
 > [!Note]
-> Both of these changes should help in reducing the frequency of the function causing Premiere to cycle sequences (for example if the function was activated/active while the save dialog window appears, or if the user activated the function during an `autosave.ahk` save attempt)
+> All of these changes should help in reducing the frequency of the function causing Premiere to cycle sequences (for example if the function was activated/active while the save dialog window appears, or if the user activated the function during an `autosave.ahk` save attempt)
+
+## PremiereRemote
+- Added `getActiveSequence()` & `focusSequence()`
 
 ## Other Changes
 - Fixed `screenshot` streamdeck scripts failing to work if the timeline isn't the focused panel
@@ -27,8 +31,11 @@
     - It has come to my attention that at some point between `v22.3.1` the `track` images have changed. Little things like this can go unnoticed for long periods of time unfortunately
 - `ptf.MainScriptName` is now tracked in `settings.ini` instead to remove some friction when installing new versions of the repo
     - This value will now automatically get set when using `startup.generate()` in a user's custom `Main Script`
+- Installation process will now replace previous `PremiereRemote` function files with updated versions if the user has `PremiereRemote` already installed
+    - It will also backup the previous files in `A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\backup\"`
 
 `autosave.ahk`
 - Now checks the originally focused panel using `UIA {` and uses that to later determine if it needs to attempt to refocus the timeline
+- Now attempts to use `UIA {` to focus the timeline before falling back to previous methods
 > [!Note]
-> This change should help in reducing the frequency of the function causing Premiere to cycle sequences if it attempts to refocus the timeline at the end of its save attempt
+> These changes should help in reducing the frequency of the function causing Premiere to cycle sequences if it attempts to refocus the timeline at the end of its save attempt

@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/25
- * @version 2.1.30
+ * @date 2024/04/26
+ * @version 2.1.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -152,6 +152,7 @@ class Prem {
 
     /**
      * A function to create a UIA element for Premiere Pro
+     * @param {Boolean} [getActive=true] determines whether this function will check the currently active panel. Note; leaving this as true can add anywhere from `60-1000ms` of delay depending on how busy Premiere currently is and is best left as `false` if performance is the goal or the active element isn't needed
      * @returns {Object}
      * ```
      * createEl := this.__createUIAelement()
@@ -159,10 +160,10 @@ class Prem {
      * createEl.activeElement ;// the UIA string of the currently active element
      * ```
      */
-    static __createUIAelement() {
+    static __createUIAelement(getActive := true) {
         premName := WinGet.PremName()
-        AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle)
-        currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+        AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle,, false)
+        currentEl := (getActive = true) ? AdobeEl.GetUIAPath(UIA.GetFocusedElement()) : ""
         return {AdobeEl: AdobeEl, activeElement: currentEl}
     }
 
@@ -252,17 +253,21 @@ class Prem {
     }
 
     /**
-     * Calls a `PremiereRemote` function to directly save the current project.
+     * Calls a `PremiereRemote` function to directly save the current project. This function will also double check to ensure the active sequence does not change after the save attempt
      * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close
-     * @returns {Trilean/String}
+     *
+     * @returns {Boolean/String}
      * - `true`: successful
      * - `false`: `PremiereRemote`/`saveProj` func/`projPath` func not found
      * - `"timeout"`: waiting for the save project window to open/close timed out
+     * - `"noseq"` : `focusSequence`/`getActiveSequence` func not found
      */
-    static save(andWait := true) {
+    static save(andWait := true, checkSeqTime := 1000, checkAmount := 1) {
         if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("projPath")
             return false
+        origSeq := this.__remoteFunc("getActiveSequence")
         this.__remoteFunc("saveProj")
+
         if !andWait
             return true
 
@@ -271,6 +276,20 @@ class Prem {
             return "timeout"
         if !WinWaitClose("Save Project",, 3)
             return "timeout"
+
+        if !this.__checkPremRemoteFunc("focusSequence") || !this.__checkPremRemoteFunc("getActiveSequence")
+            return "noseq"
+
+        sleep checkSeqTime
+        loop checkAmount {
+            currentSeq := this.__remoteFunc("getActiveSequence")
+            if currentSeq != origSeq {
+                this.__remoteFunc("focusSequence")
+                break
+            }
+            sleep checkSeqTime
+        }
+
         return true
     }
 

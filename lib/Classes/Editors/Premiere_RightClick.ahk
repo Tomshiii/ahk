@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/04/24
- * @version 2.2.4
+ * @date 2024/04/26
+ * @version 2.2.5
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -77,8 +77,9 @@ class rbuttonPrem {
 	colour  := ""
 	colour2 := ""
 
-	origActivePanel := ""
 	premUIA := false
+	origSeq := ""
+	remote  := true
 
 	;First, we define all the timeline's DEFAULT possible colors.
 	;(Note that your colors will be different if you changed the UI brightness inside [preferences > appearance > brightness] OR may be different in other versions of premiere)
@@ -206,10 +207,16 @@ class rbuttonPrem {
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
 
 	/** Reset class variables */
-	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", prem.RClickIsActive := false, this.origActivePanel := "")
+	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", prem.RClickIsActive := false, this.origSeq := "", this.remote = true)
 
 	/** A functon to define what should happen anytime the class is closed */
-	__exit() => (PremHotkeys.__HotkeyReset(["LButton", "XButton2"]), this.__resetClicks(), checkstuck(), Exit())
+	__exit() {
+		PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
+		this.__resetClicks()
+		checkstuck()
+		try SetTimer(this.__ensureSeq, 0)
+		Exit()
+	}
 
 	/**
 	 * Defines what happens when certain buttons are pressed while RButton is held down
@@ -230,6 +237,31 @@ class rbuttonPrem {
 	}
 
 	/**
+	 * This function checks to ensure the active sequence hasn't changed since the beginning of the `movePlayhead()` function.
+	 * ### Warning; making check amount more than 1 can make it hard to traverse premiere. Ie you let go of right click then immediately open a nested sequence, if you check too many times or `timeWait` is too high, you'll just get instantly kicked back to the original sequence, basically achieving the exact opposite of the functions intention
+	 * @param {String} origSequence the ID of the original active sequence
+	 * @param {Integer} [checkAmount=1] the amount of times you'd like the function to check if the sequence has changed
+	 * @param {Integer} [timeWait=1000] the amount in `ms` of time you'd like the function to wait before rechecking to see if the active sequence has changed.
+	 */
+	__ensureSeq(origSequence, checkAmount := 1, timeWait := 1000, *) {
+		static count := 1
+		currentSeq := prem.__remoteFunc("getActiveSequence", true)
+		if currentSeq != origSequence {
+			prem.__remoteFunc("focusSequence",, "ID=" origSequence)
+			return
+		}
+
+		count++
+		if count > checkAmount {
+			count := 1
+			SetTimer(, 0)
+			return
+		}
+		else
+			SetTimer(, -timeWait)
+	}
+
+	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when `RButton` is pressed.
 	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details
 	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
@@ -245,11 +277,13 @@ class rbuttonPrem {
 
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
+
 		this.premUIA := premUIA_Values()
-		try premEl := prem.__createUIAelement()
-		try this.origActivePanel := premEl.activeElement
-		catch
-			this.origActivePanel := ""
+		try premEl := prem.__createUIAelement(false)
+		if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence")
+			this.remote := false
+		if this.remote = true
+			this.origSeq := prem.__remoteFunc("getActiveSequence", true)
 
 		;// check for stuck keys
 		if GetKeyState("Ctrl") || GetKeyState("Shift") {
@@ -290,9 +324,11 @@ class rbuttonPrem {
 			}
 		}
 
-		;// check whether the timeline is already in focus & focuses it if it isn't
-		if this.origActivePanel != this.premUIA.timeline
+		;// focuses the timeline
+		try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+		catch {
 			prem.__checkTimelineFocus()
+		}
 
 		;// determines the position of the playhead
 		if this.colour = prem.playhead {
@@ -326,6 +362,10 @@ class rbuttonPrem {
 		if this.colourOrNorm = "colour" {
 			SendInput("{LButton Up}")
 		}
+
+		;// checks original sequence is still active
+		if this.remote = true
+			SetTimer(this.__ensureSeq.Bind(this, this.origSeq, 1), -1)
 
 		if allChecks = true {
 			;// resets `LButton` & `XButton2` to their original function

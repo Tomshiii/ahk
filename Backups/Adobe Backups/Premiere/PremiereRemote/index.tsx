@@ -28,6 +28,14 @@ export const host = {
     app.project.save();
   },
 
+  getActiveSequence: function() {
+    return app.project.activeSequence.sequenceID;
+  },
+
+  focusSequence: function(ID: string) {
+    app.project.openSequence(ID);
+  },
+
   /**
    * @swagger
    * /deselectAll:
