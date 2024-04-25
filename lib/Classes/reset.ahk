@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2024/04/24
- * @version 1.0.3
+ * @date 2024/04/26
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -162,7 +162,7 @@ class reset {
         detect(false)
         tool.Wait()
         detect()
-        if WinExist(this.mainScript ".ahk")
-            ProcessClose(WinGetPID(this.mainScript ".ahk",, browser.vscode.winTitle))
+        if WinExist(this().mainScript ".ahk")
+            ProcessClose(WinGetPID(this().mainScript ".ahk",, browser.vscode.winTitle))
     }
 }
