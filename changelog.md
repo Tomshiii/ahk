@@ -11,7 +11,7 @@
 
 - `prem {`
 - `numpadGain()` should now move clips on the timeline less often
-- `previews()` will reattempt to send the hotkey `once` if the timeline was the originally focused panel
+- `previews()` (& `render and replace.ahk`) will now reattempt to send the hotkey `once` if the timeline was the originally focused panel
 
 `rbuttonPrem().movePlayhead()`
 - Now uses `WinEvent` to halt the function as soon as the main Premiere window is no longer active
