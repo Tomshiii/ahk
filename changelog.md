@@ -8,11 +8,14 @@
 > The code for this function (especially the portion that sends the command to actually update packages) is specifically designed for `Chocolatey`. While there are paramaters for the function to customise it for your package manager of choice, it may not function completey as intend. Feel free to open an issue/pr detailing as much as you can if you encounter any issues and rudimentary support for additional package managers may be considered (though not guaranteed)  
 > Alternatively you can simply alter the code for your package manager of choice
 - `premUIA_Values().__setNewVal()` now prompts the user to reload scripts
-- `prem.numpadGain()` should now move clips on the timeline less often
+
+- `prem {`
+- `numpadGain()` should now move clips on the timeline less often
+- `previews()` will reattempt to send the hotkey `once` if the timeline was the originally focused panel
 
 `rbuttonPrem().movePlayhead()`
 - Now uses `WinEvent` to halt the function as soon as the main Premiere window is no longer active
-- Now checks the originally focused panel using `UIA {` and uses that to later determine if it needs to initially attempt to focus the timeline
+- Now checks the originally focused panel using `UIA {` and uses that to determine if it needs to initially attempt to focus the timeline
 > [!Note]
 > Both of these changes should help in reducing the frequency of the function causing Premiere to cycle sequences (for example if the function was activated/active while the save dialog window appears, or if the user activated the function during an `autosave.ahk` save attempt)
 

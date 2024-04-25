@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/24
- * @version 2.1.29
+ * @date 2024/04/25
+ * @version 2.1.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -298,7 +298,8 @@ class Prem {
         }
         if premUIA.activeElement == uiaVals.timeline {
             tool.Cust("Premiere should automatically refocus the timeline")
-            return
+            sleep 1000
+            return "active"
         }
         tool.Cust("Checking if timeline is in focus", 500, -180,, 16)
         sleep 500
@@ -1845,10 +1846,15 @@ class Prem {
      * This is an internal function for `prem.Previews()` simply to make code a little cleaner. It handles sending a desired hotkey to delete previews then waiting for the delete dialogue box premiere presents the user.
      * @param {String} sendHotkey which hotkey you wish to send
      */
-    __delprev(sendHotkey) {
+    __delprev(sendHotkey, wasActive := false) {
         SendInput(sendHotkey)
-        if !WinWait("Confirm Delete " prem.exeTitle,, 3)
-            return
+        if !WinWait("Confirm Delete " prem.exeTitle,, 3) {
+            if wasActive = "active" {
+                SendInput(sendHotkey)
+                if !WinWait("Confirm Delete " prem.exeTitle,, 2)
+                    return
+            }
+        }
         WinActivate("Confirm Delete " prem.exeTitle)
         if !WinWaitActive("Confirm Delete " prem.exeTitle,, 3)
             return
@@ -1876,14 +1882,19 @@ class Prem {
     static Previews(which, sendHotkey) {
         if !WinActive(this.exeTitle)
             return
-        this.saveAndFocusTimeline()
+        attempt := this.saveAndFocusTimeline()
         switch which {
-            case "delete": this().__delprev(sendHotkey)
+            case "delete": this().__delprev(sendHotkey, attempt)
             default:
                 SendInput(sendHotkey)
                 if !WinWait("Rendering",, 2) {
-                    tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
-                    return
+                    if attempt = "active" {
+                        SendInput(sendHotkey)
+                        if !WinWait("Rendering",, 2) {
+                            tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
+                            return
+                        }
+                    }
                 }
         }
     }
