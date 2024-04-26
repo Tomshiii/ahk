@@ -17,7 +17,7 @@ $Tab::
 ;spaceDelayHotkey;
 Space::
 {
-	if WinActive("Modify Clip " prem.winTitle) {
+	if WinActive("Modify Clip " prem.winTitle) || WinActive("Audio Gain " prem.winTitle) {
 		SendInput("{Enter}")
 		return
 	}

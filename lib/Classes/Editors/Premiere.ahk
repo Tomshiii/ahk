@@ -6,7 +6,7 @@
  * @premVer 24.3
  * @author tomshi
  * @date 2024/04/26
- * @version 2.1.31
+ * @version 2.1.32
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1180,10 +1180,18 @@ class Prem {
      */
     static wheelEditPoint(window, direction, keyswait := "all")
     {
+        premUIA := premUIA_Values()
+        try premUIAEl := this.__createUIAelement(false)
+
         switch window {
             ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a nulticam nest for whatever reason. Doing it this way however, is unfortunately slower.
             ;// if you do not use the multiview window simply replace the below line with `this.__checkTimelineFocus()`
-            case ksa.timelineWindow: SendInput(ksa.effectControls), SendInput(window)
+            case ksa.timelineWindow:
+            SendInput(ksa.effectControls)
+            if IsSet(premUIAEl)
+                premUIAEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
+            else
+                SendInput(window)
             case ksa.effectControls: delaySI(20, window, ksa.programMonitor, window, "^a", ksa.deselectAll) ;// indicates the user is trying to use `Select previous/next Keyframe`
             default: SendInput(window) ;focuses the timeline/desired window
         }
@@ -1465,6 +1473,10 @@ class Prem {
             block.Off()
             return false
         }
+
+        premUIA := premUIA_Values()
+        try premUIAEl := this.__createUIAelement(false)
+
         try {
             if ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                 delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
@@ -1480,7 +1492,10 @@ class Prem {
             return
         }
         sleep 100
-        this.__checkTimelineFocus()
+        if IsSet(premUIAEl)
+            premUIAEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
+        else
+            this.__checkTimelineFocus()
         sleep 100
         SendInput(KSA.gainAdjust)
         if !WinWait("Audio Gain",, 3) {
@@ -1561,20 +1576,31 @@ class Prem {
                 return
             SetTimer(rdisable, -50)
         }
+        useUIA := false
+
         coordObj := obj.MousePos()
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
         if !this.__checkTimeline() {
             return
         }
+
         ;// this below line of code ensures that the function does not fire if the mouse is outside the bounds of the timeline. This code should work regardless of where you have the timeline (if you make you're timeline comically small you may encounter issues)
         if !this.__checkCoords(coordObj) {
             SetTimer(rdisable, 0)
             return
         }
 
-        SetTimer(again.Bind(timeout), -400)
-        again(timeout)
-        again(timeout) {
+        premUIA := premUIA_Values()
+        ;// create UIA element so we can focus the timeline more efficiently later
+        try {
+            premUIAEl := this.__createUIAelement(false)
+            useUIA := true
+        }
+        premUIAEl := IsSet(premUIAEl) ? premUIAEl.AdobeEl  : false
+
+        SetTimer(again.Bind(timeout, useUIA, premUIAEl), -400)
+        again(timeout, useUIA, premUIAEl)
+        again(timeout, useUIA, el) {
             ;// we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             if !GetKeyState(KSA.DragKeywait, "P") {
                 SetTimer(rdisable, 0)
@@ -1587,8 +1613,14 @@ class Prem {
                     return
                 }
             }
-            ; click("middle") ;middle clicking helps bring focus to the timeline/workspace you're in, just incase
-            this.__checkTimelineFocus()
+            if !this.timelineFocusStatus() {
+                if useUIA = true && premUIAEl != false {
+                    try premUIAEl.ElementFromPath(premUIA.timeline).SetFocus()
+                    sleep 400 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later
+                }
+                else
+                    this.__checkTimelineFocus()
+            }
             SendInput(premtool "{LButton Down}")
             if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
                 KeyWait(A_ThisHotkey, "T" timeout)
@@ -2064,6 +2096,10 @@ class Prem {
             block.Off()
             return
         }
+
+        premUIA := premUIA_Values()
+        try premUIAEl := this.__createUIAelement(false)
+
         __clickProx(x, y) {
             MouseGetPos(&origX, &origY)
             MouseMove(x, y, 2)
@@ -2072,7 +2108,10 @@ class Prem {
             MouseMove(origX, origY, 2)
             sleep 250
         }
-        this.__checkTimelineFocus()
+        if IsSet(premUIAEl)
+            premUIAEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
+        else
+            this.__checkTimelineFocus()
         sleep 50
         if proxSrch := ImageSearch(&proxX, &proxY, progMonNN.x, progMonNN.y/2, progMonNN.x+progMonNN.width, progMonNN.y+progMonNN.height+50, "*2 " ptf.Premiere "\proxy_on.png") {
             __clickProx(proxX, proxY)

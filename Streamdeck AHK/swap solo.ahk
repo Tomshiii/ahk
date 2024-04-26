@@ -18,7 +18,13 @@ UserSettings := UserPref()
 if WinExist(UserSettings.MainScriptName ".ahk")
     WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 
-prem.__checkTimelineFocus()
+premUIA := premUIA_Values()
+try premUIAEl := prem.__createUIAelement(false)
+if IsSet(premUIAEl)
+    premUIAEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
+else
+    prem.__checkTimelineFocus()
+
 origPos := obj.MousePos()
 tool.Cust("Please press the numpad button corresponding to the track you'd like to solo.`n`nOr press ESC to cancel.", 4.0)
 ;"{Numpad1}, {Numpad2}, {Numpad3}, {Numpad4}, {Numpad5}, {Numpad6}, {Numpad7}, {Numpad8}, {Numpad9}"

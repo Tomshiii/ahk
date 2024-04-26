@@ -12,6 +12,7 @@
 - `prem {`
 - `numpadGain()` should now move clips on the timeline less often
 - `previews()` (& `render and replace.ahk`) will now reattempt to send the hotkey `once` if the timeline was the originally focused panel
+- `wheelEditPoint()`, `gain()`, `mousedrag()` & `screenshot()` now all use `UIA {` when they need to focus the timeline
 
 `rbuttonPrem().movePlayhead()`
 - Now uses `WinEvent` to halt the function as soon as the main Premiere window is no longer active
