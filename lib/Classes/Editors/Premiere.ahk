@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/26
- * @version 2.1.32
+ * @date 2024/04/27
+ * @version 2.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -170,7 +170,9 @@ class Prem {
     /**
      * A function to cut repeat code when attempting to retrieve coordinates of a Control. This function will use the UIA class to determine all coordinates of the passed in UIA element.
      * @param {String} UIA_Element the UIA string to isolate the premiere panel you wish to operate on. Can be passed in manually as a string such as `"YwY"` or as a pre-set variable via the `premUIA` class
-     * @param {Boolean} tooltip whether or not this function should provide a tooltip to alert the user on failure. Defaults to `true`
+     * @param {Boolean} [tooltip=true] whether or not this function should provide a tooltip to alert the user on failure. Defaults to `true`
+     * @param {Object} passIn pass in your own UIA element so this function doesn't need to create another one
+     * @param {Boolean} [getActive=true] determine whether you wish for `__createUIAelement()` to also retrieve the active panel. Note: doing so can add anywhere from `100ms` to `1s` of latency depending on Premiere
      * @returns {Object/false} returns an object containing all values recieved via `ControlGetPos` as well as the UIA object that can continue to be operated on. If the function cannot determine the controls position, it will return boolean `false`
      * ```
      * effCtrl := this.__uiaCtrlPos(premUIA.effectsControl)
@@ -182,10 +184,10 @@ class Prem {
      * effCtrl.uiaVar ;// returns -> uiaVar := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId())
      * ```
      */
-    static __uiaCtrlPos(UIA_Element, tooltip := true, passIn?) {
+    static __uiaCtrlPos(UIA_Element, tooltip := true, passIn?, getActive := true) {
         try {
             if !IsSet(passIn)
-                UIAel := this.__createUIAelement()
+                UIAel := this.__createUIAelement(getActive)
             else
                 UIAel := passIn
             ClassNN  := ControlGetClassNN(UIAel.AdobeEl.ElementFromPath(UIA_Element).GetControlId())
@@ -347,7 +349,7 @@ class Prem {
         block.On()
         MouseGetPos(&xpos, &ypos)
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return
         }
@@ -517,7 +519,7 @@ class Prem {
             {
                 this.__checkTimelineFocus()
                 sleep 50
-                if !progMonNN := this.__uiaCtrlPos(premUIA.programMon) {
+                if !progMonNN := this.__uiaCtrlPos(premUIA.programMon,,, false) {
                     block.Off()
                     return
                 }
@@ -589,7 +591,7 @@ class Prem {
             return
         }
         sleep 50
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return
         }
@@ -821,7 +823,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         block.On()
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return
         }
@@ -924,7 +926,7 @@ class Prem {
         block.On()
         this().__fxPanel()
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return
         }
@@ -962,7 +964,7 @@ class Prem {
         block.On()
         this().__fxPanel()
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return
         }
@@ -1212,7 +1214,7 @@ class Prem {
         block.On()
         MouseGetPos(&xpos, &ypos)
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return
         }
@@ -1354,7 +1356,7 @@ class Prem {
         coord.client()
         block.On()
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return
         }
@@ -1401,7 +1403,7 @@ class Prem {
         coord.s()
         block.On()
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return
         }
@@ -1469,13 +1471,12 @@ class Prem {
             return -1
         }
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl) {
+        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
             block.Off()
             return false
         }
 
         premUIA := premUIA_Values()
-        try premUIAEl := this.__createUIAelement(false)
 
         try {
             if ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
@@ -1493,7 +1494,7 @@ class Prem {
         }
         sleep 100
         if IsSet(premUIAEl)
-            premUIAEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
+            effCtrlNN.uiaVar.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
         else
             this.__checkTimelineFocus()
         sleep 100
@@ -1669,7 +1670,7 @@ class Prem {
         sleep 75
         coord.client()
         premUIA := premUIA_Values()
-        if !timelineNN := this.__uiaCtrlPos(premUIA.timeline)
+        if !timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
             return false
         this.timelineRawX     := timelineNN.x, this.timelineRawY := timelineNN.y
         this.timelineXValue   := timelineNN.x + timelineNN.width - 22  ;accounting for the scroll bars on the right side of the timeline
@@ -1734,7 +1735,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         sleep 50
         premUIA := premUIA_Values()
-        if !toolsNN := this.__uiaCtrlPos(premUIA.tools) {
+        if !toolsNN := this.__uiaCtrlPos(premUIA.tools,,, false) {
             block.Off()
             return
         }
@@ -1776,8 +1777,8 @@ class Prem {
             return
         }
         premUIA := premUIA_Values()
-        createEl := this.__createUIAelement()
-        toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl)
+        createEl := this.__createUIAelement(false)
+        toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
         if !toolsNN || SubStr(createEl.activeElement, 1, StrLen(createEl.activeElement)-3) = premUIA.project ||
             ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png") {
             __sendOrig()
@@ -2092,7 +2093,7 @@ class Prem {
         sleep 50
         scrshtTitle := "Export Frame"
         premUIA := premUIA_Values()
-        if !progMonNN := this.__uiaCtrlPos(premUIA.programMon) {
+        if !progMonNN := this.__uiaCtrlPos(premUIA.programMon,,, false) {
             block.Off()
             return
         }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/04/25
- * @version 2.1.18
+ * @date 2024/04/27
+ * @version 2.1.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -281,7 +281,7 @@ class adobeAutoSave extends count {
      */
     __checkPremPlayback() {
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
-            if !progMon := prem.__uiaCtrlPos(this.premUIA.programMon)
+            if !progMon := prem.__uiaCtrlPos(this.premUIA.programMon,,, false)
                 return false
             this.programMonX1 := progMon.x+100, this.programMonX2 := progMon.x + progMon.width-100, this.programMonY1 := (progMon.y+progMon.height)*0.7,  this.programMonY2 := progMon.y + progMon.height + 150
         }
@@ -426,7 +426,7 @@ class adobeAutoSave extends count {
         if WinActive(prem.winTitle) {
             try {
                 this.premUIAEl := prem.__createUIAelement()
-                this.origPanelFocus := this.premUIAEl.AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+                this.origPanelFocus := this.premUIAEl.activeElement
             }
         }
 

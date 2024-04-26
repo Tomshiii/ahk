@@ -27,6 +27,7 @@ SendEvent(LabelColour)
 sleep 50
 attempt := prem.saveAndFocusTimeline()
 SendEvent(KSA.premRndrReplce)
+sleep 100
 if !WinWait("Render and Replace",, 2) {
     if attempt = "active" {
         SendInput(KSA.premRndrReplce)
