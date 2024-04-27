@@ -31,8 +31,8 @@ class SettingsToolTips {
         disabled: "The users OS version is too low for this feature"
     }
     startup := {
-        Yes: "My scripts will automatically run at PC startup",
-        No: "My scripts will no longer run at PC startup"
+        Yes: "``PC Startup.ahk`` script will automatically run at PC startup",
+        No: "``PC Startup.ahk`` script will no longer run at PC startup"
     }
     adobeExe := {
         Yes: "Scripts will set the current Premiere Pro and After Effects version based off the current installed version",
