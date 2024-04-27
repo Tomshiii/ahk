@@ -105,6 +105,18 @@ LAlt & Xbutton2:: ;this is necessary for the below function to work
 Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 ;bonkHotkey;
-F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
+; F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
 ;bleepHotkey;
-F20::prem.audioDrag("bleep")
+; F20::prem.audioDrag("bleep")
+
+;slowDownHotkey;
+F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
+;speedUpHotkey;
+F14 & F23::SendInput(KSA.speedUpPlayback) ;alternate way to speed up playback on the timeline with mouse buttons
+
+#MaxThreadsBuffer true
+Alt & WheelUp::
+Alt & WheelDown::
+Shift & WheelUp::
+Shift & WheelDown::prem.accelScroll(5, 25)
+#MaxThreadsBuffer false

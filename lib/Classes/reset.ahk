@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2024/04/26
- * @version 1.0.4
+ * @date 2024/04/27
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -94,7 +94,7 @@ class reset {
         if checkQuote := InStr(defaultEditor, '"',,, 2)
             defaultEditor := SubStr(defaultEditor, 2, checkQuote-2)
         if (!IsSet(defaultEditor) || !defaultEditor) {
-            this().__reloadFallback()
+            this.__reloadFallback()
             return
         }
         ;// if the default editor is VSC and it's not already open, we want to open it FIRST, then open the script
@@ -108,7 +108,7 @@ class reset {
         }
         Run(defaultEditor A_Space '"' A_ScriptFullPath '"',,, &pid)
         if !WinWait("ahk_pid " PID,, 5) && !set {
-            this().__reloadFallback()
+            this.__reloadFallback()
             return
         }
     }
