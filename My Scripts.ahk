@@ -3,13 +3,13 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2024/04/13
- * @version v2.14.2
- * @ahk_ver 2.0.12
+ * @date 2024/04/28
+ * @version v2.14.3
+ * @ahk_ver 2.0.13
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.5
+;\\v2.34.6
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -245,8 +245,6 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;//* having these scripts above with the other premiere scripts caused `wheelup` and `wheeldown` hotkeys to lag out and cause windows beeping
 ;//* thanks ahk :)
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
-
-#Include <My Scripts\Premiere Mouse>
 
 ;// I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
 #Include <Classes\Editors\Premiere_RightClick>
