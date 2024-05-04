@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/04/27
- * @version 2.1.4
+ * @date 2024/05/04
+ * @version 2.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2022,7 +2022,7 @@ class Prem {
         this.defaultDelay := IsSet(delayMS) ? delayMS : this.defaultDelay
         delayMS := IsSet(delayMS) ? delayMS : this.defaultDelay
         __sendSpace() => (SendEvent(ksa.playStop), Exit())
-        if A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext
+        if !this.timelineFocusStatus() || (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext)
             __sendSpace()
         SetTimer((*) => __sendSpace(), -(delayMS-this.delayTime))
     }

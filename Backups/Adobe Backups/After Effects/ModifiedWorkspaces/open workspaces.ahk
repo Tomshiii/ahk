@@ -9,7 +9,6 @@ try {
 }
 
 SetWorkingDir(A_ScriptDir)
-drive := IniRead(A_WorkingDir "\readme.ini", "INFO", "drive letter")
 aeVerNum := StrReplace(ptf.aeIMGver, "v", "")
 aeVerNumTrim := InStr(aeVerNum, ".",,, 2) ? SubStr(aeVerNum, 1, InStr(aeVerNum, ".",,, 2)-1) : aeVerNum
 version := IsSet(UserSettings) ? aeVerNumTrim : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")

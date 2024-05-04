@@ -456,7 +456,7 @@
 	"GizmoModeRotate" = "(6)"
 	"GizmoModeScale" = "(5)"
 	"GizmoModeToggle" = "(Shift+V)"
-	"ToolArrow" = "(V)()"
+	"ToolArrow" = "(V)"
 	"ToolCamera" = "(C)"
 	"ToolCameraDolly" = "(3)"
 	"ToolCameraDollyToggle" = "()"
@@ -475,7 +475,7 @@
 	"ToolPenToggle" = "(Shift+G)"
 	"ToolPin" = "(Ctrl+P)"
 	"ToolRotate" = "(W)"
-	"ToolRotoBrush" = "(B)()()"
+	"ToolRotoBrush" = "(B)"
 	"ToolText" = "(Ctrl+T)"
 
 ["CItem"]
@@ -618,7 +618,7 @@
 	"CompToggleUberAnimatingKeyframesAndExpressionsAddState" = "()"
 	"CompTrimToWorkArea" = "(Ctrl+Shift+X)"
 	"CompViewOptions" = "(Ctrl+Alt+U)"
-	"Compify" = "()"
+	"Compify" = "(Ctrl+Shift+W)()"
 	"Copy" = "(Ctrl+C)"
 	"CopyExpressionLinkedInstance" = "(Ctrl+Alt+C)"
 	"CopyExpressionLinkedInstanceRelative" = "()"
