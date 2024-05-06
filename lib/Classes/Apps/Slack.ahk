@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2023/12/11
- * @version 1.0.0
+ * @date 2024/05/06
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -45,7 +45,7 @@ class Slack {
                 errorLog(TargetError("Unable to find the desired button", -1),, true)
                 return false
             }
-            if ImageSearch(&x, &y, coords.1x, coords.y1 - (increaseAmount*(A_Index-1)), coords.x2, coords.y2 + (increaseAmount*(A_Index-1)), "*2 " ptf.Slack image)
+            if ImageSearch(&x, &y, coords.x1, coords.y1 - (increaseAmount*(A_Index-1)), coords.x2, coords.y2 + (increaseAmount*(A_Index-1)), "*2 " ptf.Slack image)
                 return {x: x, y:y}
         }
     }
