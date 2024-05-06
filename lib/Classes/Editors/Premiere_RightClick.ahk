@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/04/26
- * @version 2.2.5
+ * @date 2024/05/06
+ * @version 2.2.6
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -148,18 +148,25 @@ class rbuttonPrem {
 	}
 
 	/**
-	 * Checks to see wheteher the playhead can be found on the screen. If it is, `KSA.shuttleStop` is sent.
+	 * Checks to see whether the playhead can be found on the screen. If it is, `KSA.shuttleStop` is sent.
 	 * If the playhead is close to the cursor, the cursor will be moved to it and `LButton` is held down
 	 * @param {Object} coordObj an object containing the cursor coords
 	 * @param {Boolean} [search=true] passing in `allChecks` to determine if the function should search near the cursor for the playhead. Disabling this feature if `allChecks` is set to `false` stops the script from potentially clicking on a clip below the cursor
 	 */
 	__checkForPlayhead(coordObj, search := true) {
 		;// checking to see if the playhead is on the screen
-		if prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y})
-			SendInput(KSA.shuttleStop) ;if it is, we input a shuttle stop
-		;// this stops the script from potentially clicking a clip if using `rbuttonPrem().movePlayhead(false)`
-		if !search
+		if !prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y}) {
+			SendInput(KSA.playheadtoCursor)
 			return
+		}
+		SendInput(KSA.shuttleStop) ;if it is on screen, we input a shuttle stop
+
+		;// this stops the script from potentially clicking a clip if using `rbuttonPrem().movePlayhead(false)`
+		if !search {
+			SendInput(KSA.playheadtoCursor)
+			return
+		}
+
 		;// then we check to see if it's relatively close to the cursors position
 		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
 			block.On()
@@ -180,18 +187,14 @@ class rbuttonPrem {
 	}
 
 	/**
-	 * This function checks to see whether the user simply tapped the activation hotkey and moves the playhead
+	 * This function checks to see whether the user simply tapped the activation
 	 * @param {String} activationHotkey the keyname for the activation hotkey. should be `A_ThisHotkey`
-	 * @returns {Boolean} if the user is no longer holding the `RButton`, returns `false`. Else return `true`
+	 * @returns {Boolean} if the user is no longer holding the activation hotkey, returns `false`. Else return `true`
 	 */
 	__checkForTap(activationHotkey) {
 		;// this block will allow you to still tap the activation hotkey and have it move the cursor
-		if !GetKeyState(activationHotkey, "P") {
-			SendInput(KSA.playheadtoCursor) ;check the Keyboard Shortcut.ini/ahk to change this
-			;The below checks are to ensure no buttons end up stuck
-			checkstuck()
+		if !GetKeyState(activationHotkey, "P") && !GetKeyState(activationHotkey)
 			return false
-		}
 		return true
 	}
 
@@ -278,13 +281,6 @@ class rbuttonPrem {
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
 
-		this.premUIA := premUIA_Values()
-		try premEl := prem.__createUIAelement(false)
-		if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence")
-			this.remote := false
-		if this.remote = true
-			this.origSeq := prem.__remoteFunc("getActiveSequence", true)
-
 		;// check for stuck keys
 		if GetKeyState("Ctrl") || GetKeyState("Shift") {
 			checkstuck()
@@ -324,12 +320,6 @@ class rbuttonPrem {
 			}
 		}
 
-		;// focuses the timeline
-		try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
-		catch {
-			prem.__checkTimelineFocus()
-		}
-
 		;// determines the position of the playhead
 		if this.colour = prem.playhead {
 			if !this.__checkUnderCursor(this.colour2) {
@@ -338,7 +328,21 @@ class rbuttonPrem {
 		}
 		this.__checkForPlayhead(origMouse, allChecks)
 		if !this.__checkForTap(A_ThisHotkey) {
+			SendInput(KSA.playheadtoCursor)
 			this.__exit()
+		}
+
+		this.premUIA := premUIA_Values()
+		try premEl := prem.__createUIAelement(false)
+		if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence")
+			this.remote := false
+		if this.remote = true
+			this.origSeq := prem.__remoteFunc("getActiveSequence", true)
+
+		;// focuses the timeline
+		try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+		catch {
+			prem.__checkTimelineFocus()
 		}
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
