@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/05/06
- * @version 2.2.6
+ * @date 2024/05/07
+ * @version 2.2.7
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -344,6 +344,10 @@ class rbuttonPrem {
 		catch {
 			prem.__checkTimelineFocus()
 		}
+
+		;// we send a single input here so that in the event UIA is slow to respond because of premiere
+		;// the cursor will still move if the user taps the activation hotkey
+		SendInput(ksa.playheadtoCursor)
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
 		while GetKeyState(A_ThisHotkey, "P") {
