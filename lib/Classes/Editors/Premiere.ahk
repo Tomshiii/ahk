@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/05/04
- * @version 2.1.5
+ * @date 2024/05/08
+ * @version 2.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -301,7 +301,7 @@ class Prem {
      * If you notice any issues you may need to slow this function down even further.
      *
      * This function is mostly designed to be used in scripts like `render and replace.ahk` and the `render previews` scripts where **speed** isn't *super* important.
-     * @returns {Boolean}
+     * @returns {Boolean|String} returns boolean or `"active"` if timeline was the active window
      */
     static saveAndFocusTimeline() {
         premUIA := this.__createUIAelement()
@@ -1926,13 +1926,15 @@ class Prem {
     static Previews(which, sendHotkey) {
         if !WinActive(this.exeTitle)
             return
-        attempt := this.saveAndFocusTimeline()
+        title := WinGet.PremName()
+        if title.saveCheck != false
+            attempt := this.saveAndFocusTimeline()
         switch which {
-            case "delete": this().__delprev(sendHotkey, attempt)
+            case "delete": this().__delprev(sendHotkey, attempt ?? false)
             default:
                 SendInput(sendHotkey)
                 if !WinWait("Rendering",, 2) {
-                    if attempt = "active" {
+                    if attempt ?? false = "active" {
                         SendInput(sendHotkey)
                         if !WinWait("Rendering",, 2) {
                             tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")

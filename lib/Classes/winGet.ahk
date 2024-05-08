@@ -234,7 +234,7 @@ class WinGet {
     /**
      * This function will grab the title of premiere if it exists and check to see if a save is necessary
      * @param {VarRef} premCheck is the complete title of premiere
-     * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return `-1` if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than 0
+     * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return `-1` if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than or equal to 0
      * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return `-1` if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
      * @returns {Object/Boolean}
      * ```
