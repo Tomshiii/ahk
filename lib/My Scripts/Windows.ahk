@@ -12,7 +12,14 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 {
 	if !isDoubleClick()
 		return
-	SetCapsLockState !GetKeyState("CapsLock", "T")
+	soundName := SoundGetName(), currentVolume := SoundGetVolume()
+	SetCapsLockState !state := GetKeyState("CapsLock", "T")
+	SoundSetVolume(Round(currentVolume/2),, soundName)
+	switch state {
+		case true: SoundBeep(250, 300), SoundBeep(250, 300)
+		case false: SoundBeep(700, 100), SoundBeep(700, 100)
+	}
+	SoundSetVolume(currentVolume,, soundName)
 }
 
 ;centreHotkey;
@@ -44,18 +51,18 @@ SC03A & F5::refreshWin("A", wingetProcessPath("A"))
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;windowspyHotkey;
-Pause::switchTo.WindowSpy() ;run/swap to windowspy
+PgDn::switchTo.WindowSpy() ;run/swap to windowspy
 ;vscodeHotkey;
-PrintScreen::switchTo.VSCode() ;run/swap to vscode
+PgUp::switchTo.VSCode() ;run/swap to vscode
 ;streamdeckHotkey;
-ScrollLock::switchTo.Streamdeck() ;run/swap to the streamdeck program
+PrintScreen::switchTo.Streamdeck() ;run/swap to the streamdeck program
 
 ;This script is to open the ahk documentation. If ctrl is held, highlighted text will be searched
 ;akhdocuHotkey;
-RWin::
+RCtrl::
 ;// both are needed here otherwise using ctrl+appskey might fail to work if the active window grabs it first
 ;ahksearchHotkey;
-RShift & RWin::switchTo.ahkDocs()
+RShift & RCtrl::switchTo.ahkDocs()
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
@@ -70,6 +77,3 @@ SC03A & XButton1::move.XorY()
 
 ;SubUnderHotkey;
 +NumpadSub::_
-
-;extraEnterHotkey;
-PgDn::Enter ;// I use a TKL keyboard and miss my NumpadEnter key
