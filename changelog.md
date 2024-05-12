@@ -1,4 +1,4 @@
-# <> Release 2.14.x - 
+# <> Release 2.14.4 - Hotfix
 
 ## Functions
 - Fixed `rbuttonPrem().movePlayhead()` performing slowly under certain circumstances

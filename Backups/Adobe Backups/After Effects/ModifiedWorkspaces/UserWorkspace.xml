@@ -114,7 +114,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.69096208</float>
+<float>0.69023323</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -167,10 +167,6 @@
 <prop.pair>
 <key>CurrTab</key>
 <int type='unsigned' size='32'>0</int>
-</prop.pair>
-<prop.pair>
-<key>IsFocused</key>
-<true/>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -487,7 +483,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.51476794</float>
+<float>0.51531154</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -904,25 +900,8 @@
 <int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
-<key>HidTabState-0</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;Locked&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;0&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>ReanimTabs</key>
-<array>
-<array.type><string/></array.type>
-<string>AE Render Queue</string>
-</array>
+<key>IsFocused</key>
+<true/>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -932,6 +911,7 @@
 <key>TabIDs</key>
 <array>
 <array.type><string/></array.type>
+<string>AE Render Queue</string>
 <string>AE Timeline</string>
 </array>
 </prop.pair>
@@ -952,7 +932,25 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;0&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
+</prop.pair>
+<prop.pair>
+<key>VisTabState-1</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameViewFlags&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Locked&lt;/key&gt;
 &lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;TabID&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
