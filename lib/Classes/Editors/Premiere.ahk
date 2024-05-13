@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/05/08
- * @version 2.1.6
+ * @date 2024/05/13
+ * @version 2.1.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1726,19 +1726,23 @@ class Prem {
     static selectionTool() {
         MouseGetPos(&xpos, &ypos)
         sleep 50
+        block.On()
         premUIA := premUIA_Values()
         if !toolsNN := this.__uiaCtrlPos(premUIA.tools,,, false) {
             block.Off()
             return
         }
-        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection_2.png")
+        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection_2.png") {
+            block.Off()
             return
+        }
         if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection.png") {
             coord.client("Mouse", false)
             MouseMove(x, y)
             SendInput("{Click}")
             MouseMove(xpos, ypos)
             SendInput(KSA.programMonitor)
+            block.Off()
             return
         }
         sleep 100
@@ -1747,6 +1751,7 @@ class Prem {
             SendInput(KSA.selectionPrem)
             SendInput(KSA.programMonitor)
             errorLog(Error("Couldn't find the selection tool", -1), "Used the selection hotkey instead", 1)
+            block.Off()
             return
         }
     }
@@ -2096,13 +2101,16 @@ class Prem {
         try premUIAEl := this.__createUIAelement(false)
 
         __clickProx(x, y) {
+            block.On()
             MouseGetPos(&origX, &origY)
             MouseMove(x, y, 2)
             SendInput("{Click}")
             sleep 250
             MouseMove(origX, origY, 2)
             sleep 250
+            block.Off()
         }
+
         if IsSet(premUIAEl)
             premUIAEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
         else
@@ -2112,23 +2120,34 @@ class Prem {
             __clickProx(proxX, proxY)
         }
         SendEvent(ksa.premExportFrame)
-        if !WinWait(scrshtTitle,, 3)
+        if !WinWait(scrshtTitle,, 3) {
+            block.Off()
             return
+        }
         SendEvent(who "_" this.sc%who%)
         if this.sc%who% = 1 {
-            if !WinWaitClose(scrshtTitle,, 10)
+            if !WinWaitClose(scrshtTitle,, 10) {
+                block.Off()
                 return
-            if !proxSrch
+            }
+            if !proxSrch {
+                block.Off()
                 return
+            }
             __clickProx(proxX, proxY)
+            block.Off()
             return
         }
         SendEvent("{Enter}")
-        if !WinWaitClose(scrshtTitle,, 10)
+        if !WinWaitClose(scrshtTitle,, 10) {
+            block.Off()
             return
+        }
         sleep 50
-        if !proxSrch
+        if !proxSrch {
+            block.Off()
             return
+        }
         __clickProx(proxX, proxY)
     }
 
