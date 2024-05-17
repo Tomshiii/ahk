@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.3
  * @author tomshi
- * @date 2024/05/13
- * @version 2.1.7
+ * @date 2024/05/17
+ * @version 2.1.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,6 +33,20 @@
 
 class Prem {
 
+    static __New() {
+        UserSettings := UserPref()
+        this.currentSetVer := SubStr(UserSettings.premVer, 2)
+        UserSettings.__delAll()
+        UserSettings := ""
+
+        switch {
+            case VerCompare(this.currentSetVer, "24.5") >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3
+			case VerCompare(this.currentSetVer, "24.5") < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB
+        }
+    }
+
+    static currentSetVer := ""
+
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
     static class    := Editors.Premiere.class
@@ -47,7 +61,7 @@ class Prem {
     static zToolY     := 0
 
     ;// colour of playhead
-    static playhead := 0x2D8CEB
+    static playhead := 0x4096F3
 
     ;// variable for prem.thumbScroll()
     static scrollSpeed := 5
@@ -60,7 +74,7 @@ class Prem {
     static timelineYValue   := 0
     static timelineXControl := 0
     static timelineYControl := 0
-    static focusColour      := 0x2D8CEB
+    static focusColour      := 0x4096F3
 
     ;// rbuttonPrem
     static focusTimelineStatus := true
@@ -1001,180 +1015,6 @@ class Prem {
     }
 
     /**
-     * This function pulls an audio file out of a separate bin from the project window and back to the cursor (premiere pro)
-     *
-     * If `sfxName` is "bleep" there is extra code that automatically moves it to your track of choice.
-     *
-     * This function uses hard coded position values for where it expects the sfx bin to be. You may need to change these values.
-     * @param {String} sfxName is the name of whatever sound you want the function to pull onto the timeline
-     */
-    static audioDrag(sfxName)
-    {
-        ;I wanted to use a method similar to other premiere functions above, that grabs the classNN value of the panel to do all imagesearches that way instead of needing to define coords, but because I'm using a separate bin which is essentially just a second project window, things get messy, premiere gets slow, and the performance of this function dropped drastically so for this one we're going to stick with coords defined in KSA.ini/ahk & additional hard coded values
-
-        /**
-         * A function to cut repeat code. Checks the state of the cursor
-         */
-        cursorCheck() {
-            if A_Cursor != "Arrow"
-                loop 12 {
-                    MouseMove(5, 0, 2, "R")
-                    if A_Cursor = "Arrow"
-                        {
-                            MouseMove(5, 0, 2, "R")
-                            sleep 25
-                            break
-                        }
-                    sleep 50
-                }
-        }
-        coord.s()
-        SendInput(KSA.selectionPrem)
-        if !ImageSearch(&sfxxx, &sfxyy, 3021, 664, 3589, 1261, "*2 " ptf.Premiere "binsfx.png") ;checks to make sure you have the sfx bin open as a separate project window
-            {
-                errorLog(Error("User hasn't opened the required bin", -1),, 1)
-                return
-            }
-        block.On()
-        coord.s()
-        MouseGetPos(&xpos, &ypos)
-        if ImageSearch(&listx, &listy, 3082, 664, 3591, 1265, "*2 " ptf.Premiere "list view.png") ;checks to make sure you're in the list view
-            {
-                MouseMove(listx, listy)
-                SendInput("{Click}")
-                sleep 100
-            }
-        loop {
-            SendInput(KSA.projectsWindow) ;highlights the project window ~ check the keyboard shortcut ini file to adjust hotkeys
-            SendInput(KSA.projectsWindow) ;highlights the sfx bin that I have ~ check the keyboard shortcut ini file to adjust hotkeys
-            ;keys.allWait() ;I have this set to remapped mouse buttons which instantly "fire" when pressed so can cause errors
-            if !this().__findBox()
-                return
-            SendInput("^a" "+{BackSpace}")
-            SendInput(sfxName)
-            sleep 250 ;the project search is pretty slow so you might need to adjust this
-            coord.w()
-            if !ImageSearch(&vlx, &vly, KSA.sfxX1, KSA.sfxY1, KSA.sfxX2, KSA.sfxY2, "*2 " ptf.Premiere "audio.png") && !ImageSearch(&vlx, &vly, KSA.sfxX1, KSA.sfxY1, KSA.sfxX2, KSA.sfxY2, "*2 " ptf.Premiere "audio2.png") ;searches for the audio image next to an audio file
-                {
-                    block.Off()
-                    errorLog(Error("Couldn't find the audio image", -1),, 1)
-                    coord.s()
-                    MouseMove(xpos, ypos)
-                    return
-                }
-            MouseMove(vlx, vly)
-            sleep 100
-            SendInput("{Click Down}")
-            sleep 100
-            coord.s()
-            MouseMove(xpos, ypos)
-            if GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")
-                SendInput("{Ctrl Up}") ;// a check to make sure premiere doesn't `insert` the clip
-            SendInput("{Click Up}")
-            sleep 500
-            ; this.__checkTimelineFocus() ;// the timeline regains focus once the audio clip is dropped on the timeline
-            colour := PixelGetColor(xpos + 10, ypos)
-            if !this.dragColour.Has(colour)
-                break
-            if A_Index > 2
-                {
-                    block.Off()
-                    errorLog(IndexError("Couldn't drag the file to the timeline because colour was " colour " A_Index was: " A_Index, -1),, 1)
-                    return
-                }
-        }
-        ;// out of loop
-        block.Off()
-        if sfxName = "bleep"
-            {
-                sleep 50
-                SendInput(KSA.selectionPrem)
-                MouseGetPos(&delx, &dely)
-                MouseMove(10, 0,, "R")
-                sleep 50
-                cursorCheck()
-                SendInput("{Click}")
-                sleep 50
-                SendInput(KSA.gainAdjust)
-                SendInput("-20")
-                SendInput("{Enter}")
-                WinWaitClose("Audio Gain")
-                MouseMove(xpos, ypos)
-                trackNumber := 2
-                sleep 100
-                SendInput(KSA.cutPrem)
-                start := A_TickCount
-                sec := 0
-                clear() {
-                    ToolTip("")
-                    ToolTip("",,, 2)
-                    ToolTip("",,, 3)
-                }
-                loop {
-                    ;check to see if the user wants the bleep on a track between 1-9
-                    getlastHotkey := A_PriorKey
-                    if getlastHotkey != "" {
-                        if IsDigit(getlastHotkey) ;checks to see if the last pressed key is a number between 1-9
-                            trackNumber := getlastHotkey
-                        if (GetKeyState("Esc", "P") || getlastHotkey = "Escape")
-                            {
-                                clear()
-                                return
-                            }
-                    }
-                    sleep 50
-                    if A_Index > 160 ;built in timeout
-                        {
-                            block.Off()
-                            clear()
-                            errorLog(IndexError(A_ThisFunc "() timed out due to no user interaction", -1),, 1)
-                            return
-                        }
-                    if ((A_TickCount - start) >= 1000)
-                        {
-                            start += 1000
-                            sec += 1
-                        }
-                    secRemain := 8 - sec
-                    mousegetpos(, &ypos)
-                    ToolTip("This function will attempt to drag your bleep to:`n" A_Tab A_Tab "Track " trackNumber)
-                    ToolTip("Press another number key to move to a different track`nThe function will continue once you've cut the track`n" secRemain "s remaining",, ypos+15, 2)
-                    ToolTip("Cancel with: Esc",, ypos-50, 3)
-                } until GetKeyState("LButton", "P")
-                ;// out of loop
-                clear()
-                block.On()
-                sleep 50
-                SendInput(KSA.selectionPrem)
-                MouseGetPos(&delx, &dely)
-                MouseMove(xpos + 10, ypos)
-                sleep 500
-                SendInput("{Click Down}")
-                MouseGetPos(&refx, &refy)
-                if !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " ptf.Premiere "track " trackNumber "_1.png") && !ImageSearch(&trackX, &trackY, 0, 0, 200, A_ScreenHeight, "*2 " ptf.Premiere "track " trackNumber "_2.png")
-                    {
-                        block.Off()
-                        errorLog(Error("Couldn't determine the Y value of desired track", -1, trackNumber),, 1)
-                        return
-                    }
-                MouseMove(refx, trackY, 2)
-                SendInput("{Click Up}")
-                sleep 50
-                MouseMove(delx + 10, dely, 2)
-                sleep 200
-                cursorCheck()
-                SendInput("{Click}")
-                SendInput("{BackSpace}")
-                MouseMove(xpos + 10, ypos)
-                Sleep(25)
-                cursorCheck()
-                block.Off()
-                ToolTip("")
-                return
-            }
-    }
-
-    /**
      * Move back and forth between edit points from anywhere in premiere
      * @param {String} window the hotkey required to focus the desired window within premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
@@ -1606,7 +1446,8 @@ class Prem {
                     return
                 }
             }
-            if !this.timelineFocusStatus() {
+            status := this.timelineFocusStatus()
+            if status != true {
                 if useUIA = true && premUIAEl != false {
                     try premUIAEl.ElementFromPath(premUIA.timeline).SetFocus()
                     sleep 400 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later

@@ -1,16 +1,17 @@
 /************************************************************************
  * @description move the Premere Pro playhead to the cursor
- * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 slowly began moving workflow to v24+
+ * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 moved workflow to v24+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/05/07
- * @version 2.2.7
+ * @date 2024/05/17
+ * @version 2.3.0
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Settings>
 #Include <Classes\ptf>
+#Include <Classes\errorLog>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\Editors\Premiere_UIA>
 #Include <Classes\tool>
@@ -62,13 +63,55 @@ There's probably some dumb hacky way to work around that but ultimately it's jus
 ;---------------------------------------------------------------------------------------
 
 ;// there may be code that EXPECTS the activation hotkey to be RButton
-RButton::rbuttonPrem().movePlayhead()
+RButton::rbuttonPrem().movePlayhead(, prem.currentSetVer)
 ; MButton::prem.__toggleTimelineFocus()
 
 ;// there is code that EXPECTS the activation hotkey to be XButton1
 ;// including uses of `checkStuck()`
 ;// beware if modifying this activation hotkey that code adjustments might be necessary
-XButton1::rbuttonPrem().movePlayhead(false)
+XButton1::rbuttonPrem().movePlayhead(false, prem.currentSetVer)
+
+;// a list of colours required for each UI version/theme of premiere I've encountered.
+;// I only use the darkest themes, if you use a different theme you'll need to fill out your own and change the variable within `movePlayhead()`
+class timelineColours {
+	static Spectrum := {
+		darkest: [
+			"timeline1",  0x3C3C3C, ;timeline colour inbetween two clips inside the in/out points ON a targeted track
+			"timeline2",  0x303030, ;timeline colour of the separating LINES between targeted AND non targeted tracks inside the in/out points
+			"timeline3",  0x191919, ;the timeline colour inside in/out points on a UNTARGETED track
+			"timeline11", 0x3B3B3B, ;the timeline colour inside in/out points on a TARGETED track (v24.5+)
+			"timeline12", 0x3E3E3E, ;the timeline colour inside in/out points on a TARGETED track (additional)
+			"timeline13", 0x3D3D3D, ;the timeline colour inside in/out points on a TARGETED track (additional)
+			"timeline14", 0x3F3F3F, ;the timeline colour inside in/out points on a TARGETED track (additional)
+			"timeline4",  0x1D1D1D, ;the colour of the bare timeline NOT inside the in out points (above any tracks)
+			"timeline8",  0x202020, ;the colour of the bare timeline NOT inside the in out points (v22.3.1+)
+			"timeline9",  0x1C1C1C, ;the colour of the bare timeline NOT inside the in out points (v23.1+)
+			"timeline10", 0x1D1D1D, ;the colour of the bare timeline NOT inside the in out points (v23.4+) (above any tracks)
+			"timeline5",  0xE2E2E2, ;the colour of a SELECTED blank space on the timeline, NOT in the in/out points
+			"timeline6",  0xE7E7E7, ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+			"timeline7",  0xC1C1C1, ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+		]
+	}
+
+	static oldUI := {
+		darkest: [
+			"timeline1",  0x414141, ;timeline colour inbetween two clips inside the in/out points ON a targeted track
+			"timeline2",  0x313131, ;timeline colour of the separating LINES between targeted AND non targeted tracks inside the in/out points
+			"timeline3",  0x1b1b1b, ;the timeline colour inside in/out points on a UNTARGETED track
+			"timeline11", 0x424242, ;the timeline colour inside in/out points on a TARGETED track (v23-24.4)
+			"timeline12", 0x424242, ;the timeline colour inside in/out points on a TARGETED track (additional) (not needed for old UI)
+			"timeline13", 0x424242, ;the timeline colour inside in/out points on a TARGETED track (additional) (not needed for old UI)
+			"timeline14", 0x424242, ;the timeline colour inside in/out points on a TARGETED track (additional) (not needed for old UI)
+			"timeline4",  0x212121, ;the colour of the bare timeline NOT inside the in out points (above any tracks)
+			"timeline8",  0x202020, ;the colour of the bare timeline NOT inside the in out points (v22.3.1+)
+			"timeline9",  0x1C1C1C, ;the colour of the bare timeline NOT inside the in out points (v23.1+)
+			"timeline10", 0x1D1D1D, ;the colour of the bare timeline NOT inside the in out points (v23.4+) (above any tracks)
+			"timeline5",  0xDFDFDF, ;the colour of a SELECTED blank space on the timeline, NOT in the in/out points
+			"timeline6",  0xE4E4E4, ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
+			"timeline7",  0xBEBEBE, ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
+		]
+	}
+}
 
 class rbuttonPrem {
 	leftClick    := false
@@ -81,26 +124,7 @@ class rbuttonPrem {
 	origSeq := ""
 	remote  := true
 
-	;First, we define all the timeline's DEFAULT possible colors.
-	;(Note that your colors will be different if you changed the UI brightness inside [preferences > appearance > brightness] OR may be different in other versions of premiere)
-	;I used Window Spy (it comes with AHK) to detect the exact colors onscreen.
-	timeline1  := 0x414141 ;timeline colour inbetween two clips inside the in/out points ON a targeted track
-	timeline2  := 0x313131 ;timeline colour of the separating LINES between targeted AND non targeted tracks inside the in/out points
-	timeline3  := 0x1b1b1b ;the timeline colour inside in/out points on a UNTARGETED track
-	timeline11 := 0x424242 ;the timeline colour inside in/out points on a TARGETED track (v23+)
-	timeline4  := 0x212121 ;the colour of the bare timeline NOT inside the in out points (above any tracks)
-	timeline8  := 0x202020 ;the colour of the bare timeline NOT inside the in out points (v22.3.1)
-	timeline9  := 0x1C1C1C ;the colour of the bare timeline NOT inside the in out points (v23.1)
-	timeline10 := 0x1D1D1D ;the colour of the bare timeline NOT inside the in out points (v23.4) (above any tracks)
-	timeline5  := 0xDFDFDF ;the colour of a SELECTED blank space on the timeline, NOT in the in/out points
-	timeline6  := 0xE4E4E4 ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
-	timeline7  := 0xBEBEBE ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track
-	timelineCol := [
-		this.timeline1,  this.timeline2,  this.timeline3,
-		this.timeline4,  this.timeline5,  this.timeline6,
-		this.timeline7,  this.timeline8,  this.timeline9,
-		this.timeline10, this.timeline11
-	]
+	timelineCol := []
 
 	/**
 	 * Checks to see whether the colour under the cursor indicates that it's a blank track
@@ -139,7 +163,8 @@ class rbuttonPrem {
 			colour != this.timelineCol[1] && colour != this.timelineCol[2] &&
 			colour != this.timelineCol[3] && colour != this.timelineCol[4] &&
 			colour != this.timelineCol[8] && colour != this.timelineCol[9] &&
-			colour != this.timelineCol[11]
+			colour != this.timelineCol[11] && colour != this.timelineCol[12] &&
+			colour != this.timelineCol[13] && colour != this.timelineCol[14]
 		) {
 			SendInput("{Rbutton}")
 			return false
@@ -265,11 +290,36 @@ class rbuttonPrem {
 	}
 
 	/**
+	 * Set internal colour variables based on the version of Premiere Pro the user currently has set within `settingsGUI()`
+	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum` & `oldUI`
+	 * @param {String} theme which theme the user wishes to use. Currently accepts `darkest`
+	 */
+	__setTimelineCol(UI, theme) {
+		for k, v in timelineColours.%UI%.%theme% {
+			if Mod(A_Index, 2) != 0
+				continue
+			varName := timelineColours.%UI%.%theme%[k-1]
+			this.timelineCol.Push(Format("0x{:x}", v))
+		}
+	}
+
+	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when `RButton` is pressed.
 	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details
 	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
 	 */
-	movePlayhead(allChecks := true) {
+	movePlayhead(allChecks := true, version := unset) {
+		if !IsSet(version) {
+			;// throw
+			errorLog(UnsetError("User has not set Paramater #2"),,, true)
+		}
+
+		;// setting which UI values to use
+		switch {
+			case VerCompare(version, "24.5") >= 0: this.__setTimelineCol("Spectrum", "darkest")
+			case VerCompare(version, "24.5") < 0:  this.__setTimelineCol("oldUI", "darkest")
+		}
+
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
 		WinEvent.NotActive((*) => Exit(), "gettitle.winTitle " prem.winTitle)
@@ -334,6 +384,11 @@ class rbuttonPrem {
 
 		this.premUIA := premUIA_Values()
 		try premEl := prem.__createUIAelement(false)
+
+		;// we send a single input here so that in the event UIA is slow to respond because of premiere
+		;// the cursor will still move if the user taps the activation hotkey
+		SendInput(ksa.playheadtoCursor)
+
 		if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence")
 			this.remote := false
 		if this.remote = true
@@ -344,10 +399,6 @@ class rbuttonPrem {
 		catch {
 			prem.__checkTimelineFocus()
 		}
-
-		;// we send a single input here so that in the event UIA is slow to respond because of premiere
-		;// the cursor will still move if the user taps the activation hotkey
-		SendInput(ksa.playheadtoCursor)
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
 		while GetKeyState(A_ThisHotkey, "P") {
@@ -363,7 +414,7 @@ class rbuttonPrem {
 			}
 			if this.colourOrNorm != "colour"
 				SendInput(ksa.playheadtoCursor)
-			sleep 16
+			sleep 30
 		}
 
 		;// releases the LButton if it was used to grab the playhead

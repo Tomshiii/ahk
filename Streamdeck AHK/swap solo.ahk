@@ -4,6 +4,7 @@
 #Include <Classes\Editors\Premiere>
 #Include <Classes\ptf>
 #Include <Classes\WM>
+#Include <Classes\obj>
 ; }
 
 #SingleInstance Force
@@ -17,6 +18,8 @@ detect()
 UserSettings := UserPref()
 if WinExist(UserSettings.MainScriptName ".ahk")
     WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
+if !prem.__checkTimelineValues()
+    prem.__checkTimelineFocus()
 
 premUIA := premUIA_Values()
 try premUIAEl := prem.__createUIAelement(false)
@@ -36,7 +39,7 @@ if (!IsInteger(ih.Input) && ih.Input != "") || (ih.EndKey = "Escape") {
     return
 }
 if ih.Input != 0 && ih.Input != "" {
-    if !FileExist(ptf.Premiere "track " ih.input "_1.png") && !FileExist(ptf.Premiere "track " ih.input "_2.png") {
+    if !FileExist(ptf.Premiere "track " ih.input "_1.png") && !FileExist(ptf.Premiere "track " ih.input "_2.png") && !FileExist(ptf.Premiere "track " ih.input "_3.png") {
         tool.Cust("The selected track doesn't have images corresponding to it!`nYou may need to take your own screenshots if you wish to use values that high.", 4.0)
         return
     }
@@ -53,8 +56,8 @@ if ih.Input = 0 || ih.Input = "" {
     tool.Cust("")
     return
 }
-if !ImageSearch(&x, &y, prem.timelineRawX, prem.timelineRawY, prem.timelineXControl, prem.timelineYControl, "*2 " ptf.Premiere "track " ih.input "_1.png") &&
-    !ImageSearch(&x, &y, prem.timelineRawX, prem.timelineRawY, prem.timelineXControl, prem.timelineYControl, "*2 " ptf.Premiere "track " ih.input "_2.png") {
+if !obj.imgSrchMulti({x1: prem.timelineRawX, y1: prem.timelineRawY, x2: prem.timelineXControl, y2: prem.timelineYControl},, &x, &y
+                        , ptf.Premiere "track " ih.input "_1.png", ptf.Premiere "track " ih.input "_2.png", ptf.Premiere "track " ih.input "_3.png") {
     tool.Cust("Couldn't find the location of the desired track", 3.0)
     return
 }
