@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.3
  * @author tomshi, taranVH
- * @date 2024/05/17
- * @version 2.3.0
+ * @date 2024/05/18
+ * @version 2.3.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -46,6 +46,8 @@ NOTE!!
 YOU MUST ASSIGN ALL VARIABLES THAT START WITH `KSA.` with their proper values within `KSA.ini`
 THESE THEN ALSO NEED TO BE SET CORRECTLY WITHIN PREMIERE TO WORK CORRECTLY
 TRY RUNNING `adobeKSA.ahk` FOUND: `..\Support Files\Release Assets\`
+
+You must also set the correct version of premiere within `settingsGUI()` to ensure the function attempts to account for the correct UI
 ;
 RUNNING THIS SCRIPT SEPARATELY WHILE OTHER HOTKEYS ARE SET USING THE SAME KEYS AS THIS SCRIPT MAY RESULT IN UNEXPECTED BEHAVIOUR
 TRY RUNNING THIS SCRIPT ALONGSIDE THOSE OTHER HOTKEYS (similarly to how I run this script from within `My Scripts.ahk`) TO ATTEMPT
@@ -63,13 +65,13 @@ There's probably some dumb hacky way to work around that but ultimately it's jus
 ;---------------------------------------------------------------------------------------
 
 ;// there may be code that EXPECTS the activation hotkey to be RButton
-RButton::rbuttonPrem().movePlayhead(, prem.currentSetVer)
+RButton::rbuttonPrem().movePlayhead(,, prem.currentSetVer)
 ; MButton::prem.__toggleTimelineFocus()
 
 ;// there is code that EXPECTS the activation hotkey to be XButton1
 ;// including uses of `checkStuck()`
 ;// beware if modifying this activation hotkey that code adjustments might be necessary
-XButton1::rbuttonPrem().movePlayhead(false, prem.currentSetVer)
+XButton1::rbuttonPrem().movePlayhead(false,, prem.currentSetVer)
 
 ;// a list of colours required for each UI version/theme of premiere I've encountered.
 ;// I only use the darkest themes, if you use a different theme you'll need to fill out your own and change the variable within `movePlayhead()`
@@ -305,10 +307,13 @@ class rbuttonPrem {
 
 	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when `RButton` is pressed.
-	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details
+	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details.
+	 * This function should work as intended on both the old UI and the new Spectrum UI assuming you use the default darkest themeing for both UI versions. Other themes will require the user to add additional colour values to `timelineColours {`
 	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
+	 * @param {String} [theme="darkest"] the desired theme the user uses and wishes to use for the required colour values
+	 * @param {String} [version=unset] the currently selected version of premiere within `settingsGUI()`. This parameter can usually be filled in using `prem.currentSetVer`
 	 */
-	movePlayhead(allChecks := true, version := unset) {
+	movePlayhead(allChecks := true, theme := "darkest", version := unset) {
 		if !IsSet(version) {
 			;// throw
 			errorLog(UnsetError("User has not set Paramater #2"),,, true)
@@ -316,8 +321,8 @@ class rbuttonPrem {
 
 		;// setting which UI values to use
 		switch {
-			case VerCompare(version, "24.5") >= 0: this.__setTimelineCol("Spectrum", "darkest")
-			case VerCompare(version, "24.5") < 0:  this.__setTimelineCol("oldUI", "darkest")
+			case VerCompare(version, "24.5") >= 0: this.__setTimelineCol("Spectrum", theme)
+			case VerCompare(version, "24.5") < 0:  this.__setTimelineCol("oldUI", theme)
 		}
 
 		;// ensure the main prem window is active before attempting to fire
