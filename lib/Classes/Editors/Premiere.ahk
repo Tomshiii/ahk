@@ -396,6 +396,8 @@ class Prem {
         effectbox()
         coord.c("screen") ;change caret coord mode to window
         CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
+        if !IsSet(carx) || !IsSet(cary) || (!carx && !cary)
+            return
         MouseMove(carx-5, cary+5) ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
         SendInput(item) ;create a preset of any effect, must be in a folder as well
         sleep 50

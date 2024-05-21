@@ -27,8 +27,9 @@ class adobeVers {
             "v24.1",    "v22.3.1",
             "v24.2",    "v22.3.1",      "v24.2.1", "v22.3.1",
             ; "v24.3",    "v22.3.1",
-            ; "v24.4",    "v24.3",      ;// UI changes occur here so this version has its own folder
-            ; "v24.5",    "v24.4",      ;// UI refresh occurs here, brand new images will need to be made by the user
+            ; "v24.4",    "v24.3",      ;// some UI changes occur here so this version has its own folder
+            "v24.4.1", "v24.4",
+            ; "v24.5",    "v24.4",      ;// UI refresh might occur here, brand new images will need to be made by the user
         )
     }
     AE := {

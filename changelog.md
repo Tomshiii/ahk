@@ -1,10 +1,11 @@
 # <> Release 2.14.5 - Initial Premiere Pro Spectrum UI Support
-This release brings initial support for the new Premiere Pro UI currently being tested in the beta channels. Be aware that, as it is currently in beta, things may continue to change in the future as they lead up to its release in a few months and as such my scripts may lag behind in support as a result.
+This release brings initial support for the new Premiere Pro UI currently being tested in the beta channels. Be aware that, as it is currently in beta, things may continue to change in the future as they lead up to its release in a few months and as such my scripts may lag behind in support as a result. It should also be noted that while the current UI overhaul is in the `v24.5` beta, there's no guarantee that will be the version it launches in (colour label changes were initially in the `v24.3` beta but pushed to `v24.4`), as such, the user should be aware that the `ImageSearch` folders in `..\Support Files\ImageSearch\Premiere` may not be completely accurate after release and adobe may change things.
 
 > [!Important]
 > It should be noted that in the current beta versions of Premiere Pro, adobe has removed the WinTitle from the `"delete existing keyframes"` window. This change completely breaks `autodismiss error.ahk` and unless adobe reverts this change, this script will no longer be able to function.
 
 ## Functions
+- Fixed `prem.preset()` potentially throwing if it cannot determine the position of the caret
 
 `rbuttonPrem {`
 - Now supports both the current UI colours and the new `Spectrum` UI found in current beta builds
