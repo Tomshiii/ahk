@@ -49,7 +49,7 @@ class adobeVers {
             "v24.2",    "v22.6",        "v24.2.1", "v22.6",
             "v24.3",    "v22.6",
             "v24.4",    "v22.6",
-            "v24.5",    "v22.6",
+            ; "v24.5",    "v22.6",      ;// UI refresh might occur here, brand new images will need to be made by the user
         )
     }
     PS := {
