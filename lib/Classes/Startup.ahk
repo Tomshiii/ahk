@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/05/24
- * @version 1.7.28
+ * @date 2024/05/25
+ * @version 1.7.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -28,9 +28,11 @@
 #Include <Functions\getLocalVer>
 #Include <Functions\trayShortcut>
 #Include <Functions\editScript>
+#Include <Functions\checkInternet>
 #Include <Other\SystemThemeAwareToolTip>
 #Include <Other\FileGetExtendedProp>
 #Include <Other\print>
+#Include <Other\Notify>
 ; }
 
 class Startup {
@@ -763,7 +765,7 @@ class Startup {
         }
         Notify := {
             name: "Notify",                          ;url: "https://raw.githubusercontent.com/XMCQCX/Notify_Class/main/Notify.ahk",
-            scriptPos: ptf.lib "\Other",             url: "https://raw.githubusercontent.com/Tomshiii/Notify_Class/main/Notify.ahk" ;// leaving this as my fork until center alignment gets merged into the main branch
+            scriptPos: ptf.lib "\Other",             url: "https://raw.githubusercontent.com/Tomshiii/Notify_Class/add-align/Notify.ahk" ;// leaving this as my fork until center alignment gets merged into the main branch
         }
 
         objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify]
@@ -785,29 +787,23 @@ class Startup {
         if check = "stop"
             return
         allLibs := Startup.libs()
-        /**
-         * This function get's the local version of the requested lib
-         * @param {any} path is the local path the lib is located
-         * @returns {Obj} returns the local lib version number or the entire script in a string
-         */
-        localVer(path) {
-            script := FileRead(path)
-            getVerPos := InStr(script, "@version")
-            if getVerPos = 0 ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
-                return {version: "", script: script}
-            endPos := InStr(script, "*",, getVerPos, 1) - 2
-            localVerStr := Trim(SubStr(script, getVerPos + 9, endPos-(getVerPos + 9)), " `t`n`r")
-            return {version: localVerStr, script: script}
-        }
+
         /**
          * This function get's the latest version of the requested lib
-         * @param {any} url is the url the function will check (raw.github links recommended)
-         * @returns {string} returns the latest lib version number
+         * @param {string} url is the url the function will check (raw.github links recommended)
+         * @param {string} name the name of the script incase an error message needs to notify the user
+         * @returns {obj}
+         * ```
+         * latestVer := getString(url, name)
+         * latestVer.version ;// a string representing the version number
+         * latestVer.script  ;// a string of the entire script FileRead
+         * ```
          */
-        getString(url) {
+        getString(url, name) {
             string := getHTML(url)
             if string = -1 {
-                tool.Tray({title: "libUpdateCheck() encountered an issue", text: "lib may have incorrect url:`n" url})
+                ; tool.Tray({title: "libUpdateCheck() encountered an issue", text: "lib may have incorrect url:`n" url})
+                Notify.Show('Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'BC=C72424')
                 errorLog(Error(A_ThisFunc " encountered an issue with the specified url", -1), url)
                 return {version: 0}
             }
@@ -815,23 +811,18 @@ class Startup {
                 return {version: 0}
             if InStr(string, "﻿") ;removes zero width no-break space
                 string := StrReplace(string, "﻿", "")
-            getVerPos := InStr(string, "@version")
-            if getVerPos = 0
-                return {version: "", script: string}
-            endPos := InStr(string, "*",, getVerPos, 1) - 2
-            ver := Trim(SubStr(string, getVerPos + 9, endPos-(getVerPos + 9)), " `t`n`r")
-            return {version: ver, script: string}
+            return getLocalVer(string,,,, true)
         }
-        ;begin loop
+        ;// begin loop
         loop allLibs.name.Length {
-            localVersion := localVer(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-            latestVer := getString(allLibs.url[A_Index])
+            localVersion := getLocalVer(, StrReplace(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk", ptf.rootDir "\", ""),,, true) ;localVer(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
+            latestVer := getString(allLibs.url[A_Index], allLibs.name[A_Index] ".ahk")
             if latestVer.version = ""
                 { ;if the lib doesn't have a @version tag, we'll instead compare the entire file against the local copy and override it if there are differences
                     if localVersion.script !== latestVer.script
                         {
                             Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                            tool.Cust(allLibs.name[A_Index] ".ahk lib file updated",,,, this.startupTtpNum)
+                            Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated", 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4')
                         }
                     continue
                 }
@@ -840,7 +831,7 @@ class Startup {
             if VerCompare(latestVer.version, localVersion.version) > 0
                 {
                     Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                    tool.Cust(allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version,,,, this.startupTtpNum)
+                    Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version, 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4')
                     continue
                 }
         }
