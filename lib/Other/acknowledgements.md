@@ -18,3 +18,6 @@
 `nperovic`  
 `SystemThemeAwareToolTip.ahk` => : https://github.com/nperovic/SystemThemeAwareToolTip
 `MouseHook.ahk`               => : https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350
+
+`XMCQCX`  
+`Notify.ahk` => : https://github.com/XMCQCX/Notify_Class/tree/main

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/04/27
- * @version 2.1.19
+ * @date 2024/05/24
+ * @version 2.1.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -21,6 +21,7 @@
 #Include <Functions\trayShortcut>
 #Include <Functions\checkStuck>
 #Include <Functions\detect>
+#Include <Other\Notify>
 ; }
 
 #SingleInstance force ;only one instance of this script may run at a time!
@@ -288,7 +289,8 @@ class adobeAutoSave extends count {
         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
             return
-        tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
+        Notify.Show(, 'If you were playing back anything, this function should resume it', 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4')
+        ; tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
         this.userPlayback := true
     }
 
@@ -412,7 +414,8 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.premWindow.saveCheck {
-            tool.Cust("Premiere save not required, cancelling")
+            Notify.Show(, 'Premiere save not required, cancelling...', 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=2')
+            ; tool.Cust("Premiere save not required, cancelling")
             return
         }
 
@@ -439,7 +442,8 @@ class adobeAutoSave extends count {
         if this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe"
             this.__checkPremPlayback()
 
-        tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
+        Notify.Show(, 'A save attempt is being made. Inputs may be temporarily blocked', 'iconi',,, 'TC=black MC=black BC=DCCC75 DUR=4')
+        ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
         ;// attempts to save using `PremiereRemote`
         saveAttempt := prem.save()
@@ -526,7 +530,8 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.aeWindow.saveCheck {
-            tool.Cust("AE save not required, cancelling")
+            Notify.Show(, 'AE save not required, cancelling...', 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=2')
+            ; tool.Cust("AE save not required, cancelling")
             return
         }
 

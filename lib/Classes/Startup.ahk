@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/04/21
- * @version 1.7.27
+ * @date 2024/05/24
+ * @version 1.7.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,8 @@
 #Include <GUIs\activeScripts>
 #Include <Classes\Settings>
 #Include <Classes\ptf>
+#Include <Classes\Editors\Premiere>
+#Include <Classes\Editors\premiere_UIA>
 #Include <Classes\tool>
 #Include <Classes\Dark>
 #Include <Classes\winget>
@@ -40,6 +42,8 @@ class Startup {
         this.MyRelease := this.__getMainRelease()
         ;// populate settings variables
         this.UserSettings := UserPref()
+
+        this.isReload := isReload()
     }
 
     ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
@@ -55,6 +59,8 @@ class Startup {
     activeFunc := ""
 
     origSkipVer := ""
+    isReload := false
+
 
     __alertTooltip() {
         SetTimer(alertttp, 1)
@@ -116,7 +122,7 @@ class Startup {
      * This function will also automatically set the `MainScriptName` variable within `settings.ini` based off the script name that calls this function.
      */
     generate() {
-        if isReload() ;checks if script was reloaded
+        if this.isReload != false ;checks if script was reloaded
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         ;// checking to see if the users OS version is high enough to support dark mode
@@ -254,7 +260,7 @@ class Startup {
      * This script will also perform a backup of the users current instance of the "ahk" folder this script resides in and will place it in the `\Backups` folder.
      */
     updateChecker() {
-        if isReload() ;checks if script was reloaded
+        if this.isReload != false ;checks if script was reloaded
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         ;checking to see if the user wishes to check for updates
@@ -407,7 +413,7 @@ class Startup {
      * @param {String} [nonChocoUpdateCommand=""] an alternative command given to the commandline to update all installed packages as the update code in this function is specific to chocolatey
      */
     updatePackages(packageManager := "choco", checkOutdated := "choco outdated", noUpdatesString := "has determined 0 package(s) are outdated", nonChocoUpdateCommand := "") {
-        if isReload() || this.UserSettings.package_update_check = false ;checks if script was reloaded
+        if this.isReload != false || this.UserSettings.package_update_check = false ;checks if script was reloaded
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if InStr(cmd.result(packageManager), Format("'{1}' is not recognized as an internal or external command", packageManager))
@@ -450,7 +456,7 @@ class Startup {
      */
     firstCheck() {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
-        if isReload() ;checks if script was reloaded
+        if this.isReload != false ;checks if script was reloaded
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if WinExist("Scripts Release ")
@@ -519,7 +525,7 @@ class Startup {
      * This function will (on first startup, NOT a refresh of the script) delete any `\.txt` files in any of the `..\Logs\` folders that are older than 30 days
      */
     oldLogs() {
-        if isReload()
+        if this.isReload != false
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         loop files, ptf.Logs "\*.txt", "R" {
@@ -616,7 +622,7 @@ class Startup {
     adobeVerOverride() {
         if !this.UserSettings.adobeExeOverride
             return
-        if isReload()
+        if this.isReload != false
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
 
@@ -652,14 +658,14 @@ class Startup {
         if premExeVer = false && aeExeVer = false
             return
 
-        if VerCompare(premExeVer, this.UserSettings.premVer) != 0 || VerCompare(aeExeVer, this.UserSettings.aeVer) != 0 ||
-            ptf.PremYearVer != (SubStr(A_YYYY, 1, 2) setPremYear) || ptf.aeYearVer != (SubStr(A_YYYY, 1, 2) setAEYear) {
+        if VerCompare(premExeVer, StrReplace(this.UserSettings.premVer, "v", "")) != 0 || VerCompare(aeExeVer, StrReplace(this.UserSettings.aeVer, "v", "")) != 0 ||
+            ptf.PremYearVer != setPremYear || ptf.aeYearVer != setAEYear {
             this.UserSettings.premVer   := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
             this.UserSettings.prem_year := SubStr(A_YYYY, 1, 2) setPremYear
             this.UserSettings.aeVer     := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
             this.UserSettings.ae_year   := SubStr(A_YYYY, 1, 2) setAEYear
             this.UserSettings.__delAll()
-            reset.ext_reload()
+            reset.reset()
         }
     }
 
@@ -755,8 +761,12 @@ class Startup {
             name: "WinEvent",                        url: "https://raw.githubusercontent.com/Descolada/AHK-v2-libraries/main/Lib/WinEvent.ahk",
             scriptPos: ptf.lib "\Other"
         }
+        Notify := {
+            name: "Notify",                          ;url: "https://raw.githubusercontent.com/XMCQCX/Notify_Class/main/Notify.ahk",
+            scriptPos: ptf.lib "\Other",             url: "https://raw.githubusercontent.com/Tomshiii/Notify_Class/main/Notify.ahk" ;// leaving this as my fork until center alignment gets merged into the main branch
+        }
 
-        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent]
+        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify]
         name        := []
         url         := []
         scriptPos   := []
@@ -766,7 +776,7 @@ class Startup {
      * This function will loop through `class libs {` and ensure that all libs are up to date. This function will not fire on a reload
      */
     libUpdateCheck() {
-        if isReload()
+        if this.isReload != false
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if !checkInternet()
@@ -841,7 +851,7 @@ class Startup {
      * This function will check for a new version of AHK by comparing the latest version to the users currently running version. If a newer version is available, it will prompt the user.
      */
     updateAHK() {
-        if isReload() ;checks if script was reloaded
+        if this.isReload != false ;checks if script was reloaded
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         settingsCheck := this.UserSettings.update_check

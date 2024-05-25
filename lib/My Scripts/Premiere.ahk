@@ -8,6 +8,10 @@
 Shift & Tab::
 $Tab::
 {
+	if WinActive("Modify Clip " prem.winTitle) {
+		prem.swapChannels(1)
+		return
+	}
 	if !isDoubleClick()
 		return
 	sendMod := (GetKeyState("Shift", "P")) ? "+" : ""

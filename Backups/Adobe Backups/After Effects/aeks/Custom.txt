@@ -200,7 +200,7 @@
 
 
 ["** header **"]
-	"major_version" = "106"
+	"major_version" = "107"
 
 ["AE_TopLevelWindow"]
 	"SelectNextTab" = "(Alt+Shift+.)"
@@ -684,6 +684,7 @@
 	"OpenLayerSourceWindow" = "(Alt+Enter)"
 	"Orientation" = "(Ctrl+Alt+Shift+R)"
 	"Paste" = "(Ctrl+V)"
+	"PasteReversedKeyframes" = "()"
 	"PrefsGeneral" = "(Ctrl+Alt+;)"
 	"PrevXferMode" = "(Shift+-)"
 	"ProjectSettings" = "(Ctrl+Alt+Shift+K)"

@@ -3,10 +3,10 @@
  * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 slowly began moving workflow to v23.5+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * See the version number listed below for the version of Premiere I am currently using
- * @premVer 24.3
+ * @premVer 24.4.1
  * @author tomshi
- * @date 2024/05/17
- * @version 2.1.8
+ * @date 2024/05/24
+ * @version 2.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,6 +29,7 @@
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
 #Include <Functions\detect>
+#Include <Other\Notify>
 ; }
 
 class Prem {
@@ -120,18 +121,6 @@ class Prem {
             2: [2873, -436, 300, 960, 540]
         }
     }
-
-    /**
-     * This variable contains a map of all relevant colour values for audioDrag() to work correctly
-     */
-    static dragColour := Map(
-        ;// colours for a green audio track
-        0x156B4C, 1, 0x1B8D64, 1, 0x1c7d5a, 1, 0x1D7E5B, 1, 0x1D986C, 1, 0x1E7F5C, 1, 0x1F805D, 1, 0x1FA072, 1, 0x1FA373, 1, 0x20815E, 1, 0x21825F, 1, 0x23AB83, 1, 0x248562, 1, 0x258663, 1, 0x268764, 1,  0x298A67, 1, 0x29D698, 1, 0x2A8B68, 1, 0x2A8D87, 1, 0x2B8C69, 1, 0x3A9B78, 1, 0x3DFFE4, 1, 0x44A582, 1, 0x457855, 1, 0x47A582, 1, 0x4AAB88, 1, 0x5C67F9, 1, 0x5D68FB, 1, 0x5D68FC, 1, 0xD0E1DB, 1, 0xD4F7EA, 1, 0xFDFDFD, 1, 0xFEFEFE, 1, 0xFFFFFF, 1, 0x3AAA59, 1,
-        ;// colours for the red box
-        0xE40000, 1, 0xEEE1E1, 1,
-        ;// colours for the fx symbol box
-        0x292929, 1, 0x2D2D2D, 1, 0x3B3B3B, 1, 0x404040, 1, 0x454545, 1, 0x4A4A4A, 1, 0x585858, 1, 0x606060, 1, 0x646464, 1, 0xA7ADAB, 1, 0xB1B1B1, 1, 0xCCCCCC, 1, 0xD2D2D2, 1, 0xEFEFEF, 1
-    )
 
     __fxPanel() => (SendInput(KSA.effectControls), SendInput(KSA.effectControls))
 
@@ -1513,53 +1502,15 @@ class Prem {
         this.timelineXControl := timelineNN.x + 236         ;accounting for the column to the left of the timeline
         this.timelineYControl := timelineNN.y + timelineNN.height - 25 ;accounting for the scroll bars at the bottom of the timeline
         this.timelineVals     := true
-        if tools = true
-            SetTimer(tooltips, -100)
+        if tools = true {
+            Notify.Show(,"
+            (
+                prem.getTimeline() found the coordinates of the timeline. This function will not check coordinates again until a script refresh.
+                If this script grabbed the wrong coordinates, refresh and try again! If this script fails to function correctly, recheck your
+                Prem_UIA coords before refreshing the script and trying again!
+            )",,,, 'POS=BC DUR=6 ALI=CENTER BC=242424')
+        }
         return true
-        tooltips() {
-            ; tool.Wait()
-            tool.Cust("prem.getTimeline() found the coordinates of the timeline.", 4.0,,, 10)
-            tool.Cust("This function will not check coordinates again until a script refresh.`nIf this script grabbed the wrong coordinates, refresh and try again!", 4.0,, 30, 11)
-            tool.Cust("If this script fails to function correctly, recheck your Prem_UIA coords`nbefore refreshing the script and trying again!", 4.0,, 73, 12)
-        }
-    }
-
-    /**
-     * ### This function has been broken for a while. Premiere now makes it so that if you're on the very last character of a text block, <kbd>Ctrl</kbd> + <kbd>Left</kbd> won't do anything. Move one character to the left and suddenly it works.
-     * Premiere is really dumb and doesn't let you ctrl + backspace, this function is to return that functionality
-     */
-    static wordBackspace() {
-        SendMode("Event")
-        SetKeyDelay(15)
-        sendLeft() {
-            Send("{Ctrl Down}{Shift Down}")
-            Send("{Left}")
-            Send("{Shift Up}{Ctrl Up}")
-        }
-        keys.allWait("second")
-        sendLeft()
-        store := clip.clear()
-        Send("^c")
-        if !ClipWait(0.1) || check := (StrLen(A_Clipboard) = 1) ? 1 : 0
-            {
-                additional := true
-                if IsSet(check) && check = 1
-                    Send("{Right}")
-                else if A_Clipboard = A_Space
-                    {
-                        Send("{Right}")
-                        Send("{BackSpace}")
-                        additional := false
-                    }
-                Send("{Space}")
-                Send("{Left}")
-                sendLeft()
-                Send("{BackSpace}")
-                if additional
-                    Send("{Delete}")
-            }
-        Send("{BackSpace}")
-        clip.returnClip(store.storedClip)
     }
 
     /**
@@ -2007,6 +1958,71 @@ class Prem {
         anch2 := A_Clipboard
         delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
         clip.delayReturn(clipb.storedClip)
+    }
+
+    /**
+     * This function is mostly designed for my own workflow and isn't really built out with an incredible amount of logic.
+     * it is designed to swap the L/R channel on a single track stereo file.  attempting to use this script on anything else will either produce unintended results or will simply not function at all
+     */
+    static swapChannels(mouseSpeed := 2) {
+        clipWinTitle := "Modify Clip"
+        coord.s()
+        origCoords := obj.MousePos()
+        block.On()
+        SetDefaultMouseSpeed(mouseSpeed)
+
+        if !WinActive(clipWinTitle) {
+            if prem.__checkTimelineValues() = true {
+                sleep 100
+                if !prem.__waitForTimeline(3)
+                    return
+            }
+            SendInput(ksa.audioChannels)
+            if !WinWait(clipWinTitle,, 3) {
+                block.Off()
+                errorLog(Error("Timed out waiting for window", -1),, 1)
+                return
+            }
+            sleep 150
+        }
+
+        clipWin := obj.WinPos(clipWinTitle)
+        __searchChannel(&x, &y) => ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "channel1.png")
+        if !__searchChannel(&x, &y) {
+            sleep 150
+            if !__searchChannel(&x, &y) {
+                block.Off()
+                errorLog(TargetError("Couldn't find channel 1.", -1),, 1)
+                return
+            }
+        }
+
+        left  := ImageSearch(&checkX, &checkY, x, y - 50, x + 200, y + 50, "*2 " ptf.Premiere "L_unchecked.png") ? coords := {x: checkX, y: checkY} : false
+        right := ImageSearch(&checkX, &checkY, x, y - 50, x + 200, y + 50, "*2 " ptf.Premiere "R_unchecked.png") ? coords := {x: checkX, y: checkY} : false
+
+        ;// if the file isn't dual channel it might not have two checkboxes and thus `coords` won't be set
+        if !IsSet(coords) || !coords {
+            block.Off()
+            tool.Cust("Checkbox not found")
+            return
+        }
+        if !left && !right {
+            block.Off()
+            errorLog(TargetError("Couldn't find unchecked channel.", -1),, 1)
+            return
+        }
+        which := (left = 1) ? "L_unchecked.png" : "R_unchecked.png"
+        Click(Format("{} {}", coords.x+10, coords.y+30))
+
+        if !ImageSearch(&okX, &okY, clipWin.x, (clipWin.y + clipWin.height) - 150, clipWin.x + clipWin.width, clipWin.y + clipWin.height, "*2 " ptf.Premiere "channels_ok.png") {
+            block.Off()
+            errorLog(TargetError("Couldn't find OK button.", -1),, 1)
+            return
+        }
+        MouseMove(okX, okY, 1)
+        SendInput("{Click}")
+        MouseMove(origCoords.x, origCoords.y, 2)
+        block.Off()
     }
 
     ;//! *** ===============================================
