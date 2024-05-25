@@ -5,3 +5,7 @@
     - `startup.libUpdateCheck()` now uses this function instead of repeating code
         - Fixes `startup.libUpdateCheck()` sometimes incorrectly determining version numbers
 - `startup.libUpdateCheck()` now uses `Notify {` in a few cases
+
+`settingsGUI()`
+- Fixed the bottom checkboxes getting cut off
+- Fixed function throwing if the user attempts to open the `Photoshop` dropdown menu

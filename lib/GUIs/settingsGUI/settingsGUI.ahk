@@ -150,7 +150,7 @@ settingsGUI()
     ;//! Top Titles
     settingsGUI.AddText("W100 H20 xs Y7", "Toggle").SetFont("S13 Bold")
 
-    settingsGUI.AddText("W100 H20 x+125", "Adjust").SetFont("S13 Bold")
+    settingsGUI.AddText("W100 H20 x+348", "Adjust").SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! checkboxes
@@ -252,7 +252,7 @@ settingsGUI()
 
     ;// adobe version override
     adobeVerOverrideTitle := "Adobe Version Override"
-    settingsGUI.AddCheckbox("vadobeVerOverrideToggle Checked" UserSettings.adobeExeOverride " Y+20", adobeVerOverrideTitle).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
+    settingsGUI.AddCheckbox("vadobeVerOverrideToggle Checked" UserSettings.adobeExeOverride " xs+223 ys Section", adobeVerOverrideTitle).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
     settingsGUI["adobeVerOverrideToggle"].ToolTip := (UserSettings.adobeExeOverride = true) ? toolT.adobeExe.Yes : toolT.adobeExe.No
 
     ;// autosave always save
@@ -404,7 +404,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! BOTTOM TEXT
-    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+120", "Reset")
+    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+50", "Reset")
     resetText.SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -447,8 +447,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! GROUP EXIT BUTTONS
-
-    settingsGUI.AddGroupBox("W201 H58 xs+270 ys+5", "Exit")
+    settingsGUI.AddGroupBox("W201 H58 xs+500 ys+5", "Exit")
     settingsGUI.AddButton("W85 H30 x+-190 y+-40", "Hard Reset").OnEvent("Click", close.bind("hard"))
 
     settingsGUI.AddButton("W85 H30 x+10", "Save && Exit").OnEvent("Click", close)
@@ -593,6 +592,7 @@ settingsGUI()
                 yearIniName := "ps_year"
                 iniInitYear := UserSettings.ps_year
                 verIniName := "psVer"
+                initVer := UserSettings.psVer
                 genProg := program
                 otherTitle := "Photoshop Settings"
                 static imageLoc := ptf.psIMGver
