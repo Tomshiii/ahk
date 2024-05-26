@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/05/25
- * @version 1.7.29
+ * @date 2024/05/26
+ * @version 1.7.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -628,6 +628,8 @@ class Startup {
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
 
+        premNotFound := false, aeNotFound   := false
+
         __determineYear(dir, which, default) {
             if !DirExist(dir)
                 return false
@@ -647,11 +649,11 @@ class Startup {
 
         premFolder := (this.UserSettings.premIsBeta = true) ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) setPremYear
         aeFolder   := (this.UserSettings.aeIsBeta = true)   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) setAEYear
-        premExeLocation := A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro.exe"
-        aeExeLocation   := A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
+        premExeLocation := (this.UserSettings.premIsBeta = true) ? A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro (Beta).exe"             : A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro.exe"
+        aeExeLocation   := (this.UserSettings.aeIsBeta = true)   ? A_ProgramFiles "\Adobe\" aeFolder "\Support Files\Adobe Premiere Pro (Beta).exe" : A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
 
-        premExeVer := FileExist(premExeLocation) ? FileGetExtendedProp(premExeLocation,, "Product version")["Product version"] : false
-        aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "Product version")["Product version"]   : false
+        premExeVer := FileExist(premExeLocation) ? FileGetExtendedProp(premExeLocation,, "Product version")["Product version"] : premNotFound := true
+        aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "Product version")["Product version"]   : aeNotFound   := true
 
         ;// remove ".0"
         premExeVer := SubStr(premExeVer, premFinalDot := InStr(premExeVer, ".",, -1), 2) = ".0" ? SubStr(premExeVer, 1, premFinalDot-1) : premExeVer
@@ -660,13 +662,24 @@ class Startup {
         if premExeVer = false && aeExeVer = false
             return
 
-        if VerCompare(premExeVer, StrReplace(this.UserSettings.premVer, "v", "")) != 0 || VerCompare(aeExeVer, StrReplace(this.UserSettings.aeVer, "v", "")) != 0 ||
-            ptf.PremYearVer != setPremYear || ptf.aeYearVer != setAEYear {
-            this.UserSettings.premVer   := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
-            this.UserSettings.prem_year := SubStr(A_YYYY, 1, 2) setPremYear
-            this.UserSettings.aeVer     := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
-            this.UserSettings.ae_year   := SubStr(A_YYYY, 1, 2) setAEYear
+        operatePrem := false, operateAE := false
+        if !premNotFound {
+            if VerCompare(premExeVer, StrReplace(this.UserSettings.premVer, "v", "")) != 0 || ptf.PremYearVer != setPremYear {
+                operatePrem := true
+                this.UserSettings.premVer   := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
+                this.UserSettings.prem_year := SubStr(A_YYYY, 1, 2) setPremYear
+            }
+        }
+        if !aeNotFound {
+            if VerCompare(aeExeVer, StrReplace(this.UserSettings.aeVer, "v", "")) != 0  || ptf.aeYearVer != setAEYear {
+                operateAE := true
+                this.UserSettings.aeVer     := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
+                this.UserSettings.ae_year   := SubStr(A_YYYY, 1, 2) setAEYear
+            }
+        }
+        if operatePrem = true || operateAE = true {
             this.UserSettings.__delAll()
+            this.UserSettings := ""
             reset.reset()
         }
     }

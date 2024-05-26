@@ -121,7 +121,7 @@ start.trayMen()                ;adds the ability to toggle checking for updates 
 start.firstCheck()             ;runs the firstCheck() function
 start.oldLogs()                ;runs the loop to delete old log files
 start.adobeTemp()              ;runs the loop to delete cache files
-start.adobeVerOverride()
+start.adobeVerOverride()       ;attempts to automatically set premiere/after effects versions
 start.libUpdateCheck()         ;runs a loop to check for lib updates
 start.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
 start.monitorAlert()           ;checks the users monitor work area for any changes

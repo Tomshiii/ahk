@@ -1,4 +1,5 @@
 # <> Release 2.14.x - 
+- Fixed `startup.adobeVerOverride()` failing to determine beta exe paths correctly & causing a boot loop
 
 ## Functions
 - `getLocalVer()` now accepts parameter `returnObj` to determine whether just to return the version number of a script as a string, or whether to return an object containing both the version number & the entire contents of the passed script
