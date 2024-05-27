@@ -72,20 +72,6 @@ $+1::
 $+2::
 $+3::prem.zoomPreviewWindow(A_ThisHotkey)
 
-`::
-{
-	allowedTitles := Map(
-		"Modify Clip",		 true,
-		"Audio Gain",		 true,
-	)
-	activeWin := WinGetTitle("A")
-	if !allowedTitles.Has(activeWin) {
-		SendInput("{``}")
-		return
-	}
-	SendInput("{Enter}")
-}
-
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;		Mouse Scripts
@@ -107,11 +93,6 @@ F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mou
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;
 Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
-
-;bonkHotkey;
-; F19::prem.audioDrag("Bonk - Sound Effect (HD).wav") ;drag my bleep (goose) sfx to the cursor ;I have a button on my mouse spit out F19 & F20
-;bleepHotkey;
-; F20::prem.audioDrag("bleep")
 
 ;slowDownHotkey;
 F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons

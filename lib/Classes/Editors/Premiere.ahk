@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.4.1
  * @author tomshi
- * @date 2024/05/24
- * @version 2.1.9
+ * @date 2024/05/27
+ * @version 2.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1965,10 +1965,10 @@ class Prem {
      * it is designed to swap the L/R channel on a single track stereo file.  attempting to use this script on anything else will either produce unintended results or will simply not function at all
      */
     static swapChannels(mouseSpeed := 2) {
+        block.On()
         clipWinTitle := "Modify Clip"
         coord.s()
         origCoords := obj.MousePos()
-        block.On()
         SetDefaultMouseSpeed(mouseSpeed)
 
         if !WinActive(clipWinTitle) {
