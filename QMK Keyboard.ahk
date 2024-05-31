@@ -24,7 +24,7 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;\\v2.13.7
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.14.6
+;\\v2.14.7
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE REWORKED IT TO WORK IN AHK v2.0 and then completely changed it to be for my workflow

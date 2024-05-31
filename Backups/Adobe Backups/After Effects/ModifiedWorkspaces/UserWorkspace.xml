@@ -114,7 +114,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.69023323</float>
+<float>0.68950438</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -128,7 +128,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.80721468</float>
+<float>0.80396217</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -142,7 +142,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.11831502</float>
+<float>0.11879367</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -270,7 +270,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.1512256</float>
+<float>0.15191987</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -335,7 +335,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.84532553</float>
+<float>0.86614174</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -483,7 +483,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.51531154</float>
+<float>0.52748412</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -497,7 +497,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.83196723</float>
+<float>0.83567137</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -511,7 +511,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.31527093</float>
+<float>0.33333334</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -950,7 +950,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;6&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -1167,9 +1167,9 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
+<int type='signed' size='32'>-8</int>
 <int type='signed' size='32'>0</int>
-<int type='signed' size='32'>0</int>
-<int type='signed' size='32'>3382</int>
+<int type='signed' size='32'>3374</int>
 <int type='signed' size='32'>1440</int>
 </array>
 </prop.pair>
