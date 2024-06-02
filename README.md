@@ -13,7 +13,7 @@ A lot of the code in the earliest versions of my scripts was either inspired by,
 
 > [!Important]
 > *A lot* of the development for this repo happens in the [dev](https://github.com/Tomshiii/ahk/tree/dev) branch before making its way into a release and these changes can remain over there for months at a time. I recommend checking out any [changes](https://github.com/Tomshiii/ahk/blob/dev/changelog.md) over there in case of important fixes, as well as the [Known Issues](https://github.com/users/Tomshiii/projects/2) and [Planned Changes](https://github.com/users/Tomshiii/projects/1) project pages to see if any small bugs/changes are currently being tracked/worked on.  
-> ***However*** do be aware that the dev branch **is** in active development and any amount of bugs/issues may still be present as I continue to iron things out.
+> ***However*** do be aware that the dev branch **is** in active development and any number of bugs/issues may still be present as I continue to iron things out.
 
 ***
 
@@ -43,6 +43,7 @@ This script is the "central" script if you will. A lot of my windows scripts are
 This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional. These `startup` functions are contained within a class `startup {` and are as follows;
 - `generate()` - Handles creating a new `settings.ini` file each new release. The `settings.ini` file will be located in `A_MyDocuments \tomshi\`. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings` or by pulling up `settingsGUI()` (default hotkey is <kbd>win + F1</kbd>)
 - `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as backup your current script directory
+- `updatePackages()` Checks for updates to packages installed through the `choco` package manager
 - `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
 - `firstCheck()` - Will check to see if this is the first time you're running my scripts and offer a helpful GUI to run you through a few things to get you going.
 - `oldLogs()` - Will remove logs in `..\Logs\Error Logs\` & `..\Logs\Other Logs\` older than 30 days
