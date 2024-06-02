@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2024/04/05
- * @version 1.5.19
+ * @date 2024/06/02
+ * @version 1.5.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -204,8 +204,12 @@ class WinGet {
     /**
      * This function is to reduce repeat code for the adobe name functions below.
      * @param {String} which is defining whether after effects or premiere should be checked
+     * @param {VarRef} progCheck
+     * @param {VarRef} titleCheck
+     * @param {VarRef} saveCheck
+     * @param {Boolean} [ttips=true]
      */
-    __AdobeName(which, &progCheck?, &titleCheck?, &saveCheck?) {
+    __AdobeName(which, &progCheck?, &titleCheck?, &saveCheck?, ttips := true) {
         if (which != "AE" && which != "Premiere") {
             ;// throw
             errorLog(ValueError("Incorrect Parameter (#1) Passed to function", -1, which), "Parameter must be 'AE' or 'Premiere'",, 1)
@@ -225,7 +229,8 @@ class WinGet {
             return {winTitle: progCheck, titleCheck: true, saveCheck: saveCheck}
         } catch as e {
             block.Off()
-            tool.Cust("Couldn't determine the titles of Adobe programs")
+            if ttips = true
+                tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e)
             return {winTitle: false, titleCheck: -1, saveCheck: -1}
         }
@@ -236,6 +241,7 @@ class WinGet {
      * @param {VarRef} premCheck is the complete title of premiere
      * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return `-1` if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than or equal to 0
      * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return `-1` if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
+     * @param {Boolean} [ttips=true] determine whether tooltips will display in the event that the title cannot be determined
      * @returns {Object/Boolean}
      * ```
      * ;// if Premiere isn't open `winget.PremName()` will return 0/false
@@ -245,8 +251,8 @@ class WinGet {
      * prem.saveCheck       ;// a boolean value of if a save is currently necessary
      * ```
      */
-    static PremName(&premCheck?, &titleCheck?, &saveCheck?) {
-        premiere := this().__AdobeName("Premiere", &premCheck?, &titleCheck?, &saveCheck?)
+    static PremName(&premCheck?, &titleCheck?, &saveCheck?, ttips := true) {
+        premiere := this().__AdobeName("Premiere", &premCheck?, &titleCheck?, &saveCheck?, ttips)
         if !premiere.winTitle
             return false
         return {winTitle: premiere.winTitle, titleCheck: premiere.titleCheck, saveCheck: premiere.saveCheck}
@@ -266,8 +272,8 @@ class WinGet {
      * ae.saveCheck       ;// a boolean value of if a save is currently necessary
      * ```
      */
-    static AEName(&aeCheck?, &titleCheck?, &saveCheck?) {
-        ae := this().__AdobeName("AE", &aeCheck?, &titleCheck?, &saveCheck?)
+    static AEName(&aeCheck?, &titleCheck?, &saveCheck?, ttips := true) {
+        ae := this().__AdobeName("AE", &aeCheck?, &titleCheck?, &saveCheck?, ttips)
         if !ae.winTitle
             return false
         return {winTitle: ae.winTitle, titleCheck: (IsSet(titleCheck) ? ae.titleCheck : unset), saveCheck: (IsSet(saveCheck) ? ae.saveCheck : unset)}

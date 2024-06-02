@@ -252,7 +252,11 @@ class Prem {
                 tool.cust("Unable to connect to localhost server. PremiereRemote Extension may not be running.")
                 return false
             }
-            parse := JSON.parse(getResp)
+            try parse := JSON.parse(getResp)
+            catch {
+                tool.cust("Unable to connect to localhost server. PremiereRemote Extension may not be running.")
+                return false
+            }
             return parse["result"]
         }
     }

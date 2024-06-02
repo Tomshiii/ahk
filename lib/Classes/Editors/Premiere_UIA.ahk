@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/05/24
- * @version 2.0.4
+ * @date 2024/06/02
+ * @version 2.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,7 +31,11 @@ Class premUIA_Values {
         UserSettings    := UserPref()
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
         UserSettings    := ""
-        this.allVals    := JSON.parse(FileRead(this.valueINI),, false)
+        try this.allVals := JSON.parse(FileRead(this.valueINI),, false)
+        catch {
+            ;// throw
+            errorLog(Error("Parsing JSON Data Failed"),,, true)
+        }
         this.currentVer := currentPremVer
         this.baseVer    := SubStr(this.currentVer, 1, InStr(this.currentVer, "_",, 1, 1)-1)
 
@@ -88,8 +92,13 @@ Class premUIA_Values {
         UserSettings    := ""
         premName := WinGet.PremName()
         AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle)
-        currentVers := JSON.parse(FileRead(ptf.SupportFiles "\UIA\values.ini"),, false)
-        originalVers := JSON.stringify(currentVers)
+        try {
+            currentVers  := JSON.parse(FileRead(ptf.SupportFiles "\UIA\values.ini"),, false)
+            originalVers := JSON.stringify(currentVers)
+        } catch {
+            ;// throw
+            errorLog(Error("Parsing JSON Data Failed"),,, true)
+        }
 
         if !WinActivate(prem.winTitle)
             switchTo.Premiere()

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/04/23
- * @version 1.0.22
+ * @date 2024/06/02
+ * @version 1.0.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -345,7 +345,11 @@ class ffmpeg {
             ;// throw
             errorLog(UnsetError("File May not contain any audio streams", -1, filepath),,, true)
         }
-        mp     := JSON.parse(probecmd)
+        try mp := JSON.parse(probecmd)
+        catch {
+            ;// throw
+            errorLog(Error("Parsing JSON Data Failed"),,, true)
+        }
         amount := 0
         hzArr := []
         loop mp["streams"].length {

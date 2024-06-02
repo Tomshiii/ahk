@@ -61,9 +61,9 @@ class adobeTimer extends count {
         if !WinActive(prem.winTitle) && !WinActive(AE.winTitle)
             return
         if WinActive(prem.winTitle)
-            this.__fs(WinGet.PremName(), "Premiere Pro")
+            this.__fs(WinGet.PremName(,,, false), "Premiere Pro")
         if WinActive(AE.winTitle)
-            this.__fs(WinGet.AEName(), "After Effects")
+            this.__fs(WinGet.AEName(,,, false), "After Effects")
     }
 
     /**
