@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/05/26
- * @version 1.7.30
+ * @date 2024/06/02
+ * @version 1.7.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -777,8 +777,8 @@ class Startup {
             scriptPos: ptf.lib "\Other"
         }
         Notify := {
-            name: "Notify",                          ;url: "https://raw.githubusercontent.com/XMCQCX/Notify_Class/main/Notify.ahk",
-            scriptPos: ptf.lib "\Other",             url: "https://raw.githubusercontent.com/Tomshiii/Notify_Class/add-align/Notify.ahk" ;// leaving this as my fork until center alignment gets merged into the main branch
+            name: "Notify",                          url: "https://raw.githubusercontent.com/XMCQCX/Notify_Class/main/Notify.ahk",
+            scriptPos: ptf.lib "\Other"
         }
 
         objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify]
@@ -816,7 +816,7 @@ class Startup {
             string := getHTML(url)
             if string = -1 {
                 ; tool.Tray({title: "libUpdateCheck() encountered an issue", text: "lib may have incorrect url:`n" url})
-                Notify.Show('Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'BC=C72424')
+                Notify.Show('Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'BC=C72424 show=Fade@250 hide=Fade@250')
                 errorLog(Error(A_ThisFunc " encountered an issue with the specified url", -1), url)
                 return {version: 0}
             }
@@ -835,7 +835,7 @@ class Startup {
                     if localVersion.script !== latestVer.script
                         {
                             Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                            Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated", 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4')
+                            Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated", 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
                         }
                     continue
                 }
@@ -844,7 +844,7 @@ class Startup {
             if VerCompare(latestVer.version, localVersion.version) > 0
                 {
                     Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                    Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version, 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4')
+                    Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version, 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
                     continue
                 }
         }
