@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2024/03/18
- * @version 1.1.8
+ * @date 2024/06/02
+ * @version 1.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -142,16 +142,14 @@ class WM {
             case "Premiere_RightClick":
                 bool := (res[1]) = "true" ? true : false
                 prem.RClickIsActive := bool
-            case "adobe_FS", "autosave_MIN":
-                %res[2]%.__changeVar(res[1]*1000)
-            case "autosave_beep":
-                %res[2]%.beep := res[1]
-            case "autosave_save_override":
-                %res[2]%.saveOverride := res[1]
-            case "autosave_check_mouse":
-                %res[2]%.checkMouse := res[1]
-            case "autosave_always_save":
-                %res[2]%.alwaysSave := res[1]
+
+            case "adobe_FS", "autosave_MIN":  %res[2]%.__changeVar(res[1]*1000)
+            case "autosave_beep":             %res[2]%.beep := res[1]
+            case "autosave_save_override":    %res[2]%.saveOverride := res[1]
+            case "autosave_check_mouse":      %res[2]%.checkMouse := res[1]
+            case "autosave_always_save":      %res[2]%.alwaysSave := res[1]
+            case "autosave_restart_playback": %res[2]%.restartPlayback := res[1]
+
             case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator", "Premiere_scDesktop", "Premiere_scguest1", "Premiere_scguest2", "Premiere_scEnvironment":
                 getName := SubStr(determineWhich, InStr(determineWhich, "_",, 1, 1)+1)
                 prem.%getName% := res[1]

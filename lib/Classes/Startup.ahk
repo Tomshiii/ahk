@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2024/06/02
- * @version 1.7.31
+ * @version 1.7.32
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -154,7 +154,7 @@ class Startup {
             {
                 ;// this check ensures that the function will prematurely return if the release version in the settings.ini is the same as the current release AND
                 ;// that the amount of settings all line up, otherwise the function will continue so that it may add missing settings values
-                if (this.UserSettings.defaults.Length != (allSettings.Count + allAdjust.Count + allTrack.Count)) || (VerCompare(this.MyRelease, this.UserSettings.version) > 0) {
+                if (this.UserSettings.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count)) || (VerCompare(this.MyRelease, this.UserSettings.version) > 0) {
                     tempFile := A_MyDocuments "\tomshi\settings_temp.ini"
                     UserPref().__createIni(tempFile)
                     tempSettings := genNewMap(), tempAdjust := genNewMap(), tempTrack  := genNewMap()

@@ -54,6 +54,10 @@ class SettingsToolTips {
         Yes: "Manually saving within Premiere/After Effects will reset ``autosave.ahk`` timer",
         No: "Manually saving within Premiere/After Effects will have no effect on ``autosave.ahk``"
     }
+    autosaveRestartPlayback := {
+        Yes: "``autosave.ahk`` will attempt to restart Premiere playback after a save attempt has been made",
+        No: "``autosave.ahk`` will not attempt to restart Premiere playback after a save attempt has been made"
+    }
     checklistTooltip := {
         Yes: "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer",
         No: "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
@@ -260,16 +264,20 @@ settingsGUI()
     settingsGUI.AddCheckbox("vasAlwaysSaveToggle Checked" UserSettings.autosave_always_save " Y+5", asAlwaysSaveTitle).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
     settingsGUI["asAlwaysSaveToggle"].ToolTip := (UserSettings.autosave_always_save = true) ? toolT.autosaveAlwaysSave.Yes : toolT.autosaveAlwaysSave.No
 
+    ;// autosave beep
+    asBeepTitle := "``autosave.ahk`` Beep"
+    settingsGUI.AddCheckbox("vasbeepToggle Checked" UserSettings.autosave_beep " Y+5", asBeepTitle).OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
+    settingsGUI["asbeepToggle"].ToolTip := (UserSettings.autosave_beep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
 
     ;// autosave check mouse
     ascheckMouseTitle := "``autosave.ahk`` Check Mouse"
     settingsGUI.AddCheckbox("vasmouseToggle Checked" UserSettings.autosave_check_mouse " Y+5", ascheckMouseTitle).OnEvent("Click", toggle.Bind("autosave check mouse", "autosave"))
     settingsGUI["asmouseToggle"].ToolTip := (UserSettings.autosave_check_mouse = true) ? toolT.autosaveMouse.Yes : toolT.autosaveMouse.No
 
-    ;// autosave beep
-    asBeepTitle := "``autosave.ahk`` Beep"
-    settingsGUI.AddCheckbox("vasbeepToggle Checked" UserSettings.autosave_beep " Y+5", asBeepTitle).OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
-    settingsGUI["asbeepToggle"].ToolTip := (UserSettings.autosave_beep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
+    ;// autosave restart playback
+    asRestartPlayTitle := "``autosave.ahk`` Restart Playback"
+    settingsGUI.AddCheckbox("vasRestartPlay Checked" UserSettings.autosave_restart_playback " Y+5", asRestartPlayTitle).OnEvent("Click", toggle.Bind("autosave restart playback", "autosave"))
+    settingsGUI["asRestartPlay"].ToolTip := (UserSettings.autosave_restart_playback = true) ? toolT.autosaveRestartPlayback.Yes : toolT.autosaveRestartPlayback.No
 
     ;// autosave save override
     asOverrideTitle := "``autosave.ahk`` Save Override"
@@ -312,6 +320,9 @@ settingsGUI()
             case packageUpdate:
                 toolTrue := toolT.packageUpdate.yes
                 toolFalse := toolT.packageUpdate.no
+            case asRestartPlayTitle:
+                toolTrue := toolT.autosaveRestartPlayback.Yes
+                toolFalse := toolT.autosaveRestartPlayback.No
         }
 
         ;// toggling the checkboxes & setting values based off checkbox state

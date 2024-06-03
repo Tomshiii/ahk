@@ -2,7 +2,7 @@
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
  * @date 2024/06/02
- * @version 2.1.21
+ * @version 2.1.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,11 +69,12 @@ class adobeAutoSave extends count {
             this.UserSettings := UserPref()
             this.ms   := (this.UserSettings.autosave_MIN * 60000)
             this.beep := this.UserSettings.autosave_beep
-            this.checkMouse   := this.UserSettings.autosave_check_mouse
-            this.saveOverride := this.UserSettings.autosave_save_override
-            this.alwaysSave   := this.UserSettings.autosave_always_save
-            this.mainScript   := this.UserSettings.MainScriptName
-            this.UserSettings := ""
+            this.checkMouse      := this.UserSettings.autosave_check_mouse
+            this.saveOverride    := this.UserSettings.autosave_save_override
+            this.alwaysSave      := this.UserSettings.autosave_always_save
+            this.restartPlayback := this.UserSettings.autosave_restart_playback
+            this.mainScript      := this.UserSettings.MainScriptName
+            this.UserSettings    := ""
         }
 
         ;// set variables for some user hotkeys
@@ -108,6 +109,7 @@ class adobeAutoSave extends count {
     currentVolume := ""
     resetingSave  := false
     mainScript    := "My Scripts"
+    restartPlayback := false
 
     rClickPrem    := ""
     rClickMove    := ""
@@ -345,7 +347,7 @@ class adobeAutoSave extends count {
                 case "Adobe Premiere Pro.exe", "Adobe Premiere Pro (Beta).exe":
                     if !WinActive(prem.winTitle)
                         switchTo.Premiere()
-                    if this.userPlayback = false
+                    if this.restartPlayback = false || this.userPlayback = false
                         return
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
@@ -439,7 +441,7 @@ class adobeAutoSave extends count {
             return
 
         ;// checking if prem is the originally active window
-        if this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe"
+        if (this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe") && this.restartPlayback = true
             this.__checkPremPlayback()
 
         Notify.Show(, 'A save attempt is being made. Inputs may be temporarily blocked', 'iconi',,, 'TC=black MC=black BC=DCCC75 DUR=4 show=Fade@250 hide=Fade@250')

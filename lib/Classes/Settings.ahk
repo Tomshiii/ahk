@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/04/21
- * @version 1.2.14
+ * @date 2024/06/02
+ * @version 1.2.15
  ***********************************************************************/
 
 class UserPref {
@@ -26,7 +26,31 @@ class UserPref {
 
     ;// defaults
     workingDir := A_WorkingDir
-    defaults := ["true", "false", "true", "", "false", "true", "true", "true", "true", "true", "true", "true", "true", "false", "false", "true", "true", 45, 2, 5, 2.5, 5, "2024", "2024", "2024", "v24.1", "false", "v24.1", "false", "v25.4", "false", "v18.5", A_AppData "\Adobe\Common", A_AppData "\Adobe\Common", 0, this.workingDir, "false", "false", 0, "v2.0", "My Scripts", "v2.0"]
+    defaults := Map(
+        ;// [Settings]
+        "update_check", "true", "beta_update_check", "false", "package_update_check", "true",
+        "dark_mode", "",
+        "run_at_startup", "false",
+        "autosave_beep", "true", "autosave_check_checklist", "true", "autosave_save_override", "true", "autosave_check_mouse", "true",
+        "autosave_always_save", "true", "autosave_restart_playback", "false",
+        "checklist_hotkeys", "true", "checklist_tooltip", "true", "checklist_wait", "false",
+        "prem_Focus_Icon", "false", "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
+
+        ;// [Adjust]
+        "adobe_GB", 45, "adobe_FS", 2,
+        "autosave_MIN",  5, "game_SEC",  2, "multi_SEC", 5,
+        "prem_year", 2024, "ae_year", 2024, "ps_year", 2024,
+        "premVer", "v24.4.1", "aeVer", "v24.4.1", "psVer", "25.5", "resolveVer", "v18.5",
+        "premIsBeta", "false", "aeIsBeta", "false", "psIsBeta", "false",
+        "premCache", A_AppData "\Adobe\Common", "aeCache", A_AppData "\Adobe\Common",
+
+        ;// [Track]
+        "adobe_temp", 0, "working_dir", this.workingDir,
+        "first_check", "false", "block_aware", "false",
+        "version", "v2.0", "skipVersion", "v2.0",
+        "monitor_alert", "0",
+        "MainScriptName", "My Scripts"
+    )
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
@@ -38,37 +62,7 @@ class UserPref {
     __getDefault(key) {
         if InStr(key, A_Space)
             key := StrReplace(key, A_Space, "_")
-        switch key {
-            case "adobe_GB":                          return 45
-            case "adobe_FS":                          return 2
-            case "autosave_MIN":                      return 5
-            case "game_SEC":                          return 2
-            case "multi_SEC":                         return 5
-            case "prem_year", "ae_year", "ps_year":   return 2024
-            case "skipVersion":                       return "v2.0"
-            case "version":                           return "v2.0"
-            case "monitor_alert":                     return "0"
-            case "premVer":                           return "v24.1"
-            case "aeVer":                             return "v24.1"
-            case "psVer":                             return "v25.4"
-            case "resolveVer":                        return "v18.5"
-            case "update_check":                      return "true"
-            case "dark_mode":                         return ""
-            case "MainScriptName":                    return "My Scripts"
-            case "autosave_check_checklist",
-                 "tooltip", "checklist_tooltip",
-                 "prem_Focus_Icon", "checklist_hotkeys",
-                 "autosave_beep", "autosave_save_override",
-                 "disc_disable_autoreply", "autosave_check_mouse",
-                 "adobeExeOverride", "autosave_always_save", "package_update_check":
-                                                      return "true"
-            case "beta_update_check",
-                 "run_at_startup", "checklist_wait",
-                 "first_check", "block_aware", "premIsBeta",
-                 "aeIsBeta", "psIsBeta":
-                                                      return "false"
-            default:                                  return "false"
-        }
+        return(this.defaults.Has(key) ? this.defaults[key] : "false")
     }
 
     /**
@@ -222,6 +216,7 @@ class UserPref {
                     autosave save override={}
                     autosave check mouse={}
                     autosave always save={}
+                    autosave restart playback={}
                     tooltip={}
                     checklist hotkeys={}
                     checklist tooltip={}
@@ -261,13 +256,17 @@ class UserPref {
                 )", filelocation)
                 ;// replace {}
                 workingFile := FileRead(filelocation)
-                loop this.defaults.Length {
-                    workingFile := StrReplace(workingFile, "{}", this.defaults[A_Index],,, 1)
-                    if A_Index = this.defaults.Length
-                        {
-                            FileDelete(filelocation)
-                            FileAppend(workingFile, filelocation)
-                        }
+                eachLine := StrSplit(workingFile, ["`n", "`r"])
+                currentSection := ""
+                for v in eachLine {
+                    if v = ""
+                        continue
+                    if InStr(v, "[") && InStr(v, "]") {
+                        currentSection := SubStr(v, 2, StrLen(v)-2)
+                        continue
+                    }
+                    splitLine := StrSplit(v, "=")
+                    IniWrite(this.__getDefault(splitLine[1]), filelocation, currentSection, splitLine[1])
                 }
     }
 }
