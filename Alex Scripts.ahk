@@ -21,24 +21,26 @@ SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to th
 SetDefaultMouseSpeed(0)                ;sets default MouseMove speed to 0 (instant)
 SetWinDelay(0)                         ;sets default WinMove speed to 0 (instant)
 A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
+A_MenuMaskKey := "vkD7"				   ;necessary for `alt_menu_acceleration_disabler.ahk` to work correctly
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 start := Startup()
 start.generate()               ;generates/replaces the `settings.ini` file every release
-start.updateChecker()          ;runs the update checker
+; start.updateChecker()          ;runs the update checker
+start.updatePackages()         ;checks for updates to packages installed through choco by default
 start.trayMen()
 start.oldLogs()
-start.adobeVerOverride()
 start.adobeTemp()
+start.adobeVerOverride()
 start.updateAHK()
 start.__Delete()
 
+;// so streamdeck scripts can receive premiere timeline coords
+onMsgObj := ObjBindMethod(WM, "__recieveMessage")
+OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
+
 #HotIf ;code below here (until the next #HotIf) will work anywhere
 #SuspendExempt ;this and the below "false" are required so you can turn off suspending this script with the hotkey listed below
-/*
-F11::ListLines() ;debugging
-F12::KeyHistory  ;debugging
-*/
 
 #F1::settingsGUI()
 
@@ -55,16 +57,8 @@ F12::KeyHistory  ;debugging
 ;=============================================================================================================================================
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 
-F1::prem.valuehold("position")
-F2::prem.valuehold("position", "60")
-F3::prem.valuehold("scale")
-F4::prem.movepreview()
-F5::prem.reset()
-F6::prem.valuehold("rotation")
-F7::prem.valuehold("opacity")
-
 ;premselecttoolHotkey;
-SC03A & v::prem.selectionTool() ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
+; SC03A & v::prem.selectionTool() ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
