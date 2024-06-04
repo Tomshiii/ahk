@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/06/02
- * @version 1.2.15
+ * @date 2024/06/04
+ * @version 1.2.16
  ***********************************************************************/
 
 class UserPref {
@@ -14,6 +14,7 @@ class UserPref {
                     {
                         SetWorkingDir("..\..\")
                         this.workingDir := A_WorkingDir
+                        this.defaults["working_dir"] := A_WorkingDir
                     }
                 this.__createIni()
                 Run(A_ScriptFullPath)
