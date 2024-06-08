@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.4.1
  * @author tomshi
- * @date 2024/06/02
- * @version 2.1.11
+ * @date 2024/06/08
+ * @version 2.1.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1500,10 +1500,19 @@ class Prem {
         premUIA := premUIA_Values()
         if !timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
             return false
+
+        ;// determine how much to account for the column left of the timeline based on premiere version
+        xAddMap := Map("lessThan24.6", 236, "24.6", 204,
+                        "default", 206)
+        switch {
+            case (VerCompare(this.currentSetVer, "24.6") < 0) && !(VerCompare(this.currentSetVer, "24.6") >= 0): xAdd := xAddMap["lessThan24.6"]
+            case xAddMap.Has(this.currentSetVer): xAdd := xAddMap[this.currentSetVer]
+            default: xAdd := xAddMap["default"]
+        }
         this.timelineRawX     := timelineNN.x, this.timelineRawY := timelineNN.y
         this.timelineXValue   := timelineNN.x + timelineNN.width - 22  ;accounting for the scroll bars on the right side of the timeline
-        this.timelineYValue   := timelineNN.y + 46          ;accounting for the area at the top of the timeline that you can drag to move the playhead
-        this.timelineXControl := timelineNN.x + 236         ;accounting for the column to the left of the timeline
+        this.timelineYValue   := timelineNN.y + 46                     ;accounting for the area at the top of the timeline that you can drag to move the playhead
+        this.timelineXControl := timelineNN.x + xAdd                   ;accounting for the column to the left of the timeline
         this.timelineYControl := timelineNN.y + timelineNN.height - 25 ;accounting for the scroll bars at the bottom of the timeline
         this.timelineVals     := true
         if tools = true {

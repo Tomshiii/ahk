@@ -2,10 +2,10 @@
  * @description move the Premere Pro playhead to the cursor
  * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 moved workflow to v24+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
- * @premVer 24.3
+ * @premVer 24.4.1
  * @author tomshi, taranVH
- * @date 2024/05/18
- * @version 2.3.1
+ * @date 2024/06/08
+ * @version 2.3.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -21,6 +21,7 @@
 #Include <Classes\obj>
 #Include <Classes\winGet>
 #Include <Other\WinEvent>
+#Include <Other\Notify>
 #Include <Functions\checkStuck>
 #Include <GUIs\Premiere Timeline GUI>
 ; }
@@ -394,10 +395,24 @@ class rbuttonPrem {
 		;// the cursor will still move if the user taps the activation hotkey
 		SendInput(ksa.playheadtoCursor)
 
-		if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence")
-			this.remote := false
-		if this.remote = true
-			this.origSeq := prem.__remoteFunc("getActiveSequence", true)
+		;// we use a static varibale here to determine if the server is currently active and track that
+		;// if any of the premremote functions return false, it won't continue checking them every time the function is fired
+		static useRemote := true
+		if useRemote = true {
+			if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence") {
+				useRemote := false
+				this.remote := false
+				Notify.Show('Error', 'PremiereRemote has not been installed or is missing functions.`nrbuttonPrem().movePlayhead() will no longer attempt to use it.', 'iconx',,, 'BC=C72424 show=Fade@250 hide=Fade@250')
+				this.__exit()
+			}
+			if this.remote = true
+				this.origSeq := prem.__remoteFunc("getActiveSequence", true)
+			if this.origSeq = false {
+				useRemote := false
+				Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'iconx',,, 'BC=C72424 show=Fade@250 hide=Fade@250 ALI=Center')
+				this.__exit()
+			}
+		}
 
 		;// focuses the timeline
 		try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
@@ -428,7 +443,7 @@ class rbuttonPrem {
 		}
 
 		;// checks original sequence is still active
-		if this.remote = true
+		if this.remote = true && useRemote = true
 			SetTimer(this.__ensureSeq.Bind(this, this.origSeq, 1), -1)
 
 		if allChecks = true {

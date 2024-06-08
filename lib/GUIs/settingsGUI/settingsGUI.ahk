@@ -35,7 +35,7 @@ class SettingsToolTips {
         No: "``PC Startup.ahk`` script will no longer run at PC startup"
     }
     adobeExe := {
-        Yes: "Scripts will set the current Premiere Pro and After Effects version based off the current installed version",
+        Yes: "Startup scripts will set the current Premiere Pro and After Effects version based off the current installed version.`nNote: startup.adobeVerOverride() must be called in one of the user's scripts",
         No: "The current versions of Premiere Pro and After Effects must be set by the user"
     }
     autosaveAlwaysSave := {
