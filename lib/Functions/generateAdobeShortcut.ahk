@@ -25,7 +25,7 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
             ;// determining if we need to include an additional folder for AE
             aeFolder := (adobeName = "Adobe After Effects") ? "Support Files\" : ""
             ;// the location of the exe we're generating a shortcut for
-            exeLocation := (userSettingsObj.%shortName%IsBeta = false) ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE
+            exeLocation := (userSettingsObj.%shortName%IsBeta = false || userSettingsObj.%shortName%IsBeta = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE
                                                                        : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta
         case "Photoshop":
             ;// determining some variables
@@ -33,7 +33,7 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
             ahkEXEBeta := adobeName " (Beta).exe"
             shortName  := "ps"
             ;// the location of the exe we're generating a shortcut for
-            exeLocation := (userSettingsObj.%shortName%IsBeta = false) ? A_ProgramFiles "\Adobe\Adobe " adobeName A_Space adobeYear "\" ahkEXE
+            exeLocation := (userSettingsObj.%shortName%IsBeta = false || userSettingsObj.%shortName%IsBeta = "false") ? A_ProgramFiles "\Adobe\Adobe " adobeName A_Space adobeYear "\" ahkEXE
                                                                        : A_ProgramFiles "\Adobe\Adobe " adobeName A_Space "(Beta)\" ahkEXEBeta
     }
     ;// where the shortcut will be generated+name

@@ -621,12 +621,12 @@ settingsGUI()
         __generateDropYear(genProg, &year, ctrlX)
         adobeGui.AddText("xs y+10", "Version: ")
         __generateDropVer(genProg, &ver, ctrlX)
-        adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked" UserSettings.%short%IsBeta, "Is Beta Version?").OnEvent("Click", (guiCtrl, *) => (UserSettings.%short%IsBeta := guiCtrl.value, __generateShortcut()))
+        adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked" UserSettings.%short%IsBeta, "Is Beta Version?").OnEvent("Click", (guiCtrl, *) => (UserSettings.%short%IsBeta := UserSettings.__convertToStr(guiCtrl.value), __generateShortcut()))
         if program = "Premiere" {
             adobeGui.AddText("xs y+10 Section", "Focus Timeline Icon: ")
             timelineCheckbox := adobeGui.AddCheckbox("xs+135 ys+1 Checked" UserSettings.prem_Focus_Icon)
             timelineCheckbox.OnEvent("Click", timelineCheckbx)
-            timelineCheckbx(guiobj, *) => UserSettings.prem_Focus_Icon := timelineCheckbox.value
+            timelineCheckbx(guiobj, *) => UserSettings.prem_Focus_Icon := UserSettings.__convertToStr(timelineCheckbox.value)
         }
         if program != "Photoshop" {
             adobeGui.AddText("xs y+12 Section", "Cache Dir: ")
