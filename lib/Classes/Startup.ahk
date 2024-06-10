@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2024/06/10
- * @version 1.7.33
+ * @version 1.7.34
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -87,7 +87,8 @@ class Startup {
                 case 2: dot := ".."
                 case 3: dot := "..."
             }
-            ToolTip("⚠️ Startup functions running" dot "`nCurrent function: " this.activeFunc, A_ScreenWidth, A_ScreenHeight, this.alertTtipNum)
+            if this.activeFunc != ""
+                ToolTip("⚠️ Startup functions running" dot "`nCurrent function: " this.activeFunc, A_ScreenWidth, A_ScreenHeight, this.alertTtipNum)
             if ++dotAmount > 3
                 dotAmount := 1
             sleep 750
@@ -925,7 +926,6 @@ class Startup {
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         save := false
-
         ;// get initial values
         MonitorCount   := MonitorGetCount()
         MonitorPrimary := MonitorGetPrimary()
