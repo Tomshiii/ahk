@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/06/02
- * @version 1.7.32
+ * @date 2024/06/10
+ * @version 1.7.33
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1016,6 +1016,24 @@ class Startup {
             ;// log new values
             write(WL, WT, WR, WB)
         }
+    }
+
+    /**
+     * A rudimentary function to check if any shortcuts have been generated in the shortcuts folder. If they haven't it will run a script in an attempt to generate them.
+     * It should be noted the script in question assumes the adobe programs have been installed to their default locations.
+     */
+    checkShortcuts() {
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
+        doLooop() {
+            loop files ptf.SupportFiles "\shortcuts\*", "F" {
+                if A_LoopFileExt = "lnk"
+                    return true
+            }
+            return false
+        }
+        found := doLooop()
+        if !found
+            try RunWait(ptf.SupportFiles "\shortcuts\createShortcuts.ahk", ptf.SupportFiles "\shortcuts\")
     }
 
     __Delete() {

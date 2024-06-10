@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.6
+;\\v2.34.7
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -125,6 +125,7 @@ start.adobeVerOverride()       ;attempts to automatically set premiere/after eff
 start.libUpdateCheck()         ;runs a loop to check for lib updates
 start.updateAHK()              ;checks for a newer version of ahk and alerts the user asking if they wish to download it
 start.monitorAlert()           ;checks the users monitor work area for any changes
+start.checkShortcuts()         ;attempts to create shortcuts if they haven't already been generated
 start.__Delete()
 
 ;// so streamdeck scripts can receive premiere timeline coords

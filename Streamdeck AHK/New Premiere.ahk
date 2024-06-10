@@ -49,6 +49,15 @@ if count > 1 {
     }
 }
 FileCopy(chosenFile, SelectedFolder "\_project files\" IB.Value ".prproj")
+if !FileExist(prem.path) {
+    try RunWait(ptf.SupportFiles "\shortcuts\createShortcuts.ahk", ptf.SupportFiles "\shortcuts\")
+    sleep 100
+    if !FileExist(prem.path) {
+        ;// throw
+        errorLog(TargetError("Shortcut file has not been generated.`nPlease run ``createShortcuts.ahk``"),,, true)
+        return
+    }
+}
 Run(prem.path A_Space '"' SelectedFolder "\_project files\" IB.Value ".prproj" '"')
 if !WinWait("Open Project",, 20) {
     check := MsgBox("Script didn't encounter Open Project window, can the script proceed?", "Check", "4 32 4096")

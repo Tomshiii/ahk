@@ -25,14 +25,15 @@ A_MenuMaskKey := "vkD7"				   ;necessary for `alt_menu_acceleration_disabler.ahk
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 start := Startup()
-start.generate()               ;generates/replaces the `settings.ini` file every release
-; start.updateChecker()          ;runs the update checker
-start.updatePackages()         ;checks for updates to packages installed through choco by default
+start.generate()
+; start.updateChecker()
+start.updatePackages()
 start.trayMen()
 start.oldLogs()
 start.adobeTemp()
 start.adobeVerOverride()
 start.updateAHK()
+start.checkShortcuts()
 start.__Delete()
 
 ;// so streamdeck scripts can receive premiere timeline coords
