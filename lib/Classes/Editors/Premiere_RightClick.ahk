@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.4.1
  * @author tomshi, taranVH
- * @date 2024/06/08
- * @version 2.3.2
+ * @date 2024/06/13
+ * @version 2.3.2.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -402,7 +402,7 @@ class rbuttonPrem {
 			if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence") {
 				useRemote := false
 				this.remote := false
-				Notify.Show('Error', 'PremiereRemote has not been installed or is missing functions.`nrbuttonPrem().movePlayhead() will no longer attempt to use it.', 'iconx',,, 'BC=C72424 show=Fade@250 hide=Fade@250')
+				Notify.Show('Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.`nrbuttonPrem().movePlayhead() will no longer attempt to use it until a script reload.', 'iconx',,, 'BC=C72424 show=Fade@250 hide=Fade@250')
 				this.__exit()
 			}
 			if this.remote = true
