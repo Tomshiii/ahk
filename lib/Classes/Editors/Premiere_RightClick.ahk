@@ -5,7 +5,7 @@
  * @premVer 24.4.1
  * @author tomshi, taranVH
  * @date 2024/06/13
- * @version 2.3.2.1
+ * @version 2.3.2.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -409,7 +409,7 @@ class rbuttonPrem {
 				this.origSeq := prem.__remoteFunc("getActiveSequence", true)
 			if this.origSeq = false {
 				useRemote := false
-				Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'iconx',,, 'BC=C72424 show=Fade@250 hide=Fade@250 ALI=Center')
+				Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'iconx',,, 'BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
 				this.__exit()
 			}
 		}

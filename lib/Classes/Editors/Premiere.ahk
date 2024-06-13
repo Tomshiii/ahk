@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.4.1
  * @author tomshi
- * @date 2024/06/08
- * @version 2.1.12
+ * @date 2024/06/13
+ * @version 2.1.12.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1521,7 +1521,7 @@ class Prem {
                 prem.getTimeline() found the coordinates of the timeline. This function will not check coordinates again until a script refresh.
                 If this script grabbed the wrong coordinates, refresh and try again! If this script fails to function correctly, recheck your
                 Prem_UIA coords before refreshing the script and trying again!
-            )",,,, 'POS=BC DUR=6 ALI=CENTER BC=242424 show=Fade@250 hide=Fade@250')
+            )",,,, 'POS=BC DUR=6 MALI=CENTER BC=242424 show=Fade@250 hide=Fade@250')
         }
         return true
     }

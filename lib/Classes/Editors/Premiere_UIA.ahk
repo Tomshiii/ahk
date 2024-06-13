@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/06/02
- * @version 2.0.6
+ * @date 2024/06/13
+ * @version 2.0.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -120,7 +120,7 @@ Class premUIA_Values {
         this.allVals := currentVers
         this.__setClassVal()
         ; tool.Cust("This process may have no effect until all scripts are reloaded!", 3.0)
-        Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 ALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250')
+        Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250')
         if JSON.stringify(currentVers) == originalVers
             return
 
