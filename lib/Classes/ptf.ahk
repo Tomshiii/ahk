@@ -139,7 +139,7 @@ class browser {
 
 class Editors {
     static __setWinTitle(which, exe) {
-        wintitle := (ptf().UserSettings.%which%IsBeta = true) ? "ahk_exe " exe " (Beta).exe" : "ahk_exe " exe ".exe"
+        wintitle := (ptf().UserSettings.%which%IsBeta = true || ptf().UserSettings.%which%IsBeta = "true") ? "ahk_exe " exe " (Beta).exe" : "ahk_exe " exe ".exe"
         return wintitle
     }
     static Premiere := {

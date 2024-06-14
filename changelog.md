@@ -11,6 +11,7 @@
 - Added `startup.createShortcuts()` to check if shortcuts have been generated
     - Added `createShortcuts.ahk` to help with this process or to allow the user to generate them manually (fixes `New Premiere.ahk` throwing in the event of no shortcuts)
 - Fixed `current function` tooltip from showing when the function variable is blank
+
 ## Other Changes
 - Updated `Notify.ahk` now that text alignment is a native feature
 - `autosave.ahk` attempting to restart playback within `Premiere Pro` after a save attempt can now be enabled/disabled within `settingsGUI()`

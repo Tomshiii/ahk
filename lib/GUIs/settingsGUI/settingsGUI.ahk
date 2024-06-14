@@ -621,7 +621,7 @@ settingsGUI()
         __generateDropYear(genProg, &year, ctrlX)
         adobeGui.AddText("xs y+10", "Version: ")
         __generateDropVer(genProg, &ver, ctrlX)
-        adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked" UserSettings.%short%IsBeta, "Is Beta Version?").OnEvent("Click", (guiCtrl, *) => (UserSettings.%short%IsBeta := UserSettings.__convertToStr(guiCtrl.value), __generateShortcut()))
+        adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked" UserSettings.__convertToBool(short "IsBeta", "Adjust"), "Is Beta Version?").OnEvent("Click", (guiCtrl, *) => (UserSettings.%short%IsBeta := UserSettings.__convertToStr(guiCtrl.value), __generateShortcut()))
         if program = "Premiere" {
             adobeGui.AddText("xs y+10 Section", "Focus Timeline Icon: ")
             timelineCheckbox := adobeGui.AddCheckbox("xs+135 ys+1 Checked" UserSettings.prem_Focus_Icon)

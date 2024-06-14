@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/06/10
- * @version 1.7.34
+ * @date 2024/06/14
+ * @version 1.7.34.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -817,7 +817,7 @@ class Startup {
             string := getHTML(url)
             if string = -1 {
                 ; tool.Tray({title: "libUpdateCheck() encountered an issue", text: "lib may have incorrect url:`n" url})
-                Notify.Show('Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'BC=C72424 show=Fade@250 hide=Fade@250')
+                Notify.Show('Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 errorLog(Error(A_ThisFunc " encountered an issue with the specified url", -1), url)
                 return {version: 0}
             }
@@ -836,7 +836,7 @@ class Startup {
                     if localVersion.script !== latestVer.script
                         {
                             Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                            Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated", 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
+                            Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated", 'iconi',,, 'POS=BR TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
                         }
                     continue
                 }
@@ -845,7 +845,7 @@ class Startup {
             if VerCompare(latestVer.version, localVersion.version) > 0
                 {
                     Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                    Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version, 'iconi',,, 'TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
+                    Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version, 'iconi',,, 'POS=BR TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
                     continue
                 }
         }
