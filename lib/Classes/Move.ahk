@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2024/04/04
- * @version 1.2.9
+ * @date 2024/06/16
+ * @version 1.2.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -27,6 +27,10 @@ class Move {
      */
     static Window(key?)
     {
+        ;// I have a habit of reloading my scripts then instantly trying to interact with premiere before ahk has caught up
+        ;// which causes this function to throw because it hasn't actually set KSA yet
+        if !IsSet(KSA)
+            return
         if !IsSet(key) && (A_ThisHotkey != KSA.minimiseHotkey && A_ThisHotkey != KSA.maximiseHotkey) {
             ;// throw
             errorLog(ValueError("Incorrect hotkey has been used for function.`nDouble check KSA values.", -1),,, 1)
