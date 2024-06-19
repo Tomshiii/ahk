@@ -14,4 +14,7 @@
 
 ## Other Changes
 - Updated `Notify.ahk` now that text alignment is a native feature
-- `autosave.ahk` attempting to restart playback within `Premiere Pro` after a save attempt can now be enabled/disabled within `settingsGUI()`
+
+`autosave.ahk`
+- Script attempting to restart playback within `Premiere Pro` after a save attempt can now be enabled/disabled within `settingsGUI()`
+- Making `After Effects` opaque should now be more reliable

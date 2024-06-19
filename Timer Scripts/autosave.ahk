@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/06/14
- * @version 2.1.22.1
+ * @date 2024/06/19
+ * @version 2.1.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -133,6 +133,11 @@ class adobeAutoSave extends count {
             this.__reactivateWindow()
 
         ;// finish up
+        if this.aeExist = true {
+            aeTrans := WinGetTransColor(editors.AE.winTitle)
+            if aeTrans != 255 || aeTrans = ""
+                this.__resetAETrans()
+        }
         this.__reset()
         block.Off()
     }
@@ -546,20 +551,17 @@ class adobeAutoSave extends count {
             ;// this part will throw if it's not inside a try block
             ControlSend("{Ctrl Down}s{Ctrl Up}",, this.aeWindow.winTitle)
         } catch {
-            WinMoveBottom(editors.AE.winTitle)
-            WinSetTransparent("Off", editors.AE.winTitle)
+            this.__resetAETrans()
             return
         }
         if WinWait("Save As",, 3) {
             ControlSend("{Esc}",, "Save As " editors.AE.winTitle)
         }
-        if !WinWaitClose("Save Project",, 3)
+        if !WinWaitClose("Save Project",, 3) {
+            this.__resetAETrans()
             return
-        ;// maybe need to force switch back to original window here?
-        try {
-            WinMoveBottom(editors.AE.winTitle)
-            WinSetTransparent("Off", editors.AE.winTitle)
         }
+        this.__resetAETrans()
     }
 
     /** checks to see if the script the user has defined as their main script is running */
@@ -568,6 +570,14 @@ class adobeAutoSave extends count {
         if WinExist(this.mainScript ".ahk")
             return true
         return false
+    }
+
+    /** reset after effects window transparency */
+    __resetAETrans() {
+        try {
+            WinMoveBottom(editors.AE.winTitle)
+            WinSetTransparent("Off", editors.AE.winTitle)
+        }
     }
 
     /** attempts to check if `Premiere_RightClick.ahk` is active */
