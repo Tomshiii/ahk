@@ -1,8 +1,8 @@
 /**********************************************
 * @description Notify - This class makes it easier to create and display notification GUIs.
 * @author XMCQCX
-* @date 2024/06/12
-* @version 1.4.1
+* @date 2024/06/19
+* @version 1.4.2
 * @see {@link https://github.com/XMCQCX/Notify_Class Notify_Class - GitHub} | {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 Notify_Class - AHK Forum}
 * @credits
 * - Notify by gwarble. {@link https://www.autohotkey.com/board/topic/44870-notify-multiple-easy-tray-area-notifications-v04991/ source}
@@ -430,18 +430,21 @@ NotifyGUICallback(*)
             case 'tr', 'tc', 'tl', 'ct': minMaxPosY := monWATop  
         }
 
-        tmmPrev := A_TitleMatchMode
-        SetTitleMatchMode('RegEx')        
-                
-        for id in WinGetList('i)^NotifyGUI_' m['mon'] '_' m['pos'] ' ahk_class AutoHotkeyGUI') {            
-            WinGetPos(&guiX, &guiY, &guiW, &guiH, id)
-            Switch m['pos'], 'off' {
-                case 'br', 'bc', 'bl': minMaxPosY := Min(minMaxPosY, guiY)               
-                case 'tr', 'tc', 'tl', 'ct': minMaxPosY := Max(minMaxPosY, guiY + guiH)
-            }
-        }
+	dhwPrev := A_DetectHiddenWindows
+	tmmPrev := A_TitleMatchMode
+	DetectHiddenWindows(0)
+	SetTitleMatchMode('RegEx')   
 
-        SetTitleMatchMode(tmmPrev)
+	for id in WinGetList('i)^NotifyGUI_' m['mon'] '_' m['pos'] ' ahk_class AutoHotkeyGUI') {            
+		WinGetPos(&guiX, &guiY, &guiW, &guiH, 'ahk_id ' id)
+		switch m['pos'], 'off' {
+			case 'br', 'bc', 'bl': minMaxPosY := Min(minMaxPosY, guiY)               
+			case 'tr', 'tc', 'tl', 'ct': minMaxPosY := Max(minMaxPosY, guiY + guiH)
+		}
+	}
+
+	DetectHiddenWindows(dhwPrev)
+	SetTitleMatchMode(tmmPrev)
 
         switch m['pos'], 'off' {
             case 'br':

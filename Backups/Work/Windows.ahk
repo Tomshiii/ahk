@@ -12,7 +12,14 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 {
 	if !isDoubleClick()
 		return
-	SetCapsLockState !GetKeyState("CapsLock", "T")
+	soundName := SoundGetName(), currentVolume := SoundGetVolume()
+	SetCapsLockState !state := GetKeyState("CapsLock", "T")
+	SoundSetVolume(Round(currentVolume/2),, soundName)
+	switch state {
+		case true: SoundBeep(250, 300), SoundBeep(250, 300)
+		case false: SoundBeep(700, 100), SoundBeep(700, 100)
+	}
+	SoundSetVolume(currentVolume,, soundName)
 }
 
 ;centreHotkey;
