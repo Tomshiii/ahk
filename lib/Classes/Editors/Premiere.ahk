@@ -6,7 +6,7 @@
  * @premVer 24.4.1
  * @author tomshi
  * @date 2024/06/20
- * @version 2.1.13.1
+ * @version 2.1.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -267,7 +267,7 @@ class Prem {
      *
      * @returns {Boolean/String}
      * - `true`: successful
-     * - `false`: `PremiereRemote`/`saveProj` func/`projPath` func not found
+     * - `false`: `PremiereRemote`/`saveProj` func/`projPath` func not found/save attempt fails (server not running)
      * - `"timeout"`: waiting for the save project window to open/close timed out
      * - `"noseq"` : `focusSequence`/`getActiveSequence` func not found
      */
@@ -275,7 +275,8 @@ class Prem {
         if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("projPath")
             return false
         origSeq := this.__remoteFunc("getActiveSequence")
-        this.__remoteFunc("saveProj")
+        if !this.__remoteFunc("saveProj")
+            return false
 
         if !andWait
             return true

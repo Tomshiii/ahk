@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/06/19
- * @version 2.1.23
+ * @date 2024/06/20
+ * @version 2.1.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -135,7 +135,7 @@ class adobeAutoSave extends count {
         ;// finish up
         if this.aeExist = true {
             aeTrans := WinGetTransColor(editors.AE.winTitle)
-            if aeTrans != 255 || aeTrans = ""
+            if IsInteger(aeTrans) && aeTrans != 255
                 this.__resetAETrans()
         }
         this.__reset()

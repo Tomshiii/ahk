@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/03/16
- * @version 1.3.8
+ * @date 2024/03/20
+ * @version 1.3.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -269,13 +269,14 @@ class switchTo {
                 runae()
             default:
                 checkTrans() {
-                    checkTran := WinGetTransparent(editors.AE.winTitle)
-                    if IsInteger(checkTran) && checkTran != 255
-                        {
+                    try {
+                        checkTran := WinGetTransparent(editors.AE.winTitle)
+                        if IsInteger(checkTran) && checkTran != 255 {
                             WinMoveBottom(AE.winTitle)
                             WinSetTransparent(255, AE.winTitle)
                         }
-                    WinActivate(AE.winTitle)
+                        WinActivate(AE.winTitle)
+                    }
                 }
                 if premExist
                     {

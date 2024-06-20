@@ -18,3 +18,4 @@
 `autosave.ahk`
 - Script attempting to restart playback within `Premiere Pro` after a save attempt can now be enabled/disabled within `settingsGUI()`
 - Making `After Effects` opaque should now be more reliable
+- Fixed script failing to fall back to alternate save method if `PremiereRemote` server is not functioning correctly
