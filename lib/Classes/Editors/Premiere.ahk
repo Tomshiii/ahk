@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.4.1
  * @author tomshi
- * @date 2024/06/13
- * @version 2.1.12.1
+ * @date 2024/06/20
+ * @version 2.1.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,8 +41,8 @@ class Prem {
         UserSettings := ""
 
         switch {
-            case VerCompare(this.currentSetVer, "24.5") >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3
-			case VerCompare(this.currentSetVer, "24.5") < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB
+            case VerCompare(this.currentSetVer, "24.6") >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3
+			case VerCompare(this.currentSetVer, "24.6") < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB
         }
     }
 
@@ -1474,6 +1474,8 @@ class Prem {
             returnCoord()
             return true
         }
+        MouseMove(this.timelineRawX-1, this.timelineRawY+10)
+        sleep 3000
         returnCoord()
         return false
     }
