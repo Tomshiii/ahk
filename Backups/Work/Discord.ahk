@@ -38,14 +38,14 @@ class discord {
     static disableAutoReplyPing := true
 
     ;// position you keep it
-    static x := 60
-    static y := 0
-    static width  := 1012
-    static height := 720
+    static x := -1080
+    static y := 34
+    static width  := 1080
+    static height := 1600
 
     static slackX := -1068
     static slackY := 16
-    static slackWidth := 1058
+    static slackWidth  := 1058
     static slackHeight := 840
 
     ;// other

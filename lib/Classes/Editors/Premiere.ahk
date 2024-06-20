@@ -6,7 +6,7 @@
  * @premVer 24.4.1
  * @author tomshi
  * @date 2024/06/20
- * @version 2.1.13
+ * @version 2.1.13.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1474,8 +1474,6 @@ class Prem {
             returnCoord()
             return true
         }
-        MouseMove(this.timelineRawX-1, this.timelineRawY+10)
-        sleep 3000
         returnCoord()
         return false
     }

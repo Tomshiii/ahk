@@ -51,18 +51,18 @@ SC03A & F5::refreshWin("A", wingetProcessPath("A"))
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;windowspyHotkey;
-Pause::switchTo.WindowSpy() ;run/swap to windowspy
+PgDn::switchTo.WindowSpy() ;run/swap to windowspy
 ;vscodeHotkey;
-PrintScreen::switchTo.VSCode() ;run/swap to vscode
+PgUp::switchTo.VSCode() ;run/swap to vscode
 ;streamdeckHotkey;
-ScrollLock::switchTo.Streamdeck() ;run/swap to the streamdeck program
+PrintScreen::switchTo.Streamdeck() ;run/swap to the streamdeck program
 
 ;This script is to open the ahk documentation. If ctrl is held, highlighted text will be searched
 ;akhdocuHotkey;
-RWin::
+RCtrl::
 ;// both are needed here otherwise using ctrl+appskey might fail to work if the active window grabs it first
 ;ahksearchHotkey;
-RShift & RWin::switchTo.ahkDocs()
+RShift & RCtrl::switchTo.ahkDocs()
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
