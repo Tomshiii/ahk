@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.4.1
  * @author tomshi, taranVH
- * @date 2024/06/13
- * @version 2.3.2.3
+ * @date 2024/06/20
+ * @version 2.3.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -322,8 +322,8 @@ class rbuttonPrem {
 
 		;// setting which UI values to use
 		switch {
-			case VerCompare(version, "24.5") >= 0: this.__setTimelineCol("Spectrum", theme)
-			case VerCompare(version, "24.5") < 0:  this.__setTimelineCol("oldUI", theme)
+			case VerCompare(version, "24.6") >= 0: this.__setTimelineCol("Spectrum", theme)
+			case VerCompare(version, "24.6") < 0:  this.__setTimelineCol("oldUI", theme)
 		}
 
 		;// ensure the main prem window is active before attempting to fire

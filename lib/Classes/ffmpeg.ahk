@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/06/02
- * @version 1.0.23
+ * @date 2024/06/20
+ * @version 1.0.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -121,19 +121,19 @@ class ffmpeg {
      * @param {String} preset the desired h264 preset to use. defaults to `veryfast`
      * @param {String} crf the desired crf value to use. defaults to `17`. If this parameter is set, `bitrate` must be set to false
      * @param {String} bitrate the deired bitrate value to use. Defaults to false. If this parameter is set, `crf` must be set to false
-     * @param {Boolean} useNVENC determines whether to use GPU encoding. If this parameter is set to `true` a few different conditions must be met; the `codec` parameter must also be set to `h26x_nvenc` where `x` is either `4` or `5`. When set to true `preset` must also be an `integer` between 12->18. The `crf` value is used in place for `-cq` instead as they use the same range and essentially achieve the same results.
+     * @param {Boolean} useNVENC_Val determines whether to use GPU encoding. If this parameter is set to `true` a few different conditions must be met; the `codec` parameter must also be set to `h26x_nvenc` where `x` is either `4` or `5`. When set to true `preset` must also be an `integer` between 12->18. The `crf` value is used in place for `-cq` instead as they use the same range and essentially achieve the same results.
      * @returns `false` if the user sets `useNVENC` to true but doesn't have a nvidia gpu
      */
-    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false, useNVENC := false) {
+    reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false, useNVENC_Val := false, forceGPU := false) {
         if crf != false && bitrate != false {
             ;// throw
             errorLog(Error("CRF and Bitrate cannot be set at the same time. One parameter must be set to false"),,, 1)
             return
         }
-        if useNVENC = true && !useNVENC()
+        if (useNVENC_Val = true && !useNVENC()) && forceGPU = false
             return false
         qualParam := crf != false ? "-crf " crf : "-b:v " bitrate "k"
-        if useNVENC = true {
+        if useNVENC_Val = true {
             codec := "h264_nvenc"
             qualParam := "-cq " crf
             if !IsInteger(preset) || (preset<12 || preset>18)

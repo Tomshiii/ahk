@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2024/04/12
- * @version 1.2.3
+ * @date 2024/06/20
+ * @version 1.2.4
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -81,6 +81,7 @@ class encodeGUI extends tomshiBasic {
     overwrite := 0
     commands := ""
     useNVENC := 1
+    forceGPU := false
 
     presetsArrCPU := ["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo"]
     presetsArrGPU := ["fastest (p1)", "faster (p2)", "fast (p3)", "medium (p4)", "slow (p5)", "slower (p6)", "slowest (p7)"]
@@ -171,15 +172,17 @@ class encodeGUI extends tomshiBasic {
     /** This function facilitates setting up for and then calling ffmpeg to reencode the selected file */
     __doEncode(*) {
         if this.useNVENC = true && !useNVENC() {
-            MsgBox("System failed to detect a NVIDIA GPU or the existence of CUDA. NVENC Rendering is unavailable.`nPlease use CPU encoding", "No NVENC Detected", "48 4096")
-            return
+            nvidGPU := MsgBox("System failed to detect a NVIDIA GPU or the existence of CUDA. NVENC Rendering is unavailable.`n`nWould you like to force GPU encoding?", "No NVENC Detected", "4 48 4096")
+            if nvidGPU != "Yes"
+                return
+            this.forceGPU := true
         }
         pathObj := this.__fileObj()
         crfVal  := (this.crfOrBitrate = "crf") ? this.crf : false
         bitrateVal := (crfVal = false) ? this.bitrate : false
         encoder := (this.useNVENC = true) ? "h26" this.h26 "_nvenc" : "libx26" this.h26
         presetVal := (this.useNVENC = true) ? this["pres"].value + 11 : this.preset
-        this.ffmpegInstance.reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, encoder, presetVal, crfVal, bitrateVal, this.useNVENC)
+        this.ffmpegInstance.reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, encoder, presetVal, crfVal, bitrateVal, this.useNVENC, this.forceGPU)
         this.__runDir(pathObj.fileObj)
         ;// calls the traytip
         this.ffmpegInstance.__Delete()

@@ -1,4 +1,5 @@
 # <> Release 2.14.x - 
+- Fixed references/functions/filepaths that assumed `v24.5` was going to be the `Spectrum UI` update
 
 ## Functions
 - Wrapped all uses of `JSON.Parse()` in `try` blocks to hopefully stop some instances of the script locking up in the event that it doesn't retrieve the data it needs
@@ -14,6 +15,7 @@
 
 ## Other Changes
 - Updated `Notify.ahk` now that text alignment is a native feature
+- `reencodeGUI()` will now prompt the user asking if they'd like to attempt to force GPU rendering if it rudimentarily determines GPU rendering isn't available
 
 `autosave.ahk`
 - Script attempting to restart playback within `Premiere Pro` after a save attempt can now be enabled/disabled within `settingsGUI()`
