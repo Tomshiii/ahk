@@ -57,6 +57,7 @@ class ffmpeg {
     /**
      * Get the index to append to the file if the user doesn't wish to overwrite it
      * @param {String} path the location of the file being worked on
+     * @param {String} extOverride override the default extension
      */
     __getIndex(path, extOverride := "") {
         pathobj := obj.SplitPath(path)
@@ -116,12 +117,14 @@ class ffmpeg {
     /**
      * Attempts to reencode the desired file into the desired file codec. (h264/h265)
      * @param {String} videoFilePath the path to the desired video file
-     * @param {String} outputFileName the desired output name of your file. leaving this variable blank will leave the name the same (which may fail as ffmpeg may not be able to output a file if that name is already taken)
-     * @param {String} codec the desired h26x encoder to use. defaults to `libx264`
-     * @param {String} preset the desired h264 preset to use. defaults to `veryfast`
-     * @param {String} crf the desired crf value to use. defaults to `17`. If this parameter is set, `bitrate` must be set to false
-     * @param {String} bitrate the deired bitrate value to use. Defaults to false. If this parameter is set, `crf` must be set to false
-     * @param {Boolean} useNVENC_Val determines whether to use GPU encoding. If this parameter is set to `true` a few different conditions must be met; the `codec` parameter must also be set to `h26x_nvenc` where `x` is either `4` or `5`. When set to true `preset` must also be an `integer` between 12->18. The `crf` value is used in place for `-cq` instead as they use the same range and essentially achieve the same results.
+     * @param {String} outputFileName? the desired output name of your file. leaving this variable blank will leave the name the same (which may fail as ffmpeg may not be able to output a file if that name is already taken)
+     * @param {String} [codec="libx264"] the desired h26x encoder to use. defaults to `libx264`
+     * @param {String} [preset="veryfast"] the desired h264 preset to use. defaults to `veryfast`
+     * @param {String} [crf="17"] the desired crf value to use. defaults to `17`. If this parameter is set, `bitrate` must be set to false
+     * @param {String} [bitrate=false] the deired bitrate value to use. Defaults to false. If this parameter is set, `crf` must be set to false
+     * @param {Boolean} [useNVENC_Val=false] determines whether to use GPU encoding. If this parameter is set to `true` a few different conditions must be met; the `codec` parameter must also be set to `h26x_nvenc` where `x` is either `4` or `5`. When set to true `preset` must also be an `integer` between 12->18. The `crf` value is used in place for `-cq` instead as they use the same range and essentially achieve the same results.
+     * @param {Boolean} [forceGPU=false] determines whether to attempt to use `nvenc` encoding whether or not a rudimentary internal function determines it shouldn't be possible. Using this option may cause problems if `nvenc` encoding really isn't available
+     *
      * @returns `false` if the user sets `useNVENC` to true but doesn't have a nvidia gpu
      */
     reencode_h26x(videoFilePath, outputFileName?, codec := "libx264", preset := "veryfast", crf := "17", bitrate := false, useNVENC_Val := false, forceGPU := false) {
@@ -184,10 +187,10 @@ class ffmpeg {
 
     /**
      * Attempts to convert all files of the input type, to the desired type. You may notice this function flash a cmd window, that's ffmpeg determining the fps of the file it is operating on
-     * @param {String} path the path of the desired files. If no path is provided this parameter defaults to the active windows explorer window
-     * @param {String} from the filetype you wish to convert from
-     * @param {String} to the filetype you wish to convert to
-     * @param {Integer} frameRate the framerate you wish for the remux to obide by if ffmpeg cannot determine it (or it isn't an integer). This is important as otherwise a `60fps` file might end up remuxing as `60.0002fps` or something like that which has performance issues within NLE's like Premiere
+     * @param {String} [path="A"] the path of the desired files. If no path is provided this parameter defaults to the active windows explorer window
+     * @param {String} [from="mkv"] the filetype you wish to convert from
+     * @param {String} [to="mp4"] the filetype you wish to convert to
+     * @param {Integer} [frameRate=60] the framerate you wish for the remux to obide by if ffmpeg cannot determine it (or it isn't an integer). This is important as otherwise a `60fps` file might end up remuxing as `60.0002fps` or something like that which has performance issues within NLE's like Premiere
      */
     all_XtoY(path := "A", from := "mkv", to := "mp4", frameRate := 60) {
         path := this.__setPath(path)
@@ -219,8 +222,8 @@ class ffmpeg {
     /**
      * Attempts to split all videos in half on the horizontal or vertical axis and reencode all `.mkv/.mp4` files in the chosen directory to two separate `.mp4` files. Files will be named `[original filename]_c1.mp4` and `[original filename]_c2.mp4` and placed in a folder called `crop_loop_output_loop_output`.
      * #### NOTE: `crf` & `bitrate` can NOT be set at the same time, one of them MUST be set to `false`
-     * @param {String} path the desired path to excecute the loop. the active directory is used by default if no path is specified
-     * @param {Object} options an object to contain all necessary encoding options. The defaults are listed below.
+     * @param {String} [path="A"] the desired path to excecute the loop. the active directory is used by default if no path is specified
+     * @param {Object} options? an object to contain all necessary encoding options. The defaults are listed below.
      * ```
      * options := {codec: "libx264", preset: "veryfast", crf: false, bitrate: 30000, horizontalVertical: "horizontal"}
      * ;// bitrate is set in kilobits
@@ -270,11 +273,11 @@ class ffmpeg {
     /**
      * Attempts to trim the specified file by the input amount.
      * @param {String} path the location of the file being worked on
-     * @param {Integer} startval the number of seconds into the file the user wishes to trim to
-     * @param {Integer} durationval the number of seconds from the start value the user wishes to trim the file. If this value is omitted (or is 0) this function will assume you want the remainder of the track and only wish to trim the start value.
-     * @param {Boolean} overwrite whether the file should be overwritten
-     * @param {String} commands any further commands that will be appended to the command. The default command is `ffmpeg -ss {startval} -i "{filepath}" -t {durationval} {commands} "{outputfile}"`
-     * @param {Boolean} runDir define whether the path will but run after the function executes
+     * @param {Integer} [startval=0] the number of seconds into the file the user wishes to trim to
+     * @param {Integer} durationval? the number of seconds from the start value the user wishes to trim the file. If this value is omitted (or is 0) this function will assume you want the remainder of the track and only wish to trim the start value.
+     * @param {Boolean} [overwrite=false] whether the file should be overwritten
+     * @param {String} [commands=""] any further commands that will be appended to the command. The default command is `ffmpeg -ss {startval} -i "{filepath}" -t {durationval} {commands} "{outputfile}"`
+     * @param {Boolean} [runDir=true] define whether the path will but run after the function executes
      */
     trim(path, startval := 0, durationval?, overwrite := false, commands := "", runDir := true) {
         pathobj := obj.SplitPath(path)
@@ -331,7 +334,7 @@ class ffmpeg {
     /**
      * This function determines the sample rate of all audio streams within a file
      * @param {String} filepath the filepath of the file you are operating on
-     * @param {String} fallback the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
+     * @param {String} [fallback="48000"] the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
      * @returns {Object}
      * ```
      * audio := ffmpeg().__getFrequency(filepath)
@@ -366,7 +369,7 @@ class ffmpeg {
     /**
      * Extracts all audio streams from a file and saves them as `.wav`
      * @param {String} filepath the filepath of the file you wish to extract the audio from
-     * @param {String} samplerate the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
+     * @param {String} [samplerate="48000"] the audio samplerate you wish for the function to fall back on if it cannot be automatically determined
      */
     extractAudio(filepath, samplerate := "48000") {
         split := obj.SplitPath(filepath)

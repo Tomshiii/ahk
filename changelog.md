@@ -2,11 +2,10 @@
 - Fixed references/functions/filepaths that assumed `v24.5` was going to be the `Spectrum UI` update
 
 ## Functions
-- Wrapped all uses of `JSON.Parse()` in `try` blocks to hopefully stop some instances of the script locking up in the event that it doesn't retrieve the data it needs
-- `winget.PremName()` & `winget.AEName()` now accept parameter `ttips` to determine whether tooltips will display if the window titles cannot be determined
 - Fixed `rbuttonPrem().movePlayhead()` attempting to use `PremiereRemote` every use even if it's been determined to not be working correctly
 - Fixed `prem.getTimeline()` not properly accounting for a different column size left of the timeline on the new `Spectrum UI`
-- Fixed `settingsGUI()` settings adobe `beta` values as `0/1` instead of `true/false`
+- Fixed `settingsGUI()` setting adobe `beta` values as `0/1` instead of `true/false`
+- `winget.PremName()` & `winget.AEName()` now accept parameter `ttips` to determine whether tooltips will display if the window titles cannot be determined
 
 `startup {`
 - Added `startup.createShortcuts()` to check if shortcuts have been generated
@@ -15,6 +14,8 @@
 
 ## Other Changes
 - Updated `Notify.ahk` now that text alignment is a native feature
+- Added `vidPart.ahk` & `audPart.ahk` to automate downloading specific timecodes of youtube videos
+- Wrapped all uses of `JSON.Parse()` in `try` blocks to hopefully stop some instances scripts locking up in the event that they don't retrieve the data they need
 - `reencodeGUI()` will now prompt the user asking if they'd like to attempt to force GPU rendering if it rudimentarily determines GPU rendering isn't available
 
 `autosave.ahk`
