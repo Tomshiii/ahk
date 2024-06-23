@@ -1,0 +1,100 @@
+{
+  "updateCheck": {
+    "title": "Check for Updates",
+    "tooltip": {
+      "true": "Scripts will check for updates",
+      "false": "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available",
+      "stop": "Scripts will NOT check for updates"
+    }
+  },
+  "packageUpdate": {
+    "title": "Check for Package Updates",
+    "tooltip": {
+      "true": "Scripts will check to see if any updates are available using Chocolatey or the user's defined package manager",
+      "false": "Scripts will not check for updates using Chocolatey or the user's defined package manager"
+    }
+  },
+  "dark": {
+    "title":"Dark Mode",
+    "tooltip": {
+      "true": "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect",
+      "false": "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect",
+      "stop": "The users OS version is too low for this feature"
+    }
+  },
+  "startup": {
+    "title": "Run at Startup",
+    "tooltip": {
+      "true": "``PC Startup.ahk`` script will automatically run at PC startup",
+      "false": "``PC Startup.ahk`` script will no longer run at PC startup"
+    }
+  },
+  "adobeExeOverride": {
+    "title": "Adobe Version Override",
+    "tooltip": {
+      "true": "Startup scripts will set the current Premiere Pro and After Effects version based off the current installed version.`nNote: startup.adobeVerOverride() must be called in one of the user's scripts",
+      "false": "The current versions of Premiere Pro and After Effects must be set by the user"
+    }
+  },
+  "discAutoReply": {
+    "title": "Disable Discord Reply Ping",
+    "tooltip": {
+      "true": "``discord.button(`'DiscReply.png`')`` will disable the @ ping automatically when replying",
+      "false": "``discord.button(`'DiscReply.png`')`` will not disable the @ ping when replying"
+    }
+  },
+
+  "________newSection": " autosave",
+
+  "autosaveAlwaysSave": {
+    "title": "``autosave.ahk`` Always Save",
+    "tooltip": {
+      "true": "``autosave.ahk`` will save regardless of the active window",
+      "false": "``autosave.ahk`` will only save the active window"
+    }
+  },
+  "autosaveBeep": {
+    "title": "``autosave.ahk`` Beep",
+    "tooltip": {
+      "true": "``autosave.ahk`` will beep to alert the user it is attempting to save",
+      "false": "``autosave.ahk`` will no longer beep to alert the user that it is attempting to save"
+    }
+  },
+  "autosaveMouse": {
+    "title": "``autosave.ahk`` Check Mouse",
+    "tooltip": {
+      "true": "``autosave.ahk`` will check to ensure you haven't recently interacted with the mouse",
+      "false": "``autosave.ahk`` will no longer check to ensure you haven't recently interacted with the mouse"
+    }
+  },
+  "autosaveOverride": {
+    "title": "``autosave.ahk`` Save Override",
+    "tooltip": {
+      "true": "Manually saving within Premiere/After Effects will reset ``autosave.ahk`` timer",
+      "false": "Manually saving within Premiere/After Effects will have no effect on ``autosave.ahk``"
+    }
+  },
+  "autosaveRestartPlayback": {
+    "title": "``autosave.ahk`` Restart Playback",
+    "tooltip": {
+      "true": "``autosave.ahk`` will attempt to restart Premiere playback after a save attempt has been made",
+      "false": "``autosave.ahk`` will not attempt to restart Premiere playback after a save attempt has been made"
+    }
+  },
+
+  "________newSection": " checklist",
+  "checklistTooltip": {
+    "title": "``checklist.ahk`` tooltips",
+    "tooltip": {
+      "true": "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer",
+      "false": "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
+    }
+  },
+  "checklistHotkeys": {
+    "title": "``checklist.ahk`` create hotkey",
+    "tooltip": {
+      "true": "``checklist.ahk`` will create a hotkey to start/stop the timer. (Shift & Media_Play_Pause)",
+      "false": "``checklist.ahk`` will no longer create a hotkey to start/stop the timer."
+    }
+  }
+}

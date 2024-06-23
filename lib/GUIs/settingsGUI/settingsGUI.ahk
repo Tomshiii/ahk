@@ -15,67 +15,6 @@
 #Include <Functions\generateAdobeShortcut>
 ;}
 
-class SettingsToolTips {
-    updateCheck := {
-        true: "Scripts will check for updates",
-        false: "Scripts will still check for updates but will not present the user`nwith a GUI when an update is available",
-        stop: "Scripts will NOT check for updates"
-    }
-    packageUpdate := {
-        Yes: "Scripts will check to see if any updates are available using Chocolatey or the user's defined package manager",
-        No: "Scripts will not check for updates using Chocolatey or the user's defined package manager"
-    }
-    dark := {
-        Yes: "A dark theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect",
-        No: "A lighter theme will be applied to certain GUI elements wherever possible.`nThese GUI elements may need to be reloaded to take effect",
-        disabled: "The users OS version is too low for this feature"
-    }
-    startup := {
-        Yes: "``PC Startup.ahk`` script will automatically run at PC startup",
-        No: "``PC Startup.ahk`` script will no longer run at PC startup"
-    }
-    adobeExe := {
-        Yes: "Startup scripts will set the current Premiere Pro and After Effects version based off the current installed version.`nNote: startup.adobeVerOverride() must be called in one of the user's scripts",
-        No: "The current versions of Premiere Pro and After Effects must be set by the user"
-    }
-    autosaveAlwaysSave := {
-        Yes: "``autosave.ahk`` will save regardless of the active window",
-        No: "``autosave.ahk`` will only save the active window"
-    }
-    autosaveBeep := {
-        Yes: "``autosave.ahk`` will beep to alert the user it is attempting to save",
-        No: "``autosave.ahk`` will no longer beep to alert the user that it is attempting to save"
-    }
-    autosaveMouse := {
-        Yes: "``autosave.ahk`` will check to ensure you haven't recently interacted with the mouse",
-        No: "``autosave.ahk`` will no longer check to ensure you haven't recently interacted with the mouse"
-    }
-    autosaveOverride := {
-        Yes: "Manually saving within Premiere/After Effects will reset ``autosave.ahk`` timer",
-        No: "Manually saving within Premiere/After Effects will have no effect on ``autosave.ahk``"
-    }
-    autosaveRestartPlayback := {
-        Yes: "``autosave.ahk`` will attempt to restart Premiere playback after a save attempt has been made",
-        No: "``autosave.ahk`` will not attempt to restart Premiere playback after a save attempt has been made"
-    }
-    checklistTooltip := {
-        Yes: "``checklist.ahk`` will produce tooltips to remind you if you've paused the timer",
-        No: "``checklist.ahk`` will no longer produce tooltips to remind you if you've paused the timer"
-    }
-    checklistWait := {
-        Yes: "``checklist.ahk`` will always wait for you to open a premiere project before opening",
-        No: "``checklist.ahk`` will prompt the user if you wish to wait or manually open a project"
-    }
-    checklistHotkeys := {
-        Yes: "``checklist.ahk`` will create a hotkey to start/stop the timer. (Shift & Media_Play_Pause)",
-        No: "``checklist.ahk`` will no longer create a hotkey to start/stop the timer."
-    }
-    discAutoReply := {
-        Yes: "``discord.button(`"DiscReply.png`")`` will disable the @ ping automatically when replying",
-        No: "``discord.button(`"DiscReply.png`")`` will not disable the @ ping when replying"
-    }
-}
-
 
 /**
  * A GUI window to allow the user to toggle settings contained within the `settings.ini` file
@@ -85,7 +24,9 @@ settingsGUI()
     ;this function is needed to reload some scripts
     detect()
 
-    toolT := SettingsToolTips()
+    readSet := FileRead(ptf.lib "\GUIs\settingsGUI\values.json")
+    setJSON := JSON.parse(readSet,, false)
+
     UserSettings := UserPref()
     ;// menubar
     FileMenu := Menu()
@@ -139,7 +80,7 @@ settingsGUI()
     }
 
     darkMode := UserSettings.dark_mode
-    version := UserSettings.version
+    version  := UserSettings.version
 
     ;gameCheckGUI
     gameTitle := "Add game to gameCheck.ahk" ;// used in winwaits
@@ -160,18 +101,11 @@ settingsGUI()
     ;//! checkboxes
 
     ;// update check
-    checkVal := UserSettings.update_check
-    switch checkVal {
-        case true:
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked1 section xs+1 Y+5", "Check for Updates")
-            updateCheckToggle.ToolTip := toolT.updateCheck.true
-        case false:
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked-1 section xs+1 Y+5", "Check for Updates")
-            updateCheckToggle.ToolTip :=toolT.updateCheck.false
-        case "stop":
-            updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked0 section xs+1 Y+5", "Check for Updates")
-            updateCheckToggle.ToolTip :=toolT.updateCheck.stop
-    }
+    checkVal := UserSettings.update_check = "stop" ? "-1" : UserSettings.update_check
+    updateCheckToggle := settingsGUI.Add("Checkbox", "Check3 Checked" checkVal " section xs+1 Y+5", setJSON.updateCheck.title)
+    updateCheckToggle.ToolTip := (checkVal != true && checkVal != false)
+            ? setJSON.updateCheck.tooltip.stop
+            : (checkval = true) ?  setJSON.updateCheck.tooltip.true : setJSON.updateCheck.tooltip.false
     updateCheckToggle.OnEvent("Click", update)
     update(*)
     {
@@ -179,18 +113,18 @@ settingsGUI()
         switch updateCheckToggle.Value {
             case 1: ;true
                 UserSettings.update_check := true
-                updateCheckToggle.ToolTip := toolT.updateCheck.true
+                updateCheckToggle.ToolTip := setJSON.updateCheck.tooltip.true
                 if UserSettings.beta_update_check = true
                     betaupdateCheckToggle.Value := 1
             case -1: ;false
                 UserSettings.update_check := false
-                updateCheckToggle.ToolTip := toolT.updateCheck.false
+                updateCheckToggle.ToolTip := setJSON.updateCheck.tooltip.false
                 if UserSettings.beta_update_check = true
                     betaupdateCheckToggle.Value := 1
             case 0: ;stop
                 betaupdateCheckToggle.Value := 0
                 UserSettings.update_check := "stop"
-                updateCheckToggle.ToolTip := toolT.updateCheck.stop
+                updateCheckToggle.ToolTip := setJSON.updateCheck.tooltip.stop
         }
     }
 
@@ -215,15 +149,15 @@ settingsGUI()
 
     packageUpdate := "Check for Package Updates"
     settingsGUI.AddCheckbox("vpackageCheck Checked" UserSettings.package_update_check " Y+5", packageUpdate).OnEvent("Click", toggle.Bind("package update check", ""))
-    settingsGUI["packageCheck"].ToolTip := (UserSettings.package_update_check = true) ? toolT.packageUpdate.Yes : toolT.packageUpdate.No
+    settingsGUI["packageCheck"].ToolTip := (UserSettings.package_update_check = true) ? setJSON.packageUpdate.tooltip.true : setJSON.packageUpdate.tooltip.false
 
     ;// dark mode toggle
-    settingsGUI.AddCheckbox("vdarkCheck Checked" UserSettings.dark_mode " Y+5", "Dark Mode").OnEvent("Click", darkToggle)
+    settingsGUI.AddCheckbox("vdarkCheck Checked" UserSettings.dark_mode " Y+5", setJSON.dark.title).OnEvent("Click", darkToggle)
     switch UserSettings.dark_mode {
-        case true:  settingsGUI["darkCheck"].ToolTip := toolT.dark.Yes
-        case false: settingsGUI["darkCheck"].ToolTip := toolT.dark.No
+        case true:  settingsGUI["darkCheck"].ToolTip := setJSON.dark.tooltip.true
+        case false: settingsGUI["darkCheck"].ToolTip := setJSON.dark.tooltip.false
         case "disabled":
-            settingsGUI["darkCheck"].ToolTip := toolT.dark.disabled
+            settingsGUI["darkCheck"].ToolTip := setJSON.dark.tooltip.disabled
             settingsGUI["darkCheck"].Opt("+Disabled")
     }
     darkToggle(*)
@@ -231,58 +165,47 @@ settingsGUI()
         ToolTip("")
         darkToggleVal := settingsGUI["darkCheck"].Value
         UserSettings.dark_mode := (settingsGUI["darkCheck"].Value = 1) ? true : false
-        settingsGUI["darkCheck"].ToolTip := (settingsGUI["darkCheck"].Value = 1) ? toolT.dark.Yes : toolT.dark.No
-        if (settingsGUI["darkCheck"].Value = 1)
-            {
-                tool.Cust(toolT.dark.Yes, 2000)
-                goDark()
-                return
-            }
+        settingsGUI["darkCheck"].ToolTip := (settingsGUI["darkCheck"].Value = 1) ? setJSON.dark.tooltip.true : setJSON.dark.tooltip.false
+        if (settingsGUI["darkCheck"].Value = 1) {
+            tool.Cust(setJSON.dark.tooltip.true, 2000)
+            goDark()
+            return
+        }
         ;// dark mode is false
-        tool.Cust(toolT.dark.No, 2000)
+        tool.Cust(setJSON.dark.tooltip.false, 2000)
         goDark(false, "Light")
     }
 
     ;// run at startup
-    StartupCheckTitle := "Run at Startup"
-    settingsGUI.AddCheckbox("vStartupCheck Checked" UserSettings.run_at_startup " Y+5", StartupCheckTitle).OnEvent("Click", toggle.Bind("run at startup", ""))
-    switch UserSettings.run_at_startup {
-        case true:  settingsGUI["StartupCheck"].ToolTip := toolT.startup.Yes
-        case false: settingsGUI["StartupCheck"].ToolTip := toolT.startup.No
-    }
+    settingsGUI.AddCheckbox("vstartup Checked" UserSettings.run_at_startup " Y+5", setJSON.startup.title).OnEvent("Click", toggle.Bind("run at startup", ""))
+    settingsGUI["startup"].ToolTip := (UserSettings.run_at_startup = true) ? setJSON.startup.tooltip.true : setJSON.startup.tooltip.false
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
     ;// adobe version override
-    adobeVerOverrideTitle := "Adobe Version Override"
-    settingsGUI.AddCheckbox("vadobeVerOverrideToggle Checked" UserSettings.adobeExeOverride " xs+223 ys Section", adobeVerOverrideTitle).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
-    settingsGUI["adobeVerOverrideToggle"].ToolTip := (UserSettings.adobeExeOverride = true) ? toolT.adobeExe.Yes : toolT.adobeExe.No
+    settingsGUI.AddCheckbox("vadobeExeOverride Checked" UserSettings.adobeExeOverride " xs+223 ys Section", setJSON.adobeExeOverride.title).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
+    settingsGUI["adobeExeOverride"].ToolTip := (UserSettings.adobeExeOverride = true) ? setJSON.adobeExeOverride.tooltip.true : setJSON.adobeExeOverride.tooltip.false
 
     ;// autosave always save
-    asAlwaysSaveTitle := "``autosave.ahk`` Always Save"
-    settingsGUI.AddCheckbox("vasAlwaysSaveToggle Checked" UserSettings.autosave_always_save " Y+5", asAlwaysSaveTitle).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
-    settingsGUI["asAlwaysSaveToggle"].ToolTip := (UserSettings.autosave_always_save = true) ? toolT.autosaveAlwaysSave.Yes : toolT.autosaveAlwaysSave.No
+    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " Y+5", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
+    settingsGUI["autosaveAlwaysSave"].ToolTip := (UserSettings.autosave_always_save = true) ? setJSON.autosaveAlwaysSave.tooltip.true : setJSON.autosaveAlwaysSave.tooltip.false
 
     ;// autosave beep
-    asBeepTitle := "``autosave.ahk`` Beep"
-    settingsGUI.AddCheckbox("vasbeepToggle Checked" UserSettings.autosave_beep " Y+5", asBeepTitle).OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
-    settingsGUI["asbeepToggle"].ToolTip := (UserSettings.autosave_beep = true) ? toolT.autosaveBeep.Yes : toolT.autosaveBeep.No
+    settingsGUI.AddCheckbox("vautosaveBeep Checked" UserSettings.autosave_beep " Y+5", setJSON.autosaveBeep.title).OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
+    settingsGUI["autosaveBeep"].ToolTip := (UserSettings.autosave_beep = true) ? setJSON.autosaveBeep.tooltip.true : setJSON.autosaveBeep.tooltip.false
 
     ;// autosave check mouse
-    ascheckMouseTitle := "``autosave.ahk`` Check Mouse"
-    settingsGUI.AddCheckbox("vasmouseToggle Checked" UserSettings.autosave_check_mouse " Y+5", ascheckMouseTitle).OnEvent("Click", toggle.Bind("autosave check mouse", "autosave"))
-    settingsGUI["asmouseToggle"].ToolTip := (UserSettings.autosave_check_mouse = true) ? toolT.autosaveMouse.Yes : toolT.autosaveMouse.No
+    settingsGUI.AddCheckbox("vautosaveMouse Checked" UserSettings.autosave_check_mouse " Y+5", setJSON.autosaveMouse.title).OnEvent("Click", toggle.Bind("autosave check mouse", "autosave"))
+    settingsGUI["autosaveMouse"].ToolTip := (UserSettings.autosave_check_mouse = true) ? setJSON.autosaveMouse.tooltip.true : setJSON.autosaveMouse.tooltip.false
 
     ;// autosave restart playback
-    asRestartPlayTitle := "``autosave.ahk`` Restart Playback"
-    settingsGUI.AddCheckbox("vasRestartPlay Checked" UserSettings.autosave_restart_playback " Y+5", asRestartPlayTitle).OnEvent("Click", toggle.Bind("autosave restart playback", "autosave"))
-    settingsGUI["asRestartPlay"].ToolTip := (UserSettings.autosave_restart_playback = true) ? toolT.autosaveRestartPlayback.Yes : toolT.autosaveRestartPlayback.No
+    settingsGUI.AddCheckbox("vautosaveRestartPlayback Checked" UserSettings.autosave_restart_playback " Y+5", setJSON.autosaveRestartPlayback.title).OnEvent("Click", toggle.Bind("autosave restart playback", "autosave"))
+    settingsGUI["autosaveRestartPlayback"].ToolTip := (UserSettings.autosave_restart_playback = true) ? setJSON.autosaveRestartPlayback.tooltip.true : setJSON.autosaveRestartPlayback.tooltip.false
 
     ;// autosave save override
-    asOverrideTitle := "``autosave.ahk`` Save Override"
-    settingsGUI.AddCheckbox("vasOverride Checked" UserSettings.autosave_save_override " Y+5", asOverrideTitle).OnEvent("Click", toggle.Bind("autosave save override", "autosave"))
-    settingsGUI["asOverride"].ToolTip := (UserSettings.autosave_save_override = true) ? toolT.autosaveOverride.Yes : toolT.autosaveOverride.No
+    settingsGUI.AddCheckbox("vautosaveOverride Checked" UserSettings.autosave_save_override " Y+5", setJSON.autosaveOverride.title).OnEvent("Click", toggle.Bind("autosave save override", "autosave"))
+    settingsGUI["autosaveOverride"].ToolTip := (UserSettings.autosave_save_override = true) ? setJSON.autosaveOverride.tooltip.true : setJSON.autosaveOverride.tooltip.false
 
     /**
      * This function handles the logic for a few checkboxes
@@ -295,72 +218,42 @@ settingsGUI()
         detect()
         ToolTip("")
         ;// each switch here goes off the TITLE variable we created
-        switch script.text {
-            case adobeVerOverrideTitle:
-                toolTrue := toolT.adobeExe.Yes
-                toolFalse := toolT.adobeExe.No
-            case asAlwaysSaveTitle:
-                toolTrue := toolT.autosaveAlwaysSave.Yes
-                toolFalse := toolT.autosaveAlwaysSave.No
-            case ascheckMouseTitle:
-                toolTrue := toolT.autosaveMouse.Yes
-                toolFalse := toolT.autosaveMouse.No
-            case StartupCheckTitle:
-                toolTrue := toolT.startup.Yes
-                toolFalse := toolT.startup.No
-            case asBeepTitle:
-                toolTrue := toolT.autosaveBeep.Yes
-                toolFalse := toolT.autosaveBeep.No
-            case asOverrideTitle:
-                toolTrue := toolT.autosaveOverride.yes
-                toolFalse := toolT.autosaveOverride.no
-            case discAutoReply:
-                toolTrue := toolT.discAutoReply.yes
-                toolFalse := toolT.discAutoReply.no
-            case packageUpdate:
-                toolTrue := toolT.packageUpdate.yes
-                toolFalse := toolT.packageUpdate.no
-            case asRestartPlayTitle:
-                toolTrue := toolT.autosaveRestartPlayback.Yes
-                toolFalse := toolT.autosaveRestartPlayback.No
+        try {
+            replaceVal := UserSettings.__convertToStr(script.value)
+            script.ToolTip := setJSON.%script.name%.tooltip.%replaceVal%
         }
 
         ;// toggling the checkboxes & setting values based off checkbox state
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := (script.Value = 1) ? true : false
-        script.ToolTip := (script.Value = 1) ? toolTrue : toolFalse
         ;// custom logic for the run at startup option
-        if ini = "run at startup"
-            {
-                switch script.Value {
-                    case 1:
-                        startupScript := ptf.rootDir "\PC Startup\PC Startup.ahk"
-                        FileCreateShortcut(startupScript, ptf["scriptStartup"])
-                    case 0:
-                        if FileExist(ptf["scriptStartup"])
-                            FileDelete(ptf["scriptStartup"])
-                }
-                return
+        if ini = "run at startup" {
+            switch script.Value {
+                case 1:
+                    startupScript := ptf.rootDir "\PC Startup\PC Startup.ahk"
+                    FileCreateShortcut(startupScript, ptf["scriptStartup"])
+                case 0:
+                    if FileExist(ptf["scriptStartup"])
+                        FileDelete(ptf["scriptStartup"])
             }
+            return
+        }
         ;// changing requested value
         if InStr(script.text, "autosave") && WinExist("autosave.ahk - AutoHotkey")
             WM.Send_WM_COPYDATA(iniVar "," script.Value "," objName, "autosave.ahk")
     }
 
     ;// checklist create hotkeys
-    checklistHotkeysTitle := "``checklist.ahk`` create hotkey"
-    settingsGUI.AddCheckbox("vcheckHTool Checked" UserSettings.checklist_hotkeys " Y+5", checklistHotkeysTitle).OnEvent("Click", msgboxToggle.Bind("checklist hotkeys"))
-    settingsGUI["checkHTool"].ToolTip := (UserSettings.checklist_hotkeys = true) ? toolT.checklistHotkeys.Yes : toolT.checklistHotkeys.No
+    settingsGUI.AddCheckbox("vchecklistHotkeys Checked" UserSettings.checklist_hotkeys " Y+5", setJSON.checklistHotkeys.title).OnEvent("Click", msgboxToggle.Bind("checklist hotkeys"))
+    settingsGUI["checklistHotkeys"].ToolTip := (UserSettings.checklist_hotkeys = true) ? setJSON.checklistHotkeys.tooltip.true : setJSON.checklistHotkeys.tooltip.false
 
     ;// checklist tooltip
-    checklistTooltipTitle := "``checklist.ahk`` tooltips"
-    settingsGUI.AddCheckbox("vcheckTool Checked" UserSettings.checklist_tooltip " Y+5", checklistTooltipTitle).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
-    settingsGUI["checkTool"].ToolTip := (UserSettings.checklist_tooltip = true) ? toolT.checklistTooltip.Yes : toolT.checklistTooltip.No
+    settingsGUI.AddCheckbox("vchecklistTooltip Checked" UserSettings.checklist_tooltip " Y+5", setJSON.checklistTooltip.title).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
+    settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
 
     ;// disc disable autoreply
-    discAutoReply := "Disable Discord Reply Ping"
-    settingsGUI.AddCheckbox("vdiscReply Checked" UserSettings.disc_disable_autoreply " Y+5", discAutoReply).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
-    settingsGUI["discReply"].ToolTip := (UserSettings.disc_disable_autoreply = true) ? toolT.discAutoReply.Yes : toolT.discAutoReply.No
+    settingsGUI.AddCheckbox("vdiscAutoReply Checked" UserSettings.disc_disable_autoreply " Y+5", setJSON.discAutoReply.title).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
+    settingsGUI["discAutoReply"].ToolTip := (UserSettings.disc_disable_autoreply = true) ? setJSON.discAutoReply.tooltip.true : setJSON.discAutoReply.tooltip.false
 
     /**
      * This function handles logic for checkboxes that need to pop up a msgbox to alert the user that they need to reload `checklist.ahk`
@@ -375,7 +268,7 @@ settingsGUI()
         iniVar := StrReplace(ini, A_Space, "_")
         ;// setting values based on the state of the checkbox
         UserSettings.%iniVar% := (script.Value = 1) ? true : false
-        settingsGUI["checkWait"].ToolTip := (script.Value = 1) ? toolT.checklistTooltip.Yes : toolT.checklistTooltip.No
+        script.ToolTip := (script.Value = 1) ? setJSON.%script.name%.tooltip.true : setJSON.%script.name%.tooltip.false
         if WinExist("checklist.ahk - AutoHotkey")
             MsgBox(msgboxtext,, "48 4096")
     }
@@ -390,16 +283,11 @@ settingsGUI()
     loop set_Edit_Val().objs.Length {
         initValVar := StrReplace(set_Edit_Val.iniInput[A_Index], A_Space, "_")
         initVal := UserSettings.%initValVar%
-        settingsGUI.Add("Edit",
-                             set_Edit_Val.EditPos[A_Index] " r1 W50 -E0200 Number v" set_Edit_Val.control[A_Index])
+        settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 -E0200 Number v" set_Edit_Val.control[A_Index])
         settingsGUI.Add("UpDown", set_Edit_Val.UpDownOpt[A_Index], initVal)
-        settingsGUI.Add("Text",
-                            set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index],
-                            set_Edit_Val.scriptText[A_Index])
+        settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
         settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
-        settingsGUI.Add("Text",
-                            set_Edit_Val.otherTextPos[A_Index],
-                            set_Edit_Val.otherText[A_Index])
+        settingsGUI.Add("Text", set_Edit_Val.otherTextPos[A_Index], set_Edit_Val.otherText[A_Index])
         settingsGUI[set_Edit_Val.control[A_Index]].OnEvent("Change", editCtrl.Bind(set_Edit_Val.Bind[A_Index], set_Edit_Val.iniInput[A_Index], set_Edit_Val.objName[A_Index]))
     }
 
