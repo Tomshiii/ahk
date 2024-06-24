@@ -19,6 +19,6 @@ __rootDirDelete(".TemporaryItems")
 __rootDirDelete(".Trashes")
 
 loop files selectedDir "\*", "FR" {
-    if SubStr(A_LoopFileName, 1, 2) = "._" && FileGetSize(A_LoopFileFullPath, "K") = 4
+    if (SubStr(A_LoopFileName, 1, 2) = "._" && FileGetSize(A_LoopFileFullPath, "K") = 4) || (A_LoopFileExt = "DS_Store")
         try FileDelete(A_LoopFileFullPath)
 }
