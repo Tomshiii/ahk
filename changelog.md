@@ -3,9 +3,12 @@
 
 ## Functions
 - Fixed `rbuttonPrem().movePlayhead()` attempting to use `PremiereRemote` every use even if it's been determined to not be working correctly
-- Fixed `prem.getTimeline()` not properly accounting for a different column size left of the timeline on the new `Spectrum UI`
 - Fixed `settingsGUI()` setting adobe `beta` values as `0/1` instead of `true/false`
 - `winget.PremName()` & `winget.AEName()` now accept parameter `ttips` to determine whether tooltips will display if the window titles cannot be determined
+
+`Prem {`
+- Fixed `getTimeline()` not properly accounting for a different column size left of the timeline on the new `Spectrum UI`
+- `swapChannels()` will now work for 2 track files assuming you want all media channels to use the same stereo pair
 
 `startup {`
 - Added `startup.createShortcuts()` to check if shortcuts have been generated

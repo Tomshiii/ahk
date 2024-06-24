@@ -1976,7 +1976,8 @@ class Prem {
 
     /**
      * This function is mostly designed for my own workflow and isn't really built out with an incredible amount of logic.
-     * it is designed to swap the L/R channel on a single track stereo file.  attempting to use this script on anything else will either produce unintended results or will simply not function at all
+     *
+     * This function was originally designed to swap the L/R channel on a single track stereo file but may also function on a dual track stereo file where you're expecting both the L & R channels to use the same media source channel. attempting to use this script on anything else will either produce unintended results or will simply not function at all
      */
     static swapChannels(mouseSpeed := 2) {
         block.On()
@@ -2001,21 +2002,22 @@ class Prem {
         }
 
         clipWin := obj.WinPos(clipWinTitle)
-        __searchChannel(&x, &y) => ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "channel1.png")
-        if !__searchChannel(&x, &y) {
+        __searchChannel(&x, &y, &chan, &clip) => (chan := ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "channel1.png"), clip := ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "clip1.png"))
+        if !__searchChannel(&x, &y, &chan, &clip) {
             sleep 150
-            if !__searchChannel(&x, &y) {
+            if !__searchChannel(&x, &y, &chan, &clip) {
                 block.Off()
                 errorLog(TargetError("Couldn't find channel 1.", -1),, 1)
                 return
             }
         }
 
-        left  := ImageSearch(&checkX, &checkY, x, y - 50, x + 200, y + 50, "*2 " ptf.Premiere "L_unchecked.png") ? coords := {x: checkX, y: checkY} : false
-        right := ImageSearch(&checkX, &checkY, x, y - 50, x + 200, y + 50, "*2 " ptf.Premiere "R_unchecked.png") ? coords := {x: checkX, y: checkY} : false
+        left  := obj.imgSrchMulti({x1: x, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "L_unchecked.png", ptf.Premiere "L_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
+        right := obj.imgSrchMulti({x1: x, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "R_unchecked.png", ptf.Premiere "R_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
 
         ;// if the file isn't dual channel it might not have two checkboxes and thus `coords` won't be set
         if !IsSet(coords) || !coords {
+            MouseMove(x, y)
             block.Off()
             tool.Cust("Checkbox not found")
             return
@@ -2027,6 +2029,9 @@ class Prem {
         }
         which := (left = 1) ? "L_unchecked.png" : "R_unchecked.png"
         Click(Format("{} {}", coords.x+10, coords.y+30))
+        if clip != 0 {
+            Click(Format("{} {}", coords.x+10, coords.y+55))
+        }
 
         if !ImageSearch(&okX, &okY, clipWin.x, (clipWin.y + clipWin.height) - 150, clipWin.x + clipWin.width, clipWin.y + clipWin.height, "*2 " ptf.Premiere "channels_ok.png") {
             block.Off()
