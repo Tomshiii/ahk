@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.4.1
  * @author tomshi
- * @date 2024/06/20
- * @version 2.1.14
+ * @date 2024/06/26
+ * @version 2.1.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,8 +41,8 @@ class Prem {
         UserSettings := ""
 
         switch {
-            case VerCompare(this.currentSetVer, "24.6") >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3
-			case VerCompare(this.currentSetVer, "24.6") < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB
+            case VerCompare(this.currentSetVer, "24.6") >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
+			case VerCompare(this.currentSetVer, "24.6") < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55
         }
     }
 
@@ -99,6 +99,9 @@ class Prem {
     ;// PremiereRemote variables
     static remoteDir := A_AppData "\Adobe\CEP\extensions\PremiereRemote"
     static indexFile := this.remoteDir "\host\src\index.tsx"
+
+    ;// swapChannels()
+    static secondChannel := 0
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -2030,7 +2033,7 @@ class Prem {
         which := (left = 1) ? "L_unchecked.png" : "R_unchecked.png"
         Click(Format("{} {}", coords.x+10, coords.y+30))
         if clip != 0 {
-            Click(Format("{} {}", coords.x+10, coords.y+55))
+            Click(Format("{} {}", coords.x+10, coords.y+this.secondChannel))
         }
 
         if !ImageSearch(&okX, &okY, clipWin.x, (clipWin.y + clipWin.height) - 150, clipWin.x + clipWin.width, clipWin.y + clipWin.height, "*2 " ptf.Premiere "channels_ok.png") {
