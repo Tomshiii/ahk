@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/06/14
- * @version 1.7.34.1
+ * @date 2024/06/27
+ * @version 1.7.35
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -648,10 +648,10 @@ class Startup {
         setPremYear := __determineYear(dirFold, "Adobe Premiere Pro", ptf.PremYearVer)
         setAEYear   := __determineYear(dirFold, "Adobe After Effects", ptf.aeYearVer)
 
-        premFolder := (this.UserSettings.premIsBeta = true) ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) setPremYear
-        aeFolder   := (this.UserSettings.aeIsBeta = true)   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) setAEYear
-        premExeLocation := (this.UserSettings.premIsBeta = true) ? A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro (Beta).exe"             : A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro.exe"
-        aeExeLocation   := (this.UserSettings.aeIsBeta = true)   ? A_ProgramFiles "\Adobe\" aeFolder "\Support Files\Adobe Premiere Pro (Beta).exe" : A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
+        premFolder := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) setPremYear
+        aeFolder   := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true")   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) setAEYear
+        premExeLocation := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro (Beta).exe"             : A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro.exe"
+        aeExeLocation   := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true")   ? A_ProgramFiles "\Adobe\" aeFolder "\Support Files\Adobe Premiere Pro (Beta).exe" : A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
 
         premExeVer := FileExist(premExeLocation) ? FileGetExtendedProp(premExeLocation,, "Product version")["Product version"] : premNotFound := true
         aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "Product version")["Product version"]   : aeNotFound   := true
