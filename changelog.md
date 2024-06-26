@@ -8,6 +8,7 @@
 - `winget.PremName()` & `winget.AEName()` now accept parameter `ttips` to determine whether tooltips will display if the window titles cannot be determined
 - `SD_Opt {` now contains function `checkCount()` to ensure all currently available options have been set in the user's `options.ini` file
 - `ytdlp().download()` will now increment the filename if it already exists
+- `useNVENC()` will now properly detect nvidia gpus if the user has integrated graphics
 
 `switchTo {`
 - `AE()`

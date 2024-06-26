@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <Classes\Mip>
+;
+
 /**
  * returns information about the user's GPU
  * @author jNizM
@@ -5,6 +9,13 @@
  * @returns {Object} `Manufacturer`, `Model`
  */
 Win32_VideoController() {
-    for objItem in ComObjGet("winmgmts:\\.\root\CIMV2").ExecQuery("SELECT * FROM Win32_VideoController")
-        return {Manufacturer: objItem.AdapterCompatibility, Model: objItem.Description }
+    returnMap:= Mip()
+    for objItem in ComObjGet("winmgmts:\\.\root\CIMV2").ExecQuery("SELECT * FROM Win32_VideoController") {
+        if !returnMap.Has(objItem.AdapterCompatibility)
+            returnMap.Set(objItem.AdapterCompatibility, true)
+        if !returnMap.Has(objItem.Description) {
+            returnMap.Set(objItem.Description, true)
+        }
+    }
+    return returnMap
 }
