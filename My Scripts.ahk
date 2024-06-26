@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.7
+;\\v2.34.8
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -35,6 +35,7 @@
 #Include <Classes\reset>
 #Include <Classes\keys>
 #Include <Classes\errorLog>
+#Include <Classes\Streamdeck_opt>
 #Include <Functions\mouseDrag>
 #Include <Functions\getLocalVer>
 #Include <Functions\fastWheel>
@@ -115,6 +116,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 ; =======================================================================================================================================
 start := Startup()
 start.generate()               ;generates/replaces the `settings.ini` file every release
+SD_Opt().checkCount()
 start.updateChecker()          ;runs the update checker
 start.updatePackages()         ;checks for updates to packages installed through choco by default
 start.trayMen()                ;adds the ability to toggle checking for updates when you right click on this scripts tray icon

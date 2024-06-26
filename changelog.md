@@ -6,6 +6,7 @@
 - Fixed `settingsGUI()` setting adobe `beta` values as `0/1` instead of `true/false`
 - Fixed `generateAdobeShortcut()` incorrectly generating `After Effects Beta` shortcut
 - `winget.PremName()` & `winget.AEName()` now accept parameter `ttips` to determine whether tooltips will display if the window titles cannot be determined
+- `SD_Opt {` now contains function `checkCount()` to ensure all currently available options have been set in the user's `options.ini` file
 
 `switchTo {`
 - `AE()`

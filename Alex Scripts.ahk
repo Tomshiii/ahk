@@ -1,6 +1,9 @@
 #SingleInstance Force
 ;// This script is for a friend and is simply kept in the repo to more easily track it as well as allowing them to more easily access it in multiple locations
 
+#Include <Classes\Startup>
+#Include <Classes\ptf>
+#Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\keys>
 #Include <Classes\switchTo>
@@ -11,11 +14,9 @@
 #Include <Classes\tool>
 #Include <Classes\winGet>
 #Include <Classes\timer>
-#Include <Classes\ptf>
-#Include <Classes\Startup>
 #Include <Classes\Settings>
+#Include <Classes\Streamdeck_opt>
 #Include <GUIs\settingsGUI\settingsGUI>
-#Include <KSA\Keyboard Shortcut Adjustments>
 
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
 SetDefaultMouseSpeed(0)                ;sets default MouseMove speed to 0 (instant)
@@ -26,6 +27,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 
 start := Startup()
 start.generate()
+SD_Opt().checkCount()
 ; start.updateChecker()
 start.updatePackages()
 start.trayMen()
