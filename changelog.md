@@ -4,7 +4,12 @@
 ## Functions
 - Fixed `rbuttonPrem().movePlayhead()` attempting to use `PremiereRemote` every use even if it's been determined to not be working correctly
 - Fixed `settingsGUI()` setting adobe `beta` values as `0/1` instead of `true/false`
+- Fixed `generateAdobeShortcut()` incorrectly generating `After Effects Beta` shortcut
 - `winget.PremName()` & `winget.AEName()` now accept parameter `ttips` to determine whether tooltips will display if the window titles cannot be determined
+
+`switchTo {`
+- `AE()` should now more reliably bring After Effects into focus
+- `AE()` will now focus `Mocha` if it exists
 
 `Prem {`
 - Fixed `getTimeline()` not properly accounting for a different column size left of the timeline on the new `Spectrum UI`

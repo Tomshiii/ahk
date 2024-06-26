@@ -26,7 +26,7 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
             aeFolder := (adobeName = "Adobe After Effects") ? "Support Files\" : ""
             ;// the location of the exe we're generating a shortcut for
             exeLocation := (userSettingsObj.%shortName%IsBeta = false || userSettingsObj.%shortName%IsBeta = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE
-                                                                       : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta
+                                                                       : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" aeFolder ahkEXEBeta
         case "Photoshop":
             ;// determining some variables
             ahkEXE     := adobeName ".exe"

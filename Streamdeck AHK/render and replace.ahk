@@ -23,12 +23,12 @@ if prem.__checkTimelineValues() = true {
     if !prem.__waitForTimeline(3)
         return
 }
-sleep 100
-SendEvent(LabelColour)
-sleep 50
 title := WinGet.PremName()
 if title.saveCheck != false
     attempt := prem.saveAndFocusTimeline()
+sleep 100
+SendEvent(LabelColour)
+sleep 50
 SendEvent(KSA.premRndrReplce)
 sleep 100
 if !WinWait("Render and Replace",, 2) {

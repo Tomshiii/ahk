@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/06/20
- * @version 2.1.25
+ * @date 2024/06/25
+ * @version 2.1.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -349,6 +349,9 @@ class adobeAutoSave extends count {
                 return
             switch this.origWindow {
                 case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
+                case "Adobe After Effects.exe", "Adobe After Effects (Beta).exe":
+                    WinMoveTop("ahk_exe " this.origWindow)
+                    WinActivate("ahk_exe " this.origWindow)
                 case "Adobe Premiere Pro.exe", "Adobe Premiere Pro (Beta).exe":
                     if !WinActive(prem.winTitle)
                         switchTo.Premiere()

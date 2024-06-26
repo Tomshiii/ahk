@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/03/20
- * @version 1.3.9
+ * @date 2024/06/25
+ * @version 1.3.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -209,6 +209,23 @@ class switchTo {
                 WinActivate(AE.winTitle)
         }
 
+        checkTrans() {
+            try {
+                checkTran := WinGetTransparent(editors.AE.winTitle)
+                if IsInteger(checkTran) && checkTran != 255
+                    WinSetTransparent(255, AE.winTitle)
+            }
+        }
+
+        bringTopActivate() {
+            WinMoveTop(ae.winTitle)
+            WinActivate(ae.winTitle)
+            if WinExist("Mocha AE ahk_exe mocha4ae_adobe.exe",, "Mocha UI") || WinExist("Mocha AE * ahk_exe mocha4ae_adobe.exe",, "Mocha UI")
+                try WinActivate()
+        }
+
+        if WinExist(ae.winTitle)
+            checkTrans()
         /** checks the current project's working directory for any after effects files. If none are present, ae will simply be opened. If 1 is present, it will be opened. If multiple are present, the user will be prompted to select one */
         premTitle() {
             try {
@@ -261,38 +278,23 @@ class switchTo {
 
         switch aeExist {
             case false:
-                if premExist
-                    {
-                        premTitle()
-                        return
-                    }
+                if premExist {
+                    premTitle()
+                    return
+                }
                 runae()
             default:
-                checkTrans() {
+                if premExist {
                     try {
-                        checkTran := WinGetTransparent(editors.AE.winTitle)
-                        if IsInteger(checkTran) && checkTran != 255 {
-                            WinMoveBottom(AE.winTitle)
-                            WinSetTransparent(255, AE.winTitle)
-                        }
-                        WinActivate(AE.winTitle)
+                        Name := WinGet.AEName()
+                        if !InStr(Name.winTitle, "\",, -1) ;if there's a slash in the title, it means a project is open
+                            premTitle()
                     }
                 }
-                if premExist
-                    {
-                        try {
-                            Name := WinGet.AEName()
-                            if InStr(Name.winTitle, "\",, -1) ;if there's a slash in the title, it means a project is open
-                                checkTrans()
-                            else
-                                premTitle()
-                        } catch {
-                            WinActivate(AE.winTitle)
-                        }
-                        return
-                    }
                 ;// if prem doesn't exist
                 checkTrans()
+                try bringTopActivate()
+                return
         }
     }
 
