@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2024/03/12
- * @version 1.0.10
+ * @date 2024/06/26
+ * @version 1.0.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,6 +12,8 @@
 #Include <Classes\clip>
 #Include <Classes\obj>
 #Include <Classes\errorLog>
+#Include <Classes\Streamdeck_opt>
+#Include <Other\Notify>
 #Include <Functions\getHTMLTitle>
 ; }
 
@@ -27,6 +29,7 @@ class ytdlp {
     ]
     URL := ""
     defaultCommand := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
+    defaultFilename := "%(title).{1}s [%(id)s].%(ext)s"
     command := ""
     check := false
     checkClipState := false
@@ -155,6 +158,32 @@ class ytdlp {
                 }
             }
         }
+
+        ;// checking if filename already exists
+        mNotifyGUI_Prog := Notify.Show('ytdlp', 'Determining name of output file...', 'iconi',,, 'TC=black MC=black BC=75AEDC POS=BR show=fade@250 hide=fade@250 DUR=6')
+        SDopt := SD_Opt()
+        outputFileName := Format(this.defaultFilename, SDopt.filenameLengthLimit)
+        nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}"', outputFileName, this.URL))
+        SplitPath(nameOutput,,,, &nameNoExt)
+        checkPath1 := WinGet.pathU(folder "\" nameOutput)
+        checkPath2 := WinGet.pathU(folder "\" nameNoExt ".mp4")
+        if FileExist(checkPath1) || FileExist(checkPath2) {
+            index := 1
+            loop {
+                if FileExist(folder nameNoExt index ".webm") || FileExist(folder nameNoExt index ".mp4") {
+                    index++
+                    continue
+                }
+                args := Format(args, nameNoExt index)
+                break
+            }
+        }
+        else {
+            args := Format(args, outputFileName)
+        }
+        Notify.Destroy(mNotifyGUI_Prog['hwnd'])
+
+        ;// building rest of command
         if this.checkClipState = true {
             this.command := Format(this.defaultCommand, args, folder, oldClip.storedClip)
             clip.returnClip(oldClip)
