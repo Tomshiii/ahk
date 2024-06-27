@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.4.1
  * @author tomshi
- * @date 2024/06/26
- * @version 2.1.15
+ * @date 2024/06/27
+ * @version 2.1.15.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2067,13 +2067,13 @@ class Prem {
                         try {
                             Hotkey(k2, k2)
                         } catch {
-                            Hotkey(k2, "Off")
+                            try Hotkey(k2, "Off")
                         }
                     }
                     try {
                         Hotkey("NumpadDiv", "NumpadDiv")
                     } catch {
-                        Hotkey("NumpadDiv", "Off")
+                        try Hotkey("NumpadDiv", "Off")
                     }
             }
         }

@@ -24,12 +24,25 @@
 
 class AE {
 
+    static __New() {
+        UserSettings := UserPref()
+        this.currentSetVer := SubStr(UserSettings.aeVer, 2)
+        UserSettings.__delAll()
+        UserSettings := ""
+
+        switch {
+            case VerCompare(this.currentSetVer, "24.6") >= 0: this.focusColour := 0x005CC8
+			case VerCompare(this.currentSetVer, "24.6") < 0:  this.focusColour := 0x2D8CEB
+        }
+    }
+
     static exeTitle := Editors.AE.winTitle
     static winTitle := this.exeTitle
     static class := Editors.AE.class
     static path := ptf["AE"]
 
     static focusColour := 0x2D8CEB
+    static currentSetVer := ""
 
     /**
      * This function is to quickly begin keyframing the scale & position values.
