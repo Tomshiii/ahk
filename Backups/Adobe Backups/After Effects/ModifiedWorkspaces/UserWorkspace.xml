@@ -128,21 +128,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.80396217</float>
-</prop.pair>
-<prop.pair>
-<key>Sub1</key>
-<prop.list>
-<prop.pair>
-<key>Splitter</key>
-<prop.list>
-<prop.pair>
-<key>Orient</key>
-<true/>
-</prop.pair>
-<prop.pair>
-<key>Place</key>
-<float>0.11879367</float>
+<float>0.095505618</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -167,6 +153,10 @@
 <prop.pair>
 <key>CurrTab</key>
 <int type='unsigned' size='32'>0</int>
+</prop.pair>
+<prop.pair>
+<key>IsFocused</key>
+<true/>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -270,7 +260,21 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.15191987</float>
+<float>0.80124223</float>
+</prop.pair>
+<prop.pair>
+<key>Sub1</key>
+<prop.list>
+<prop.pair>
+<key>Splitter</key>
+<prop.list>
+<prop.pair>
+<key>Orient</key>
+<true/>
+</prop.pair>
+<prop.pair>
+<key>Place</key>
+<float>0.14851081</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -335,7 +339,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.86614174</float>
+<float>0.85433638</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -483,7 +487,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.52748412</float>
+<float>0.51585627</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -497,7 +501,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.83567137</float>
+<float>0.83196723</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -511,7 +515,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.33333334</float>
+<float>0.31527093</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -741,14 +745,6 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
-<key>Sub2Vis</key>
-<true/>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
 <key>Sub1Vis</key>
 <true/>
 </prop.pair>
@@ -886,6 +882,14 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
+<key>Sub2Vis</key>
+<true/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
 <key>Sub1Vis</key>
 <true/>
 </prop.pair>
@@ -897,11 +901,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>0</int>
-</prop.pair>
-<prop.pair>
-<key>IsFocused</key>
-<true/>
+<int type='unsigned' size='32'>1</int>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -950,7 +950,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;6&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;3&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -1159,8 +1159,8 @@
 <key>MinPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-1</int>
-<int type='signed' size='32'>-1</int>
+<int type='signed' size='32'>-32058</int>
+<int type='signed' size='32'>-32000</int>
 </array>
 </prop.pair>
 <prop.pair>

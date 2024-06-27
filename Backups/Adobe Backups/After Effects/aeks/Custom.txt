@@ -618,7 +618,7 @@
 	"CompToggleUberAnimatingKeyframesAndExpressionsAddState" = "()"
 	"CompTrimToWorkArea" = "(Ctrl+Shift+X)"
 	"CompViewOptions" = "(Ctrl+Alt+U)"
-	"Compify" = "(Ctrl+Shift+W)()"
+	"Compify" = "(Ctrl+Shift+W)"
 	"Copy" = "(Ctrl+C)"
 	"CopyExpressionLinkedInstance" = "(Ctrl+Alt+C)"
 	"CopyExpressionLinkedInstanceRelative" = "()"

@@ -5,6 +5,7 @@
 <key>BuiltInKeys</key>
 <array>
 <array.type><string/></array.type>
+<string>$$$/Premiere/FrontEnd/Starter=Starter</string>
 <string>$$$/Premiere/FrontEnd/Essentials=Essentials</string>
 <string>$$$/Premiere/FrontEnd/Vertical=Vertical</string>
 <string>$$$/Premiere/FrontEnd/Learning=Learning</string>
@@ -80,10 +81,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>3390</int>
-<int type='signed' size='32'>1448</int>
+<int type='signed' size='32'>68</int>
+<int type='signed' size='32'>10</int>
+<int type='signed' size='32'>3430</int>
+<int type='signed' size='32'>1430</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -99,12 +100,12 @@
 <string>20220102T043215.207365</string>
 <string>20221020T020352.261979</string>
 <string>20231222T011258.080156</string>
-<string>20240530T095820.825431</string>
+<string>20240601T034041.732144</string>
 <string>20201116T003810</string>
 <string>20220622T034809.770985</string>
 <string>20240315T100125.646025</string>
 <string>20240219T052853.511758</string>
-<string>20240530T145603.643066</string>
+<string>20240624T070012.459058</string>
 <string>20211129T055027.354664</string>
 <string>20220614T030634.122250</string>
 <string>20200630T070242</string>

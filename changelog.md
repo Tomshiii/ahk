@@ -1,4 +1,4 @@
-# <> Release 2.14.x - 
+# <> Release 2.14.8 - Bugfix & QoL Update
 - Fixed references/functions/filepaths that assumed `v24.5` was going to be the `Spectrum UI` update
 
 ## Functions
