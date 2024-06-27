@@ -27,6 +27,7 @@
 ## Other Changes
 - Updated `Notify.ahk` now that text alignment is a native feature
 - Added `vidPart.ahk` & `audPart.ahk` to automate downloading specific timecodes of youtube videos
+- Added `checkInstalls.ahk` to check `PremiereRemote` files
 - Wrapped all uses of `JSON.Parse()` in `try` blocks to hopefully stop some instances of scripts locking up in the event that they don't retrieve the data they need
 - `reencodeGUI()` will now prompt the user asking if they'd like to attempt to force GPU rendering if it rudimentarily determines GPU rendering isn't available
 
