@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.5
  * @author tomshi
- * @date 2024/06/27
- * @version 2.1.15.1
+ * @date 2024/06/28
+ * @version 2.1.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -248,18 +248,23 @@ class Prem {
             }
         }
         sendcommand := Format('curl "http://localhost:8081/{1}?{2}"', whichFunc, String(paramsString))
-        if !needResult
+        if !needResult {
             Run(sendcommand,, "Hide")
+            return true
+        }
         else {
             if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
                 tool.cust("Unable to connect to localhost server. PremiereRemote Extension may not be running.")
+                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
                 return false
             }
             try parse := JSON.parse(getResp)
             catch {
                 tool.cust("Unable to connect to localhost server. PremiereRemote Extension may not be running.")
+                errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
                 return false
             }
+            errorLog(Error(parse["result"]))
             return parse["result"]
         }
     }
@@ -275,7 +280,7 @@ class Prem {
      * - `"noseq"` : `focusSequence`/`getActiveSequence` func not found
      */
     static save(andWait := true, checkSeqTime := 1000, checkAmount := 1) {
-        if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("projPath")
+        if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("getActiveSequence")
             return false
         origSeq := this.__remoteFunc("getActiveSequence")
         if !this.__remoteFunc("saveProj")
@@ -716,7 +721,9 @@ class Prem {
         }
         if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &motionX, &motionY
             , ptf.Premiere "motion2.png"
-            , ptf.Premiere "motion3.png")
+            , ptf.Premiere "motion3.png"
+            , ptf.Premiere "motion4.png"
+            , ptf.Premiere "motion5.png")
         {
             MouseMove(xpos, ypos)
             block.Off()
@@ -1205,14 +1212,18 @@ class Prem {
             }
         MouseGetPos(&xpos, &ypos)
         loop {
-            if ImageSearch(&x2, &y2, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "motion2.png") || ImageSearch(&x2, &y2, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "motion3.png") ;checks if the "motion" value is in view
+            ;// checks if the "motion" value is in view
+            if obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x2, &y2
+                , ptf.Premiere "motion2.png"
+                , ptf.Premiere "motion3.png"
+                , ptf.Premiere "motion4.png"
+                , ptf.Premiere "motion5.png")
                 break
-            if A_Index > 5
-                {
-                    block.Off()
-                    errorLog(IndexError("Couldn't find the motion image", -1),, 1)
-                    return
-                }
+            if A_Index > 5 {
+                block.Off()
+                errorLog(IndexError("Couldn't find the motion image", -1),, 1)
+                return
+            }
         }
         this.__checkTimelineFocus() ;~ check the keyboard shortcut ini file to adjust hotkeys
         if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " ptf.Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
