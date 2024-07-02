@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.5
  * @author tomshi
- * @date 2024/06/28
- * @version 2.1.16
+ * @date 2024/07/02
+ * @version 2.1.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2016,7 +2016,7 @@ class Prem {
         }
 
         clipWin := obj.WinPos(clipWinTitle)
-        __searchChannel(&x, &y, &chan, &clip) => (chan := ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "channel1.png"), clip := ImageSearch(&x, &y, clipWin.x, clipWin.y + 100, clipWin.x + 200, clipWin.y + 300, "*2 " ptf.Premiere "clip1.png"))
+        __searchChannel(&x, &y, &chan, &clip) => (chan := ImageSearch(&x, &y, clipWin.x, clipWin.y + 150, clipWin.x + 200, clipWin.y + 500, "*2 " ptf.Premiere "channel1.png"), clip := ImageSearch(&x, &y, clipWin.x, clipWin.y + 125, clipWin.x + 200, clipWin.y + 325, "*2 " ptf.Premiere "clip1.png"))
         if !__searchChannel(&x, &y, &chan, &clip) {
             sleep 150
             if !__searchChannel(&x, &y, &chan, &clip) {
@@ -2025,7 +2025,6 @@ class Prem {
                 return
             }
         }
-
         left  := obj.imgSrchMulti({x1: x, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "L_unchecked.png", ptf.Premiere "L_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
         right := obj.imgSrchMulti({x1: x, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "R_unchecked.png", ptf.Premiere "R_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
 
@@ -2043,7 +2042,7 @@ class Prem {
         }
         which := (left = 1) ? "L_unchecked.png" : "R_unchecked.png"
         Click(Format("{} {}", coords.x+10, coords.y+30))
-        if clip != 0 {
+        if chan != 0 {
             Click(Format("{} {}", coords.x+10, coords.y+this.secondChannel))
         }
 
