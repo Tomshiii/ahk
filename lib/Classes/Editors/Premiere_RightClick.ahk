@@ -5,7 +5,7 @@
  * @premVer 24.5
  * @author tomshi, taranVH
  * @date 2024/06/20
- * @version 2.3.3
+ * @version 2.3.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -328,11 +328,13 @@ class rbuttonPrem {
 
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
-		WinEvent.NotActive((*) => Exit(), "gettitle.winTitle " prem.winTitle)
-		if WingetTitle("A") != gettitle.winTitle {
-			SendInput("{Rbutton}")
-			return
+		try {
+			if WinGetTitle("A") != gettitle.winTitle {
+				SendInput("{Rbutton}")
+				return
+			}
 		}
+		WinEvent.NotActive((*) => Exit(), gettitle.winTitle)
 
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
@@ -447,14 +449,14 @@ class rbuttonPrem {
 			SetTimer(this.__ensureSeq.Bind(this, this.origSeq, 1), -1)
 
 		if allChecks = true {
-			;// resets `LButton` & `XButton2` to their original function
-			PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
 			;// determines whether to resume playback & how fast to playback
 			if !this.leftClick && !this.xbuttonClick {
 				this.__exit()
 			}
 			if this.leftClick
 				this.__restartPlayback()
+			;// resets `LButton` & `XButton2` to their original function
+			PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
 		}
 
 		;// cleans up
