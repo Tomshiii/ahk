@@ -95,7 +95,7 @@ settingsGUI()
     ;//! Top Titles
     settingsGUI.AddText("W100 H20 xs Y7", "Toggle").SetFont("S13 Bold")
 
-    settingsGUI.AddText("W100 H20 x+348", "Adjust").SetFont("S13 Bold")
+    settingsGUI.AddText("W100 H20 x+355", "Adjust").SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! checkboxes
@@ -147,8 +147,16 @@ settingsGUI()
         }
     }
 
-    packageUpdate := "Check for Package Updates"
-    settingsGUI.AddCheckbox("vpackageCheck Checked" UserSettings.package_update_check " Y+5", packageUpdate).OnEvent("Click", toggle.Bind("package update check", ""))
+    ;// lib update check
+    settingsGUI.AddCheckbox("vahkCheck Checked" UserSettings.ahk_update_check " Y+5", setJSON.ahkUpdate.title).OnEvent("Click", toggle.Bind("ahk update check", ""))
+    settingsGUI["ahkCheck"].ToolTip := (UserSettings.ahk_update_check = true) ? setJSON.ahkUpdate.tooltip.true : setJSON.ahkUpdate.tooltip.false
+
+    ;// lib update check
+    settingsGUI.AddCheckbox("vlibCheck Checked" UserSettings.lib_update_check " Y+5", setJSON.libUpdate.title).OnEvent("Click", toggle.Bind("lib update check", ""))
+    settingsGUI["libCheck"].ToolTip := (UserSettings.lib_update_check = true) ? setJSON.libUpdate.tooltip.true : setJSON.libUpdate.tooltip.false
+
+    ;// package update check
+    settingsGUI.AddCheckbox("vpackageCheck Checked" UserSettings.package_update_check " Y+5", setJSON.packageUpdate.title).OnEvent("Click", toggle.Bind("package update check", ""))
     settingsGUI["packageCheck"].ToolTip := (UserSettings.package_update_check = true) ? setJSON.packageUpdate.tooltip.true : setJSON.packageUpdate.tooltip.false
 
     ;// dark mode toggle
@@ -367,7 +375,8 @@ settingsGUI()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         ToolTip("")
-        tool.Tray({text: "Settings changes are being saved", title: "settingsGUI()", options: 20}, 2000)
+        ; tool.Tray({text: "Settings changes are being saved", title: "settingsGUI()", options: 20}, 2000)
+        Notify.Show("settingsGUI()", "Settings changes are being saved", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 Hide=Fade@250")
         UserSettings.__delAll() ;// close the settings instance
         ToolTip("")
         if IsSet(butt) && butt = "hard"

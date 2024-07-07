@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/06/04
- * @version 1.2.16
+ * @date 2024/07/06
+ * @version 1.2.17
  ***********************************************************************/
 
 class UserPref {
@@ -29,7 +29,7 @@ class UserPref {
     workingDir := A_WorkingDir
     defaults := Map(
         ;// [Settings]
-        "update_check", "true", "beta_update_check", "false", "package_update_check", "true",
+        "update_check", "true", "beta_update_check", "false", "package_update_check", "true", "lib_update_check", "true", "ahk_update_check", "true",
         "dark_mode", "",
         "run_at_startup", "false",
         "autosave_beep", "true", "autosave_check_checklist", "true", "autosave_save_override", "true", "autosave_check_mouse", "true",
@@ -209,7 +209,9 @@ class UserPref {
                     [Settings]
                     update check={}
                     beta update check={}
+                    ahk update check={}
                     package update check={}
+                    lib update check={}
                     dark mode={}
                     run at startup={}
                     autosave beep={}

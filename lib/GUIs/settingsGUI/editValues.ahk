@@ -9,7 +9,7 @@ class set_Edit_Val {
     }
 
     adTemp := {
-        control: "adobeTemp",                EditPos: "Section xs+223 ys",
+        control: "adobeTemp",                EditPos: "Section xs+230 ys",
         scriptText: "``adobeTemp()``",       textPos: "X+5 Y+-20",
         otherText: " limit (GB)",            otherTextPos: "X+1",
         iniInput: "adobe GB",                colour: "cd53c3c",

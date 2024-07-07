@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/06/27
- * @version 1.7.35
+ * @date 2024/07/06
+ * @version 1.7.36
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -792,7 +792,7 @@ class Startup {
      * This function will loop through `class libs {` and ensure that all libs are up to date. This function will not fire on a reload
      */
     libUpdateCheck() {
-        if this.isReload != false
+        if this.isReload != false || this.UserSettings.lib_update_check = false
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if !checkInternet()
@@ -856,7 +856,7 @@ class Startup {
      * This function will check for a new version of AHK by comparing the latest version to the users currently running version. If a newer version is available, it will prompt the user.
      */
     updateAHK() {
-        if this.isReload != false ;checks if script was reloaded
+        if this.isReload != false || this.UserSettings.ahk_update_check = false
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         settingsCheck := this.UserSettings.update_check

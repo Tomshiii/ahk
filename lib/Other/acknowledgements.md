@@ -21,3 +21,6 @@
 
 `XMCQCX`  
 `Notify.ahk` => : https://github.com/XMCQCX/Notify_Class/tree/main
+
+`GroggyOtter`
+`definition_updater.v2.ahk` => : https://github.com/GroggyOtter/ahkv2_definition_rewrite/tree/main
