@@ -57,6 +57,20 @@
       "false": "``discord.button(`'DiscReply.png`')`` will not disable the @ ping when replying"
     }
   },
+  "alwaysCheckUIA": {
+    "title": "``getTimeline()`` Always Check UIA",
+    "tooltip": {
+      "true": "``getTimeline()`` will set new UIA values on first use",
+      "false": "``getTimeline()`` will not set new UIA values"
+    }
+  },
+  "setUIA_LimitDaily": {
+    "title": "Limit Daily",
+    "tooltip": {
+      "true": "``getTimeline()`` will set new UIA values on first use once per day",
+      "false": "``getTimeline()`` will always set new UIA values on first use"
+    }
+  },
 
   "________newSection": " autosave",
 

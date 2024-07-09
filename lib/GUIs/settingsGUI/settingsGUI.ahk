@@ -195,8 +195,12 @@ settingsGUI()
     settingsGUI.AddCheckbox("vadobeExeOverride Checked" UserSettings.adobeExeOverride " xs+223 ys Section", setJSON.adobeExeOverride.title).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
     settingsGUI["adobeExeOverride"].ToolTip := (UserSettings.adobeExeOverride = true) ? setJSON.adobeExeOverride.tooltip.true : setJSON.adobeExeOverride.tooltip.false
 
+    ;// disc disable autoreply
+    settingsGUI.AddCheckbox("vdiscAutoReply Checked" UserSettings.disc_disable_autoreply " Y+5", setJSON.discAutoReply.title).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
+    settingsGUI["discAutoReply"].ToolTip := (UserSettings.disc_disable_autoreply = true) ? setJSON.discAutoReply.tooltip.true : setJSON.discAutoReply.tooltip.false
+
     ;// autosave always save
-    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " Y+5", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
+    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " Y+15", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
     settingsGUI["autosaveAlwaysSave"].ToolTip := (UserSettings.autosave_always_save = true) ? setJSON.autosaveAlwaysSave.tooltip.true : setJSON.autosaveAlwaysSave.tooltip.false
 
     ;// autosave beep
@@ -234,17 +238,21 @@ settingsGUI()
         ;// toggling the checkboxes & setting values based off checkbox state
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := (script.Value = 1) ? true : false
-        ;// custom logic for the run at startup option
-        if ini = "run at startup" {
-            switch script.Value {
-                case 1:
-                    startupScript := ptf.rootDir "\PC Startup\PC Startup.ahk"
-                    FileCreateShortcut(startupScript, ptf["scriptStartup"])
-                case 0:
-                    if FileExist(ptf["scriptStartup"])
-                        FileDelete(ptf["scriptStartup"])
-            }
-            return
+        switch ini {
+            case "run at startup":
+                switch script.Value {
+                    case 1:
+                        startupScript := ptf.rootDir "\PC Startup\PC Startup.ahk"
+                        FileCreateShortcut(startupScript, ptf["scriptStartup"])
+                    case 0:
+                        if FileExist(ptf["scriptStartup"])
+                            FileDelete(ptf["scriptStartup"])
+                }
+                return
+            case "Always Check UIA":
+                (script.Value = 0) ? (settingsGUI["setUIA_LimitDaily"].Opt("+Disabled"), UserSettings.Set_UIA_Limit_Daily := "disabled")
+                                   : (settingsGUI["setUIA_LimitDaily"].Opt("-Disabled"), UserSettings.Set_UIA_Limit_Daily := "false")
+
         }
         ;// changing requested value
         if InStr(script.text, "autosave") && WinExist("autosave.ahk - AutoHotkey")
@@ -259,9 +267,14 @@ settingsGUI()
     settingsGUI.AddCheckbox("vchecklistTooltip Checked" UserSettings.checklist_tooltip " Y+5", setJSON.checklistTooltip.title).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
 
-    ;// disc disable autoreply
-    settingsGUI.AddCheckbox("vdiscAutoReply Checked" UserSettings.disc_disable_autoreply " Y+5", setJSON.discAutoReply.title).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
-    settingsGUI["discAutoReply"].ToolTip := (UserSettings.disc_disable_autoreply = true) ? setJSON.discAutoReply.tooltip.true : setJSON.discAutoReply.tooltip.false
+    ;// getTimeline() - Always Check UIA
+    settingsGUI.AddCheckbox("valwaysCheckUIA Checked" UserSettings.Always_Check_UIA " Y+5", setJSON.alwaysCheckUIA.title).OnEvent("Click", toggle.Bind("Always Check UIA", ""))
+    settingsGUI["alwaysCheckUIA"].ToolTip := (UserSettings.Always_Check_UIA = true) ? setJSON.alwaysCheckUIA.tooltip.true : setJSON.alwaysCheckUIA.tooltip.false
+
+    ;// Set_UIA_LimitDaily
+    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 x+-215", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set_UIA_Limit_Daily", ""))
+    settingsGUI["setUIA_LimitDaily"].ToolTip := (UserSettings.Set_UIA_Limit_Daily = true) ? setJSON.setUIA_LimitDaily.tooltip.true : setJSON.setUIA_LimitDaily.tooltip.false
+    (settingsGUI["alwaysCheckUIA"].Value = 0) ? settingsGUI["setUIA_LimitDaily"].Opt("+Disabled") : settingsGUI["setUIA_LimitDaily"].Opt("-Disabled")
 
     /**
      * This function handles logic for checkboxes that need to pop up a msgbox to alert the user that they need to reload `checklist.ahk`
@@ -311,7 +324,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! BOTTOM TEXT
-    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+50", "Reset")
+    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+95", "Reset")
     resetText.SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------

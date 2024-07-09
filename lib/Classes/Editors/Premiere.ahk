@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.5
  * @author tomshi
- * @date 2024/07/02
- * @version 2.1.17
+ * @date 2024/07/09
+ * @version 2.1.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1493,6 +1493,18 @@ class Prem {
         return false
     }
 
+    static __checkAlwaysUIA() {
+        UserSettings := UserPref()
+        if UserSettings.Always_Check_UIA = true {
+            if UserSettings.Set_UIA_Limit_Daily = true && UserSettings.UIA_Daily_Limit_Day = A_YDay
+                return
+            premUIA_Values(false).__setNewVal()
+            UserSettings.UIA_Daily_Limit_Day := A_YDay
+            UserSettings.__delAll()
+            UserSettings := ""
+        }
+    }
+
     /**
      * ### Note: This function will evaluate the premiere timeline coordinates based off the `Client` coordmode. This cannot be changed.
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
@@ -1512,6 +1524,7 @@ class Prem {
         ; SendInput(KSA.timelineWindow)
         sleep 75
         coord.client()
+        this.__checkAlwaysUIA()
         premUIA := premUIA_Values()
         if !timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
             return false

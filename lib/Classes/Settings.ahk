@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/07/06
- * @version 1.2.17
+ * @date 2024/07/09
+ * @version 1.2.18
  ***********************************************************************/
 
 class UserPref {
@@ -36,6 +36,7 @@ class UserPref {
         "autosave_always_save", "true", "autosave_restart_playback", "false",
         "checklist_hotkeys", "true", "checklist_tooltip", "true", "checklist_wait", "false",
         "prem_Focus_Icon", "false", "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
+        "Always Check UIA", "false", "Set UIA Limit Daily", "disabled",
 
         ;// [Adjust]
         "adobe_GB", 45, "adobe_FS", 2,
@@ -46,7 +47,7 @@ class UserPref {
         "premCache", A_AppData "\Adobe\Common", "aeCache", A_AppData "\Adobe\Common",
 
         ;// [Track]
-        "adobe_temp", 0, "working_dir", this.workingDir,
+        "adobe_temp", 0, "UIA_Daily_Limit_Day", 0, "working_dir", this.workingDir,
         "first_check", "false", "block_aware", "false",
         "version", "v2.0", "skipVersion", "v2.0",
         "monitor_alert", "0",
@@ -227,6 +228,8 @@ class UserPref {
                     prem Focus Icon={}
                     disc disable autoreply={}
                     adobeExeOverride={}
+                    Always Check UIA={}
+                    Set UIA Limit Daily={}
 
                     [Adjust]
                     adobe GB={}
@@ -249,6 +252,7 @@ class UserPref {
 
                     [Track]
                     adobe temp={}
+                    UIA Daily Limit Day={}
                     working dir={}
                     first check={}
                     block aware={}
