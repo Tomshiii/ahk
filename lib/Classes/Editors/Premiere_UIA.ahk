@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/06/13
- * @version 2.0.6.1
+ * @date 2024/07/12
+ * @version 2.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,6 +11,7 @@
 #Include <Classes\switchTo>
 #Include <Classes\errorLog>
 #Include <Classes\settings>
+#Include <Functions\checkStuck>
 #Include <Other\UIA\UIA>
 #Include <Other\JSON>
 #Include <Other\Notify>
@@ -46,6 +47,7 @@ Class premUIA_Values {
             if WinExist(prem.winTitle) {
                 block.On()
                 this.__setNewVal()
+                checkStuck()
                 block.Off()
                 return
             }
@@ -53,6 +55,7 @@ Class premUIA_Values {
             return
         }
         this.__setClassVal()
+        checkStuck()
     }
 
     valueINI   := ptf.SupportFiles "\UIA\values.ini"

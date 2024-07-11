@@ -2,6 +2,7 @@
 
 ## Functions
 - Fixed `rbuttonPrem().movePlayhead()` not properly detecting when Premiere is no longer the active window
+- Fixed `premUIA_Values {` causing some inputs to get stuck
 
 `settingsGUI()`
 - Added Toggles;
