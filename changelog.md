@@ -15,3 +15,6 @@
 `prem {`
 - Fixed `__remoteFunc()` not passing back if it was successful which caused `autosave.ahk` to always fall back to the previous save method causing double saves
 - Added more images so `reset()` will fail less on `Spectrum UI`
+
+## Other Changes
+- Streamdeck `download` scripts will now play a little sfx to alert the user they are determining the video title
