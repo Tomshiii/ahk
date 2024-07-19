@@ -1,4 +1,4 @@
-# <> Release 2.14.x -
+# <> Release 2.14.9 - Bugfix
 
 ## Functions
 - Fixed `rbuttonPrem().movePlayhead()` not properly detecting when Premiere is no longer the active window
