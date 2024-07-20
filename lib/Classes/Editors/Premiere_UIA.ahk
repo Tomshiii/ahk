@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/07/12
- * @version 2.0.7
+ * @date 2024/07/20
+ * @version 2.0.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -113,12 +113,15 @@ Class premUIA_Values {
             }
         }
 
+        block.On()
+        tool.Cust("Retriving Premiere UIA Coordinates`nInputs will be temporarily disabled", 3.0,,, 9)
         for currentPanel, currHotkey in this.windowHotkeys {
             SendInput(currHotkey)
             sleep 50
             currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
             currentVers.%currentPremVer%.%currentPanel% := currentEl
         }
+        block.Off()
 
         this.allVals := currentVers
         this.__setClassVal()
