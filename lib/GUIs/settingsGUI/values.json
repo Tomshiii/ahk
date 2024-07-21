@@ -112,14 +112,14 @@
 
   "________newSection": " checklist",
   "checklistTooltip": {
-    "title": "`checklist.ahk` tooltips",
+    "title": "`checklist.ahk` Tooltips",
     "tooltip": {
       "true": "`checklist.ahk` will produce tooltips to remind you if you've paused the timer",
       "false": "`checklist.ahk` will no longer produce tooltips to remind you if you've paused the timer"
     }
   },
   "checklistHotkeys": {
-    "title": "`checklist.ahk` create hotkey",
+    "title": "`checklist.ahk` Create Hotkey",
     "tooltip": {
       "true": "`checklist.ahk` will create a hotkey to start/stop the timer. (Shift & Media_Play_Pause)",
       "false": "`checklist.ahk` will no longer create a hotkey to start/stop the timer."

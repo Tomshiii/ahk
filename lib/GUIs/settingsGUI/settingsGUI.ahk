@@ -1,3 +1,8 @@
+/************************************************************************
+ * @author tomshi
+ * @date 2024/07/21
+ * @version 2.3.0
+ ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
 #Include <GUIs\tomshiBasic>
@@ -32,9 +37,10 @@ settingsGUI()
     FileMenu := Menu()
     FileMenu.Add("&Add Game to ``gameCheck.ahk```tCtrl+A", menu_AddGame)
     openMenu := Menu()
-    openMenu.Add("&settings.ini`tCtrl+S", menu_Openini)
+    openMenu.Add("&settings.ini`tCtrl+i", menu_Openini)
     openMenu.Add("&Wiki", (*) => MsgBox("Not implemented"))
     openMenu.Disable("&Wiki")
+    openMenu.Add("&Settings Cheat Sheet`tCtrl+S", openWiki.Bind("cheat"))
     openMenu.Add("&Wiki Dir`tCtrl+O", openWiki.Bind("local"))
     openMenu.Add("&Wiki Web`tCtrl+W", openWiki.Bind("web"))
     editorsMenu := Menu()
@@ -51,23 +57,25 @@ settingsGUI()
     bar.Add("&Editors", editorsMenu)
 
     openWiki(which, *) {
+        openWikiPage(title, link) {
+            checkInt := checkInternet()
+            if !checkInt {
+                tool.Cust("It doesn't appear like you have an active internet connection", 2.0)
+                tool.Cust("The page will run just incase", 2.0,, 20, 2)
+            }
+            if WinExist(title)
+                WinActivate(title)
+            else
+                Run(link)
+        }
         switch which {
             case "local":
                 if WinExist("Wiki explorer.exe")
                     WinActivate("Wiki explorer.exe")
                 else
                     Run(ptf.Wiki "\Latest")
-            case "web":
-                checkInt := checkInternet()
-                if !checkInt
-                    {
-                        tool.Cust("It doesn't appear like you have an active internet connection", 2.0)
-                        tool.Cust("The page will run just incase", 2.0,, 20, 2)
-                    }
-                if WinExist("Home · Tomshiii/ahk Wik")
-                    WinActivate("Home · Tomshiii/ahk Wik")
-                else
-                    Run("https://github.com/Tomshiii/ahk/wiki")
+            case "web": openWikiPage("Home · Tomshiii/ahk Wiki", "https://github.com/Tomshiii/ahk/wiki")
+            case "cheat": openWikiPage("settingsGUI() · Tomshiii/ahk Wiki", "https://github.com/Tomshiii/ahk/wiki/settingsGUI()")
         }
     }
 
@@ -94,8 +102,8 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! Top Titles
     settingsGUI.AddText("W100 H20 xs Y7", "Toggle").SetFont("S13 Bold")
-
     settingsGUI.AddText("W100 H20 x+355", "Adjust").SetFont("S13 Bold")
+    settingsGUI.AddButton("W23 H22 x+125", "ℹ️").OnEvent("Click", (*) => (Run("https://github.com/Tomshiii/ahk/wiki/settingsGUI()")))
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! checkboxes
