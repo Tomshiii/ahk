@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/07/20
- * @version 2.0.8
+ * @date 2024/07/22
+ * @version 2.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -106,6 +106,27 @@ Class premUIA_Values {
         if !WinActivate(prem.winTitle)
             switchTo.Premiere()
 
+        block.On()
+        ;// we need to ensure playback here is halted, otherwise UIA is SUPER unresponsive
+        ;// and for whatever reason known only to the adobe devs some hotkeys no longer function globally
+        ;// if they contain any modifiers, so we have to do a check here to see if the user has any in their set hotkey
+        if !InStr(ksa.shuttleStop, "+") && !InStr(ksa.shuttleStop, "^") && !InStr(ksa.shuttleStop, "!") && !InStr(ksa.shuttleStop, "Ctrl") && !InStr(ksa.shuttleStop, "Shift") && !InStr(ksa.shuttleStop, "Alt")
+            SendInput(ksa.shuttleStop)
+        else {
+            try {
+                delaySI(80, this.windowHotkeys["effectsControl"], this.windowHotkeys["programMon"])
+                sleep 150
+                currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+                progMon := prem.__uiaCtrlPos(currentEl,,, false)
+                programMonX1 := progMon.x+100, programMonX2 := progMon.x + progMon.width-100, programMonY1 := (progMon.y+progMon.height)*0.7,  programMonY2 := progMon.y + progMon.height + 150
+
+                if ImageSearch(&x, &y, programMonX1, programMonY1, programMonX2, programMonY2, "*2 " ptf.Premiere "stop.png") {
+                    Click(, x, y)
+                    sleep 150
+                }
+            }
+        }
+
         if !currentVers.HasOwnProp(currentPremVer) {
             currentVers.%currentPremVer% := {}
             for currentPanel in this.windowHotkeys {
@@ -113,7 +134,6 @@ Class premUIA_Values {
             }
         }
 
-        block.On()
         tool.Cust("Retriving Premiere UIA Coordinates`nInputs will be temporarily disabled", 3.0,,, 9)
         for currentPanel, currHotkey in this.windowHotkeys {
             SendInput(currHotkey)

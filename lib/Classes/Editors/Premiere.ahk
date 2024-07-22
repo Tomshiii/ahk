@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.5
  * @author tomshi
- * @date 2024/07/09
- * @version 2.1.18
+ * @date 2024/07/22
+ * @version 2.1.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1951,7 +1951,7 @@ class Prem {
         else
             this.__checkTimelineFocus()
         sleep 50
-        if proxSrch := ImageSearch(&proxX, &proxY, progMonNN.x, progMonNN.y/2, progMonNN.x+progMonNN.width, progMonNN.y+progMonNN.height+50, "*2 " ptf.Premiere "\proxy_on.png") {
+        if proxSrch := obj.imgSrchMulti({x1: progMonNN.x, y1: progMonNN.y/2, x2: progMonNN.x+progMonNN.width, y2: progMonNN.y+progMonNN.height+50},, &proxX, &proxY, ptf.Premiere "\proxy_on.png", ptf.Premiere "\proxy_on2.png") {
             __clickProx(proxX, proxY)
         }
         SendEvent(ksa.premExportFrame)
