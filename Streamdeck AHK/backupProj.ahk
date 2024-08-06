@@ -2,10 +2,15 @@
 #Include <Classes\winget>
 #Include <Classes\Streamdeck_opt>
 #Include <Classes\obj>
+#Include <Classes\Editors\Premiere>
 #Include <Other\Notify>
 ;
-
-defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+if WinExist(prem.winTitle) {
+    path := WinGet.ProjPath()
+    defaultDir := path.dir
+}
+else
+    defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
 if !projectFolder := FileSelect("D 3", defaultDir, "Select Folder Containing Project Files")
     return
 sd := SD_Opt()
@@ -40,5 +45,5 @@ for _, v in backFolders {
 }
 
 loop files rootDir "\videos\*", 'F' {
-    try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\*.*", true)
+    try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\*.*", false)
 }
