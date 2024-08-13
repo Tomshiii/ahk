@@ -13,10 +13,12 @@
  * NOTE: if all WinTitle criteria are left empty then any window will match. To match for Last Found
  *       Window, use WinExist() as WinTitle.
  * 
- * `Callback(eventObj, hWnd, dwmsEventTime)`
- *      `eventObj`     : the event hook object describing the hook
+ * `Callback(hWnd, eventObj, dwmsEventTime)`
  *      `hWnd`         : the window handle that triggered the event
+ *      `eventObj`     : the event hook object describing the hook (see the next section about "Hook object")
  *      `dwmsEventTime`: the `A_TickCount` for when the event happened
+ * If the callback returns 0 (default return value of functions) then `EventHook.Count` is decremented by one.
+ * Otherwise the count is not decremented.
  * 
  * Hook object properties:
  * `EventHook.EventType`
@@ -331,7 +333,7 @@ class WinEvent {
         , "Restore", [this.EVENT_SYSTEM_MINIMIZEEND, this.EVENT_OBJECT_LOCATIONCHANGE], "Maximize", [this.EVENT_OBJECT_LOCATIONCHANGE])
 
     ; Internal variables: keep track of registered events (the match criteria) and registered window hooks
-    static __RegisteredEvents := Map(), __Hooks := Map(), IsPaused := 0
+    static __RegisteredEvents := Map(), __Hooks := Map(), __EventQueue := [], IsPaused := 0
 
     static __New() {
         this.Prototype.__WinEvent := this
@@ -386,7 +388,7 @@ class WinEvent {
             catch
                 this.__IsActive := 0
         } else if EventType = "Exist" && (this.__UpdateMatchingWinList(), hWnd := WinExist(MatchCriteria*)) {
-            SetTimer(Callback.Bind(this, hWnd, A_TickCount), -1)
+            __WinEvent.__EventQueue.Push(Callback.Bind(hWnd, this, A_TickCount))
         } else if EventType = "Create" || EventType = "Show" {
             this.DetectHiddenWindows := 1, this.DetectHiddenText := 1
         }
@@ -394,6 +396,7 @@ class WinEvent {
             __WinEvent.__RegisteredEvents[EventType] := Map()
         __WinEvent.__RegisteredEvents[EventType][MatchCriteria] := this
         __WinEvent.__AddRequiredHooks(EventType)
+        __WinEvent.__EmptyEventQueue()
     }
     ; Internal use: once a WinEvent object is destroyed, deregister the match criteria and remove 
     ; the hook (if no other WinEvent objects depend on it)
@@ -403,13 +406,16 @@ class WinEvent {
         this.__WinEvent.__RegisteredEvents[this.EventType].Delete(this.MatchCriteria)
         this.__WinEvent.__RemoveRequiredHooks(this.EventType)
     }
-    ; Internal use: sets a timer for the callback function (to avoid the thread being Critical
-    ; because the HandleWinEvent thread is Critical). Also keeps track of how many times the 
-    ; callback has been called.
-    __ActivateCallback(args*) {
-        SetTimer this.Callback.Bind(args*), -1
-        if --this.Count = 0
-            this.Stop()
+    ; Internal use: adds the callback function to a queue that gets emptied at the end of __HandleWinEvent.
+    ; Also keeps track of how many times the callback has been called.
+    static __AddCallbackToQueue(hWnd, HookObj, args*) => HookObj.Callback ? this.__EventQueue.Push(HookObj.Callback.Bind(hWnd, HookObj, args*), HookObj) : 0
+    ; Internal use: calls all callbacks in a new pseudo-thread
+    static __EmptyEventQueue() {
+        While this.__EventQueue.Length && (CB := this.__EventQueue.RemoveAt(1)) && (HookObj := this.__EventQueue.RemoveAt(1)) {
+            pCB := CallbackCreate(CB,, 0), ret := DllCall(pCB), CallbackFree(pCB) ; Call in a new pseudo-thread
+            if ret=0 && --HookObj.Count = 0
+                HookObj.Stop()
+        }
     }
     ; Internal use: handles the event called by SetWinEventHook. 
     static __HandleWinEvent(hWinEventHook, event, hwnd, idObject, idChild, idEventThread, dwmsEventTime) {
@@ -428,7 +434,7 @@ class WinEvent {
             for EventName in ["Close", "NotExist"] {
                 for MatchCriteria, HookObj in this.__RegisteredEvents[EventName] {
                     if !HookObj.IsPaused && HookObj.MatchingWinList.Has(hWnd)
-                        HookObj.__ActivateCallback(HookObj, hWnd, dwmsEventTime)
+                        this.__AddCallbackToQueue(hWnd, HookObj, dwmsEventTime)
                     HookObj.__UpdateMatchingWinList()
                 }
             }
@@ -441,7 +447,7 @@ class WinEvent {
                 for MatchCriteria, HookObj in this.__RegisteredEvents["NotExist"] {
                     if !HookObj.IsPaused && HookObj.MatchingWinList.Has(hWnd) && !((A_DetectHiddenWindows := HookObj.DetectHiddenWindows, A_DetectHiddenText := HookObj.DetectHiddenText, A_TitleMatchMode := HookObj.TitleMatchMode, A_TitleMatchModeSpeed := HookObj.TitleMatchModeSpeed, 
                         MatchCriteria.ahk_id) ? MatchCriteria.ahk_id = hWnd && WinExist(MatchCriteria*) : WinExist(MatchCriteria[1] " ahk_id " hWnd, MatchCriteria[2], MatchCriteria[3], MatchCriteria[4]))
-                        HookObj.__ActivateCallback(HookObj, hWnd, dwmsEventTime)
+                        this.__AddCallbackToQueue(hWnd, HookObj, dwmsEventTime)
                 }
             }
             for EventName in ["Close", "NotExist", "Restore"] {
@@ -458,14 +464,14 @@ class WinEvent {
                             continue
                     } catch
                         continue
-                    HookObj.__ActivateCallback(HookObj, hWnd, dwmsEventTime)
+                    this.__AddCallbackToQueue(hWnd, HookObj, dwmsEventTime)
                 }
             }
             for MatchCriteria, HookObj in this.__RegisteredEvents["Restore"] {
                 if !HookObj.IsPaused && HookObj.MatchingWinList.Has(hWnd) && HookObj.MatchingWinList[hWnd] = 1
                     && (MatchCriteria.IsBlank || ((A_DetectHiddenWindows := HookObj.DetectHiddenWindows, A_DetectHiddenText := HookObj.DetectHiddenText, A_TitleMatchMode := HookObj.TitleMatchMode, A_TitleMatchModeSpeed := HookObj.TitleMatchModeSpeed, 
                         MatchCriteria.ahk_id) ? MatchCriteria.ahk_id = hWnd && WinExist(MatchCriteria*) : WinExist(MatchCriteria[1] " ahk_id " hWnd, MatchCriteria[2], MatchCriteria[3], MatchCriteria[4]))) {
-                    HookObj.__ActivateCallback(HookObj, hWnd, dwmsEventTime)
+                    this.__AddCallbackToQueue(hWnd, HookObj, dwmsEventTime)
                 }
                 HookObj.__UpdateMatchingWinList()
             }
@@ -482,14 +488,14 @@ class WinEvent {
             for MatchCriteria, HookObj in this.__RegisteredEvents[EventName] {
                 if !HookObj.IsPaused && (MatchCriteria.IsBlank || ((A_DetectHiddenWindows := HookObj.DetectHiddenWindows, A_DetectHiddenText := HookObj.DetectHiddenText, A_TitleMatchMode := HookObj.TitleMatchMode, A_TitleMatchModeSpeed := HookObj.TitleMatchModeSpeed, 
                     MatchCriteria.ahk_id) ? MatchCriteria.ahk_id = hWnd && WinExist(MatchCriteria*) : WinExist(MatchCriteria[1] " ahk_id " hWnd, MatchCriteria[2], MatchCriteria[3], MatchCriteria[4])))
-                    HookObj.__ActivateCallback(HookObj, hWnd, dwmsEventTime)
+                    this.__AddCallbackToQueue(hWnd, HookObj, dwmsEventTime)
             }
         }
         if (event = EVENT_OBJECT_CREATE || event = EVENT_OBJECT_SHOW || event = EVENT_OBJECT_NAMECHANGE) {
             for MatchCriteria, HookObj in this.__RegisteredEvents["Exist"] {
                 if !HookObj.IsPaused && !HookObj.MatchingWinList.Has(hWnd) && (MatchCriteria.IsBlank || ((A_DetectHiddenWindows := HookObj.DetectHiddenWindows, A_DetectHiddenText := HookObj.DetectHiddenText, A_TitleMatchMode := HookObj.TitleMatchMode, A_TitleMatchModeSpeed := HookObj.TitleMatchModeSpeed, 
                     MatchCriteria.ahk_id) ? MatchCriteria.ahk_id = hWnd && WinExist(MatchCriteria*) : WinExist(MatchCriteria[1] " ahk_id " hWnd, MatchCriteria[2], MatchCriteria[3], MatchCriteria[4])))
-                    HookObj.__ActivateCallback(HookObj, hWnd, dwmsEventTime)
+                    this.__AddCallbackToQueue(hWnd, HookObj, dwmsEventTime)
                 HookObj.__UpdateMatchingWinList()
             }
         }
@@ -498,7 +504,7 @@ class WinEvent {
                 A_DetectHiddenWindows := HookObj.DetectHiddenWindows, A_DetectHiddenText := HookObj.DetectHiddenText
                 hWndActive := WinActive(MatchCriteria*)
                 if !hWndActive && !HookObj.IsPaused && HookObj.__IsActive {
-                    HookObj.__ActivateCallback(HookObj, HookObj.__IsActive, dwmsEventTime)
+                    this.__AddCallbackToQueue(HookObj.__IsActive, HookObj, dwmsEventTime)
                     HookObj.__IsActive := 0
                 }
                 if hWndActive = hWnd
@@ -507,7 +513,7 @@ class WinEvent {
         }
         Cleanup:
         Critical("Off")
-        Sleep(-1) ; Check the message queue immediately
+        this.__EmptyEventQueue()
     }
     ; Internal use: keeps track of open windows that match the criteria, because matching for name
     ; class etc wouldn't work after the window is already destroyed. 

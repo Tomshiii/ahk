@@ -31,6 +31,9 @@ class adobeVers {
             "v24.4.1", "v24.4",
             "v24.5",    "v24.4",
             ; "v24.6",    "v24.4",      ;// UI refresh might occur here, brand new images will need to be made by the user
+        ),
+        25: Map(
+            "v25.0",     "v24.6" ;// UI refresh might actually happen here - 24.6 might be skipped or might not end up including the new UI
         )
     }
     AE := {
