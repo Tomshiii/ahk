@@ -1,4 +1,4 @@
-# <> Release 2.14.x - 
+# <> Release 2.14.10 - Bugfix
 
 ## Functions
 - Fixed `autosave.ahk` not saving if `PremiereRemote` is unresponsive
