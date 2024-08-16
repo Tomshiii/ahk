@@ -19,13 +19,13 @@ Support Files/shortcuts/*.lnk
 
 # adobe symlinks
 Support Files/ImageSearch/AE/v23.*
-Support Files/ImageSearch/AE/v24.[0-4]*
-Support Files/ImageSearch/AE/v24.[6-9]*
+Support Files/ImageSearch/AE/v24.[0-9]*
+Support Files/ImageSearch/AE/v25.[1-9]*
 Support Files/ImageSearch/Premiere/v23.*
 Support Files/ImageSearch/Premiere/v24.[0-2]*
 Support Files/ImageSearch/Premiere/v24.4.*
-Support Files/ImageSearch/Premiere/v24.5
-Support Files/ImageSearch/Premiere/v24.[7-9]*
+Support Files/ImageSearch/Premiere/v24.[5-9]*
+Support Files/ImageSearch/Premiere/v25.[1-9]*
 Support Files/ImageSearch/Photoshop/v24.[0-2]*
 Support Files/ImageSearch/Photoshop/v24.[4-9]*
 Support Files/ImageSearch/Photoshop/v25.*

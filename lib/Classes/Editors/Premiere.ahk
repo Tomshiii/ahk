@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 24.5
  * @author tomshi
- * @date 2024/07/22
- * @version 2.1.19
+ * @date 2024/08/16
+ * @version 2.1.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,12 +41,13 @@ class Prem {
         UserSettings := ""
 
         switch {
-            case VerCompare(this.currentSetVer, "24.6") >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
-			case VerCompare(this.currentSetVer, "24.6") < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
+			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55
         }
     }
 
     static currentSetVer := ""
+    static spectrumUI_Version := "25.0"
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -291,7 +292,7 @@ class Prem {
 
         ;// waiting for save dialogue to open & close
         if !WinWait("Save Project",, 3)
-            return "timeout"
+            return "timeout_nosave"
         if !WinWaitClose("Save Project",, 3)
             return "timeout"
 
@@ -322,7 +323,8 @@ class Prem {
     static saveAndFocusTimeline() {
         premUIA := this.__createUIAelement()
         uiaVals := premUIA_Values()
-        if this.save() = (false || "timeout") {
+        saveAttempt := this.save()
+        if (saveAttempt = false || saveAttempt = "timeout" || saveAttempt = "timeout_nosave") {
             SendEvent("^s")
             if !WinWait("Save Project",, 3) {
                 tool.Cust("Function timed out waiting for save prompt")
@@ -1530,10 +1532,10 @@ class Prem {
             return false
 
         ;// determine how much to account for the column left of the timeline based on premiere version
-        xAddMap := Map("lessThan24.6", 236, "24.6", 204,
+        xAddMap := Map("lessThan" this.spectrumUI_Version, 236, this.spectrumUI_Version, 204,
                         "default", 206)
         switch {
-            case (VerCompare(this.currentSetVer, "24.6") < 0) && !(VerCompare(this.currentSetVer, "24.6") >= 0): xAdd := xAddMap["lessThan24.6"]
+            case (VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0) && !(VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0): xAdd := xAddMap["lessThan" this.spectrumUI_Version]
             case xAddMap.Has(this.currentSetVer): xAdd := xAddMap[this.currentSetVer]
             default: xAdd := xAddMap["default"]
         }

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of AE.
  * @aeVer 24.5
  * @author tomshi
- * @date 2024/05/22
- * @version 1.2.5
+ * @date 2024/08/16
+ * @version 1.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,10 +31,12 @@ class AE {
         UserSettings := ""
 
         switch {
-            case VerCompare(this.currentSetVer, "24.6") >= 0: this.focusColour := 0x005CC8
-			case VerCompare(this.currentSetVer, "24.6") < 0:  this.focusColour := 0x2D8CEB
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.focusColour := 0x005CC8
+			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:  this.focusColour := 0x2D8CEB
         }
     }
+
+    static spectrumUI_Version := "25.0"
 
     static exeTitle := Editors.AE.winTitle
     static winTitle := this.exeTitle
