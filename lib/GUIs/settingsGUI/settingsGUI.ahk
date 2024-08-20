@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2024/07/21
- * @version 2.3.0
+ * @date 2024/08/20
+ * @version 2.3.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -632,7 +632,7 @@ settingsGUI()
                 loopYear := SubStr(A_Year, 1, 2) SubStr(A_LoopFileName, 2, 2)
                 if program != "Photoshop" {
                     removeAdobeName := StrReplace(adobeFullName, "Adobe ", "")
-                    if !DirExist(installPath adobeFullName A_Space loopYear) && !DirExist(A_MyDocuments "\Adobe\" removeAdobeName " (Beta)\" SubStr(loopYear, 3, 2) ".0")
+                    if !DirExist(installPath adobeFullName A_Space loopYear) && !DirExist(A_MyDocuments "\Adobe\" removeAdobeName " (Beta)\" SubStr(loopYear, 3, 2) ".0") && (removeAdobeName = "After Effects" && !DirExist(A_AppData "\Adobe\" removeAdobeName " (Beta)\" SubStr(loopYear, 3, 2) ".0"))
                         continue
                 }
                 if program = "Photoshop" {
