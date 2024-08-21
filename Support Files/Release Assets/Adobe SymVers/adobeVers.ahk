@@ -30,10 +30,10 @@ class adobeVers {
             ; "v24.4",    "v24.3",      ;// some UI changes occur here so this version has its own folder
             "v24.4.1", "v24.4",
             "v24.5",    "v24.4",
-            ; "v24.6",    "v24.4",      ;// UI refresh might occur here, brand new images will need to be made by the user - version may also never exist and become v25.0
+            "v24.6",    "v24.4",
         ),
         25: Map(
-            ; "v25.0",     "v25.0" ;// UI refresh might actually happen here - 24.6 might be skipped or might not end up including the new UI
+            ; "v25.0",     "v25.0" ;// UI refresh should happen here
         )
     }
     AE := {
@@ -54,10 +54,10 @@ class adobeVers {
             "v24.3",    "v22.6",
             "v24.4",    "v22.6",        "v24.4.1", "v22.6",
             "v24.5",    "v22.6",
-            ; "v24.6",    "v24.5",      ;// UI refresh might occur here instead of 24.5 - version may also never exist and become v25.0
+            "v24.6",    "v24.5",
         ),
         25: Map(
-            ; "v25.0",     "v25.0" ;// UI refresh might actually happen here - 24.6 might be skipped or might not end up including the new UI
+            ; "v25.0",     "v25.0" ;// UI refresh should happen here
         )
     }
     PS := {
