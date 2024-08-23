@@ -9,7 +9,7 @@ try {
 }
 
 SetWorkingDir(A_ScriptDir)
-version := IsSet(UserSettings) ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
+version := (IsSet(UserSettings) && UserSettings.premIsBeta != true && UserSettings.premIsBeta != "true") ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
 
 Dir := A_MyDocuments "\Adobe\Adobe Media Encoder\" version "\Presets"
 if !DirExist(Dir) {

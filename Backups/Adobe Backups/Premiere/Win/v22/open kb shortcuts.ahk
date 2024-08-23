@@ -9,13 +9,12 @@ try {
 }
 
 SetWorkingDir(A_ScriptDir)
-drive := IniRead(A_WorkingDir "\readme.ini", "INFO", "drive letter")
-version := IsSet(UserSettings) ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
+version := (IsSet(UserSettings) && UserSettings.premIsBeta != true && UserSettings.premIsBeta != "true") ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
 
-Dir := drive ":\Program Files\User\Documents\Adobe\Premiere Pro\" version "\Profile-" A_UserName "\Win"
+Dir := A_MyDocuments "\Adobe\Premiere Pro\" version "\Profile-" A_UserName "\Win"
 dirver := IsSet(UserSettings) ? ptf.premIMGver : version
 if !DirExist(Dir) {
-    MsgBox("You either have the incorrect version set within ``settingsGUI()`` (current version set: " dirver ") or you have installed After Effects to a different location.`n`nThis folder is usually in the \AppData\Roaming\ directory.`nIf you have moved this directory, please adjust the .ini file and try again", "Error attempting to run Adobe folder", 0x30)
+    MsgBox("You either have the incorrect version set within ``settingsGUI()`` (current version set: " dirver ") or you have installed Premiere Pro to a different location.`n`nThis folder is usually in the \My Documents\ directory.`nIf you have moved this directory, please adjust the .ini file and try again", "Error attempting to run Adobe folder", 0x30)
     return
 }
-Run(drive ":\Program Files\User\Documents\Adobe\Premiere Pro\" version "\Profile-" A_UserName "\Win")
+Run(Dir)

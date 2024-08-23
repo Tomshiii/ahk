@@ -9,7 +9,7 @@ try {
 }
 
 SetWorkingDir(A_ScriptDir)
-version := IsSet(UserSettings) ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
+version := (IsSet(UserSettings) && UserSettings.premIsBeta != true && UserSettings.premIsBeta != "true") ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
 
 Dir := A_MyDocuments "\Adobe\Premiere Pro\" version "\Profile-" A_UserName
 dirver := IsSet(UserSettings) ? ptf.premIMGver : version
