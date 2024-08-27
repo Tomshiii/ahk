@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <Functions\getLocalVer>
@@ -28,6 +29,8 @@ if WinExist("Ahk2Exe for AutoHotkey")
 ;=====================================================================
 ;// backup adobe stuff
 ;//! premiere
+
+UserSettings := UserPref()
 
 ;//* PremiereRemote
 RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\backupPremRemote.ahk"))
@@ -74,7 +77,8 @@ ahkAEDir := "E:\Github\ahk\Backups\Adobe Backups\After Effects"
 ;//* aeks
 ahkAEKBD := ahkAEDir "\aeks\Custom.txt"
 pcAEKBD := aeDir "\aeks\Custom.txt"
-FileCopy(pcAEKBD, ahkAEKBD, 1)
+if UserSettings.aeIsBeta != true && UserSettings.aeIsBeta != "true"
+    FileCopy(pcAEKBD, ahkAEKBD, 1)
 
 ;//* workspace
 workspaceBackup := ahkAEDir "\ModifiedWorkspaces\"

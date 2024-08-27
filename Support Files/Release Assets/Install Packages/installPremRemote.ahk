@@ -18,8 +18,10 @@ if !getNPM {
 }
 
 ;// registry key required to run unsigned extensions within Premiere Pro
+;// prem v??-v24
 if !RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.11", "PlayerDebugMode", 0)
     RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.11", "PlayerDebugMode")
+;// prem v25-v??
 if !RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode", 0)
     RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode")
 
