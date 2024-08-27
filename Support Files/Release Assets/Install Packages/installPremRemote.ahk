@@ -20,6 +20,8 @@ if !getNPM {
 ;// registry key required to run unsigned extensions within Premiere Pro
 if !RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.11", "PlayerDebugMode", 0)
     RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.11", "PlayerDebugMode")
+if !RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode", 0)
+    RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode")
 
 downloadURl    := "https://github.com/sebinside/PremiereRemote/archive/refs/heads/main.zip"
 extensionsPath := A_AppData "\Adobe\CEP\extensions"
