@@ -30,7 +30,7 @@ class adobeVers {
             ; "v24.4",    "v24.3",      ;// some UI changes occur here so this version has its own folder
             "v24.4.1", "v24.4",
             "v24.5",    "v24.4",
-            "v24.6",    "v24.4",
+            "v24.6",    "v24.4",        "v24.6.1", "v24.4",
         ),
         25: Map(
             ; "v25.0",     "v25.0" ;// UI refresh should happen here
@@ -54,7 +54,7 @@ class adobeVers {
             "v24.3",    "v22.6",
             "v24.4",    "v22.6",        "v24.4.1", "v22.6",
             "v24.5",    "v22.6",
-            "v24.6",    "v24.5",
+            "v24.6",    "v24.5",        "v24.6.1", "v24.4",
         ),
         25: Map(
             ; "v25.0",     "v25.0" ;// UI refresh should happen here
