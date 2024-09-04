@@ -1,23 +1,21 @@
 /************************************************************************
- * @description Use Microsoft Edge WebView2 control in ahk
- * @file WebView2.ahk
+ * @description Use Microsoft Edge WebView2 control in ahk.
  * @author thqby
- * @date 2024/08/16
- * @version 1.0.34
- * @webview2version 1.0.2651.64
+ * @date 2024/09/04
+ * @version 1.0.35
+ * @webview2version 1.0.2739.15
+ * @see {@link https://www.nuget.org/packages/Microsoft.Web.WebView2/ nuget package}
+ * @see {@link https://learn.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/ API Reference}
  ***********************************************************************/
-
-#Include '..\ComVar.ahk'
 class WebView2 extends WebView2.Base {
 	/**
 	 * create Edge WebView2 control.
 	 * @param hwnd the hwnd of Gui or Control.
 	 * @param callback Wait for the webview2 control to be created when the callback is unset; otherwise, don't wait and call the callback function after completion.
-	 * @param createdEnvironment Create WebView2 controls from the created environment.
+	 * @param {WebView2.Environment} createdEnvironment Create WebView2 controls from the created environment.
 	 * @param datadir User data folder.
 	 * @param edgeruntime The path of Edge Runtime or Edge(dev..) Bin.
-	 * @param options The environment options of Edge. @see WebView2.EnvironmentOptions
-	 * `{TargetCompatibleBrowserVersion?: string, AdditionalBrowserArguments?: string, AllowSingleSignOnUsingOSPrimaryAccount?: bool, Language?: string, ExclusiveUserDataFolderAccess?: bool}`
+	 * @param {WebView2.EnvironmentOptions} options The environment options of Edge.
 	 * @param dllPath The path of `WebView2Loader.dll`.
 	 * @returns {WebView2.Controller}
 	 */
@@ -90,18 +88,33 @@ class WebView2 extends WebView2.Base {
 
 	; Interfaces Base class
 	class Base {
-		ptr := 0
-		__New(ptr := 0, addref := true) {
-			if ptr {
-				this.ptr := ptr
-				if (addref)
-					ObjAddRef(ptr)
+		static Prototype.Ptr := 0
+		/**
+		 * Some interfaces with inheritance have different addresses for their objects.
+		 * Incorrect use of methods that do not exist in the interface will cause the program to crash.
+		 * For example, the object addresses for `FrameInfo` and `FrameInfo2` are different.
+		 * By specifying the default IID, the interface is automatically queried when these objects are returned.
+		 */
+		static DefaultIID {
+			set {
+				this.Prototype.DefineProp('Ptr', { set: QueryInterface })
+				QueryInterface(this, ptr) {
+					if !ptr
+						return
+					obj := ComObjQuery(ptr, Value)
+					ObjRelease(ptr), ObjAddRef(ptr := ComObjValue(obj))
+					this.DefineProp('Ptr', { value: ptr })
+				}
 			}
 		}
-		__Delete() {
-			if (this.ptr)
-				this.Release()
+		__New(ptr := 0, addref := true) {
+			if !ptr
+				return
+			this.Ptr := ptr
+			if (addref)
+				ObjAddRef(ptr)
 		}
+		__Delete() => this.Release()
 		__Call(Name, Params) {
 			if (HasMethod(this, 'add_' Name)) {
 				if (!IsInteger(handler := Params[1]) && !(handler is WebView2.Handler))
@@ -113,6 +126,22 @@ class WebView2 extends WebView2.Base {
 		}
 		AddRef() => ObjAddRef(this.ptr)
 		Release() => this.ptr && ObjRelease(this.ptr)
+		/**
+		 * By default, an object in webview2 can be encapsulated as multiple different ahk objects,
+		 * with independent properties. By calling this method, you can get its unique object in ahk.
+		 * @returns {this}
+		 */
+		unique() {
+			static caches := Map()
+			if ptr := caches.Get(this.Ptr, 0)
+				return ObjFromPtrAddRef(ptr)
+			if ptr := this.Ptr {
+				caches[ptr] := ObjPtr(this)
+				cache := { Ptr: ptr, __Delete: this => caches.Delete(this.Ptr) }
+				this.DefineProp('unique', { call: (this) => (cache, this) })
+			}
+			return this
+		}
 	}
 	class List extends WebView2.Base {
 		;@lint-disable class-non-dynamic-member-check
@@ -591,13 +620,22 @@ class WebView2 extends WebView2.Base {
 		AddWebResourceRequestedFilterWithRequestSourceKinds(uri, resourceContext, requestSourceKinds) => ComCall(123, this, 'wstr', uri, 'int', resourceContext, 'int', requestSourceKinds)
 		RemoveWebResourceRequestedFilterWithRequestSourceKinds(uri, resourceContext, requestSourceKinds) => ComCall(124, this, 'wstr', uri, 'int', resourceContext, 'int', requestSourceKinds)
 
-		static IID_23 := '508f0db5-90c4-5872-90a7-267a91377502'
+		static IID_23 := '{508f0db5-90c4-5872-90a7-267a91377502}'
 		/**
 		 * Same as PostWebMessageAsJson, but also has support for posting DOM objects to page content.
 		 * @param {String} webMessageAsJson
 		 * @param {WebView2.ObjectCollectionView} additionalObjects
 		 */
 		PostWebMessageAsJsonWithAdditionalObjects(webMessageAsJson, additionalObjects) => ComCall(125, this, 'wstr', webMessageAsJson, 'ptr', additionalObjects)
+
+		static IID_24 := '{39a7ad55-4287-5cc1-88a1-c6f458593824}'
+		add_NotificationReceived(eventHandler) => (ComCall(126, this, 'ptr', eventHandler, 'int64*', &token := 0), token)	; ICoreWebView2LaunchingExternalUriSchemeEventHandler
+		remove_NotificationReceived(token) => ComCall(127, this, 'int64', token)
+
+		static IID_25 := '{b5a86092-df50-5b4f-a17b-6c8f8b40b771}'
+		add_SaveAsUIShowing(eventHandler) => (ComCall(128, this, 'ptr', eventHandler, 'int64*', &token := 0), token)	; ICoreWebView2LaunchingExternalUriSchemeEventHandler
+		remove_SaveAsUIShowing(token) => ComCall(129, this, 'int64', token)
+		ShowSaveAsUI(handler) => ComCall(130, this, 'ptr', handler)
 	}
 	class ClientCertificate extends WebView2.Base {
 		static IID := '{e7188076-bcc3-11eb-8529-0242ac130003}'
@@ -830,7 +868,8 @@ class WebView2 extends WebView2.Base {
 			items := Buffer(A_PtrSize * len := objects.Length), p := items.Ptr
 			for it in objects
 				p := NumPut('ptr', it.Ptr, p)
-			ComCall(28, this, 'uint', len, 'ptr', items, 'ptr*', objectCollection := WebView2.ObjectCollection(), objectCollection)
+			ComCall(28, this, 'uint', len, 'ptr', items, 'ptr*', objectCollection := WebView2.ObjectCollection())
+			return objectCollection
 		}
 	}
 	class EnvironmentOptions extends Buffer {
@@ -1019,7 +1058,7 @@ class WebView2 extends WebView2.Base {
 		Name => (ComCall(3, this, 'ptr*', &name := 0), CoTaskMem_String(name))
 		Source => (ComCall(4, this, 'ptr*', &source := 0), CoTaskMem_String(source))
 
-		static IID_2 := '{56f85cfa-72c4-11ee-b962-0242ac120002}'
+		static IID_2 := this.DefaultIID := '{56f85cfa-72c4-11ee-b962-0242ac120002}'
 		ParentFrameInfo => (ComCall(5, this, 'ptr*', frameInfo := WebView2.FrameInfo()), frameInfo)
 		FrameId => (ComCall(6, this, 'uint*', &id := 0), id)
 		FrameKind => (ComCall(7, this, 'uint*', &kind := 0), kind)
@@ -1163,6 +1202,43 @@ class WebView2 extends WebView2.Base {
 	class NonClientRegionChangedEventArgs extends WebView2.Base {
 		static IID := '{AB71D500-0820-4A52-809C-48DB04FF93BF}'
 		RegionKind => (ComCall(3, this, 'int*', &value := 0), value)
+	}
+	class Notification extends WebView2.Base {
+		static IID := '{B7434D98-6BC8-419D-9DA5-FB5A96D4DACD}'
+		add_CloseRequested(eventHandler) => (ComCall(3, this, 'ptr', eventHandler, 'int64*', &token := 0), token)
+		remove_CloseRequested(token) => ComCall(4, this, 'int64', token)
+		ReportShown() => ComCall(5, this)
+		ReportClicked() => ComCall(6, this)
+		ReportClosed() => ComCall(7, this)
+		Body => (ComCall(8, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		Direction => ComCall(9, this, 'int*', &value := 0)
+		Language => (ComCall(10, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		Tag => (ComCall(11, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		IconUri => (ComCall(12, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		Title => (ComCall(13, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		BadgeUri => (ComCall(14, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		BodyImageUri => (ComCall(15, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		ShouldRenotify => (ComCall(16, this, 'int*', &value := 0), value)
+		RequiresInteraction => (ComCall(17, this, 'int*', &value := 0), value)
+		IsSilent => (ComCall(18, this, 'int*', &value := 0), value)
+		Timestamp => (ComCall(19, this, 'double*', &value := 0), value)
+		GetVibrationPattern() {
+			ComCall(20, this, 'uint*', &count := 0, 'ptr*', &pvi := 0)
+			(vibrationPattern := []).Capacity := count
+			loop count
+				vibrationPattern.Push(NumGet(pvi, 'int64')), pvi += 8
+			return vibrationPattern
+		}
+	}
+	class NotificationReceivedEventArgs extends WebView2.Base {
+		static IID := '{1512DD5B-5514-4F85-886E-21C3A4C9CFE6}'
+		SenderOrigin => (ComCall(3, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		Notification => (ComCall(4, this, 'ptr*', value := WebView2.Notification()), value)
+		Handled {
+			set => ComCall(5, this, 'int', Value)
+			get => (ComCall(6, this, 'int*', &value := 0), value)
+		}
+		GetDeferral() => (ComCall(7, this, 'ptr*', deferral := WebView2.Deferral()), deferral)
 	}
 	class ObjectCollection extends WebView2.ObjectCollectionView {
 		static IID := '{5cfec11c-25bd-4e8d-9e1a-7acdaeeec047}'
@@ -1501,6 +1577,31 @@ class WebView2 extends WebView2.Base {
 		Count => (ComCall(3, this, 'uint*', &value := 0), value)
 		GetValueAtIndex(index) => (ComCall(4, this, 'uint', index, 'ptr', value := Buffer(16)), value)
 	}
+	class SaveAsUIShowingEventArgs extends WebView2.Base {
+		static IID := '{55902952-0e0d-5aaa-a7d0-e833cdb34f62}'
+		ContentMimeType => (ComCall(3, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		Cancel {
+			set => ComCall(4, this, 'int', Value)
+			get => (ComCall(5, this, 'int*', &value := 0), value)
+		}
+		SuppressDefaultDialog {
+			set => ComCall(6, this, 'int', Value)
+			get => (ComCall(7, this, 'int*', &value := 0), value)
+		}
+		GetDeferral() => (ComCall(8, this, 'ptr*', deferral := WebView2.Deferral()), deferral)
+		SaveAsFilePath {
+			set => ComCall(9, this, 'wstr', Value)
+			get => (ComCall(10, this, 'ptr*', &value := 0), CoTaskMem_String(value))
+		}
+		AllowReplace {
+			set => ComCall(11, this, 'int', Value)
+			get => (ComCall(12, this, 'int*', &value := 0), value)
+		}
+		Kind {
+			set => ComCall(13, this, 'int', Value)
+			get => (ComCall(14, this, 'int*', &value := 0), value)
+		}
+	}
 	class ScriptDialogOpeningEventArgs extends WebView2.Base {
 		static IID := '{7390bb70-abe0-4843-9529-f143b31b03d6}'
 		Uri => (ComCall(3, this, 'ptr*', &uri := 0), CoTaskMem_String(uri))
@@ -1794,10 +1895,13 @@ class WebView2 extends WebView2.Base {
 	static PROCESS_FAILED_REASON := { UNEXPECTED: 0, UNRESPONSIVE: 1, TERMINATED: 2, CRASHED: 3, LAUNCH_FAILED: 4, OUT_OF_MEMORY: 5, PROFILE_DELETED: 6 }
 	static PROCESS_KIND := { BROWSER: 0, RENDERER: 1, UTILITY: 2, SANDBOX_HELPER: 3, GPU: 4, PPAPI_PLUGIN: 5, PPAPI_BROKER: 6 }
 	static RELEASE_CHANNELS := { NONE: 0, STABLE: 1, BETA: 2, DEV: 4, CANARY: 8 }
+	static SAVE_AS_KIND := { DEFAULT: 0, HTML_ONLY: 1, SINGLE_FILE: 2, COMPLETE: 3 }
+	static SAVE_AS_UI_RESULT := { SUCCESS: 0, INVALID_PATH: 1, FILE_ALREADY_EXISTS: 2, KIND_NOT_SUPPORTED: 3, CANCELLED: 4 }
 	static SCRIPT_DIALOG_KIND := { ALERT: 0, CONFIRM: 1, PROMPT: 2, BEFOREUNLOAD: 3 }
 	static SCROLLBAR_STYLE := { DEFAULT: 0, FLUENT_OVERLAY: 1 }
 	static SERVER_CERTIFICATE_ERROR_ACTION := { ALWAYS_ALLOW: 0, CANCEL: 1, DEFAULT: 2 }
 	static SHARED_BUFFER_ACCESS := { READ_ONLY: 0, READ_WRITE: 1 }
+	static TEXT_DIRECTION_KIND := { DEFAULT: 0, LEFT_TO_RIGHT: 1, RIGHT_TO_LEFT: 2 }
 	static TRACKING_PREVENTION_LEVEL := { NONE: 0, BASIC: 1, BALANCED: 2, STRICT: 3 }
 	static WEB_ERROR_STATUS := { UNKNOWN: 0, CERTIFICATE_COMMON_NAME_IS_INCORRECT: 1, CERTIFICATE_EXPIRED: 2, CLIENT_CERTIFICATE_CONTAINS_ERRORS: 3, CERTIFICATE_REVOKED: 4, CERTIFICATE_IS_INVALID: 5, SERVER_UNREACHABLE: 6, TIMEOUT: 7, ERROR_HTTP_INVALID_SERVER_RESPONSE: 8, CONNECTION_ABORTED: 9, CONNECTION_RESET: 10, DISCONNECTED: 11, CANNOT_CONNECT: 12, HOST_NAME_NOT_RESOLVED: 13, OPERATION_CANCELED: 14, REDIRECT_FAILED: 15, UNEXPECTED_ERROR: 16, VALID_AUTHENTICATION_CREDENTIALS_REQUIRED: 17, VALID_PROXY_AUTHENTICATION_REQUIRED: 18 }
 	static WEB_RESOURCE_CONTEXT := { ALL: 0, DOCUMENT: 1, STYLESHEET: 2, IMAGE: 3, MEDIA: 4, FONT: 5, SCRIPT: 6, XML_HTTP_REQUEST: 7, FETCH: 8, TEXT_TRACK: 9, EVENT_SOURCE: 10, WEBSOCKET: 11, MANIFEST: 12, SIGNED_EXCHANGE: 13, PING: 14, CSP_VIOLATION_REPORT: 15, OTHER: 16 }
@@ -1808,3 +1912,4 @@ CoTaskMem_String(ptr) {
 	s := StrGet(ptr), DllCall('ole32\CoTaskMemFree', 'ptr', ptr)
 	return s
 }
+#Include <ComVar>

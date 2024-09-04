@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2024/07/13
- * @version 1.0.12
+ * @date 2024/09/05
+ * @version 1.0.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -71,12 +71,26 @@ class ytdlp {
      */
     __activateDir(folder) {
         SplitPath(folder, &name)
-        if WinExist(folder " ahk_exe explorer.exe")
-            WinActivate(folder " ahk_exe explorer.exe")
-        else if WinExist(name " ahk_exe explorer.exe")
-            WinActivate(name " ahk_exe explorer.exe")
-        else
-            RunWait("explore " folder)
+        __determineFolder(path, name) {
+            hasPath := WinExist(path " ahk_exe explorer.exe")
+            noPath  := WinExist(name " ahk_exe explorer.exe")
+            if !hasPath && !noPath
+                return false
+
+            hwnd := (hasPath != 0) ? hasPath : noPath
+            pathStr := WinGet.ExplorerPath(hwnd)
+            if pathStr == path {
+                WinActivate(hwnd)
+                return true
+            }
+            return false
+        }
+
+        if WinExist(folder " ahk_exe explorer.exe") || WinExist(name " ahk_exe explorer.exe") {
+            if __determineFolder(folder, name)
+                return
+        }
+        RunWait("explore " folder)
     }
 
     /**
@@ -170,7 +184,7 @@ class ytdlp {
         if FileExist(checkPath1) || FileExist(checkPath2) {
             index := 1
             loop {
-                if FileExist(folder nameNoExt index ".webm") || FileExist(folder nameNoExt index ".mp4") {
+                if FileExist(folder "\" nameNoExt String(index) ".webm") || FileExist(folder "\" nameNoExt String(index) ".mp4") {
                     index++
                     continue
                 }
