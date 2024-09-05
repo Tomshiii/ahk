@@ -5,13 +5,14 @@
 arr1 := ["Food & Bev", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Health"]
 arr2 := ["Gift", "Salary", "Loan Repayments", "Other Repayments"]
 
-getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample: $L$323", "Expenses PivotTable Coords", "H130", "$L$")
+;// this will assume the second pivot table is 3 cells to the right of the first pivot table
+getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample: $N$323`n`nThis script assumes the second pivot table to be 3 cells to the right of this first one.", "Expenses PivotTable Coords", "H130", "$N$")
 if getValExpenses.result = "Cancel"
     return
 
-getValIncome := InputBox("Enter Coordinates for Income PivotTable`n`nExample: $O$323", "Income PivotTable Coords", "H130", "$O$")
-if getValIncome.result = "Cancel"
-    return
+response := StrSplit(getValExpenses.Value, "$")
+getValIncome := {}
+getValIncome.value := String("$" chr(ord(response[2])+3) "$" response[3])
 
 WinWaitClose("Income PivotTable Coords")
 

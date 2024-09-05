@@ -6,8 +6,13 @@
 #Include <Other\Notify>
 ;
 if WinExist(prem.winTitle) {
-    path := WinGet.ProjPath()
-    defaultDir := path.dir
+    try {
+        path := WinGet.ProjPath()
+        defaultDir := path.dir
+    } catch {
+        ;// same as below
+        defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+    }
 }
 else
     defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
