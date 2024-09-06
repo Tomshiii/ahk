@@ -28,12 +28,13 @@ class adobeVers {
             "v24.2",    "v22.3.1",      "v24.2.1", "v22.3.1",
             ; "v24.3",    "v22.3.1",
             ; "v24.4",    "v24.3",      ;// some UI changes occur here so this version has its own folder
-            "v24.4.1", "v24.4",
+            "v24.4.1",  "v24.4",
             "v24.5",    "v24.4",
             "v24.6",    "v24.4",        "v24.6.1", "v24.4",
         ),
         25: Map(
             ; "v25.0",     "v25.0" ;// UI refresh should happen here
+            "v25.1",     "v25.0"
         )
     }
     AE := {
@@ -58,6 +59,7 @@ class adobeVers {
         ),
         25: Map(
             ; "v25.0",     "v25.0" ;// UI refresh should happen here
+            "v25.1",     "v25.0"
         )
     }
     PS := {

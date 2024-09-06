@@ -2,10 +2,10 @@
  * @description A library of useful After Effects functions to speed up common tasks
  * Originally tested on and designed for v22.6 of After Effects. As of 2023/06/30 slowly began moving workflow to v23.5+
  * Any code after that date is no longer guaranteed to function on previous versions of AE.
- * @aeVer 24.5
+ * @aeVer 25.0
  * @author tomshi
- * @date 2024/08/16
- * @version 1.2.6
+ * @date 2024/09/06
+ * @version 1.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,7 +31,7 @@ class AE {
         UserSettings := ""
 
         switch {
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.focusColour := 0x005CC8
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.focusColour := 0x066CE7
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:  this.focusColour := 0x2D8CEB
         }
     }

@@ -3,7 +3,7 @@
  * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 slowly began moving workflow to v23.5+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * See the version number listed below for the version of Premiere I am currently using
- * @premVer 24.5
+ * @premVer 25.0
  * @author tomshi
  * @date 2024/08/16
  * @version 2.1.20

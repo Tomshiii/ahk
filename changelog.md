@@ -1,6 +1,7 @@
 # <> Release 2.14.x - 
 
 ## Functions
+- Updated AE `focusColour` variable for versions using the `Spectrum UI` to return functionality to functions that rely on it
 
 `ytdlp {`
 - Fixed `download()` failing to increment filenames past `1`
