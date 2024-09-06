@@ -127,6 +127,12 @@ class adobeVers {
                     ps.Set(Integer(psYear)+1, 1)
             }
         }
+        ;// since the beta cycle usually eventuall ends up a version number ahead of what the current years is, we need to check if the beta folder exists
+        ;// and if it does, add a number +1 from the current year, otherwise beta versions will not show in the selector
+        if DirExist(installPath "Adobe Premiere Pro (Beta)") && !DirExist(installPath "Adobe Premiere Pro 20" SubStr((A_YYYY+1), -2))
+            pr.Set(SubStr((A_YYYY+1), -2), 1)
+        if DirExist(installPath "Adobe After Effects (Beta)") && !DirExist(installPath "Adobe After Effects 20" SubStr((A_YYYY+1), -2))
+            ae.Set(SubStr((A_YYYY+1), -2), 1)
 
         ;// this is the array containing the objects
         for k, v in this.maps {

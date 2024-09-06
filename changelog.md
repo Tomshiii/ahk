@@ -2,6 +2,7 @@
 
 ## Functions
 - Updated AE `focusColour` variable for versions using the `Spectrum UI` to return functionality to functions that rely on it
+- Fixed `adobeVers.__generate()` not generating symbolic links for beta versions if their year version is ahead of the current year
 
 `ytdlp {`
 - Fixed `download()` failing to increment filenames past `1`
