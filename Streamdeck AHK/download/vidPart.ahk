@@ -4,15 +4,17 @@
 #Include <Classes\winGet>
 #Include <Classes\Streamdeck_opt>
 #Include <Functions\useNVENC>
+#Include <GUIs\partDL>
 ; }
 SendInput("^c")
 
 if !selectedDir := FileSelect("D2",, "Select Download Location")
     return
 
-timecode := InputBox("Please provide the timecode that all content you wish to download sits within.`n`nPlease use the format;`nhh:mm:ss-hh:mm:ss")
-if timecode.result = "Cancel"
+timecode := partDL()
+if !timecode.value
     return
+timecode.__Delete()
 
 SDopt := SD_Opt()
 
