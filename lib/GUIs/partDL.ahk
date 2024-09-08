@@ -11,7 +11,7 @@ class partDL extends tomshiBasic {
         loop 2 {
             this.AddText(((A_Index = 1) ? "" : "xs y+15 ") "Section", (A_Index = 1) ? "Start Timecode:   H" : "End Timecode:    H")
             this.AddEdit("xs+120 ys-3 w50")
-            this.AddUpDown("vH" A_Index " Range0-24 ", 0)
+            this.AddUpDown("vH" A_Index " Range0-11 ", 0)
 
             this.AddText("x+10 ys", "M")
             this.AddEdit("x+5 ys-3 w50")
