@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/06/26
- * @version 2.1.26.1
+ * @date 2024/09/09
+ * @version 2.1.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,6 +22,7 @@
 #Include <Functions\checkStuck>
 #Include <Functions\detect>
 #Include <Other\Notify>
+#Include <Other\WinEvent>
 ; }
 
 #SingleInstance force ;only one instance of this script may run at a time!
@@ -50,7 +51,6 @@ ExitFunc(ExitReason, ExitCode) {
             autoSave.stop()
         }
         checkstuck()
-        PremHotkeys.__HotkeyReset(["^s"])
         block.Off()
     }
 }
@@ -148,14 +148,14 @@ class adobeAutoSave extends count {
             super.stop()
         }
         checkstuck()
-        PremHotkeys.__HotkeyReset(["^s"])
         block.Off()
     }
 
     /** starts the timer */
     Start() {
-        if this.saveOverride == true
-            PremHotkeys.__HotkeySet(["^s"], ObjBindMethod(this, '__saveReset'), "I2")
+        if this.saveOverride == true {
+            WinEvent.Exist(this.__stopAndReset.Bind(this), "Save Project")
+        }
         super.start()
     }
 
@@ -184,20 +184,14 @@ class adobeAutoSave extends count {
             this.__saveAE()
     }
 
-    /** This function handles reseting the timer when the user manually saves */
-    __saveReset(*) {
+    __stopAndReset(*) {
         if !WinActive(prem.winTitle) && !WinActive(AE.winTitle) {
-            SendEvent("^s")
             return
         }
-        this.resetingSave := true
-        SendEvent("^s")
-        ;// maybe don't backup files everytime save is pressed... can cause quite large backup folders for long projects
-        ; this.__backupFiles()
         this.Stop()
-        sleep 3500
-        this.__reset()
-        super.Start()
+        this.resetingSave := true, this.idleAttempt := true
+        sleep 5000
+        SetTimer((*) => (this.__reset(), this.Start()), -4500)
     }
 
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */
@@ -205,7 +199,7 @@ class adobeAutoSave extends count {
         try {
             this.stop()
             this.interval := (val*60000)
-            super.start()
+            this.start()
             return
         }
     }
@@ -231,8 +225,10 @@ class adobeAutoSave extends count {
         if this.idleAttempt = true
             return
         loop 5 {
-            if this.resetingSave = true
+            if this.resetingSave = true || WinExist("Save Project") {
+                this.resetingSave := true
                 break
+            }
             ;// if the user has interacted with the keyboard recently
             ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
             ;// the save attempt will be paused and retried
@@ -248,6 +244,8 @@ class adobeAutoSave extends count {
             this.idleAttempt := true
             break
         }
+        if this.resetingSave = true
+            return false
     }
 
     /** @returns {Boolean} true/false on whether it can grab the active window */
@@ -442,8 +440,8 @@ class adobeAutoSave extends count {
         }
 
         ;// checking idle status
-        this.__checkIdle()
-        if this.idleAttempt = false
+        checkIdle := this.__checkIdle()
+        if (this.idleAttempt = false || checkIdle = false || this.resetingSave = true)
             return
 
         ;// checking if prem is the originally active window
@@ -616,7 +614,6 @@ class adobeAutoSave extends count {
             super.stop()
         }
         checkstuck()
-        PremHotkeys.__HotkeyReset(["^s"])
         block.Off()
     }
 }
