@@ -16,7 +16,7 @@
 ;//* the final ffmpeg command is different depending on which it is so make sure not to mix different files into this process
 
 defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
-if !selectedFile := FileSelect("D 3", defaultDir, "Select file to extract audio.")
+if !selectedFile := FileSelect("D 3", defaultDir, "Select directory that contains the LAV files you wish to combine.")
     return
 
 recurse := (MsgBox("Do you wish to recurse?", "Recurse?", "4 32 4096") = "Yes") ? "R" : ""
