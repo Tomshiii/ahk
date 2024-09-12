@@ -7,7 +7,7 @@
  */
 class adobeVers {
     Premiere := {
-        ;// VER      || IMAGE VER    ||  SUBSEQUENT MINOR VERS
+        ;// VER      || IMAGE VER       ||  SUBSEQUENT MINOR VERS
         22: Map(
             "v22.4",    "v22.3.1",
             "22.5",     "v22.3.1",
@@ -38,7 +38,7 @@ class adobeVers {
         )
     }
     AE := {
-        ;// VER      || IMAGE VER    ||  SUBSEQUENT MINOR VERS
+        ;// VER      || IMAGE VER       ||  SUBSEQUENT MINOR VERS
         23: Map(
             "v23.0",    "v22.6",
             "v23.1",    "v22.6",
@@ -55,7 +55,7 @@ class adobeVers {
             "v24.3",    "v22.6",
             "v24.4",    "v22.6",        "v24.4.1", "v22.6",
             "v24.5",    "v22.6",
-            "v24.6",    "v24.5",        "v24.6.1", "v24.4",
+            "v24.6",    "v24.5",        "v24.6.1", "v24.4", "v24.6.2", "v24.4",
         ),
         25: Map(
             ; "v25.0",     "v25.0" ;// UI refresh should happen here
@@ -63,7 +63,7 @@ class adobeVers {
         )
     }
     PS := {
-        ;// VER      || IMAGE VER    ||  SUBSEQUENT MINOR VERS
+        ;// VER      || IMAGE VER       ||  SUBSEQUENT MINOR VERS
         24: Map(
             "v24.0.1",  "v24.3",
             "v24.1",    "v24.3",        "v24.1.1", "v24.3",
