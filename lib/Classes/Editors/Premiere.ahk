@@ -1,12 +1,12 @@
 /************************************************************************
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
- * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 slowly began moving workflow to v23.5+
+ * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 code is maintained for the version of Premiere listed below
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/08/16
- * @version 2.1.20
+ * @date 2024/09/14
+ * @version 2.1.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2071,6 +2071,29 @@ class Prem {
         MouseMove(origCoords.x, origCoords.y, 2)
         block.Off()
     }
+
+    /**
+     * A function designed to allow the user to quickly dismiss certain fx windows that otherwise require them to manually dismiss them
+     * @param {String} [onFailure="{Escape}"] what the function will send in the event that the active window isn't defined
+     */
+    static escFxMenu(onFailure := "{Escape}") {
+		windows := Map(
+			"Clip Fx Editor", true
+		)
+		activeWin := WinGetTitle("A")
+		inList := false
+		for k, v in windows {
+			if InStr(activeWin, k)
+				inList := true
+		}
+		coord.s()
+		mousePos := obj.MousePos()
+		winObj   := obj.WinPos(activeWin)
+		(inList = true && WinGetTitle("A") == activeWin) ? SendEvent("{Click " ((winObj.x+winObj.width)-19) A_Space winObj.y+16 "}") : SendInput(onFailure)
+		MouseMove(mousePos.x, mousePos.y)
+		sleep 100
+		this.__checkTimelineFocus()
+	}
 
     ;//! *** ===============================================
 

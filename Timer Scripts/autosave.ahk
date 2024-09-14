@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/09/12
- * @version 2.1.28
+ * @date 2024/09/14
+ * @version 2.1.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,7 +30,7 @@
 #WinActivateForce
 
 ListLines(0)
-; KeyHistory(0) ;// this has to be enabled for some code relating to `mouse idle` to work
+; KeyHistory(0) ;// KeyHistory must not be disabled for some code relating to `mouse idle` to work
 InstallKeybdHook() ;required so A_TimeIdleKeyboard works and doesn't default back to A_TimeIdle
 ;InstallMouseHook() ;// this is set within the function, no idea why but it needs to happen in the func or it just... doesn't work
 TraySetIcon(ptf.Icons "\save.ico") ;changes the icon this script uses in the taskbar
@@ -154,7 +154,10 @@ class adobeAutoSave extends count {
     /** starts the timer */
     Start() {
         if this.saveOverride == true {
-            WinEvent.Exist(this.__stopAndReset.Bind(this), "Save Project")
+            try WinEvent.Exist(this.__stopAndReset.Bind(this), "Save Project " prem.exeTitle)
+            catch {
+                SetTimer((*) => tool.Cust("Attempting to start lib ``WinEvent`` failed.`nA reload may be required for proper functionality."), -1)
+            }
         }
         super.start()
     }

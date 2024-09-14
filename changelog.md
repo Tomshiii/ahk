@@ -3,6 +3,7 @@
 ## Functions
 - Updated AE `focusColour` variable for versions using the `Spectrum UI` to return functionality to functions that rely on it
 - Fixed `adobeVers.__generate()` not generating symbolic links for beta versions if their year version is ahead of the current year
+- Added `prem.escFxMenu()` to automatically dismiss some FX menus that would otherwise require the user to manually dismiss them
 
 `ytdlp {`
 - Fixed `download()` failing to increment filenames past `1`
@@ -10,4 +11,4 @@
 
 ## Other Changes
 - Added `partDL.ahk` GUI for `vidPart.ahk` & `audPart.ahk` to more easily define their timecode ranges
-- `autosave.ahk` will no longer cause a double save if the user manually saves Premiere while the timer is waiting for the user to go idle
+- `autosave.ahk` will no be less likely to cause a double save if the user manually saves Premiere while the timer is waiting for the user to go idle
