@@ -16,7 +16,10 @@ TraySetIcon(ptf.Icons "\dismiss.ico")
 ; "This action will delete existing keyframes. Do you want to continue?"
 ; Well, now you can auto-dismiss it. That's not as good as WIPING IT FROM THE FACE OF THE EARTH FOREVER, but it's at least a little better.
 
-;// June 2024- OR not apparently if you're on the new Spectrum UI because adobe in their infinite wisdom have REMOVED the window title
-;// which makes it COMPLETELY impossible to detect... thanks adobe
 if VerCompare(prem.currentSetVer, prem.spectrumUI_Version) < 0
     WinEvent.Active((*) => SendInput("{Enter}"), "Warning " prem.winTitle,,, "Clip Mismatch")
+else {
+    ;// due to adobe removing the window title for this menu in the spectrum ui, we have to find the text instead
+    SetTitleMatchMode("Slow")
+    WinEvent.Active((*) => SendInput("{Enter}"),,, "This action will delete existing keyframes. Do you want to continue?")
+}
