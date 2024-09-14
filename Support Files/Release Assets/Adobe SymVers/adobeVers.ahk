@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include Vers.ahk
+; }
+
 /**
  * Values of adobe versions that share their images with each other.
  * Versions being listed here do NOT ensure they are completely compatible with my scripts, I do not have the manpower to extensively test versions I do not use consistently.
@@ -7,87 +11,19 @@
  */
 class adobeVers {
     Premiere := {
-        ;// VER      || IMAGE VER       ||  SUBSEQUENT MINOR VERS
-        22: Map(
-            "v22.4",    "v22.3.1",
-            "22.5",     "v22.3.1",
-            "22.6",     "v22.3.1",
-        ),
-        23: Map(
-            "v23.0",    "v22.3.1",
-            "v23.1",    "v22.3.1",
-            "v23.2",    "v22.3.1",
-            "v23.3",    "v22.3.1",
-            "v23.4",    "v22.3.1",
-            "v23.5",    "v22.3.1",
-            "v23.6",    "v22.3.1",      "v23.6.2", "v22.3.1", "v23.6.4", "v22.3.1", "v23.6.5", "v22.3.1",
-        ),
-        24: Map(
-            "v24.0",    "v22.3.1",      "v24.0.3", "v22.3.1",
-            "v24.1",    "v22.3.1",
-            "v24.2",    "v22.3.1",      "v24.2.1", "v22.3.1",
-            ; "v24.3",    "v22.3.1",
-            ; "v24.4",    "v24.3",      ;// some UI changes occur here so this version has its own folder
-            "v24.4.1",  "v24.4",
-            "v24.5",    "v24.4",
-            "v24.6",    "v24.4",        "v24.6.1", "v24.4",
-        ),
-        25: Map(
-            ; "v25.0",     "v25.0" ;// UI refresh should happen here
-            "v25.1",     "v25.0"
-        )
+        22: premVers.v22,
+        23: premVers.v23,
+        24: premVers.v24,
+        25: premVers.v25
     }
     AE := {
-        ;// VER      || IMAGE VER       ||  SUBSEQUENT MINOR VERS
-        23: Map(
-            "v23.0",    "v22.6",
-            "v23.1",    "v22.6",
-            "v23.2",    "v22.6",        "v23.2.1", "v22.6",
-            "v23.3",    "v22.6",
-            "v23.4",    "v22.6",
-            "v23.5",    "v22.6",
-            "v23.6",    "v22.6",        "v23.6.2", "v22.6", "v23.6.5", "v22.6",
-        ),
-        24: Map(
-            "v24.0",    "v22.6",        "v24.0.1", "v22.6", "v24.0.3", "v22.6",
-            "v24.1",    "v22.6",
-            "v24.2",    "v22.6",        "v24.2.1", "v22.6",
-            "v24.3",    "v22.6",
-            "v24.4",    "v22.6",        "v24.4.1", "v22.6",
-            "v24.5",    "v22.6",
-            "v24.6",    "v24.5",        "v24.6.1", "v24.4", "v24.6.2", "v24.4",
-        ),
-        25: Map(
-            ; "v25.0",     "v25.0" ;// UI refresh should happen here
-            "v25.1",     "v25.0"
-        )
+        23: aeVers.v23,
+        24: aeVers.v24,
+        25: aeVers.v25
     }
     PS := {
-        ;// VER      || IMAGE VER       ||  SUBSEQUENT MINOR VERS
-        24: Map(
-            "v24.0.1",  "v24.3",
-            "v24.1",    "v24.3",        "v24.1.1", "v24.3",
-            "v24.2",    "v24.3",        "v24.2.1", "v24.3",
-            "v24.4.1",  "v24.3",
-            "v24.5",    "v24.3",
-            "v24.6",    "v24.3",
-            "v24.7",    "v24.3",        "v24.7.1", "v24.3", "v24.7.2", "v24.3", "v24.7.3", "v24.3",
-        ),
-        25: Map(
-            "v25.0",    "v24.3",
-            "v25.1",    "v24.3",
-            "v25.2",    "v24.3",
-            "v25.3",    "v24.3",        "v25.3.1", "v24.3",
-            "v25.4",    "v24.3",
-            "v25.5",    "v24.3",        "v25.5.1", "v24.3",
-            "v25.6",    "v24.3",
-            "v25.7",    "v24.3",
-            "v25.8",    "v24.3",
-            "v25.9",    "v24.3",        "v25.9.1", "v24.3",
-            "v25.10",   "v24.3",
-            "v25.11",   "v24.3",
-            "v25.12",   "v24.3",
-        )
+        24: psVers.v24,
+        25: psVers.v25
     }
 
     static maps := [this().Premiere, this().AE, this().PS]
@@ -127,7 +63,7 @@ class adobeVers {
                     ps.Set(Integer(psYear)+1, 1)
             }
         }
-        ;// since the beta cycle usually eventuall ends up a version number ahead of what the current years is, we need to check if the beta folder exists
+        ;// since the beta cycle usually eventually ends up a version number ahead of what the current years is, we need to check if the beta folder exists
         ;// and if it does, add a number +1 from the current year, otherwise beta versions will not show in the selector
         if DirExist(installPath "Adobe Premiere Pro (Beta)") && !DirExist(installPath "Adobe Premiere Pro 20" SubStr((A_YYYY+1), -2))
             pr.Set(SubStr((A_YYYY+1), -2), 1)
@@ -166,8 +102,8 @@ class adobeVers {
                         continue
                     }
                     ;// checking to see if we need to break up the command bc of its length
-                    if (!InStr(adobecmd, "|||") && (StrLen(adobecmd) + StrLen(Format(' && mklink /D "{1}\{4}\{2}" "{1}\{4}\{3}"', imgsrchPath, k2, v2, which))) >= 8191) ||
-                        ((StrLen(Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}"', StrLen(SubStr(adobecmd, InStr(adobecmd, "|||",,, -1))), imgsrchPath, k2, v2, which))) >= 8191) {
+                    if (!InStr(adobecmd, "|||") && (StrLen(adobecmd) + StrLen(Format(' && mklink /D "{1}\{4}\{2}" "{1}\{4}\{3}"', imgsrchPath, k2, v2, which))) >= 8185) ||
+                        ((StrLen(Format('{1} && mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}"', imgsrchPath, k2, v2, which)) + StrLen(SubStr(adobecmd, InStr(adobecmd, "|||",,, -1)))) >= 8185) {
                         adobecmd := Format('{1} ||| mklink /D "{2}\{5}\{3}" "{2}\{5}\{4}"', adobecmd, imgsrchPath, k2, v2, which)
                         continue
                     }

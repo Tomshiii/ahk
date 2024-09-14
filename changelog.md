@@ -6,8 +6,10 @@
 - Added `prem.escFxMenu()` to automatically dismiss some FX menus that would otherwise require the user to manually dismiss them
 
 `ytdlp {`
-- Fixed `download()` failing to increment filenames past `1`
-- `download()` will now check the window filepath before reactivating it, ensuring it doesn't activate a random window simply because it shares the same folder name
+
+`download()`
+- Fixed function failing to increment filenames past `1`
+- Will now check the window filepath before reactivating it, ensuring it doesn't activate a random window simply because it shares the same folder name
 
 ## Other Changes
 - `autodismiss error.ahk` now works with the `Spectrum UI`
