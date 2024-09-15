@@ -2,6 +2,7 @@
 #Include <Classes\ptf>
 #Include <Classes\cmd>
 #Include <Functions\unzip>
+#Include <GUIs\cepVer>
 
 ;//! This script will NOT complete without NodeJS already being installed
 
@@ -18,19 +19,18 @@ if !getNPM {
 }
 
 ;// registry key required to run unsigned extensions within Premiere Pro
-;// prem v??-v24
-if !RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.11", "PlayerDebugMode", 0)
-    RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.11", "PlayerDebugMode")
-;// prem v25-v??
-if !RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode", 0)
-    RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode")
+cepSelect := cepVer()
+WinWait(cepSelect.Title)
+WinWaitClose(cepSelect.Title)
 
 downloadURl    := "https://github.com/sebinside/PremiereRemote/archive/refs/heads/main.zip"
 extensionsPath := A_AppData "\Adobe\CEP\extensions"
 remotePath     := extensionsPath "\PremiereRemote"
 
-if DirExist(remotePath)
+if DirExist(remotePath) {
+    MsgBox("PremiereRemote appears to already be installed!`n`nExiting...")
     return
+}
 
 if !DirExist(remotePath)
     DirCreate(remotePath)
