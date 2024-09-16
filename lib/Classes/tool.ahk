@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2024/03/20
- * @version 1.2.1
+ * @date 2024/09/16
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -91,6 +91,7 @@ class tool {
      * @param {Integer} xy the x & y coordinates you want the tooltip to appear. These values are unset by default and can be omitted
      * @param {Integer} WhichToolTip omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip to operate upon. If unspecified or set larger than 20, that number is 1 (the first).
      * @param {Boolean} darkMode whether to set the tooltip as darkmode or lightmode. will default to the user's system theme. Brought to my attention by [Nikola](https://discord.com/channels/115993023636176902/1202471107211431986/1202471107211431986)
+     * @returns {Integer} returns the tooltip hwnd
      */
     static Cust(message, timeout := 1000, x?, y?, WhichToolTip?, darkMode?)
     {
@@ -132,7 +133,9 @@ class tool {
         time := A_TickCount ;log our starting time
 
         ;//! creating the tooltip
-        ttw := ToolTip(message, origMouse.x + x, origMouse.y + y, WhichToolTip) ;// produce the initial tooltip
+        try ttw := ToolTip(message, origMouse.x + x, origMouse.y + y, WhichToolTip) ;// produce the initial tooltip
+        catch
+            return
         if !(darkMode ?? isDarkMode)
             SystemThemeAwareToolTip.IsDarkMode := false
         else if (darkMode ?? isDarkMode)
@@ -177,8 +180,6 @@ class tool {
     }
 
     /**
-     * This function is a part of the class `tool`
-     *
      * This function will check to see if any tooltips are active before continuing
      * @param {Integer} timeout allows you to pass in a time value (in seconds) that you want WinWaitClose to wait before timing out. This value can be omitted and does not need to be set
      */

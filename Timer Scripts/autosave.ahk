@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/09/14
- * @version 2.1.29
+ * @date 2024/09/16
+ * @version 2.1.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -146,6 +146,7 @@ class adobeAutoSave extends count {
     Stop() {
         try {
             super.stop()
+            WinEvent.Stop()
         }
         checkstuck()
         block.Off()
@@ -615,6 +616,7 @@ class adobeAutoSave extends count {
     __Delete() {
         try {
             super.stop()
+            WinEvent.Stop()
         }
         checkstuck()
         block.Off()
