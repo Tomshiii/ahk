@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/09/14
- * @version 2.1.21
+ * @date 2024/09/17
+ * @version 2.1.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2089,9 +2089,9 @@ class Prem {
 		coord.s()
 		mousePos := obj.MousePos()
 		winObj   := obj.WinPos(activeWin)
-		(inList = true && WinGetTitle("A") == activeWin) ? SendEvent("{Click " ((winObj.x+winObj.width)-19) A_Space winObj.y+16 "}") : SendInput(onFailure)
+        (inList = true && WinGetTitle("A") == activeWin) ? SendEvent("{Click " ((winObj.x+winObj.width)-19) A_Space winObj.y+16 "}") : (SendInput(onFailure), Exit())
 		MouseMove(mousePos.x, mousePos.y)
-		sleep 100
+		sleep 200
 		this.__checkTimelineFocus()
 	}
 
