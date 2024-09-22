@@ -38,7 +38,7 @@ Enter & SC149::switchTo.closeOtherWindow(browser.firefox.class)
 Right & PgUp::switchTo.newWin("exe", "firefox.exe", "firefox.exe")
 
 y::unassigned()
-; h::
+h::unassigned()
 n::unassigned()
 /** because this macro always ends in discord being in focus, tapping the macro repeatedly will cycle through the programs but manually clicking on the program and then activating the macro will not force a cycle */
 Space::

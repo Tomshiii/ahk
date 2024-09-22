@@ -24,7 +24,7 @@ l::ae.wiggle("
 
 i::unassigned()
 k::unassigned()
-,::unassigned()
+,::prem.anchorToPosition()
 ;Left::unassigned()
 
 u::unassigned()
@@ -58,7 +58,7 @@ x::unassigned()
 
 q::unassigned()
 a::unassigned()
-z::prem.anchorToPosition()
+z::unassigned()
 ;F16::unassigned()
 
 ;Tab::unassigned()

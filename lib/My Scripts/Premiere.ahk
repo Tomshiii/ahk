@@ -21,11 +21,25 @@ $Tab::
 ;spaceDelayHotkey;
 Space::
 {
-	if WinActive("Modify Clip " prem.winTitle) || WinActive("Audio Gain " prem.winTitle) {
-		SendInput("{Enter}")
-		return
+	switch getTitle := WinGetTitle("A") {
+		case "Modify Clip", "Audio Gain":
+			SendInput("{Enter}")
+			return
+		case "Save Project": return
 	}
 	prem.delayPlayback()
+}
+
+Enter::
+{
+	getTitle := WinGetTitle("A")
+	if !InStr(getTitle, "Clip Fx Editor") {
+		SendInput("{" A_ThisHotkey "}")
+		return
+	}
+	delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
+	if IsSet(A_PriorKey) && isDoubleClick(400)
+		prem.escFxMenu()
 }
 
 ;linkActivateHotkey;

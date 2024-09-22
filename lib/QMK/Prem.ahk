@@ -64,11 +64,11 @@ k::prem.gain("-2") ;REDUCE GAIN BY -2db
 
 u::prem.valuehold("rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 j::prem.gain("-6") ;REDUCE GAIN BY -6db
-m::prem.gain("6") ;INCREASE GAIN BY 6db
+g::prem.gain("6") ;INCREASE GAIN BY 6db
 ;PgUp::unassigned()
 
 y::prem.valuehold("opacity")
-;h::unassigned()
+h::prem.gain("2")
 #MaxThreadsBuffer True
 n::prem.zoom()
 #MaxThreadsBuffer false
@@ -90,7 +90,7 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 	else
 		prem.preset("fix clipping_default")
 }
-g:: ;this hotkey will fill the frame to fit the window
+m:: ;this hotkey will fill the frame to fit the window
 {
 	premTimeline()
 	SendInput(KSA.scaleFrameSize)
