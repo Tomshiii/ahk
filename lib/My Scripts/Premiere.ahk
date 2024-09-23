@@ -30,6 +30,7 @@ Space::
 	prem.delayPlayback()
 }
 
+NumpadEnter::
 Enter::
 {
 	getTitle := WinGetTitle("A")
@@ -38,7 +39,7 @@ Enter::
 		return
 	}
 	delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
-	if IsSet(A_PriorKey) && isDoubleClick(400)
+	if IsSet(A_PriorKey) && isDoubleClick(750)
 		prem.escFxMenu()
 }
 
