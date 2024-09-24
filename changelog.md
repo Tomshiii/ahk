@@ -4,6 +4,7 @@
 - Updated AE `focusColour` variable for versions using the `Spectrum UI` to return functionality to functions that rely on it
 - Fixed `adobeVers.__generate()` not generating symbolic links for beta versions if their year version is ahead of the current year
 - Added `prem.escFxMenu()` to automatically dismiss some FX menus that would otherwise require the user to manually dismiss them
+- `isDoubleClick()` now accepts parameter `priorKeyOrHotkey`
 
 `ytdlp {`
 

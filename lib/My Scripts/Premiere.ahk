@@ -39,7 +39,7 @@ Enter::
 		return
 	}
 	delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
-	if IsSet(A_PriorKey) && isDoubleClick(750)
+	if IsSet(A_PriorKey) && isDoubleClick(750, "key")
 		prem.escFxMenu()
 }
 
