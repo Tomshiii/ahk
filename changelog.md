@@ -18,3 +18,4 @@
 - `autosave.ahk` will now be less likely to cause a double save if the user manually saves Premiere while the timer is waiting for the user to go idle
 - `enable unsigned extensions.ahk` is now a GUI that allows the user to select the versions they wish to enable extensions for
     - This GUI will also be presented to the user during `installPremRemote.ahk`
+- Renamed `Start new project.ahk` => `generate project directory.ahk`

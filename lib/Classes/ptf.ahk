@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2024/04/21
- * @version 1.2.6
+ * @date 2024/09/25
+ * @version 1.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,6 +32,9 @@ class ptf {
     static comms             := this.MyDir "\comms"
     static LioranBoardDir    := "F:\Twitch\lioranboard\LioranBoard Receiver(PC)"
     static musicDir          := "C:\Users\" A_UserName "\Music\"
+
+    ;Other Programs
+    static mpvWintitle       := "ahk_class mpv"
 
     ;ImageSearch
     static premIMGver        := this().UserSettings.premVer

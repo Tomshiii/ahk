@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.8
+;\\v2.34.9
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -198,6 +198,16 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 #HotIf WinActive(Slack.winTitle) ;some scripts to speed up Slack interactions
 
 #Include <My Scripts\Slack>
+
+;=============================================================================================================================================
+;
+;		mpv
+;
+;=============================================================================================================================================
+;//! mpv
+#HotIf WinActive(ptf.mpvWintitle)
+
+#Include <My Scripts\mpv>
 
 ;=============================================================================================================================================
 ;
