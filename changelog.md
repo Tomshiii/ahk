@@ -22,3 +22,4 @@
 - `enable unsigned extensions.ahk` is now a GUI that allows the user to select the versions they wish to enable extensions for
     - This GUI will also be presented to the user during `installPremRemote.ahk`
 - Renamed `Start new project.ahk` => `generate project directory.ahk`
+- `convert wavOrmp3.ahk` will now ask the user to select the desired file instead of requiring the path to be copied to the clipboard

@@ -6,7 +6,7 @@
 
 /**
  * Generates all directories for a user's project folder
- * @param {Array/String} dirs an array of custom folder paths the user wishes to generate if they do no wish to use the default
+ * @param {Array} dirs an array of custom folder paths the user wishes to generate if they do no wish to use the default
  */
 genProjDirs(dirs?) {
     activeWin := WinGet.ExplorerPath()
@@ -21,9 +21,10 @@ genProjDirs(dirs?) {
     }
     if !IsSet(dirs) {
         dirs := [
-            "videos",                 "audio\music",              "audio\sfx",
-            "proxies\colour renders", "proxies\timeline renders", "renders\draft",
-            "renders\final",          "_project files",           "screenshots"
+            "videos\footage", "audio\music", "audio\sfx",
+            "proxies\timeline renders", "_project files",
+            "renders\draft", "renders\final",  "renders\socials",
+            "screenshots"
         ]
     }
     for v in dirs
