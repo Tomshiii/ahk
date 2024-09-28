@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2024/09/25
- * @version 1.2.7
+ * @date 2024/09/27
+ * @version 1.2.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -35,6 +35,7 @@ class ptf {
 
     ;Other Programs
     static mpvWintitle       := "ahk_class mpv"
+    static obsidianWintitle  := "ahk_exe Obsidian.exe"
 
     ;ImageSearch
     static premIMGver        := this().UserSettings.premVer

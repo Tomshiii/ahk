@@ -6,6 +6,8 @@
 - Fixed `startup.adobeVerOverride()` failing to set `After Effects` version if the `beta` is selected
 - Added `prem.escFxMenu()` to automatically dismiss some FX menus that would otherwise require the user to manually dismiss them
 - `isDoubleClick()` now accepts parameter `priorKeyOrHotkey`
+- `switchTo.explorer()` now accepts parameter `toggleFullscreen` to determine whether you want the script to quickly switching to and from fullscreen when it opens a new instance. There are reports that doing so increases explorer performance
+- `clip.search()` now accepts parameter `browser` to determine which browser should be used for the search
 
 `ytdlp {`
 

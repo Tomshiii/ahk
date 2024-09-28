@@ -56,7 +56,7 @@ layoutsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\
 __backupPremFolders(layoutsBackup, layoutsBeginningDir, "Select Premiere Layouts to Backup")
 
 ;//* Settings
-settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\"
+settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\v" ptf.PremYearVer "\"
 settingsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\"
 FileCopy(settingsBeginningDir "\Adobe Premiere Pro Prefs", settingsBackup "\Adobe Premiere Pro Prefs", 1)
 FileCopy(settingsBeginningDir "\Effect Presets and Custom Items.prfpset", settingsBackup "\Effect Presets and Custom Items.prfpset", 1)

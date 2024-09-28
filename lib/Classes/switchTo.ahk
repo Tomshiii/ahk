@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/06/25
- * @version 1.3.10
+ * @date 2024/09/25
+ * @version 1.3.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -61,10 +61,32 @@ class switchTo {
             WinActivate(winExistVar)
     }
 
+    static __explorerToggleFullscreen(newWin := false) {
+        sleep 300
+        block.On()
+        WinSetTransparent(0, "ahk_class CabinetWClass")
+        WinActivate("ahk_class CabinetWClass") ;in win11 running explorer won't always activate it, so it'll open in the backround
+        if newWin = true
+            sleep 150
+        delaySI(150, "{F11}", "{F11}")
+        sleep 100
+        allWin := WinGetList("ahk_class CabinetWClass")
+        for v in allWin {
+            try {
+                checkTran := WinGetTransparent(v)
+                if IsInteger(checkTran) && checkTran != 255
+                    WinSetTransparent(255, v)
+            }
+            sleep 1
+        }
+        block.Off()
+    }
+
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+     * @param {Boolean} [toggleFullscreen=false] determine whether you wish for the explorer window to be toggled fullscreen and then back to normal when running a new explorer instance. There are reports that doing this improves explorer responsiveness.
      */
-    static Explorer()
+    static Explorer(toggleFullscreen := true)
     {
         ;// the below values will be ignored (but only if `ignoreString` is added to the respective `GroupAdd` down below)
         ignore := Map("ahk_exe hamachi-2-ui.exe", 1)
@@ -73,9 +95,13 @@ class switchTo {
             ignoreString := ignoreString A_Space k
         if !WinExist("ahk_class CabinetWClass") && !WinExist("ahk_class #32770") {
             Run("explorer.exe")
-            if WinWait("ahk_class CabinetWClass",, 2)
+            if !WinWait("ahk_class CabinetWClass",, 2)
+                return
+            if !toggleFullscreen {
                 WinActivate("ahk_class CabinetWClass") ;in win11 running explorer won't always activate it, so it'll open in the backround
-            return
+                return
+            }
+            this.__explorerToggleFullscreen()
         }
         GroupAdd("explorers", "ahk_class CabinetWClass")
         GroupAdd("explorers", "ahk_class #32770", ignoreString) ;these are usually save dialoge windows from any program
@@ -121,18 +147,30 @@ class switchTo {
      * @param {String} classorexe is just defining if we're trying to grab the class or exe
      * @param {String} activate is whatever usually comes after the ahk_class or ahk_exe that ahk is going to use to activate once it's open
      * @param {String} runval is whatever you need to put into ahk to run a new instance of the desired program (eg. a file path)
+     * @param {Boolean} [toggleFullscreen=false] in the event that [classorexe="CabinetWClass"] & [runval="explorer.exe"]; determine whether you wish for the explorer window to be toggled fullscreen and then back to normal when running a new explorer instance. There are reports that doing this improves explorer responsiveness.
      */
-    static newWin(classorexe, activate, runval)
+    static newWin(classorexe, activate, runval, toggleFullscreen := false)
     {
         keys.allWait("second")
-        if !WinExist("ahk_" classorexe . activate)
-            {
-                Run(runval)
-                if WinWait("ahk_" classorexe . activate,, 2)
+        if !WinExist("ahk_" classorexe . activate) {
+            Run(runval)
+            if WinWait("ahk_" classorexe . activate,, 2) {
+                if (activate != "CabinetWClass" && runval != "explorer.exe") {
                     WinActivate("ahk_" classorexe . activate) ;in win11 running things won't always activate it and will open in the backround
+                    return
+                }
+                if toggleFullscreen != false
+                    this.__explorerToggleFullscreen()
                 return
             }
+            return
+        }
         Run(runval)
+        /* if !WinWait("ahk_" classorexe . activate,, 2)
+            return
+        sleep 200
+        if (activate = "CabinetWClass" && runval = "explorer.exe") && toggleFullscreen != false
+            this.__explorerToggleFullscreen(true) */
     }
 
     /** This function will check for the existence of Adobe Creative cloud. For use with adobe scripts. This is necessary because unless CC is opened before the program of choice, some synced assets (ie. fonts) will not load within the program and may silently default to the next option in the list. */

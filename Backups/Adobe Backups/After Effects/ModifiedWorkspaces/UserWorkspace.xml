@@ -128,7 +128,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.095505618</float>
+<float>0.1706091</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -260,7 +260,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.80124223</float>
+<float>0.78324419</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -274,7 +274,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.14851081</float>
+<float>0.050068274</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -950,7 +950,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>

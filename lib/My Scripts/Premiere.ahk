@@ -34,13 +34,17 @@ NumpadEnter::
 Enter::
 {
 	getTitle := WinGetTitle("A")
-	if !InStr(getTitle, "Clip Fx Editor") {
-		SendInput("{" A_ThisHotkey "}")
-		return
+	switch {
+		case InStr(getTitle, "Clip Fx Editor"):
+			delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
+			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
+				prem.escFxMenu()
+			return
+		case getTitle == "Save Project": return
+		default:
+			SendInput("{" A_ThisHotkey "}")
+			return
 	}
-	delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
-	if IsSet(A_PriorKey) && isDoubleClick(750, "key")
-		prem.escFxMenu()
 }
 
 ;linkActivateHotkey;

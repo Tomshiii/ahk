@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
- * @date 2024/02/22
- * @version 1.0.6
+ * @date 2024/09/27
+ * @version 1.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -79,14 +79,26 @@ class clip {
 
     /**
      * This function runs a search of highlighted text.
-     * @param {String} url the url (search engine) you wish to use. Provide everything before the part of the url that is your search quiry
+     * @param {String} [url="https://www.google.com/search?d&q="] the url (search engine) you wish to use. Provide everything before the part of the url that is your search quiry
+     * @param {String} [browser=""] the ability to define which browser you wish to run. You must use the string used to define the browser within cmd, ie; `firefox.exe` or `chrome.exe`. Leave unset to use the default browser set within windows.
      */
-    static search(url := "https://www.google.com/search?d&q=") {
+    static search(url := "https://www.google.com/search?d&q=", browser := "") {
         store := this.clear()
         if !this.copyWait(store.storedClip)
             return
-        Run(url A_Clipboard)
+        Run(Format("{1} {2}" , browser, url A_Clipboard))
         this.returnClip(store.storedClip)
+        if !browser
+            return
+        if !WinWait("ahk_exe " browser,, 2)
+            return
+        if browser = "firefox.exe" && WinWait("Open Firefox in Troubleshoot Mode?",, 2) {
+            block.On()
+            WinActivate("Open Firefox in Troubleshoot Mode?")
+            SendInput("{Enter}")
+            block.Off()
+            return
+        }
     }
 
     /**

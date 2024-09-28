@@ -259,5 +259,7 @@
     "window.zoomLevel": 1,
     "settingsSync.ignoredSettings": [
 
-    ]
+    ],
+    "markdown.preview.scrollPreviewWithEditor": false,
+    "scm.showHistoryGraph": false
 }

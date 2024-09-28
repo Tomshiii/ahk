@@ -13,12 +13,12 @@ SC028::unassigned() ; ' key
 Enter::unassigned()
 Enter & Up::switchTo.closeOtherWindow("ahk_class CabinetWClass")
 Right::unassigned()
-Right & Up::switchTo.newWin("class", "CabinetWClass", "explorer.exe")
+Right & Up::switchTo.newWin("class", "CabinetWClass", "explorer.exe", true)
 
 p::unassigned()
 SC027::unassigned()
 /::switchTo.adobeProject("..\") ;opens the directory back from the current premiere/ae project
-Up::switchTo.Explorer()
+Up::switchTo.Explorer(true)
 
 o::unassigned()
 l::unassigned()
