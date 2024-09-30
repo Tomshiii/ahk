@@ -33,41 +33,49 @@ backFolders := ["AC Footage", "Adobe After Effects Auto-Save", "Adobe After Effe
 rootDir := SubStr(folder := WinGet.pathU(projectFolder "\..\"), -1, 1) = "\" ? SubStr(folder, 1, StrLen(folder)-1) : folder
 proj := obj.SplitPath(rootDir)
 
-;// creating necessary destination folders
-if !DirExist(backupFolder "\" proj.Name)
-    DirCreate(backupFolder "\" proj.Name)
-backupFolder := backupFolder "\" proj.Name
-if !DirExist(backupFolder "\_Additional Assets\videos")
-    DirCreate(backupFolder "\_Additional Assets\videos")
-if !DirExist(backupFolder "\_Additional Assets\audio\music")
-    DirCreate(backupFolder "\_Additional Assets\audio\music")
-if !DirExist(backupFolder "\_Additional Assets\audio\sfx")
-    DirCreate(backupFolder "\_Additional Assets\audio\sfx")
-if !DirExist(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
-    DirCreate(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
+__doBackup(backupFolder) {
+    ;// creating necessary destination folders
+    if !DirExist(backupFolder "\" proj.Name)
+        DirCreate(backupFolder "\" proj.Name)
+    backupFolder := backupFolder "\" proj.Name
+    if !DirExist(backupFolder "\_Additional Assets\videos")
+        DirCreate(backupFolder "\_Additional Assets\videos")
+    if !DirExist(backupFolder "\_Additional Assets\audio\music")
+        DirCreate(backupFolder "\_Additional Assets\audio\music")
+    if !DirExist(backupFolder "\_Additional Assets\audio\sfx")
+        DirCreate(backupFolder "\_Additional Assets\audio\sfx")
+    if !DirExist(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
+        DirCreate(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
 
 
-;// copying project
-loop files projectFolder "\*", 'F' {
-    try FileCopy(A_LoopFileFullPath, backupFolder "\" A_YYYY "-" A_MM "-" A_DD "\*.*", true)
+    ;// copying project
+    loop files projectFolder "\*", 'F' {
+        try FileCopy(A_LoopFileFullPath, backupFolder "\" A_YYYY "-" A_MM "-" A_DD "\*.*", true)
+    }
+
+    for _, v in backFolders {
+        try DirCopy(projectFolder "\" v, backupFolder "\" A_YYYY "-" A_MM "-" A_DD "\" v, false)
+    }
+
+    loop files rootDir "\videos\*", 'F' {
+        try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\videos\*.*", false)
+    }
+
+    loop files rootDir "\audio\*", 'F' {
+        try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\*.*", false)
+    }
+
+    loop files rootDir "\audio\music\*", 'F' {
+        try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\music\*.*", false)
+    }
+
+    loop files rootDir "\audio\sfx\*", 'F' {
+        try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\sfx\*.*", false)
+    }
 }
 
-for _, v in backFolders {
-    try DirCopy(projectFolder "\" v, backupFolder "\" A_YYYY "-" A_MM "-" A_DD "\" v, false)
-}
-
-loop files rootDir "\videos\*", 'F' {
-    try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\videos\*.*", false)
-}
-
-loop files rootDir "\audio\*", 'F' {
-    try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\*.*", false)
-}
-
-loop files rootDir "\audio\music\*", 'F' {
-    try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\music\*.*", false)
-}
-
-loop files rootDir "\audio\sfx\*", 'F' {
-    try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\sfx\*.*", false)
-}
+__doBackup(backupFolder)
+if !DirExist(sd.backupFolderWork)
+    return
+backupFolder := sd.backupFolderWork
+__doBackup(backupFolder)

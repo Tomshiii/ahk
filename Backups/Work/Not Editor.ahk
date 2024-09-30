@@ -29,7 +29,7 @@ x::x */
 ^SPACE::alwaysOnTop()
 
 ;searchgoogleHotkey;
-^+c::clip.search() ;runs a google search of highlighted text
+^+c::clip.search(, "firefox.exe") ;runs a google search of highlighted text
 
 ;capitaliseHotkey;
 SC03A & c::clip.capitilise()
