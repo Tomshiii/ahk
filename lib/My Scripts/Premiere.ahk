@@ -35,7 +35,7 @@ Enter::
 {
 	getTitle := WinGetTitle("A")
 	switch {
-		case InStr(getTitle, "Clip Fx Editor"):
+		case InStr(getTitle, "Clip Fx Editor"), InStr(getTitle, "Track Fx Editor"):
 			delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
 			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
 				prem.escFxMenu()
@@ -46,6 +46,8 @@ Enter::
 			return
 	}
 }
+
+Escape::prem.escFxMenu()
 
 ;linkActivateHotkey;
 ~^l::SendInput(KSA.selectAtPlayhead)
@@ -90,8 +92,6 @@ NumpadMult::Tab
 $+1::
 $+2::
 $+3::prem.zoomPreviewWindow(A_ThisHotkey)
-
-Escape::prem.escFxMenu()
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/09/17
- * @version 2.1.22
+ * @date 2024/09/30
+ * @version 2.1.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2078,7 +2078,7 @@ class Prem {
      */
     static escFxMenu(onFailure := "{Escape}") {
 		windows := Map(
-			"Clip Fx Editor", true
+			"Clip Fx Editor", true, "Track Fx Editor", true
 		)
 		activeWin := WinGetTitle("A")
 		inList := false

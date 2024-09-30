@@ -30,4 +30,5 @@ GroupAdd("games", "Horizon Zero Dawn: Complete Edition ahk_exe HorizonZeroDawn.e
 GroupAdd("games", "Risk of Rain 2 ahk_exe Risk of Rain 2.exe")
 GroupAdd("games", "Deep Rock Galactic   ahk_exe FSD-Win64-Shipping.exe")
 GroupAdd("games", "Borderlands ahk_exe Borderlands3.exe")
+GroupAdd("games", "The Witcher 3 ahk_exe witcher3.exe")
 ; -- leave this line it gets used and is needed in settingsGUI()
