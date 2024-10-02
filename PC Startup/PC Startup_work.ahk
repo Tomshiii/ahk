@@ -2,6 +2,7 @@
 #Requires AutoHotkey v2.0
 #Include *i <Classes\Settings>
 #Include *i <Classes\ptf>
+#Include *i <Functions\deleteDotUnderscore>
 
 ;// if the user has not generated the symlink yet this script will return
 try {
@@ -29,3 +30,5 @@ FileCopy(ptf.rootDir "\Support Files\Streamdeck Files\options.ini", ptf.rootDir 
 FileCopy(ptf.rootDir "\lib\My Scripts\Windows.ahk", ptf.rootDir "\Backups\Work\Windows.ahk", 1)
 FileCopy(ptf.rootDir "\lib\My Scripts\Not Editor.ahk", ptf.rootDir "\Backups\Work\Not Editor.ahk", 1)
 FileCopy(ptf.rootDir "\lib\Classes\Apps\Discord.ahk", ptf.rootDir "\Backups\Work\Discord.ahk", 1)
+
+deleteDotUnderscore("N:\")
